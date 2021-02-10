@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Form } from 'antd';
-import { Input, Checkbox, Button } from 'antd';
+import { Input, Checkbox, Button, Alert } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import { useRouter } from 'next/router'
@@ -9,12 +9,13 @@ import httpcookie from 'cookie'
 
 
 export default function Home({ initProps }) {
+  // console.log("token di login abis dari logout: " + jscookie.get('token'))
   const rt = useRouter()
-  const tok = initProps
   const [formdata, setFormdata] = useState({
     email: '',
     password: ''
   })
+  const [alerterror, setAlerterror] = useState(false)
   const onChangeLogin = (e) => {
     setFormdata({
       ...formdata,
@@ -32,17 +33,20 @@ export default function Home({ initProps }) {
       .then(res => res.json())
       .then(res2 => {
         if (res2.data) {
-          console.log("token: " + res2.data.token)
+          // console.log("token: " + res2.data.token)
           jscookie.set('token', JSON.stringify(res2.data.token))
-          // sessionStorage.setItem('token', JSON.stringify(res2.data.token))
-          console.log("token di session: " + JSON.parse(jscookie.get('token')))
-          rt.push('/dashboard/')
+          // console.log("token di session: " + JSON.parse(jscookie.get('token')))
+          rt.push('/dashboard')
+        }
+        else if (res2.error) {
+          // console.log("masuk ke error login")
+          setAlerterror(true)
         }
       })
   }
   return (
     <div className="container-xl bg-blue-600 h-screen">
-      <div className="pt-20" id="wrapper">
+      <div className="pt-20 relative" id="wrapper">
         <div className="mx-auto bg-white rounded-lg w-5/12 h-96 text-black shadow-lg px-5 py-10 text-center">
           <h1 className="mb-5 font-mont text-xl font-semibold">Log In MIGSYS v3</h1>
           <Form name="email" className="loginForm" initialValues={{ remember: true }} onFinish={handleLogin}>
@@ -78,15 +82,32 @@ export default function Home({ initProps }) {
             </Form.Item>
           </Form>
         </div>
+        <div className="absolute top-2 right-3">
+          {
+            alerterror ?
+              <Alert
+                message="Error"
+                description="Email/password salah!"
+                type="error"
+                showIcon
+              />
+              :
+              null
+            }
+        </div>
       </div>
     </div>
   )
 }
 
-export async function getServerSideProps({ req }) {
+export async function getServerSideProps({ req, res }) {
   const initProps = {};
   if (req && req.headers) {
     const cookies = req.headers.cookie;
+    if (cookies) {
+      res.writeHead(302, { Location: '/dashboard' })
+      res.end()
+    }
     if (typeof cookies === 'string') {
       const cookiesJSON = httpcookie.parse(cookies);
       initProps.token = cookiesJSON.token;

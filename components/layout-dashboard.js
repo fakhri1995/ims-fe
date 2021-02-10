@@ -5,6 +5,7 @@ import Layout from 'antd/lib/layout'
 import Menu from 'antd/lib/menu'
 import Avatar from 'antd/lib/avatar'
 import Dropdown from 'antd/lib/dropdown'
+import Breadcrumb from 'antd/lib/breadcrumb'
 import MenuUnfoldOutlined from '@ant-design/icons/MenuUnfoldOutlined'
 import MenuFoldOutlined from '@ant-design/icons/MenuFoldOutlined'
 import UserOutlined from '@ant-design/icons/UserOutlined'
@@ -16,7 +17,13 @@ import DashboardTwoTone from '@ant-design/icons/DashboardTwoTone'
 import jscookie from 'js-cookie'
 import 'antd/dist/antd.css';
 
-function LayoutDashboard({ children, tok }) {
+function LayoutDashboard({ children, tok, pathArr }) {
+    var rootBreadcrumb = ""
+    var rootBreadcrumb2 = ""
+    if (pathArr) {
+        rootBreadcrumb = pathArr[1]
+        rootBreadcrumb2 = rootBreadcrumb[0].toUpperCase() + rootBreadcrumb.slice(1)
+    }
     const rt = useRouter()
     const { Sider, Content, Header } = Layout
     const [coll, setColl] = useState(true)
@@ -25,27 +32,30 @@ function LayoutDashboard({ children, tok }) {
         setColl(prev => !prev)
     };
     const handleLogout = () => {
-        jscookie.remove('token')
-        rt.push('/')
-        // fetch(`https://go.cgx.co.id/auth/v1/logout`, {
-        //     method: "POST",
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         'Authorization':  `${tok}`
-        //     }
-        // })
-        // .then(res => res.json())
-        // .then(res2 => {
-        //     if(res2.data.is_success){
-        //         jscookie.remove('token')
-        //         rt.push('/')
-        //     }
-        // })
+        fetch(`https://go.cgx.co.id/auth/v1/logout`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': JSON.parse(tok)
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                console.log("isi dari res2: " + res2)
+                if (res2.data.is_success) {
+                    jscookie.remove('token')
+                    console.log("token abis logout: " + jscookie.get('token'))
+                    rt.push('/')
+                }
+            })
+            .catch(err => {
+                console.log(err.message)
+            })
     }
     const menuProfile = (
         <Menu>
             <Menu.Item>
-                <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
+                <a target="_blank" rel="noopener noreferrer" href="#">
                     <UserOutlined /> Profile
                 </a>
             </Menu.Item>
@@ -85,7 +95,27 @@ function LayoutDashboard({ children, tok }) {
             </Sider>
             <Layout className="site-layout">
                 <Header className="site-layout-background" style={{ padding: 0, backgroundColor: `white` }}>
-                    {coll ? <MenuUnfoldOutlined onClick={handleColl} style={{ padding: `24px` }} className="trigger"></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleColl} style={{ padding: `24px` }} className="trigger"></MenuFoldOutlined>}
+                    {coll ? <MenuUnfoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className="trigger"></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left` }} className="trigger"></MenuFoldOutlined>}
+                    {
+                        pathArr ?
+                            <Breadcrumb separator=">" style={{ marginLeft: `1rem`, float: `left`, padding: `24px` }}>
+                                {pathArr.length == 2 && <Breadcrumb.Item>{rootBreadcrumb2}</Breadcrumb.Item>}
+                                {pathArr.length >= 2 && <Breadcrumb.Item href={`/dashboard/${pathArr[1]}`}>{rootBreadcrumb2}</Breadcrumb.Item>}
+                                {pathArr.length >= 2 ?
+                                    pathArr.map((doc, idx) => {
+                                        if (idx > 1) {
+                                            return (
+                                                <Breadcrumb.Item>{doc}</Breadcrumb.Item>
+                                            )
+                                        }
+                                    })
+                                    :
+                                    null
+                                }
+                            </Breadcrumb>
+                            :
+                            null
+                    }
                     <div style={{ float: `right`, marginRight: `2rem` }}>
                         <Dropdown overlay={menuProfile}>
                             <Avatar icon={<UserOutlined></UserOutlined>} style={{ cursor: `pointer` }} />

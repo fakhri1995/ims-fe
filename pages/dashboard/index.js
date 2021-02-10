@@ -1,31 +1,31 @@
-import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
 import jscookie from 'js-cookie'
 import Layout from '../../components/layout-dashboard'
 
 
 function DashboardIndex({ initProps }) {
-    const rt = useRouter()
     const tok = initProps
     const cook = jscookie.get('token')
-    if (tok == null || tok == "null") {
-        rt.push('/')
-    }
-    console.log("cookie di dashboard: " + cook)
+    // console.log("cookie di dashboard: " + cook)
     return (
-        <Layout tok={cook}>
+        <Layout tok={tok}>
             <h1>Selamat datang di Dashboard</h1>
         </Layout>
     )
 }
 
-export async function getServerSideProps({ req }) {
-    const initProps = {};
+export async function getServerSideProps({ req,res }) {
+    var initProps = {};
     if (req && req.headers) {
         const cookies = req.headers.cookie;
+        if(!cookies){
+            res.writeHead(302, { Location: '/' })
+            res.end()
+        }
         if (typeof cookies === 'string') {
             const cookiesJSON = httpcookie.parse(cookies);
-            initProps.token = cookiesJSON.token;
+            initProps = cookiesJSON.token;
+            // console.log("cookie di index dashboard ssr: " + initProps)
         }
     }
     return {

@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import cookie from 'cookie'
+import httpcookie from 'cookie'
 import Layout from '../../components/layout-dashboard'
 import TeamOutlined from '@ant-design/icons/TeamOutlined'
 import UserOutlined from '@ant-design/icons/UserOutlined'
@@ -8,13 +8,11 @@ import jscookie from 'js-cookie'
 function DashboardAdmin({ initProps }) {
     const rt = useRouter()
     const cook = jscookie.get('token')
-    console.log("cook: "+cook)
+    // console.log("cookie di admin dashboard: " + cook)
     const tok = initProps
-    if (tok == null || tok == "null") {
-        rt.push('/')
-    }
+    const pathArr = rt.pathname.split("/").slice(1)
     return (
-        <Layout tok={cook}>
+        <Layout tok={tok} pathArr={pathArr}>
             <div className="w-full h-auto py-5 px-2 font-mont border-t border-opacity-30 border-gray-500 border-b">
                 <div className="divide-y divide-gray-300 divide-opacity-50">
                     <div>
@@ -49,14 +47,18 @@ function DashboardAdmin({ initProps }) {
     )
 }
 
-export async function getServerSideProps({ req }) {
-    const initProps = {};
+export async function getServerSideProps({ req, res }) {
+    var initProps = {};
     if (req && req.headers) {
         const cookies = req.headers.cookie;
+        if (!cookies) {
+            res.writeHead(302, { Location: '/' })
+            res.end()
+        }
         if (typeof cookies === 'string') {
-            const cookiesJSON = cookie.parse(cookies);
-            console.log("cookie di admin: " + cookiesJSON)
-            initProps.token = JSON.stringify(cookiesJSON.token);
+            const cookiesJSON = httpcookie.parse(cookies);
+            initProps = cookiesJSON.token
+            // console.log("cookie di admin dashboard ssr: " + initProps)
         }
     }
     return {
