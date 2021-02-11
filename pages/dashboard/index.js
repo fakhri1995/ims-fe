@@ -5,7 +5,7 @@ import Layout from '../../components/layout-dashboard'
 
 function DashboardIndex({ initProps }) {
     const tok = initProps
-    const cook = jscookie.get('token')
+    // const cook = jscookie.get('token')
     // console.log("cookie di dashboard: " + cook)
     return (
         <Layout tok={tok}>

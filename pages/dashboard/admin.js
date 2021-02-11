@@ -6,14 +6,15 @@ import UserOutlined from '@ant-design/icons/UserOutlined'
 import jscookie from 'js-cookie'
 
 function DashboardAdmin({ initProps }) {
+    // jscookie.remove('token')
     const rt = useRouter()
-    const cook = jscookie.get('token')
+    // const cook = jscookie.get('token')
     // console.log("cookie di admin dashboard: " + cook)
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     return (
         <Layout tok={tok} pathArr={pathArr}>
-            <div className="w-full h-auto py-5 px-2 font-mont border-t border-opacity-30 border-gray-500 border-b">
+            <div className="w-full h-auto py-5 font-mont border-t border-opacity-30 border-gray-500 border-b">
                 <div className="divide-y divide-gray-300 divide-opacity-50">
                     <div>
                         <h3 className="font-semibold text-lg mb-0">User Management</h3>
@@ -22,22 +23,22 @@ function DashboardAdmin({ initProps }) {
                         </h3>
                     </div>
                     <div className="grid grid-cols-5">
-                        <div className="border hover:border-yellow-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                        <div className="border hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                             <TeamOutlined /> Agents
                         </div>
-                        <div className="border hover:border-yellow-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                        <div className="border hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                             <UserOutlined /> Requestors
                         </div>
-                        <div className="border hover:border-yellow-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                        <div className="border hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                             <TeamOutlined /> Agents
                         </div>
-                        <div className="border hover:border-yellow-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                        <div className="border hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                             <UserOutlined /> Requestors
                         </div>
-                        <div className="border hover:border-yellow-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                        <div className="border hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                             <TeamOutlined /> Agents
                         </div>
-                        <div className="border hover:border-yellow-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                        <div className="border hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                             <UserOutlined /> Requestors
                         </div>
                     </div>

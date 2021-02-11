@@ -13,7 +13,9 @@ import BankOutlined from '@ant-design/icons/BankOutlined'
 import InboxOutlined from '@ant-design/icons/InboxOutlined'
 import SettingOutlined from '@ant-design/icons/SettingOutlined'
 import ExportOutlined from '@ant-design/icons/ExportOutlined'
-import DashboardTwoTone from '@ant-design/icons/DashboardTwoTone'
+import DashboardOutlined from '@ant-design/icons/DashboardOutlined'
+import NotificationOutlined from '@ant-design/icons/NotificationOutlined'
+import QuestionCircleOutlined from '@ant-design/icons/QuestionCircleOutlined'
 import jscookie from 'js-cookie'
 import 'antd/dist/antd.css';
 
@@ -75,7 +77,7 @@ function LayoutDashboard({ children, tok, pathArr }) {
             <Sider collapsible collapsed={coll} trigger={null} breakpoint="lg" theme="light">
                 <div className="logo" style={{ height: `32px`, margin: `16px`, background: `gray` }}></div>
                 <Menu theme="light" mode="inline" defaultSelectedKeys={['1']}>
-                    <Menu.Item key="1" icon={<DashboardTwoTone />}>
+                    <Menu.Item key="1" icon={<DashboardOutlined />}>
                         <Link href="/dashboard">
                             Dashboard
                         </Link>
@@ -87,7 +89,7 @@ function LayoutDashboard({ children, tok, pathArr }) {
                         Assets
                     </Menu.Item>
                     <Menu.Item key="4" icon={<SettingOutlined />}>
-                        <Link href="/dashboard/admin/">
+                        <Link href="/dashboard/admin">
                             Admin
                         </Link>
                     </Menu.Item>
@@ -98,9 +100,9 @@ function LayoutDashboard({ children, tok, pathArr }) {
                     {coll ? <MenuUnfoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className="trigger"></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left` }} className="trigger"></MenuFoldOutlined>}
                     {
                         pathArr ?
-                            <Breadcrumb separator=">" style={{ marginLeft: `1rem`, float: `left`, padding: `24px` }}>
+                            <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 10px` }}>
                                 {pathArr.length == 2 && <Breadcrumb.Item>{rootBreadcrumb2}</Breadcrumb.Item>}
-                                {pathArr.length >= 2 && <Breadcrumb.Item href={`/dashboard/${pathArr[1]}`}>{rootBreadcrumb2}</Breadcrumb.Item>}
+                                {pathArr.length > 2 && <Breadcrumb.Item href={`/dashboard/${pathArr[1]}`}>{rootBreadcrumb2}</Breadcrumb.Item>}
                                 {pathArr.length >= 2 ?
                                     pathArr.map((doc, idx) => {
                                         if (idx > 1) {
@@ -120,6 +122,12 @@ function LayoutDashboard({ children, tok, pathArr }) {
                         <Dropdown overlay={menuProfile}>
                             <Avatar icon={<UserOutlined></UserOutlined>} style={{ cursor: `pointer` }} />
                         </Dropdown>
+                    </div>
+                    <div style={{ float: `right`, marginRight: `2rem` }}>
+                        <NotificationOutlined />
+                    </div>
+                    <div style={{ float: `right`, marginRight: `2rem` }}>
+                        <QuestionCircleOutlined />
                     </div>
                 </Header>
                 <Content className="slb" style={{ padding: 24, height: `${tinggi}px` }}>

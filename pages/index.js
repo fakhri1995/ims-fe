@@ -34,7 +34,9 @@ export default function Home({ initProps }) {
       .then(res2 => {
         if (res2.data) {
           // console.log("token: " + res2.data.token)
-          jscookie.set('token', JSON.stringify(res2.data.token))
+          var date = new Date();
+          date.setTime(date.getTime() + (3600 * 1000));
+          jscookie.set('token', JSON.stringify(res2.data.token), { expires: date })
           // console.log("token di session: " + JSON.parse(jscookie.get('token')))
           rt.push('/dashboard')
         }
@@ -93,7 +95,7 @@ export default function Home({ initProps }) {
               />
               :
               null
-            }
+          }
         </div>
       </div>
     </div>
