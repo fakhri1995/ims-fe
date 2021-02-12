@@ -34,9 +34,11 @@ export default function Home({ initProps }) {
       .then(res2 => {
         if (res2.data) {
           // console.log("token: " + res2.data.token)
-          jscookie.set('token', JSON.stringify(res2.data.token))
+          var date = new Date();
+          date.setTime(date.getTime() + (3600 * 1000));
+          jscookie.set('token', JSON.stringify(res2.data.token), { expires: date })
           // console.log("token di session: " + JSON.parse(jscookie.get('token')))
-          rt.push('/dashboard')
+          rt.push('/dashboard/home')
         }
         else if (res2.error) {
           // console.log("masuk ke error login")
@@ -93,7 +95,7 @@ export default function Home({ initProps }) {
               />
               :
               null
-            }
+          }
         </div>
       </div>
     </div>
@@ -105,7 +107,7 @@ export async function getServerSideProps({ req, res }) {
   if (req && req.headers) {
     const cookies = req.headers.cookie;
     if (cookies) {
-      res.writeHead(302, { Location: '/dashboard' })
+      res.writeHead(302, { Location: '/dashboard/home' })
       res.end()
     }
     if (typeof cookies === 'string') {

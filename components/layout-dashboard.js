@@ -14,17 +14,34 @@ import InboxOutlined from '@ant-design/icons/InboxOutlined'
 import SettingOutlined from '@ant-design/icons/SettingOutlined'
 import ExportOutlined from '@ant-design/icons/ExportOutlined'
 import DashboardTwoTone from '@ant-design/icons/DashboardTwoTone'
+import NotificationOutlined from '@ant-design/icons/NotificationOutlined'
+import QuestionCircleOutlined from '@ant-design/icons/QuestionCircleOutlined'
+import PlusCircleTwoTone from '@ant-design/icons/PlusCircleTwoTone'
 import jscookie from 'js-cookie'
 import 'antd/dist/antd.css';
 
-function LayoutDashboard({ children, tok, pathArr }) {
-    var rootBreadcrumb = ""
-    var rootBreadcrumb2 = ""
-    if (pathArr) {
-        rootBreadcrumb = pathArr[1]
-        rootBreadcrumb2 = rootBreadcrumb[0].toUpperCase() + rootBreadcrumb.slice(1)
-    }
+function LayoutDashboard({ children, tok, pathArr, sidemenu, originPath }) {
     const rt = useRouter()
+    var rootBreadcrumb = ""
+    var oriPath = ""
+    var childBreacrumb = []
+    if (originPath) {
+        oriPath = originPath
+    }
+    if (pathArr) {
+        if (pathArr[0] === "dashboard") {
+            rootBreadcrumb = pathArr[1]
+            rootBreadcrumb = rootBreadcrumb[0].toUpperCase() + rootBreadcrumb.slice(1)
+        }
+        else {
+            for (var i = 0; i < pathArr.length; i++) {
+                childBreacrumb.push(pathArr[i])
+            }
+        }
+    }
+    const childBreacrumbCC = childBreacrumb.map((doc, idx) => {
+        return doc[0].toUpperCase() + doc.slice(1)
+    })
     const { Sider, Content, Header } = Layout
     const [coll, setColl] = useState(true)
     const [tinggi, setTinggi] = useState(90)
@@ -66,6 +83,25 @@ function LayoutDashboard({ children, tok, pathArr }) {
             </Menu.Item>
         </Menu>
     );
+    const menuProfile2 = () => {
+        return (
+            <div className="w-auto h-auto flex flex-col shadow-md rounded bg-white space-y-4 p-5">
+                <div className="flex justify-center space-x-3">
+                    <div className="w-10 h-10 rounded-full bg-blue-500 flex text-white text-center justify-center items-center"><div>Y</div></div>
+                    <div className="flex flex-col">
+                        <h2 className="text-lg font-semibold mb-1">Yues Tadrik Hafiyan</h2>
+                        <h2 className="text-sm font-normal mb-1">hanif@mitramas.com</h2>
+                        <a>Profile Settings</a>
+                    </div>
+                </div>
+                <div>
+                    <a target="_blank" rel="noopener noreferrer" onClick={handleLogout}>
+                        <ExportOutlined /> Logout
+                    </a>
+                </div>
+            </div>
+        )
+    }
     useEffect(() => {
         var h = window.innerHeight
         setTinggi(h)
@@ -74,9 +110,9 @@ function LayoutDashboard({ children, tok, pathArr }) {
         <Layout>
             <Sider collapsible collapsed={coll} trigger={null} breakpoint="lg" theme="light">
                 <div className="logo" style={{ height: `32px`, margin: `16px`, background: `gray` }}></div>
-                <Menu theme="light" mode="inline" defaultSelectedKeys={['1']}>
+                <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]}>
                     <Menu.Item key="1" icon={<DashboardTwoTone />}>
-                        <Link href="/dashboard">
+                        <Link href="/dashboard/home">
                             Dashboard
                         </Link>
                     </Menu.Item>
@@ -87,7 +123,7 @@ function LayoutDashboard({ children, tok, pathArr }) {
                         Assets
                     </Menu.Item>
                     <Menu.Item key="4" icon={<SettingOutlined />}>
-                        <Link href="/dashboard/admin/">
+                        <Link href="/dashboard/admin">
                             Admin
                         </Link>
                     </Menu.Item>
@@ -98,16 +134,14 @@ function LayoutDashboard({ children, tok, pathArr }) {
                     {coll ? <MenuUnfoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className="trigger"></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left` }} className="trigger"></MenuFoldOutlined>}
                     {
                         pathArr ?
-                            <Breadcrumb separator=">" style={{ marginLeft: `1rem`, float: `left`, padding: `24px` }}>
-                                {pathArr.length == 2 && <Breadcrumb.Item>{rootBreadcrumb2}</Breadcrumb.Item>}
-                                {pathArr.length >= 2 && <Breadcrumb.Item href={`/dashboard/${pathArr[1]}`}>{rootBreadcrumb2}</Breadcrumb.Item>}
-                                {pathArr.length >= 2 ?
-                                    pathArr.map((doc, idx) => {
-                                        if (idx > 1) {
-                                            return (
-                                                <Breadcrumb.Item>{doc}</Breadcrumb.Item>
-                                            )
-                                        }
+                            <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 10px` }}>
+                                {pathArr[0] === "dashboard" && <Breadcrumb.Item> <strong>{rootBreadcrumb}</strong></Breadcrumb.Item>}
+                                {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${oriPath.toLowerCase()}`}><strong>{oriPath}</strong></Breadcrumb.Item>}
+                                {childBreacrumbCC.length !== 0 ?
+                                    childBreacrumbCC.map((doc, idx) => {
+                                        return (
+                                            <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                        )
                                     })
                                     :
                                     null
@@ -117,9 +151,18 @@ function LayoutDashboard({ children, tok, pathArr }) {
                             null
                     }
                     <div style={{ float: `right`, marginRight: `2rem` }}>
-                        <Dropdown overlay={menuProfile}>
+                        <Dropdown overlay={menuProfile2} trigger={['click']}>
                             <Avatar icon={<UserOutlined></UserOutlined>} style={{ cursor: `pointer` }} />
                         </Dropdown>
+                    </div>
+                    <div style={{ float: `right`, marginRight: `2rem`, cursor: `pointer` }}>
+                        <NotificationOutlined />
+                    </div>
+                    <div style={{ float: `right`, marginRight: `2rem`, cursor: `pointer` }}>
+                        <QuestionCircleOutlined />
+                    </div>
+                    <div style={{ float: `right`, marginRight: `2rem`, cursor: `pointer` }}>
+                        <PlusCircleTwoTone></PlusCircleTwoTone>
                     </div>
                 </Header>
                 <Content className="slb" style={{ padding: 24, height: `${tinggi}px` }}>

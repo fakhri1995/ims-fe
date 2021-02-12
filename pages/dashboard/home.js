@@ -3,12 +3,12 @@ import jscookie from 'js-cookie'
 import Layout from '../../components/layout-dashboard'
 
 
-function DashboardIndex({ initProps }) {
+function DashboardIndex({ initProps, sidemenu }) {
     const tok = initProps
-    const cook = jscookie.get('token')
+    // const cook = jscookie.get('token')
     // console.log("cookie di dashboard: " + cook)
     return (
-        <Layout tok={tok}>
+        <Layout tok={tok} sidemenu={sidemenu}>
             <h1>Selamat datang di Dashboard</h1>
         </Layout>
     )
@@ -31,6 +31,7 @@ export async function getServerSideProps({ req,res }) {
     return {
         props: {
             initProps,
+            sidemenu: "1"
         },
     }
 }
