@@ -5,7 +5,7 @@ import TeamOutlined from '@ant-design/icons/TeamOutlined'
 import UserOutlined from '@ant-design/icons/UserOutlined'
 import Link from 'next/link'
 
-function DashboardAdmin({ initProps, sidemenu }) {
+function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
     // jscookie.remove('token')
     const rt = useRouter()
     // const cook = jscookie.get('token')
@@ -13,7 +13,7 @@ function DashboardAdmin({ initProps, sidemenu }) {
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     return (
-        <Layout tok={tok} pathArr={pathArr} sidemenu={sidemenu}>
+        <Layout tok={tok} pathArr={pathArr} sidemenu={sidemenu} dataProfile={dataProfile}>
             <div className="w-full h-auto py-5 font-mont border-t border-opacity-30 border-gray-500 border-b bg-white">
                 <div className="divide-y divide-gray-300 divide-opacity-50">
                     <div>
@@ -71,9 +71,18 @@ export async function getServerSideProps({ req, res }) {
             // console.log("cookie di admin dashboard ssr: " + initProps)
         }
     }
+    const resources = await fetch(`https://go.cgx.co.id/auth/v1/get-profile`, {
+        method: `GET`,
+        headers: {
+            'Authorization': JSON.parse(initProps)
+        }
+    })
+    const resjson = await resources.json()
+    const dataProfile = resjson
     return {
         props: {
             initProps,
+            dataProfile,
             sidemenu: "4"
         },
     }

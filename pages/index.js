@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Form } from 'antd';
-import { Input, Checkbox, Button, Alert } from 'antd';
+import { Input, Checkbox, Button, Alert, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import { useRouter } from 'next/router'
@@ -42,6 +42,12 @@ export default function Home({ initProps }) {
         }
         else if (res2.error) {
           // console.log("masuk ke error login")
+          message.error({
+            content: "Email/password yang dimasukkan salah!",
+            style: {
+              marginTop: `1rem`
+            }
+          }, 5)
           setAlerterror(true)
         }
       })
@@ -49,7 +55,7 @@ export default function Home({ initProps }) {
   return (
     <div className="container-xl bg-blue-600 h-screen">
       <div className="pt-20 relative" id="wrapper">
-        <div className="mx-auto bg-white rounded-lg w-5/12 h-96 text-black shadow-lg px-5 py-10 text-center">
+        <div className="mx-auto bg-white rounded-lg w-5/12 h-80 text-black shadow-lg px-5 py-10 text-center">
           <h1 className="mb-5 font-mont text-xl font-semibold">Log In MIGSYS v3</h1>
           <Form name="email" className="loginForm" initialValues={{ remember: true }} onFinish={handleLogin}>
             <Form.Item name="email" rules={[
@@ -80,11 +86,10 @@ export default function Home({ initProps }) {
               <Button type="primary" htmlType="submit" className="login-form-button mb-5" style={{ width: `100%` }}>
                 Log in
               </Button>
-              <a href="">Register now!</a>
             </Form.Item>
           </Form>
         </div>
-        <div className="absolute top-2 right-3">
+        {/* <div className="absolute top-2 right-3">
           {
             alerterror ?
               <Alert
@@ -96,7 +101,7 @@ export default function Home({ initProps }) {
               :
               null
           }
-        </div>
+        </div> */}
       </div>
     </div>
   )

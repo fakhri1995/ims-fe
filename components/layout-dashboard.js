@@ -20,7 +20,7 @@ import PlusCircleTwoTone from '@ant-design/icons/PlusCircleTwoTone'
 import jscookie from 'js-cookie'
 import 'antd/dist/antd.css';
 
-function LayoutDashboard({ children, tok, pathArr, sidemenu, originPath }) {
+function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, originPath }) {
     const rt = useRouter()
     var rootBreadcrumb = ""
     var oriPath = ""
@@ -69,28 +69,30 @@ function LayoutDashboard({ children, tok, pathArr, sidemenu, originPath }) {
                 console.log(err.message)
             })
     }
-    const menuProfile = (
-        <Menu>
-            <Menu.Item>
-                <a target="_blank" rel="noopener noreferrer" href="#">
-                    <UserOutlined /> Profile
-                </a>
-            </Menu.Item>
-            <Menu.Item>
-                <a target="_blank" rel="noopener noreferrer" onClick={handleLogout}>
-                    <ExportOutlined /> Logout
-                </a>
-            </Menu.Item>
-        </Menu>
-    );
+    // const menuProfile = (
+    //     <Menu>
+    //         <Menu.Item>
+    //             <a target="_blank" rel="noopener noreferrer" href="#">
+    //                 <UserOutlined /> Profile
+    //             </a>
+    //         </Menu.Item>
+    //         <Menu.Item>
+    //             <a target="_blank" rel="noopener noreferrer" onClick={handleLogout}>
+    //                 <ExportOutlined /> Logout
+    //             </a>
+    //         </Menu.Item>
+    //     </Menu>
+    // );
     const menuProfile2 = () => {
         return (
             <div className="w-auto h-auto flex flex-col shadow-md rounded bg-white space-y-4 p-5">
                 <div className="flex justify-center space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-500 flex text-white text-center justify-center items-center"><div>Y</div></div>
+                    <div className="w-10 h-10 rounded-full bg-blue-500 flex text-white text-center justify-center items-center">
+                        <img src={dataProfile.data.image_profile} alt="imageProfile" className=" object-cover w-full h-full"/>
+                    </div>
                     <div className="flex flex-col">
-                        <h2 className="text-lg font-semibold mb-1">Yues Tadrik Hafiyan</h2>
-                        <h2 className="text-sm font-normal mb-1">hanif@mitramas.com</h2>
+                        <h2 className="text-lg font-semibold mb-1">{dataProfile.data.fullname}</h2>
+                        <h2 className="text-sm font-normal mb-1">{dataProfile.data.email}</h2>
                         <a>Profile Settings</a>
                     </div>
                 </div>

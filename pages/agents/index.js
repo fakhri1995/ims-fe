@@ -7,7 +7,7 @@ import EditOutlined from '@ant-design/icons/EditOutlined'
 import { useState } from 'react'
 
 
-function Agents({ initProps, sidemenu }) {
+function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
@@ -38,8 +38,17 @@ function Agents({ initProps, sidemenu }) {
             address: 'London No. 2 Lake Park',
         },
     ];
+    const dataDD = dataListAccount.data.accounts.map((doc, idx) => {
+        return ({
+            user_id: doc.user_id,
+            profile_image: doc.profile_image,
+            fullname: doc.fullname,
+            email: doc.email,
+            phone_number: doc.phone_number
+        })
+    })
     var actionsArr = []
-    for (var i = 0; i < data.length; i++) {
+    for (var i = 0; i < dataDD.length; i++) {
         actionsArr.push(false)
     }
     const [actions, setActions] = useState(actionsArr)
@@ -124,8 +133,157 @@ function Agents({ initProps, sidemenu }) {
             )
         }
     ];
+    const columnsDD = [
+        {
+            dataIndex: 'profil_image',
+            render: (text, record, index) => (
+                <>
+                    <img src={record.profile_image} alt="imageProfile" className=" object-cover w-10 h-10 rounded-full" />
+                </>
+            )
+        },
+        {
+            title: 'ID',
+            dataIndex: 'user_id',
+            sorter: (a, b) => a.user_id - b.user_id,
+            sortDirections: ['descend', 'ascend'],
+        },
+        {
+            title: 'Nama',
+            dataIndex: 'fullname',
+            filters: [
+                {
+                    text: 'A',
+                    value: 'A'
+                },
+                {
+                    text: 'B',
+                    value: 'B'
+                },
+                {
+                    text: 'C',
+                    value: 'C'
+                },
+                {
+                    text: 'D',
+                    value: 'D'
+                },
+                {
+                    text: 'E',
+                    value: 'E'
+                },
+                {
+                    text: 'F',
+                    value: 'F'
+                },
+                {
+                    text: 'G',
+                    value: 'G'
+                },
+                {
+                    text: 'H',
+                    value: 'H'
+                },
+                {
+                    text: 'I',
+                    value: 'I'
+                },
+                {
+                    text: 'J',
+                    value: 'J'
+                },
+                {
+                    text: 'K',
+                    value: 'K'
+                },
+                {
+                    text: 'L',
+                    value: 'L'
+                },
+                {
+                    text: 'M',
+                    value: 'M'
+                },
+                {
+                    text: 'N',
+                    value: 'N'
+                },
+                {
+                    text: 'O',
+                    value: 'O'
+                },
+                {
+                    text: 'P',
+                    value: 'P'
+                },
+                {
+                    text: 'Q',
+                    value: 'Q'
+                },
+                {
+                    text: 'R',
+                    value: 'R'
+                },
+                {
+                    text: 'S',
+                    value: 'S'
+                },
+                {
+                    text: 'T',
+                    value: 'T'
+                },
+                {
+                    text: 'U',
+                    value: 'U'
+                },
+                {
+                    text: 'V',
+                    value: 'V'
+                },
+                {
+                    text: 'W',
+                    value: 'W'
+                },
+                {
+                    text: 'X',
+                    value: 'X'
+                },
+                {
+                    text: 'Y',
+                    value: 'Y'
+                },
+                {
+                    text: 'Z',
+                    value: 'Z'
+                },
+            ],
+            onFilter: (value, record) => record.fullname.indexOf(value) === 0,
+            sorter: (a, b) =>  a.fullname.localeCompare(b.fullname),
+            sortDirections: ['descend', 'ascend'],
+        },
+        {
+            title: 'Email',
+            dataIndex: 'email',
+        },
+        {
+            title: 'No Handphone',
+            dataIndex: 'phone_number',
+        },
+        {
+            dataIndex: 'actionss',
+            render: (text, record, index) => (
+                <>
+                    {
+                        actions[index] ? <>{actions[index]} <a><CopyOutlined /></a> <a><EditOutlined /></a></>
+                            :
+                            null
+                    }
+                </>
+            )
+        }
+    ];
     return (
-        <Layout tok={tok} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath}>
+        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath}>
             <>
                 <div className="h-20 w-full flex justify-between border-gray-400 border-t border-b px-2 bg-white mb-5">
                     <div className="w-auto flex items-center">
@@ -137,8 +295,8 @@ function Agents({ initProps, sidemenu }) {
                         <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center">New Agent</div>
                     </div>
                 </div>
-                <div className="h-auto w-full grid grid-cols-3 mb-5 bg-white px-2">
-                    <div className="col-span-2 flex flex-col space-y-3">
+                <div className="h-auto w-full grid grid-cols-4 mb-5 bg-white px-2">
+                    <div className="col-span-3 flex flex-col space-y-3">
                         <div className="flex">
                             <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto">
                                 A
@@ -219,7 +377,7 @@ function Agents({ initProps, sidemenu }) {
                                 Z
                             </button>
                         </div>
-                        <Table dataSource={data} columns={columns} onRow={(record, rowIndex) => {
+                        <Table dataSource={dataDD} columns={columnsDD} onRow={(record, rowIndex) => {
                             return {
                                 onMouseOver: (event) => {
                                     var actionsCopy = actions
@@ -238,10 +396,10 @@ function Agents({ initProps, sidemenu }) {
                             }
                         }}></Table>
                     </div>
-                    <div className="flex flex-col space-y-3 pl-8">
+                    <div className="flex flex-col space-y-3">
                         <div className="font-semibold text-base">Agents</div>
                         <p className="font-normal text-base">
-                            The list shows all Agents added in your help desk. You can edit an existing agent’s permissions and access rights by hovering over the agent and clicking on <EditOutlined/>. <br/>
+                            The list shows all Agents added in your help desk. You can edit an existing agent’s permissions and access rights by hovering over the agent and clicking on <EditOutlined />. <br />
                             You can add new agents by clicking on the “New Agent” button.
                         </p>
                     </div>
@@ -262,12 +420,30 @@ export async function getServerSideProps({ req, res }) {
         if (typeof cookies === 'string') {
             const cookiesJSON = httpcookie.parse(cookies);
             initProps = cookiesJSON.token
-            // console.log("cookie di admin dashboard ssr: " + initProps)
         }
     }
+    const resourcesGP = await fetch(`https://go.cgx.co.id/auth/v1/get-profile`, {
+        method: `GET`,
+        headers: {
+            'Authorization': JSON.parse(initProps)
+        }
+    })
+    const resjsonGP = await resourcesGP.json()
+    const dataProfile = resjsonGP
+
+    const resourcesLA = await fetch(`https://go.cgx.co.id/admin/v1/get-list-account?page=1&rows=5&order_by=asc`, {
+        method: `GET`,
+        headers: {
+            'Authorization': JSON.parse(initProps)
+        }
+    })
+    const resjsonLA = await resourcesLA.json()
+    const dataListAccount = resjsonLA
     return {
         props: {
             initProps,
+            dataProfile,
+            dataListAccount,
             sidemenu: "4"
         },
     }
