@@ -110,45 +110,45 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
     
     const addMenu = () => {
         return (
-            <div className="w-96 h-auto flex flex-col shadow-md rounded bg-white space-y-4 p-5">
+            <div style={{ fontSize: '20px'}} className="w-224 h-auto flex flex-col shadow-md rounded bg-white space-y-4 p-5">
                 <div className="">
                     <Row justify="center">
                             <Col span={10}>
-                                <AlertOutlined className="" />Incident
+                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Incident</p>
                             </Col>
                             <Col span={9}>
-                                <AlertOutlined className="" />Release
+                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Release</p>
                             </Col>
                             <Col span={5}>
-                                <AlertOutlined className="" />Project
+                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Project</p>
                             </Col>
                     </Row>
                     <Row justify="center"> 
                             <Col span={10}>
-                                <AlertOutlined className="" />Service Request
+                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Service Request</p>
                             </Col>
                             <Col span={9}>
-                                <AlertOutlined className="" />Asset
-                            </Col>
-                            <Col span={5}>
-                            </Col>
-                    </Row>
-                    <Row justify="center"> 
-                            <Col span={10}>
-                                <AlertOutlined className="" />Problem
-                            </Col>
-                            <Col span={9}>
-                                <AlertOutlined className="" />Contract
+                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Asset</p>
                             </Col>
                             <Col span={5}>
                             </Col>
                     </Row>
                     <Row justify="center"> 
                             <Col span={10}>
-                                <AlertOutlined className="" />Change
+                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Problem</p>
                             </Col>
                             <Col span={9}>
-                                <AlertOutlined className="" />Purchase Order
+                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Contract</p>
+                            </Col>
+                            <Col span={5}>
+                            </Col>
+                    </Row>
+                    <Row justify="center"> 
+                            <Col span={10}>
+                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Change</p>
+                            </Col>
+                            <Col span={9}>
+                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Purchase Order</p>
                             </Col>
                             <Col span={5}>
                             </Col>
@@ -221,10 +221,11 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                         <QuestionCircleOutlined />
                     </div>
                     <div style={{ float: `right`, marginRight: `2rem`}}>
-                        <Dropdown overlay={addMenu} placement="bottomCenter" trigger={['click']}>
+                        <Dropdown overlay={addMenu} placement="bottomRight" trigger={['click']}>
                             <PlusCircleTwoTone className="" style={{ fontSize: '30px', cursor: `pointer` }} />
                         </Dropdown>
                     </div>
+                    
                 </Header>
                 <Content className="slb" style={{ padding: 24, height: `${tinggi}px` }}>
                     {children}
