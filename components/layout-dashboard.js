@@ -19,7 +19,6 @@ import QuestionCircleOutlined from '@ant-design/icons/QuestionCircleOutlined'
 import PlusCircleTwoTone from '@ant-design/icons/PlusCircleTwoTone'
 import AlertOutlined from '@ant-design/icons/AlertOutlined'
 import { Row, Col } from 'antd';
-import { Space, Button, Typography, Divider } from 'antd';
 import jscookie from 'js-cookie'
 import 'antd/dist/antd.css';
 
@@ -200,7 +199,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                                 {childBreacrumbCC.length !== 0 ?
                                     childBreacrumbCC.map((doc, idx) => {
                                         pathBuilder = pathBuilder + `/${pathArr[idx]}`
-                                        if (idx === childBreacrumbCC.length - 1) {
+                                        if (idx === childBreacrumbCC.length - 1 && idx > 0) {
                                             return (
                                                 <Breadcrumb.Item key={idx}> <strong>{dataProfile.data.fullname}</strong> </Breadcrumb.Item>
                                             )
@@ -239,7 +238,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                         <QuestionCircleOutlined />
                     </div>
                     <div style={{ float: `right`, marginRight: `2rem`}}>
-                        <Dropdown overlay={addMenu} placement="bottomCenter" trigger={['click']}>
+                        <Dropdown overlay={addMenu} placement="bottomRight" trigger={['click']}>
                             <PlusCircleTwoTone className="" style={{ fontSize: '30px', cursor: `pointer` }} />
                         </Dropdown>
                     </div>
