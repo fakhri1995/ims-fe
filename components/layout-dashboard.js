@@ -17,6 +17,9 @@ import DashboardTwoTone from '@ant-design/icons/DashboardTwoTone'
 import NotificationOutlined from '@ant-design/icons/NotificationOutlined'
 import QuestionCircleOutlined from '@ant-design/icons/QuestionCircleOutlined'
 import PlusCircleTwoTone from '@ant-design/icons/PlusCircleTwoTone'
+import AlertOutlined from '@ant-design/icons/AlertOutlined'
+import { Row, Col } from 'antd';
+import { Space, Button, Typography, Divider } from 'antd';
 import jscookie from 'js-cookie'
 import 'antd/dist/antd.css';
 
@@ -104,6 +107,60 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
             </div>
         )
     }
+    
+    const addMenu = () => {
+        return (
+            <div className="w-96 h-auto flex flex-col shadow-md rounded bg-white space-y-4 p-5">
+                <div className="">
+                    <Row justify="center">
+                            <Col span={10}>
+                                <AlertOutlined className="" />Incident
+                            </Col>
+                            <Col span={9}>
+                                <AlertOutlined className="" />Release
+                            </Col>
+                            <Col span={5}>
+                                <AlertOutlined className="" />Project
+                            </Col>
+                    </Row>
+                    <Row justify="center"> 
+                            <Col span={10}>
+                                <AlertOutlined className="" />Service Request
+                            </Col>
+                            <Col span={9}>
+                                <AlertOutlined className="" />Asset
+                            </Col>
+                            <Col span={5}>
+                            </Col>
+                    </Row>
+                    <Row justify="center"> 
+                            <Col span={10}>
+                                <AlertOutlined className="" />Problem
+                            </Col>
+                            <Col span={9}>
+                                <AlertOutlined className="" />Contract
+                            </Col>
+                            <Col span={5}>
+                            </Col>
+                    </Row>
+                    <Row justify="center"> 
+                            <Col span={10}>
+                                <AlertOutlined className="" />Change
+                            </Col>
+                            <Col span={9}>
+                                <AlertOutlined className="" />Purchase Order
+                            </Col>
+                            <Col span={5}>
+                            </Col>
+                    </Row>
+                
+                    
+                </div>
+            </div>
+                
+        )
+    }
+    
     useEffect(() => {
         var h = window.innerHeight
         setTinggi(h)
@@ -163,8 +220,10 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                     <div style={{ float: `right`, marginRight: `2rem`, cursor: `pointer` }}>
                         <QuestionCircleOutlined />
                     </div>
-                    <div style={{ float: `right`, marginRight: `2rem`, cursor: `pointer` }}>
-                        <PlusCircleTwoTone></PlusCircleTwoTone>
+                    <div style={{ float: `right`, marginRight: `2rem`}}>
+                        <Dropdown overlay={addMenu} placement="bottomCenter" trigger={['click']}>
+                            <PlusCircleTwoTone className="" style={{ fontSize: '30px', cursor: `pointer` }} />
+                        </Dropdown>
                     </div>
                 </Header>
                 <Content className="slb" style={{ padding: 24, height: `${tinggi}px` }}>
