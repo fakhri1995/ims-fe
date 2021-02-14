@@ -16,7 +16,8 @@
     "postcss": "^8.2.6",
     "react": "17.0.1",
     "react-dom": "17.0.1",
-    "tailwindcss": "^2.0.3"
+    "tailwindcss": "^2.0.3",
+    "wil-react-sticky": "^1.0.5"
   },
   "cacheDirectories": [
     ".next/cache"

@@ -88,7 +88,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
             <div className="w-auto h-auto flex flex-col shadow-md rounded bg-white space-y-4 p-5">
                 <div className="flex justify-center space-x-3">
                     <div className="w-10 h-10 rounded-full bg-blue-500 flex text-white text-center justify-center items-center">
-                        <img src={dataProfile.data.image_profile} alt="imageProfile" className=" object-cover w-full h-full"/>
+                        <img src={dataProfile.data.image_profile} alt="imageProfile" className=" object-cover w-full h-full" />
                     </div>
                     <div className="flex flex-col">
                         <h2 className="text-lg font-semibold mb-1">{dataProfile.data.fullname}</h2>
@@ -108,6 +108,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
         var h = window.innerHeight
         setTinggi(h)
     }, [])
+    var pathBuilder = ""
     return (
         <Layout>
             <Sider collapsible collapsed={coll} trigger={null} breakpoint="lg" theme="light">
@@ -141,9 +142,26 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                                 {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${oriPath.toLowerCase()}`}><strong>{oriPath}</strong></Breadcrumb.Item>}
                                 {childBreacrumbCC.length !== 0 ?
                                     childBreacrumbCC.map((doc, idx) => {
-                                        return (
-                                            <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
-                                        )
+                                        pathBuilder = pathBuilder + `/${pathArr[idx]}`
+                                        if (idx === childBreacrumbCC.length - 1) {
+                                            return (
+                                                <Breadcrumb.Item key={idx}> <strong>{dataProfile.data.fullname}</strong> </Breadcrumb.Item>
+                                            )
+                                        }
+                                        else {
+                                            return (
+                                                <Breadcrumb.Item key={idx}>
+                                                    <Link href={{
+                                                        pathname: pathBuilder,
+                                                        query: {
+                                                            originPath: oriPath
+                                                        }
+                                                    }}>
+                                                        <strong>{doc}</strong>
+                                                    </Link>
+                                                </Breadcrumb.Item>
+                                            )
+                                        }
                                     })
                                     :
                                     null

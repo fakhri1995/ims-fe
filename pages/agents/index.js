@@ -5,6 +5,7 @@ import Table from 'antd/lib/table'
 import CopyOutlined from '@ant-design/icons/CopyOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import { useState } from 'react'
+import Link from 'next/link'
 
 
 function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
@@ -12,32 +13,32 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
-    const data = [
-        {
-            key: '1',
-            name: 'John Brown',
-            age: 32,
-            address: 'New York No. 1 Lake Park',
-        },
-        {
-            key: '2',
-            name: 'Jim Green',
-            age: 42,
-            address: 'London No. 1 Lake Park',
-        },
-        {
-            key: '3',
-            name: 'Joe Black',
-            age: 32,
-            address: 'Sidney No. 1 Lake Park',
-        },
-        {
-            key: '4',
-            name: 'Jim Red',
-            age: 32,
-            address: 'London No. 2 Lake Park',
-        },
-    ];
+    // const data = [
+    //     {
+    //         key: '1',
+    //         name: 'John Brown',
+    //         age: 32,
+    //         address: 'New York No. 1 Lake Park',
+    //     },
+    //     {
+    //         key: '2',
+    //         name: 'Jim Green',
+    //         age: 42,
+    //         address: 'London No. 1 Lake Park',
+    //     },
+    //     {
+    //         key: '3',
+    //         name: 'Joe Black',
+    //         age: 32,
+    //         address: 'Sidney No. 1 Lake Park',
+    //     },
+    //     {
+    //         key: '4',
+    //         name: 'Jim Red',
+    //         age: 32,
+    //         address: 'London No. 2 Lake Park',
+    //     },
+    // ];
     const dataDD = dataListAccount.data.accounts.map((doc, idx) => {
         return ({
             user_id: doc.user_id,
@@ -53,86 +54,80 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
     }
     const [actions, setActions] = useState(actionsArr)
     const [action, setAction] = useState(false)
-    const handleMouseoverRows = (idx) => {
-        var actionsCopy = actions
-        actionsCopy[idx] = "block"
-        setActions(actionsCopy)
-    }
-    const handleMouseleaveRows = (idx) => {
-        var actionsCopy = actions
-        actionsCopy[idx] = "hidden"
-        setActions(actionsCopy)
-    }
-    const columns = [
-        {
-            title: 'Name',
-            dataIndex: 'name',
-            filters: [
-                {
-                    text: 'Joe',
-                    value: 'Joe',
-                },
-                {
-                    text: 'Jim',
-                    value: 'Jim',
-                },
-                {
-                    text: 'Submenu',
-                    value: 'Submenu',
-                    children: [
-                        {
-                            text: 'Green',
-                            value: 'Green',
-                        },
-                        {
-                            text: 'Black',
-                            value: 'Black',
-                        },
-                    ],
-                },
-            ],
-            onFilter: (value, record) => record.name.indexOf(value) === 0,
-            sorter: (a, b) => a.name.length - b.name.length,
-            sortDirections: ['descend'],
-        },
-        {
-            title: 'Age',
-            dataIndex: 'age',
-            defaultSortOrder: 'descend',
-            sorter: (a, b) => a.age - b.age,
-        },
-        {
-            title: 'Address',
-            dataIndex: 'address',
-            filters: [
-                {
-                    text: 'London',
-                    value: 'London',
-                },
-                {
-                    text: 'New York',
-                    value: 'New York',
-                },
-            ],
-            filterMultiple: false,
-            onFilter: (value, record) => record.address.indexOf(value) === 0,
-            sorter: (a, b) => a.address.length - b.address.length,
-            sortDirections: ['descend', 'ascend'],
-        },
-        {
-            dataIndex: 'actions',
-            render: (text, record, index) => (
-                <>
-                    <h1>{actions[index]}</h1>
-                    {
-                        actions[index] ? <><a><CopyOutlined /></a> <a><EditOutlined /></a></>
-                            :
-                            null
-                    }
-                </>
-            )
-        }
-    ];
+    // const columns = [
+    //     {
+    //         title: 'Name',
+    //         dataIndex: 'name',
+    //         filters: [
+    //             {
+    //                 text: 'Joe',
+    //                 value: 'Joe',
+    //             },
+    //             {
+    //                 text: 'Jim',
+    //                 value: 'Jim',
+    //             },
+    //             {
+    //                 text: 'Submenu',
+    //                 value: 'Submenu',
+    //                 children: [
+    //                     {
+    //                         text: 'Green',
+    //                         value: 'Green',
+    //                     },
+    //                     {
+    //                         text: 'Black',
+    //                         value: 'Black',
+    //                     },
+    //                 ],
+    //             },
+    //         ],
+    //         onFilter: (value, record) => record.name.indexOf(value) === 0,
+    //         sorter: (a, b) => a.name.length - b.name.length,
+    //         sortDirections: ['descend'],
+    //     },
+    //     {
+    //         title: 'Age',
+    //         dataIndex: 'age',
+    //         defaultSortOrder: 'descend',
+    //         sorter: (a, b) => a.age - b.age,
+    //     },
+    //     {
+    //         title: 'Address',
+    //         dataIndex: 'address',
+    //         filters: [
+    //             {
+    //                 text: 'London',
+    //                 value: 'London',
+    //             },
+    //             {
+    //                 text: 'New York',
+    //                 value: 'New York',
+    //             },
+    //         ],
+    //         filterMultiple: false,
+    //         onFilter: (value, record) => record.address.indexOf(value) === 0,
+    //         sorter: (a, b) => a.address.length - b.address.length,
+    //         sortDirections: ['descend', 'ascend'],
+    //     },
+    //     {
+    //         dataIndex: 'actions',
+    //         render: (text, record, index) => (
+    //             <>
+    //                 <h1>{actions[index]}</h1>
+    //                 {
+    //                     actions[index] ?
+    //                         <>
+    //                             <a><CopyOutlined /></a>
+    //                             <Link href={`/profiles/${record.user_id}`}><EditOutlined /></Link>
+    //                         </>
+    //                         :
+    //                         null
+    //                 }
+    //             </>
+    //         )
+    //     }
+    // ];
     const columnsDD = [
         {
             dataIndex: 'profil_image',
@@ -258,7 +253,7 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
                 },
             ],
             onFilter: (value, record) => record.fullname.indexOf(value) === 0,
-            sorter: (a, b) =>  a.fullname.localeCompare(b.fullname),
+            sorter: (a, b) => a.fullname.localeCompare(b.fullname),
             sortDirections: ['descend', 'ascend'],
         },
         {
@@ -274,7 +269,16 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
             render: (text, record, index) => (
                 <>
                     {
-                        actions[index] ? <>{actions[index]} <a><CopyOutlined /></a> <a><EditOutlined /></a></>
+                        actions[index] ?
+                            <>{actions[index]}
+                                <a><CopyOutlined /></a>
+                                <Link href={{
+                                    pathname: `/agents/${record.user_id}`,
+                                    query: {
+                                        originPath: 'Admin'
+                                    }
+                                }}><a><EditOutlined /></a></Link>
+                            </>
                             :
                             null
                     }
