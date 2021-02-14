@@ -4,6 +4,11 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
+      spacing:{
+        '108' : '27rem',
+        '120' : '30rem',
+        '224' : '37rem',
+      },
       fontFamily:{
         mont: ['Montserrat']
       }
