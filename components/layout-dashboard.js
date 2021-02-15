@@ -87,7 +87,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
     // );
     const menuProfile2 = () => {
         return (
-            <div className="w-auto h-auto flex flex-col shadow-md rounded bg-white space-y-4 p-5">
+            <div className="w-auto h-auto flex flex-col shadow-md rounded bg-white space-y-4 px-10 py-5">
                 <div className="flex justify-center space-x-3">
                     <div className="w-10 h-10 rounded-full bg-blue-500 flex text-white text-center justify-center items-center">
                         <img src={dataProfile.data.image_profile} alt="imageProfile" className=" object-cover w-full h-full" />
@@ -109,7 +109,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
     
     const addMenu = () => {
         return (
-            <div style={{ fontSize: '20px'}} className="w-224 h-auto flex flex-col shadow-md rounded bg-white space-y-4 p-5">
+            <div style={{ fontSize: '14px'}} className="w-224 h-auto flex flex-col shadow-md rounded bg-white space-y-4 p-5 text-sm">
                 <div className="">
                     <Row justify="center">
                             <Col span={10}>
@@ -244,7 +244,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                     </div>
                     
                 </Header>
-                <Content className="slb" style={{ padding: 24, height: `${tinggi}px` }}>
+                <Content className="slb" style={{ padding: 24, height: `${tinggi}px`, backgroundColor:`white` }}>
                     {children}
                 </Content>
             </Layout>

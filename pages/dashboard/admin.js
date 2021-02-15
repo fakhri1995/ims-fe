@@ -14,9 +14,9 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
     const pathArr = rt.pathname.split("/").slice(1)
     return (
         <Layout tok={tok} pathArr={pathArr} sidemenu={sidemenu} dataProfile={dataProfile}>
-            <div className="w-full h-auto py-5 font-mont border-t border-opacity-30 border-gray-500 border-b bg-white">
-                <div className="divide-y divide-gray-300 divide-opacity-50">
-                    <div>
+            <div className="w-full h-auto p-5 font-mont border-t border-opacity-30 border-gray-500 border-b bg-white space-y-10">
+                <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
+                    <div className="border-b border-gray-300">
                         <h3 className="font-semibold text-lg mb-0">User Management</h3>
                         <h3 className="font-normal text-sm text-gray-700">
                             Manage agents and end users of your service desk
@@ -39,16 +39,36 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             <UserOutlined /> Requestors
                         </div>
                         <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                            <TeamOutlined /> Agents
+                            <TeamOutlined /> Roles
                         </div>
                         <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                            <UserOutlined /> Requestors
+                            <UserOutlined /> Groups
+                        </div>
+                    </div>
+                </div>
+
+                <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
+                    <div className="border-b border-gray-300">
+                        <h3 className="font-semibold text-lg mb-0">Company</h3>
+                        <h3 className="font-normal text-sm text-gray-700">
+                            Configure the basic settings that are necessary for company information
+                        </h3>
+                    </div>
+                    <div className="grid grid-cols-5">
+                        <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                            <Link href={{
+                                pathname: '/agents',
+                                query: {
+                                    originPath: "Admin"
+                                }
+                            }}>
+                                <div>
+                                    <TeamOutlined /> MIG Company
+                                </div>
+                            </Link>
                         </div>
                         <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                            <TeamOutlined /> Agents
-                        </div>
-                        <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                            <UserOutlined /> Requestors
+                            <UserOutlined /> Clients
                         </div>
                     </div>
                 </div>
