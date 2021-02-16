@@ -8,7 +8,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 
 
-function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
+function Requestors({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
@@ -190,7 +190,7 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
                             <>{actions[index]}
                                 <a><CopyOutlined /></a>
                                 <Link href={{
-                                    pathname: `/agents/${record.user_id}`,
+                                    pathname: `/requestors/${record.user_id}`,
                                     query: {
                                         originPath: 'Admin'
                                     }
@@ -203,23 +203,24 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
             )
         }
     ];
+    
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath}>
             <>
                 <div className="h-20 w-full flex justify-between border-gray-400 border-t border-b px-2 bg-white mb-5">
                     <div className="w-auto flex items-center">
-                        <div className="font-semibold text-base w-auto">Agents</div>
+                        <div className="font-semibold text-base w-auto">Requestors</div>
                     </div>
                     <div className="flex justify-center items-center space-x-6">
                         <a className=" text-sm text-center w-auto">Import</a>
                         <a className=" text-sm text-center w-auto">Export</a>
-                        <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center">New Agent</div>
+                        <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center">New Requestors</div>
                     </div>
                 </div>
                 <div className="h-auto w-full grid grid-cols-4 mb-5 bg-white px-2">
                     <div className="col-span-3 flex flex-col space-y-3">
                         <div className="flex">
-                        <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={FilterAll}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={FilterAll}>
                                 All
                             </button>
                             <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("a")}>
@@ -321,10 +322,10 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
                         }}></Table>
                     </div>
                     <div className="flex flex-col space-y-3 p-4">
-                        <div className="font-semibold text-base">Agents</div>
+                        <div className="font-semibold text-base">Requestors</div>
                         <p className="font-normal text-base">
-                            The list shows all Agents added in your help desk. You can edit an existing agent’s permissions and access rights by hovering over the agent and clicking on <EditOutlined />. <br />
-                            You can add new agents by clicking on the “New Agent” button.
+                            The list shows all requestors added in your help desk. You can edit an existing requestor’s permissions and access rights by hovering over the requestor and clicking on <EditOutlined />. <br />
+                            You can add new requestors by clicking on the “New Requestors” button.
                         </p>
                     </div>
                 </div>
@@ -373,4 +374,4 @@ export async function getServerSideProps({ req, res }) {
     }
 }
 
-export default Agents
+export default Requestors
