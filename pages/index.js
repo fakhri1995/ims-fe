@@ -87,9 +87,9 @@ export default function Home({ initProps }) {
                 <Form.Item name="remember" valuePropName="checked" noStyle>
                   <Checkbox>Remember me</Checkbox>
                 </Form.Item>
-                <a className="login-form-forgot ml-60" href="">
+                {/* <a className="login-form-forgot ml-60" href="">
                   Forgot password
-                    </a>
+                    </a> */}
               </Form.Item>
               <Form.Item style={{ justifyContent: `center` }}>
                 <Button type="primary" htmlType="submit" className="login-form-button mb-5" style={{ width: `100%` }}>

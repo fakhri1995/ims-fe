@@ -239,7 +239,7 @@ function LayoutDashboardMig({ children, tok, dataProfile, pathArr, sidemenu, ori
                     </div>
                     <div style={{ float: `right`, marginRight: `2rem` }}>
                         <Dropdown overlay={addMenu} placement="bottomRight" trigger={['click']}>
-                            <PlusCircleTwoTone className="" style={{ fontSize: '30px', cursor: `pointer` }} />
+                            <PlusCircleTwoTone className="" style={{ fontSize: '20px', cursor: `pointer` }} />
                         </Dropdown>
                     </div>
 
