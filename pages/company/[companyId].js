@@ -1,6 +1,8 @@
-import Layout from '../../../components/layout-dashboard-mig'
-import httpcookie from 'cookie'
+import Layout from '../../components/layout-dashboard-clients'
 import { useRouter } from 'next/router'
+import httpcookie from 'cookie'
+import { useState } from 'react'
+
 import Tabs from 'antd/lib/tabs'
 import Input from 'antd/lib/input'
 import Table from 'antd/lib/table'
@@ -8,10 +10,10 @@ import Tree from 'antd/lib/tree'
 import Drawer from 'antd/lib/drawer'
 import Popconfirm from 'antd/lib/popconfirm'
 import message from 'antd/lib/message'
-import { useState } from 'react'
 import Sticky from 'wil-react-sticky'
 
-function MigIndexProfile({ dataDetailCompany }) {
+
+function ClientsDetailProfile({ dataDetailCompany }) {
     const [editable, setEditable] = useState(false)
     const onClickEdit = () => {
         setEditable(true)
@@ -125,7 +127,7 @@ function MigIndexProfile({ dataDetailCompany }) {
     )
 }
 
-function MigIndexLocations() {
+function ClientsDetailLocations() {
     const [editable, setEditable] = useState(false)
     const [drawablecreate, setDrawablecreate] = useState(false)
     const [checkedtree, setCheckedtree] = useState([])
@@ -228,7 +230,6 @@ function MigIndexLocations() {
     ];
     return (
         <div id="locationsDetailMigWrapper">
-            {/* <Sticky containerSelectorFocus="#locationsDetailMigWrapper"> */}
             <div className="flex justify-end p-3 border-t-2 border-b-2 bg-white mb-8">
                 <div className="flex space-x-2">
                     {editable ?
@@ -253,7 +254,6 @@ function MigIndexLocations() {
                     }></Drawer>
                 </div>
             </div>
-            {/* </Sticky> */}
             <div className="p-5">
                 <h1 className="text-sm font-semibold">Pilih Parent terakhir untuk hapus</h1>
                 {/* <Tree treeData={treeData} autoExpandParent={autoExpandParent} selectable selectedKeys={selectedtree} checkable checkedKeys={checkedtree} onCheck={() => { setEditable(true) }}>
@@ -274,7 +274,7 @@ function MigIndexLocations() {
     )
 }
 
-function MigIndexBankAccount() {
+function ClientsDetailBankAccount() {
     const [editable, setEditable] = useState(false)
     const [drawablecreate, setDrawablecreate] = useState(false)
     const [drawableedit, setDrawableedit] = useState(false)
@@ -339,7 +339,6 @@ function MigIndexBankAccount() {
     ];
     return (
         <div id="bankAccountDetailMigWrapper">
-            {/* <Sticky containerSelectorFocus="#bankAccountDetailMigWrapper"> */}
             <div className="flex justify-end p-3 border-t-2 border-b-2 bg-white mb-8">
                 <div className="flex space-x-2">
                     {
@@ -373,13 +372,12 @@ function MigIndexBankAccount() {
                     }></Drawer>
                 </div>
             </div>
-            {/* </Sticky> */}
             <div className="p-5">
                 <Table rowSelection={{
                     selectedRowKeys: selectedrows, onChange: (selectedRowKeys) => {
                         setSelectedrows(selectedRowKeys)
                         setEditable(true)
-                        if(selectedRowKeys.length === 0){
+                        if (selectedRowKeys.length === 0) {
                             setEditable(false)
                         }
                     }
@@ -389,24 +387,24 @@ function MigIndexBankAccount() {
     )
 }
 
-function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany }) {
+function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany }) {
     const rt = useRouter()
     const { TabPane } = Tabs;
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
     return (
-        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath}>
+        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} dataDetailCompany={dataDetailCompany}>
             <div className="p-5">
                 <Tabs tabPosition={`left`}>
                     <TabPane tab="Profile" key={`profile`}>
-                        <MigIndexProfile dataDetailCompany={dataDetailCompany}></MigIndexProfile>
+                        <ClientsDetailProfile dataDetailCompany={dataDetailCompany}></ClientsDetailProfile>
                     </TabPane>
                     <TabPane tab="Bank Accounts" key={`bankAccounts`}>
-                        <MigIndexBankAccount />
+                        <ClientsDetailBankAccount />
                     </TabPane>
                     <TabPane tab="Locations" key={`locations`}>
-                        <MigIndexLocations></MigIndexLocations>
+                        <ClientsDetailLocations></ClientsDetailLocations>
                     </TabPane>
                 </Tabs>
             </div>
@@ -414,8 +412,12 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany }) {
     )
 }
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req, res, params }) {
     var initProps = {};
+    const companyid = params.companyId
+    const reqBodyCompanyDetail = {
+        login_id: companyid
+    }
     if (req && req.headers) {
         const cookies = req.headers.cookie;
         if (!cookies) {
@@ -427,24 +429,28 @@ export async function getServerSideProps({ req, res }) {
             initProps = cookiesJSON.token
         }
     }
-    const resourcesGP = await fetch(`https://go.cgx.co.id/auth/v1/get-profile`, {
-        method: `GET`,
+
+    const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
+        method: `POST`,
         headers: {
-            'Authorization': JSON.parse(initProps)
-        }
+            'Authorization': JSON.parse(initProps),
+            'Content-Type': 'application/json'
+        },
     })
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    const resourcesGC = await fetch(`https://go.cgx.co.id/admin/v1/get-company?id=${66}`, {
-        method: `GET`,
+    const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyDetail`, {
+        method: `POST`,
         headers: {
-            'Authorization': JSON.parse(initProps)
-        }
+            'Authorization': JSON.parse(initProps),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(reqBodyCompanyDetail)
     })
     const resjsonGC = await resourcesGC.json()
     const dataDetailCompany = resjsonGC
-    
+
     return {
         props: {
             initProps,
@@ -455,5 +461,4 @@ export async function getServerSideProps({ req, res }) {
     }
 }
 
-
-export default MigIndex
+export default DetailClients

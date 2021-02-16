@@ -22,7 +22,7 @@ import { Row, Col } from 'antd';
 import jscookie from 'js-cookie'
 import 'antd/dist/antd.css';
 
-function LayoutDashboardMig({ children, tok, dataProfile, pathArr, sidemenu, originPath }) {
+function LayoutDashboardClients({ children, tok, dataProfile, pathArr, sidemenu, originPath, dataDetailCompany }) {
     const rt = useRouter()
     var rootBreadcrumb = ""
     var oriPath = ""
@@ -71,20 +71,6 @@ function LayoutDashboardMig({ children, tok, dataProfile, pathArr, sidemenu, ori
                 console.log(err.message)
             })
     }
-    // const menuProfile = (
-    //     <Menu>
-    //         <Menu.Item>
-    //             <a target="_blank" rel="noopener noreferrer" href="#">
-    //                 <UserOutlined /> Profile
-    //             </a>
-    //         </Menu.Item>
-    //         <Menu.Item>
-    //             <a target="_blank" rel="noopener noreferrer" onClick={handleLogout}>
-    //                 <ExportOutlined /> Logout
-    //             </a>
-    //         </Menu.Item>
-    //     </Menu>
-    // );
     const menuProfile2 = () => {
         return (
             <div className="w-auto h-auto flex flex-col shadow-md rounded bg-white space-y-4 px-10 py-5">
@@ -197,11 +183,11 @@ function LayoutDashboardMig({ children, tok, dataProfile, pathArr, sidemenu, ori
                                 {pathArr[0] === "dashboard" && <Breadcrumb.Item> <strong>{rootBreadcrumb}</strong></Breadcrumb.Item>}
                                 {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${oriPath.toLowerCase()}`}><strong>{oriPath}</strong></Breadcrumb.Item>}
                                 {childBreacrumbCC.length !== 0 ?
-                                    childBreacrumbCC.splice(1,1).map((doc, idx) => {
+                                    childBreacrumbCC.map((doc, idx) => {
                                         pathBuilder = pathBuilder + `/${pathArr[idx]}`
                                         if (idx === childBreacrumbCC.length - 1 && idx > 0) {
                                             return (
-                                                <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                <Breadcrumb.Item key={idx}> <strong>{dataDetailCompany.data.company_name}</strong> </Breadcrumb.Item>
                                             )
                                         }
                                         else {
@@ -212,7 +198,7 @@ function LayoutDashboardMig({ children, tok, dataProfile, pathArr, sidemenu, ori
                                                         query: {
                                                             originPath: oriPath
                                                         }
-                                                    }}>
+                                                    }} className="cursor-pointer">
                                                         <strong>{doc}</strong>
                                                     </Link>
                                                 </Breadcrumb.Item>
@@ -244,7 +230,7 @@ function LayoutDashboardMig({ children, tok, dataProfile, pathArr, sidemenu, ori
                     </div>
 
                 </Header>
-                <Content className="slb" style={{ padding: 24, height: `${tinggi}px`, backgroundColor: `white` }}>
+                <Content className="slb" style={{ padding: 24, height: `${tinggi}px` }}>
                     {children}
                 </Content>
             </Layout>
@@ -252,4 +238,4 @@ function LayoutDashboardMig({ children, tok, dataProfile, pathArr, sidemenu, ori
     )
 }
 
-export default LayoutDashboardMig
+export default LayoutDashboardClients
