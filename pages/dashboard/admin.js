@@ -14,7 +14,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
     const pathArr = rt.pathname.split("/").slice(1)
     return (
         <Layout tok={tok} pathArr={pathArr} sidemenu={sidemenu} dataProfile={dataProfile}>
-            <div className="w-full h-auto p-5 font-mont border-t border-opacity-30 border-gray-500 border-b bg-white space-y-10">
+            <div className="w-full h-auto p-5 font-mont border-t border-opacity-30 border-gray-500 bg-white space-y-10">
                 <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
                     <div className="border-b border-gray-300">
                         <h3 className="font-semibold text-lg mb-0">User Management</h3>
@@ -66,7 +66,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                     <div className="grid grid-cols-5">
                         <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                             <Link href={{
-                                pathname: '/agents',
+                                pathname: '/company/mig/',
                                 query: {
                                     originPath: "Admin"
                                 }
@@ -77,7 +77,16 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             </Link>
                         </div>
                         <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                            <UserOutlined /> Clients
+                            <Link href={{
+                                pathname: '/company/',
+                                query: {
+                                    originPath: "Admin"
+                                }
+                            }}>
+                                <div>
+                                    <UserOutlined /> Clients
+                                </div>
+                            </Link>
                         </div>
                     </div>
                 </div>

@@ -18,12 +18,11 @@ import NotificationOutlined from '@ant-design/icons/NotificationOutlined'
 import QuestionCircleOutlined from '@ant-design/icons/QuestionCircleOutlined'
 import PlusCircleTwoTone from '@ant-design/icons/PlusCircleTwoTone'
 import AlertOutlined from '@ant-design/icons/AlertOutlined'
-import Row from 'antd/lib/row';
-import Col from 'antd/lib/col';
+import { Row, Col } from 'antd';
 import jscookie from 'js-cookie'
 import 'antd/dist/antd.css';
 
-function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, originPath, dataDetailAccount }) {
+function LayoutDashboardMig({ children, tok, dataProfile, pathArr, sidemenu, originPath }) {
     const rt = useRouter()
     var rootBreadcrumb = ""
     var oriPath = ""
@@ -107,60 +106,60 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
             </div>
         )
     }
-    
+
     const addMenu = () => {
         return (
-            <div style={{ fontSize: '14px'}} className="w-224 h-auto flex flex-col shadow-md rounded bg-white space-y-4 p-5 text-sm">
+            <div style={{ fontSize: '14px' }} className="w-224 h-auto flex flex-col shadow-md rounded bg-white space-y-4 p-5 text-sm">
                 <div className="">
                     <Row justify="center">
-                            <Col span={10}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Incident</p>
-                            </Col>
-                            <Col span={9}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Release</p>
-                            </Col>
-                            <Col span={5}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Project</p>
-                            </Col>
+                        <Col span={10}>
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Incident</p>
+                        </Col>
+                        <Col span={9}>
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Release</p>
+                        </Col>
+                        <Col span={5}>
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Project</p>
+                        </Col>
                     </Row>
-                    <Row justify="center"> 
-                            <Col span={10}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Service Request</p>
-                            </Col>
-                            <Col span={9}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Asset</p>
-                            </Col>
-                            <Col span={5}>
-                            </Col>
+                    <Row justify="center">
+                        <Col span={10}>
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Service Request</p>
+                        </Col>
+                        <Col span={9}>
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Asset</p>
+                        </Col>
+                        <Col span={5}>
+                        </Col>
                     </Row>
-                    <Row justify="center"> 
-                            <Col span={10}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Problem</p>
-                            </Col>
-                            <Col span={9}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Contract</p>
-                            </Col>
-                            <Col span={5}>
-                            </Col>
+                    <Row justify="center">
+                        <Col span={10}>
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Problem</p>
+                        </Col>
+                        <Col span={9}>
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Contract</p>
+                        </Col>
+                        <Col span={5}>
+                        </Col>
                     </Row>
-                    <Row justify="center"> 
-                            <Col span={10}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Change</p>
-                            </Col>
-                            <Col span={9}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Purchase Order</p>
-                            </Col>
-                            <Col span={5}>
-                            </Col>
+                    <Row justify="center">
+                        <Col span={10}>
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Change</p>
+                        </Col>
+                        <Col span={9}>
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Purchase Order</p>
+                        </Col>
+                        <Col span={5}>
+                        </Col>
                     </Row>
-                
-                    
+
+
                 </div>
             </div>
-                
+
         )
     }
-    
+
     useEffect(() => {
         var h = window.innerHeight
         setTinggi(h)
@@ -198,11 +197,11 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                                 {pathArr[0] === "dashboard" && <Breadcrumb.Item> <strong>{rootBreadcrumb}</strong></Breadcrumb.Item>}
                                 {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${oriPath.toLowerCase()}`}><strong>{oriPath}</strong></Breadcrumb.Item>}
                                 {childBreacrumbCC.length !== 0 ?
-                                    childBreacrumbCC.map((doc, idx) => {
+                                    childBreacrumbCC.splice(1,1).map((doc, idx) => {
                                         pathBuilder = pathBuilder + `/${pathArr[idx]}`
                                         if (idx === childBreacrumbCC.length - 1 && idx > 0) {
                                             return (
-                                                <Breadcrumb.Item key={idx}> <strong>{dataDetailAccount.data.fullname}</strong> </Breadcrumb.Item>
+                                                <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
                                             )
                                         }
                                         else {
@@ -238,14 +237,14 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                     <div style={{ float: `right`, marginRight: `2rem`, cursor: `pointer` }}>
                         <QuestionCircleOutlined />
                     </div>
-                    <div style={{ float: `right`, marginRight: `2rem`}}>
+                    <div style={{ float: `right`, marginRight: `2rem` }}>
                         <Dropdown overlay={addMenu} placement="bottomRight" trigger={['click']}>
                             <PlusCircleTwoTone className="" style={{ fontSize: '30px', cursor: `pointer` }} />
                         </Dropdown>
                     </div>
-                    
+
                 </Header>
-                <Content className="slb" style={{ padding: 24, height: `${tinggi}px`, backgroundColor:`white` }}>
+                <Content className="slb" style={{ padding: 24, height: `${tinggi}px`, backgroundColor: `white` }}>
                     {children}
                 </Content>
             </Layout>
@@ -253,4 +252,4 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
     )
 }
 
-export default LayoutDashboard
+export default LayoutDashboardMig

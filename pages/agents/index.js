@@ -13,7 +13,6 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
-    
     const dataDD = dataListAccount.data.accounts.map((doc, idx) => {
         return ({
             user_id: doc.user_id,
@@ -43,7 +42,6 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
     }
     const [actions, setActions] = useState(actionsArr)
     const [action, setAction] = useState(false)
-    
     const columnsDD = [
         {
             dataIndex: 'profil_image',
