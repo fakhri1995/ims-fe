@@ -10,51 +10,14 @@ import Sticky from 'wil-react-sticky'
 
 
 
-function ProfilesDetail({ initProps, dataProfile, sidemenu }) {
-    // const routes = [
-    //     {
-    //         path: 'index',
-    //         breadcrumbName: 'home',
-    //     },
-    //     {
-    //         path: 'first',
-    //         breadcrumbName: 'first',
-    //         children: [
-    //             {
-    //                 path: '/general',
-    //                 breadcrumbName: 'General',
-    //             },
-    //             {
-    //                 path: '/layout',
-    //                 breadcrumbName: 'Layout',
-    //             },
-    //             {
-    //                 path: '/navigation',
-    //                 breadcrumbName: 'Navigation',
-    //             },
-    //         ],
-    //     },
-    //     {
-    //         path: 'second',
-    //         breadcrumbName: 'second',
-    //     },
-    // ];
-    // function itemRender(route, params, routes, paths) {
-    //     const last = routes.indexOf(route) === routes.length - 1;
-    //     return last ? (
-    //         <span>{route.breadcrumbName}</span>
-    //     ) : (
-    //             <Link href={paths.join('/')}>{route.breadcrumbName}</Link>
-    //         );
-    // }
-
+function ProfilesDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
     const rt = useRouter()
     const { userId, originPath } = rt.query
     const tok = initProps
     var pathArr = rt.pathname.split("/").slice(1)
     pathArr[pathArr.length - 1] = userId
     return (
-        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath}>
+        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} dataDetailAccount={dataDetailAccount}>
             <div className="w-full h-auto grid grid-cols-4">
                 <div className="col-span-3 flex flex-col" id="formAgentsWrapper">
                     <Sticky containerSelectorFocus="#formAgentsWrapper">
@@ -92,21 +55,21 @@ function ProfilesDetail({ initProps, dataProfile, sidemenu }) {
                         </div>
                         <div className="grid grid-cols-4">
                             <div className="p-3">
-                                <img src={dataProfile.data.profile_image} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full" />
+                                <img src={dataDetailAccount.data.profile_image} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full" />
                             </div>
                             <div className="col-span-3 p-3">
                                 <Form layout="vertical">
                                     <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi">
-                                        <Input value={dataProfile.data.fullname} />
+                                        <Input value={dataDetailAccount.data.fullname} />
                                     </Form.Item>
                                     <Form.Item label="Email" required tooltip="Wajib diisi">
-                                        <Input value={dataProfile.data.email} />
+                                        <Input value={dataDetailAccount.data.email} />
                                     </Form.Item>
                                     <Form.Item label="No. Handphone">
-                                        <Input value={dataProfile.data.phone_number} />
+                                        <Input value={dataDetailAccount.data.phone_number} />
                                     </Form.Item>
                                     <Form.Item label="Tanggal Bergabung">
-                                        <h1 className="text-xs font-light">Default tanggal: {dataProfile.data.create_time}</h1>
+                                        <h1 className="text-xs font-light">Default tanggal: {dataDetailAccount.data.create_time}</h1>
                                         <DatePicker onChange={(date, dateString) => { }} />
                                     </Form.Item>
                                 </Form>
@@ -119,16 +82,16 @@ function ProfilesDetail({ initProps, dataProfile, sidemenu }) {
                         </div>
                         <div className="grid grid-cols-4">
                             <div className="p-3">
-                                <img src={dataProfile.data.company.image_logo} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full" />
+                                <img src={dataDetailAccount.data.company.image_logo} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full" />
                             </div>
                             <div className="col-span-3 p-3 space-y-4">
                                 <div>
                                     <h1 className="font-semibold text-sm">ID Perusahaan:</h1>
-                                    <h1 className="font-normal text-sm">{dataProfile.data.company.company_id}</h1>
+                                    <h1 className="font-normal text-sm">{dataDetailAccount.data.company.company_id}</h1>
                                 </div>
                                 <div>
                                     <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
-                                    <h1 className="font-normal text-sm">{dataProfile.data.company.company_name}</h1>
+                                    <h1 className="font-normal text-sm">{dataDetailAccount.data.company.company_name}</h1>
                                 </div>
                             </div>
                         </div>
@@ -159,17 +122,28 @@ export async function getServerSideProps({ req, res, params }) {
             initProps = cookiesJSON.token;
         }
     }
-    const resources = await fetch(`https://go.cgx.co.id/admin/v1/get-account?id=${parseInt(userid)}`, {
+    const resourcesDA = await fetch(`https://go.cgx.co.id/admin/v1/get-account?id=${parseInt(userid)}`, {
         method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
     })
+    const resjsonDA = await resourcesDA.json()
+    const dataDetailAccount = resjsonDA
+
+    const resources = await fetch(`https://go.cgx.co.id/auth/v1/get-profile`, {
+        method: `GET`,
+        headers: {
+            'Authorization': JSON.parse(initProps)
+        }
+    })
+    console.log(resources)
     const resjson = await resources.json()
     const dataProfile = resjson
     return {
         props: {
             initProps,
+            dataDetailAccount,
             dataProfile,
             sidemenu: "4"
         },
