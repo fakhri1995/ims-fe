@@ -26,11 +26,8 @@ export default function Home({ initProps }) {
   }
   const handleLogin = () => {
     setSpin1(true)
-    fetch('https://go.cgx.co.id/auth/v1/login', {
+    fetch(`https://boiling-thicket-46501.herokuapp.com/login`, {
       method: "POST",
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
       body: new URLSearchParams(formdata)
     })
       .then(res => res.json())
