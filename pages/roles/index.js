@@ -15,7 +15,7 @@ function Requestors({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
-    
+    const text = <span>Clone</span>;
     // const dataDD = dataListAccount.data.accounts.map((doc, idx) => {
     //     return ({
     //         user_id: doc.user_id,
@@ -73,9 +73,9 @@ function Requestors({ initProps, dataProfile, dataListAccount, sidemenu }) {
                 <>
                 {
                     
-                <Tooltip placement="topLeft" title={actionss}>
+                <Tooltip placement="topLeft" title={text}>
                         
-                        <>
+                        
                         {/* {actions[index]} */}
                         <Button>
                             
@@ -86,7 +86,7 @@ function Requestors({ initProps, dataProfile, dataListAccount, sidemenu }) {
                                 }
                             }}><a><CopyOutlined /></a></Link>
                         </Button>
-                        </>
+                        
                         
                 </Tooltip>
                 }
