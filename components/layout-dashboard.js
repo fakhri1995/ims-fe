@@ -72,20 +72,6 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                 console.log(err.message)
             })
     }
-    // const menuProfile = (
-    //     <Menu>
-    //         <Menu.Item>
-    //             <a target="_blank" rel="noopener noreferrer" href="#">
-    //                 <UserOutlined /> Profile
-    //             </a>
-    //         </Menu.Item>
-    //         <Menu.Item>
-    //             <a target="_blank" rel="noopener noreferrer" onClick={handleLogout}>
-    //                 <ExportOutlined /> Logout
-    //             </a>
-    //         </Menu.Item>
-    //     </Menu>
-    // );
     const menuProfile2 = () => {
         return (
             <div className="w-auto h-auto flex flex-col shadow-md rounded bg-white space-y-4 px-10 py-5">

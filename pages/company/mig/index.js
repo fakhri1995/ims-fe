@@ -429,6 +429,9 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany }) {
 
 export async function getServerSideProps({ req, res }) {
     var initProps = {};
+    const reqBodyMigDetail = {
+        login_id: 66
+    }
     if (req && req.headers) {
         const cookies = req.headers.cookie;
         if (!cookies) {
@@ -440,8 +443,8 @@ export async function getServerSideProps({ req, res }) {
             initProps = cookiesJSON.token
         }
     }
-    const resourcesGP = await fetch(`https://go.cgx.co.id/auth/v1/get-profile`, {
-        method: `GET`,
+    const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
+        method: `POST`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -449,11 +452,13 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    const resourcesGC = await fetch(`https://go.cgx.co.id/admin/v1/get-company?id=${66}`, {
-        method: `GET`,
+    const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyDetail`, {
+        method: `POST`,
         headers: {
-            'Authorization': JSON.parse(initProps)
-        }
+            'Authorization': JSON.parse(initProps),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(reqBodyMigDetail)
     })
     const resjsonGC = await resourcesGC.json()
     const dataDetailCompany = resjsonGC
