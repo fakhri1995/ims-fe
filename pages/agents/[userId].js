@@ -10,7 +10,7 @@ import Sticky from 'wil-react-sticky'
 
 
 
-function ProfilesDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
+function RequestorsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
     const rt = useRouter()
     const { userId, originPath } = rt.query
     const tok = initProps
@@ -18,8 +18,14 @@ function ProfilesDetail({ initProps, dataProfile, dataDetailAccount, sidemenu })
     pathArr[pathArr.length - 1] = userId
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} dataDetailAccount={dataDetailAccount}>
-            <div className="w-full h-auto grid grid-cols-4">
-                <div className="col-span-3 flex flex-col" id="formAgentsWrapper">
+            <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
+                <div className=" col-span-1 md:col-span-1 flex md:hidden flex-col space-y-4 p-4">
+                    <div className="font-semibold text-base">Agents</div>
+                    <p className="font-normal text-xs">
+                        When you add a new agent, you will have to provide the agent’s email, set their permission levels and access (full-time or occasional). Agents will receive an email with a confirmation link to activate their account after which they can be assigned to, or respond to tickets. Administrators can also edit an Agent’s profile to include the agent’s title, phone, profile picture, signature etc.
+                    </p>
+                </div>
+                <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
                     <Sticky containerSelectorFocus="#formAgentsWrapper">
                         <div className="flex justify-between p-4 border-t-2 border-b-2 bg-white mb-8">
                             <h1 className="font-semibold py-2">Edit Agents</h1>
@@ -30,17 +36,16 @@ function ProfilesDetail({ initProps, dataProfile, dataDetailAccount, sidemenu })
                         </div>
                     </Sticky>
                     <div className="p-4 mb-14">
-                        {/* <Breadcrumb itemRender={itemRender} routes={routes} /> */}
                         <h1 className="font-semibold mb-2">Agent type</h1>
-                        <div className="flex">
-                            <div className=" mr-20">
+                        <div className="grid grid-cols-1 md:grid-cols-2">
+                            <div className="md:mr-20 col-span-1 md:col-span-1">
                                 <input type="radio" id="fulltime" name="agentType" /> <label htmlFor="fulltime" className="font-semibold text-xs">Full-Time</label>
                                 <br />
                                 <p className="text-sm">
                                     Consumes an agent license.
                                 </p>
                             </div>
-                            <div>
+                            <div className=" col-span-1 md:col-span-1">
                                 <input type="radio" id="occasional" name="agentType" /> <label htmlFor="occasional" className="font-semibold text-xs">Occasional</label>
                                 <br />
                                 <p className="text-sm">
@@ -53,11 +58,11 @@ function ProfilesDetail({ initProps, dataProfile, dataDetailAccount, sidemenu })
                         <div className="border-b border-black p-4 font-semibold mb-5">
                             Detail Akun Pengguna
                         </div>
-                        <div className="grid grid-cols-4">
-                            <div className="p-3">
+                        <div className="grid grid-cols-1 md:grid-cols-4">
+                            <div className="p-3 col-span-1 md:col-span-1">
                                 <img src={dataDetailAccount.data.profile_image} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full" />
                             </div>
-                            <div className="col-span-3 p-3">
+                            <div className="p-3 col-span-1 md:col-span-3">
                                 <Form layout="vertical">
                                     <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi">
                                         <Input value={dataDetailAccount.data.fullname} />
@@ -80,11 +85,11 @@ function ProfilesDetail({ initProps, dataProfile, dataDetailAccount, sidemenu })
                         <div className="border-b border-black p-4 font-semibold mb-5">
                             Detail Perusahaan
                         </div>
-                        <div className="grid grid-cols-4">
-                            <div className="p-3">
+                        <div className="grid grid-cols-1 md:grid-cols-4">
+                            <div className="p-3 col-span-1 md:col-span-1">
                                 <img src={dataDetailAccount.data.company.image_logo} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full" />
                             </div>
-                            <div className="col-span-3 p-3 space-y-4">
+                            <div className="col-span-1 md:col-span-3 p-3 space-y-4">
                                 <div>
                                     <h1 className="font-semibold text-sm">ID Perusahaan:</h1>
                                     <h1 className="font-normal text-sm">{dataDetailAccount.data.company.company_id}</h1>
@@ -97,7 +102,7 @@ function ProfilesDetail({ initProps, dataProfile, dataDetailAccount, sidemenu })
                         </div>
                     </div>
                 </div>
-                <div className="col-span-1 flex flex-col space-y-4 p-4">
+                <div className="col-span-1 md:col-span-1 hidden md:flex flex-col space-y-4 p-4">
                     <div className="font-semibold text-base">Agents</div>
                     <p className="font-normal text-sm">
                         When you add a new agent, you will have to provide the agent’s email, set their permission levels and access (full-time or occasional). Agents will receive an email with a confirmation link to activate their account after which they can be assigned to, or respond to tickets. Administrators can also edit an Agent’s profile to include the agent’s title, phone, profile picture, signature etc.
@@ -150,4 +155,4 @@ export async function getServerSideProps({ req, res, params }) {
     }
 }
 
-export default ProfilesDetail
+export default RequestorsDetail

@@ -44,7 +44,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     }
     return (
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath}>
-            <div className="flex justify-end p-3 border-t-2 border-b-2 bg-white mb-8">
+            <div className="flex justify-start md:justify-end p-3 md:border-t-2 md:border-b-2 bg-white mb-4 md:mb-8">
                 <div className="flex space-x-2">
                     <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-40" onClick={() => { setDrawablecreate(true) }}> Create</button>
                     <Drawer title="Create Company MIG" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720} footer={
@@ -65,7 +65,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                         return (
                             <div className="p-4 flex items-center" onMouseOver={() => onMouseOverCells(idx)} onMouseLeave={() => onMouseLeaveCells(idx)}>
                                 <img src={doc.image_logo} alt="imageProfile" className=" object-cover w-10 h-10 rounded-full mr-8" />
-                                <div className="mr-14 w-40">
+                                <div className="mr-14 w-40 text-xs md:text-sm">
                                     {doc.company_name}
                                 </div>
                                 {

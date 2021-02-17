@@ -13,7 +13,7 @@ function Requestors({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
-    
+
     const dataDD = dataListAccount.data.accounts.map((doc, idx) => {
         return ({
             user_id: doc.user_id,
@@ -27,10 +27,10 @@ function Requestors({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const FilterAll = () => {
         setDataSource(dataDD)
     }
-    const FilterByWord = (word)=> {
+    const FilterByWord = (word) => {
         const currValue = word;
         const filteredData = dataDD.filter(entry => {
-            if (entry.fullname.toLowerCase()[0] === word){
+            if (entry.fullname.toLowerCase()[0] === word) {
                 return entry.fullname.toLowerCase().includes(currValue)
             }
         }
@@ -43,7 +43,7 @@ function Requestors({ initProps, dataProfile, dataListAccount, sidemenu }) {
     }
     const [actions, setActions] = useState(actionsArr)
     const [action, setAction] = useState(false)
-    
+
     const columnsDD = [
         {
             dataIndex: 'profil_image',
@@ -62,113 +62,6 @@ function Requestors({ initProps, dataProfile, dataListAccount, sidemenu }) {
         {
             title: 'Nama',
             dataIndex: 'fullname',
-            // filters: [
-            //     {
-            //         text: 'A',
-            //         value: 'A'
-            //     },
-            //     {
-            //         text: 'B',
-            //         value: 'B'
-            //     },
-            //     {
-            //         text: 'C',
-            //         value: 'C'
-            //     },
-            //     {
-            //         text: 'D',
-            //         value: 'D'
-            //     },
-            //     {
-            //         text: 'E',
-            //         value: 'E'
-            //     },
-            //     {
-            //         text: 'F',
-            //         value: 'F'
-            //     },
-            //     {
-            //         text: 'G',
-            //         value: 'G'
-            //     },
-            //     {
-            //         text: 'H',
-            //         value: 'H'
-            //     },
-            //     {
-            //         text: 'I',
-            //         value: 'I'
-            //     },
-            //     {
-            //         text: 'J',
-            //         value: 'J'
-            //     },
-            //     {
-            //         text: 'K',
-            //         value: 'K'
-            //     },
-            //     {
-            //         text: 'L',
-            //         value: 'L'
-            //     },
-            //     {
-            //         text: 'M',
-            //         value: 'M'
-            //     },
-            //     {
-            //         text: 'N',
-            //         value: 'N'
-            //     },
-            //     {
-            //         text: 'O',
-            //         value: 'O'
-            //     },
-            //     {
-            //         text: 'P',
-            //         value: 'P'
-            //     },
-            //     {
-            //         text: 'Q',
-            //         value: 'Q'
-            //     },
-            //     {
-            //         text: 'R',
-            //         value: 'R'
-            //     },
-            //     {
-            //         text: 'S',
-            //         value: 'S'
-            //     },
-            //     {
-            //         text: 'T',
-            //         value: 'T'
-            //     },
-            //     {
-            //         text: 'U',
-            //         value: 'U'
-            //     },
-            //     {
-            //         text: 'V',
-            //         value: 'V'
-            //     },
-            //     {
-            //         text: 'W',
-            //         value: 'W'
-            //     },
-            //     {
-            //         text: 'X',
-            //         value: 'X'
-            //     },
-            //     {
-            //         text: 'Y',
-            //         value: 'Y'
-            //     },
-            //     {
-            //         text: 'Z',
-            //         value: 'Z'
-            //     },
-            // ],
-            // onFilter: (value, record) => record.fullname.indexOf(value) === 0,
             sorter: (a, b) => a.fullname.localeCompare(b.fullname),
             sortDirections: ['descend', 'ascend'],
         },
@@ -181,7 +74,7 @@ function Requestors({ initProps, dataProfile, dataListAccount, sidemenu }) {
             dataIndex: 'phone_number',
         },
         {
-            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0', // Non-breakable space is char 0xa0 (160 dec)
+            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
             dataIndex: 'actionss',
             render: (text, record, index) => (
                 <>
@@ -203,106 +96,113 @@ function Requestors({ initProps, dataProfile, dataListAccount, sidemenu }) {
             )
         }
     ];
-    
+
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath}>
             <>
-                <div className="h-20 w-full flex justify-between border-gray-400 border-t border-b px-2 bg-white mb-5">
-                    <div className="w-auto flex items-center">
+                <div className="h-20 w-full grid grid-cols-1 md:grid-cols-3 border-gray-400 md:border-t md:border-b p-4 bg-white mb-5">
+                    <div className="col-span-1 md:col-span-2 flex items-center">
                         <div className="font-semibold text-base w-auto">Requestors</div>
                     </div>
-                    <div className="flex justify-center items-center space-x-6">
-                        <a className=" text-sm text-center w-auto">Import</a>
-                        <a className=" text-sm text-center w-auto">Export</a>
-                        <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center">New Requestors</div>
+                    <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
+                        <a className=" text-sm text-center w-auto mr-5">Import</a>
+                        <a className=" text-sm text-center w-auto mr-5">Export</a>
+                        <div className=" text-white text-xs md:text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-3 md:py-2 w-28 md:w-52 text-center">New Requestors</div>
                     </div>
                 </div>
-                <div className="h-auto w-full grid grid-cols-4 mb-5 bg-white px-2">
-                    <div className="col-span-3 flex flex-col space-y-3">
+                <div className="h-auto w-full grid grid-cols-1 md:grid-cols-4 mb-5 bg-white px-2">
+                    <div className="flex md:hidden flex-col space-y-3 p-4 md:col-span-1 col-span-1">
+                        <div className="font-semibold text-sm">Agents</div>
+                        <p className="font-normal text-sm">
+                            The list shows all Agents added in your help desk. You can edit an existing agent’s permissions and access rights by hovering over the agent and clicking on <EditOutlined />. <br />
+                            You can add new agents by clicking on the “New Agent” button.
+                        </p>
+                    </div>
+                    <div className="md:col-span-3 col-span-1 flex flex-col p-4">
                         <div className="flex">
                             <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={FilterAll}>
                                 All
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("a")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("a")}>
                                 A
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("b")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("b")}>
                                 B
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("c")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("c")}>
                                 C
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("d")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("d")}>
                                 D
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("e")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("e")}>
                                 E
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("f")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("f")}>
                                 F
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("g")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("g")}>
                                 G
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("h")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("h")}>
                                 H
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("i")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("i")}>
                                 I
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("j")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("j")}>
                                 J
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("k")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("k")}>
                                 K
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("l")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("l")}>
                                 L
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("m")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("m")}>
                                 M
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("n")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("n")}>
                                 N
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("o")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("o")}>
                                 O
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("p")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("p")}>
                                 P
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("q")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("q")}>
                                 Q
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("r")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("r")}>
                                 R
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("s")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("s")}>
                                 S
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("t")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("t")}>
                                 T
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("u")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("u")}>
                                 U
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("v")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("v")}>
                                 V
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("w")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("w")}>
                                 W
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("x")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("x")}>
                                 X
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("y")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("y")}>
                                 Y
                             </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={()=>FilterByWord("z")}>
+                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("z")}>
                                 Z
                             </button>
                         </div>
-                        <Table scroll={{ x: 400 }} dataSource={dataKK} columns={columnsDD} onRow={(record, rowIndex) => {
+                        <Table scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} onRow={(record, rowIndex) => {
                             return {
                                 onMouseOver: (event) => {
                                     var actionsCopy = actions
@@ -321,9 +221,9 @@ function Requestors({ initProps, dataProfile, dataListAccount, sidemenu }) {
                             }
                         }}></Table>
                     </div>
-                    <div className="flex flex-col space-y-3 p-4">
-                        <div className="font-semibold text-base">Requestors</div>
-                        <p className="font-normal text-base">
+                    <div className="hidden md:flex flex-col space-y-3 p-4 md:col-span-1 col-span-1">
+                        <div className="font-semibold text-sm">Requestors</div>
+                        <p className="font-normal text-sm">
                             The list shows all requestors added in your help desk. You can edit an existing requestor’s permissions and access rights by hovering over the requestor and clicking on <EditOutlined />. <br />
                             You can add new requestors by clicking on the “New Requestors” button.
                         </p>

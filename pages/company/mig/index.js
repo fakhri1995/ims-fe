@@ -17,9 +17,9 @@ function MigIndexProfile({ dataDetailCompany }) {
         setEditable(true)
     }
     return (
-        <div id="profileDetailMigWrapper">
-            <div className="flex justify-end p-3 border-t-2 border-b-2 bg-white mb-8">
-                <Sticky containerSelectorFocus="#profileDetailMigWrapper">
+        <div id="profileeDetailMigWrapper">
+            <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
+                <Sticky containerSelectorFocus="#profileeDetailMigWrapper">
                     <div className="flex space-x-2">
                         {editable ?
                             <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md" onClick={() => { setEditable(false) }}>Cancel</button>
@@ -34,8 +34,8 @@ function MigIndexProfile({ dataDetailCompany }) {
                     </div>
                 </Sticky>
             </div>
-            <div className="w-full h-auto p-5 grid grid-cols-2">
-                <div className="m-5">
+            <div className="w-full h-auto p-3 md:p-5 grid  grid-cols-1 md:grid-cols-2">
+                <div className="md:m-5 mb-5 md:mb-0 ">
                     <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
                     {
                         editable ?
@@ -44,11 +44,11 @@ function MigIndexProfile({ dataDetailCompany }) {
                             <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
                     }
                 </div>
-                <div className="m-5">
+                <div className="md:m-5 mb-5 md:mb-0">
                     <h1 className="font-semibold text-sm">Singkatan:</h1>
                     <h1 className="font-normal text-sm">MIG</h1>
                 </div>
-                <div className="m-5">
+                <div className="md:m-5 mb-5 md:mb-0">
                     <h1 className="font-semibold text-sm">Tanggal PKP:</h1>
                     {
                         editable ?
@@ -57,7 +57,7 @@ function MigIndexProfile({ dataDetailCompany }) {
                             <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
                     }
                 </div>
-                <div className="m-5">
+                <div className="md:m-5 mb-5 md:mb-0">
                     <h1 className="font-semibold text-sm">NPWP:</h1>
                     {
                         editable ?
@@ -66,7 +66,7 @@ function MigIndexProfile({ dataDetailCompany }) {
                             <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
                     }
                 </div>
-                <div className="m-5">
+                <div className="md:m-5 mb-5 md:mb-0">
                     <h1 className="font-semibold text-sm">Penanggung Jawab:</h1>
                     {
                         editable ?
@@ -75,7 +75,7 @@ function MigIndexProfile({ dataDetailCompany }) {
                             <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
                     }
                 </div>
-                <div className="m-5">
+                <div className="md:m-5 mb-5 md:mb-0">
                     <h1 className="font-semibold text-sm">Alamat:</h1>
                     {
                         editable ?
@@ -84,7 +84,7 @@ function MigIndexProfile({ dataDetailCompany }) {
                             <Input disabled defaultValue={dataDetailCompany.data.address}></Input>
                     }
                 </div>
-                <div className="m-5">
+                <div className="md:m-5 mb-5 md:mb-0">
                     <h1 className="font-semibold text-sm">Telepon:</h1>
                     {
                         editable ?
@@ -93,7 +93,7 @@ function MigIndexProfile({ dataDetailCompany }) {
                             <Input disabled defaultValue={dataDetailCompany.data.phone_number}></Input>
                     }
                 </div>
-                <div className="m-5">
+                <div className="md:m-5 mb-5 md:mb-0">
                     <h1 className="font-semibold text-sm">Fax:</h1>
                     {
                         editable ?
@@ -102,7 +102,7 @@ function MigIndexProfile({ dataDetailCompany }) {
                             <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
                     }
                 </div>
-                <div className="m-5">
+                <div className="md:m-5 mb-5 md:mb-0">
                     <h1 className="font-semibold text-sm">Email:</h1>
                     {
                         editable ?
@@ -111,7 +111,7 @@ function MigIndexProfile({ dataDetailCompany }) {
                             <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
                     }
                 </div>
-                <div className="m-5">
+                <div className="md:m-5 mb-5 md:mb-0">
                     <h1 className="font-semibold text-sm">Website:</h1>
                     {
                         editable ?
@@ -227,20 +227,20 @@ function MigIndexLocations() {
         },
     ];
     return (
-        <div id="locationsDetailMigWrapper">
+        <div id="locationssDetailMigWrapper">
             {/* <Sticky containerSelectorFocus="#locationsDetailMigWrapper"> */}
-            <div className="flex justify-end p-3 border-t-2 border-b-2 bg-white mb-8">
+            <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
                 <div className="flex space-x-2">
                     {editable ?
                         <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("berhasil dihapus") }} onCancel={() => { message.error("Gagal dihapus") }}>
-                            <button className=" bg-red-600 hover:bg-red-800 border text-white py-1 px-3 rounded-md w-40">
+                            <button className=" bg-red-600 hover:bg-red-800 border text-white py-1 px-3 rounded-md w-24 md:w-40">
                                 Delete
                                 </button>
                         </Popconfirm>
                         :
                         null
                     }
-                    <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-40" onClick={() => { setDrawablecreate(true) }}> Create</button>
+                    <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40" onClick={() => { setDrawablecreate(true) }}> Create</button>
                     <Drawer title="Create Locations MIG" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720} footer={
                         <div style={{ textAlign: 'right' }}>
                             <button onClick={() => { setDrawablecreate(false) }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
@@ -254,7 +254,7 @@ function MigIndexLocations() {
                 </div>
             </div>
             {/* </Sticky> */}
-            <div className="p-5">
+            <div className="md:p-5">
                 <h1 className="text-sm font-semibold">Pilih Parent terakhir untuk hapus</h1>
                 {/* <Tree treeData={treeData} autoExpandParent={autoExpandParent} selectable selectedKeys={selectedtree} checkable checkedKeys={checkedtree} onCheck={() => { setEditable(true) }}>
                 </Tree> */}
@@ -340,17 +340,17 @@ function MigIndexBankAccount() {
     return (
         <div id="bankAccountDetailMigWrapper">
             {/* <Sticky containerSelectorFocus="#bankAccountDetailMigWrapper"> */}
-            <div className="flex justify-end p-3 border-t-2 border-b-2 bg-white mb-8">
+            <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
                 <div className="flex space-x-2">
                     {
                         editable ?
-                            <button className=" bg-gray-600 hover:bg-gray-800 border text-white py-1 px-3 rounded-md w-40" onClick={() => { setDrawableedit(true) }}>
+                            <button className=" bg-gray-600 hover:bg-gray-800 border text-white py-1 px-3 rounded-md w-24 md:w-40" onClick={() => { setDrawableedit(true) }}>
                                 Edit
-                                </button>
+                            </button>
                             :
                             null
                     }
-                    <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-40" onClick={() => { setDrawablecreate(true) }}> Create</button>
+                    <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40" onClick={() => { setDrawablecreate(true) }}> Create</button>
                     <Drawer title="Edit data Bank Account MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false) }} width={720} footer={
                         <div style={{ textAlign: 'right' }}>
                             <button onClick={() => { setDrawableedit(false) }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
@@ -374,12 +374,12 @@ function MigIndexBankAccount() {
                 </div>
             </div>
             {/* </Sticky> */}
-            <div className="p-5">
-                <Table rowSelection={{
+            <div className="md:p-5">
+                <Table scroll={{ x: 200 }} rowSelection={{
                     selectedRowKeys: selectedrows, onChange: (selectedRowKeys) => {
                         setSelectedrows(selectedRowKeys)
                         setEditable(true)
-                        if(selectedRowKeys.length === 0){
+                        if (selectedRowKeys.length === 0) {
                             setEditable(false)
                         }
                     }
@@ -397,8 +397,21 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany }) {
     const { originPath } = rt.query
     return (
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath}>
-            <div className="p-5">
+            <div className="p-5 bg-white hidden md:block">
                 <Tabs tabPosition={`left`}>
+                    <TabPane tab="Profile" key={`profile`}>
+                        <MigIndexProfile dataDetailCompany={dataDetailCompany}></MigIndexProfile>
+                    </TabPane>
+                    <TabPane tab="Bank Accounts" key={`bankAccounts`}>
+                        <MigIndexBankAccount />
+                    </TabPane>
+                    <TabPane tab="Locations" key={`locations`}>
+                        <MigIndexLocations></MigIndexLocations>
+                    </TabPane>
+                </Tabs>
+            </div>
+            <div className="p-5 bg-white block md:hidden">
+                <Tabs tabPosition={`top`}>
                     <TabPane tab="Profile" key={`profile`}>
                         <MigIndexProfile dataDetailCompany={dataDetailCompany}></MigIndexProfile>
                     </TabPane>
@@ -444,7 +457,7 @@ export async function getServerSideProps({ req, res }) {
     })
     const resjsonGC = await resourcesGC.json()
     const dataDetailCompany = resjsonGC
-    
+
     return {
         props: {
             initProps,

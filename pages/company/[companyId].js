@@ -20,7 +20,7 @@ function ClientsDetailProfile({ dataDetailCompany }) {
     }
     return (
         <div id="profileDetailMigWrapper">
-            <div className="flex justify-end p-3 border-t-2 border-b-2 bg-white mb-8">
+            <div className="flex justify-start md:justify-end p-3 md:border-t-2 md:border-b-2 bg-white mb-4 md:mb-8">
                 <Sticky containerSelectorFocus="#profileDetailMigWrapper">
                     <div className="flex space-x-2">
                         {editable ?
@@ -31,13 +31,13 @@ function ClientsDetailProfile({ dataDetailCompany }) {
                         {editable ?
                             <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md" onClick={onClickEdit}>Save</button>
                             :
-                            <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md w-40" onClick={onClickEdit}>Edit</button>
+                            <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md w-24 md:w-40" onClick={onClickEdit}>Edit</button>
                         }
                     </div>
                 </Sticky>
             </div>
-            <div className="w-full h-auto p-5 grid grid-cols-2">
-                <div className="m-5">
+            <div className="w-full h-auto p-3 md:p-5 grid grid-cols-1 md:grid-cols-2">
+                <div className="md:m-5 mb-5 md:mb-0">
                     <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
                     {
                         editable ?
@@ -46,11 +46,11 @@ function ClientsDetailProfile({ dataDetailCompany }) {
                             <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
                     }
                 </div>
-                <div className="m-5">
+                <div className="md:m-5 mb-5 md:mb-0">
                     <h1 className="font-semibold text-sm">Singkatan:</h1>
                     <h1 className="font-normal text-sm">MIG</h1>
                 </div>
-                <div className="m-5">
+                <div className="md:m-5 mb-5 md:mb-0">
                     <h1 className="font-semibold text-sm">Tanggal PKP:</h1>
                     {
                         editable ?
@@ -59,7 +59,7 @@ function ClientsDetailProfile({ dataDetailCompany }) {
                             <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
                     }
                 </div>
-                <div className="m-5">
+                <div className="md:m-5 mb-5 md:mb-0">
                     <h1 className="font-semibold text-sm">NPWP:</h1>
                     {
                         editable ?
@@ -68,7 +68,7 @@ function ClientsDetailProfile({ dataDetailCompany }) {
                             <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
                     }
                 </div>
-                <div className="m-5">
+                <div className="md:m-5 mb-5 md:mb-0">
                     <h1 className="font-semibold text-sm">Penanggung Jawab:</h1>
                     {
                         editable ?
@@ -77,7 +77,7 @@ function ClientsDetailProfile({ dataDetailCompany }) {
                             <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
                     }
                 </div>
-                <div className="m-5">
+                <div className="md:m-5 mb-5 md:mb-0">
                     <h1 className="font-semibold text-sm">Alamat:</h1>
                     {
                         editable ?
@@ -86,7 +86,7 @@ function ClientsDetailProfile({ dataDetailCompany }) {
                             <Input disabled defaultValue={dataDetailCompany.data.address}></Input>
                     }
                 </div>
-                <div className="m-5">
+                <div className="md:m-5 mb-5 md:mb-0">
                     <h1 className="font-semibold text-sm">Telepon:</h1>
                     {
                         editable ?
@@ -95,7 +95,7 @@ function ClientsDetailProfile({ dataDetailCompany }) {
                             <Input disabled defaultValue={dataDetailCompany.data.phone_number}></Input>
                     }
                 </div>
-                <div className="m-5">
+                <div className="md:m-5 mb-5 md:mb-0">
                     <h1 className="font-semibold text-sm">Fax:</h1>
                     {
                         editable ?
@@ -104,7 +104,7 @@ function ClientsDetailProfile({ dataDetailCompany }) {
                             <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
                     }
                 </div>
-                <div className="m-5">
+                <div className="md:m-5 mb-5 md:mb-0">
                     <h1 className="font-semibold text-sm">Email:</h1>
                     {
                         editable ?
@@ -113,7 +113,7 @@ function ClientsDetailProfile({ dataDetailCompany }) {
                             <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
                     }
                 </div>
-                <div className="m-5">
+                <div className="md:m-5 mb-5 md:mb-0">
                     <h1 className="font-semibold text-sm">Website:</h1>
                     {
                         editable ?
@@ -230,18 +230,18 @@ function ClientsDetailLocations() {
     ];
     return (
         <div id="locationsDetailMigWrapper">
-            <div className="flex justify-end p-3 border-t-2 border-b-2 bg-white mb-8">
+            <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
                 <div className="flex space-x-2">
                     {editable ?
                         <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("berhasil dihapus") }} onCancel={() => { message.error("Gagal dihapus") }}>
-                            <button className=" bg-red-600 hover:bg-red-800 border text-white py-1 px-3 rounded-md w-40">
+                            <button className=" bg-red-600 hover:bg-red-800 border text-white py-1 px-3 rounded-md w-24 md:w-40">
                                 Delete
-                                </button>
+                            </button>
                         </Popconfirm>
                         :
                         null
                     }
-                    <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-40" onClick={() => { setDrawablecreate(true) }}> Create</button>
+                    <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40" onClick={() => { setDrawablecreate(true) }}> Create</button>
                     <Drawer title="Create Locations MIG" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720} footer={
                         <div style={{ textAlign: 'right' }}>
                             <button onClick={() => { setDrawablecreate(false) }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
@@ -339,17 +339,17 @@ function ClientsDetailBankAccount() {
     ];
     return (
         <div id="bankAccountDetailMigWrapper">
-            <div className="flex justify-end p-3 border-t-2 border-b-2 bg-white mb-8">
+            <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
                 <div className="flex space-x-2">
                     {
                         editable ?
-                            <button className=" bg-gray-600 hover:bg-gray-800 border text-white py-1 px-3 rounded-md w-40" onClick={() => { setDrawableedit(true) }}>
+                            <button className=" bg-gray-600 hover:bg-gray-800 border text-white py-1 px-2 rounded-md w-24 md:w-40" onClick={() => { setDrawableedit(true) }}>
                                 Edit
                                 </button>
                             :
                             null
                     }
-                    <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-40" onClick={() => { setDrawablecreate(true) }}> Create</button>
+                    <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40" onClick={() => { setDrawablecreate(true) }}> Create</button>
                     <Drawer title="Edit data Bank Account MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false) }} width={720} footer={
                         <div style={{ textAlign: 'right' }}>
                             <button onClick={() => { setDrawableedit(false) }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
@@ -372,8 +372,8 @@ function ClientsDetailBankAccount() {
                     }></Drawer>
                 </div>
             </div>
-            <div className="p-5">
-                <Table rowSelection={{
+            <div className="md:p-5">
+                <Table scroll={{ x: 200 }} rowSelection={{
                     selectedRowKeys: selectedrows, onChange: (selectedRowKeys) => {
                         setSelectedrows(selectedRowKeys)
                         setEditable(true)
@@ -395,8 +395,21 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany }) 
     const { originPath } = rt.query
     return (
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} dataDetailCompany={dataDetailCompany}>
-            <div className="p-5">
+            <div className="p-5 bg-white hidden md:block">
                 <Tabs tabPosition={`left`}>
+                    <TabPane tab="Profile" key={`profile`}>
+                        <ClientsDetailProfile dataDetailCompany={dataDetailCompany}></ClientsDetailProfile>
+                    </TabPane>
+                    <TabPane tab="Bank Accounts" key={`bankAccounts`}>
+                        <ClientsDetailBankAccount />
+                    </TabPane>
+                    <TabPane tab="Locations" key={`locations`}>
+                        <ClientsDetailLocations></ClientsDetailLocations>
+                    </TabPane>
+                </Tabs>
+            </div>
+            <div className="p-5 bg-white block md:hidden">
+                <Tabs tabPosition={`top`}>
                     <TabPane tab="Profile" key={`profile`}>
                         <ClientsDetailProfile dataDetailCompany={dataDetailCompany}></ClientsDetailProfile>
                     </TabPane>

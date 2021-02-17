@@ -1,0 +1,11 @@
+.headerLayout{
+    padding: 0;
+    background-color: white;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.triggerLayout{
+    padding: 24px;
+    float: left;
+}

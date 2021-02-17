@@ -22,7 +22,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             Manage agents and end users of your service desk
                         </h3>
                     </div>
-                    <div className="grid grid-cols-5">
+                    <div className="grid md:grid-cols-5 sm:grid-cols-1">
                         <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                             <Link href={{
                                 pathname: '/agents',
@@ -63,7 +63,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             Configure the basic settings that are necessary for company information
                         </h3>
                     </div>
-                    <div className="grid grid-cols-5">
+                    <div className="grid md:grid-cols-5 sm:grid-cols-1">
                         <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                             <Link href={{
                                 pathname: '/company/mig/',
