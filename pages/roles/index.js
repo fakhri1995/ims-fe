@@ -6,7 +6,6 @@ import Tooltip from 'antd/lib/tooltip'
 import Button from 'antd/lib/button'
 import Drawer from 'antd/lib/drawer'
 import CopyOutlined from '@ant-design/icons/CopyOutlined'
-import EditOutlined from '@ant-design/icons/EditOutlined'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
@@ -17,7 +16,7 @@ function Roles({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
-    const text = <span>Clone</span>;
+
     const [drawablecreate, setDrawablecreate] = useState(false)
 
     const columnsDD = [
@@ -64,7 +63,7 @@ function Roles({ initProps, dataProfile, dataListAccount, sidemenu }) {
                     props: {
                         style: { background: record.key%2 == 1 ? '#f2f2f2' : '#fff' },
                     },
-                    children: <Tooltip placement="topLeft" title={text}>
+                    children: <Tooltip placement="topLeft" title={"Clone"}>
                     {/* {actions[index]} */}
                     <Button>
                         <Link href={{

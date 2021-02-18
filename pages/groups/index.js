@@ -5,13 +5,14 @@ import Table from 'antd/lib/table'
 import Tooltip from 'antd/lib/tooltip'
 import Button from 'antd/lib/button'
 import Drawer from 'antd/lib/drawer'
-import CopyOutlined from '@ant-design/icons/CopyOutlined'
-import EditOutlined from '@ant-design/icons/EditOutlined'
+import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
 import Tabs from 'antd/lib/tabs'
 import DownOutlined from '@ant-design/icons/DownOutlined'
+import Dropdown from 'antd/lib/dropdown'
+import Menu from 'antd/lib/menu'
 
 function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const rt = useRouter()
@@ -19,7 +20,6 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
 
-    const text = <span>Clone</span>;
     const [drawablecreate, setDrawablecreate] = useState(false)
 
     const { TabPane } = Tabs;
@@ -31,6 +31,7 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
             title: 'role',
             dataIndex: 'name',
             key: 'role',
+            width: 800,
             render(text, record) {
                 return {
                     props: {
@@ -41,36 +42,46 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
             },
         },
         {
-            title: 'nama',
-            dataIndex: 'agent',
-            key: 'nama',
-            render(text, record) {
-                return {
-                    props: {
-                        style: { background: record.key%2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children: <div>{text}</div>,
-                };
-            },
-        },
-        {
             title: 'action', // Non-breakable space is char 0xa0 (160 dec)
             dataIndex: 'actionss',
             key: 'action',
+            width: 50,
             render: (text, record, index) => {
                 return {
                     props: {
                         style: { background: record.key%2 == 1 ? '#f2f2f2' : '#fff' },
                     },
-                    children: <Tooltip placement="topLeft" title={text}>
-                    {/* {actions[index]} */}
+                    children: 
                     <Button>
                         <Link href={{
-                            pathname: `/clone/${record.key}`,
+                            pathname: `/edit/${record.key}`,
                             query: {
                                 originPath: 'Admin'
                             }
-                        }}><a><CopyOutlined /></a></Link>
+                        }}><a>Edit</a></Link>
+                    </Button>
+                }
+            }
+        },
+        {
+            title: 'action', // Non-breakable space is char 0xa0 (160 dec)
+            dataIndex: 'actionss',
+            key: 'action',
+            width: 100,
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { background: record.key%2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children: <Tooltip placement="topLeft" title={"Delete"}>
+                    {/* {actions[index]} */}
+                    <Button>
+                        <Link href={{
+                            pathname: `/delete/${record.key}`,
+                            query: {
+                                originPath: 'Admin'
+                            }
+                        }}><a><DeleteOutlined /></a></Link>
                     </Button>
                 </Tooltip>
                 }
@@ -119,6 +130,19 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
         },
     ];
 
+    const menu = () =>{
+        return (
+        <Menu style={{padding:"10px 5px"}}>
+          <Menu.Item  key="0">
+            <a href="http://www.alipay.com/">Agent Group</a>
+          </Menu.Item>
+          <Menu.Item key="1">
+            <a href="http://www.taobao.com/">Requester Group</a>
+          </Menu.Item>
+        </Menu>
+        )
+    }
+      
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath}>
             <>
@@ -128,7 +152,12 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <h1 className="font-semibold text-base w-auto py-2">Groups</h1>
                                 <div className="flex space-x-2">
-                                    <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center" onClick={() => { setDrawablecreate(true) }}>Create New&nbsp;<DownOutlined style={{verticalAlign:'0.05em'}}/></div>
+                                    <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center" >
+                                        <Dropdown overlay={menu} placement="bottomCenter" trigger={['click']}>
+                                            <p onClick={e => e.preventDefault()}>
+                                            Create New &nbsp;<DownOutlined style={{verticalAlign:'0.2em'}} />
+                                            </p>
+                                        </Dropdown></div>
                                 </div>
                             </div>
                         </Sticky>
