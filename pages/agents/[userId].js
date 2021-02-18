@@ -127,24 +127,29 @@ export async function getServerSideProps({ req, res, params }) {
             initProps = cookiesJSON.token;
         }
     }
-    const resourcesDA = await fetch(`https://go.cgx.co.id/admin/v1/get-account?id=${parseInt(userid)}`, {
-        method: `GET`,
+
+    const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
+        method: `POST`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
+    })
+    const resjson = await resources.json()
+    const dataProfile = resjson
+
+    const resourcesDA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAccountDetail`, {
+        method: `POST`,
+        headers: {
+            'Authorization': JSON.parse(initProps),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            login_id: userid
+        })
     })
     const resjsonDA = await resourcesDA.json()
     const dataDetailAccount = resjsonDA
 
-    const resources = await fetch(`https://go.cgx.co.id/auth/v1/get-profile`, {
-        method: `GET`,
-        headers: {
-            'Authorization': JSON.parse(initProps)
-        }
-    })
-    console.log(resources)
-    const resjson = await resources.json()
-    const dataProfile = resjson
     return {
         props: {
             initProps,

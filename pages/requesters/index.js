@@ -236,6 +236,11 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
 
 export async function getServerSideProps({ req, res }) {
     var initProps = {};
+    const reqBodyAccountList = {
+        page: 1,
+        rows: 10,
+        order_by: "asc"
+    }
     if (req && req.headers) {
         const cookies = req.headers.cookie;
         if (!cookies) {
@@ -247,8 +252,8 @@ export async function getServerSideProps({ req, res }) {
             initProps = cookiesJSON.token
         }
     }
-    const resourcesGP = await fetch(`https://go.cgx.co.id/auth/v1/get-profile`, {
-        method: `GET`,
+    const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
+        method: `POST`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -256,11 +261,13 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    const resourcesLA = await fetch(`https://go.cgx.co.id/admin/v1/get-list-account?page=1&rows=50&order_by=asc`, {
-        method: `GET`,
+    const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAccountList`, {
+        method: `POST`,
         headers: {
-            'Authorization': JSON.parse(initProps)
-        }
+            'Authorization': JSON.parse(initProps),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(reqBodyAccountList)
     })
     const resjsonLA = await resourcesLA.json()
     const dataListAccount = resjsonLA

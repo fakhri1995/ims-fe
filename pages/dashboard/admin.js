@@ -127,8 +127,8 @@ export async function getServerSideProps({ req, res }) {
             // console.log("cookie di admin dashboard ssr: " + initProps)
         }
     }
-    const resources = await fetch(`https://go.cgx.co.id/auth/v1/get-profile`, {
-        method: `GET`,
+    const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
+        method: `POST`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }

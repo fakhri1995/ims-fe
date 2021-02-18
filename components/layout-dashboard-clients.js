@@ -51,7 +51,7 @@ function LayoutDashboardClients({ children, tok, dataProfile, pathArr, sidemenu,
         setColl(prev => !prev)
     };
     const handleLogout = () => {
-        fetch(`https://go.cgx.co.id/auth/v1/logout`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/logout`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
