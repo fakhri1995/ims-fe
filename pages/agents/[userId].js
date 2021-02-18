@@ -10,7 +10,7 @@ import Sticky from 'wil-react-sticky'
 
 
 
-function RequestorsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
+function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
     const rt = useRouter()
     const { userId, originPath } = rt.query
     const tok = initProps
@@ -155,4 +155,4 @@ export async function getServerSideProps({ req, res, params }) {
     }
 }
 
-export default RequestorsDetail
+export default AgentsDetail

@@ -8,7 +8,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 
 
-function Requestors({ initProps, dataProfile, dataListAccount, sidemenu }) {
+function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
@@ -83,7 +83,7 @@ function Requestors({ initProps, dataProfile, dataListAccount, sidemenu }) {
                             <>{actions[index]}
                                 <a><CopyOutlined /></a>
                                 <Link href={{
-                                    pathname: `/requestors/${record.user_id}`,
+                                    pathname: `/requesters/${record.user_id}`,
                                     query: {
                                         originPath: 'Admin'
                                     }
@@ -102,12 +102,12 @@ function Requestors({ initProps, dataProfile, dataListAccount, sidemenu }) {
             <>
                 <div className="h-20 w-full grid grid-cols-1 md:grid-cols-3 border-gray-400 md:border-t md:border-b p-4 bg-white mb-5">
                     <div className="col-span-1 md:col-span-2 flex items-center">
-                        <div className="font-semibold text-base w-auto">Requestors</div>
+                        <div className="font-semibold text-base w-auto">Requesters</div>
                     </div>
                     <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
                         <a className=" text-sm text-center w-auto mr-5">Import</a>
                         <a className=" text-sm text-center w-auto mr-5">Export</a>
-                        <div className=" text-white text-xs md:text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-3 md:py-2 w-28 md:w-52 text-center">New Requestors</div>
+                        <div className=" text-white text-xs md:text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-3 md:py-2 w-28 md:w-52 text-center">New Requesters</div>
                     </div>
                 </div>
                 <div className="h-auto w-full grid grid-cols-1 md:grid-cols-4 mb-5 bg-white px-2">
@@ -222,10 +222,10 @@ function Requestors({ initProps, dataProfile, dataListAccount, sidemenu }) {
                         }}></Table>
                     </div>
                     <div className="hidden md:flex flex-col space-y-3 p-4 md:col-span-1 col-span-1">
-                        <div className="font-semibold text-sm">Requestors</div>
+                        <div className="font-semibold text-sm">Requesters</div>
                         <p className="font-normal text-sm">
-                            The list shows all requestors added in your help desk. You can edit an existing requestor’s permissions and access rights by hovering over the requestor and clicking on <EditOutlined />. <br />
-                            You can add new requestors by clicking on the “New Requestors” button.
+                            The list shows all requesters added in your help desk. You can edit an existing requester’s permissions and access rights by hovering over the requester and clicking on <EditOutlined />. <br />
+                            You can add new requesters by clicking on the “New Requesters” button.
                         </p>
                     </div>
                 </div>
@@ -274,4 +274,4 @@ export async function getServerSideProps({ req, res }) {
     }
 }
 
-export default Requestors
+export default Requesters
