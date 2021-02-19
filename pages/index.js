@@ -41,10 +41,10 @@ export default function Home({ initProps }) {
           // console.log("token di session: " + JSON.parse(jscookie.get('token')))
           rt.push('/dashboard/home')
         }
-        else if (res2.error) {
+        else if (!res2.success) {
           // console.log("masuk ke error login")
           message.error({
-            content: "Email/password yang dimasukkan salah!",
+            content: "Invalid Email/password",
             style: {
               marginTop: `1rem`
             }

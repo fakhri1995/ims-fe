@@ -82,7 +82,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                     <div className="flex flex-col">
                         <h2 className="text-lg font-semibold mb-1">{dataProfile.data.fullname}</h2>
                         <h2 className="text-sm font-normal mb-1">{dataProfile.data.email}</h2>
-                        <Link href={`/profile`}>Profile Settings</Link>
+                        <a href={`/profile`} target="_blank" ref="noreferrer">Profile Settings</a>
                     </div>
                 </div>
                 <div>

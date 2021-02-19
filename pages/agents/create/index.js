@@ -10,6 +10,7 @@ import Input from 'antd/lib/input'
 import InputNumber from 'antd/lib/input-number'
 import notification from 'antd/lib/notification'
 import Sticky from 'wil-react-sticky'
+import Link from 'next/link'
 import { useState, useEffect } from 'react'
 
 function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
@@ -48,7 +49,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
         role: 0,
         phone_number: '',
         profile_image: '',
-        company_id: 0
+        company_id: 66
     })
     const [loadingupload, setLoadingupload] = useState(false)
 
@@ -64,18 +65,18 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
         })
             .then(res => res.json())
             .then(res2 => {
-                if (res2.asset_id) {
+                if (res2.data) {
                     notification['success']({
-                        message: "New agent member successfully saved",
+                        message: res2.data.message,
                         duration: 3
                     })
                     setTimeout(() => {
                         rt.push(`/agents?originPath=Admin`)
-                    }, 3000)
+                    }, 1000)
                 }
-                else {
+                else if (!res2.success) {
                     notification['error']({
-                        message: "Failed to save new agent member",
+                        message: res2.message.errorInfo.status_detail,
                         duration: 3
                     })
                 }
@@ -84,7 +85,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     }
     const onChangeCreateAgents = (e) => {
         var val = e.target.value
-        if(e.target.name === "role"){
+        if (e.target.name === "role") {
             val = parseInt(e.target.value)
         }
         setNewuser({
@@ -188,7 +189,9 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                         <div className="flex justify-between p-4 border-t-2 border-b-2 bg-white mb-8">
                             <h1 className="font-semibold py-2">New Agent</h1>
                             <div className="flex space-x-2">
-                                <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button>
+                                <Link href="/agents?originPath=Admin">
+                                    <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button>
+                                </Link>
                                 <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={handleCreateAgents}>Save</button>
                             </div>
                         </div>
@@ -240,20 +243,20 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                                         </button>
                                     </div> */}
                                     <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi" name="fullname">
-                                        <Input value={newuser} name={`fullname`} onChange={onChangeCreateAgents} style={{ width: `30rem` }} />
+                                        <Input value={newuser.fullname} name={`fullname`} onChange={onChangeCreateAgents} style={{ width: `30rem` }} />
                                     </Form.Item>
                                     <Form.Item label="Email" required tooltip="Wajib diisi" name="email">
-                                        <Input value={newuser} name={`email`} onChange={onChangeCreateAgents} style={{ width: `30rem` }} />
+                                        <Input value={newuser.email} name={`email`} onChange={onChangeCreateAgents} style={{ width: `30rem` }} />
                                     </Form.Item>
                                     <Form.Item label="No. Handphone" name="phone_number">
-                                        <Input value={newuser} name={`phone_number`} onChange={onChangeCreateAgents} style={{ width: `30rem` }} />
+                                        <Input value={newuser.phone_number} name={`phone_number`} onChange={onChangeCreateAgents} style={{ width: `30rem` }} />
                                     </Form.Item>
                                     <Form.Item label="Role" name="role">
                                         {/* <Input value={newuser} name={`role`} onChange={onChangeCreateAgents} style={{ width: `30rem` }} /> */}
                                         {/* <InputNumber value={newuser} name={`role`} onChange={onChangeCreateAgents} style={{ width: `30rem` }} /> */}
-                                        <input type="number" value={newuser.phone_number} name={'role'} onChange={onChangeCreateAgents} style={{ width: `30rem` }} />
+                                        <input type="number" value={newuser.role} name={'role'} onChange={onChangeCreateAgents} style={{ width: `30rem` }} />
                                     </Form.Item>
-                                    <Form.Item label="Company" name="company_id">
+                                    {/* <Form.Item label="Company" name="company_id">
                                         <Select onChange={(value) => { setNewuser({ ...newuser, company_id: value }) }} name={`company_id`} style={{ width: `30rem` }} allowClear>
                                             <Select.Option >Choose company</Select.Option>
                                             {
@@ -264,24 +267,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                                                 })
                                             }
                                         </Select>
-                                        {/* <select
-                                            as="select"
-                                            className="custom-select mr-sm-2 wajib selectJK"
-                                            id="inlineFormCustomSelect"
-                                            custom
-                                            name="company_id"
-                                            value={newuser.company_id} onChange={onChangeCreateAgents}
-                                            style={{ color: `rgb(107, 110, 140)`, fontSize: `medium`, paddingLeft: `1rem` }}
-                                        >
-                                            {
-                                                dataCompanyList.data.companies.map((doc, idx) => {
-                                                    return (
-                                                        <option key={idx} value={newuser.company_id}>{doc.company_name}</option>
-                                                    )
-                                                })
-                                            }
-                                        </select> */}
-                                    </Form.Item>
+                                    </Form.Item> */}
                                 </div>
                             </Form>
                         </div>

@@ -516,38 +516,27 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                             null
                     }
                     <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40" onClick={() => { setDrawablecreate(true) }}> Create</button>
-                    <Drawer title="Edit data Bank Account MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false) }} width={720}
-                        // footer={
-                        //     <div style={{ textAlign: 'right' }}>
-                        //         <button onClick={() => { setDrawableedit(false) }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
-                        //             Cancel
-                        //         </button>
-                        //         <button type="primary" className="bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-20">
-                        //             Submit
-                        //         </button>
-                        //     </div>
-                        // }
-                        >
+                    <Drawer title="Edit data Bank Account MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false) }} width={720}>
                         <Form layout="vertical">
                             <div className="grid grid-cols-2">
                                 {/* record: {recordrow.name} */}
                                 <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank Name"
-                                    // rules={[
-                                    //     {
-                                    //         required: true,
-                                    //         message: 'Please input your bank name!',
-                                    //     },
-                                    // ]}
+                                // rules={[
+                                //     {
+                                //         required: true,
+                                //         message: 'Please input your bank name!',
+                                //     },
+                                // ]}
                                 >
                                     <Input onChange={onChangeEditBA} name="name" defaultValue={recordrow.name} />
                                 </Form.Item>
                                 <Form.Item name="account_number" style={{ marginRight: `1rem` }} label="Account Number"
-                                    // rules={[
-                                    //     {
-                                    //         required: true,
-                                    //         message: 'Please input your account number!',
-                                    //     },
-                                    // ]}
+                                // rules={[
+                                //     {
+                                //         required: true,
+                                //         message: 'Please input your account number!',
+                                //     },
+                                // ]}
                                 >
                                     <Input onChange={onChangeEditBA} name="account_number" defaultValue={recordrow.account_number} />
                                 </Form.Item>
@@ -568,18 +557,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                             <button className="bg-gray-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-gray-800" onClick={handleSubmitEditBA}>Edit</button>
                         </Form>
                     </Drawer>
-                    <Drawer title="Create data Bank Account MIG" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720}
-                    // footer={
-                    //     <div style={{ textAlign: 'right' }}>
-                    //         <button onClick={() => { setDrawablecreate(false) }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
-                    //             Cancel
-                    //             </button>
-                    //         <button type="primary" className="bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-20">
-                    //             Submit
-                    //             </button>
-                    //     </div>
-                    // }
-                    >
+                    <Drawer title="Create data Bank Account MIG" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720}>
                         <Form layout="vertical">
                             <div className="grid grid-cols-2">
                                 <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank Name" rules={[
@@ -676,7 +654,7 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
                         <ClientsDetailProfile dataDetailCompany={dataDetailCompany}></ClientsDetailProfile>
                     </TabPane>
                     <TabPane tab="Bank Accounts" key={`bankAccounts`}>
-                        <ClientsDetailBankAccount dataGetBanks={dataGetBanks} />
+                        <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
                     </TabPane>
                     <TabPane tab="Locations" key={`locations`}>
                         <ClientsDetailLocations></ClientsDetailLocations>
@@ -731,9 +709,6 @@ export async function getServerSideProps({ req, res, params }) {
         headers: {
             'Authorization': JSON.parse(initProps),
         },
-        // body: JSON.stringify({
-        //     id: dataDetailCompany.data.company_id
-        // })
     })
     const resjsonGB = await resourcesGB.json()
     const dataGetBanks = resjsonGB
