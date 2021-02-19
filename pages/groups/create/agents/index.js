@@ -1,4 +1,4 @@
-import Layout from '../../components/layout-dashboard-groups'
+import Layout from '../../../../components/layout-dashboard-groups'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import Table from 'antd/lib/table'
@@ -12,16 +12,46 @@ import Sticky from 'wil-react-sticky'
 import Tabs from 'antd/lib/tabs'
 import DownOutlined from '@ant-design/icons/DownOutlined'
 import Dropdown from 'antd/lib/dropdown'
+import Divider from 'antd/lib/divider'
 import Menu from 'antd/lib/menu'
+import { Input, Slider } from 'antd'
+import { Select, Tag } from 'antd'
+import { Radio } from 'antd'
+import { Row, Col } from 'antd'
 
-function Groups({ initProps, dataProfile, sidemenu }) {
+function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
 
-    const [drawablecreate, setDrawablecreate] = useState(false)
+    //------------populate list account-------------
+    const [value, setValue] = useState(1);
+    const onChange = e => {
+        console.log('radio checked', e.target.value);
+        setValue(e.target.value);
+    };
 
+    const dataDD = dataListAccount.data.accounts.map((doc, idx) => {
+        return ({
+            value: doc.user_id,
+            profile_image: doc.profile_image,
+            label: doc.fullname,
+            email: doc.email,
+            phone_number: doc.phone_number
+        })
+    })
+    
+    function handleChange(value) {
+        console.log(`selected ${value}`);
+      }
+
+    //----------------------------------------------
+    const waktu = [{value:'15 Minutes'},{value:'30 Minutes'},{value:'1 Hour'},{value:'2 Hours'},{value:'4 Hours'},{value:'8 Hours'},{value:'12 Hours'},{value:'1 Day'},{value:'2 Days'},{value:'4 Days'}]
+    // const time = JSON.parse(waktu)
+    const [drawablecreate, setDrawablecreate] = useState(false)
+    const { TextArea } = Input;
+    const { Option } = Select;
     const { TabPane } = Tabs;
     function callback(key) {
         console.log(key);
@@ -130,25 +160,7 @@ function Groups({ initProps, dataProfile, sidemenu }) {
         },
     ];
 
-    const menu = () =>{
-        return (
-        <Menu style={{padding:"10px 5px"}}>
-          <Menu.Item  key="0">
-            <Link href={{
-                                pathname: '/groups/create/agents',
-                                query: {
-                                    originPath: "Admin"
-                                }
-                            }}>Agent Group</Link>
-            
-          </Menu.Item>
-          <Menu.Item key="1">
-            <Link href="create/group-requester">Requester Group</Link>
-          </Menu.Item>
-        </Menu>
-        )
-    }
-      
+    // console.log(options[random])
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath}>
             <>
@@ -156,34 +168,87 @@ function Groups({ initProps, dataProfile, sidemenu }) {
                     <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
-                                <h1 className="font-semibold text-base w-auto py-2">Groups</h1>
+                                <h1 className="font-semibold text-base w-auto py-2">New Group</h1>
                                 <div className="flex space-x-2">
-                                    <Dropdown overlay={menu} placement="bottomCenter" trigger={['click']}>
-                                        <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center" >
+                                    
+                                        <div className=" text-black text-sm bg-white hover:bg-gray-300 border-2 border-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
                                             <p onClick={e => e.preventDefault()}>
-                                            Create New &nbsp;<DownOutlined style={{verticalAlign:'0.2em'}} />
+                                            Cancel
                                             </p>
                                         </div>
-                                    </Dropdown>
+                                        <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
+                                            <p onClick={e => e.preventDefault()}>
+                                            Save
+                                            </p>
+                                        </div>
+                                    
                                 </div>
                             </div>
                         </Sticky>
-
-                        <div className="col-span-3 flex flex-col space-y-3">
-                        <Tabs onChange={callback} type="card">
-                            <TabPane tab="Agent Groups" key="1">
-                                <Table showHeader={false} scroll={{ x: 400 }} dataSource={dataAgent} columns={columnsDD} onRow={(record, rowIndex) => {
-                                }}></Table>
-                            </TabPane>
-                            <TabPane tab="Requester Groups" key="2">
-                                <Table showHeader={false} scroll={{ x: 400 }} dataSource={dataRequester} columns={columnsDD} onRow={(record, rowIndex) => {
-                                }}></Table>
-                            </TabPane>
-                        </Tabs>
                         
+                        {/* <div className="w-120 h-auto p-0 "> */}
+                            <div className="pb-4 md:mb-0 ">
+                                <h1 className="font-semibold text-sm">Group Name</h1>
+                                <Input placeholder="Group Name"></Input>
+                            </div>
+                            
+                            <div className="pb-4 md:mb-0">
+                                <h1 className="font-semibold text-sm">Group Description</h1>
+                                <TextArea placeholder="Group Description" rows={2}/>
+                            </div>
+                            
+                            <div className="pb-4 md:mb-0">
+                                <h1 className="font-semibold text-sm">Business Hours</h1>
+                                
+                                <Select placeholder="Select Business Hours">
+                                    <Option value="Default">Default</Option>
+                                </Select>
+                            </div>
+                        {/* </div> */}
+                        <Divider style={{borderTop:'1px solid rgba(0, 0, 0, 0.2)'}}/>
+                        <h1 className="font-semibold text-base w-auto py-2">Agents</h1>
+                        <div className="border-gray-300 p-4 border bg-white w-full h-auto ">
+                            <Radio.Group className="flex" row onChange={onChange} value={value}>
+                                <Radio className="flex-initial font-bold " value={1}>Add as a Member 
+                                <p className="w-96 pl-6 whitespace-normal font-normal">Members can be assigned tickets, tasks and other items that belong to this group.</p>
+                                </Radio>
+                                <Radio className="flex-initial font-bold" value={2}>Add as an Observer
+                                <p className="w-96 pl-6 whitespace-normal font-normal">Members can be assigned tickets, tasks and other items that belong to this group.</p>
+                                </Radio>
+                            </Radio.Group>
+                            <Row>
+                                <Col flex="auto">
+                                    <Select  placeholder="Add an Agent" showArrow mode="multiple" options={dataDD} onChange={handleChange} style={{ width: '100%',padding:'0 5px', lineHeight:'2.4'}}/>  
+                                </Col>
+                                <Col flex="100px">
+                                    <div className=" text-black text-sm bg-white hover:bg-gray-300 border border-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
+                                        <p onClick={e => e.preventDefault()}>
+                                        Add
+                                        </p>
+                                    </div>
+                                </Col>
+                            </Row>
                         </div>
-
-
+                        <Divider style={{borderTop:'1px solid rgba(0, 0, 0, 0.2)'}}/>
+                        <h1 className="font-semibold text-base w-auto py-2">Group Automation</h1>
+                        <Row>
+                            <Col span={9}>
+                                if a ticket remains un-assigned for more than
+                            </Col>
+                            <Col span={15}>
+                            <Select  options={waktu}  style={{ width: '100%',padding:'0 5px', lineHeight:'2.4'}}/>
+                            </Col>
+                        </Row>
+                        <br/>
+                        <Row>
+                            <Col span={9}>
+                                then send escalation email to
+                            </Col>
+                            <Col span={15}>
+                            <Select  placeholder="Select Agent" showArrow options={dataDD} onChange={handleChange} style={{ width: '100%',padding:'0 5px', lineHeight:'2.4'}}/> 
+                            </Col>
+                        </Row>
+                        
                     </div>
                     <div className="flex flex-col space-y-3 px-4">
                         <div className="font-semibold text-base">Groups</div>
@@ -223,6 +288,11 @@ function Groups({ initProps, dataProfile, sidemenu }) {
 
 export async function getServerSideProps({ req, res }) {
     var initProps = {};
+    const reqBodyAccountList = {
+        page: 1,
+        rows: 50,
+        order_by: "asc"
+    }
     if (req && req.headers) {
         const cookies = req.headers.cookie;
         if (!cookies) {
@@ -248,10 +318,29 @@ export async function getServerSideProps({ req, res }) {
     })
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
+
+    const resourcesLA = await fetch(`https://go.cgx.co.id/admin/v1/get-list-account?page=1&rows=50&order_by=asc`, {
+        method: `GET`,
+        headers: {
+            'Authorization': JSON.parse(initProps)
+        }
+    })
+    // const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAccountList`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify(reqBodyAccountList)
+    // })
+    const resjsonLA = await resourcesLA.json()
+    const dataListAccount = resjsonLA
+   
     return {
         props: {
             initProps,
             dataProfile,
+            dataListAccount,
             sidemenu: "4"
         },
     }

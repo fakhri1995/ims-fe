@@ -11,7 +11,7 @@ import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
 
 
-function Roles({ initProps, dataProfile, dataListAccount, sidemenu }) {
+function Roles({ initProps, dataProfile, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
@@ -188,8 +188,8 @@ export async function getServerSideProps({ req, res }) {
             initProps = cookiesJSON.token
         }
     }
-    const resourcesGP = await fetch(`https://go.cgx.co.id/auth/v1/get-profile`, {
-        method: `GET`,
+    const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
+        method: `POST`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -197,19 +197,10 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    const resourcesLA = await fetch(`https://go.cgx.co.id/admin/v1/get-list-account?page=1&rows=50&order_by=asc`, {
-        method: `GET`,
-        headers: {
-            'Authorization': JSON.parse(initProps)
-        }
-    })
-    const resjsonLA = await resourcesLA.json()
-    const dataListAccount = resjsonLA
     return {
         props: {
             initProps,
             dataProfile,
-            dataListAccount,
             sidemenu: "4"
         },
     }
