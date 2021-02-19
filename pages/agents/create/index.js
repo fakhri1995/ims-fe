@@ -2,12 +2,13 @@ import Layout from '../../../components/layout-dashboard'
 import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
 import Form from 'antd/lib/form'
-// import Button from 'antd/lib/button'
 import Select from 'antd/lib/select'
 import Upload from 'antd/lib/upload'
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import Input from 'antd/lib/input'
+import InputNumber from 'antd/lib/input-number'
+import notification from 'antd/lib/notification'
 import Sticky from 'wil-react-sticky'
 import { useState, useEffect } from 'react'
 
@@ -53,12 +54,42 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
 
     //handleCreateButton
     const handleCreateAgents = () => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addAccountMember`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newuser)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.asset_id) {
+                    notification['success']({
+                        message: "New agent member successfully saved",
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/agents?originPath=Admin`)
+                    }, 3000)
+                }
+                else {
+                    notification['error']({
+                        message: "Failed to save new agent member",
+                        duration: 3
+                    })
+                }
+            })
         console.log("isi new user: " + newuser.profile_image)
     }
     const onChangeCreateAgents = (e) => {
+        var val = e.target.value
+        if(e.target.name === "role"){
+            val = parseInt(e.target.value)
+        }
         setNewuser({
             ...newuser,
-            [e.target.name]: e.target.value
+            [e.target.name]: val
         })
     }
 
@@ -79,37 +110,34 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
             return;
         }
         if (info.file.status === 'done') {
-            console.log("isi upload: " + info.fileList[0].name)
+            console.log("isi upload: " + info.file.originFileObj.name)
             const formData = new FormData()
-            formData.append('file', info.fileList[0])
-            fetch("/api/upload", {
-                method: "POST",
-                // headers: {
-                //   "Content-Type": "multipart/form-data"
-                // },
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-            // const API_key = 254366153328835
-            // const secret_key = 'dDZ_jO2RPnTYZ1bNA-WaFCKa2ic'
-            // formData.append('upload_preset', 'dbmjwdin')
-            // return fetch(`https://api.Cloudinary.com/v1_1/:aqlpeduli/image/upload?API_key=${API_key}&API_secret=${secret_key}`, {
-            //     method: 'POST',
+            formData.append('file', info.file.originFileObj)
+            // fetch("/api/upload", {
+            //     method: "POST",
             //     body: formData
             // })
-            //     .then(res => res.json())
-            //     .then(res2 => {
-            //         setNewuser({
-            //             ...newuser,
-            //             profile_image: res2.secure_url
-            //         })
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         console.log(data);
             //     })
+            //     .catch(error => {
+            //         console.error(error);
+            //     });
+            const API_key = 254366153328835
+            const secret_key = 'dDZ_jO2RPnTYZ1bNA-WaFCKa2ic'
+            formData.append('upload_preset', 'migsys')
+            return fetch(`https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`, {
+                method: 'POST',
+                body: formData
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    setNewuser({
+                        ...newuser,
+                        profile_image: res2.secure_url
+                    })
+                })
             //or
             // getBase64(info.file.originFileObj, (imageUrl) => {
             //     setNewuser({
@@ -132,12 +160,6 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
             <div style={{ marginTop: 8 }}>Upload</div>
         </div>
     );
-
-    // const handleUpload = (e) => {
-    //     const url = `https://api.cloudinary.com/v1_1/aqlpeduli/image/upload`
-    //     var img = document.querySelector('[type=file]').files[0]
-    //     console.log(img.name)
-    // }
 
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath}>
@@ -227,7 +249,9 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                                         <Input value={newuser} name={`phone_number`} onChange={onChangeCreateAgents} style={{ width: `30rem` }} />
                                     </Form.Item>
                                     <Form.Item label="Role" name="role">
-                                        <Input value={newuser} name={`role`} onChange={onChangeCreateAgents} style={{ width: `30rem` }} />
+                                        {/* <Input value={newuser} name={`role`} onChange={onChangeCreateAgents} style={{ width: `30rem` }} /> */}
+                                        {/* <InputNumber value={newuser} name={`role`} onChange={onChangeCreateAgents} style={{ width: `30rem` }} /> */}
+                                        <input type="number" value={newuser.phone_number} name={'role'} onChange={onChangeCreateAgents} style={{ width: `30rem` }} />
                                     </Form.Item>
                                     <Form.Item label="Company" name="company_id">
                                         <Select onChange={(value) => { setNewuser({ ...newuser, company_id: value }) }} name={`company_id`} style={{ width: `30rem` }} allowClear>
