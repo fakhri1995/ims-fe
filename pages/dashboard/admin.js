@@ -37,13 +37,13 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                         </div>
                         <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                         <Link href={{
-                                pathname: '/requestors',
+                                pathname: '/requesters',
                                 query: {
                                     originPath: "Admin"
                                 }
                             }}>
                                 <div>
-                                    <UserOutlined /> Requestors
+                                    <UserOutlined /> Requesters
                                 </div>
                             </Link>
                         </div>
@@ -60,7 +60,16 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             </Link>
                         </div>
                         <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                            <UserOutlined /> Groups
+                        <Link href={{
+                                pathname: '/groups',
+                                query: {
+                                    originPath: "Admin"
+                                }
+                            }}>
+                                <div>
+                                    <UserOutlined /> Groups
+                                </div>
+                            </Link>
                         </div>
                     </div>
                 </div>

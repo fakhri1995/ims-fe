@@ -7,7 +7,7 @@ import DatePicker from 'antd/lib/date-picker'
 import Sticky from 'wil-react-sticky'
 
 
-function RequestorsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
+function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
     const rt = useRouter()
     const { userId, originPath } = rt.query
     const tok = initProps
@@ -159,4 +159,4 @@ export async function getServerSideProps({ req, res, params }) {
     }
 }
 
-export default RequestorsDetail
+export default RequestersDetail
