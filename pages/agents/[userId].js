@@ -8,9 +8,7 @@ import Sticky from 'wil-react-sticky'
 // import Link from 'next/link';
 // import Breadcrumb from 'antd/lib/breadcrumb'
 
-
-
-function RequestorsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
+function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
     const rt = useRouter()
     const { userId, originPath } = rt.query
     const tok = initProps
@@ -160,4 +158,4 @@ export async function getServerSideProps({ req, res, params }) {
     }
 }
 
-export default RequestorsDetail
+export default AgentsDetail

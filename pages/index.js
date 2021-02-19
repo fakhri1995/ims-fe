@@ -78,7 +78,7 @@ export default function Home({ initProps }) {
                   message: 'Password!',
                 },
               ]}>
-                <Input prefix={<LockOutlined className="site-form-item-icon" />} name="password" value={formdata} placeholder="Password" type="password" onChange={onChangeLogin} />
+                <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} name="password" value={formdata} placeholder="Password" type="password" onChange={onChangeLogin} />
               </Form.Item>
               <Form.Item>
                 <Form.Item name="remember" valuePropName="checked" noStyle>

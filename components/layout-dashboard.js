@@ -18,8 +18,6 @@ import NotificationOutlined from '@ant-design/icons/NotificationOutlined'
 import QuestionCircleOutlined from '@ant-design/icons/QuestionCircleOutlined'
 import PlusCircleTwoTone from '@ant-design/icons/PlusCircleTwoTone'
 import AlertOutlined from '@ant-design/icons/AlertOutlined'
-import Row from 'antd/lib/row';
-import Col from 'antd/lib/col';
 import jscookie from 'js-cookie'
 import 'antd/dist/antd.css';
 
@@ -93,60 +91,60 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
             </div>
         )
     }
-    
+
     const addMenu = () => {
         return (
-            <div style={{ fontSize: '14px'}} className="w-224 h-auto flex flex-col shadow-md rounded bg-white space-y-4 p-5 text-sm">
+            <div style={{ fontSize: '14px' }} className="w-224 h-auto flex flex-col shadow-md rounded bg-white space-y-4 p-5 text-sm">
                 <div className="">
-                    <Row justify="center">
-                            <Col span={10}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Incident</p>
-                            </Col>
-                            <Col span={9}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Release</p>
-                            </Col>
-                            <Col span={5}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Project</p>
-                            </Col>
-                    </Row>
-                    <Row justify="center"> 
-                            <Col span={10}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Service Request</p>
-                            </Col>
-                            <Col span={9}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Asset</p>
-                            </Col>
-                            <Col span={5}>
-                            </Col>
-                    </Row>
-                    <Row justify="center"> 
-                            <Col span={10}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Problem</p>
-                            </Col>
-                            <Col span={9}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Contract</p>
-                            </Col>
-                            <Col span={5}>
-                            </Col>
-                    </Row>
-                    <Row justify="center"> 
-                            <Col span={10}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Change</p>
-                            </Col>
-                            <Col span={9}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Purchase Order</p>
-                            </Col>
-                            <Col span={5}>
-                            </Col>
-                    </Row>
-                
-                    
+                    <div className="grid md:grid-cols-3 justify-center">
+                        <div className="md:col-span-1">
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Incident</p>
+                        </div>
+                        <div className="md:col-span-1">
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Release</p>
+                        </div>
+                        <div className="md:col-span-1">
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Project</p>
+                        </div>
+                    </div>
+                    <div className="grid md:grid-cols-3 justify-center">
+                        <div className="md:col-span-1">
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Service Request</p>
+                        </div>
+                        <div className="md:col-span-1">
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Asset</p>
+                        </div>
+                        <div className="md:col-span-1">
+                        </div>
+                    </div>
+                    <div className="grid md:grid-cols-3 justify-center">
+                        <div className="md:col-span-1">
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Problem</p>
+                        </div>
+                        <div className="md:col-span-1">
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Contract</p>
+                        </div>
+                        <div className="md:col-span-1">
+                        </div>
+                    </div>
+                    <div className="grid md:grid-cols-3 justify-center">
+                        <div className="md:col-span-1">
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Change</p>
+                        </div>
+                        <div className="md:col-span-1">
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Purchase Order</p>
+                        </div>
+                        <div className="md:col-span-1">
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
-                
+
         )
     }
-    
+
     useEffect(() => {
         var h = window.innerHeight
         setTinggi(h)
@@ -187,6 +185,11 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                                     childBreacrumbCC.map((doc, idx) => {
                                         pathBuilder = pathBuilder + `/${pathArr[idx]}`
                                         if (idx === childBreacrumbCC.length - 1 && idx > 0) {
+                                            if (childBreacrumbCC[idx] === "Create") {
+                                                return (
+                                                    <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                )
+                                            }
                                             return (
                                                 <Breadcrumb.Item key={idx}> <strong>{dataDetailAccount.data.fullname}</strong> </Breadcrumb.Item>
                                             )
@@ -213,9 +216,14 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                             :
                             null
                     }
-                    <div style={{ float: `right`, marginRight: `2rem` }}>
+                    <div style={{ float: `right`, marginRight: `2rem`, marginTop:`1rem` }}>
                         <Dropdown overlay={menuProfile2} trigger={['click']}>
-                            <Avatar icon={<UserOutlined></UserOutlined>} style={{ cursor: `pointer` }} />
+                            {
+                                dataProfile.data.image_profile ?
+                                    <img src={dataProfile.data.image_profile} alt="ava" className="w-8 h-8 rounded-full object-cover cursor-pointer" />
+                                    :
+                                    <Avatar icon={<UserOutlined></UserOutlined>} style={{ cursor: `pointer` }} />
+                            }
                         </Dropdown>
                     </div>
                     <div style={{ float: `right`, marginRight: `2rem`, cursor: `pointer` }}>
@@ -224,14 +232,14 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                     <div style={{ float: `right`, marginRight: `2rem`, cursor: `pointer` }}>
                         <QuestionCircleOutlined />
                     </div>
-                    <div style={{ float: `right`, marginRight: `2rem`}}>
+                    <div style={{ float: `right`, marginRight: `2rem` }}>
                         <Dropdown overlay={addMenu} placement="bottomRight" trigger={['click']}>
                             <PlusCircleTwoTone className="" style={{ fontSize: '20px', cursor: `pointer` }} />
                         </Dropdown>
                     </div>
-                    
+
                 </Header>
-                <Content className="slb" style={{ padding: 24, height: `${tinggi}px`, backgroundColor:`white` }}>
+                <Content className="slb" style={{ padding: 24, height: `${tinggi}px`, backgroundColor: `white` }}>
                     {children}
                 </Content>
             </Layout>
