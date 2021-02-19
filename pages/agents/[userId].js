@@ -8,8 +8,6 @@ import Sticky from 'wil-react-sticky'
 // import Link from 'next/link';
 // import Breadcrumb from 'antd/lib/breadcrumb'
 
-
-
 function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
     const rt = useRouter()
     const { userId, originPath } = rt.query

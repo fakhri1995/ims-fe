@@ -2,7 +2,6 @@ import Layout from '../../components/layout-dashboard-clients'
 import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
 import { useState } from 'react'
-
 import Tabs from 'antd/lib/tabs'
 import Input from 'antd/lib/input'
 import Table from 'antd/lib/table'
@@ -10,6 +9,10 @@ import Tree from 'antd/lib/tree'
 import Drawer from 'antd/lib/drawer'
 import Popconfirm from 'antd/lib/popconfirm'
 import message from 'antd/lib/message'
+import Form from 'antd/lib/form'
+import notification from 'antd/lib/notification'
+import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
+import EditOutlined from '@ant-design/icons/EditOutlined'
 import Sticky from 'wil-react-sticky'
 
 
@@ -274,69 +277,232 @@ function ClientsDetailLocations() {
     )
 }
 
-function ClientsDetailBankAccount() {
+function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
+    const rt = useRouter()
     const [editable, setEditable] = useState(false)
     const [drawablecreate, setDrawablecreate] = useState(false)
     const [drawableedit, setDrawableedit] = useState(false)
-    const [selectedrows, setSelectedrows] = useState([])
-    const columnsDummy = [
+    // const [selectedrows, setSelectedrows] = useState([])
+    const [recordrow, setRecordrow] = useState({
+        id: 0,
+        company_id: companyId,
+        name: '',
+        account_number: '',
+        owner: '',
+        currency: ''
+    })
+    const [bankdata, setBankdata] = useState({
+        company_id: companyId,
+        name: '',
+        account_number: '',
+        owner: '',
+        currency: ''
+    })
+    var actionsArr = []
+    for (var i = 0; i < dataGetBanks.data.length; i++) {
+        actionsArr.push(false)
+    }
+    console.log(companyId)
+    const [actions, setActions] = useState(actionsArr)
+    const [action, setAction] = useState(false)
+    const handleDeleteBA = (rec) => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteBank?id=${rec.id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': JSON.parse(tok),
+            },
+            // body: JSON.stringify({
+            //     id: rec.company_id
+            // })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/company/${companyId}?originPath=Admin`)
+                    }, 3000)
+                }
+                else {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
+    const columnsgetBanks = [
         {
             title: 'No.',
             dataIndex: 'key'
         },
         {
+            title: 'ID',
+            dataIndex: 'id'
+        },
+        {
             title: 'Bank',
-            dataIndex: 'bank',
-            filters: [
-                {
-                    text: 'Bukopin',
-                    value: 'Bank Bukopin Kantor Pusat - Jakarta',
-                },
-            ],
-            onFilter: (value, record) => record.bank.indexOf(value) === 0,
+            dataIndex: 'name',
+            // filters: [
+            //     {
+            //         text: 'Bukopin',
+            //         value: 'Bank Bukopin Kantor Pusat - Jakarta',
+            //     },
+            // ],
+            // onFilter: (value, record) => record.bank.indexOf(value) === 0,
             sorter: (a, b) => a.bank.localeCompare(b.bank),
             sortDirections: ['descend', 'ascend'],
         },
         {
             title: 'Nomor Rekening',
-            dataIndex: 'norek',
+            dataIndex: 'account_number',
             sorter: (a, b) => a.norek - b.norek,
             sortDirections: ['descend', 'ascend'],
         },
         {
             title: 'Atas Nama',
-            dataIndex: 'an',
+            dataIndex: 'owner',
             sorter: (a, b) => a.an.localeCompare(b.an),
             sortDirections: ['descend', 'ascend'],
         },
         {
             title: 'Mata Uang',
-            dataIndex: 'matauang',
+            dataIndex: 'currency',
             filters: [
                 {
                     text: 'IDR',
                     value: 'IDR',
                 },
+                {
+                    text: 'USD',
+                    value: 'USD',
+                },
             ],
-            onFilter: (value, record) => record.matauang.indexOf(value) === 0,
-        },
-    ];
-    const dataDummy = [
-        {
-            key: '1',
-            bank: 'Bank Bukopin Kantor Pusat - Jakarta',
-            norek: 12345,
-            an: 'Test 1',
-            matauang: 'IDR'
+            onFilter: (value, record) => record.currency.indexOf(value) === 0,
         },
         {
-            key: '2',
-            bank: 'Bank Syariah Bukopin - Jakarta',
-            norek: 1234567,
-            an: 'Test 2',
-            matauang: 'IDR'
-        },
+            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
+            dataIndex: 'actionss',
+            render: (text, record, index) => (
+                <>
+                    {
+                        actions[index] ?
+                            <>{actions[index]}
+                                <a onClick={() => handleDeleteBA(record)}><DeleteOutlined /></a>
+                                <a onClick={() => { setDrawableedit(true); console.log("isi record: " + record.name); setRecordrow(record) }}><EditOutlined /></a>
+                            </>
+                            :
+                            null
+                    }
+                </>
+            )
+        }
     ];
+    var datagetBanks = []
+    dataGetBanks.data ?
+        datagetBanks = dataGetBanks.data.map((doc, idx) => {
+            return ({
+                key: idx + 1,
+                id: doc.id,
+                company_id: doc.company_id,
+                name: doc.name,
+                account_number: doc.account_number,
+                owner: doc.owner,
+                currency: doc.currency
+            })
+        })
+        :
+        datagetBanks = []
+    const onChangeBA = (e) => {
+        setBankdata({
+            ...bankdata,
+            [e.target.name]: e.target.value
+        })
+    }
+    const onChangeEditBA = (e) => {
+        setRecordrow({
+            ...recordrow,
+            [e.target.name]: e.target.value
+        })
+    }
+    const handleSubmitCreateBA = () => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addBank`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bankdata)
+        })
+            .then((res) => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setBankdata({
+                        company_id: companyId,
+                        name: '',
+                        account_number: '',
+                        owner: '',
+                        currency: ''
+                    })
+                    setTimeout(() => {
+                        setDrawablecreate(false)
+                        rt.push(`/company/${companyId}?originPath=Admin`)
+                    }, 3000)
+                }
+                else {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+        console.log("isi bank data: " + bankdata.name)
+    }
+    const handleSubmitEditBA = () => {
+        console.log("isidata2: " + recordrow)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateBank`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(recordrow)
+        })
+            .then((res) => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setRecordrow({
+                        id: 0,
+                        company_id: companyId,
+                        name: '',
+                        account_number: '',
+                        owner: '',
+                        currency: ''
+                    })
+                    setTimeout(() => {
+                        setDrawableedit(false)
+                        rt.push(`/company/${companyId}?originPath=Admin`)
+                    }, 3000)
+                }
+                else {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
     return (
         <div id="bankAccountDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
@@ -350,49 +516,145 @@ function ClientsDetailBankAccount() {
                             null
                     }
                     <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40" onClick={() => { setDrawablecreate(true) }}> Create</button>
-                    <Drawer title="Edit data Bank Account MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false) }} width={720} footer={
-                        <div style={{ textAlign: 'right' }}>
-                            <button onClick={() => { setDrawableedit(false) }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
-                                Cancel
-                                </button>
-                            <button type="primary" className="bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-20">
-                                Submit
-                                </button>
-                        </div>
-                    }></Drawer>
-                    <Drawer title="Create data Bank Account MIG" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720} footer={
-                        <div style={{ textAlign: 'right' }}>
-                            <button onClick={() => { setDrawablecreate(false) }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
-                                Cancel
-                                </button>
-                            <button type="primary" className="bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-20">
-                                Submit
-                                </button>
-                        </div>
-                    }></Drawer>
+                    <Drawer title="Edit data Bank Account MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false) }} width={720}
+                        // footer={
+                        //     <div style={{ textAlign: 'right' }}>
+                        //         <button onClick={() => { setDrawableedit(false) }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
+                        //             Cancel
+                        //         </button>
+                        //         <button type="primary" className="bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-20">
+                        //             Submit
+                        //         </button>
+                        //     </div>
+                        // }
+                        >
+                        <Form layout="vertical">
+                            <div className="grid grid-cols-2">
+                                {/* record: {recordrow.name} */}
+                                <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank Name"
+                                    // rules={[
+                                    //     {
+                                    //         required: true,
+                                    //         message: 'Please input your bank name!',
+                                    //     },
+                                    // ]}
+                                >
+                                    <Input onChange={onChangeEditBA} name="name" defaultValue={recordrow.name} />
+                                </Form.Item>
+                                <Form.Item name="account_number" style={{ marginRight: `1rem` }} label="Account Number"
+                                    // rules={[
+                                    //     {
+                                    //         required: true,
+                                    //         message: 'Please input your account number!',
+                                    //     },
+                                    // ]}
+                                >
+                                    <Input onChange={onChangeEditBA} name="account_number" defaultValue={recordrow.account_number} />
+                                </Form.Item>
+                                <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Owner"
+                                // rules={[
+                                //     {
+                                //         required: true,
+                                //         message: 'Please input the owner!',
+                                //     },
+                                // ]}
+                                >
+                                    <Input onChange={onChangeEditBA} name="owner" defaultValue={recordrow.owner} />
+                                </Form.Item>
+                                <Form.Item name="currency" style={{ marginRight: `1rem` }} label="Currency">
+                                    <Input onChange={onChangeEditBA} name="currency" defaultValue={recordrow.currency} />
+                                </Form.Item>
+                            </div>
+                            <button className="bg-gray-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-gray-800" onClick={handleSubmitEditBA}>Edit</button>
+                        </Form>
+                    </Drawer>
+                    <Drawer title="Create data Bank Account MIG" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720}
+                    // footer={
+                    //     <div style={{ textAlign: 'right' }}>
+                    //         <button onClick={() => { setDrawablecreate(false) }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
+                    //             Cancel
+                    //             </button>
+                    //         <button type="primary" className="bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-20">
+                    //             Submit
+                    //             </button>
+                    //     </div>
+                    // }
+                    >
+                        <Form layout="vertical">
+                            <div className="grid grid-cols-2">
+                                <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank Name" rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input your bank name!',
+                                    },
+                                ]}>
+                                    <Input onChange={onChangeBA} name="name" value={bankdata.name} />
+                                </Form.Item>
+                                <Form.Item name="account_number" style={{ marginRight: `1rem` }} label="Account Number" rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input your account number!',
+                                    },
+                                ]}>
+                                    <Input onChange={onChangeBA} name="account_number" value={bankdata.account_number} />
+                                </Form.Item>
+                                <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Owner" rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input the owner!',
+                                    },
+                                ]}>
+                                    <Input onChange={onChangeBA} name="owner" value={bankdata.owner} />
+                                </Form.Item>
+                                <Form.Item name="currency" style={{ marginRight: `1rem` }} label="Currency">
+                                    <Input onChange={onChangeBA} name="currency" value={bankdata.currency} />
+                                </Form.Item>
+                            </div>
+                            <button className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800" onClick={handleSubmitCreateBA}>Submit</button>
+                        </Form>
+                    </Drawer>
                 </div>
             </div>
             <div className="md:p-5">
-                <Table scroll={{ x: 200 }} rowSelection={{
-                    selectedRowKeys: selectedrows, onChange: (selectedRowKeys) => {
-                        setSelectedrows(selectedRowKeys)
-                        setEditable(true)
-                        if (selectedRowKeys.length === 0) {
-                            setEditable(false)
+                <Table scroll={{ x: 200 }}
+                    onRow={(record, rowIndex) => {
+                        return {
+                            onMouseOver: (event) => {
+                                var actionsCopy = actions
+                                actionsCopy[rowIndex] = true
+                                setActions(actionsCopy)
+                                setAction("block")
+                            },
+                            onMouseLeave: (event) => {
+                                var actionsCopy = actions
+                                actionsCopy[rowIndex] = false
+                                setActions(actionsCopy)
+                                setAction("hidden")
+                            }
                         }
-                    }
-                }} columns={columnsDummy} dataSource={dataDummy} />
+                    }}
+                    // rowSelection={{
+                    //     selectedRowKeys: selectedrows, onChange: (selectedRowKeys) => {
+                    //         setSelectedrows(selectedRowKeys)
+                    //         setEditable(true)
+                    //         if (selectedRowKeys.length === 0) {
+                    //             setEditable(false)
+                    //         }
+                    //     }
+                    // }} 
+                    columns={columnsgetBanks} dataSource={datagetBanks} />
             </div>
         </div>
     )
 }
 
-function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany }) {
+function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGetBanks }) {
     const rt = useRouter()
     const { TabPane } = Tabs;
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
+    // console.log("get banks: " + dataGetBanks.data[0].account_number)
     return (
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} dataDetailCompany={dataDetailCompany}>
             <div className="p-5 bg-white hidden md:block">
@@ -401,7 +663,7 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany }) 
                         <ClientsDetailProfile dataDetailCompany={dataDetailCompany}></ClientsDetailProfile>
                     </TabPane>
                     <TabPane tab="Bank Accounts" key={`bankAccounts`}>
-                        <ClientsDetailBankAccount />
+                        <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
                     </TabPane>
                     <TabPane tab="Locations" key={`locations`}>
                         <ClientsDetailLocations></ClientsDetailLocations>
@@ -414,7 +676,7 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany }) 
                         <ClientsDetailProfile dataDetailCompany={dataDetailCompany}></ClientsDetailProfile>
                     </TabPane>
                     <TabPane tab="Bank Accounts" key={`bankAccounts`}>
-                        <ClientsDetailBankAccount />
+                        <ClientsDetailBankAccount dataGetBanks={dataGetBanks} />
                     </TabPane>
                     <TabPane tab="Locations" key={`locations`}>
                         <ClientsDetailLocations></ClientsDetailLocations>
@@ -464,11 +726,23 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonGC = await resourcesGC.json()
     const dataDetailCompany = resjsonGC
 
+    const resourcesGB = await fetch(`https://boiling-thicket-46501.herokuapp.com/getBanks?id=${dataDetailCompany.data.company_id}`, {
+        method: `GET`,
+        headers: {
+            'Authorization': JSON.parse(initProps),
+        },
+        // body: JSON.stringify({
+        //     id: dataDetailCompany.data.company_id
+        // })
+    })
+    const resjsonGB = await resourcesGB.json()
+    const dataGetBanks = resjsonGB
     return {
         props: {
             initProps,
             dataProfile,
             dataDetailCompany,
+            dataGetBanks,
             sidemenu: "4"
         },
     }

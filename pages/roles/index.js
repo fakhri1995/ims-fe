@@ -139,19 +139,19 @@ function Roles({ initProps, dataProfile, sidemenu }) {
 
                     </div>
                     <div className="flex flex-col space-y-3 px-4">
-                        <div className="font-semibold text-base">Understanding Roles</div>
-                        <p className="font-normal text-base">
+                        <div className="font-semibold text-sm">Understanding Roles</div>
+                        <p className="font-normal text-sm">
                             Roles allow you to create and edit access permissions for agents. You can create new roles, specify what actions agents with these roles can perform within your help desk, and assign the role to agents.
                     </p>
-                        <p className="font-normal text-base">
+                        <p className="font-normal text-sm">
                             For example, you can create a role for your Support Co-ordinators, allowing them to update fields and assign tickets, and even add notes internally, but not reply to customers.
                     </p>
-                        <p className="font-normal text-base">
+                        <p className="font-normal text-sm">
                             Once you create and save a new Role you will be able to assign it to agents when you create or edit their profile by clicking on the Agents icon under the admin tab.
                     </p>
                         <br />
-                        <div className="font-semibold text-base">Admin Privileges</div>
-                        <p className="font-normal text-base">
+                        <div className="font-semibold text-sm">Admin Privileges</div>
+                        <p className="font-normal text-sm">
                             You can nominate whether you want an agent to have access to settings under the Admin tab. Agents with admin access can be Operation Agents with limited access, or Super Admins with the ability to edit all configurations. You can have as many Super Admins with the ability to view and modify your billing details, or as few as one.
                     </p>
                     </div>
