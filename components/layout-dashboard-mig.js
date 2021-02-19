@@ -81,7 +81,7 @@ function LayoutDashboardMig({ children, tok, dataProfile, pathArr, sidemenu, ori
                     <div className="flex flex-col">
                         <h2 className="text-lg font-semibold mb-1">{dataProfile.data.fullname}</h2>
                         <h2 className="text-sm font-normal mb-1">{dataProfile.data.email}</h2>
-                        <a>Profile Settings</a>
+                        <Link href={`/profile`}>Profile Settings</Link>
                     </div>
                 </div>
                 <div>

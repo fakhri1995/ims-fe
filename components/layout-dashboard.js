@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Layout from 'antd/lib/layout'
+import jscookie from 'js-cookie'
+
 import Menu from 'antd/lib/menu'
 import Avatar from 'antd/lib/avatar'
 import Dropdown from 'antd/lib/dropdown'
@@ -18,7 +20,7 @@ import NotificationOutlined from '@ant-design/icons/NotificationOutlined'
 import QuestionCircleOutlined from '@ant-design/icons/QuestionCircleOutlined'
 import PlusCircleTwoTone from '@ant-design/icons/PlusCircleTwoTone'
 import AlertOutlined from '@ant-design/icons/AlertOutlined'
-import jscookie from 'js-cookie'
+
 import 'antd/dist/antd.css';
 
 function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, originPath, dataDetailAccount }) {
@@ -80,7 +82,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                     <div className="flex flex-col">
                         <h2 className="text-lg font-semibold mb-1">{dataProfile.data.fullname}</h2>
                         <h2 className="text-sm font-normal mb-1">{dataProfile.data.email}</h2>
-                        <a>Profile Settings</a>
+                        <Link href={`/profile`}>Profile Settings</Link>
                     </div>
                 </div>
                 <div>
@@ -216,7 +218,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                             :
                             null
                     }
-                    <div style={{ float: `right`, marginRight: `2rem`, marginTop:`1rem` }}>
+                    <div style={{ float: `right`, marginRight: `2rem`, marginTop: `1rem` }}>
                         <Dropdown overlay={menuProfile2} trigger={['click']}>
                             {
                                 dataProfile.data.image_profile ?
