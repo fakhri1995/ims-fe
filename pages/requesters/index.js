@@ -14,7 +14,7 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
 
-    const dataDD = dataListAccount.data.accounts.map((doc, idx) => {
+    const dataDD = dataListAccount.data.accounts.filter(data => data.company_id !== 66).map((doc, idx) => {
         return ({
             user_id: doc.user_id,
             profile_image: doc.profile_image,
@@ -107,15 +107,27 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
                     <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
                         <a className=" text-sm text-center w-auto mr-5">Import</a>
                         <a className=" text-sm text-center w-auto mr-5">Export</a>
-                        <div className=" text-white text-xs md:text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-3 md:py-2 w-28 md:w-52 text-center">New Requesters</div>
+                        <div className=" text-white text-xs md:text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-3 md:py-2 w-28 md:w-52 text-center">
+                            <Link href={{
+                                pathname: '/requesters/create/',
+                                query: {
+                                    originPath: 'Admin'
+                                }
+                            }}>
+                                <div>
+                                    New Requesters
+                                </div>
+                            </Link>
+                        </div>
                     </div>
                 </div>
                 <div className="h-auto w-full grid grid-cols-1 md:grid-cols-4 mb-5 bg-white px-2">
                     <div className="flex md:hidden flex-col space-y-3 p-4 md:col-span-1 col-span-1">
-                        <div className="font-semibold text-sm">Agents</div>
+                        <div className="font-semibold text-sm">Requesters</div>
                         <p className="font-normal text-sm">
-                            The list shows all Agents added in your help desk. You can edit an existing agent’s permissions and access rights by hovering over the agent and clicking on <EditOutlined />. <br />
-                            You can add new agents by clicking on the “New Agent” button.
+                            This page lets you handpick a set of requesters and add them to your help desk. These requesters will have selective privileges to submit requests to your helpdesk. You can restrict access such that only people who have been added here are allowed to login to your self-service portal and access your knowledge base.
+                        <br /> <br />
+                        You can fill in the details of each of your new requesters manually or import a list of users from a CSV file. Once you have populated your list, your agents can open up each of your requesters and view their ticket history and contact information.
                         </p>
                     </div>
                     <div className="md:col-span-3 col-span-1 flex flex-col p-4">
@@ -221,11 +233,12 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
                             }
                         }}></Table>
                     </div>
-                    <div className="hidden md:flex flex-col space-y-3 p-4 md:col-span-1 col-span-1">
+                    <div className="flex md:hidden flex-col space-y-3 p-4 md:col-span-1 col-span-1">
                         <div className="font-semibold text-sm">Requesters</div>
                         <p className="font-normal text-sm">
-                            The list shows all requesters added in your help desk. You can edit an existing requester’s permissions and access rights by hovering over the requester and clicking on <EditOutlined />. <br />
-                            You can add new requesters by clicking on the “New Requesters” button.
+                            This page lets you handpick a set of requesters and add them to your help desk. These requesters will have selective privileges to submit requests to your helpdesk. You can restrict access such that only people who have been added here are allowed to login to your self-service portal and access your knowledge base.
+                        <br /> <br />
+                        You can fill in the details of each of your new requesters manually or import a list of users from a CSV file. Once you have populated your list, your agents can open up each of your requesters and view their ticket history and contact information.
                         </p>
                     </div>
                 </div>

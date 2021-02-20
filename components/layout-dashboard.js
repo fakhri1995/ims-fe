@@ -45,6 +45,12 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
     const childBreacrumbCC = childBreacrumb.map((doc, idx) => {
         return doc[0].toUpperCase() + doc.slice(1)
     })
+    const childBreacrumbDD = childBreacrumbCC
+    if (childBreacrumbDD[1] === "Update") {
+        // childBreacrumbDD[childBreacrumbDD.length - 2] = childBreacrumbDD[childBreacrumbDD.length - 2] + " " + childBreacrumbDD[childBreacrumbDD.length - 1]
+        childBreacrumbDD.splice(2, 1)
+    }
+    console.log("pjg cc: " + childBreacrumbDD)
     const { Sider, Content, Header } = Layout
     const [coll, setColl] = useState(true)
     const [tinggi, setTinggi] = useState(90)
@@ -183,17 +189,17 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                             <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 10px` }}>
                                 {pathArr[0] === "dashboard" && <Breadcrumb.Item> <strong>{rootBreadcrumb}</strong></Breadcrumb.Item>}
                                 {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${oriPath.toLowerCase()}`}><strong>{oriPath}</strong></Breadcrumb.Item>}
-                                {childBreacrumbCC.length !== 0 ?
-                                    childBreacrumbCC.map((doc, idx) => {
+                                {childBreacrumbDD.length !== 0 ?
+                                    childBreacrumbDD.map((doc, idx) => {
                                         pathBuilder = pathBuilder + `/${pathArr[idx]}`
-                                        if (idx === childBreacrumbCC.length - 1 && idx > 0) {
-                                            if (childBreacrumbCC[idx] === "Create") {
+                                        if (idx === childBreacrumbDD.length - 1 && idx > 0) {
+                                            if (childBreacrumbDD[idx] === "Create") {
                                                 return (
                                                     <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
                                                 )
                                             }
                                             return (
-                                                <Breadcrumb.Item key={idx}> <strong>{dataDetailAccount.data.fullname}</strong> </Breadcrumb.Item>
+                                                <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
                                             )
                                         }
                                         else {

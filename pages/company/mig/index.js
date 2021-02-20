@@ -481,7 +481,9 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                     {
                         actions[index] ?
                             <>{actions[index]}
-                                <a onClick={() => handleDeleteBA(record)}><DeleteOutlined /></a>
+                                <Popconfirm title="Yakin hapus data bank account?" onConfirm={() => { handleDeleteBA(record) }} onCancel={() => { message.error("Gagal dihapus") }}>
+                                    <a><DeleteOutlined /></a>
+                                </Popconfirm>
                                 <a onClick={() => { setDrawableedit(true); console.log("isi record: " + record.name); setRecordrow(record) }}><EditOutlined /></a>
                             </>
                             :
