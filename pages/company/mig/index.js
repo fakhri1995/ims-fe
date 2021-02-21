@@ -12,17 +12,83 @@ import notification from 'antd/lib/notification'
 import message from 'antd/lib/message'
 import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
+import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import { useState } from 'react'
 import Sticky from 'wil-react-sticky'
 
-function MigIndexProfile({ dataDetailCompany }) {
+function MigIndexProfile({ dataDetailCompany, tok }) {
     const [editable, setEditable] = useState(false)
     const onClickEdit = () => {
         setEditable(true)
     }
+    const [data1, setData1] = useState({
+        id: dataDetailCompany.data.company_id,
+        company_name: dataDetailCompany.data.company_name,
+        role: dataDetailCompany.data.role,
+        address: dataDetailCompany.data.address,
+        phone_number: dataDetailCompany.data.phone_number,
+        image_logo: dataDetailCompany.data.image_logo
+    })
+    const [loadingfoto, setLoadingfoto] = useState(false)
+
+    const onChangeEditProfile = (e) => {
+        var val = e.target.value
+        if (e.target.name === "role") {
+            val = parseInt(e.target.value)
+        }
+        setData1({
+            ...data1,
+            [e.target.name]: val
+        })
+    }
+    const onChangeEditProfileFoto = async (e) => {
+        setLoadingfoto(true)
+        const foto = e.target.files
+        const formdata = new FormData()
+        formdata.append('file', foto[0])
+        formdata.append('upload_preset', 'migsys')
+        const fetching = await fetch(`https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`, {
+            method: 'POST',
+            body: formdata
+        })
+        const datajson = await fetching.json()
+        setData1({
+            ...data1,
+            image_logo: datajson.secure_url
+        })
+        setLoadingfoto(false)
+    }
+    const handleEditProfile = () => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateCompanyDetail`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data1)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.data) {
+                    notification['success']({
+                        message: res2.data.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/company/mig?originPath=Admin`)
+                    }, 1000)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                }
+            })
+    }
     return (
         <div id="profileeDetailMigWrapper">
-            <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
+            <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-6">
                 <Sticky containerSelectorFocus="#profileeDetailMigWrapper">
                     <div className="flex space-x-2">
                         {editable ?
@@ -31,31 +97,84 @@ function MigIndexProfile({ dataDetailCompany }) {
                             null
                         }
                         {editable ?
-                            <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md" onClick={onClickEdit}>Save</button>
+                            <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md" onClick={handleEditProfile}>Save</button>
                             :
-                            <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md w-40" onClick={onClickEdit}>Edit</button>
+                            <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md w-40" onClick={() => { setEditable(true) }}>Edit</button>
                         }
                     </div>
                 </Sticky>
             </div>
+            <div className="p-3 relative flex flex-col">
+                <img src={data1.image_logo} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
+                {editable ?
+                    <div>
+                        <label className="custom-file-upload w-auto p-2 border-2 cursor-pointer text-sm rounded-md hover:bg-gray-200">
+                            <input type="file" style={{ display: `none` }} name="profile_image" onChange={onChangeEditProfileFoto} />
+                            {loadingfoto ? <LoadingOutlined /> : <EditOutlined style={{ fontSize: `1.5rem` }} />}
+                                    Ganti Foto
+                        </label>
+                    </div>
+                    :
+                    null
+                }
+            </div>
             <div className="w-full h-auto p-3 md:p-5 grid  grid-cols-1 md:grid-cols-2">
+                <div className="md:m-5 mb-5 md:mb-0 ">
+                    <h1 className="font-semibold text-sm">ID Perusahaan:</h1>
+                    {
+                        editable ?
+                            <Input defaultValue={data1.id} name="company_id" onChange={onChangeEditProfile}></Input>
+                            :
+                            <h1 className="text-sm font-normal text-black">{data1.id}</h1>
+
+                    }
+                </div>
                 <div className="md:m-5 mb-5 md:mb-0 ">
                     <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
                     {
                         editable ?
-                            <Input defaultValue={dataDetailCompany.data.company_name}></Input>
+                            <Input defaultValue={data1.company_name} name="company_name" onChange={onChangeEditProfile}></Input>
                             :
-                            <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
+                            <h1 className="text-sm font-normal text-black">{data1.company_name}</h1>
+
+                    }
+                </div>
+                <div className="md:m-5 mb-5 md:mb-0 ">
+                    <h1 className="font-semibold text-sm">Role:</h1>
+                    {
+                        editable ?
+                            <input type="number" value={data1.role} name={'role'} onChange={onChangeEditProfile} style={{ width: `30rem` }} />
+                            :
+                            <h1 className="text-sm font-normal text-black">{data1.role}</h1>
+
                     }
                 </div>
                 <div className="md:m-5 mb-5 md:mb-0">
-                    <h1 className="font-semibold text-sm">Singkatan:</h1>
-                    {/* <h1 className="font-normal text-sm">MIG</h1> */}
+                    <h1 className="font-semibold text-sm">Alamat:</h1>
                     {
                         editable ?
-                            <Input defaultValue="MIG"></Input>
+                            <Input defaultValue={data1.address} name="address" onChange={onChangeEditProfile}></Input>
                             :
-                            <Input disabled defaultValue="MIG"></Input>
+                            <h1 className="text-sm font-normal text-black">{data1.address}</h1>
+
+                    }
+                </div>
+                <div className="md:m-5 mb-5 md:mb-0">
+                    <h1 className="font-semibold text-sm">Telepon:</h1>
+                    {
+                        editable ?
+                            <Input defaultValue={data1.phone_number} name="phone_number" onChange={onChangeEditProfile}></Input>
+                            :
+                            <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
+
+                    }
+                </div>
+                {/* <div className="md:m-5 mb-5 md:mb-0">
+                    <h1 className="font-semibold text-sm">Singkatan:</h1>
+                    {editable ?
+                        <Input defaultValue="MIG"></Input>
+                        :
+                        <h1 className="text-sm font-normal text-black">{`MIG`}</h1>
                     }
                 </div>
                 <div className="md:m-5 mb-5 md:mb-0">
@@ -64,7 +183,7 @@ function MigIndexProfile({ dataDetailCompany }) {
                         editable ?
                             <Input defaultValue={dataDetailCompany.data.company_name}></Input>
                             :
-                            <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
+                            <h1 className="text-sm font-normal text-black">{dataDetailCompany.data.company_name}</h1>
                     }
                 </div>
                 <div className="md:m-5 mb-5 md:mb-0">
@@ -73,7 +192,7 @@ function MigIndexProfile({ dataDetailCompany }) {
                         editable ?
                             <Input defaultValue={dataDetailCompany.data.company_name}></Input>
                             :
-                            <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
+                            <h1 className="text-sm font-normal text-black">{dataDetailCompany.data.company_name}</h1>
                     }
                 </div>
                 <div className="md:m-5 mb-5 md:mb-0">
@@ -82,25 +201,7 @@ function MigIndexProfile({ dataDetailCompany }) {
                         editable ?
                             <Input defaultValue={dataDetailCompany.data.company_name}></Input>
                             :
-                            <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
-                    }
-                </div>
-                <div className="md:m-5 mb-5 md:mb-0">
-                    <h1 className="font-semibold text-sm">Alamat:</h1>
-                    {
-                        editable ?
-                            <Input defaultValue={dataDetailCompany.data.address}></Input>
-                            :
-                            <Input disabled defaultValue={dataDetailCompany.data.address}></Input>
-                    }
-                </div>
-                <div className="md:m-5 mb-5 md:mb-0">
-                    <h1 className="font-semibold text-sm">Telepon:</h1>
-                    {
-                        editable ?
-                            <Input defaultValue={dataDetailCompany.data.phone_number}></Input>
-                            :
-                            <Input disabled defaultValue={dataDetailCompany.data.phone_number}></Input>
+                            <h1 className="text-sm font-normal text-black">{dataDetailCompany.data.company_name}</h1>
                     }
                 </div>
                 <div className="md:m-5 mb-5 md:mb-0">
@@ -109,7 +210,7 @@ function MigIndexProfile({ dataDetailCompany }) {
                         editable ?
                             <Input defaultValue={dataDetailCompany.data.company_name}></Input>
                             :
-                            <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
+                            <h1 className="text-sm font-normal text-black">{dataDetailCompany.data.company_name}</h1>
                     }
                 </div>
                 <div className="md:m-5 mb-5 md:mb-0">
@@ -118,7 +219,7 @@ function MigIndexProfile({ dataDetailCompany }) {
                         editable ?
                             <Input defaultValue={dataDetailCompany.data.company_name}></Input>
                             :
-                            <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
+                            <h1 className="text-sm font-normal text-black">{dataDetailCompany.data.company_name}</h1>
                     }
                 </div>
                 <div className="md:m-5 mb-5 md:mb-0">
@@ -127,9 +228,9 @@ function MigIndexProfile({ dataDetailCompany }) {
                         editable ?
                             <Input defaultValue={dataDetailCompany.data.company_name}></Input>
                             :
-                            <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
+                            <h1 className="text-sm font-normal text-black">{dataDetailCompany.data.company_name}</h1>
                     }
-                </div>
+                </div> */}
             </div>
         </div>
     )
@@ -664,7 +765,7 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGet
             <div className="p-5 bg-white hidden md:block">
                 <Tabs tabPosition={`left`}>
                     <TabPane tab="Profile" key={`profile`}>
-                        <MigIndexProfile dataDetailCompany={dataDetailCompany}></MigIndexProfile>
+                        <MigIndexProfile dataDetailCompany={dataDetailCompany} tok={tok}></MigIndexProfile>
                     </TabPane>
                     <TabPane tab="Bank Accounts" key={`bankAccounts`}>
                         <MigIndexBankAccount dataGetBanks={dataGetBanks} tok={tok} />
@@ -677,7 +778,7 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGet
             <div className="p-5 bg-white block md:hidden">
                 <Tabs tabPosition={`top`}>
                     <TabPane tab="Profile" key={`profile`}>
-                        <MigIndexProfile dataDetailCompany={dataDetailCompany}></MigIndexProfile>
+                        <MigIndexProfile dataDetailCompany={dataDetailCompany} tok={tok}></MigIndexProfile>
                     </TabPane>
                     <TabPane tab="Bank Accounts" key={`bankAccounts`}>
                         <MigIndexBankAccount dataGetBanks={dataGetBanks} tok={tok} />

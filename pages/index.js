@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import Form from 'antd/lib/form';
-import Spin from 'antd/lib/spin'
-import { Input, Checkbox, Button, Alert, message } from 'antd';
+import { Input, Checkbox, Button, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import { useRouter } from 'next/router'
