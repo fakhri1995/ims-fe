@@ -19,12 +19,13 @@ import { Select, Tag } from 'antd'
 import { Radio } from 'antd'
 import { Row, Col } from 'antd'
 
-function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
+function Groups({ initProps, dataProfile, dataListAccount, dataDetailGroup, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
-    const dataDetailGroup = []
+    // console.log('yg ni' + dataDetailGroup.data.group_detail.name)
+
     //------------populate list account-------------
     const [value, setValue] = useState(1);
     const onChange = e => {
@@ -119,50 +120,8 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
         }
     ];
 
-    // const dataAgent = [
-    //     {
-    //         key: '1',
-    //         name: 'Capacity Management Team',
-    //         agent: '4 Agents',
-    //         actionss: 'clone'
-    //     },
-    //     {
-    //         key: '2',
-    //         name: 'Change Team',
-    //         agent: 'No Agents',
-    //         actionss: 'clone'
-    //     },
-    //     {
-    //         key: '3',
-    //         name: 'Database Team',
-    //         agent: 'No Agents',
-    //         actionss: 'clone'
-    //     },
-    // ];
-    // const dataRequester = [
-    //     {
-    //         key: '1',
-    //         name: 'Change Requesters',
-    //         agent: '4 Agents',
-    //         actionss: 'clone'
-    //     },
-    //     {
-    //         key: '2',
-    //         name: 'Finance Team',
-    //         agent: 'No Agents',
-    //         actionss: 'clone'
-    //     },
-    //     {
-    //         key: '3',
-    //         name: 'HR Team',
-    //         agent: 'No Agents',
-    //         actionss: 'clone'
-    //     },
-    // ];
-
-    // console.log(options[random])
     return (
-        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} dataDetailGroup={dataDetailGroup}>
+        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} dataDetailGroup={dataDetailGroup} originPath={originPath}>
             <>
                 <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
                     <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
@@ -189,12 +148,12 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
                         {/* <div className="w-120 h-auto p-0 "> */}
                             <div className="pb-4 md:mb-0 ">
                                 <h1 className="font-semibold text-sm">Group Name</h1>
-                                <Input placeholder="Group Name"></Input>
+                                <Input placeholder="Group Name" defaultValue={dataDetailGroup.data.group_detail.name}></Input>
                             </div>
                             
                             <div className="pb-4 md:mb-0">
                                 <h1 className="font-semibold text-sm">Group Description</h1>
-                                <TextArea placeholder="Group Description" rows={2}/>
+                                <TextArea placeholder="Group Description" defaultValue={dataDetailGroup.data.group_detail.description} rows={2}/>
                             </div>
                             
                             {/* <div className="pb-4 md:mb-0">
@@ -218,7 +177,7 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
                             </Radio.Group>
                             <Row>
                                 <Col flex="auto">
-                                    <Select  showSearch placeholder="Add an Agent" showArrow mode="multiple" options={dataDD} onChange={handleChange} style={{ width: '100%',padding:'0 5px', lineHeight:'2.4'}}/>  
+                                    <Select  placeholder="Add an Agent" showArrow mode="multiple" options={dataDD} onChange={handleChange} style={{ width: '100%',padding:'0 5px', lineHeight:'2.4'}}/>  
                                 </Col>
                                 <Col flex="100px">
                                     <div className=" text-black text-sm bg-white hover:bg-gray-300 border border-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
@@ -286,8 +245,9 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
     )
 }
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req, res, params }) {
     var initProps = {};
+    const groupsid = params.groupsId
     const reqBodyAccountList = {
         page: 1,
         rows: 50,
@@ -304,6 +264,15 @@ export async function getServerSideProps({ req, res }) {
             initProps = cookiesJSON.token
         }
     }
+    const resourcesGetDetailGroup = await fetch(`https://boiling-thicket-46501.herokuapp.com/getGroup?id=${groupsid}`, {
+        method: `GET`,
+        headers: {
+            'Authorization': JSON.parse(initProps)
+        },
+    })
+    const resjsonGetDetailGroup = await resourcesGetDetailGroup.json()
+    const dataDetailGroup = resjsonGetDetailGroup
+    
     // const resourcesGP = await fetch(`https://go.cgx.co.id/auth/v1/get-profile`, {
     //     method: `GET`,
     //     headers: {
@@ -335,11 +304,13 @@ export async function getServerSideProps({ req, res }) {
     })
     const resjsonLA = await resourcesLA.json()
     const dataListAccount = resjsonLA
+   
     return {
         props: {
             initProps,
             dataProfile,
             dataListAccount,
+            dataDetailGroup,
             sidemenu: "4"
         },
     }
