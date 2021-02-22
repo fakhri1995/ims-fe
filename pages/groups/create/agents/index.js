@@ -212,7 +212,7 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
                                 <Radio className="flex-initial font-bold " value={1}>Add as a Member 
                                 <p className="w-96 pl-6 whitespace-normal font-normal">Members can be assigned tickets, tasks and other items that belong to this group.</p>
                                 </Radio>
-                                <Radio className="flex-initial font-bold" value={2}>Add as an Observer
+                                <Radio disabled className="flex-initial font-bold" value={2}>Add as an Observer
                                 <p className="w-96 pl-6 whitespace-normal font-normal">Members can be assigned tickets, tasks and other items that belong to this group.</p>
                                 </Radio>
                             </Radio.Group>
@@ -229,7 +229,7 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
                                 </Col>
                             </Row>
                         </div>
-                        <Divider style={{borderTop:'1px solid rgba(0, 0, 0, 0.2)'}}/>
+                        {/* <Divider style={{borderTop:'1px solid rgba(0, 0, 0, 0.2)'}}/>
                         <h1 className="font-semibold text-base w-auto py-2">Group Automation</h1>
                         <Row>
                             <Col span={9}>
@@ -247,7 +247,7 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
                             <Col span={15}>
                             <Select  placeholder="Select Agent" showArrow options={dataDD} onChange={handleChange} style={{ width: '100%',padding:'0 5px', lineHeight:'2.4'}}/> 
                             </Col>
-                        </Row>
+                        </Row> */}
                         
                     </div>
                     <div className="flex flex-col space-y-3 px-4">
@@ -319,20 +319,20 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    const resourcesLA = await fetch(`https://go.cgx.co.id/admin/v1/get-list-account?page=1&rows=50&order_by=asc`, {
-        method: `GET`,
-        headers: {
-            'Authorization': JSON.parse(initProps)
-        }
-    })
-    // const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAccountList`, {
-    //     method: `POST`,
+    // const resourcesLA = await fetch(`https://go.cgx.co.id/admin/v1/get-list-account?page=1&rows=50&order_by=asc`, {
+    //     method: `GET`,
     //     headers: {
-    //         'Authorization': JSON.parse(initProps),
-    //         'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify(reqBodyAccountList)
+    //         'Authorization': JSON.parse(initProps)
+    //     }
     // })
+    const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAccountList`, {
+        method: `POST`,
+        headers: {
+            'Authorization': JSON.parse(initProps),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(reqBodyAccountList)
+    })
     const resjsonLA = await resourcesLA.json()
     const dataListAccount = resjsonLA
    

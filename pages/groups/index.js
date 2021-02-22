@@ -14,11 +14,20 @@ import DownOutlined from '@ant-design/icons/DownOutlined'
 import Dropdown from 'antd/lib/dropdown'
 import Menu from 'antd/lib/menu'
 
-function Groups({ initProps, dataProfile, sidemenu }) {
+function Groups({ initProps, dataProfile, dataGroups, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
+    // console.log(dataGroups)
+
+    const groups = dataGroups.data.map((doc, idx) => {
+        return ({
+            key: doc.id,
+            name: doc.name,
+            description: doc.description
+        })
+    })
 
     const [drawablecreate, setDrawablecreate] = useState(false)
 
@@ -37,7 +46,13 @@ function Groups({ initProps, dataProfile, sidemenu }) {
                     props: {
                     style: { background: record.key%2 == 1 ? '#f2f2f2' : '#fff' },
                   },
-                    children: <div>{text}</div>,
+                    children: <div><Link href={{
+                            pathname: `/edit/${record.key}`,
+                            query: {
+                                originPath: 'Admin'
+                            }
+                        }}><a>{record.name}</a></Link>
+                         <p style={{fontSize:'13px'}}>{record.description}</p></div>,
                 };
             },
         },
@@ -172,11 +187,11 @@ function Groups({ initProps, dataProfile, sidemenu }) {
                         <div className="col-span-3 flex flex-col space-y-3">
                         <Tabs onChange={callback} type="card">
                             <TabPane tab="Agent Groups" key="1">
-                                <Table showHeader={false} scroll={{ x: 400 }} dataSource={dataAgent} columns={columnsDD} onRow={(record, rowIndex) => {
+                                <Table showHeader={false} scroll={{ x: 400 }} dataSource={groups} columns={columnsDD} onRow={(record, rowIndex) => {
                                 }}></Table>
                             </TabPane>
                             <TabPane tab="Requester Groups" key="2">
-                                <Table showHeader={false} scroll={{ x: 400 }} dataSource={dataRequester} columns={columnsDD} onRow={(record, rowIndex) => {
+                                <Table showHeader={false} scroll={{ x: 400 }} dataSource={groups} columns={columnsDD} onRow={(record, rowIndex) => {
                                 }}></Table>
                             </TabPane>
                         </Tabs>
@@ -234,12 +249,15 @@ export async function getServerSideProps({ req, res }) {
             initProps = cookiesJSON.token
         }
     }
-    // const resourcesGP = await fetch(`https://go.cgx.co.id/auth/v1/get-profile`, {
-    //     method: `GET`,
-    //     headers: {
-    //         'Authorization': JSON.parse(initProps)
-    //     }
-    // })
+    const resourcesGetGroups = await fetch(`https://boiling-thicket-46501.herokuapp.com/getGroups`, {
+        method: `GET`,
+        headers: {
+            'Authorization': JSON.parse(initProps)
+        }
+    })
+    const resjsonGetGroups = await resourcesGetGroups.json()
+    const dataGroups = resjsonGetGroups
+
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,
         headers: {
@@ -252,6 +270,7 @@ export async function getServerSideProps({ req, res }) {
         props: {
             initProps,
             dataProfile,
+            dataGroups,
             sidemenu: "4"
         },
     }
