@@ -18,28 +18,6 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     var pathArr = rt.pathname.split("/").slice(1)
     pathArr[pathArr.length - 1] = "Create"
 
-    //useEffect
-    // useEffect(() => {
-    //     var d = document.getElementById("widget")
-    //     d.addEventListener('click', (e) => {
-    //         const widget = window.Cloudinary.createUploadWidget(
-    //             {
-    //                 cloudName: 'aqlpeduli',
-    //                 uploadPreset: 'dbmjwdin',
-    //             },
-    //             (error, result) => {
-    //                 if (result.event === 'success') {
-    //                     setNewuser({
-    //                         ...newuser,
-    //                         profile_image: result.info.secure_url
-    //                     })
-    //                 }
-    //             },
-    //         );
-    //         widget.open()
-    //     })
-    // })
-
     //useState
     const [newuser, setNewuser] = useState({
         fullname: '',
@@ -123,8 +101,6 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
             //     .catch(error => {
             //         console.error(error);
             //     });
-            const API_key = 254366153328835
-            const secret_key = 'dDZ_jO2RPnTYZ1bNA-WaFCKa2ic'
             formData.append('upload_preset', 'migsys')
             return fetch(`https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`, {
                 method: 'POST',
@@ -163,7 +139,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-                <div className=" col-span-1 md:col-span-1 flex md:hidden flex-col space-y-4 p-4">
+                {/* <div className=" col-span-1 md:col-span-1 flex md:hidden flex-col space-y-4 p-4">
                     <div className="font-semibold text-base">Agents</div>
                     <p className="font-normal text-xs">
                         When you add a new agent, you will have to provide the agent’s email, set their permission levels and access (full-time or occasional). Agents will receive an email with a confirmation link to activate their account after which they can be assigned to, or respond to tickets. Administrators can also edit an Agent’s profile to include the agent’s title, phone, profile picture, signature etc.
@@ -181,7 +157,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                         Choose the tickets this agent can view and actions they can perform within the helpdesk by assigning one or more roles.
                         Note that you will not be able to modify your own roles, or delete yourself.
                     </p>
-                </div>
+                </div> */}
                 <div className="col-span-1 md:col-span-3 flex flex-col" id="createAgentsWrapper">
                     <Sticky containerSelectorFocus="#createAgentsWrapper">
                         <div className="flex justify-between p-4 border-t-2 border-b-2 bg-white mb-8">
@@ -218,56 +194,34 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                             Detail Akun Pengguna
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4">
-                            <Form layout="vertical" className="createAgentsForm" onFinish={handleCreateAgents}>
-                                <div className="p-3 col-span-1 md:col-span-1">
-                                    <Form.Item name="profile_image">
-                                        <Upload
-                                            name="profile_image"
-                                            listType="picture-card"
-                                            className="profileImage"
-                                            showUploadList={false}
-                                            beforeUpload={beforeUploadProfileImage}
-                                            onChange={onChangeProfileImage}
-                                        >
-                                            {newuser.profile_image ? <img src={newuser.profile_image} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-                                        </Upload>
-                                    </Form.Item>
-                                </div>
-                                <div className="p-3 col-span-1 md:col-span-3">
-                                    {/* <div id="widget" className="w-28 h-28 mb-5 border-dashed border border-blue-500 rounded-md flex justify-center items-center relative cursor-pointer">
-                                        <input type="file" name="uploadimg" style={{ opacity: 0, zIndex: 100, position: `absolute`, width: `100%`, height: `100%`, top: 0, left: 0, cursor: 'pointer' }} />
-                                        <button onClick={handleUpload}>
-                                            + Upload
-                                        </button>
-                                    </div> */}
+                            <div className="p-3 col-span-1 md:col-span-1">
+                                <Upload
+                                    name="profile_image"
+                                    listType="picture-card"
+                                    className="profileImage"
+                                    showUploadList={false}
+                                    beforeUpload={beforeUploadProfileImage}
+                                    onChange={onChangeProfileImage}
+                                >
+                                    {newuser.profile_image ? <img src={newuser.profile_image} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                                </Upload>
+                            </div>
+                            <div className="p-3 col-span-1 md:col-span-3">
+                                <Form layout="vertical" className="createAgentsForm" onFinish={handleCreateAgents}>
                                     <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi" name="fullname">
-                                        <Input value={newuser.fullname} name={`fullname`} onChange={onChangeCreateAgents} style={{ width: `30rem` }} />
+                                        <Input value={newuser.fullname} name={`fullname`} onChange={onChangeCreateAgents} />
                                     </Form.Item>
                                     <Form.Item label="Email" required tooltip="Wajib diisi" name="email">
-                                        <Input value={newuser.email} name={`email`} onChange={onChangeCreateAgents} style={{ width: `30rem` }} />
+                                        <Input value={newuser.email} name={`email`} onChange={onChangeCreateAgents} />
                                     </Form.Item>
                                     <Form.Item label="No. Handphone" name="phone_number">
-                                        <Input value={newuser.phone_number} name={`phone_number`} onChange={onChangeCreateAgents} style={{ width: `30rem` }} />
+                                        <Input value={newuser.phone_number} name={`phone_number`} onChange={onChangeCreateAgents} />
                                     </Form.Item>
                                     <Form.Item label="Role" name="role">
-                                        {/* <Input value={newuser} name={`role`} onChange={onChangeCreateAgents} style={{ width: `30rem` }} /> */}
-                                        {/* <InputNumber value={newuser} name={`role`} onChange={onChangeCreateAgents} style={{ width: `30rem` }} /> */}
-                                        <input type="number" value={newuser.role} name={'role'} onChange={onChangeCreateAgents} style={{ width: `30rem` }} />
+                                        <input type="number" value={newuser.role} name={'role'} onChange={onChangeCreateAgents} />
                                     </Form.Item>
-                                    {/* <Form.Item label="Company" name="company_id">
-                                        <Select onChange={(value) => { setNewuser({ ...newuser, company_id: value }) }} name={`company_id`} style={{ width: `30rem` }} allowClear>
-                                            <Select.Option >Choose company</Select.Option>
-                                            {
-                                                dataCompanyList.data.companies.map((doc, idx) => {
-                                                    return (
-                                                        <Select.Option title={doc.company_name} key={idx} value={doc.company_id}>{doc.company_name}</Select.Option>
-                                                    )
-                                                })
-                                            }
-                                        </Select>
-                                    </Form.Item> */}
-                                </div>
-                            </Form>
+                                </Form>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -99,7 +99,7 @@ function ProfileIndex({ initProps, dataProfile }) {
         setEditable(false)
     }
     return (
-        <Layout tok={initProps} dataProfile={dataProfile} >
+        <Layout tok={initProps} dataProfile={dataProfile} edit={editable} setedit={setEditable}>
             <div className="w-full h-auto border-t-2 p-4 relative">
                 <div className=" absolute top-4 right-8">
                     {editable ?

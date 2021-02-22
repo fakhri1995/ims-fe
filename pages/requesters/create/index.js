@@ -160,44 +160,34 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                             Detail Akun Pengguna
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4">
-                            <Form layout="vertical" className="createAgentsForm" onFinish={handleCreateAgents}>
-                                <div className="p-3 col-span-1 md:col-span-1">
-                                    <Form.Item name="profile_image">
-                                        <Upload
-                                            name="profile_image"
-                                            listType="picture-card"
-                                            className="profileImage"
-                                            showUploadList={false}
-                                            beforeUpload={beforeUploadProfileImage}
-                                            onChange={onChangeProfileImage}
-                                        >
-                                            {newuserrequesters.profile_image ? <img src={newuserrequesters.profile_image} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-                                        </Upload>
-                                    </Form.Item>
-                                </div>
-                                <div className="p-3 col-span-1 md:col-span-3">
-                                    {/* <div id="widget" className="w-28 h-28 mb-5 border-dashed border border-blue-500 rounded-md flex justify-center items-center relative cursor-pointer">
-                                        <input type="file" name="uploadimg" style={{ opacity: 0, zIndex: 100, position: `absolute`, width: `100%`, height: `100%`, top: 0, left: 0, cursor: 'pointer' }} />
-                                        <button onClick={handleUpload}>
-                                            + Upload
-                                        </button>
-                                    </div> */}
+                            <div className="p-3 col-span-1 md:col-span-1">
+                                <Upload
+                                    name="profile_image"
+                                    listType="picture-card"
+                                    className="profileImage"
+                                    showUploadList={false}
+                                    beforeUpload={beforeUploadProfileImage}
+                                    onChange={onChangeProfileImage}
+                                >
+                                    {newuserrequesters.profile_image ? <img src={newuserrequesters.profile_image} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                                </Upload>
+                            </div>
+                            <div className="p-3 col-span-1 md:col-span-3">
+                                <Form layout="vertical" className="createAgentsForm" onFinish={handleCreateAgents}>
                                     <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi" name="fullname">
-                                        <Input value={newuserrequesters.fullname} name={`fullname`} onChange={onChangeCreateRequesters} style={{ width: `30rem` }} />
+                                        <Input value={newuserrequesters.fullname} name={`fullname`} onChange={onChangeCreateRequesters} />
                                     </Form.Item>
                                     <Form.Item label="Email" required tooltip="Wajib diisi" name="email">
-                                        <Input value={newuserrequesters.email} name={`email`} onChange={onChangeCreateRequesters} style={{ width: `30rem` }} />
+                                        <Input value={newuserrequesters.email} name={`email`} onChange={onChangeCreateRequesters} />
                                     </Form.Item>
                                     <Form.Item label="No. Handphone" name="phone_number">
-                                        <Input value={newuserrequesters.phone_number} name={`phone_number`} onChange={onChangeCreateRequesters} style={{ width: `30rem` }} />
+                                        <Input value={newuserrequesters.phone_number} name={`phone_number`} onChange={onChangeCreateRequesters} />
                                     </Form.Item>
                                     <Form.Item label="Role" name="role">
-                                        {/* <Input value={newuserrequesters} name={`role`} onChange={onChangeCreateRequesters} style={{ width: `30rem` }} /> */}
-                                        {/* <InputNumber value={newuserrequesters} name={`role`} onChange={onChangeCreateRequesters} style={{ width: `30rem` }} /> */}
-                                        <input type="number" value={newuserrequesters.role} name={'role'} onChange={onChangeCreateRequesters} style={{ width: `30rem` }} />
+                                        <input type="number" value={newuserrequesters.role} name={'role'} onChange={onChangeCreateRequesters} />
                                     </Form.Item>
                                     <Form.Item label="Company" name="company_id">
-                                        <Select onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }} name={`company_id`} style={{ width: `30rem` }} allowClear>
+                                        <Select onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }} name={`company_id`} allowClear>
                                             <Select.Option >Choose company</Select.Option>
                                             {
                                                 dataCompanyList.map((doc, idx) => {
@@ -208,8 +198,8 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                                             }
                                         </Select>
                                     </Form.Item>
-                                </div>
-                            </Form>
+                                </Form>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -83,7 +83,7 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
                             <>{actions[index]}
                                 <a><CopyOutlined /></a>
                                 <Link href={{
-                                    pathname: `/requesters/${record.user_id}`,
+                                    pathname: `/requesters/update/${record.user_id}`,
                                     query: {
                                         originPath: 'Admin'
                                     }
@@ -251,7 +251,7 @@ export async function getServerSideProps({ req, res }) {
     var initProps = {};
     const reqBodyAccountList = {
         page: 1,
-        rows: 10,
+        rows: 50,
         order_by: "asc"
     }
     if (req && req.headers) {

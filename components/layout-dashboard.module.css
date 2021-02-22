@@ -1,11 +1,29 @@
-.headerLayout{
-    padding: 0;
-    background-color: white;
-    display: flex;
-    flex-wrap: wrap;
+.headerLayout {
+  padding: 0;
+  background-color: white;
+  display: flex;
+  flex-wrap: wrap;
 }
 
-.triggerLayout{
+/* .triggerLayout{
     padding: 24px;
     float: left;
+} */
+
+.menuToggle:checked + .menu {
+  display: flex;
+  justify-content: end;
 }
+
+/* @media only screen and (max-width: 540px) {
+  .siderLayout {
+      display: none;
+  }
+  
+}
+
+@media only screen and (min-width: 541px) {
+    .siderLayout {
+        display: block;
+    }
+  } */

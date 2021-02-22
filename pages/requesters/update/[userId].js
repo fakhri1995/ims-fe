@@ -3,8 +3,10 @@ import Layout from '../../../components/layout-dashboard'
 import httpcookie from 'cookie'
 import Form from 'antd/lib/form'
 import Input from 'antd/lib/input'
-import DatePicker from 'antd/lib/date-picker'
 import Sticky from 'wil-react-sticky'
+import { useState } from 'react'
+import Link from 'next/link'
+import EditOutlined from '@ant-design/icons/EditOutlined'
 
 
 function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
@@ -139,7 +141,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
                                         <Input value={data1.phone_number} />
                                     </Form.Item>
                                     <Form.Item label="Role" required tooltip="Wajib diisi">
-                                        <input type="number" value={data1.role} name={'role'} onChange={onChangeEditAgents} style={{ width: `30rem` }} />
+                                        <input type="number" value={data1.role} name={'role'} onChange={onChangeEditAgents} />
                                     </Form.Item>
                                 </Form>
                             </div>
