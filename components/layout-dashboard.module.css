@@ -15,15 +15,19 @@
   justify-content: end;
 }
 
-/* @media only screen and (max-width: 540px) {
-  .siderLayout {
-      display: none;
+@media only screen and (max-width: 540px) {
+  .foldToggle:checked + .sider {
+    display: block;
   }
-  
+
+  .siderLayout,
+  .trigger {
+    display: none;
+  }
 }
 
 @media only screen and (min-width: 541px) {
-    .siderLayout {
-        display: block;
-    }
-  } */
+  .siderLayout {
+    display: block;
+  }
+}

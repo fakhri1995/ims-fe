@@ -160,7 +160,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
     var pathBuilder = ""
     return (
         <Layout>
-            <Sider collapsible collapsed={coll} trigger={null} breakpoint="lg" theme="light" className={st.siderLayout}>
+            <Sider collapsible collapsed={coll} trigger={null} breakpoint="lg" theme="light" className={`${st.siderLayout} sider`}>
                 <div className="logo" style={{ height: `32px`, margin: `16px`, background: `gray` }}></div>
                 <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]}>
                     <Menu.Item key="1" icon={<DashboardTwoTone />}>
@@ -183,8 +183,12 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
             </Sider>
             <Layout className="site-layout">
                 <Header className="site-layout-background" style={{ padding: 0, backgroundColor: `white`, display: `flex`, alignItems: `center`, flexDirection: `row`, flexWrap: `wrap`, width: `100%`, justifyContent: `space-between`, height: `auto` }}>
-                    <div>
-                        {coll ? <MenuUnfoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className="trigger"></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left` }} className="trigger"></MenuFoldOutlined>}
+                    <div className="flex">
+                        {coll ? <MenuUnfoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className={st.trigger}></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left` }} className={st.trigger}></MenuFoldOutlined>}
+                        <label htmlFor={`foldtoggle`} className="pointer-cursor md:hidden block cursor-pointer">
+                            <MenuUnfoldOutlined style={{ padding: `24px`, float: `left` }}></MenuUnfoldOutlined>
+                        </label>
+                        <input className={`hidden ${st.foldToggle}`} type="checkbox" />
                         {
                             pathArr ?
                                 <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 10px`, backgroundColor: `white` }}>
@@ -226,7 +230,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                                 null
                         }
                     </div>
-                    <label htmlFor={`menutoggle`} className="pointer-cursor md:hidden block cursor-pointer">
+                    <label htmlFor={`menutoggle`} className="pointer-cursor md:hidden block cursor-pointer mr-4">
                         <svg className="fill-current text-gray-900" xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 20 20">
                             <title>menu</title>
                             <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
