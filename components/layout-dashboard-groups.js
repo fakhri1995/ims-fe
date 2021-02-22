@@ -23,10 +23,12 @@ import Col from 'antd/lib/col';
 import jscookie from 'js-cookie'
 import st from './layout-dashboard-groups.module.css'
 import 'antd/dist/antd.css';
+import { data } from 'autoprefixer'
 
-function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, originPath, dataDetailAccount }) {
+function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, originPath, dataDetailGroup }) {
     const rt = useRouter()
     var rootBreadcrumb = ""
+    // console.log(dataDetailGroup)
     var oriPath = ""
     var childBreacrumb = []
     if (originPath) {
@@ -47,8 +49,18 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
         return doc[0].toUpperCase() + doc.slice(1)
     })
     const childBreacrumbDD = childBreacrumbCC
-    childBreacrumbDD[childBreacrumbCC.length - 2] = childBreacrumbDD[childBreacrumbCC.length - 2] + " " + childBreacrumbDD[childBreacrumbCC.length - 1] + " " + childBreacrumbDD[childBreacrumbCC.length - 3]
-    childBreacrumbDD.splice(2, 1)
+    if (dataDetailGroup.length === 0 ){
+        childBreacrumbDD[childBreacrumbCC.length - 2] = childBreacrumbDD[childBreacrumbCC.length - 2] + " " + childBreacrumbDD[childBreacrumbCC.length - 1] + " " + childBreacrumbDD[childBreacrumbCC.length - 3]
+        childBreacrumbDD.splice(2, 1)
+        // console.log("satu")
+    }
+    else {
+        // console.log("dua")
+        console.log(childBreacrumbDD)
+        childBreacrumbDD[childBreacrumbCC.length - 3] = childBreacrumbDD[childBreacrumbCC.length - 3] + " " + childBreacrumbDD[childBreacrumbCC.length - 2] + " " +childBreacrumbDD[childBreacrumbCC.length - 4]
+        childBreacrumbDD.splice(2, 1)
+        // console.log('udah di splice: '+childBreacrumbDD)
+    }
 
     const { Sider, Content, Header } = Layout
     const [coll, setColl] = useState(true)
@@ -192,10 +204,17 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                                     {childBreacrumbDD.length !== 0 ?
                                         childBreacrumbDD.map((doc, idx) => {
                                             pathBuilder = pathBuilder + `/${pathArr[idx]}`
-                                            if (idx === childBreacrumbDD.length - 1 && idx > 0) {
-                                                return (
-                                                    <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
-                                                )
+                                            if (idx === childBreacrumbDD.length - 1 && idx > 0) { 
+                                                if (dataDetailGroup.length === 0){
+                                                    return (
+                                                        <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                    )
+                                                }
+                                                else {
+                                                    return (
+                                                        <Breadcrumb.Item key={idx}> <strong>{dataDetailGroup.data.group_detail.name}</strong> </Breadcrumb.Item>
+                                                    )
+                                                }
                                             }
                                             else {
                                                 return (

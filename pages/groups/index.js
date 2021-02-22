@@ -14,7 +14,7 @@ import DownOutlined from '@ant-design/icons/DownOutlined'
 import Dropdown from 'antd/lib/dropdown'
 import Menu from 'antd/lib/menu'
 
-function Groups({ initProps, dataProfile, dataGroups, sidemenu }) {
+function Groups({ initProps, dataProfile, dataGroups, sidemenu, dataDetailGroup }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
@@ -47,7 +47,7 @@ function Groups({ initProps, dataProfile, dataGroups, sidemenu }) {
                     style: { background: record.key%2 == 1 ? '#f2f2f2' : '#fff' },
                   },
                     children: <div><Link href={{
-                            pathname: `/edit/${record.key}`,
+                            pathname: `/groups/update/agents/${record.key}`,
                             query: {
                                 originPath: 'Admin'
                             }
@@ -69,7 +69,7 @@ function Groups({ initProps, dataProfile, dataGroups, sidemenu }) {
                     children: 
                     <Button>
                         <Link href={{
-                            pathname: `/edit/${record.key}`,
+                            pathname: `/groups/update/agents/${record.key}`,
                             query: {
                                 originPath: 'Admin'
                             }
@@ -165,7 +165,7 @@ function Groups({ initProps, dataProfile, dataGroups, sidemenu }) {
     }
       
     return (
-        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath}>
+        <Layout tok={tok} dataDetailGroup={dataDetailGroup} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath}>
             <>
                 <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
                     <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
@@ -266,11 +266,14 @@ export async function getServerSideProps({ req, res }) {
     })
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
+
+    const dataDetailGroup = []
     return {
         props: {
             initProps,
             dataProfile,
             dataGroups,
+            dataDetailGroup,
             sidemenu: "4"
         },
     }
