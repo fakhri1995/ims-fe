@@ -50,7 +50,6 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
         // childBreacrumbDD[childBreacrumbDD.length - 2] = childBreacrumbDD[childBreacrumbDD.length - 2] + " " + childBreacrumbDD[childBreacrumbDD.length - 1]
         childBreacrumbDD.splice(2, 1)
     }
-    console.log("pjg cc: " + childBreacrumbDD)
     const { Sider, Content, Header } = Layout
     const [coll, setColl] = useState(true)
     const [tinggi, setTinggi] = useState(90)
@@ -160,9 +159,9 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
     var pathBuilder = ""
     return (
         <Layout>
-            <Sider collapsible collapsed={coll} trigger={null} breakpoint="lg" theme="light" className={`${st.siderLayout} sider`}>
+            <Sider collapsible collapsed={coll} trigger={null} breakpoint="lg" theme="light" className={`${st.siderLayout} sider`} style={{ borderRight: `1px solid #f0f0f0` }}>
                 <div className="logo" style={{ height: `32px`, margin: `16px`, background: `gray` }}></div>
-                <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]}>
+                <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]} style={{borderRight:`0`}}>
                     <Menu.Item key="1" icon={<DashboardTwoTone />}>
                         <Link href="/dashboard/home">
                             Dashboard
