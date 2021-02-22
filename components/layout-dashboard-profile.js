@@ -9,9 +9,10 @@ import Avatar from 'antd/lib/avatar'
 import Dropdown from 'antd/lib/dropdown'
 import ExportOutlined from '@ant-design/icons/ExportOutlined'
 import DashboardTwoTone from '@ant-design/icons/DashboardTwoTone'
+import st from './layout-dashboard-profile.module.css'
 import 'antd/dist/antd.css';
 
-function LayoutDashboardProfile({ children, tok, dataProfile }) {
+function LayoutDashboardProfile({ children, tok, dataProfile, edit, setedit }) {
     const rt = useRouter()
     const { Sider, Content, Header } = Layout
     const [coll, setColl] = useState(true)
@@ -53,12 +54,12 @@ function LayoutDashboardProfile({ children, tok, dataProfile }) {
                     </div>
                 </div>
                 <div>
-                    <a onClick={handleLogout}>
+                    <a onClick={setedit}>
                         Edit Profile
                     </a>
                 </div>
                 <div>
-                    <a onClick={handleLogout}>
+                    <a>
                         Security Settings
                     </a>
                 </div>
@@ -79,7 +80,7 @@ function LayoutDashboardProfile({ children, tok, dataProfile }) {
     return (
         <Layout>
             <Sider collapsible collapsed={coll} trigger={null} breakpoint="lg" theme="light">
-                <div className="logo" style={{ height: `32px`, marginTop: `24px`, marginLeft:`16px`, marginRight:`16px`, background: `gray` }}></div>
+                <div className="logo" style={{ height: `32px`, marginTop: `24px`, marginLeft: `16px`, marginRight: `16px`, background: `gray` }}></div>
                 <Menu theme="light" mode="inline" defaultSelectedKeys={['1']}>
                     <Menu.Item key="1" icon={<DashboardTwoTone />}>
                         <Link href="/dashboard/home">
@@ -89,19 +90,30 @@ function LayoutDashboardProfile({ children, tok, dataProfile }) {
                 </Menu>
             </Sider>
             <Layout className="site-layout">
-                <Header className="site-layout-background" style={{ padding: 0, backgroundColor: `white` }}>
-                    <div className="float-left px-8 py-8 font-bold text-base">
-                        Profile
+                <Header className="site-layout-background" style={{ padding: 0, backgroundColor: `white`, display: `flex`, flexDirection: `row`, flexWrap: `wrap`, justifyContent: `space-between`, width: `100%`, height: `auto`, alignItems: `center` }}>
+                    <div>
+                        <div className="float-left px-8 py-8 font-bold text-base">
+                            Profile
+                        </div>
                     </div>
-                    <div style={{ float: `right`, marginRight: `2rem`, marginTop: `2rem`, marginBottom:`2rem` }}>
-                        <Dropdown overlay={menuProfile2} trigger={['click']}>
-                            {
-                                dataProfile.data.image_profile ?
-                                    <img src={dataProfile.data.image_profile} alt="ava" className="w-8 h-8 rounded-full object-cover cursor-pointer" />
-                                    :
-                                    <Avatar icon={<UserOutlined></UserOutlined>} style={{ cursor: `pointer` }} />
-                            }
-                        </Dropdown>
+                    <label htmlFor={`menutoggle`} className="pointer-cursor md:hidden block cursor-pointer">
+                        <svg className="fill-current text-gray-900" xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 20 20">
+                            <title>menu</title>
+                            <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
+                        </svg>
+                    </label>
+                    <input className={`hidden ${st.menuToggle}`} type="checkbox" id={`menutoggle`} />
+                    <div className={`hidden md:flex md:w-auto w-full ${st.menu}`}>
+                        <div style={{ marginRight: `3rem`, marginTop: `2rem`, marginBottom: `2rem` }}>
+                            <Dropdown overlay={menuProfile2} trigger={['click']}>
+                                {
+                                    dataProfile.data.image_profile ?
+                                        <img src={dataProfile.data.image_profile} alt="ava" className="w-8 h-8 rounded-full object-cover cursor-pointer" />
+                                        :
+                                        <Avatar icon={<UserOutlined></UserOutlined>} style={{ cursor: `pointer` }} />
+                                }
+                            </Dropdown>
+                        </div>
                     </div>
                 </Header>
                 <Content className="slb" style={{ padding: 24, height: `${tinggi}px`, backgroundColor: `white` }}>

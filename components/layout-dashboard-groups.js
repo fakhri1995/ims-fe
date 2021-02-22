@@ -21,6 +21,7 @@ import AlertOutlined from '@ant-design/icons/AlertOutlined'
 import Row from 'antd/lib/row';
 import Col from 'antd/lib/col';
 import jscookie from 'js-cookie'
+import st from './layout-dashboard-groups.module.css'
 import 'antd/dist/antd.css';
 
 function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, originPath, dataDetailAccount }) {
@@ -46,9 +47,9 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
         return doc[0].toUpperCase() + doc.slice(1)
     })
     const childBreacrumbDD = childBreacrumbCC
-    childBreacrumbDD[childBreacrumbCC.length-2] = childBreacrumbDD[childBreacrumbCC.length-2] + " " + childBreacrumbDD[childBreacrumbCC.length-1] + " " + childBreacrumbDD[childBreacrumbCC.length - 3]
-    childBreacrumbDD.splice(2,1)
-    
+    childBreacrumbDD[childBreacrumbCC.length - 2] = childBreacrumbDD[childBreacrumbCC.length - 2] + " " + childBreacrumbDD[childBreacrumbCC.length - 1] + " " + childBreacrumbDD[childBreacrumbCC.length - 3]
+    childBreacrumbDD.splice(2, 1)
+
     const { Sider, Content, Header } = Layout
     const [coll, setColl] = useState(true)
     const [tinggi, setTinggi] = useState(90)
@@ -86,7 +87,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                     <div className="flex flex-col">
                         <h2 className="text-lg font-semibold mb-1">{dataProfile.data.fullname}</h2>
                         <h2 className="text-sm font-normal mb-1">{dataProfile.data.email}</h2>
-                        <a>Profile Settings</a>
+                        <a href={`/profile`} target="_blank" ref="noreferrer">Profile Settings</a>
                     </div>
                 </div>
                 <div>
@@ -97,60 +98,60 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
             </div>
         )
     }
-    
+
     const addMenu = () => {
         return (
-            <div style={{ fontSize: '14px'}} className="w-224 h-auto flex flex-col shadow-md rounded bg-white space-y-4 p-5 text-sm">
+            <div style={{ fontSize: '14px' }} className="w-224 h-auto flex flex-col shadow-md rounded bg-white space-y-4 p-5 text-sm">
                 <div className="">
                     <Row justify="center">
-                            <Col span={10}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Incident</p>
-                            </Col>
-                            <Col span={9}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Release</p>
-                            </Col>
-                            <Col span={5}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Project</p>
-                            </Col>
+                        <Col span={10}>
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Incident</p>
+                        </Col>
+                        <Col span={9}>
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Release</p>
+                        </Col>
+                        <Col span={5}>
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Project</p>
+                        </Col>
                     </Row>
-                    <Row justify="center"> 
-                            <Col span={10}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Service Request</p>
-                            </Col>
-                            <Col span={9}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Asset</p>
-                            </Col>
-                            <Col span={5}>
-                            </Col>
+                    <Row justify="center">
+                        <Col span={10}>
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Service Request</p>
+                        </Col>
+                        <Col span={9}>
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Asset</p>
+                        </Col>
+                        <Col span={5}>
+                        </Col>
                     </Row>
-                    <Row justify="center"> 
-                            <Col span={10}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Problem</p>
-                            </Col>
-                            <Col span={9}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Contract</p>
-                            </Col>
-                            <Col span={5}>
-                            </Col>
+                    <Row justify="center">
+                        <Col span={10}>
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Problem</p>
+                        </Col>
+                        <Col span={9}>
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Contract</p>
+                        </Col>
+                        <Col span={5}>
+                        </Col>
                     </Row>
-                    <Row justify="center"> 
-                            <Col span={10}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Change</p>
-                            </Col>
-                            <Col span={9}>
-                                <p><AlertOutlined style={{verticalAlign:'0.2em'}} className="pr-2" />Purchase Order</p>
-                            </Col>
-                            <Col span={5}>
-                            </Col>
+                    <Row justify="center">
+                        <Col span={10}>
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Change</p>
+                        </Col>
+                        <Col span={9}>
+                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Purchase Order</p>
+                        </Col>
+                        <Col span={5}>
+                        </Col>
                     </Row>
-                
-                    
+
+
                 </div>
             </div>
-                
+
         )
     }
-    
+
     useEffect(() => {
         var h = window.innerHeight
         setTinggi(h)
@@ -180,62 +181,77 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                 </Menu>
             </Sider>
             <Layout className="site-layout">
-                <Header className="site-layout-background" style={{ padding: 0, backgroundColor: `white` }}>
-                    {coll ? <MenuUnfoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className="trigger"></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left` }} className="trigger"></MenuFoldOutlined>}
-                    {
-                        pathArr ?
-                            <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 10px` }}>
-                                {pathArr[0] === "dashboard" && <Breadcrumb.Item> <strong>{rootBreadcrumb}</strong></Breadcrumb.Item>}
-                                {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${oriPath.toLowerCase()}`}><strong>{oriPath}</strong></Breadcrumb.Item>}
-                                {childBreacrumbDD.length !== 0 ?
-                                    childBreacrumbDD.map((doc, idx) => {
-                                        pathBuilder = pathBuilder + `/${pathArr[idx]}`
-                                        if (idx === childBreacrumbDD.length - 1 && idx > 0) {
-                                            return (
-                                                <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
-                                            )
-                                        }
-                                        else {
-                                            return (
-                                                <Breadcrumb.Item key={idx}>
-                                                    <Link href={{
-                                                        pathname: pathBuilder,
-                                                        query: {
-                                                            originPath: oriPath
-                                                        }
-                                                    }}>
-                                                        <strong>{doc}</strong>
-                                                    </Link>
-                                                </Breadcrumb.Item>
-                                            )
-                                        }
-                                    })
-                                    :
-                                    null
+                <Header className="site-layout-background" style={{ padding: 0, backgroundColor: `white`, display: `flex`, flexDirection: `row`, flexWrap: `wrap`, justifyContent: `space-between`, width: `100%`, height: `auto`, alignItems: `center` }}>
+                    <div>
+                        {coll ? <MenuUnfoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className="trigger"></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left` }} className="trigger"></MenuFoldOutlined>}
+                        {
+                            pathArr ?
+                                <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 10px` }}>
+                                    {pathArr[0] === "dashboard" && <Breadcrumb.Item> <strong>{rootBreadcrumb}</strong></Breadcrumb.Item>}
+                                    {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${oriPath.toLowerCase()}`}><strong>{oriPath}</strong></Breadcrumb.Item>}
+                                    {childBreacrumbDD.length !== 0 ?
+                                        childBreacrumbDD.map((doc, idx) => {
+                                            pathBuilder = pathBuilder + `/${pathArr[idx]}`
+                                            if (idx === childBreacrumbDD.length - 1 && idx > 0) {
+                                                return (
+                                                    <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                )
+                                            }
+                                            else {
+                                                return (
+                                                    <Breadcrumb.Item key={idx}>
+                                                        <Link href={{
+                                                            pathname: pathBuilder,
+                                                            query: {
+                                                                originPath: oriPath
+                                                            }
+                                                        }}>
+                                                            <strong>{doc}</strong>
+                                                        </Link>
+                                                    </Breadcrumb.Item>
+                                                )
+                                            }
+                                        })
+                                        :
+                                        null
+                                    }
+                                </Breadcrumb>
+                                :
+                                null
+                        }
+                    </div>
+                    <label htmlFor={`menutoggle`} className="pointer-cursor md:hidden block cursor-pointer">
+                        <svg className="fill-current text-gray-900" xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 20 20">
+                            <title>menu</title>
+                            <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
+                        </svg>
+                    </label>
+                    <input className={`hidden ${st.menuToggle}`} type="checkbox" id={`menutoggle`} />
+                    <div className={`hidden md:flex md:w-auto w-full ${st.menu}`}>
+                        <div style={{ marginRight: `3rem` }}>
+                            <Dropdown overlay={addMenu} placement="bottomRight" trigger={['click']}>
+                                <PlusCircleTwoTone className="" style={{ fontSize: '20px', cursor: `pointer` }} />
+                            </Dropdown>
+                        </div>
+                        <div style={{ marginRight: `3rem`, cursor: `pointer` }}>
+                            <QuestionCircleOutlined />
+                        </div>
+                        <div style={{ marginRight: `3rem`, cursor: `pointer` }}>
+                            <NotificationOutlined />
+                        </div>
+                        <div style={{ marginRight: `3rem`, marginTop: `1rem` }}>
+                            <Dropdown overlay={menuProfile2} trigger={['click']}>
+                                {
+                                    dataProfile.data.image_profile ?
+                                        <img src={dataProfile.data.image_profile} alt="ava" className="w-8 h-8 rounded-full object-cover cursor-pointer" />
+                                        :
+                                        <Avatar icon={<UserOutlined></UserOutlined>} style={{ cursor: `pointer` }} />
                                 }
-                            </Breadcrumb>
-                            :
-                            null
-                    }
-                    <div style={{ float: `right`, marginRight: `2rem` }}>
-                        <Dropdown overlay={menuProfile2} trigger={['click']}>
-                            <Avatar icon={<UserOutlined></UserOutlined>} style={{ cursor: `pointer` }} />
-                        </Dropdown>
+                            </Dropdown>
+                        </div>
                     </div>
-                    <div style={{ float: `right`, marginRight: `2rem`, cursor: `pointer` }}>
-                        <NotificationOutlined />
-                    </div>
-                    <div style={{ float: `right`, marginRight: `2rem`, cursor: `pointer` }}>
-                        <QuestionCircleOutlined />
-                    </div>
-                    <div style={{ float: `right`, marginRight: `2rem`}}>
-                        <Dropdown overlay={addMenu} placement="bottomRight" trigger={['click']}>
-                            <PlusCircleTwoTone className="" style={{ fontSize: '20px', cursor: `pointer` }} />
-                        </Dropdown>
-                    </div>
-                    
                 </Header>
-                <Content className="slb" style={{ padding: 24, height: `${tinggi}px`, backgroundColor:`white` }}>
+                <Content className="slb" style={{ padding: 24, height: `${tinggi}px`, backgroundColor: `white` }}>
                     {children}
                 </Content>
             </Layout>

@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
 import Form from 'antd/lib/form'
 import Upload from 'antd/lib/upload'
+import Select from 'antd/lib/select'
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import Input from 'antd/lib/input'
@@ -11,21 +12,22 @@ import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 
-function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
+function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     const rt = useRouter()
     const { originPath } = rt.query
     const tok = initProps
     var pathArr = rt.pathname.split("/").slice(1)
     pathArr[pathArr.length - 1] = "Create"
+    dataCompanyList = dataCompanyList.data.companies.filter(data => data.company_id !== 66)
 
     //useState
-    const [newuser, setNewuser] = useState({
+    const [newuserrequesters, setNewuserrequesters] = useState({
         fullname: '',
         email: '',
         role: 0,
         phone_number: '',
         profile_image: '',
-        company_id: 66
+        company_id: 0
     })
     const [loadingupload, setLoadingupload] = useState(false)
 
@@ -37,7 +39,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                 'Authorization': JSON.parse(tok),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(newuser)
+            body: JSON.stringify(newuserrequesters)
         })
             .then(res => res.json())
             .then(res2 => {
@@ -47,7 +49,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/agents?originPath=Admin`)
+                        rt.push(`/requesters?originPath=Admin`)
                     }, 1000)
                 }
                 else if (!res2.success) {
@@ -57,15 +59,15 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                     })
                 }
             })
-        console.log("isi new user: " + newuser.profile_image)
+        console.log("isi new user: " + newuserrequesters.profile_image)
     }
-    const onChangeCreateAgents = (e) => {
+    const onChangeCreateRequesters = (e) => {
         var val = e.target.value
         if (e.target.name === "role") {
             val = parseInt(e.target.value)
         }
-        setNewuser({
-            ...newuser,
+        setNewuserrequesters({
+            ...newuserrequesters,
             [e.target.name]: val
         })
     }
@@ -90,17 +92,6 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
             console.log("isi upload: " + info.file.originFileObj.name)
             const formData = new FormData()
             formData.append('file', info.file.originFileObj)
-            // fetch("/api/upload", {
-            //     method: "POST",
-            //     body: formData
-            // })
-            //     .then(response => response.json())
-            //     .then(data => {
-            //         console.log(data);
-            //     })
-            //     .catch(error => {
-            //         console.error(error);
-            //     });
             formData.append('upload_preset', 'migsys')
             return fetch(`https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`, {
                 method: 'POST',
@@ -108,26 +99,12 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
             })
                 .then(res => res.json())
                 .then(res2 => {
-                    setNewuser({
-                        ...newuser,
+                    setNewuserrequesters({
+                        ...newuserrequesters,
                         profile_image: res2.secure_url
                     })
                 })
-            //or
-            // getBase64(info.file.originFileObj, (imageUrl) => {
-            //     setNewuser({
-            //         ...newuser,
-            //         profile_image: imageUrl,
-            //     })
-            //     setLoadingupload(false)
-            // }
-            // );
         }
-    }
-    function getBase64(img, callback) {
-        const reader = new FileReader();
-        reader.addEventListener('load', () => callback(reader.result));
-        reader.readAsDataURL(img);
     }
     const uploadButton = (
         <div>
@@ -139,31 +116,20 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-                {/* <div className=" col-span-1 md:col-span-1 flex md:hidden flex-col space-y-4 p-4">
-                    <div className="font-semibold text-base">Agents</div>
-                    <p className="font-normal text-xs">
-                        When you add a new agent, you will have to provide the agent’s email, set their permission levels and access (full-time or occasional). Agents will receive an email with a confirmation link to activate their account after which they can be assigned to, or respond to tickets. Administrators can also edit an Agent’s profile to include the agent’s title, phone, profile picture, signature etc.
+                <div className=" col-span-1 md:col-span-1 flex md:hidden flex-col space-y-4 p-4">
+                    <div className="font-semibold text-sm">Requesters</div>
+                    <p className="font-normal text-sm">
+                        This page lets you handpick a set of requesters and add them to your help desk. These requesters will have selective privileges to submit requests to your helpdesk. You can restrict access such that only people who have been added here are allowed to login to your self-service portal and access your knowledge base.
+                        <br /> <br />
+                        You can fill in the details of each of your new requesters manually or import a list of users from a CSV file. Once you have populated your list, your agents can open up each of your requesters and view their ticket history and contact information.
                     </p>
-                    <div className="font-semibold text-base">Full-time vs Occasional Agents</div>
-                    <p className=" font-normal text-xs">
-                        You can choose whether your agents will need access to your support portal full-time, or will only be logging in occasionally. Occasional agents will use up a Day Pass for each day they login to your support, and you can purchase Day Passes in bulk from the Admin tab. Note that you will only be billed monthly for the number of full-time agents you add.
-                    </p>
-                    <div className="font-semibold text-base">Agent Groups</div>
-                    <p className=" font-normal text-xs">
-                        You can choose whether your agents will need access to your support portal full-time, or will only be logging in occasionally. Occasional agents will use up a Day Pass for each day they login to your support, and you can purchase Day Passes in bulk from the Admin tab. Note that you will only be billed monthly for the number of full-time agents you add.
-                    </p>
-                    <div className="font-semibold text-base">Agent Groups</div>
-                    <p className=" font-normal text-xs">
-                        Choose the tickets this agent can view and actions they can perform within the helpdesk by assigning one or more roles.
-                        Note that you will not be able to modify your own roles, or delete yourself.
-                    </p>
-                </div> */}
+                </div>
                 <div className="col-span-1 md:col-span-3 flex flex-col" id="createAgentsWrapper">
                     <Sticky containerSelectorFocus="#createAgentsWrapper">
                         <div className="flex justify-between p-4 border-t-2 border-b-2 bg-white mb-8">
-                            <h1 className="font-semibold py-2">New Agent</h1>
+                            <h1 className="font-semibold py-2">New Requesters</h1>
                             <div className="flex space-x-2">
-                                <Link href="/agents?originPath=Admin">
+                                <Link href="/requesters?originPath=Admin">
                                     <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button>
                                 </Link>
                                 <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={handleCreateAgents}>Save</button>
@@ -171,7 +137,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                         </div>
                     </Sticky>
                     <div className="p-4 mb-14">
-                        <h1 className="font-semibold mb-2">Agent type</h1>
+                        <h1 className="font-semibold mb-2">Requesters type</h1>
                         <div className="grid grid-cols-1 md:grid-cols-2">
                             <div className="md:mr-20 col-span-1 md:col-span-1">
                                 <input type="radio" id="fulltime" name="agentType" /> <label htmlFor="fulltime" className="font-semibold text-xs">Full-Time</label>
@@ -203,22 +169,34 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                                     beforeUpload={beforeUploadProfileImage}
                                     onChange={onChangeProfileImage}
                                 >
-                                    {newuser.profile_image ? <img src={newuser.profile_image} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                                    {newuserrequesters.profile_image ? <img src={newuserrequesters.profile_image} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
                                 </Upload>
                             </div>
                             <div className="p-3 col-span-1 md:col-span-3">
                                 <Form layout="vertical" className="createAgentsForm" onFinish={handleCreateAgents}>
                                     <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi" name="fullname">
-                                        <Input value={newuser.fullname} name={`fullname`} onChange={onChangeCreateAgents} />
+                                        <Input value={newuserrequesters.fullname} name={`fullname`} onChange={onChangeCreateRequesters} />
                                     </Form.Item>
                                     <Form.Item label="Email" required tooltip="Wajib diisi" name="email">
-                                        <Input value={newuser.email} name={`email`} onChange={onChangeCreateAgents} />
+                                        <Input value={newuserrequesters.email} name={`email`} onChange={onChangeCreateRequesters} />
                                     </Form.Item>
                                     <Form.Item label="No. Handphone" name="phone_number">
-                                        <Input value={newuser.phone_number} name={`phone_number`} onChange={onChangeCreateAgents} />
+                                        <Input value={newuserrequesters.phone_number} name={`phone_number`} onChange={onChangeCreateRequesters} />
                                     </Form.Item>
                                     <Form.Item label="Role" name="role">
-                                        <input type="number" value={newuser.role} name={'role'} onChange={onChangeCreateAgents} />
+                                        <input type="number" value={newuserrequesters.role} name={'role'} onChange={onChangeCreateRequesters} />
+                                    </Form.Item>
+                                    <Form.Item label="Company" name="company_id">
+                                        <Select onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }} name={`company_id`} allowClear>
+                                            <Select.Option >Choose company</Select.Option>
+                                            {
+                                                dataCompanyList.map((doc, idx) => {
+                                                    return (
+                                                        <Select.Option title={doc.company_name} key={idx} value={doc.company_id}>{doc.company_name}</Select.Option>
+                                                    )
+                                                })
+                                            }
+                                        </Select>
                                     </Form.Item>
                                 </Form>
                             </div>
@@ -226,22 +204,11 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                     </div>
                 </div>
                 <div className=" col-span-1 md:col-span-1 hidden md:flex flex-col space-y-4 p-4">
-                    <div className="font-semibold text-base">Agents</div>
-                    <p className="font-normal text-xs">
-                        When you add a new agent, you will have to provide the agent’s email, set their permission levels and access (full-time or occasional). Agents will receive an email with a confirmation link to activate their account after which they can be assigned to, or respond to tickets. Administrators can also edit an Agent’s profile to include the agent’s title, phone, profile picture, signature etc.
-                    </p>
-                    <div className="font-semibold text-base">Full-time vs Occasional Agents</div>
-                    <p className=" font-normal text-xs">
-                        You can choose whether your agents will need access to your support portal full-time, or will only be logging in occasionally. Occasional agents will use up a Day Pass for each day they login to your support, and you can purchase Day Passes in bulk from the Admin tab. Note that you will only be billed monthly for the number of full-time agents you add.
-                    </p>
-                    <div className="font-semibold text-base">Agent Groups</div>
-                    <p className=" font-normal text-xs">
-                        You can choose whether your agents will need access to your support portal full-time, or will only be logging in occasionally. Occasional agents will use up a Day Pass for each day they login to your support, and you can purchase Day Passes in bulk from the Admin tab. Note that you will only be billed monthly for the number of full-time agents you add.
-                    </p>
-                    <div className="font-semibold text-base">Agent Groups</div>
-                    <p className=" font-normal text-xs">
-                        Choose the tickets this agent can view and actions they can perform within the helpdesk by assigning one or more roles.
-                        Note that you will not be able to modify your own roles, or delete yourself.
+                    <div className="font-semibold text-sm">Requesters</div>
+                    <p className="font-normal text-sm">
+                        This page lets you handpick a set of requesters and add them to your help desk. These requesters will have selective privileges to submit requests to your helpdesk. You can restrict access such that only people who have been added here are allowed to login to your self-service portal and access your knowledge base.
+                        <br /> <br />
+                        You can fill in the details of each of your new requesters manually or import a list of users from a CSV file. Once you have populated your list, your agents can open up each of your requesters and view their ticket history and contact information.
                     </p>
                 </div>
             </div>
@@ -298,4 +265,4 @@ export async function getServerSideProps({ req, res }) {
     }
 }
 
-export default AgentsCreate
+export default RequestersCreate

@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import Form from 'antd/lib/form';
-import Spin from 'antd/lib/spin'
-import { Input, Checkbox, Button, Alert, message } from 'antd';
+import { Input, Checkbox, Button, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import { useRouter } from 'next/router'
@@ -41,10 +40,10 @@ export default function Home({ initProps }) {
           // console.log("token di session: " + JSON.parse(jscookie.get('token')))
           rt.push('/dashboard/home')
         }
-        else if (res2.error) {
+        else if (!res2.success) {
           // console.log("masuk ke error login")
           message.error({
-            content: "Email/password yang dimasukkan salah!",
+            content: "Invalid Email/password",
             style: {
               marginTop: `1rem`
             }

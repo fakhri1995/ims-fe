@@ -1,0 +1,4 @@
+.menuToggle:checked + .menu{
+    display: block;
+    justify-content: end;
+}

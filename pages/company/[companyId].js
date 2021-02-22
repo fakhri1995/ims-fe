@@ -16,10 +16,111 @@ import EditOutlined from '@ant-design/icons/EditOutlined'
 import Sticky from 'wil-react-sticky'
 
 
-function ClientsDetailProfile({ dataDetailCompany }) {
+function ClientsDetailProfile({ dataDetailCompany, tok }) {
+    const rt = useRouter()
     const [editable, setEditable] = useState(false)
-    const onClickEdit = () => {
-        setEditable(true)
+    const [data1, setData1] = useState({
+        id: dataDetailCompany.data.company_id,
+        company_name: dataDetailCompany.data.company_name,
+        role: dataDetailCompany.data.role,
+        address: dataDetailCompany.data.address,
+        phone_number: dataDetailCompany.data.phone_number,
+        image_logo: dataDetailCompany.data.image_logo
+    })
+    const [loadingfoto, setLoadingfoto] = useState(false)
+
+    const onChangeEditProfile = (e) => {
+        var val = e.target.value
+        if (e.target.name === "role") {
+            val = parseInt(e.target.value)
+        }
+        setData1({
+            ...data1,
+            [e.target.name]: val
+        })
+    }
+    const onChangeEditProfileFoto = async (e) => {
+        setLoadingfoto(true)
+        const foto = e.target.files
+        const formdata = new FormData()
+        formdata.append('file', foto[0])
+        formdata.append('upload_preset', 'migsys')
+        const fetching = await fetch(`https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`, {
+            method: 'POST',
+            body: formdata
+        })
+        const datajson = await fetching.json()
+        setData1({
+            ...data1,
+            image_logo: datajson.secure_url
+        })
+        setLoadingfoto(false)
+    }
+    const handleEditProfile = () => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateCompanyDetail`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data1)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.data) {
+                    notification['success']({
+                        message: res2.data.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/company/${dataDetailCompany.data.company_id}?originPath=Admin`)
+                    }, 1000)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                }
+            })
+    }
+    const handleActivationClients = (status) => {
+        var keaktifan = false
+        if (status === "aktif") {
+            keaktifan = false
+        }
+        else if (status === "nonAktif") {
+            keaktifan = true
+        }
+        fetch(`https://boiling-thicket-46501.herokuapp.com/companyActivation`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                company_id: dataDetailCompany.data.company_id,
+                is_enabled: keaktifan
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.data) {
+                    notification['success']({
+                        message: res2.data.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/company/${dataDetailCompany.data.company_id}?originPath=Admin`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                }
+            })
     }
     return (
         <div id="profileDetailMigWrapper">
@@ -32,99 +133,102 @@ function ClientsDetailProfile({ dataDetailCompany }) {
                             null
                         }
                         {editable ?
-                            <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md" onClick={onClickEdit}>Save</button>
+                            <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md" onClick={handleEditProfile}>Save</button>
                             :
-                            <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md w-24 md:w-40" onClick={onClickEdit}>Edit</button>
+                            <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md w-24 md:w-40" onClick={() => { setEditable(true) }}>Edit</button>
                         }
                     </div>
                 </Sticky>
             </div>
-            <div className="w-full h-auto p-3 md:p-5 grid grid-cols-1 md:grid-cols-2">
-                <div className="md:m-5 mb-5 md:mb-0">
-                    <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
-                    {
-                        editable ?
-                            <Input defaultValue={dataDetailCompany.data.company_name}></Input>
-                            :
-                            <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
+            <div className=" mb-2 md:mb-4 flex">
+                <h1 className="font-semibold text-base mr-3 pt-1">{dataDetailCompany.data.company_name}</h1>
+                <h1 className="mr-3 pt-1">|</h1>
+                {
+                    dataDetailCompany.data.is_enabled ?
+                        <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md">AKTIF MODULE</div>
+                        :
+                        <div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md">NON-AKTIF MODULE</div>
+                }
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-4 mb-4">
+                <div className="p-3 relative col-span-1 md:col-span-1 flex flex-col">
+                    <img src={data1.image_logo} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
+                    {editable ?
+                        <div>
+                            <label className="custom-file-upload w-auto p-2 border-2 cursor-pointer text-sm rounded-md hover:bg-gray-200">
+                                <input type="file" style={{ display: `none` }} name="profile_image" onChange={onChangeEditProfileFoto} />
+                                {loadingfoto ? <LoadingOutlined /> : <EditOutlined style={{ fontSize: `1.5rem` }} />}
+                                    Ganti Foto
+                        </label>
+                        </div>
+                        :
+                        null
                     }
                 </div>
-                <div className="md:m-5 mb-5 md:mb-0">
-                    <h1 className="font-semibold text-sm">Singkatan:</h1>
-                    <h1 className="font-normal text-sm">MIG</h1>
+                <div className="col-span-1 md:col-span-3 w-full h-auto p-3 md:p-5 grid grid-cols-1 md:grid-cols-2">
+                    <div className="md:m-5 mb-5 md:mb-0 ">
+                        <h1 className="font-semibold text-sm">ID Perusahaan:</h1>
+                        {
+                            editable ?
+                                <Input defaultValue={data1.id} name="company_id" onChange={onChangeEditProfile}></Input>
+                                :
+                                <h1 className="text-sm font-normal text-black">{data1.id}</h1>
+
+                        }
+                    </div>
+                    <div className="md:m-5 mb-5 md:mb-0 ">
+                        <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
+                        {
+                            editable ?
+                                <Input defaultValue={data1.company_name} name="company_name" onChange={onChangeEditProfile}></Input>
+                                :
+                                <h1 className="text-sm font-normal text-black">{data1.company_name}</h1>
+
+                        }
+                    </div>
+                    <div className="md:m-5 mb-5 md:mb-0 ">
+                        <h1 className="font-semibold text-sm">Role:</h1>
+                        {
+                            editable ?
+                                <input type="number" value={data1.role} name={'role'} onChange={onChangeEditProfile} style={{ width: `15rem` }} />
+                                :
+                                <h1 className="text-sm font-normal text-black">{data1.role}</h1>
+
+                        }
+                    </div>
+                    <div className="md:m-5 mb-5 md:mb-0">
+                        <h1 className="font-semibold text-sm">Alamat:</h1>
+                        {
+                            editable ?
+                                <Input defaultValue={data1.address} name="address" onChange={onChangeEditProfile}></Input>
+                                :
+                                <h1 className="text-sm font-normal text-black">{data1.address}</h1>
+
+                        }
+                    </div>
+                    <div className="md:m-5 mb-5 md:mb-0">
+                        <h1 className="font-semibold text-sm">Telepon:</h1>
+                        {
+                            editable ?
+                                <Input defaultValue={data1.phone_number} name="phone_number" onChange={onChangeEditProfile}></Input>
+                                :
+                                <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
+
+                        }
+                    </div>
                 </div>
-                <div className="md:m-5 mb-5 md:mb-0">
-                    <h1 className="font-semibold text-sm">Tanggal PKP:</h1>
-                    {
-                        editable ?
-                            <Input defaultValue={dataDetailCompany.data.company_name}></Input>
-                            :
-                            <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
-                    }
-                </div>
-                <div className="md:m-5 mb-5 md:mb-0">
-                    <h1 className="font-semibold text-sm">NPWP:</h1>
-                    {
-                        editable ?
-                            <Input defaultValue={dataDetailCompany.data.company_name}></Input>
-                            :
-                            <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
-                    }
-                </div>
-                <div className="md:m-5 mb-5 md:mb-0">
-                    <h1 className="font-semibold text-sm">Penanggung Jawab:</h1>
-                    {
-                        editable ?
-                            <Input defaultValue={dataDetailCompany.data.company_name}></Input>
-                            :
-                            <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
-                    }
-                </div>
-                <div className="md:m-5 mb-5 md:mb-0">
-                    <h1 className="font-semibold text-sm">Alamat:</h1>
-                    {
-                        editable ?
-                            <Input defaultValue={dataDetailCompany.data.address}></Input>
-                            :
-                            <Input disabled defaultValue={dataDetailCompany.data.address}></Input>
-                    }
-                </div>
-                <div className="md:m-5 mb-5 md:mb-0">
-                    <h1 className="font-semibold text-sm">Telepon:</h1>
-                    {
-                        editable ?
-                            <Input defaultValue={dataDetailCompany.data.phone_number}></Input>
-                            :
-                            <Input disabled defaultValue={dataDetailCompany.data.phone_number}></Input>
-                    }
-                </div>
-                <div className="md:m-5 mb-5 md:mb-0">
-                    <h1 className="font-semibold text-sm">Fax:</h1>
-                    {
-                        editable ?
-                            <Input defaultValue={dataDetailCompany.data.company_name}></Input>
-                            :
-                            <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
-                    }
-                </div>
-                <div className="md:m-5 mb-5 md:mb-0">
-                    <h1 className="font-semibold text-sm">Email:</h1>
-                    {
-                        editable ?
-                            <Input defaultValue={dataDetailCompany.data.company_name}></Input>
-                            :
-                            <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
-                    }
-                </div>
-                <div className="md:m-5 mb-5 md:mb-0">
-                    <h1 className="font-semibold text-sm">Website:</h1>
-                    {
-                        editable ?
-                            <Input defaultValue={dataDetailCompany.data.company_name}></Input>
-                            :
-                            <Input disabled defaultValue={dataDetailCompany.data.company_name}></Input>
-                    }
-                </div>
+            </div>
+            <div className="w-9/12 p-3 md:p-5 h-auto">
+                {
+                    dataDetailCompany.data.is_enabled ?
+                        <Popconfirm onConfirm={() => { handleActivationClients("aktif") }} onClose={() => { message.error("Gagal dihapus") }}>
+                            <button className=" w-full h-auto py-2 text-center bg-red-600 text-white hover:bg-red-800 rounded-md">Non Aktifkan Akun</button>
+                        </Popconfirm>
+                        :
+                        <Popconfirm onConfirm={() => { handleActivationClients("nonAktif") }} onClose={() => { message.error("Gagal dihapus") }}>
+                            <button className=" w-full h-auto py-2 text-center bg-blue-600 text-white hover:bg-blue-800 rounded-md">Aktifkan Akun</button>
+                        </Popconfirm>
+                }
             </div>
         </div>
     )
@@ -278,6 +382,9 @@ function ClientsDetailLocations() {
 }
 
 function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
+    if (!dataGetBanks.data) {
+        dataGetBanks.data = []
+    }
     const rt = useRouter()
     const [editable, setEditable] = useState(false)
     const [drawablecreate, setDrawablecreate] = useState(false)
@@ -516,38 +623,27 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                             null
                     }
                     <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40" onClick={() => { setDrawablecreate(true) }}> Create</button>
-                    <Drawer title="Edit data Bank Account MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false) }} width={720}
-                        // footer={
-                        //     <div style={{ textAlign: 'right' }}>
-                        //         <button onClick={() => { setDrawableedit(false) }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
-                        //             Cancel
-                        //         </button>
-                        //         <button type="primary" className="bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-20">
-                        //             Submit
-                        //         </button>
-                        //     </div>
-                        // }
-                        >
+                    <Drawer title="Edit data Bank Account MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false) }} width={720}>
                         <Form layout="vertical">
                             <div className="grid grid-cols-2">
                                 {/* record: {recordrow.name} */}
                                 <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank Name"
-                                    // rules={[
-                                    //     {
-                                    //         required: true,
-                                    //         message: 'Please input your bank name!',
-                                    //     },
-                                    // ]}
+                                // rules={[
+                                //     {
+                                //         required: true,
+                                //         message: 'Please input your bank name!',
+                                //     },
+                                // ]}
                                 >
                                     <Input onChange={onChangeEditBA} name="name" defaultValue={recordrow.name} />
                                 </Form.Item>
                                 <Form.Item name="account_number" style={{ marginRight: `1rem` }} label="Account Number"
-                                    // rules={[
-                                    //     {
-                                    //         required: true,
-                                    //         message: 'Please input your account number!',
-                                    //     },
-                                    // ]}
+                                // rules={[
+                                //     {
+                                //         required: true,
+                                //         message: 'Please input your account number!',
+                                //     },
+                                // ]}
                                 >
                                     <Input onChange={onChangeEditBA} name="account_number" defaultValue={recordrow.account_number} />
                                 </Form.Item>
@@ -568,18 +664,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                             <button className="bg-gray-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-gray-800" onClick={handleSubmitEditBA}>Edit</button>
                         </Form>
                     </Drawer>
-                    <Drawer title="Create data Bank Account MIG" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720}
-                    // footer={
-                    //     <div style={{ textAlign: 'right' }}>
-                    //         <button onClick={() => { setDrawablecreate(false) }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
-                    //             Cancel
-                    //             </button>
-                    //         <button type="primary" className="bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-20">
-                    //             Submit
-                    //             </button>
-                    //     </div>
-                    // }
-                    >
+                    <Drawer title="Create data Bank Account MIG" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720}>
                         <Form layout="vertical">
                             <div className="grid grid-cols-2">
                                 <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank Name" rules={[
@@ -660,7 +745,7 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
             <div className="p-5 bg-white hidden md:block">
                 <Tabs tabPosition={`left`}>
                     <TabPane tab="Profile" key={`profile`}>
-                        <ClientsDetailProfile dataDetailCompany={dataDetailCompany}></ClientsDetailProfile>
+                        <ClientsDetailProfile dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
                     </TabPane>
                     <TabPane tab="Bank Accounts" key={`bankAccounts`}>
                         <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
@@ -673,10 +758,10 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
             <div className="p-5 bg-white block md:hidden">
                 <Tabs tabPosition={`top`}>
                     <TabPane tab="Profile" key={`profile`}>
-                        <ClientsDetailProfile dataDetailCompany={dataDetailCompany}></ClientsDetailProfile>
+                        <ClientsDetailProfile dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
                     </TabPane>
                     <TabPane tab="Bank Accounts" key={`bankAccounts`}>
-                        <ClientsDetailBankAccount dataGetBanks={dataGetBanks} />
+                        <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
                     </TabPane>
                     <TabPane tab="Locations" key={`locations`}>
                         <ClientsDetailLocations></ClientsDetailLocations>
@@ -731,9 +816,6 @@ export async function getServerSideProps({ req, res, params }) {
         headers: {
             'Authorization': JSON.parse(initProps),
         },
-        // body: JSON.stringify({
-        //     id: dataDetailCompany.data.company_id
-        // })
     })
     const resjsonGB = await resourcesGB.json()
     const dataGetBanks = resjsonGB

@@ -20,7 +20,7 @@ import NotificationOutlined from '@ant-design/icons/NotificationOutlined'
 import QuestionCircleOutlined from '@ant-design/icons/QuestionCircleOutlined'
 import PlusCircleTwoTone from '@ant-design/icons/PlusCircleTwoTone'
 import AlertOutlined from '@ant-design/icons/AlertOutlined'
-
+import st from './layout-dashboard.module.css'
 import 'antd/dist/antd.css';
 
 function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, originPath, dataDetailAccount }) {
@@ -45,6 +45,12 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
     const childBreacrumbCC = childBreacrumb.map((doc, idx) => {
         return doc[0].toUpperCase() + doc.slice(1)
     })
+    const childBreacrumbDD = childBreacrumbCC
+    if (childBreacrumbDD[1] === "Update") {
+        // childBreacrumbDD[childBreacrumbDD.length - 2] = childBreacrumbDD[childBreacrumbDD.length - 2] + " " + childBreacrumbDD[childBreacrumbDD.length - 1]
+        childBreacrumbDD.splice(2, 1)
+    }
+    console.log("pjg cc: " + childBreacrumbDD)
     const { Sider, Content, Header } = Layout
     const [coll, setColl] = useState(true)
     const [tinggi, setTinggi] = useState(90)
@@ -82,7 +88,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                     <div className="flex flex-col">
                         <h2 className="text-lg font-semibold mb-1">{dataProfile.data.fullname}</h2>
                         <h2 className="text-sm font-normal mb-1">{dataProfile.data.email}</h2>
-                        <Link href={`/profile`}>Profile Settings</Link>
+                        <a href={`/profile`} target="_blank" ref="noreferrer">Profile Settings</a>
                     </div>
                 </div>
                 <div>
@@ -154,7 +160,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
     var pathBuilder = ""
     return (
         <Layout>
-            <Sider collapsible collapsed={coll} trigger={null} breakpoint="lg" theme="light">
+            <Sider collapsible collapsed={coll} trigger={null} breakpoint="lg" theme="light" className={st.siderLayout}>
                 <div className="logo" style={{ height: `32px`, margin: `16px`, background: `gray` }}></div>
                 <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]}>
                     <Menu.Item key="1" icon={<DashboardTwoTone />}>
@@ -176,70 +182,80 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                 </Menu>
             </Sider>
             <Layout className="site-layout">
-                <Header className="site-layout-background" style={{ padding: 0, backgroundColor: `white` }}>
-                    {coll ? <MenuUnfoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className="trigger"></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left` }} className="trigger"></MenuFoldOutlined>}
-                    {
-                        pathArr ?
-                            <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 10px` }}>
-                                {pathArr[0] === "dashboard" && <Breadcrumb.Item> <strong>{rootBreadcrumb}</strong></Breadcrumb.Item>}
-                                {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${oriPath.toLowerCase()}`}><strong>{oriPath}</strong></Breadcrumb.Item>}
-                                {childBreacrumbCC.length !== 0 ?
-                                    childBreacrumbCC.map((doc, idx) => {
-                                        pathBuilder = pathBuilder + `/${pathArr[idx]}`
-                                        if (idx === childBreacrumbCC.length - 1 && idx > 0) {
-                                            if (childBreacrumbCC[idx] === "Create") {
+                <Header className="site-layout-background" style={{ padding: 0, backgroundColor: `white`, display: `flex`, alignItems: `center`, flexDirection: `row`, flexWrap: `wrap`, width: `100%`, justifyContent: `space-between`, height: `auto` }}>
+                    <div>
+                        {coll ? <MenuUnfoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className="trigger"></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left` }} className="trigger"></MenuFoldOutlined>}
+                        {
+                            pathArr ?
+                                <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 10px`, backgroundColor: `white` }}>
+                                    {pathArr[0] === "dashboard" && <Breadcrumb.Item> <strong>{rootBreadcrumb}</strong></Breadcrumb.Item>}
+                                    {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${oriPath.toLowerCase()}`}><strong>{oriPath}</strong></Breadcrumb.Item>}
+                                    {childBreacrumbDD.length !== 0 ?
+                                        childBreacrumbDD.map((doc, idx) => {
+                                            pathBuilder = pathBuilder + `/${pathArr[idx]}`
+                                            if (idx === childBreacrumbDD.length - 1 && idx > 0) {
+                                                if (childBreacrumbDD[idx] === "Create") {
+                                                    return (
+                                                        <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                    )
+                                                }
                                                 return (
                                                     <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
                                                 )
                                             }
-                                            return (
-                                                <Breadcrumb.Item key={idx}> <strong>{dataDetailAccount.data.fullname}</strong> </Breadcrumb.Item>
-                                            )
-                                        }
-                                        else {
-                                            return (
-                                                <Breadcrumb.Item key={idx}>
-                                                    <Link href={{
-                                                        pathname: pathBuilder,
-                                                        query: {
-                                                            originPath: oriPath
-                                                        }
-                                                    }}>
-                                                        <strong>{doc}</strong>
-                                                    </Link>
-                                                </Breadcrumb.Item>
-                                            )
-                                        }
-                                    })
-                                    :
-                                    null
+                                            else {
+                                                return (
+                                                    <Breadcrumb.Item key={idx}>
+                                                        <Link href={{
+                                                            pathname: pathBuilder,
+                                                            query: {
+                                                                originPath: oriPath
+                                                            }
+                                                        }}>
+                                                            <strong>{doc}</strong>
+                                                        </Link>
+                                                    </Breadcrumb.Item>
+                                                )
+                                            }
+                                        })
+                                        :
+                                        null
+                                    }
+                                </Breadcrumb>
+                                :
+                                null
+                        }
+                    </div>
+                    <label htmlFor={`menutoggle`} className="pointer-cursor md:hidden block cursor-pointer">
+                        <svg className="fill-current text-gray-900" xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 20 20">
+                            <title>menu</title>
+                            <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
+                        </svg>
+                    </label>
+                    <input className={`hidden ${st.menuToggle}`} type="checkbox" id={`menutoggle`} />
+                    <div className={`hidden md:flex md:w-auto w-full ${st.menu}`}>
+                        <div style={{ marginRight: `3rem` }}>
+                            <Dropdown overlay={addMenu} placement="bottomRight" trigger={['click']}>
+                                <PlusCircleTwoTone className="" style={{ fontSize: '20px', cursor: `pointer` }} />
+                            </Dropdown>
+                        </div>
+                        <div style={{ marginRight: `3rem`, cursor: `pointer` }}>
+                            <QuestionCircleOutlined />
+                        </div>
+                        <div style={{ marginRight: `3rem`, cursor: `pointer` }}>
+                            <NotificationOutlined />
+                        </div>
+                        <div style={{ marginRight: `3rem`, marginTop: `1rem` }}>
+                            <Dropdown overlay={menuProfile2} trigger={['click']}>
+                                {
+                                    dataProfile.data.image_profile ?
+                                        <img src={dataProfile.data.image_profile} alt="ava" className="w-8 h-8 rounded-full object-cover cursor-pointer" />
+                                        :
+                                        <Avatar icon={<UserOutlined></UserOutlined>} style={{ cursor: `pointer` }} />
                                 }
-                            </Breadcrumb>
-                            :
-                            null
-                    }
-                    <div style={{ float: `right`, marginRight: `2rem`, marginTop: `1rem` }}>
-                        <Dropdown overlay={menuProfile2} trigger={['click']}>
-                            {
-                                dataProfile.data.image_profile ?
-                                    <img src={dataProfile.data.image_profile} alt="ava" className="w-8 h-8 rounded-full object-cover cursor-pointer" />
-                                    :
-                                    <Avatar icon={<UserOutlined></UserOutlined>} style={{ cursor: `pointer` }} />
-                            }
-                        </Dropdown>
+                            </Dropdown>
+                        </div>
                     </div>
-                    <div style={{ float: `right`, marginRight: `2rem`, cursor: `pointer` }}>
-                        <NotificationOutlined />
-                    </div>
-                    <div style={{ float: `right`, marginRight: `2rem`, cursor: `pointer` }}>
-                        <QuestionCircleOutlined />
-                    </div>
-                    <div style={{ float: `right`, marginRight: `2rem` }}>
-                        <Dropdown overlay={addMenu} placement="bottomRight" trigger={['click']}>
-                            <PlusCircleTwoTone className="" style={{ fontSize: '20px', cursor: `pointer` }} />
-                        </Dropdown>
-                    </div>
-
                 </Header>
                 <Content className="slb" style={{ padding: 24, height: `${tinggi}px`, backgroundColor: `white` }}>
                     {children}

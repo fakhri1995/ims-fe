@@ -188,7 +188,7 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
                             <>{actions[index]}
                                 <a><CopyOutlined /></a>
                                 <Link href={{
-                                    pathname: `/agents/${record.user_id}`,
+                                    pathname: `/agents/update/${record.user_id}`,
                                     query: {
                                         originPath: 'Admin'
                                     }
