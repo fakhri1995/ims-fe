@@ -4,6 +4,7 @@ import Layout from '../../components/layout-dashboard'
 import TeamOutlined from '@ant-design/icons/TeamOutlined'
 import UserOutlined from '@ant-design/icons/UserOutlined'
 import Link from 'next/link'
+import st from "../../components/layout-dashboard.module.css"
 
 function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
     // jscookie.remove('token')
@@ -13,7 +14,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     return (
-        <Layout tok={tok} pathArr={pathArr} sidemenu={sidemenu} dataProfile={dataProfile}>
+        <Layout tok={tok} pathArr={pathArr} sidemenu={sidemenu} dataProfile={dataProfile} st={st}>
             <div className="w-full h-auto p-5 font-mont border-t border-opacity-30 border-gray-500 bg-white space-y-10">
                 <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
                     <div className="border-b border-gray-300">

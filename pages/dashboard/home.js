@@ -1,14 +1,14 @@
 import httpcookie from 'cookie'
 import jscookie from 'js-cookie'
 import Layout from '../../components/layout-dashboard'
-
+import st from "../../components/layout-dashboard.module.css"
 
 function DashboardIndex({ initProps, dataProfile, sidemenu }) {
     const tok = initProps
     // const cook = jscookie.get('token')
     // console.log("cookie di dashboard: " + cook)
     return (
-        <Layout tok={tok} sidemenu={sidemenu} dataProfile={dataProfile}>
+        <Layout tok={tok} sidemenu={sidemenu} dataProfile={dataProfile} st={st}>
             <h1>Selamat datang di Dashboard</h1>
         </Layout>
     )

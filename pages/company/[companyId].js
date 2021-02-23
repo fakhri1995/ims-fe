@@ -7,18 +7,20 @@ import Input from 'antd/lib/input'
 import Table from 'antd/lib/table'
 import Tree from 'antd/lib/tree'
 import Drawer from 'antd/lib/drawer'
-import Popconfirm from 'antd/lib/popconfirm'
+import Modal from 'antd/lib/modal'
 import message from 'antd/lib/message'
-import Form from 'antd/lib/form'
 import notification from 'antd/lib/notification'
+import Form from 'antd/lib/form'
 import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
-import Sticky from 'wil-react-sticky'
+import st from '../../components/layout-dashboard-clients.module.css'
 
 
 function ClientsDetailProfile({ dataDetailCompany, tok }) {
     const rt = useRouter()
     const [editable, setEditable] = useState(false)
+    const [visible, setVisible] = useState(false)
+    const [visiblenon, setVisiblenon] = useState(false)
     const [data1, setData1] = useState({
         id: dataDetailCompany.data.company_id,
         company_name: dataDetailCompany.data.company_name,
@@ -106,6 +108,8 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
             .then(res => res.json())
             .then(res2 => {
                 if (res2.data) {
+                    setVisible(false)
+                    setVisiblenon(false)
                     notification['success']({
                         message: res2.data.message,
                         duration: 3
@@ -115,6 +119,8 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                     }, 500)
                 }
                 else if (!res2.success) {
+                    setVisible(false)
+                    setVisiblenon(false)
                     notification['error']({
                         message: res2.message.errorInfo.status_detail,
                         duration: 3
@@ -125,20 +131,20 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
     return (
         <div id="profileDetailMigWrapper">
             <div className="flex justify-start md:justify-end p-3 md:border-t-2 md:border-b-2 bg-white mb-4 md:mb-8">
-                <Sticky containerSelectorFocus="#profileDetailMigWrapper">
-                    <div className="flex space-x-2">
-                        {editable ?
-                            <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md" onClick={() => { setEditable(false) }}>Cancel</button>
-                            :
-                            null
-                        }
-                        {editable ?
-                            <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md" onClick={handleEditProfile}>Save</button>
-                            :
-                            <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md w-24 md:w-40" onClick={() => { setEditable(true) }}>Edit</button>
-                        }
-                    </div>
-                </Sticky>
+                {/* <Sticky containerSelectorFocus="#profileDetailMigWrapper"> */}
+                <div className="flex space-x-2">
+                    {editable ?
+                        <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md" onClick={() => { setEditable(false) }}>Cancel</button>
+                        :
+                        null
+                    }
+                    {editable ?
+                        <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md" onClick={handleEditProfile}>Save</button>
+                        :
+                        <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md w-24 md:w-40" onClick={() => { setEditable(true) }}>Edit</button>
+                    }
+                </div>
+                {/* </Sticky> */}
             </div>
             <div className=" mb-2 md:mb-4 flex">
                 <h1 className="font-semibold text-base mr-3 pt-1">{dataDetailCompany.data.company_name}</h1>
@@ -221,16 +227,32 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
             <div className="w-9/12 p-3 md:p-5 h-auto">
                 {
                     dataDetailCompany.data.is_enabled ?
-                        <Popconfirm onConfirm={() => { handleActivationClients("aktif") }} onClose={() => { message.error("Gagal dihapus") }}>
-                            <button className=" w-full h-auto py-2 text-center bg-red-600 text-white hover:bg-red-800 rounded-md">Non Aktifkan Akun</button>
-                        </Popconfirm>
+                        <button className=" w-full h-auto py-2 text-center bg-red-600 text-white hover:bg-red-800 rounded-md" onClick={() => { setVisible(true) }}>
+                            Non Aktifkan Akun
+                        </button>
                         :
-                        <Popconfirm onConfirm={() => { handleActivationClients("nonAktif") }} onClose={() => { message.error("Gagal dihapus") }}>
-                            <button className=" w-full h-auto py-2 text-center bg-blue-600 text-white hover:bg-blue-800 rounded-md">Aktifkan Akun</button>
-                        </Popconfirm>
+                        <button className=" w-full h-auto py-2 text-center bg-blue-600 text-white hover:bg-blue-800 rounded-md" onClick={() => { setVisiblenon(true) }}>
+                            Aktifkan Akun
+                        </button>
                 }
-            </div>
-        </div>
+            </div >
+            <Modal
+                title="Konfirmasi untuk menon-aktifkan akun"
+                visible={visible}
+                onOk={() => { handleActivationClients("aktif") }}
+                onCancel={() => setVisible(false)}
+            >
+                Apakah anda yakin ingin menon-aktifkan akun perusahaan <strong>{dataDetailCompany.data.company_name}</strong>?
+            </Modal>
+            <Modal
+                title="Konfirmasi untuk mengakaktifkan akun"
+                visible={visiblenon}
+                onOk={() => { handleActivationClients("nonAktif") }}
+                onCancel={() => setVisiblenon(false)}
+            >
+                Apakah anda yakin ingin melakukan aktivasi akun perusahaan <strong>{dataDetailCompany.data.company_name}</strong>?`
+            </Modal>
+        </div >
     )
 }
 
@@ -741,7 +763,7 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
     const { originPath } = rt.query
     // console.log("get banks: " + dataGetBanks.data[0].account_number)
     return (
-        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} dataDetailCompany={dataDetailCompany}>
+        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} dataDetailCompany={dataDetailCompany} st={st}>
             <div className="p-5 bg-white hidden md:block">
                 <Tabs tabPosition={`left`}>
                     <TabPane tab="Profile" key={`profile`}>

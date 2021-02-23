@@ -18,6 +18,7 @@ import { Input, Slider } from 'antd'
 import { Select, Tag } from 'antd'
 import { Radio } from 'antd'
 import { Row, Col } from 'antd'
+import st from '../../../../components/layout-dashboard-groups.module.css'
 
 function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const rt = useRouter()
@@ -162,7 +163,7 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
 
     // console.log(options[random])
     return (
-        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} dataDetailGroup={dataDetailGroup}>
+        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} dataDetailGroup={dataDetailGroup} st={st}>
             <>
                 <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
                     <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">

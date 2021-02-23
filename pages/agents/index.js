@@ -6,6 +6,7 @@ import CopyOutlined from '@ant-design/icons/CopyOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import { useState } from 'react'
 import Link from 'next/link'
+import st from '../../components/layout-dashboard.module.css'
 
 
 function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
@@ -95,7 +96,7 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
         }
     ];
     return (
-        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath}>
+        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
                 <div className="h-20 w-full grid grid-cols-1 md:grid-cols-3 border-gray-400 md:border-t md:border-b bg-white mb-5 p-4">
                     <div className=" col-span-1 md:col-span-2 flex items-center">

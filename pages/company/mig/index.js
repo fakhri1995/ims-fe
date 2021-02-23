@@ -15,6 +15,8 @@ import EditOutlined from '@ant-design/icons/EditOutlined'
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import { useState } from 'react'
 import Sticky from 'wil-react-sticky'
+import st from '../../../components/layout-dashboard-mig.module.css'
+
 
 function MigIndexProfile({ dataDetailCompany, tok }) {
     const [editable, setEditable] = useState(false)
@@ -688,31 +690,40 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                     >
                         <Form layout="vertical">
                             <div className="grid grid-cols-2">
-                                <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank Name" rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your bank name!',
-                                    },
-                                ]}>
+                                <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank Name"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Nama bank harus diisi',
+                                        },
+                                    ]}>
                                     <Input onChange={onChangeBA} name="name" value={bankdata.name} />
                                 </Form.Item>
-                                <Form.Item name="account_number" style={{ marginRight: `1rem` }} label="Account Number" rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your account number!',
-                                    },
-                                ]}>
+                                <Form.Item name="account_number" style={{ marginRight: `1rem` }} label="Account Number"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Nomor rekening harus diisi',
+                                        },
+                                    ]}>
                                     <Input onChange={onChangeBA} name="account_number" value={bankdata.account_number} />
                                 </Form.Item>
-                                <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Owner" rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input the owner!',
-                                    },
-                                ]}>
+                                <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Owner"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Nama penanggung jawab harus diisi',
+                                        },
+                                    ]}>
                                     <Input onChange={onChangeBA} name="owner" value={bankdata.owner} />
                                 </Form.Item>
-                                <Form.Item name="currency" style={{ marginRight: `1rem` }} label="Currency">
+                                <Form.Item name="currency" style={{ marginRight: `1rem` }} label="Currency"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Mata uang harus diisi',
+                                        },
+                                    ]}>
                                     <Input onChange={onChangeBA} name="currency" value={bankdata.currency} />
                                 </Form.Item>
                             </div>
@@ -761,7 +772,7 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGet
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
     return (
-        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath}>
+        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} st={st}>
             <div className="p-5 bg-white hidden md:block">
                 <Tabs tabPosition={`left`}>
                     <TabPane tab="Profile" key={`profile`}>

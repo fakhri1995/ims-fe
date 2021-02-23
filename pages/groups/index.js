@@ -13,6 +13,8 @@ import Tabs from 'antd/lib/tabs'
 import DownOutlined from '@ant-design/icons/DownOutlined'
 import Dropdown from 'antd/lib/dropdown'
 import Menu from 'antd/lib/menu'
+import st from '../../components/layout-dashboard-groups.module.css'
+
 
 function Groups({ initProps, dataProfile, dataGroups, sidemenu, dataDetailGroup }) {
     const rt = useRouter()
@@ -165,7 +167,7 @@ function Groups({ initProps, dataProfile, dataGroups, sidemenu, dataDetailGroup 
     }
       
     return (
-        <Layout tok={tok} dataDetailGroup={dataDetailGroup} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath}>
+        <Layout tok={tok} dataDetailGroup={dataDetailGroup} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
                 <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
                     <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">

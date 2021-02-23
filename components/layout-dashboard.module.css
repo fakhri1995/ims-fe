@@ -5,29 +5,29 @@
   flex-wrap: wrap;
 }
 
-/* .triggerLayout{
-    padding: 24px;
-    float: left;
-} */
-
 .menuToggle:checked + .menu {
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
 }
 
+  .siderLayout,
+  .trigger {
+    display: block;
+  }
+
+  .siderLayoutSmall,
+  .triggerSmall {
+    display: none;
+  }
+
 @media only screen and (max-width: 540px) {
-  .foldToggle:checked + .sider {
+  .siderLayoutSmall,
+  .triggerSmall {
     display: block;
   }
 
   .siderLayout,
   .trigger {
     display: none;
-  }
-}
-
-@media only screen and (min-width: 541px) {
-  .siderLayout {
-    display: block;
   }
 }

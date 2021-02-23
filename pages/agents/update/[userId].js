@@ -9,6 +9,8 @@ import notification from 'antd/lib/notification'
 import Sticky from 'wil-react-sticky'
 import { useState } from 'react'
 import Link from 'next/link'
+import Modal from 'antd/lib/modal'
+import st from '../../../components/layout-dashboard.module.css'
 // import Link from 'next/link';
 // import Breadcrumb from 'antd/lib/breadcrumb'
 
@@ -19,6 +21,13 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
     var pathArr = rt.pathname.split("/").slice(1)
     pathArr[pathArr.length - 1] = userId
     const [loadingfoto, setLoadingfoto] = useState(false)
+    const [visible, setVisible] = useState(false)
+    const [visiblenon, setVisiblenon] = useState(false)
+    const [visibleubahpass, setVisibleubahpass] = useState(false)
+    const [datapass, setDatapass] = useState({
+        user_id: dataDetailAccount.data.user_id,
+        new_password: ''
+    })
     const [data1, setData1] = useState({
         id: dataDetailAccount.data.user_id,
         fullname: dataDetailAccount.data.fullname,
@@ -77,8 +86,80 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                 }
             })
     }
+    const handleActivationAgents = (status) => {
+        var keaktifan = false
+        if (status === "aktif") {
+            keaktifan = false
+        }
+        else if (status === "nonAktif") {
+            keaktifan = true
+        }
+        fetch(`https://boiling-thicket-46501.herokuapp.com/accountActivation`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_id: dataDetailAccount.data.user_id,
+                is_enabled: keaktifan
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.data) {
+                    setVisible(false)
+                    setVisiblenon(false)
+                    notification['success']({
+                        message: res2.data.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/agents/update/${dataDetailAccount.data.user_id}?originPath=Admin`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    setVisible(false)
+                    setVisiblenon(false)
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                }
+            })
+    }
+    const handleUbahPassword = () => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateAccountPassword`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datapass)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.data) {
+                    setVisibleubahpass(false)
+                    notification['success']({
+                        message: res2.data.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/agents/update/${dataDetailAccount.data.user_id}?originPath=Admin`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    setVisibleubahpass(false)
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                }
+            })
+    }
     return (
-        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} dataDetailAccount={dataDetailAccount}>
+        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} dataDetailAccount={dataDetailAccount} st={st}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
                 <div className=" col-span-1 md:col-span-1 flex md:hidden flex-col space-y-4 p-4">
                     <div className="font-semibold text-base">Agents</div>
@@ -118,8 +199,14 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                         </div>
                     </div>
                     <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-14">
-                        <div className="border-b border-black p-4 font-semibold mb-5">
-                            Detail Akun Agents
+                        <div className="border-b border-black p-4 font-semibold mb-5 flex">
+                            <div className="md:mr-5 pt-1">Detail Akun Agents</div>
+                            {
+                                dataDetailAccount.data.attribute.is_enabled ?
+                                    <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md w-auto">AKTIF ACCOUNT</div>
+                                    :
+                                    <div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md w-auto">NON-AKTIF ACCOUNT</div>
+                            }
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4">
                             <div className="p-3 col-span-1 md:col-span-1 relative flex flex-col items-center">
@@ -131,6 +218,8 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                                 </label>
                             </div>
                             <div className="p-3 col-span-1 md:col-span-3">
+                                <h1 className="text-xs text-gray-600 mb-1">Email:</h1>
+                                <h1 className="text-sm text-black mb-5">{dataDetailAccount.data.email}</h1>
                                 <Form layout="vertical">
                                     <Form.Item label="ID" required tooltip="Wajib diisi">
                                         <Input defaultValue={data1.id} onChange={onChangeEditAgents} name="id" />
@@ -168,6 +257,47 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                             </div>
                         </div>
                     </div>
+                    <div className="w-full p-3 md:p-5 h-auto">
+                        {
+                            dataDetailAccount.data.attribute.is_enabled ?
+                                <button className=" w-full h-auto py-2 text-center bg-red-600 text-white hover:bg-red-800 rounded-md" onClick={() => { setVisible(true) }}>
+                                    Non Aktifkan Akun
+                                </button>
+                                :
+                                <button className=" w-full h-auto py-2 text-center bg-blue-600 text-white hover:bg-blue-800 rounded-md" onClick={() => { setVisiblenon(true) }}>
+                                    Aktifkan Akun
+                                </button>
+                        }
+                    </div >
+                    <div className="w-full p-3 md:p-5 h-auto">
+                        <button className=" w-full h-auto py-2 text-center bg-white text-black hover:bg-blue-100 hover:text-blue-700 rounded-md" onClick={() => { setVisibleubahpass(true) }}>
+                            Ubah Password
+                        </button>
+                    </div >
+                    <Modal
+                        title="Konfirmasi untuk menon-aktifkan akun"
+                        visible={visible}
+                        onOk={() => { handleActivationAgents("aktif") }}
+                        onCancel={() => setVisible(false)}
+                    >
+                        Apakah anda yakin ingin menon-aktifkan akun perusahaan <strong>{dataDetailAccount.data.fullname}</strong>?
+                    </Modal>
+                    <Modal
+                        title="Konfirmasi untuk mengakaktifkan akun"
+                        visible={visiblenon}
+                        onOk={() => { handleActivationAgents("nonAktif") }}
+                        onCancel={() => setVisiblenon(false)}
+                    >
+                        Apakah anda yakin ingin melakukan aktivasi akun perusahaan <strong>{dataDetailAccount.data.fullname}</strong>?`
+                    </Modal>
+                    <Modal
+                        title="Ubah Password"
+                        visible={visibleubahpass}
+                        onOk={handleUbahPassword}
+                        onCancel={() => setVisibleubahpass(false)}
+                    >
+                        <Input.Password name="new_password" value={datapass.new_password} placeholder="Password Baru" type="password" onChange={(e) => { setDatapass({ ...datapass, [e.target.name]: e.target.value }) }} style={{ marginBottom: `2rem` }} />
+                    </Modal>
                 </div>
                 <div className="col-span-1 md:col-span-1 hidden md:flex flex-col space-y-4 p-4">
                     <div className="font-semibold text-base">Agents</div>
