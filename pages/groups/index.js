@@ -14,15 +14,25 @@ import DownOutlined from '@ant-design/icons/DownOutlined'
 import Dropdown from 'antd/lib/dropdown'
 import Menu from 'antd/lib/menu'
 
-function Groups({ initProps, dataProfile, dataGroups, sidemenu, dataDetailGroup }) {
+function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters, sidemenu, dataDetailGroup }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
     // console.log(dataGroups)
 
-    const groups = dataGroups.data.map((doc, idx) => {
+    const groupsAgents = dataGroupsAgents.data.map((doc, idx) => {
         return ({
+            idx: idx,
+            key: doc.id,
+            name: doc.name,
+            description: doc.description
+        })
+    })
+
+    const groupsRequesters = dataGroupsRequesters.data.map((doc, idx) => {
+        return ({
+            idx: idx,
             key: doc.id,
             name: doc.name,
             description: doc.description
@@ -35,115 +45,148 @@ function Groups({ initProps, dataProfile, dataGroups, sidemenu, dataDetailGroup 
     function callback(key) {
         console.log(key);
       }
-    const columnsDD = [
-        {
-            title: 'role',
-            dataIndex: 'name',
-            key: 'role',
-            width: 800,
-            render(text, record) {
-                return {
-                    props: {
-                    style: { background: record.key%2 == 1 ? '#f2f2f2' : '#fff' },
-                  },
-                    children: <div><Link href={{
-                            pathname: `/groups/update/agents/${record.key}`,
-                            query: {
-                                originPath: 'Admin'
-                            }
-                        }}><a>{record.name}</a></Link>
-                         <p style={{fontSize:'13px'}}>{record.description}</p></div>,
-                };
-            },
-        },
-        {
-            title: 'action', // Non-breakable space is char 0xa0 (160 dec)
-            dataIndex: 'actionss',
-            key: 'action',
-            width: 50,
-            render: (text, record, index) => {
-                return {
-                    props: {
-                        style: { background: record.key%2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children: 
-                    <Button>
-                        <Link href={{
-                            pathname: `/groups/update/agents/${record.key}`,
-                            query: {
-                                originPath: 'Admin'
-                            }
-                        }}><a>Edit</a></Link>
-                    </Button>
-                }
-            }
-        },
-        {
-            title: 'action', // Non-breakable space is char 0xa0 (160 dec)
-            dataIndex: 'actionss',
-            key: 'action',
-            width: 100,
-            render: (text, record, index) => {
-                return {
-                    props: {
-                        style: { background: record.key%2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children: <Tooltip placement="topLeft" title={"Delete"}>
-                    {/* {actions[index]} */}
-                    <Button>
-                        <Link href={{
-                            pathname: `/delete/${record.key}`,
-                            query: {
-                                originPath: 'Admin'
-                            }
-                        }}><a><DeleteOutlined /></a></Link>
-                    </Button>
-                </Tooltip>
-                }
-            }
-        }
-    ];
 
-    const dataAgent = [
-        {
-            key: '1',
-            name: 'Capacity Management Team',
-            agent: '4 Agents',
-            actionss: 'clone'
-        },
-        {
-            key: '2',
-            name: 'Change Team',
-            agent: 'No Agents',
-            actionss: 'clone'
-        },
-        {
-            key: '3',
-            name: 'Database Team',
-            agent: 'No Agents',
-            actionss: 'clone'
-        },
-    ];
-    const dataRequester = [
-        {
-            key: '1',
-            name: 'Change Requesters',
-            agent: '4 Agents',
-            actionss: 'clone'
-        },
-        {
-            key: '2',
-            name: 'Finance Team',
-            agent: 'No Agents',
-            actionss: 'clone'
-        },
-        {
-            key: '3',
-            name: 'HR Team',
-            agent: 'No Agents',
-            actionss: 'clone'
-        },
-    ];
+    function columns(variabel) {
+        var columnsDD = []
+        return(
+            columnsDD = [
+                {
+                    title: 'role',
+                    dataIndex: 'name',
+                    key: 'role',
+                    width: 800,
+                    render(text, record) {
+                        return {
+                            props: {
+                            style: { background: record.idx%2 == 1 ? '#f2f2f2' : '#fff' },
+                          },
+                            children: <div><Link href={{
+                                    pathname: `/groups/update/`+variabel+`/${record.key}`,
+                                    query: {
+                                        originPath: 'Admin'
+                                    }
+                                }}><a>{record.name}</a></Link>
+                                 <p style={{fontSize:'13px'}}>{record.description}</p></div>,
+                        };
+                    },
+                },
+                {
+                    title: 'action', // Non-breakable space is char 0xa0 (160 dec)
+                    dataIndex: 'actionss',
+                    key: 'action',
+                    width: 50,
+                    render: (text, record, index) => {
+                        return {
+                            props: {
+                                style: { background: record.idx%2 == 1 ? '#f2f2f2' : '#fff' },
+                            },
+                            children: 
+                            <Button>
+                                <Link href={{
+                                    pathname: `/groups/update/`+variabel+`/${record.key}`,
+                                    query: {
+                                        originPath: 'Admin'
+                                    }
+                                }}><a>Edit</a></Link>
+                            </Button>
+                        }
+                    }
+                },
+                {
+                    title: 'action', // Non-breakable space is char 0xa0 (160 dec)
+                    dataIndex: 'actionss',
+                    key: 'action',
+                    width: 100,
+                    render: (text, record, index) => {
+                        return {
+                            props: {
+                                style: { background: record.idx%2 == 1 ? '#f2f2f2' : '#fff' },
+                            },
+                            children: <Tooltip placement="topLeft" title={"Delete"}>
+                            {/* {actions[index]} */}
+                            <Button>
+                                <Link href={{
+                                    pathname: `/delete/${record.key}`,
+                                    query: {
+                                        originPath: 'Admin'
+                                    }
+                                }}><a><DeleteOutlined /></a></Link>
+                            </Button>
+                        </Tooltip>
+                        }
+                    }
+                }
+            ]
+        )
+    }
+    // const columnsDD = [
+    //     {
+    //         title: 'role',
+    //         dataIndex: 'name',
+    //         key: 'role',
+    //         width: 800,
+    //         render(text, record) {
+    //             return {
+    //                 props: {
+    //                 style: { background: record.idx%2 == 1 ? '#f2f2f2' : '#fff' },
+    //               },
+    //                 children: <div><Link href={{
+    //                         pathname: `/groups/update/agents/${record.key}`,
+    //                         query: {
+    //                             originPath: 'Admin'
+    //                         }
+    //                     }}><a>{record.name}</a></Link>
+    //                      <p style={{fontSize:'13px'}}>{record.description}</p></div>,
+    //             };
+    //         },
+    //     },
+    //     {
+    //         title: 'action', // Non-breakable space is char 0xa0 (160 dec)
+    //         dataIndex: 'actionss',
+    //         key: 'action',
+    //         width: 50,
+    //         render: (text, record, index) => {
+    //             return {
+    //                 props: {
+    //                     style: { background: record.idx%2 == 1 ? '#f2f2f2' : '#fff' },
+    //                 },
+    //                 children: 
+    //                 <Button>
+    //                     <Link href={{
+    //                         pathname: `/groups/update/agents/${record.key}`,
+    //                         query: {
+    //                             originPath: 'Admin'
+    //                         }
+    //                     }}><a>Edit</a></Link>
+    //                 </Button>
+    //             }
+    //         }
+    //     },
+    //     {
+    //         title: 'action', // Non-breakable space is char 0xa0 (160 dec)
+    //         dataIndex: 'actionss',
+    //         key: 'action',
+    //         width: 100,
+    //         render: (text, record, index) => {
+    //             return {
+    //                 props: {
+    //                     style: { background: record.idx%2 == 1 ? '#f2f2f2' : '#fff' },
+    //                 },
+    //                 children: <Tooltip placement="topLeft" title={"Delete"}>
+    //                 {/* {actions[index]} */}
+    //                 <Button>
+    //                     <Link href={{
+    //                         pathname: `/delete/${record.key}`,
+    //                         query: {
+    //                             originPath: 'Admin'
+    //                         }
+    //                     }}><a><DeleteOutlined /></a></Link>
+    //                 </Button>
+    //             </Tooltip>
+    //             }
+    //         }
+    //     }
+    // ];
 
     const menu = () =>{
         return (
@@ -187,11 +230,11 @@ function Groups({ initProps, dataProfile, dataGroups, sidemenu, dataDetailGroup 
                         <div className="col-span-3 flex flex-col space-y-3">
                         <Tabs onChange={callback} type="card">
                             <TabPane tab="Agent Groups" key="1">
-                                <Table showHeader={false} scroll={{ x: 400 }} dataSource={groups} columns={columnsDD} onRow={(record, rowIndex) => {
+                                <Table showHeader={false} scroll={{ x: 400 }} dataSource={groupsAgents} columns={columns('agents')} onRow={(record, rowIndex) => {
                                 }}></Table>
                             </TabPane>
                             <TabPane tab="Requester Groups" key="2">
-                                <Table showHeader={false} scroll={{ x: 400 }} dataSource={groups} columns={columnsDD} onRow={(record, rowIndex) => {
+                                <Table showHeader={false} scroll={{ x: 400 }} dataSource={groupsRequesters} columns={columns('requesters')} onRow={(record, rowIndex) => {
                                 }}></Table>
                             </TabPane>
                         </Tabs>
@@ -249,14 +292,23 @@ export async function getServerSideProps({ req, res }) {
             initProps = cookiesJSON.token
         }
     }
-    const resourcesGetGroups = await fetch(`https://boiling-thicket-46501.herokuapp.com/getGroups`, {
+    const resourcesGetGroupsAgents = await fetch(`https://boiling-thicket-46501.herokuapp.com/getGroups`, {
         method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
     })
-    const resjsonGetGroups = await resourcesGetGroups.json()
-    const dataGroups = resjsonGetGroups
+    const resjsonGetGroupsAgents = await resourcesGetGroupsAgents.json()
+    const dataGroupsAgents = resjsonGetGroupsAgents
+    
+    const resourcesGetGroupsRequesters = await fetch(`https://boiling-thicket-46501.herokuapp.com/getGroups?is_agent=false`, {
+        method: `GET`,
+        headers: {
+            'Authorization': JSON.parse(initProps)
+        }
+    })
+    const resjsonGetGroupsRequesters = await resourcesGetGroupsRequesters.json()
+    const dataGroupsRequesters = resjsonGetGroupsRequesters
 
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,
@@ -272,7 +324,8 @@ export async function getServerSideProps({ req, res }) {
         props: {
             initProps,
             dataProfile,
-            dataGroups,
+            dataGroupsAgents,
+            dataGroupsRequesters,
             dataDetailGroup,
             sidemenu: "4"
         },

@@ -18,28 +18,93 @@ import { Input, Slider } from 'antd'
 import { Select, Tag } from 'antd'
 import { Radio } from 'antd'
 import { Row, Col } from 'antd'
+import notification from 'antd/lib/notification'
 
-function Groups({ initProps, dataProfile, dataListAccount, dataDetailGroup, sidemenu }) {
+function Groups({ initProps, dataProfile, dataListAccount, dataDetailGroup, sidemenu, dataGroupHead }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
-    // console.log('yg ni' + dataDetailGroup.data.group_detail.name)
+    // console.log(dataGroupHead)
+    console.log(dataDetailGroup)
 
-    //------------populate list account-------------
+    const [editgroup, setEditgroup] = useState({
+        id: dataDetailGroup.data.group_detail.id,
+        name: dataDetailGroup.data.group_detail.name,
+        description: dataDetailGroup.data.group_detail.description,
+        group_head: dataGroupHead.data.user_id,
+        is_agent: true,
+        user_ids: dataDetailGroup.data.group_user
+    })
+    const onChangeEditGroup = (e) => {
+        var val = e.target.value
+        setEditgroup({
+            ...editgroup,
+            [e.target.name]: val
+        })
+    }
+    const onChangeEditGroupHeadGroup = (value) => {
+        setEditgroup({
+            ...editgroup,
+            ["group_head"]: value
+        })
+    }
+    const handleChangeEditAgent = (value) => {
+        setEditgroup({
+            ...editgroup,
+            ["user_ids"]: value
+        })
+    }
+    function handleClick() {
+        console.log(editgroup)
+    }
+    const handleEditGroup = () => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateGroup`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(editgroup)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/groups?originPath=Admin`)
+                    }, 1000)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo[3],
+                        duration: 3
+                    })
+                }
+            })
+        // console.log("isi new group: " + newgroup.name)
+    }
+    //------------------------------------------
+
+    //----------------radio button--------------
     const [value, setValue] = useState(1);
     const onChange = e => {
         console.log('radio checked', e.target.value);
         setValue(e.target.value);
     };
+    //------------------------------------------
 
+    //------------populate list account-------------
     const dataDD = dataListAccount.data.accounts.map((doc, idx) => {
         return ({
             value: doc.user_id,
-            profile_image: doc.profile_image,
+            // profile_image: doc.profile_image,
             label: doc.fullname,
-            email: doc.email,
-            phone_number: doc.phone_number
+            // email: doc.email,
+            // phone_number: doc.phone_number
         })
     })
     
@@ -57,68 +122,6 @@ function Groups({ initProps, dataProfile, dataListAccount, dataDetailGroup, side
     function callback(key) {
         console.log(key);
       }
-    const columnsDD = [
-        {
-            title: 'role',
-            dataIndex: 'name',
-            key: 'role',
-            width: 800,
-            render(text, record) {
-                return {
-                    props: {
-                    style: { background: record.key%2 == 1 ? '#f2f2f2' : '#fff' },
-                  },
-                    children: <div>{text}</div>,
-                };
-            },
-        },
-        {
-            title: 'action', // Non-breakable space is char 0xa0 (160 dec)
-            dataIndex: 'actionss',
-            key: 'action',
-            width: 50,
-            render: (text, record, index) => {
-                return {
-                    props: {
-                        style: { background: record.key%2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children: 
-                    <Button>
-                        <Link href={{
-                            pathname: `/edit/${record.key}`,
-                            query: {
-                                originPath: 'Admin'
-                            }
-                        }}><a>Edit</a></Link>
-                    </Button>
-                }
-            }
-        },
-        {
-            title: 'action', // Non-breakable space is char 0xa0 (160 dec)
-            dataIndex: 'actionss',
-            key: 'action',
-            width: 100,
-            render: (text, record, index) => {
-                return {
-                    props: {
-                        style: { background: record.key%2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children: <Tooltip placement="topLeft" title={"Delete"}>
-                    {/* {actions[index]} */}
-                    <Button>
-                        <Link href={{
-                            pathname: `/delete/${record.key}`,
-                            query: {
-                                originPath: 'Admin'
-                            }
-                        }}><a><DeleteOutlined /></a></Link>
-                    </Button>
-                </Tooltip>
-                }
-            }
-        }
-    ];
 
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} dataDetailGroup={dataDetailGroup} originPath={originPath}>
@@ -127,16 +130,18 @@ function Groups({ initProps, dataProfile, dataListAccount, dataDetailGroup, side
                     <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
-                                <h1 className="font-semibold text-base w-auto py-2">New Group</h1>
+                                <h1 className="font-semibold text-base w-auto py-2">Edit Group</h1>
                                 <div className="flex space-x-2">
                                     
+                                        <Link href="/groups?originPath=Admin" >
                                         <div className=" text-black text-sm bg-white hover:bg-gray-300 border-2 border-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
-                                            <p onClick={e => e.preventDefault()}>
+                                            <p>
                                             Cancel
                                             </p>
                                         </div>
+                                        </Link>
                                         <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
-                                            <p onClick={e => e.preventDefault()}>
+                                            <p onClick={handleEditGroup}>
                                             Save
                                             </p>
                                         </div>
@@ -148,12 +153,17 @@ function Groups({ initProps, dataProfile, dataListAccount, dataDetailGroup, side
                         {/* <div className="w-120 h-auto p-0 "> */}
                             <div className="pb-4 md:mb-0 ">
                                 <h1 className="font-semibold text-sm">Group Name</h1>
-                                <Input placeholder="Group Name" defaultValue={dataDetailGroup.data.group_detail.name}></Input>
+                                <Input placeholder="Group Name" name={`name`} defaultValue={editgroup.name} onChange={onChangeEditGroup}></Input>
                             </div>
                             
                             <div className="pb-4 md:mb-0">
                                 <h1 className="font-semibold text-sm">Group Description</h1>
-                                <TextArea placeholder="Group Description" defaultValue={dataDetailGroup.data.group_detail.description} rows={2}/>
+                                <TextArea placeholder="Group Description" name={`description`} defaultValue={editgroup.description} onChange={onChangeEditGroup} rows={2}/>
+                            </div>
+
+                            <div className="pb-4 md:mb-0 ">
+                                <h1 className="font-semibold text-sm">Group Head</h1>
+                                <Select showSearch placeholder="Add Group Head" defaultValue={editgroup.group_head} name={`group_head`} onChange={onChangeEditGroupHeadGroup} name={`group_head`} showArrow options={dataDD}  style={{ width: '100%', lineHeight:'2.4'}}/> 
                             </div>
                             
                             {/* <div className="pb-4 md:mb-0">
@@ -177,15 +187,15 @@ function Groups({ initProps, dataProfile, dataListAccount, dataDetailGroup, side
                             </Radio.Group>
                             <Row>
                                 <Col flex="auto">
-                                    <Select  placeholder="Add an Agent" showArrow mode="multiple" options={dataDD} onChange={handleChange} style={{ width: '100%',padding:'0 5px', lineHeight:'2.4'}}/>  
+                                    <Select  placeholder="Add an Agent" showArrow mode="multiple" onChange={handleChangeEditAgent} defaultValue={editgroup.user_ids} options={dataDD} style={{ width: '100%',padding:'0 5px', lineHeight:'2.4'}}/>  
                                 </Col>
-                                <Col flex="100px">
+                                {/* <Col flex="100px">
                                     <div className=" text-black text-sm bg-white hover:bg-gray-300 border border-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
-                                        <p onClick={e => e.preventDefault()}>
+                                        <p onClick={handleClick}>
                                         Add
                                         </p>
                                     </div>
-                                </Col>
+                                </Col> */}
                             </Row>
                         </div>
                         {/* <Divider style={{borderTop:'1px solid rgba(0, 0, 0, 0.2)'}}/>
@@ -264,6 +274,7 @@ export async function getServerSideProps({ req, res, params }) {
             initProps = cookiesJSON.token
         }
     }
+    //get data detail group
     const resourcesGetDetailGroup = await fetch(`https://boiling-thicket-46501.herokuapp.com/getGroup?id=${groupsid}`, {
         method: `GET`,
         headers: {
@@ -272,13 +283,19 @@ export async function getServerSideProps({ req, res, params }) {
     })
     const resjsonGetDetailGroup = await resourcesGetDetailGroup.json()
     const dataDetailGroup = resjsonGetDetailGroup
+    const group_head = dataDetailGroup.data.group_detail.group_head
     
-    // const resourcesGP = await fetch(`https://go.cgx.co.id/auth/v1/get-profile`, {
-    //     method: `GET`,
-    //     headers: {
-    //         'Authorization': JSON.parse(initProps)
-    //     }
-    // })
+    //get data  head
+    const resourcesGetGroupHead = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAccountDetail?login_id=${group_head}`, {
+        method: `POST`,
+        headers: {
+            'Authorization': JSON.parse(initProps)
+        },
+    })
+    const resjsonGetGroupHead = await resourcesGetGroupHead.json()
+    const dataGroupHead = resjsonGetGroupHead
+    
+    //get detail profil yang login
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,
         headers: {
@@ -288,12 +305,7 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    // const resourcesLA = await fetch(`https://go.cgx.co.id/admin/v1/get-list-account?page=1&rows=50&order_by=asc`, {
-    //     method: `GET`,
-    //     headers: {
-    //         'Authorization': JSON.parse(initProps)
-    //     }
-    // })
+    //get data list akun
     const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAccountList`, {
         method: `POST`,
         headers: {
@@ -311,7 +323,8 @@ export async function getServerSideProps({ req, res, params }) {
             dataProfile,
             dataListAccount,
             dataDetailGroup,
-            sidemenu: "4"
+            sidemenu: "4",
+            dataGroupHead
         },
     }
 }

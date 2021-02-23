@@ -56,7 +56,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
     }
     else {
         // console.log("dua")
-        console.log(childBreacrumbDD)
+        // console.log(childBreacrumbDD)
         childBreacrumbDD[childBreacrumbCC.length - 3] = childBreacrumbDD[childBreacrumbCC.length - 3] + " " + childBreacrumbDD[childBreacrumbCC.length - 2] + " " +childBreacrumbDD[childBreacrumbCC.length - 4]
         childBreacrumbDD.splice(2, 1)
         // console.log('udah di splice: '+childBreacrumbDD)
