@@ -24,54 +24,54 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                         </h3>
                     </div>
                     <div className="grid md:grid-cols-5 sm:grid-cols-1">
-                        <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                            <Link href={{
-                                pathname: '/agents',
-                                query: {
-                                    originPath: "Admin"
-                                }
-                            }}>
+                        <Link href={{
+                            pathname: '/agents',
+                            query: {
+                                originPath: "Admin"
+                            }
+                        }}>
+                            <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <TeamOutlined /> Agents
                                 </div>
-                            </Link>
-                        </div>
-                        <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                            </div>
+                        </Link>
                         <Link href={{
-                                pathname: '/requesters',
-                                query: {
-                                    originPath: "Admin"
-                                }
-                            }}>
+                            pathname: '/requesters',
+                            query: {
+                                originPath: "Admin"
+                            }
+                        }}>
+                            <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <UserOutlined /> Requesters
                                 </div>
-                            </Link>
-                        </div>
-                        <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                            <Link href={{
-                                pathname: '/roles',
-                                query: {
-                                    originPath: "Admin"
-                                }
-                            }}>
+                            </div>
+                        </Link>
+                        <Link href={{
+                            pathname: '/roles',
+                            query: {
+                                originPath: "Admin"
+                            }
+                        }}>
+                            <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <TeamOutlined /> Roles
                                 </div>
-                            </Link>
-                        </div>
-                        <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                            </div>
+                        </Link>
                         <Link href={{
-                                pathname: '/groups',
-                                query: {
-                                    originPath: "Admin"
-                                }
-                            }}>
+                            pathname: '/groups',
+                            query: {
+                                originPath: "Admin"
+                            }
+                        }}>
+                            <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <UserOutlined /> Groups
                                 </div>
-                            </Link>
-                        </div>
+                            </div>
+                        </Link>
                     </div>
                 </div>
 
@@ -83,30 +83,30 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                         </h3>
                     </div>
                     <div className="grid md:grid-cols-5 sm:grid-cols-1">
-                        <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                            <Link href={{
-                                pathname: '/company/mig/',
-                                query: {
-                                    originPath: "Admin"
-                                }
-                            }}>
+                        <Link href={{
+                            pathname: '/company/mig/',
+                            query: {
+                                originPath: "Admin"
+                            }
+                        }}>
+                            <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <TeamOutlined /> MIG Company
                                 </div>
-                            </Link>
-                        </div>
-                        <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                            <Link href={{
-                                pathname: '/company/',
-                                query: {
-                                    originPath: "Admin"
-                                }
-                            }}>
+                            </div>
+                        </Link>
+                        <Link href={{
+                            pathname: '/company/',
+                            query: {
+                                originPath: "Admin"
+                            }
+                        }}>
+                            <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <UserOutlined /> Clients
                                 </div>
-                            </Link>
-                        </div>
+                            </div>
+                        </Link>
                     </div>
                 </div>
             </div>

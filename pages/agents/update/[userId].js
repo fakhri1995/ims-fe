@@ -231,7 +231,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                                         <Input defaultValue={data1.phone_number} onChange={onChangeEditAgents} name="phone_number" />
                                     </Form.Item>
                                     <Form.Item label="Role" required tooltip="Wajib diisi">
-                                        <input type="number" value={data1.role} name={'role'} onChange={onChangeEditAgents} />
+                                        <input type="number" defaultValue={data1.role} name={'role'} onChange={onChangeEditAgents} />
                                     </Form.Item>
                                 </Form>
                             </div>

@@ -86,7 +86,7 @@ function ProfileTabs({ dataProfile, editable2 }) {
     )
 }
 
-function SecurityTabs({ dataProfile, initProps }) {
+function SecurityTabs({ dataProfile, tok }) {
     const rt = useRouter()
     const [pass, setPass] = useState({
         new_password: ''
@@ -102,7 +102,8 @@ function SecurityTabs({ dataProfile, initProps }) {
         fetch(`https://boiling-thicket-46501.herokuapp.com/changePassword`, {
             method: 'POST',
             headers: {
-                'Authorization': JSON.parse(initProps),
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(pass)
         })
@@ -110,6 +111,9 @@ function SecurityTabs({ dataProfile, initProps }) {
             .then(res2 => {
                 if (res2.data) {
                     setVisible(false)
+                    setPass({
+                        new_password: ''
+                    })
                     notification['success']({
                         message: res2.data.message,
                         duration: 3
@@ -120,6 +124,9 @@ function SecurityTabs({ dataProfile, initProps }) {
                 }
                 else if (!res2.success) {
                     setVisible(false)
+                    setPass({
+                        new_password: ''
+                    })
                     notification['error']({
                         message: res2.message.errorInfo.status_detail,
                         duration: 3
@@ -130,7 +137,7 @@ function SecurityTabs({ dataProfile, initProps }) {
     return (
         <div className="p-4 grid grid-rows-1 w-full">
             <div className="col-span-1">
-                <Input.Password name="password" value={pass.new_password} placeholder="Password Baru" type="password" onChange={onChangePassword} style={{ marginBottom: `2rem` }} />
+                <Input.Password name="new_password" placeholder="Password Baru" type="password" onChange={onChangePassword} style={{ marginBottom: `2rem` }} />
                 <button className="w-auto h-auto py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded-md" onClick={() => { setVisible(true) }}>Ubah Password</button>
             </div>
             <Modal
@@ -181,7 +188,7 @@ function ProfileIndex({ initProps, dataProfile }) {
                             <div className="flex">
                                 <h1 className=" text-xs md:text-sm font-normal mr-1 md:mr-3 pt-1">{dataProfile.data.email} </h1>
                                 <div className="mr-1 md:mr-3 pt-1">|</div>
-                                <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md">USER</div>
+                                <div className=" bg-blue-100 text-blue-600 text-sm md:text-base border-blue-600 border py-1 md:py-1 px-1 md:px-3 rounded-md">USER</div>
                             </div>
                         </div>
                     </div>

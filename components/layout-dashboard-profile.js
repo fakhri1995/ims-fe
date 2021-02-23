@@ -93,7 +93,7 @@ function LayoutDashboardProfile({ children, tok, dataProfile, edit, setedit, st 
                     </Menu.Item>
                 </Menu>
             </Sider>
-            <Sider collapsible collapsed={collsmall} trigger={null} collapsedWidth={0} width={50} theme="light" className={st.siderLayoutSmall} style={{ borderRight: `1px solid #f0f0f0` }}>
+            <Sider collapsible collapsed={collsmall} trigger={null} collapsedWidth={0} width={45} theme="light" className={st.siderLayoutSmall} style={{ borderRight: `1px solid #f0f0f0` }}>
                 <div className="logo" style={{ height: `32px`, marginTop: `24px`, marginLeft: `16px`, marginRight: `16px` }}></div>
                 <Menu theme="light" mode="inline" defaultSelectedKeys={['1']}>
                     <Menu.Item key="1" icon={<DashboardTwoTone />}>

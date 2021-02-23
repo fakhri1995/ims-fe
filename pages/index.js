@@ -2,8 +2,8 @@ import { useState } from 'react'
 import Form from 'antd/lib/form';
 import { Input, Checkbox, Button, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import 'antd/dist/antd.css';
 import { useRouter } from 'next/router'
+import notification from 'antd/lib/notification'
 import jscookie from 'js-cookie'
 import httpcookie from 'cookie'
 
@@ -16,7 +16,6 @@ export default function Home({ initProps }) {
     password: ''
   })
   const [alerterror, setAlerterror] = useState(false)
-  const [spin1, setSpin1] = useState(false)
   const onChangeLogin = (e) => {
     setFormdata({
       ...formdata,
@@ -24,7 +23,6 @@ export default function Home({ initProps }) {
     })
   }
   const handleLogin = () => {
-    setSpin1(true)
     fetch(`https://boiling-thicket-46501.herokuapp.com/login`, {
       method: "POST",
       body: new URLSearchParams(formdata)
@@ -32,23 +30,25 @@ export default function Home({ initProps }) {
       .then(res => res.json())
       .then(res2 => {
         if (res2.data) {
+          notification['success']({
+            message: "Selamat datang di MIGSYS",
+            duration: 3
+          })
           // console.log("token: " + res2.data.token)
           var date = new Date();
           date.setTime(date.getTime() + (3600 * 1000));
           jscookie.set('token', JSON.stringify(res2.data.token), { expires: date })
-          setSpin1(false)
           // console.log("token di session: " + JSON.parse(jscookie.get('token')))
           rt.push('/dashboard/home')
         }
         else if (!res2.success) {
           // console.log("masuk ke error login")
           message.error({
-            content: "Invalid Email/password",
+            content: res2.message.errorInfo.status_detail,
             style: {
               marginTop: `1rem`
             }
           }, 5)
-          setSpin1(false)
           setAlerterror(true)
         }
       })
@@ -60,7 +60,7 @@ export default function Home({ initProps }) {
           <Spin size="large"> */}
       <div className="container-xl bg-blue-600 h-screen">
         <div className="pt-20 relative" id="wrapper">
-          <div className="mx-auto bg-white rounded-lg w-5/12 h-80 text-black shadow-lg px-5 py-10 text-center">
+          <div className="mx-auto bg-white rounded-lg w-10/12 md:w-5/12 h-80 md:h-80 text-black shadow-lg px-3 md:px-5 py-10 text-center">
             <h1 className="mb-5 font-mont text-xl font-semibold">Log In MIGSYS v3</h1>
             <Form name="email" className="loginForm" initialValues={{ remember: true }} onFinish={handleLogin}>
               <Form.Item name="email" rules={[
@@ -97,7 +97,6 @@ export default function Home({ initProps }) {
         </div>
       </div>
       {/* </Spin> */}
-      // :
       {/* } */}
     </>
   )
