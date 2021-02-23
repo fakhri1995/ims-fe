@@ -20,10 +20,8 @@ import PlusCircleTwoTone from '@ant-design/icons/PlusCircleTwoTone'
 import AlertOutlined from '@ant-design/icons/AlertOutlined'
 import { Row, Col } from 'antd';
 import jscookie from 'js-cookie'
-import st from './layout-dashboard-clients.module.css'
-import 'antd/dist/antd.css';
 
-function LayoutDashboardClients({ children, tok, dataProfile, pathArr, sidemenu, originPath, dataDetailCompany }) {
+function LayoutDashboardClients({ children, tok, dataProfile, pathArr, sidemenu, originPath, dataDetailCompany, st }) {
     const rt = useRouter()
     var rootBreadcrumb = ""
     var oriPath = ""
@@ -47,9 +45,13 @@ function LayoutDashboardClients({ children, tok, dataProfile, pathArr, sidemenu,
     })
     const { Sider, Content, Header } = Layout
     const [coll, setColl] = useState(true)
+    const [collsmall, setCollsmall] = useState(true)
     const [tinggi, setTinggi] = useState(90)
     const handleColl = () => {
         setColl(prev => !prev)
+    };
+    const handleCollSmall = () => {
+        setCollsmall(prev => !prev)
     };
     const handleLogout = () => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/logout`, {
@@ -154,8 +156,29 @@ function LayoutDashboardClients({ children, tok, dataProfile, pathArr, sidemenu,
     var pathBuilder = ""
     return (
         <Layout>
-            <Sider collapsible collapsed={coll} trigger={null} breakpoint="lg" theme="light">
+            <Sider collapsible collapsed={coll} trigger={null} theme="light" style={{ borderRight: `1px solid #f0f0f0` }} className={`${st.siderLayout} sider`}>
                 <div className="logo" style={{ height: `32px`, margin: `16px`, background: `gray` }}></div>
+                <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]}>
+                    <Menu.Item key="1" icon={<DashboardTwoTone />}>
+                        <Link href="/dashboard/home">
+                            Dashboard
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="2" icon={<BankOutlined />}>
+                        Companies
+                    </Menu.Item>
+                    <Menu.Item key="3" icon={<InboxOutlined />}>
+                        Assets
+                    </Menu.Item>
+                    <Menu.Item key="4" icon={<SettingOutlined />}>
+                        <Link href="/dashboard/admin">
+                            Admin
+                        </Link>
+                    </Menu.Item>
+                </Menu>
+            </Sider>
+            <Sider collapsible collapsed={collsmall} trigger={null} collapsedWidth={0} width={45} theme="light" className={st.siderLayoutSmall} style={{ borderRight: `1px solid #f0f0f0` }}>
+                <div className="logo" style={{ height: `32px`, margin: `16px` }}></div>
                 <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]}>
                     <Menu.Item key="1" icon={<DashboardTwoTone />}>
                         <Link href="/dashboard/home">
@@ -177,8 +200,9 @@ function LayoutDashboardClients({ children, tok, dataProfile, pathArr, sidemenu,
             </Sider>
             <Layout className="site-layout">
                 <Header className="site-layout-background" style={{ padding: 0, backgroundColor: `white`, display: `flex`, flexDirection: `row`, flexWrap: `wrap`, justifyContent: `space-between`, width: `100%`, height: `auto`, alignItems: `center` }}>
-                    <div>
-                        {coll ? <MenuUnfoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className="trigger"></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left` }} className="trigger"></MenuFoldOutlined>}
+                    <div className=" flex">
+                        {coll ? <MenuUnfoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className={st.trigger}></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left` }} className={st.trigger}></MenuFoldOutlined>}
+                        {collsmall ? <MenuUnfoldOutlined onClick={handleCollSmall} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className={st.triggerSmall}></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleCollSmall} style={{ padding: `24px`, float: `left` }} className={st.triggerSmall}></MenuFoldOutlined>}
                         {
                             pathArr ?
                                 <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 10px` }}>
@@ -234,7 +258,7 @@ function LayoutDashboardClients({ children, tok, dataProfile, pathArr, sidemenu,
                         <div style={{ marginRight: `3rem`, cursor: `pointer` }}>
                             <QuestionCircleOutlined />
                         </div>
-                        <div style={{ marginRight: `3rem`, marginTop:`1rem` }}>
+                        <div style={{ marginRight: `3rem`, marginTop: `1rem` }}>
                             <Dropdown overlay={menuProfile2} trigger={['click']}>
                                 {
                                     dataProfile.data.image_profile ?

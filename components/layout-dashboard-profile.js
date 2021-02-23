@@ -9,16 +9,20 @@ import Avatar from 'antd/lib/avatar'
 import Dropdown from 'antd/lib/dropdown'
 import ExportOutlined from '@ant-design/icons/ExportOutlined'
 import DashboardTwoTone from '@ant-design/icons/DashboardTwoTone'
-import st from './layout-dashboard-profile.module.css'
-import 'antd/dist/antd.css';
+import MenuUnfoldOutlined from '@ant-design/icons/MenuUnfoldOutlined'
+import MenuFoldOutlined from '@ant-design/icons/MenuFoldOutlined'
 
-function LayoutDashboardProfile({ children, tok, dataProfile, edit, setedit }) {
+function LayoutDashboardProfile({ children, tok, dataProfile, edit, setedit, st }) {
     const rt = useRouter()
     const { Sider, Content, Header } = Layout
     const [coll, setColl] = useState(true)
+    const [collsmall, setCollsmall] = useState(true)
     const [tinggi, setTinggi] = useState(90)
     const handleColl = () => {
         setColl(prev => !prev)
+    };
+    const handleCollSmall = () => {
+        setCollsmall(prev => !prev)
     };
     const handleLogout = () => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/logout`, {
@@ -79,8 +83,18 @@ function LayoutDashboardProfile({ children, tok, dataProfile, edit, setedit }) {
     var pathBuilder = ""
     return (
         <Layout>
-            <Sider collapsible collapsed={coll} trigger={null} breakpoint="lg" theme="light">
+            <Sider collapsible collapsed={coll} trigger={null} theme="light" style={{ borderRight: `1px solid #f0f0f0` }} className={`${st.siderLayout} sider`}>
                 <div className="logo" style={{ height: `32px`, marginTop: `24px`, marginLeft: `16px`, marginRight: `16px`, background: `gray` }}></div>
+                <Menu theme="light" mode="inline" defaultSelectedKeys={['1']}>
+                    <Menu.Item key="1" icon={<DashboardTwoTone />}>
+                        <Link href="/dashboard/home">
+                            Dashboard
+                        </Link>
+                    </Menu.Item>
+                </Menu>
+            </Sider>
+            <Sider collapsible collapsed={collsmall} trigger={null} collapsedWidth={0} width={45} theme="light" className={st.siderLayoutSmall} style={{ borderRight: `1px solid #f0f0f0` }}>
+                <div className="logo" style={{ height: `32px`, marginTop: `24px`, marginLeft: `16px`, marginRight: `16px` }}></div>
                 <Menu theme="light" mode="inline" defaultSelectedKeys={['1']}>
                     <Menu.Item key="1" icon={<DashboardTwoTone />}>
                         <Link href="/dashboard/home">
@@ -91,7 +105,9 @@ function LayoutDashboardProfile({ children, tok, dataProfile, edit, setedit }) {
             </Sider>
             <Layout className="site-layout">
                 <Header className="site-layout-background" style={{ padding: 0, backgroundColor: `white`, display: `flex`, flexDirection: `row`, flexWrap: `wrap`, justifyContent: `space-between`, width: `100%`, height: `auto`, alignItems: `center` }}>
-                    <div>
+                    <div className="flex">
+                        {coll ? <MenuUnfoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className={st.trigger}></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left` }} className={st.trigger}></MenuFoldOutlined>}
+                        {collsmall ? <MenuUnfoldOutlined onClick={handleCollSmall} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className={st.triggerSmall}></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleCollSmall} style={{ padding: `24px`, float: `left` }} className={st.triggerSmall}></MenuFoldOutlined>}
                         <div className="float-left px-8 py-8 font-bold text-base">
                             Profile
                         </div>

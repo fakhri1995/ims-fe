@@ -4,6 +4,7 @@ import Layout from '../../components/layout-dashboard'
 import TeamOutlined from '@ant-design/icons/TeamOutlined'
 import UserOutlined from '@ant-design/icons/UserOutlined'
 import Link from 'next/link'
+import st from "../../components/layout-dashboard.module.css"
 
 function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
     // jscookie.remove('token')
@@ -13,7 +14,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     return (
-        <Layout tok={tok} pathArr={pathArr} sidemenu={sidemenu} dataProfile={dataProfile}>
+        <Layout tok={tok} pathArr={pathArr} sidemenu={sidemenu} dataProfile={dataProfile} st={st}>
             <div className="w-full h-auto p-5 font-mont border-t border-opacity-30 border-gray-500 bg-white space-y-10">
                 <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
                     <div className="border-b border-gray-300">
@@ -23,54 +24,54 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                         </h3>
                     </div>
                     <div className="grid md:grid-cols-5 sm:grid-cols-1">
-                        <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                            <Link href={{
-                                pathname: '/agents',
-                                query: {
-                                    originPath: "Admin"
-                                }
-                            }}>
+                        <Link href={{
+                            pathname: '/agents',
+                            query: {
+                                originPath: "Admin"
+                            }
+                        }}>
+                            <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <TeamOutlined /> Agents
                                 </div>
-                            </Link>
-                        </div>
-                        <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                            </div>
+                        </Link>
                         <Link href={{
-                                pathname: '/requesters',
-                                query: {
-                                    originPath: "Admin"
-                                }
-                            }}>
+                            pathname: '/requesters',
+                            query: {
+                                originPath: "Admin"
+                            }
+                        }}>
+                            <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <UserOutlined /> Requesters
                                 </div>
-                            </Link>
-                        </div>
-                        <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                            <Link href={{
-                                pathname: '/roles',
-                                query: {
-                                    originPath: "Admin"
-                                }
-                            }}>
+                            </div>
+                        </Link>
+                        <Link href={{
+                            pathname: '/roles',
+                            query: {
+                                originPath: "Admin"
+                            }
+                        }}>
+                            <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <TeamOutlined /> Roles
                                 </div>
-                            </Link>
-                        </div>
-                        <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                            </div>
+                        </Link>
                         <Link href={{
-                                pathname: '/groups',
-                                query: {
-                                    originPath: "Admin"
-                                }
-                            }}>
+                            pathname: '/groups',
+                            query: {
+                                originPath: "Admin"
+                            }
+                        }}>
+                            <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <UserOutlined /> Groups
                                 </div>
-                            </Link>
-                        </div>
+                            </div>
+                        </Link>
                     </div>
                 </div>
 
@@ -82,30 +83,30 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                         </h3>
                     </div>
                     <div className="grid md:grid-cols-5 sm:grid-cols-1">
-                        <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                            <Link href={{
-                                pathname: '/company/mig/',
-                                query: {
-                                    originPath: "Admin"
-                                }
-                            }}>
+                        <Link href={{
+                            pathname: '/company/mig/',
+                            query: {
+                                originPath: "Admin"
+                            }
+                        }}>
+                            <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <TeamOutlined /> MIG Company
                                 </div>
-                            </Link>
-                        </div>
-                        <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                            <Link href={{
-                                pathname: '/company/',
-                                query: {
-                                    originPath: "Admin"
-                                }
-                            }}>
+                            </div>
+                        </Link>
+                        <Link href={{
+                            pathname: '/company/',
+                            query: {
+                                originPath: "Admin"
+                            }
+                        }}>
+                            <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <UserOutlined /> Clients
                                 </div>
-                            </Link>
-                        </div>
+                            </div>
+                        </Link>
                     </div>
                 </div>
             </div>

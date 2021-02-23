@@ -18,7 +18,7 @@ import notification from 'antd/lib/notification'
 import Drawer from 'antd/lib/drawer'
 import Link from 'next/link'
 import { useState } from 'react'
-import { render } from 'nprogress'
+import st from '../../components/layout-dashboard-clients.module.css'
 
 function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     console.log("isi list comp: " + dataCompanyList.data.companies[4].is_enabled)
@@ -243,7 +243,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     //     console.log("rows leave: " + events[idx] + " " + idx)
     // }
     return (
-        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath}>
+        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} st={st}>
             <div className="flex justify-start md:justify-end p-3 md:border-t-2 md:border-b-2 bg-white mb-4 md:mb-8">
                 <div className="flex space-x-2">
                     <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-40" onClick={() => { setDrawablecreate(true) }}> Create</button>

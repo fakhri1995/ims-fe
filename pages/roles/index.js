@@ -9,6 +9,7 @@ import CopyOutlined from '@ant-design/icons/CopyOutlined'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
+import st from '../../components/layout-dashboard.module.css'
 
 
 function Roles({ initProps, dataProfile, sidemenu }) {
@@ -101,7 +102,7 @@ function Roles({ initProps, dataProfile, sidemenu }) {
     ];
 
     return (
-        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath}>
+        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
                 <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
                     <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">

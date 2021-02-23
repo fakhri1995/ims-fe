@@ -19,6 +19,7 @@ import { Select, Tag } from 'antd'
 import { Radio } from 'antd'
 import { Row, Col } from 'antd'
 import notification from 'antd/lib/notification'
+import st from '../../../../components/layout-dashboard-groups.module.css'
 
 function Groups({ initProps, dataProfile, dataListAccount, dataDetailGroup, sidemenu, dataGroupHead }) {
     const rt = useRouter()
@@ -124,7 +125,7 @@ function Groups({ initProps, dataProfile, dataListAccount, dataDetailGroup, side
       }
 
     return (
-        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} dataDetailGroup={dataDetailGroup} originPath={originPath}>
+        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} dataDetailGroup={dataDetailGroup} originPath={originPath} st={st}>
             <>
                 <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
                     <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
@@ -220,18 +221,18 @@ function Groups({ initProps, dataProfile, dataListAccount, dataDetailGroup, side
                         
                     </div>
                     <div className="flex flex-col space-y-3 px-4">
-                        <div className="font-semibold text-base">Groups</div>
-                        <p className="font-normal text-base">
+                        <div className="font-semibold text-sm">Groups</div>
+                        <p className="font-normal text-xs md:text-sm">
                             You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that the same agent can be a member of multiple groups as well
                         </p>
                         <br />
-                        <div className="font-semibold text-base">Auto-ticket Assignment</div>
-                        <p className="font-normal text-base">
+                        <div className="font-semibold text-sm">Auto-ticket Assignment</div>
+                        <p className="font-normal text-xs md:text-sm">
                             Once you create homogeneous agent groups, you can choose to automatically assign new tickets in this group to the next agent in Round Robin. Learn more about automatic ticket assignment
                         </p>
                         <br />
-                        <div className="font-semibold text-base">Working Hours</div>
-                        <p className="font-normal text-base">
+                        <div className="font-semibold text-sm">Working Hours</div>
+                        <p className="font-normal text-xs md:text-sm">
                         You can assign a different set of business hours and holidays to each Group. For example, you can separate agents by shifts and assign them different business hours, or create separate groups for each time zone your agents work at
                         </p>
                     </div>

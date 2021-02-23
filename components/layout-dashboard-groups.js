@@ -21,11 +21,8 @@ import AlertOutlined from '@ant-design/icons/AlertOutlined'
 import Row from 'antd/lib/row';
 import Col from 'antd/lib/col';
 import jscookie from 'js-cookie'
-import st from './layout-dashboard-groups.module.css'
-import 'antd/dist/antd.css';
-import { data } from 'autoprefixer'
 
-function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, originPath, dataDetailGroup }) {
+function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, originPath, dataDetailGroup, st }) {
     const rt = useRouter()
     var rootBreadcrumb = ""
     // console.log(dataDetailGroup)
@@ -49,7 +46,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
         return doc[0].toUpperCase() + doc.slice(1)
     })
     const childBreacrumbDD = childBreacrumbCC
-    if (dataDetailGroup.length === 0 ){
+    if (dataDetailGroup.length === 0) {
         childBreacrumbDD[childBreacrumbCC.length - 2] = childBreacrumbDD[childBreacrumbCC.length - 2] + " " + childBreacrumbDD[childBreacrumbCC.length - 1] + " " + childBreacrumbDD[childBreacrumbCC.length - 3]
         childBreacrumbDD.splice(2, 1)
         // console.log("satu")
@@ -64,9 +61,13 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
 
     const { Sider, Content, Header } = Layout
     const [coll, setColl] = useState(true)
+    const [collsmall, setCollsmall] = useState(true)
     const [tinggi, setTinggi] = useState(90)
     const handleColl = () => {
         setColl(prev => !prev)
+    };
+    const handleCollSmall = () => {
+        setCollsmall(prev => !prev)
     };
     const handleLogout = () => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/logout`, {
@@ -99,7 +100,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                     <div className="flex flex-col">
                         <h2 className="text-lg font-semibold mb-1">{dataProfile.data.fullname}</h2>
                         <h2 className="text-sm font-normal mb-1">{dataProfile.data.email}</h2>
-                        <a href={`/profile`} target="_blank" ref="noreferrer">Profile Settings</a>
+                        <Link href={`/profile`} ref="noreferrer">Profile Settings</Link>
                     </div>
                 </div>
                 <div>
@@ -171,8 +172,29 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
     var pathBuilder = ""
     return (
         <Layout>
-            <Sider collapsible collapsed={coll} trigger={null} breakpoint="lg" theme="light">
+            <Sider collapsible collapsed={coll} trigger={null} theme="light" style={{ borderRight: `1px solid #f0f0f0` }} className={`${st.siderLayout} sider`}>
                 <div className="logo" style={{ height: `32px`, margin: `16px`, background: `gray` }}></div>
+                <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]}>
+                    <Menu.Item key="1" icon={<DashboardTwoTone />}>
+                        <Link href="/dashboard/home">
+                            Dashboard
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="2" icon={<BankOutlined />}>
+                        Companies
+                    </Menu.Item>
+                    <Menu.Item key="3" icon={<InboxOutlined />}>
+                        Assets
+                    </Menu.Item>
+                    <Menu.Item key="4" icon={<SettingOutlined />}>
+                        <Link href="/dashboard/admin">
+                            Admin
+                        </Link>
+                    </Menu.Item>
+                </Menu>
+            </Sider>
+            <Sider collapsible collapsed={collsmall} trigger={null} collapsedWidth={0} width={45} theme="light" className={st.siderLayoutSmall} style={{ borderRight: `1px solid #f0f0f0` }}>
+                <div className="logo" style={{ height: `32px`, margin: `16px` }}></div>
                 <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]}>
                     <Menu.Item key="1" icon={<DashboardTwoTone />}>
                         <Link href="/dashboard/home">
@@ -194,8 +216,9 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
             </Sider>
             <Layout className="site-layout">
                 <Header className="site-layout-background" style={{ padding: 0, backgroundColor: `white`, display: `flex`, flexDirection: `row`, flexWrap: `wrap`, justifyContent: `space-between`, width: `100%`, height: `auto`, alignItems: `center` }}>
-                    <div>
-                        {coll ? <MenuUnfoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className="trigger"></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left` }} className="trigger"></MenuFoldOutlined>}
+                    <div className="flex">
+                        {coll ? <MenuUnfoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className={st.trigger}></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left` }} className={st.trigger}></MenuFoldOutlined>}
+                        {collsmall ? <MenuUnfoldOutlined onClick={handleCollSmall} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className={st.triggerSmall}></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleCollSmall} style={{ padding: `24px`, float: `left` }} className={st.triggerSmall}></MenuFoldOutlined>}
                         {
                             pathArr ?
                                 <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 10px` }}>
@@ -204,8 +227,8 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                                     {childBreacrumbDD.length !== 0 ?
                                         childBreacrumbDD.map((doc, idx) => {
                                             pathBuilder = pathBuilder + `/${pathArr[idx]}`
-                                            if (idx === childBreacrumbDD.length - 1 && idx > 0) { 
-                                                if (dataDetailGroup.length === 0){
+                                            if (idx === childBreacrumbDD.length - 1 && idx > 0) {
+                                                if (dataDetailGroup.length === 0) {
                                                     return (
                                                         <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
                                                     )

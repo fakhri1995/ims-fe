@@ -1,4 +1,5 @@
 import '../styles/globals.css'
+import 'antd/dist/antd.css';
 import Head from 'next/head'
 import Router from 'next/router';
 import NProgress from 'nprogress';
@@ -12,6 +13,7 @@ function MyApp({ Component, pageProps }) {
     <>
       <Head>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+        <title>MIGSys</title>
       </Head>
       <Component {...pageProps} />
     </>

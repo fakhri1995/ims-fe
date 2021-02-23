@@ -1,4 +1,26 @@
 .menuToggle:checked + .menu{
-    display: block;
-    justify-content: end;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.siderLayout,
+.trigger {
+  display: block;
+}
+
+.siderLayoutSmall,
+.triggerSmall {
+  display: none;
+}
+
+@media only screen and (max-width: 540px) {
+.siderLayoutSmall,
+.triggerSmall {
+  display: block;
+}
+
+.siderLayout,
+.trigger {
+  display: none;
+}
 }

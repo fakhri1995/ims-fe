@@ -7,18 +7,20 @@ import Input from 'antd/lib/input'
 import Table from 'antd/lib/table'
 import Tree from 'antd/lib/tree'
 import Drawer from 'antd/lib/drawer'
-import Popconfirm from 'antd/lib/popconfirm'
+import Modal from 'antd/lib/modal'
 import message from 'antd/lib/message'
-import Form from 'antd/lib/form'
 import notification from 'antd/lib/notification'
+import Form from 'antd/lib/form'
 import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
-import Sticky from 'wil-react-sticky'
+import st from '../../components/layout-dashboard-clients.module.css'
 
 
 function ClientsDetailProfile({ dataDetailCompany, tok }) {
     const rt = useRouter()
     const [editable, setEditable] = useState(false)
+    const [visible, setVisible] = useState(false)
+    const [visiblenon, setVisiblenon] = useState(false)
     const [data1, setData1] = useState({
         id: dataDetailCompany.data.company_id,
         company_name: dataDetailCompany.data.company_name,
@@ -106,6 +108,8 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
             .then(res => res.json())
             .then(res2 => {
                 if (res2.data) {
+                    setVisible(false)
+                    setVisiblenon(false)
                     notification['success']({
                         message: res2.data.message,
                         duration: 3
@@ -115,6 +119,8 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                     }, 500)
                 }
                 else if (!res2.success) {
+                    setVisible(false)
+                    setVisiblenon(false)
                     notification['error']({
                         message: res2.message.errorInfo.status_detail,
                         duration: 3
@@ -125,20 +131,20 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
     return (
         <div id="profileDetailMigWrapper">
             <div className="flex justify-start md:justify-end p-3 md:border-t-2 md:border-b-2 bg-white mb-4 md:mb-8">
-                <Sticky containerSelectorFocus="#profileDetailMigWrapper">
-                    <div className="flex space-x-2">
-                        {editable ?
-                            <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md" onClick={() => { setEditable(false) }}>Cancel</button>
-                            :
-                            null
-                        }
-                        {editable ?
-                            <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md" onClick={handleEditProfile}>Save</button>
-                            :
-                            <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md w-24 md:w-40" onClick={() => { setEditable(true) }}>Edit</button>
-                        }
-                    </div>
-                </Sticky>
+                {/* <Sticky containerSelectorFocus="#profileDetailMigWrapper"> */}
+                <div className="flex space-x-2">
+                    {editable ?
+                        <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md" onClick={() => { setEditable(false) }}>Cancel</button>
+                        :
+                        null
+                    }
+                    {editable ?
+                        <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md" onClick={handleEditProfile}>Save</button>
+                        :
+                        <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md w-24 md:w-40" onClick={() => { setEditable(true) }}>Edit</button>
+                    }
+                </div>
+                {/* </Sticky> */}
             </div>
             <div className=" mb-2 md:mb-4 flex">
                 <h1 className="font-semibold text-base mr-3 pt-1">{dataDetailCompany.data.company_name}</h1>
@@ -221,16 +227,32 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
             <div className="w-9/12 p-3 md:p-5 h-auto">
                 {
                     dataDetailCompany.data.is_enabled ?
-                        <Popconfirm onConfirm={() => { handleActivationClients("aktif") }} onClose={() => { message.error("Gagal dihapus") }}>
-                            <button className=" w-full h-auto py-2 text-center bg-red-600 text-white hover:bg-red-800 rounded-md">Non Aktifkan Akun</button>
-                        </Popconfirm>
+                        <button className=" w-full h-auto py-2 text-center bg-red-600 text-white hover:bg-red-800 rounded-md" onClick={() => { setVisible(true) }}>
+                            Non Aktifkan Akun
+                        </button>
                         :
-                        <Popconfirm onConfirm={() => { handleActivationClients("nonAktif") }} onClose={() => { message.error("Gagal dihapus") }}>
-                            <button className=" w-full h-auto py-2 text-center bg-blue-600 text-white hover:bg-blue-800 rounded-md">Aktifkan Akun</button>
-                        </Popconfirm>
+                        <button className=" w-full h-auto py-2 text-center bg-blue-600 text-white hover:bg-blue-800 rounded-md" onClick={() => { setVisiblenon(true) }}>
+                            Aktifkan Akun
+                        </button>
                 }
-            </div>
-        </div>
+            </div >
+            <Modal
+                title="Konfirmasi untuk menon-aktifkan akun"
+                visible={visible}
+                onOk={() => { handleActivationClients("aktif") }}
+                onCancel={() => setVisible(false)}
+            >
+                Apakah anda yakin ingin menon-aktifkan akun perusahaan <strong>{dataDetailCompany.data.company_name}</strong>?
+            </Modal>
+            <Modal
+                title="Konfirmasi untuk mengakaktifkan akun"
+                visible={visiblenon}
+                onOk={() => { handleActivationClients("nonAktif") }}
+                onCancel={() => setVisiblenon(false)}
+            >
+                Apakah anda yakin ingin melakukan aktivasi akun perusahaan <strong>{dataDetailCompany.data.company_name}</strong>?`
+            </Modal>
+        </div >
     )
 }
 
@@ -409,7 +431,6 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
     for (var i = 0; i < dataGetBanks.data.length; i++) {
         actionsArr.push(false)
     }
-    console.log(companyId)
     const [actions, setActions] = useState(actionsArr)
     const [action, setAction] = useState(false)
     const handleDeleteBA = (rec) => {
@@ -453,13 +474,6 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
         {
             title: 'Bank',
             dataIndex: 'name',
-            // filters: [
-            //     {
-            //         text: 'Bukopin',
-            //         value: 'Bank Bukopin Kantor Pusat - Jakarta',
-            //     },
-            // ],
-            // onFilter: (value, record) => record.bank.indexOf(value) === 0,
             sorter: (a, b) => a.bank.localeCompare(b.bank),
             sortDirections: ['descend', 'ascend'],
         },
@@ -547,16 +561,16 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
             .then((res) => res.json())
             .then(res2 => {
                 if (res2.success) {
-                    notification['success']({
-                        message: res2.message,
-                        duration: 3
-                    })
                     setBankdata({
                         company_id: companyId,
                         name: '',
                         account_number: '',
                         owner: '',
                         currency: ''
+                    })
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
                     })
                     setTimeout(() => {
                         setDrawablecreate(false)
@@ -565,12 +579,11 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                 }
                 else {
                     notification['error']({
-                        message: res2.message,
+                        message: res2.message.errorInfo.status_detail,
                         duration: 3
                     })
                 }
             })
-        console.log("isi bank data: " + bankdata.name)
     }
     const handleSubmitEditBA = () => {
         console.log("isidata2: " + recordrow)
@@ -599,12 +612,18 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                     })
                     setTimeout(() => {
                         setDrawableedit(false)
-                        rt.push(`/company/${companyId}?originPath=Admin`)
+                        if (process.env.NODE_ENV == "production") {
+                            window.location.href = `https://migsys.herokuapp.com/company/${companyId}?originPath=Admin`
+                        }
+                        else if (process.env.NODE_ENV == "development") {
+                            window.location.href = `http://localhost:3000/company/${companyId}?originPath=Admin`
+                        }
+                        // rt.push(`/company/${companyId}?originPath=Admin`)
                     }, 3000)
                 }
                 else {
                     notification['error']({
-                        message: res2.message,
+                        message: res2.erroInfo.status_detail,
                         duration: 3
                     })
                 }
@@ -624,53 +643,61 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                     }
                     <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40" onClick={() => { setDrawablecreate(true) }}> Create</button>
                     <Drawer title="Edit data Bank Account MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false) }} width={720}>
-                        <Form layout="vertical">
+                        <Form layout="vertical" onFinish={handleSubmitEditBA}>
                             <div className="grid grid-cols-2">
-                                {/* record: {recordrow.name} */}
                                 <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank Name"
-                                // rules={[
-                                //     {
-                                //         required: true,
-                                //         message: 'Please input your bank name!',
-                                //     },
-                                // ]}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Nama bank harus diisi',
+                                        },
+                                    ]}
                                 >
                                     <Input onChange={onChangeEditBA} name="name" defaultValue={recordrow.name} />
                                 </Form.Item>
                                 <Form.Item name="account_number" style={{ marginRight: `1rem` }} label="Account Number"
-                                // rules={[
-                                //     {
-                                //         required: true,
-                                //         message: 'Please input your account number!',
-                                //     },
-                                // ]}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Nomor rekening harus diisi',
+                                        },
+                                    ]}
                                 >
                                     <Input onChange={onChangeEditBA} name="account_number" defaultValue={recordrow.account_number} />
                                 </Form.Item>
                                 <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Owner"
-                                // rules={[
-                                //     {
-                                //         required: true,
-                                //         message: 'Please input the owner!',
-                                //     },
-                                // ]}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Nama penanggung jawab harus diisi',
+                                        },
+                                    ]}
                                 >
                                     <Input onChange={onChangeEditBA} name="owner" defaultValue={recordrow.owner} />
                                 </Form.Item>
-                                <Form.Item name="currency" style={{ marginRight: `1rem` }} label="Currency">
+                                <Form.Item name="currency" style={{ marginRight: `1rem` }} label="Currency"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Mata uang harus diisi',
+                                        },
+                                    ]}
+                                >
                                     <Input onChange={onChangeEditBA} name="currency" defaultValue={recordrow.currency} />
                                 </Form.Item>
                             </div>
-                            <button className="bg-gray-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-gray-800" onClick={handleSubmitEditBA}>Edit</button>
+                            <Form.Item>
+                                <button type="submit" className="bg-gray-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-gray-800">Edit</button>
+                            </Form.Item>
                         </Form>
                     </Drawer>
                     <Drawer title="Create data Bank Account MIG" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720}>
-                        <Form layout="vertical">
+                        <Form layout="vertical" onFinish={handleSubmitCreateBA}>
                             <div className="grid grid-cols-2">
                                 <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank Name" rules={[
                                     {
                                         required: true,
-                                        message: 'Please input your bank name!',
+                                        message: 'Nama bank harus diisi',
                                     },
                                 ]}>
                                     <Input onChange={onChangeBA} name="name" value={bankdata.name} />
@@ -678,7 +705,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                 <Form.Item name="account_number" style={{ marginRight: `1rem` }} label="Account Number" rules={[
                                     {
                                         required: true,
-                                        message: 'Please input your account number!',
+                                        message: 'Nomor rekening harus diisi',
                                     },
                                 ]}>
                                     <Input onChange={onChangeBA} name="account_number" value={bankdata.account_number} />
@@ -686,16 +713,25 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                 <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Owner" rules={[
                                     {
                                         required: true,
-                                        message: 'Please input the owner!',
+                                        message: 'Nama penanggung jawab harus diisi',
                                     },
                                 ]}>
                                     <Input onChange={onChangeBA} name="owner" value={bankdata.owner} />
                                 </Form.Item>
-                                <Form.Item name="currency" style={{ marginRight: `1rem` }} label="Currency">
+                                <Form.Item name="currency" style={{ marginRight: `1rem` }} label="Currency"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Mata uang harus diisi',
+                                        },
+                                    ]}
+                                >
                                     <Input onChange={onChangeBA} name="currency" value={bankdata.currency} />
                                 </Form.Item>
                             </div>
-                            <button className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800" onClick={handleSubmitCreateBA}>Submit</button>
+                            <Form.Item>
+                                <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button>
+                            </Form.Item>
                         </Form>
                     </Drawer>
                 </div>
@@ -741,7 +777,7 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
     const { originPath } = rt.query
     // console.log("get banks: " + dataGetBanks.data[0].account_number)
     return (
-        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} dataDetailCompany={dataDetailCompany}>
+        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} dataDetailCompany={dataDetailCompany} st={st}>
             <div className="p-5 bg-white hidden md:block">
                 <Tabs tabPosition={`left`}>
                     <TabPane tab="Profile" key={`profile`}>

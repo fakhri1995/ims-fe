@@ -4,8 +4,10 @@ import { useRouter } from 'next/router'
 import Table from 'antd/lib/table'
 import CopyOutlined from '@ant-design/icons/CopyOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
+import notification from 'antd/lib/notification'
 import { useState } from 'react'
 import Link from 'next/link'
+import st from '../../components/layout-dashboard.module.css'
 
 
 function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
@@ -13,15 +15,25 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
-    const dataDD = dataListAccount.data.accounts.map((doc, idx) => {
-        return ({
-            user_id: doc.user_id,
-            profile_image: doc.profile_image,
-            fullname: doc.fullname,
-            email: doc.email,
-            phone_number: doc.phone_number
+    var dataDD = []
+    if (!dataListAccount.data) {
+        dataDD = []
+        notification['error']({
+            message: dataListAccount.message.errorInfo.status_detail,
+            duration: 3
         })
-    })
+    }
+    else {
+        dataDD = dataListAccount.data.accounts.map((doc, idx) => {
+            return ({
+                user_id: doc.user_id,
+                profile_image: doc.profile_image,
+                fullname: doc.fullname,
+                email: doc.email,
+                phone_number: doc.phone_number
+            })
+        })
+    }
     const [dataKK, setDataSource] = useState(dataDD);
     const FilterAll = () => {
         setDataSource(dataDD)
@@ -95,7 +107,7 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
         }
     ];
     return (
-        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath}>
+        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
                 <div className="h-20 w-full grid grid-cols-1 md:grid-cols-3 border-gray-400 md:border-t md:border-b bg-white mb-5 p-4">
                     <div className=" col-span-1 md:col-span-2 flex items-center">

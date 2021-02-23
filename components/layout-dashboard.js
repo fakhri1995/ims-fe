@@ -20,10 +20,8 @@ import NotificationOutlined from '@ant-design/icons/NotificationOutlined'
 import QuestionCircleOutlined from '@ant-design/icons/QuestionCircleOutlined'
 import PlusCircleTwoTone from '@ant-design/icons/PlusCircleTwoTone'
 import AlertOutlined from '@ant-design/icons/AlertOutlined'
-import st from './layout-dashboard.module.css'
-import 'antd/dist/antd.css';
 
-function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, originPath, dataDetailAccount }) {
+function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, originPath, st }) {
     const rt = useRouter()
     var rootBreadcrumb = ""
     var oriPath = ""
@@ -50,12 +48,15 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
         // childBreacrumbDD[childBreacrumbDD.length - 2] = childBreacrumbDD[childBreacrumbDD.length - 2] + " " + childBreacrumbDD[childBreacrumbDD.length - 1]
         childBreacrumbDD.splice(2, 1)
     }
-    console.log("pjg cc: " + childBreacrumbDD)
     const { Sider, Content, Header } = Layout
     const [coll, setColl] = useState(true)
+    const [collsmall, setCollsmall] = useState(true)
     const [tinggi, setTinggi] = useState(90)
     const handleColl = () => {
         setColl(prev => !prev)
+    };
+    const handleCollSmall = () => {
+        setCollsmall(prev => !prev)
     };
     const handleLogout = () => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/logout`, {
@@ -88,7 +89,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                     <div className="flex flex-col">
                         <h2 className="text-lg font-semibold mb-1">{dataProfile.data.fullname}</h2>
                         <h2 className="text-sm font-normal mb-1">{dataProfile.data.email}</h2>
-                        <a href={`/profile`} target="_blank" ref="noreferrer">Profile Settings</a>
+                        <Link href={`/profile`} ref="noreferrer">Profile Settings</Link>
                     </div>
                 </div>
                 <div>
@@ -160,8 +161,29 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
     var pathBuilder = ""
     return (
         <Layout>
-            <Sider collapsible collapsed={coll} trigger={null} breakpoint="lg" theme="light" className={`${st.siderLayout} sider`}>
+            <Sider collapsible collapsed={coll} trigger={null} theme="light" className={`${st.siderLayout} sider`} style={{ borderRight: `1px solid #f0f0f0` }}>
                 <div className="logo" style={{ height: `32px`, margin: `16px`, background: `gray` }}></div>
+                <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]}>
+                    <Menu.Item key="1" icon={<DashboardTwoTone />}>
+                        <Link href="/dashboard/home">
+                            Dashboard
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="2" icon={<BankOutlined />}>
+                        Companies
+                    </Menu.Item>
+                    <Menu.Item key="3" icon={<InboxOutlined />}>
+                        Assets
+                    </Menu.Item>
+                    <Menu.Item key="4" icon={<SettingOutlined />}>
+                        <Link href="/dashboard/admin">
+                            Admin
+                        </Link>
+                    </Menu.Item>
+                </Menu>
+            </Sider>
+            <Sider collapsible collapsed={collsmall} trigger={null} collapsedWidth={0} width={45} theme="light" className={st.siderLayoutSmall} style={{ borderRight: `1px solid #f0f0f0` }}>
+                <div className="logo" style={{ height: `32px`, margin: `16px` }}></div>
                 <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]}>
                     <Menu.Item key="1" icon={<DashboardTwoTone />}>
                         <Link href="/dashboard/home">
@@ -185,10 +207,11 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                 <Header className="site-layout-background" style={{ padding: 0, backgroundColor: `white`, display: `flex`, alignItems: `center`, flexDirection: `row`, flexWrap: `wrap`, width: `100%`, justifyContent: `space-between`, height: `auto` }}>
                     <div className="flex">
                         {coll ? <MenuUnfoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className={st.trigger}></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left` }} className={st.trigger}></MenuFoldOutlined>}
-                        <label htmlFor={`foldtoggle`} className="pointer-cursor md:hidden block cursor-pointer">
+                        {collsmall ? <MenuUnfoldOutlined onClick={handleCollSmall} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className={st.triggerSmall}></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleCollSmall} style={{ padding: `24px`, float: `left` }} className={st.triggerSmall}></MenuFoldOutlined>}
+                        {/* <label htmlFor={`foldtoggle`} className="pointer-cursor md:hidden block cursor-pointer">
                             <MenuUnfoldOutlined style={{ padding: `24px`, float: `left` }}></MenuUnfoldOutlined>
                         </label>
-                        <input className={`hidden ${st.foldToggle}`} type="checkbox" />
+                        <input className={`hidden ${st.foldToggle}`} type="checkbox" /> */}
                         {
                             pathArr ?
                                 <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 10px`, backgroundColor: `white` }}>

@@ -10,7 +10,8 @@ import Input from 'antd/lib/input'
 import notification from 'antd/lib/notification'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import st from '../../../components/layout-dashboard.module.css'
 
 function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     const rt = useRouter()
@@ -114,7 +115,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
     );
 
     return (
-        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath}>
+        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
                 <div className=" col-span-1 md:col-span-1 flex md:hidden flex-col space-y-4 p-4">
                     <div className="font-semibold text-sm">Requesters</div>
