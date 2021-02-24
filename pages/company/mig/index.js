@@ -457,10 +457,10 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                     })
                     setTimeout(() => {
                         setDrawableedit(false)
-                        if (process.env.NODE_ENV == "production") {
+                        if(process.env.NODE_ENV == "production"){
                             window.location.href = "https://migsys.herokuapp.com/company/mig?originPath=Admin"
                         }
-                        else if (process.env.NODE_ENV == "development") {
+                        else if(process.env.NODE_ENV == "development"){
                             window.location.href = "http://localhost:3000/company/mig?originPath=Admin"
                         }
                         // rt.push(`/company/mig?originPath=Admin`)
@@ -790,10 +790,6 @@ export async function getServerSideProps({ req, res }) {
     })
     const resjsonGC = await resourcesGC.json()
     const dataDetailCompany = resjsonGC
-    if (!dataDetailCompany.data) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
 
     const resourcesGB = await fetch(`https://boiling-thicket-46501.herokuapp.com/getBanks?id=${dataDetailCompany.data.company_id}`, {
         method: `GET`,

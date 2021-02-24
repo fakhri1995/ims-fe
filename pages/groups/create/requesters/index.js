@@ -5,7 +5,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
 import Divider from 'antd/lib/divider'
-import { Input, Slider } from 'antd'
+import { Input } from 'antd'
 import { Select, Tag } from 'antd'
 import { Radio } from 'antd'
 import { Row, Col } from 'antd'
@@ -25,7 +25,7 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
         name: '',
         description: '',
         group_head: dataProfile.data.user_id,
-        is_agent: true,
+        is_agent: false,
         user_ids: []
     })
     const onChangeCreateGroup = (e) => {
@@ -113,9 +113,7 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
                                 <div className="flex space-x-2">
                                     <Link href="/groups?originPath=Admin" >
                                     <div className=" text-black text-sm bg-white hover:bg-gray-300 border-2 border-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
-                                        <p>
-                                        Cancel
-                                        </p>
+                                        <p>Cancel</p>
                                     </div>
                                     </Link>
                                     <button type="submit" className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
@@ -134,9 +132,8 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
                                             message: 'Nama grup harus diisi',
                                         },
                                     ]}
-                                    initialValue={newgroup.name}
                                 >
-                                <Input placeholder="Group Name" name={`name`} onChange={onChangeCreateGroup}></Input>
+                                <Input placeholder="Group Name" value={newgroup.name} name={`name`} onChange={onChangeCreateGroup}></Input>
                                 </Form.Item>
                             </div>
                             
@@ -148,9 +145,8 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
                                             message: 'Deskripsi grup harus diisi',
                                         },
                                     ]}
-                                    initialValue={newgroup.description}
                                 >
-                                <TextArea placeholder="Group Description" rows={2} name={`description`} onChange={onChangeCreateGroup}/>
+                                <TextArea placeholder="Group Description" rows={2} value={newgroup.description} name={`description`} onChange={onChangeCreateGroup}/>
                                 </Form.Item>
                             </div>
 
@@ -167,7 +163,7 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
                                 <Select showSearch placeholder="Add Group Head" name={`group_head`} showArrow options={dataDD} onChange={onChangeCreateGroupHeadGroup} style={{ width: '100%', lineHeight:'2.4'}}/> 
                                 </Form.Item>
                             </div>
-                            
+
                         {/* </div> */}
                         <Divider style={{borderTop:'1px solid rgba(0, 0, 0, 0.2)'}}/>
                         <h1 className="font-semibold text-base w-auto py-2">Agents</h1>
