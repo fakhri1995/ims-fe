@@ -170,10 +170,10 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
                         <div className="border-gray-300 p-4 border bg-white w-full h-auto ">
                             <Radio.Group className="flex" row onChange={onChange} value={value}>
                                 <Radio className="flex-initial font-bold " value={1}>Add as a Member 
-                                <p className="w-96 pl-6 whitespace-normal font-normal">Members can be assigned tickets, tasks and other items that belong to this group.</p>
+                                <p className="pl-6 whitespace-normal font-normal" style={{width:'min-content',minWidth:'15rem'}}>Members can be assigned tickets, tasks and other items that belong to this group.</p>
                                 </Radio>
                                 <Radio disabled className="flex-initial font-bold" value={2}>Add as an Observer
-                                <p className="w-96 pl-6 whitespace-normal font-normal">Members can be assigned tickets, tasks and other items that belong to this group.</p>
+                                <p className="pl-6 whitespace-normal font-normal" style={{width:'min-content',minWidth:'15rem'}}>Members can be assigned tickets, tasks and other items that belong to this group.</p>
                                 </Radio>
                             </Radio.Group>
                             <Row>
