@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 import Table from 'antd/lib/table'
 import Tooltip from 'antd/lib/tooltip'
 import Button from 'antd/lib/button'
-import Drawer from 'antd/lib/drawer'
 import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import { useState } from 'react'
 import Link from 'next/link'
@@ -14,15 +13,19 @@ import DownOutlined from '@ant-design/icons/DownOutlined'
 import Dropdown from 'antd/lib/dropdown'
 import Menu from 'antd/lib/menu'
 import st from '../../components/layout-dashboard-groups.module.css'
-
+import Popconfirm from 'antd/lib/popconfirm'
+import notification from 'antd/lib/notification'
+import message from 'antd/lib/message'
 
 function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters, sidemenu, dataDetailGroup }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
+    const { TabPane } = Tabs;
     // console.log(dataGroups)
 
+    //------------get agents groups------------------
     const groupsAgents = dataGroupsAgents.data.map((doc, idx) => {
         return ({
             idx: idx,
@@ -31,7 +34,9 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
             description: doc.description
         })
     })
+    //----------------------------------------------
 
+    //----------------get requesters groups---------------
     const groupsRequesters = dataGroupsRequesters.data.map((doc, idx) => {
         return ({
             idx: idx,
@@ -40,14 +45,36 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
             description: doc.description
         })
     })
+    //-----------------------------------------------------
 
-    const [drawablecreate, setDrawablecreate] = useState(false)
-
-    const { TabPane } = Tabs;
-    function callback(key) {
-        console.log(key);
-      }
-
+    //------------------handle delete groups-------------------
+    const handleDeleteGroup = (rec) => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteGroup?id=${rec.key}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': JSON.parse(tok),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/groups?originPath=Admin`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo[3],
+                        duration: 3
+                    })
+                }
+            })
+    }
+    
     function columns(variabel) {
         var columnsDD = []
         return(
@@ -104,15 +131,19 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                             props: {
                                 style: { background: record.idx%2 == 1 ? '#f2f2f2' : '#fff' },
                             },
-                            children: <Tooltip placement="topLeft" title={"Delete"}>
+                            children: 
+                            <Tooltip placement="topLeft" title={"Delete"}>
                             {/* {actions[index]} */}
                             <Button>
-                                <Link href={{
+                                <Popconfirm title="Yakin hapus data bank account?" onConfirm={() => { handleDeleteGroup(record) }} onCancel={() => { message.error("Gagal dihapus") }}>
+                                    <a><DeleteOutlined /></a>
+                                </Popconfirm>
+                                {/* <Link href={{
                                     pathname: `/delete/${record.key}`,
                                     query: {
                                         originPath: 'Admin'
                                     }
-                                }}><a><DeleteOutlined /></a></Link>
+                                }}><a><DeleteOutlined /></a></Link> */}
                             </Button>
                         </Tooltip>
                         }
@@ -121,74 +152,6 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
             ]
         )
     }
-    // const columnsDD = [
-    //     {
-    //         title: 'role',
-    //         dataIndex: 'name',
-    //         key: 'role',
-    //         width: 800,
-    //         render(text, record) {
-    //             return {
-    //                 props: {
-    //                 style: { background: record.idx%2 == 1 ? '#f2f2f2' : '#fff' },
-    //               },
-    //                 children: <div><Link href={{
-    //                         pathname: `/groups/update/agents/${record.key}`,
-    //                         query: {
-    //                             originPath: 'Admin'
-    //                         }
-    //                     }}><a>{record.name}</a></Link>
-    //                      <p style={{fontSize:'13px'}}>{record.description}</p></div>,
-    //             };
-    //         },
-    //     },
-    //     {
-    //         title: 'action', // Non-breakable space is char 0xa0 (160 dec)
-    //         dataIndex: 'actionss',
-    //         key: 'action',
-    //         width: 50,
-    //         render: (text, record, index) => {
-    //             return {
-    //                 props: {
-    //                     style: { background: record.idx%2 == 1 ? '#f2f2f2' : '#fff' },
-    //                 },
-    //                 children: 
-    //                 <Button>
-    //                     <Link href={{
-    //                         pathname: `/groups/update/agents/${record.key}`,
-    //                         query: {
-    //                             originPath: 'Admin'
-    //                         }
-    //                     }}><a>Edit</a></Link>
-    //                 </Button>
-    //             }
-    //         }
-    //     },
-    //     {
-    //         title: 'action', // Non-breakable space is char 0xa0 (160 dec)
-    //         dataIndex: 'actionss',
-    //         key: 'action',
-    //         width: 100,
-    //         render: (text, record, index) => {
-    //             return {
-    //                 props: {
-    //                     style: { background: record.idx%2 == 1 ? '#f2f2f2' : '#fff' },
-    //                 },
-    //                 children: <Tooltip placement="topLeft" title={"Delete"}>
-    //                 {/* {actions[index]} */}
-    //                 <Button>
-    //                     <Link href={{
-    //                         pathname: `/delete/${record.key}`,
-    //                         query: {
-    //                             originPath: 'Admin'
-    //                         }
-    //                     }}><a><DeleteOutlined /></a></Link>
-    //                 </Button>
-    //             </Tooltip>
-    //             }
-    //         }
-    //     }
-    // ];
 
     const menu = () =>{
         return (
@@ -230,7 +193,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                         </Sticky>
 
                         <div className="col-span-3 flex flex-col space-y-3">
-                        <Tabs onChange={callback} type="card">
+                        <Tabs type="card">
                             <TabPane tab="Agent Groups" key="1">
                                 <Table showHeader={false} scroll={{ x: 400 }} dataSource={groupsAgents} columns={columns('agents')} onRow={(record, rowIndex) => {
                                 }}></Table>
@@ -250,7 +213,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                         <p className="font-normal text-sm">
                             You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that the same agent can be a member of multiple groups as well
                         </p>
-                        <br />
+                        {/* <br />
                         <div className="font-semibold text-sm">Auto-ticket Assignment</div>
                         <p className="font-normal text-sm">
                             Once you create homogeneous agent groups, you can choose to automatically assign new tickets in this group to the next agent in Round Robin. Learn more about automatic ticket assignment
@@ -259,23 +222,9 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                         <div className="font-semibold text-sm">Working Hours</div>
                         <p className="font-normal text-sm">
                         You can assign a different set of business hours and holidays to each Group. For example, you can separate agents by shifts and assign them different business hours, or create separate groups for each time zone your agents work at
-                        </p>
+                        </p> */}
                     </div>
                 </div>
-
-                <Drawer title="New Groups" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720} footer={
-                    <div style={{ textAlign: 'right' }}>
-                        <button onClick={() => { setDrawablecreate(false) }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
-                            Cancel
-                        </button>
-                        <button type="primary" className="bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-20">
-                            Submit
-                        </button>
-                    </div>
-                }>
-                </Drawer>
-
-
             </>
         </Layout>
     )
