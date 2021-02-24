@@ -22,6 +22,7 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
             message: dataListAccount.message.errorInfo.status_detail,
             duration: 3
         })
+        rt.push('/dashboard/admin')
     }
     else {
         dataDD = dataListAccount.data.accounts.map((doc, idx) => {
