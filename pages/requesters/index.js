@@ -226,7 +226,7 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
                                 Z
                             </button>
                         </div>
-                        <Table scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} onRow={(record, rowIndex) => {
+                        <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} onRow={(record, rowIndex) => {
                             return {
                                 onMouseOver: (event) => {
                                     var actionsCopy = actions

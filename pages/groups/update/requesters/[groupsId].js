@@ -194,20 +194,10 @@ function Groups({ initProps, dataProfile, dataListAccount, dataDetailGroup, side
                         </div>
                     </div>
                     </Form>
-                    <div className="flex flex-col space-y-3 px-4">
+                    <div className={ `${st.grupdesc} flex flex-col space-y-3 px-4`}>
                         <div className="font-semibold text-sm">Groups</div>
                         <p className="font-normal text-xs md:text-sm">
                             You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that the same agent can be a member of multiple groups as well
-                        </p>
-                        <br />
-                        <div className="font-semibold text-sm">Auto-ticket Assignment</div>
-                        <p className="font-normal text-xs md:text-sm">
-                            Once you create homogeneous agent groups, you can choose to automatically assign new tickets in this group to the next agent in Round Robin. Learn more about automatic ticket assignment
-                        </p>
-                        <br />
-                        <div className="font-semibold text-sm">Working Hours</div>
-                        <p className="font-normal text-xs md:text-sm">
-                        You can assign a different set of business hours and holidays to each Group. For example, you can separate agents by shifts and assign them different business hours, or create separate groups for each time zone your agents work at
                         </p>
                     </div>
                 </div>

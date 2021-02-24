@@ -332,6 +332,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
             </div>
             <div className="p-5 mt-5 flex flex-col space-y-5 shadow-md rounded-md w-full h-auto bg-white">
                 <Table
+                pagination={{ pageSize: 6 }}
                     scroll={{ x: 200 }}
                     onRow={(record, rowIndex) => {
                         return {

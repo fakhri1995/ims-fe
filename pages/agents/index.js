@@ -110,7 +110,7 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
-                <div className="h-20 w-full grid grid-cols-1 md:grid-cols-3 border-gray-400 md:border-t md:border-b bg-white mb-5 p-4">
+                <div className="h-20 w-full grid grid-cols-1 md:grid-cols-3 border-gray-400 md:border-t md:border-b bg-white mb-5 p-4 rounded-md">
                     <div className=" col-span-1 md:col-span-2 flex items-center">
                         <div className="font-semibold text-base w-auto">Agents</div>
                     </div>
@@ -131,7 +131,7 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
                         </div>
                     </div>
                 </div>
-                <div className="h-auto w-full grid grid-cols-1 md:grid-cols-4 mb-5 bg-white px-2">
+                <div className="h-auto w-full grid grid-cols-1 md:grid-cols-4 mb-5 bg-white px-2 rounded-md">
                     <div className="flex md:hidden flex-col space-y-3 p-4 md:col-span-1 col-span-1">
                         <div className="font-semibold text-sm">Agents</div>
                         <p className="font-normal text-sm">
@@ -140,7 +140,7 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
                         </p>
                     </div>
                     <div className="md:col-span-3 col-span-1 flex flex-col p-4">
-                        <div className="flex">
+                        <div className="flex flex-wrap">
                             <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={FilterAll}>
                                 All
                             </button>
@@ -223,7 +223,7 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
                                 Z
                             </button>
                         </div>
-                        <Table scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} onRow={(record, rowIndex) => {
+                        <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} onRow={(record, rowIndex) => {
                             return {
                                 onMouseOver: (event) => {
                                     var actionsCopy = actions

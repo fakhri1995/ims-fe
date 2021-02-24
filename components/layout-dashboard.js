@@ -148,7 +148,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
     var pathBuilder = ""
     return (
         <Layout>
-            <Sider collapsible collapsed={coll} trigger={null} theme="light" className={`${st.siderLayout} sider`} style={{ borderRight: `1px solid #f0f0f0` }}>
+            <Sider collapsible collapsed={coll} trigger={null} theme="light" className={`${st.siderLayout} sider`} style={{ borderRight: `1px solid #f0f0f0`, height: `auto` }}>
                 <div className="logo" style={{ height: `32px`, margin: `16px`, background: `gray` }}></div>
                 <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]}>
                     <Menu.Item key="1" icon={<DashboardTwoTone />}>
@@ -268,7 +268,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                     </div>
                     {
                         pathArr ?
-                            <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 24px`, fontSize: `0.825rem`, width:`100%` }} className={st.breadcrumbClientsSmall}>
+                            <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 24px`, fontSize: `0.825rem`, width: `100%` }} className={st.breadcrumbClientsSmall}>
                                 {pathArr[0] === "dashboard" && <Breadcrumb.Item> <strong>{rootBreadcrumb}</strong></Breadcrumb.Item>}
                                 {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${oriPath.toLowerCase()}`}><strong>{oriPath}</strong></Breadcrumb.Item>}
                                 {childBreacrumbCC.length !== 0 ?
@@ -276,7 +276,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                                         pathBuilder = pathBuilder + `/${pathArr[idx]}`
                                         if (idx === childBreacrumbCC.length - 1 && idx > 0) {
                                             return (
-                                                <Breadcrumb.Item key={idx}> <strong>{dataDetailCompany.data.company_name}</strong> </Breadcrumb.Item>
+                                                <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
                                             )
                                         }
                                         else {

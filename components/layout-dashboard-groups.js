@@ -247,7 +247,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                                 null
                         }
                     </div>
-                    <label htmlFor={`menutoggle`} className="pointer-cursor md:hidden block cursor-pointer">
+                    <label htmlFor={`menutoggle`} className="pointer-cursor md:hidden block cursor-pointer mt-4 mr-4">
                         <svg className="fill-current text-gray-900" xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 20 20">
                             <title>menu</title>
                             <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
@@ -282,32 +282,39 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                             <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 24px`, fontSize: `0.825rem`, width: `100%` }} className={st.breadcrumbClientsSmall}>
                                 {pathArr[0] === "dashboard" && <Breadcrumb.Item> <strong>{rootBreadcrumb}</strong></Breadcrumb.Item>}
                                 {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${oriPath.toLowerCase()}`}><strong>{oriPath}</strong></Breadcrumb.Item>}
-                                {childBreacrumbCC.length !== 0 ?
-                                    childBreacrumbCC.map((doc, idx) => {
-                                        pathBuilder = pathBuilder + `/${pathArr[idx]}`
-                                        if (idx === childBreacrumbCC.length - 1 && idx > 0) {
-                                            return (
-                                                <Breadcrumb.Item key={idx}> <strong>{dataDetailCompany.data.company_name}</strong> </Breadcrumb.Item>
-                                            )
-                                        }
-                                        else {
-                                            return (
-                                                <Breadcrumb.Item key={idx}>
-                                                    <Link href={{
-                                                        pathname: pathBuilder,
-                                                        query: {
-                                                            originPath: oriPath
-                                                        }
-                                                    }} className="cursor-pointer">
-                                                        <strong>{doc}</strong>
-                                                    </Link>
-                                                </Breadcrumb.Item>
-                                            )
-                                        }
-                                    })
-                                    :
-                                    null
-                                }
+                                {childBreacrumbDD.length !== 0 ?
+                                        childBreacrumbDD.map((doc, idx) => {
+                                            pathBuilder = pathBuilder + `/${pathArr[idx]}`
+                                            if (idx === childBreacrumbDD.length - 1 && idx > 0) {
+                                                if (dataDetailGroup.length === 0) {
+                                                    return (
+                                                        <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                    )
+                                                }
+                                                else {
+                                                    return (
+                                                        <Breadcrumb.Item key={idx}> <strong>{dataDetailGroup.data.group_detail.name}</strong> </Breadcrumb.Item>
+                                                    )
+                                                }
+                                            }
+                                            else {
+                                                return (
+                                                    <Breadcrumb.Item key={idx}>
+                                                        <Link href={{
+                                                            pathname: pathBuilder,
+                                                            query: {
+                                                                originPath: oriPath
+                                                            }
+                                                        }}>
+                                                            <strong>{doc}</strong>
+                                                        </Link>
+                                                    </Breadcrumb.Item>
+                                                )
+                                            }
+                                        })
+                                        :
+                                        null
+                                    }
                             </Breadcrumb>
                             :
                             null
