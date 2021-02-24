@@ -18,6 +18,7 @@ import { Input, Slider } from 'antd'
 import { Select, Tag } from 'antd'
 import { Radio } from 'antd'
 import { Row, Col } from 'antd'
+import notification from 'antd/lib/notification'
 import st from '../../../../components/layout-dashboard-groups.module.css'
 
 function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
@@ -26,30 +27,93 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
     const dataDetailGroup = []
-    //------------populate list account-------------
+    // console.log(dataProfile)
+    //----------CreateGroup-------------
+    const [newgroup, setNewgroup] = useState({
+        name: '',
+        description: '',
+        group_head: dataProfile.data.user_id,
+        is_agent: true,
+        user_ids: []
+    })
+    const onChangeCreateGroup = (e) => {
+        var val = e.target.value
+        setNewgroup({
+            ...newgroup,
+            [e.target.name]: val
+        })
+    }
+    const onChangeCreateGroupHeadGroup = (value) => {
+        setNewgroup({
+            ...newgroup,
+            ["group_head"]: value
+        })
+    }
+    //------------add agent---------------
+    const handleChangeAddAgent = (value) => {
+        setNewgroup({
+            ...newgroup,
+            ["user_ids"]: value
+        })
+    }
+    function handleClick() {
+        console.log(newgroup)
+        // console.log(`selected ${value}`);
+    }
+    //----------------------------------------------
+    const handleCreateGroup = () => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addGroup`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newgroup)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/groups?originPath=Admin`)
+                    }, 1000)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo[3],
+                        duration: 3
+                    })
+                }
+            })
+        // console.log("isi new group: " + newgroup.name)
+    }
+    //------------------------------------------
+
+    //----------------radio button--------------
     const [value, setValue] = useState(1);
     const onChange = e => {
         console.log('radio checked', e.target.value);
         setValue(e.target.value);
     };
-
+    //------------------------------------------
+    
+    //------------populate list account-------------
     const dataDD = dataListAccount.data.accounts.map((doc, idx) => {
         return ({
             value: doc.user_id,
-            profile_image: doc.profile_image,
+            // profile_image: doc.profile_image,
             label: doc.fullname,
-            email: doc.email,
-            phone_number: doc.phone_number
+            // email: doc.email,
+            // phone_number: doc.phone_number
         })
     })
-    
-    function handleChange(value) {
-        console.log(`selected ${value}`);
-      }
-
     //----------------------------------------------
+
     const waktu = [{value:'15 Minutes'},{value:'30 Minutes'},{value:'1 Hour'},{value:'2 Hours'},{value:'4 Hours'},{value:'8 Hours'},{value:'12 Hours'},{value:'1 Day'},{value:'2 Days'},{value:'4 Days'}]
-    // const time = JSON.parse(waktu)
+    
     const [drawablecreate, setDrawablecreate] = useState(false)
     const { TextArea } = Input;
     const { Option } = Select;
@@ -57,111 +121,7 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
     function callback(key) {
         console.log(key);
       }
-    const columnsDD = [
-        {
-            title: 'role',
-            dataIndex: 'name',
-            key: 'role',
-            width: 800,
-            render(text, record) {
-                return {
-                    props: {
-                    style: { background: record.key%2 == 1 ? '#f2f2f2' : '#fff' },
-                  },
-                    children: <div>{text}</div>,
-                };
-            },
-        },
-        {
-            title: 'action', // Non-breakable space is char 0xa0 (160 dec)
-            dataIndex: 'actionss',
-            key: 'action',
-            width: 50,
-            render: (text, record, index) => {
-                return {
-                    props: {
-                        style: { background: record.key%2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children: 
-                    <Button>
-                        <Link href={{
-                            pathname: `/edit/${record.key}`,
-                            query: {
-                                originPath: 'Admin'
-                            }
-                        }}><a>Edit</a></Link>
-                    </Button>
-                }
-            }
-        },
-        {
-            title: 'action', // Non-breakable space is char 0xa0 (160 dec)
-            dataIndex: 'actionss',
-            key: 'action',
-            width: 100,
-            render: (text, record, index) => {
-                return {
-                    props: {
-                        style: { background: record.key%2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children: <Tooltip placement="topLeft" title={"Delete"}>
-                    {/* {actions[index]} */}
-                    <Button>
-                        <Link href={{
-                            pathname: `/delete/${record.key}`,
-                            query: {
-                                originPath: 'Admin'
-                            }
-                        }}><a><DeleteOutlined /></a></Link>
-                    </Button>
-                </Tooltip>
-                }
-            }
-        }
-    ];
 
-    // const dataAgent = [
-    //     {
-    //         key: '1',
-    //         name: 'Capacity Management Team',
-    //         agent: '4 Agents',
-    //         actionss: 'clone'
-    //     },
-    //     {
-    //         key: '2',
-    //         name: 'Change Team',
-    //         agent: 'No Agents',
-    //         actionss: 'clone'
-    //     },
-    //     {
-    //         key: '3',
-    //         name: 'Database Team',
-    //         agent: 'No Agents',
-    //         actionss: 'clone'
-    //     },
-    // ];
-    // const dataRequester = [
-    //     {
-    //         key: '1',
-    //         name: 'Change Requesters',
-    //         agent: '4 Agents',
-    //         actionss: 'clone'
-    //     },
-    //     {
-    //         key: '2',
-    //         name: 'Finance Team',
-    //         agent: 'No Agents',
-    //         actionss: 'clone'
-    //     },
-    //     {
-    //         key: '3',
-    //         name: 'HR Team',
-    //         agent: 'No Agents',
-    //         actionss: 'clone'
-    //     },
-    // ];
-
-    // console.log(options[random])
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} dataDetailGroup={dataDetailGroup} st={st}>
             <>
@@ -171,14 +131,15 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <h1 className="font-semibold text-base w-auto py-2">New Group</h1>
                                 <div className="flex space-x-2">
-                                    
+                                        <Link href="/groups?originPath=Admin" >
                                         <div className=" text-black text-sm bg-white hover:bg-gray-300 border-2 border-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
-                                            <p onClick={e => e.preventDefault()}>
+                                            <p>
                                             Cancel
                                             </p>
                                         </div>
+                                        </Link>
                                         <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
-                                            <p onClick={e => e.preventDefault()}>
+                                            <p onClick={handleCreateGroup}>
                                             Save
                                             </p>
                                         </div>
@@ -190,12 +151,17 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
                         {/* <div className="w-120 h-auto p-0 "> */}
                             <div className="pb-4 md:mb-0 ">
                                 <h1 className="font-semibold text-sm">Group Name</h1>
-                                <Input placeholder="Group Name"></Input>
+                                <Input placeholder="Group Name" value={newgroup.name} name={`name`} onChange={onChangeCreateGroup}></Input>
                             </div>
                             
                             <div className="pb-4 md:mb-0">
                                 <h1 className="font-semibold text-sm">Group Description</h1>
-                                <TextArea placeholder="Group Description" rows={2}/>
+                                <TextArea placeholder="Group Description" rows={2} value={newgroup.description} name={`description`} onChange={onChangeCreateGroup}/>
+                            </div>
+
+                            <div className="pb-4 md:mb-0 ">
+                                <h1 className="font-semibold text-sm">Group Head</h1>
+                                <Select showSearch placeholder="Add Group Head" defaultValue={dataProfile.data.user_id} name={`group_head`} showArrow options={dataDD} onChange={onChangeCreateGroupHeadGroup} style={{ width: '100%', lineHeight:'2.4'}}/> 
                             </div>
                             
                             {/* <div className="pb-4 md:mb-0">
@@ -219,15 +185,15 @@ function Groups({ initProps, dataProfile, dataListAccount, sidemenu }) {
                             </Radio.Group>
                             <Row>
                                 <Col flex="auto">
-                                    <Select  showSearch placeholder="Add an Agent" showArrow mode="multiple" options={dataDD} onChange={handleChange} style={{ width: '100%',padding:'0 5px', lineHeight:'2.4'}}/>  
+                                    <Select  showSearch placeholder="Add an Agent" showArrow mode="multiple" options={dataDD} onChange={handleChangeAddAgent} style={{ width: '100%',padding:'0 5px', lineHeight:'2.4'}}/>  
                                 </Col>
-                                <Col flex="100px">
+                                {/* <Col flex="100px">
                                     <div className=" text-black text-sm bg-white hover:bg-gray-300 border border-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
-                                        <p onClick={e => e.preventDefault()}>
+                                        <p onClick={handleClick}>
                                         Add
                                         </p>
                                     </div>
-                                </Col>
+                                </Col> */}
                             </Row>
                         </div>
                         {/* <Divider style={{borderTop:'1px solid rgba(0, 0, 0, 0.2)'}}/>
@@ -305,12 +271,7 @@ export async function getServerSideProps({ req, res }) {
             initProps = cookiesJSON.token
         }
     }
-    // const resourcesGP = await fetch(`https://go.cgx.co.id/auth/v1/get-profile`, {
-    //     method: `GET`,
-    //     headers: {
-    //         'Authorization': JSON.parse(initProps)
-    //     }
-    // })
+
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,
         headers: {
@@ -320,12 +281,6 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    // const resourcesLA = await fetch(`https://go.cgx.co.id/admin/v1/get-list-account?page=1&rows=50&order_by=asc`, {
-    //     method: `GET`,
-    //     headers: {
-    //         'Authorization': JSON.parse(initProps)
-    //     }
-    // })
     const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAccountList`, {
         method: `POST`,
         headers: {
@@ -336,6 +291,7 @@ export async function getServerSideProps({ req, res }) {
     })
     const resjsonLA = await resourcesLA.json()
     const dataListAccount = resjsonLA
+    
     return {
         props: {
             initProps,
