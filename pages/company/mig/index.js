@@ -685,7 +685,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                 </div>
             </div>
             <div className="md:p-5">
-                <Table scroll={{ x: 200 }}
+                <Table pagination={{ pageSize: 6 }} scroll={{ x: 200 }}
                     onRow={(record, rowIndex) => {
                         return {
                             onMouseOver: (event) => {

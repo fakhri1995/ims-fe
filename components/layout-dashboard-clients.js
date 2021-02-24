@@ -291,7 +291,7 @@ function LayoutDashboardClients({ children, tok, dataProfile, pathArr, sidemenu,
                             null
                     }
                 </Header>
-                <Content className="slb" style={{ padding: 24, height: `${tinggi}px` }}>
+                <Content className="slb" style={{ padding: 24, height: `auto` }}>
                     {children}
                 </Content>
             </Layout>
