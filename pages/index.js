@@ -25,7 +25,11 @@ export default function Home({ initProps }) {
   const handleLogin = () => {
     fetch(`https://boiling-thicket-46501.herokuapp.com/login`, {
       method: "POST",
-      body: new URLSearchParams(formdata)
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // body: new URLSearchParams(formdata)
+      body: JSON.stringify(formdata)
     })
       .then(res => res.json())
       .then(res2 => {

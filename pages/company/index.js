@@ -21,7 +21,6 @@ import { useState } from 'react'
 import st from '../../components/layout-dashboard-clients.module.css'
 
 function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
-    console.log("isi list comp: " + dataCompanyList.data.companies[4].is_enabled)
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
@@ -36,8 +35,27 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
         image_logo: '',
         image_of_company: 0
     })
+    var dataTable = []
+    if (!dataCompanyList.data) {
+        dataTable = []
+        notification['error']({
+            message: dataCompanyList.message.errorInfo.status_detail,
+            duration: 3
+        })
+        rt.push('/dashboard/admin')
+    }
+    else{
+        dataTable = dataCompanyList.data.companies.map((doc, idx) => {
+            return ({
+                image_logo: doc.image_logo,
+                company_id: doc.company_id,
+                company_name: doc.company_name,
+                is_enabled: doc.is_enabled
+            })
+        })
+    }
     const eventsArr = []
-    for (var i = 0; i < dataCompanyList.data.total; i++) {
+    for (var i = 0; i < dataTable.length; i++) {
         eventsArr.push(false)
     }
     const [events, setEvents] = useState(eventsArr)
@@ -129,14 +147,6 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
             )
         }
     ]
-    const dataTable = dataCompanyList.data.companies.map((doc, idx) => {
-        return ({
-            image_logo: doc.image_logo,
-            company_id: doc.company_id,
-            company_name: doc.company_name,
-            is_enabled: doc.is_enabled
-        })
-    })
     const beforeUploadProfileImage = (file) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
         if (!isJpgOrPng) {

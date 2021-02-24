@@ -11,6 +11,8 @@ import Modal from 'antd/lib/modal'
 import message from 'antd/lib/message'
 import notification from 'antd/lib/notification'
 import Form from 'antd/lib/form'
+import Popconfirm from 'antd/lib/popconfirm'
+import Link from 'next/link'
 import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import st from '../../components/layout-dashboard-clients.module.css'
@@ -256,12 +258,13 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
     )
 }
 
-function ClientsDetailLocations() {
+function ClientsDetailLocations({ dataDetailCompany, tok }) {
     const [editable, setEditable] = useState(false)
     const [drawablecreate, setDrawablecreate] = useState(false)
     const [checkedtree, setCheckedtree] = useState([])
     const [selectedtree, setSelectedtree] = useState([])
     const [expandedKeys, setExpandedKeys] = useState([])
+    const [hoverrowtree, setHoverrowtree] = useState("hidden")
     const [autoExpandParent, setAutoExpandParent] = useState(true);
     const onExpand = (expandedKeys) => {
         setExpandedKeys(expandedKeys);
@@ -269,6 +272,7 @@ function ClientsDetailLocations() {
     };
 
     const onCheck = (checkedKeys) => {
+        console.log("checked: " + checkedKeys)
         setEditable(true)
         setCheckedtree(checkedKeys)
         if (checkedKeys.length === 0) {
@@ -277,6 +281,7 @@ function ClientsDetailLocations() {
     };
 
     const onSelect = (selectedKeys, info) => {
+        console.log("selected: " + selectedKeys + " " + info)
         setSelectedtree(selectedKeys);
     };
     const treeData = [
@@ -388,15 +393,27 @@ function ClientsDetailLocations() {
                 {/* <Tree treeData={treeData} autoExpandParent={autoExpandParent} selectable selectedKeys={selectedtree} checkable checkedKeys={checkedtree} onCheck={() => { setEditable(true) }}>
                 </Tree> */}
                 <Tree
-                    checkable
                     onExpand={onExpand}
                     expandedKeys={expandedKeys}
                     autoExpandParent={autoExpandParent}
-                    onCheck={onCheck}
-                    checkedKeys={checkedtree}
                     onSelect={onSelect}
                     selectedKeys={selectedtree}
                     treeData={treeData}
+                    selectable
+                    titleRender={(nodeData) => (
+                        <Link href={`/company/${dataDetailCompany.data.company_id}?originPath=Admin`}>
+                            <div className="flex justify-between hover:text-blue-500 text-black">
+                                <div className="mr-20">
+                                    {nodeData.title}
+                                </div>
+                                <div className={`${hoverrowtree}`} onMouseOver={() => { setHoverrowtree("block"); console.log("hover: " + hoverrowtree) }} onMouseLeave={() => { setHoverrowtree("hidden"); console.log("leave: " + hoverrowtree) }}>
+                                    <a><EditOutlined /></a>
+                                </div>
+                            </div>
+                        </Link>
+                    )
+                    }
+                    blockNode={true}
                 />
             </div>
         </div>
@@ -653,7 +670,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                         },
                                     ]}
                                 >
-                                    <Input onChange={onChangeEditBA} name="name" defaultValue={recordrow.name} />
+                                    <Input onChange={onChangeEditBA} name="name" defaultValue={recordrow.name} id="editName" />
                                 </Form.Item>
                                 <Form.Item name="account_number" style={{ marginRight: `1rem` }} label="Account Number"
                                     rules={[
@@ -663,7 +680,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                         },
                                     ]}
                                 >
-                                    <Input onChange={onChangeEditBA} name="account_number" defaultValue={recordrow.account_number} />
+                                    <Input onChange={onChangeEditBA} name="account_number" defaultValue={recordrow.account_number} id="editAccountNumber" />
                                 </Form.Item>
                                 <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Owner"
                                     rules={[
@@ -673,7 +690,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                         },
                                     ]}
                                 >
-                                    <Input onChange={onChangeEditBA} name="owner" defaultValue={recordrow.owner} />
+                                    <Input onChange={onChangeEditBA} name="owner" defaultValue={recordrow.owner} id="editOwner" />
                                 </Form.Item>
                                 <Form.Item name="currency" style={{ marginRight: `1rem` }} label="Currency"
                                     rules={[
@@ -683,7 +700,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                         },
                                     ]}
                                 >
-                                    <Input onChange={onChangeEditBA} name="currency" defaultValue={recordrow.currency} />
+                                    <Input onChange={onChangeEditBA} name="currency" defaultValue={recordrow.currency} id="editCurrency" />
                                 </Form.Item>
                             </div>
                             <Form.Item>
@@ -787,7 +804,7 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
                         <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
                     </TabPane>
                     <TabPane tab="Locations" key={`locations`}>
-                        <ClientsDetailLocations></ClientsDetailLocations>
+                        <ClientsDetailLocations dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailLocations>
                     </TabPane>
                 </Tabs>
             </div>
@@ -800,7 +817,7 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
                         <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
                     </TabPane>
                     <TabPane tab="Locations" key={`locations`}>
-                        <ClientsDetailLocations></ClientsDetailLocations>
+                        <ClientsDetailLocations dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailLocations>
                     </TabPane>
                 </Tabs>
             </div>
