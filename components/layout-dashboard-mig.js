@@ -261,11 +261,11 @@ function LayoutDashboardMig({ children, tok, dataProfile, pathArr, sidemenu, ori
                                 {pathArr[0] === "dashboard" && <Breadcrumb.Item> <strong>{rootBreadcrumb}</strong></Breadcrumb.Item>}
                                 {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${oriPath.toLowerCase()}`}><strong>{oriPath}</strong></Breadcrumb.Item>}
                                 {childBreacrumbCC.length !== 0 ?
-                                    childBreacrumbCC.map((doc, idx) => {
+                                    childBreacrumbCC.splice(1, 1).map((doc, idx) => {
                                         pathBuilder = pathBuilder + `/${pathArr[idx]}`
                                         if (idx === childBreacrumbCC.length - 1 && idx > 0) {
                                             return (
-                                                <Breadcrumb.Item key={idx}> <strong>{dataDetailCompany.data.company_name}</strong> </Breadcrumb.Item>
+                                                <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
                                             )
                                         }
                                         else {
@@ -276,7 +276,7 @@ function LayoutDashboardMig({ children, tok, dataProfile, pathArr, sidemenu, ori
                                                         query: {
                                                             originPath: oriPath
                                                         }
-                                                    }} className="cursor-pointer">
+                                                    }}>
                                                         <strong>{doc}</strong>
                                                     </Link>
                                                 </Breadcrumb.Item>
