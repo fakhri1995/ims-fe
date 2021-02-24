@@ -18,7 +18,6 @@ import NotificationOutlined from '@ant-design/icons/NotificationOutlined'
 import QuestionCircleOutlined from '@ant-design/icons/QuestionCircleOutlined'
 import PlusCircleTwoTone from '@ant-design/icons/PlusCircleTwoTone'
 import AlertOutlined from '@ant-design/icons/AlertOutlined'
-import { Row, Col } from 'antd';
 import jscookie from 'js-cookie'
 
 function LayoutDashboardMig({ children, tok, dataProfile, pathArr, sidemenu, originPath, st }) {
@@ -98,54 +97,41 @@ function LayoutDashboardMig({ children, tok, dataProfile, pathArr, sidemenu, ori
 
     const addMenu = () => {
         return (
-            <div style={{ fontSize: '14px' }} className="w-224 h-auto flex flex-col shadow-md rounded bg-white space-y-4 p-5 text-sm">
-                <div className="">
-                    <Row justify="center">
-                        <Col span={10}>
-                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Incident</p>
-                        </Col>
-                        <Col span={9}>
-                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Release</p>
-                        </Col>
-                        <Col span={5}>
-                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Project</p>
-                        </Col>
-                    </Row>
-                    <Row justify="center">
-                        <Col span={10}>
-                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Service Request</p>
-                        </Col>
-                        <Col span={9}>
-                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Asset</p>
-                        </Col>
-                        <Col span={5}>
-                        </Col>
-                    </Row>
-                    <Row justify="center">
-                        <Col span={10}>
-                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Problem</p>
-                        </Col>
-                        <Col span={9}>
-                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Contract</p>
-                        </Col>
-                        <Col span={5}>
-                        </Col>
-                    </Row>
-                    <Row justify="center">
-                        <Col span={10}>
-                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Change</p>
-                        </Col>
-                        <Col span={9}>
-                            <p><AlertOutlined style={{ verticalAlign: '0.2em' }} className="pr-2" />Purchase Order</p>
-                        </Col>
-                        <Col span={5}>
-                        </Col>
-                    </Row>
-
-
+            <div style={{ fontSize: '14px' }} className="w-auto h-auto grid grid-cols-1 md:grid-cols-3 shadow-md rounded bg-white">
+                <div className=" col-span-1 md:col-span-1 text-xs md:text-sm m-3 md:m-2 space-y-3 px-8">
+                    <div className="flex justify-center">
+                        <p><AlertOutlined className="p-2" />Incident</p>
+                    </div>
+                    <div className="flex justify-center">
+                        <p><AlertOutlined className="p-2" />Release</p>
+                    </div>
+                    <div className="flex justify-center">
+                        <p><AlertOutlined className="p-2" />Project</p>
+                    </div>
+                    <div className="flex justify-center">
+                        <p><AlertOutlined className="p-2" />Project</p>
+                    </div>
+                </div>
+                <div className=" col-span-1 md:col-span-1 text-xs md:text-sm m-3 md:m-2 space-y-3 px-8">
+                    <div className="flex justify-center">
+                        <p><AlertOutlined className="p-2" />Incident</p>
+                    </div>
+                    <div className="flex justify-center">
+                        <p><AlertOutlined className="p-2" />Release</p>
+                    </div>
+                    <div className="flex justify-center">
+                        <p><AlertOutlined className="p-2" />Project</p>
+                    </div>
+                    <div className="flex justify-center">
+                        <p><AlertOutlined className="p-2" />Project</p>
+                    </div>
+                </div>
+                <div className=" col-span-1 md:col-span-1 text-xs md:text-sm m-3 md:m-2 space-y-3 px-8">
+                    <div className="flex justify-center">
+                        <p><AlertOutlined className="p-2" />Incident</p>
+                    </div>
                 </div>
             </div>
-
         )
     }
 
@@ -205,7 +191,7 @@ function LayoutDashboardMig({ children, tok, dataProfile, pathArr, sidemenu, ori
                         {collsmall ? <MenuUnfoldOutlined onClick={handleCollSmall} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className={st.triggerSmall}></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleCollSmall} style={{ padding: `24px`, float: `left` }} className={st.triggerSmall}></MenuFoldOutlined>}
                         {
                             pathArr ?
-                                <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 10px` }}>
+                                <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 10px` }} className={st.breadcrumbClients}>
                                     {pathArr[0] === "dashboard" && <Breadcrumb.Item> <strong>{rootBreadcrumb}</strong></Breadcrumb.Item>}
                                     {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${oriPath.toLowerCase()}`}><strong>{oriPath}</strong></Breadcrumb.Item>}
                                     {childBreacrumbCC.length !== 0 ?
@@ -269,6 +255,41 @@ function LayoutDashboardMig({ children, tok, dataProfile, pathArr, sidemenu, ori
                             </Dropdown>
                         </div>
                     </div>
+                    {
+                        pathArr ?
+                            <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 24px`, fontSize: `0.825rem`, width: `100%` }} className={st.breadcrumbClientsSmall}>
+                                {pathArr[0] === "dashboard" && <Breadcrumb.Item> <strong>{rootBreadcrumb}</strong></Breadcrumb.Item>}
+                                {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${oriPath.toLowerCase()}`}><strong>{oriPath}</strong></Breadcrumb.Item>}
+                                {childBreacrumbCC.length !== 0 ?
+                                    childBreacrumbCC.map((doc, idx) => {
+                                        pathBuilder = pathBuilder + `/${pathArr[idx]}`
+                                        if (idx === childBreacrumbCC.length - 1 && idx > 0) {
+                                            return (
+                                                <Breadcrumb.Item key={idx}> <strong>{dataDetailCompany.data.company_name}</strong> </Breadcrumb.Item>
+                                            )
+                                        }
+                                        else {
+                                            return (
+                                                <Breadcrumb.Item key={idx}>
+                                                    <Link href={{
+                                                        pathname: pathBuilder,
+                                                        query: {
+                                                            originPath: oriPath
+                                                        }
+                                                    }} className="cursor-pointer">
+                                                        <strong>{doc}</strong>
+                                                    </Link>
+                                                </Breadcrumb.Item>
+                                            )
+                                        }
+                                    })
+                                    :
+                                    null
+                                }
+                            </Breadcrumb>
+                            :
+                            null
+                    }
                 </Header>
                 <Content className="slb" style={{ padding: 24, height: `${tinggi}px`, backgroundColor: `white` }}>
                     {children}

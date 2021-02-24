@@ -91,20 +91,32 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
     return (
         <div id="profileeDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-6">
-                <Sticky containerSelectorFocus="#profileeDetailMigWrapper">
-                    <div className="flex space-x-2">
-                        {editable ?
-                            <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md" onClick={() => { setEditable(false) }}>Cancel</button>
+                {/* <Sticky containerSelectorFocus="#profileeDetailMigWrapper"> */}
+                <div className="flex space-x-2">
+                    {editable ?
+                        <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md" onClick={() => { setEditable(false) }}>Cancel</button>
+                        :
+                        null
+                    }
+                    {editable ?
+                        <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md" onClick={handleEditProfile}>Save</button>
+                        :
+                        <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md w-40" onClick={() => { setEditable(true) }}>Edit</button>
+                    }
+                </div>
+                {/* </Sticky> */}
+            </div>
+            <div className=" mb-2 md:mb-4 flex md:flex-row flex-col">
+                <h1 className="font-semibold text-base mr-3 pt-1">{dataDetailCompany.data.company_name}</h1>
+                <h1 className="mr-3 pt-1 hidden md:block">|</h1>
+                <div className="flex">
+                    {
+                        dataDetailCompany.data.is_enabled ?
+                            <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md text-xs md:text-sm w-auto">AKTIF MODULE</div>
                             :
-                            null
-                        }
-                        {editable ?
-                            <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md" onClick={handleEditProfile}>Save</button>
-                            :
-                            <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md w-40" onClick={() => { setEditable(true) }}>Edit</button>
-                        }
-                    </div>
-                </Sticky>
+                            <div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md text-xs md:text-sm w-auto">NON-AKTIF MODULE</div>
+                    }
+                </div>
             </div>
             <div className="p-3 relative flex flex-col">
                 <img src={data1.image_logo} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
@@ -171,68 +183,6 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
 
                     }
                 </div>
-                {/* <div className="md:m-5 mb-5 md:mb-0">
-                    <h1 className="font-semibold text-sm">Singkatan:</h1>
-                    {editable ?
-                        <Input defaultValue="MIG"></Input>
-                        :
-                        <h1 className="text-sm font-normal text-black">{`MIG`}</h1>
-                    }
-                </div>
-                <div className="md:m-5 mb-5 md:mb-0">
-                    <h1 className="font-semibold text-sm">Tanggal PKP:</h1>
-                    {
-                        editable ?
-                            <Input defaultValue={dataDetailCompany.data.company_name}></Input>
-                            :
-                            <h1 className="text-sm font-normal text-black">{dataDetailCompany.data.company_name}</h1>
-                    }
-                </div>
-                <div className="md:m-5 mb-5 md:mb-0">
-                    <h1 className="font-semibold text-sm">NPWP:</h1>
-                    {
-                        editable ?
-                            <Input defaultValue={dataDetailCompany.data.company_name}></Input>
-                            :
-                            <h1 className="text-sm font-normal text-black">{dataDetailCompany.data.company_name}</h1>
-                    }
-                </div>
-                <div className="md:m-5 mb-5 md:mb-0">
-                    <h1 className="font-semibold text-sm">Penanggung Jawab:</h1>
-                    {
-                        editable ?
-                            <Input defaultValue={dataDetailCompany.data.company_name}></Input>
-                            :
-                            <h1 className="text-sm font-normal text-black">{dataDetailCompany.data.company_name}</h1>
-                    }
-                </div>
-                <div className="md:m-5 mb-5 md:mb-0">
-                    <h1 className="font-semibold text-sm">Fax:</h1>
-                    {
-                        editable ?
-                            <Input defaultValue={dataDetailCompany.data.company_name}></Input>
-                            :
-                            <h1 className="text-sm font-normal text-black">{dataDetailCompany.data.company_name}</h1>
-                    }
-                </div>
-                <div className="md:m-5 mb-5 md:mb-0">
-                    <h1 className="font-semibold text-sm">Email:</h1>
-                    {
-                        editable ?
-                            <Input defaultValue={dataDetailCompany.data.company_name}></Input>
-                            :
-                            <h1 className="text-sm font-normal text-black">{dataDetailCompany.data.company_name}</h1>
-                    }
-                </div>
-                <div className="md:m-5 mb-5 md:mb-0">
-                    <h1 className="font-semibold text-sm">Website:</h1>
-                    {
-                        editable ?
-                            <Input defaultValue={dataDetailCompany.data.company_name}></Input>
-                            :
-                            <h1 className="text-sm font-normal text-black">{dataDetailCompany.data.company_name}</h1>
-                    }
-                </div> */}
             </div>
         </div>
     )

@@ -148,15 +148,17 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                 </div>
                 {/* </Sticky> */}
             </div>
-            <div className=" mb-2 md:mb-4 flex">
+            <div className=" mb-2 md:mb-4 flex md:flex-row flex-col">
                 <h1 className="font-semibold text-base mr-3 pt-1">{dataDetailCompany.data.company_name}</h1>
-                <h1 className="mr-3 pt-1">|</h1>
-                {
-                    dataDetailCompany.data.is_enabled ?
-                        <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md">AKTIF MODULE</div>
-                        :
-                        <div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md">NON-AKTIF MODULE</div>
-                }
+                <h1 className="mr-3 pt-1 hidden md:block">|</h1>
+                <div className="flex">
+                    {
+                        dataDetailCompany.data.is_enabled ?
+                            <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md text-xs md:text-sm w-auto">AKTIF MODULE</div>
+                            :
+                            <div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md text-xs md:text-sm w-auto">NON-AKTIF MODULE</div>
+                    }
+                </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-4 mb-4">
                 <div className="p-3 relative col-span-1 md:col-span-1 flex flex-col">
@@ -230,11 +232,11 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                 {
                     dataDetailCompany.data.is_enabled ?
                         <button className=" w-full h-auto py-2 text-center bg-red-600 text-white hover:bg-red-800 rounded-md" onClick={() => { setVisible(true) }}>
-                            Non Aktifkan Akun
+                            Non Aktifkan Perusahaan
                         </button>
                         :
                         <button className=" w-full h-auto py-2 text-center bg-blue-600 text-white hover:bg-blue-800 rounded-md" onClick={() => { setVisiblenon(true) }}>
-                            Aktifkan Akun
+                            Aktifkan Perusahaan
                         </button>
                 }
             </div >
@@ -669,8 +671,9 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                             message: 'Nama bank harus diisi',
                                         },
                                     ]}
+                                    initialValue={recordrow.name}
                                 >
-                                    <Input onChange={onChangeEditBA} name="name" defaultValue={recordrow.name} id="editName" />
+                                    <Input onChange={onChangeEditBA} name="name" id="editName" />
                                 </Form.Item>
                                 <Form.Item name="account_number" style={{ marginRight: `1rem` }} label="Account Number"
                                     rules={[
@@ -679,8 +682,9 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                             message: 'Nomor rekening harus diisi',
                                         },
                                     ]}
+                                    initialValue={recordrow.account_number}
                                 >
-                                    <Input onChange={onChangeEditBA} name="account_number" defaultValue={recordrow.account_number} id="editAccountNumber" />
+                                    <Input onChange={onChangeEditBA} name="account_number" id="editAccountNumber" />
                                 </Form.Item>
                                 <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Owner"
                                     rules={[
@@ -689,8 +693,9 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                             message: 'Nama penanggung jawab harus diisi',
                                         },
                                     ]}
+                                    initialValue={recordrow.owner}
                                 >
-                                    <Input onChange={onChangeEditBA} name="owner" defaultValue={recordrow.owner} id="editOwner" />
+                                    <Input onChange={onChangeEditBA} name="owner" id="editOwner" />
                                 </Form.Item>
                                 <Form.Item name="currency" style={{ marginRight: `1rem` }} label="Currency"
                                     rules={[
@@ -699,8 +704,9 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                             message: 'Mata uang harus diisi',
                                         },
                                     ]}
+                                    initialValue={recordrow.currency}
                                 >
-                                    <Input onChange={onChangeEditBA} name="currency" defaultValue={recordrow.currency} id="editCurrency" />
+                                    <Input onChange={onChangeEditBA} name="currency" id="editCurrency" />
                                 </Form.Item>
                             </div>
                             <Form.Item>
@@ -725,7 +731,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                         message: 'Nomor rekening harus diisi',
                                     },
                                 ]}>
-                                    <Input onChange={onChangeBA} name="account_number" value={bankdata.account_number} />
+                                    <Input onChange={onChangeBA} name="account_number" defaultValue={bankdata.account_number} />
                                 </Form.Item>
                                 <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Owner" rules={[
                                     {

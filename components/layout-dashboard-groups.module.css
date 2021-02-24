@@ -5,23 +5,23 @@
 
 
 .siderLayout,
-.trigger {
+.trigger, .breadcrumbClients {
   display: block;
 }
 
 .siderLayoutSmall,
-.triggerSmall {
+.triggerSmall, .breadcrumbClientsSmall  {
   display: none;
 }
 
 @media only screen and (max-width: 540px) {
 .siderLayoutSmall,
-.triggerSmall {
+.triggerSmall, .breadcrumbClientsSmall  {
   display: block;
 }
 
 .siderLayout,
-.trigger {
+.trigger, .breadcrumbClients {
   display: none;
 }
 }
