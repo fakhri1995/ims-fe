@@ -132,20 +132,13 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                                 style: { background: record.idx%2 == 1 ? '#f2f2f2' : '#fff' },
                             },
                             children: 
-                            <Tooltip placement="topLeft" title={"Delete"}>
-                            {/* {actions[index]} */}
+                            // <Tooltip placement="topLeft" title={"Delete"}>
                             <Button>
-                                <Popconfirm title="Yakin hapus data bank account?" onConfirm={() => { handleDeleteGroup(record) }} onCancel={() => { message.error("Gagal dihapus") }}>
+                                <Popconfirm title="Yakin hapus data bank account?" onConfirm={() => { handleDeleteGroup(record) }}>
                                     <a><DeleteOutlined /></a>
                                 </Popconfirm>
-                                {/* <Link href={{
-                                    pathname: `/delete/${record.key}`,
-                                    query: {
-                                        originPath: 'Admin'
-                                    }
-                                }}><a><DeleteOutlined /></a></Link> */}
                             </Button>
-                        </Tooltip>
+                            // </Tooltip>
                         }
                     }
                 }
@@ -158,15 +151,19 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
         <Menu style={{padding:"10px 5px"}}>
           <Menu.Item  key="0">
             <Link href={{
-                                pathname: '/groups/create/agents',
-                                query: {
-                                    originPath: "Admin"
-                                }
-                            }}>Agent Group</Link>
-            
+                pathname: '/groups/create/agents',
+                query: {
+                    originPath: "Admin"
+                }
+            }}>Agent Group</Link>
           </Menu.Item>
           <Menu.Item key="1">
-            <Link href="create/group-requester">Requester Group</Link>
+          <Link href={{
+                pathname: '/groups/create/requesters',
+                query: {
+                    originPath: "Admin"
+                }
+            }}>Requester Group</Link>
           </Menu.Item>
         </Menu>
         )

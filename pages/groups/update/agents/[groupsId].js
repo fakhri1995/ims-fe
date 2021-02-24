@@ -1,33 +1,23 @@
 import Layout from '../../../../components/layout-dashboard-groups'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
-import Table from 'antd/lib/table'
-import Tooltip from 'antd/lib/tooltip'
-import Button from 'antd/lib/button'
-import Drawer from 'antd/lib/drawer'
-import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import Tabs from 'antd/lib/tabs'
-import DownOutlined from '@ant-design/icons/DownOutlined'
-import Dropdown from 'antd/lib/dropdown'
 import Divider from 'antd/lib/divider'
-import Menu from 'antd/lib/menu'
-import { Input, Slider } from 'antd'
+import { Input } from 'antd'
 import { Select, Tag } from 'antd'
 import { Radio } from 'antd'
 import { Row, Col } from 'antd'
 import notification from 'antd/lib/notification'
 import st from '../../../../components/layout-dashboard-groups.module.css'
+import Form from 'antd/lib/form'
 
 function Groups({ initProps, dataProfile, dataListAccount, dataDetailGroup, sidemenu, dataGroupHead }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
-    // console.log(dataGroupHead)
-    console.log(dataDetailGroup)
 
     const [editgroup, setEditgroup] = useState({
         id: dataDetailGroup.data.group_detail.id,
@@ -77,7 +67,7 @@ function Groups({ initProps, dataProfile, dataListAccount, dataDetailGroup, side
                     })
                     setTimeout(() => {
                         rt.push(`/groups?originPath=Admin`)
-                    }, 1000)
+                    }, 100)
                 }
                 else if (!res2.success) {
                     notification['error']({
@@ -86,14 +76,13 @@ function Groups({ initProps, dataProfile, dataListAccount, dataDetailGroup, side
                     })
                 }
             })
-        // console.log("isi new group: " + newgroup.name)
     }
     //------------------------------------------
 
     //----------------radio button--------------
     const [value, setValue] = useState(1);
     const onChange = e => {
-        console.log('radio checked', e.target.value);
+        // console.log('radio checked', e.target.value);
         setValue(e.target.value);
     };
     //------------------------------------------
@@ -102,10 +91,7 @@ function Groups({ initProps, dataProfile, dataListAccount, dataDetailGroup, side
     const dataDD = dataListAccount.data.accounts.map((doc, idx) => {
         return ({
             value: doc.user_id,
-            // profile_image: doc.profile_image,
             label: doc.fullname,
-            // email: doc.email,
-            // phone_number: doc.phone_number
         })
     })
     
@@ -114,66 +100,73 @@ function Groups({ initProps, dataProfile, dataListAccount, dataDetailGroup, side
       }
 
     //----------------------------------------------
-    const waktu = [{value:'15 Minutes'},{value:'30 Minutes'},{value:'1 Hour'},{value:'2 Hours'},{value:'4 Hours'},{value:'8 Hours'},{value:'12 Hours'},{value:'1 Day'},{value:'2 Days'},{value:'4 Days'}]
-    // const time = JSON.parse(waktu)
-    const [drawablecreate, setDrawablecreate] = useState(false)
     const { TextArea } = Input;
-    const { Option } = Select;
-    const { TabPane } = Tabs;
-    function callback(key) {
-        console.log(key);
-      }
 
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} dataDetailGroup={dataDetailGroup} originPath={originPath} st={st}>
             <>
                 <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
+                    <Form layout="vertical" onFinish={handleEditGroup} style={{display:'contents'}}>
                     <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <h1 className="font-semibold text-base w-auto py-2">Edit Group</h1>
                                 <div className="flex space-x-2">
-                                    
-                                        <Link href="/groups?originPath=Admin" >
-                                        <div className=" text-black text-sm bg-white hover:bg-gray-300 border-2 border-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
-                                            <p>
-                                            Cancel
-                                            </p>
-                                        </div>
-                                        </Link>
-                                        <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
-                                            <p onClick={handleEditGroup}>
-                                            Save
-                                            </p>
-                                        </div>
-                                    
+                                    <Link href="/groups?originPath=Admin" >
+                                    <div className=" text-black text-sm bg-white hover:bg-gray-300 border-2 border-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
+                                        <p>Cancel</p>
+                                    </div>
+                                    </Link>
+                                    <button type="submit" className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
+                                        <p>Save</p>
+                                    </button>
                                 </div>
                             </div>
                         </Sticky>
                         
                         {/* <div className="w-120 h-auto p-0 "> */}
-                            <div className="pb-4 md:mb-0 ">
-                                <h1 className="font-semibold text-sm">Group Name</h1>
-                                <Input placeholder="Group Name" name={`name`} defaultValue={editgroup.name} onChange={onChangeEditGroup}></Input>
+                        <div className="pb-4 md:mb-0 ">
+                                <Form.Item name="name" style={{ marginRight: `1rem` }} label="Group Name"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Nama grup harus diisi',
+                                        },
+                                    ]}
+                                    initialValue={editgroup.name}
+                                >
+                                <Input placeholder="Group Name" name={`name`} onChange={onChangeEditGroup}></Input>
+                                </Form.Item>
                             </div>
                             
                             <div className="pb-4 md:mb-0">
-                                <h1 className="font-semibold text-sm">Group Description</h1>
-                                <TextArea placeholder="Group Description" name={`description`} defaultValue={editgroup.description} onChange={onChangeEditGroup} rows={2}/>
+                                <Form.Item name="description" style={{ marginRight: `1rem` }} label="Group Description"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Deskripsi grup harus diisi',
+                                        },
+                                    ]}
+                                    initialValue={editgroup.description}
+                                >
+                                <TextArea placeholder="Group Description" rows={2} name={`description`} onChange={onChangeEditGroup}/>
+                                </Form.Item>
                             </div>
 
                             <div className="pb-4 md:mb-0 ">
-                                <h1 className="font-semibold text-sm">Group Head</h1>
-                                <Select showSearch placeholder="Add Group Head" defaultValue={editgroup.group_head} name={`group_head`} onChange={onChangeEditGroupHeadGroup} name={`group_head`} showArrow options={dataDD}  style={{ width: '100%', lineHeight:'2.4'}}/> 
+                                <Form.Item name="group_head" style={{ marginRight: `1rem` }} label="Group Head"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Ketua grup harus diisi',
+                                        },
+                                    ]}
+                                    initialValue={editgroup.group_head}
+                                >
+                                <Select showSearch placeholder="Add Group Head" name={`group_head`} showArrow options={dataDD} onChange={onChangeEditGroupHeadGroup} style={{ width: '100%', lineHeight:'2.4'}}/> 
+                                </Form.Item>
                             </div>
                             
-                            {/* <div className="pb-4 md:mb-0">
-                                <h1 className="font-semibold text-sm">Business Hours</h1>
-                                
-                                <Select placeholder="Select Business Hours">
-                                    <Option value="Default">Default</Option>
-                                </Select>
-                            </div> */}
                         {/* </div> */}
                         <Divider style={{borderTop:'1px solid rgba(0, 0, 0, 0.2)'}}/>
                         <h1 className="font-semibold text-base w-auto py-2">Agents</h1>
@@ -199,58 +192,15 @@ function Groups({ initProps, dataProfile, dataListAccount, dataDetailGroup, side
                                 </Col> */}
                             </Row>
                         </div>
-                        {/* <Divider style={{borderTop:'1px solid rgba(0, 0, 0, 0.2)'}}/>
-                        <h1 className="font-semibold text-base w-auto py-2">Group Automation</h1>
-                        <Row>
-                            <Col span={9}>
-                                if a ticket remains un-assigned for more than
-                            </Col>
-                            <Col span={15}>
-                            <Select  options={waktu}  style={{ width: '100%',padding:'0 5px', lineHeight:'2.4'}}/>
-                            </Col>
-                        </Row>
-                        <br/>
-                        <Row>
-                            <Col span={9}>
-                                then send escalation email to
-                            </Col>
-                            <Col span={15}>
-                            <Select  placeholder="Select Agent" showArrow options={dataDD} onChange={handleChange} style={{ width: '100%',padding:'0 5px', lineHeight:'2.4'}}/> 
-                            </Col>
-                        </Row> */}
-                        
                     </div>
+                    </Form>
                     <div className="flex flex-col space-y-3 px-4">
                         <div className="font-semibold text-sm">Groups</div>
                         <p className="font-normal text-xs md:text-sm">
                             You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that the same agent can be a member of multiple groups as well
                         </p>
-                        <br />
-                        <div className="font-semibold text-sm">Auto-ticket Assignment</div>
-                        <p className="font-normal text-xs md:text-sm">
-                            Once you create homogeneous agent groups, you can choose to automatically assign new tickets in this group to the next agent in Round Robin. Learn more about automatic ticket assignment
-                        </p>
-                        <br />
-                        <div className="font-semibold text-sm">Working Hours</div>
-                        <p className="font-normal text-xs md:text-sm">
-                        You can assign a different set of business hours and holidays to each Group. For example, you can separate agents by shifts and assign them different business hours, or create separate groups for each time zone your agents work at
-                        </p>
                     </div>
                 </div>
-
-                <Drawer title="New Groups" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720} footer={
-                    <div style={{ textAlign: 'right' }}>
-                        <button onClick={() => { setDrawablecreate(false) }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
-                            Cancel
-                        </button>
-                        <button type="primary" className="bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-20">
-                            Submit
-                        </button>
-                    </div>
-                }>
-                </Drawer>
-
-
             </>
         </Layout>
     )
