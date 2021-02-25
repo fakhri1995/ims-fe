@@ -13,9 +13,9 @@ import DownOutlined from '@ant-design/icons/DownOutlined'
 import Dropdown from 'antd/lib/dropdown'
 import Menu from 'antd/lib/menu'
 import st from '../../components/layout-dashboard-groups.module.css'
-import Popconfirm from 'antd/lib/popconfirm'
 import notification from 'antd/lib/notification'
-import message from 'antd/lib/message'
+import Modal from 'antd/lib/modal'
+import { set } from 'nprogress'
 
 function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters, sidemenu, dataDetailGroup }) {
     const rt = useRouter()
@@ -24,6 +24,21 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
     const { originPath } = rt.query
     const { TabPane } = Tabs;
     // console.log(dataGroups)
+    //--------hook modal delete group-------------
+    const [warningDelete, setWarningDelete] = useState({
+        istrue: false,
+        key: null,
+        name: ""
+    })
+    const onClickModalDeleteGroup = (istrue, record) => {
+        setWarningDelete({
+            ...warningDelete,
+            ["istrue"]: istrue,
+            ["key"]: record.key,
+            ["name"]: record.name
+        })
+    }
+    //-------------------------------------------
 
     //------------get agents groups------------------
     const groupsAgents = dataGroupsAgents.data.map((doc, idx) => {
@@ -48,8 +63,8 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
     //-----------------------------------------------------
 
     //------------------handle delete groups-------------------
-    const handleDeleteGroup = (rec) => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteGroup?id=${rec.key}`, {
+    const handleDeleteGroup = (key) => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteGroup?id=${key}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -58,6 +73,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
             .then(res => res.json())
             .then(res2 => {
                 if (res2.success) {
+                    setWarningDelete(false,null)
                     notification['success']({
                         message: res2.message,
                         duration: 3
@@ -67,8 +83,9 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                     }, 500)
                 }
                 else if (!res2.success) {
+                    setWarningDelete(false,null)
                     notification['error']({
-                        message: res2.message.errorInfo[3],
+                        message: res2.message,
                         duration: 3
                     })
                 }
@@ -128,24 +145,26 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                     width: 100,
                     render: (text, record, index) => {
                         return {
+                            
+                            
                             props: {
                                 style: { background: record.idx%2 == 1 ? '#f2f2f2' : '#fff' },
                             },
                             children: 
-                            // <Tooltip placement="topLeft" title={"Delete"}>
-                            <Button>
-                                <Popconfirm title="Yakin hapus data bank account?" onConfirm={() => { handleDeleteGroup(record) }}>
-                                    <a><DeleteOutlined /></a>
-                                </Popconfirm>
+                            <>
+                            {/* <Tooltip placement="topLeft" title={"Delete"}> */}
+                            <Button onClick={() => { onClickModalDeleteGroup(true,record) }}>
+                                <a><DeleteOutlined /></a>
                             </Button>
-                            // </Tooltip>
+                            
+                             {/* </Tooltip> */}
+                            </>
                         }
                     }
                 }
             ]
         )
     }
-
     const menu = () =>{
         return (
         <Menu style={{padding:"10px 5px"}}>
@@ -168,7 +187,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
         </Menu>
         )
     }
-      
+    console.log
     return (
         <Layout tok={tok} dataDetailGroup={dataDetailGroup} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
@@ -190,20 +209,26 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                         </Sticky>
 
                         <div className="col-span-3 flex flex-col space-y-3">
-                        <Tabs type="card">
-                            <TabPane tab="Agent Groups" key="1">
-                                <Table showHeader={false} scroll={{ x: 400 }} dataSource={groupsAgents} columns={columns('agents')} onRow={(record, rowIndex) => {
-                                }}></Table>
-                            </TabPane>
-                            <TabPane tab="Requester Groups" key="2">
-                                <Table showHeader={false} scroll={{ x: 400 }} dataSource={groupsRequesters} columns={columns('requesters')} onRow={(record, rowIndex) => {
-                                }}></Table>
-                            </TabPane>
-                        </Tabs>
-                        
+                            <Tabs type="card">
+                                <TabPane tab="Agent Groups" key="1">
+                                    <Table showHeader={false} scroll={{ x: 400 }} dataSource={groupsAgents} columns={columns('agents')} onRow={(record, rowIndex) => {
+                                    }}></Table>
+                                </TabPane>
+                                <TabPane tab="Requester Groups" key="2">
+                                    <Table showHeader={false} scroll={{ x: 400 }} dataSource={groupsRequesters} columns={columns('requesters')} onRow={(record, rowIndex) => {
+                                    }}></Table>
+                                </TabPane>
+                            </Tabs>
                         </div>
 
-
+                        <Modal
+                            title="Konfirmasi untuk menghapus grup"
+                            visible={warningDelete.istrue}
+                            onOk={() => { handleDeleteGroup(warningDelete.key)}}
+                            onCancel={() => setWarningDelete(false,null)}
+                        >
+                            Apakah anda yakin ingin menghapus grup <strong>{warningDelete.name}</strong>?
+                            </Modal>
                     </div>
                     <div className="flex flex-col space-y-3 px-4">
                         <div className="font-semibold text-sm">Groups</div>
