@@ -147,7 +147,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
     }, [])
     var pathBuilder = ""
     return (
-        <Layout>
+        <div className="h-full flex">
             <Sider collapsible collapsed={coll} trigger={null} theme="light" className={`${st.siderLayout} sider`} style={{ borderRight: `1px solid #f0f0f0`, height: `auto` }}>
                 <div className="logo" style={{ height: `32px`, margin: `16px`, background: `gray` }}></div>
                 <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]}>
@@ -160,7 +160,9 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                         Companies
                     </Menu.Item>
                     <Menu.Item key="3" icon={<InboxOutlined />}>
-                        Assets
+                        <Link href="/dashboard/assets">
+                            Assets
+                        </Link>
                     </Menu.Item>
                     <Menu.Item key="4" icon={<SettingOutlined />}>
                         <Link href="/dashboard/admin">
@@ -190,7 +192,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                     </Menu.Item>
                 </Menu>
             </Sider>
-            <Layout className="site-layout">
+            <div className="h-auto w-full">
                 <Header className="site-layout-background" style={{ padding: 0, backgroundColor: `white`, display: `flex`, alignItems: `center`, flexDirection: `row`, flexWrap: `wrap`, width: `100%`, justifyContent: `space-between`, height: `auto` }}>
                     <div className="flex">
                         {coll ? <MenuUnfoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className={st.trigger}></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left` }} className={st.trigger}></MenuFoldOutlined>}
@@ -307,11 +309,11 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                             null
                     }
                 </Header>
-                <Content className="slb" style={{ padding: 24, height: `${tinggi}px`, backgroundColor: `white` }}>
+                <main className="slb" style={{ padding: 24, height: `auto` }}>
                     {children}
-                </Content>
-            </Layout>
-        </Layout>
+                </main>
+            </div>
+        </div>
     )
 }
 

@@ -7,14 +7,14 @@ import Form from 'antd/lib/form'
 import Table from 'antd/lib/table'
 import Tree from 'antd/lib/tree'
 import Drawer from 'antd/lib/drawer'
-import Popconfirm from 'antd/lib/popconfirm'
 import notification from 'antd/lib/notification'
 import message from 'antd/lib/message'
+import Modal from 'antd/lib/modal'
+import Select from 'antd/lib/select'
 import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import { useState } from 'react'
-import Sticky from 'wil-react-sticky'
 import st from '../../../components/layout-dashboard-mig.module.css'
 
 
@@ -342,9 +342,12 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
         dataGetBanks.data = []
     }
     const rt = useRouter()
+    const { Option } = Select
     const [editable, setEditable] = useState(false)
     const [drawablecreate, setDrawablecreate] = useState(false)
     const [drawableedit, setDrawableedit] = useState(false)
+    const [modaldel, setModaldel] = useState(false)
+    const [modaldeldata, setModaldeldata] = useState({})
     // const [selectedrows, setSelectedrows] = useState([])
     const [recordrow, setRecordrow] = useState({
         id: 0,
@@ -367,6 +370,24 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
     }
     const [actions, setActions] = useState(actionsArr)
     const [action, setAction] = useState(false)
+    const onChangeBA = (e) => {
+        setBankdata({
+            ...bankdata,
+            [e.target.name]: e.target.value
+        })
+    }
+    const onChangeBACurrency = (data) => {
+        setBankdata({
+            ...bankdata,
+            currency: data.value
+        })
+    }
+    const onChangeEditBA = (e) => {
+        setRecordrow({
+            ...recordrow,
+            [e.target.name]: e.target.value
+        })
+    }
     const handleDeleteBA = (rec) => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/deleteBank?id=${rec.id}`, {
             method: 'DELETE',
@@ -377,6 +398,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
             .then(res => res.json())
             .then(res2 => {
                 if (res2.success) {
+                    setModaldel(false)
                     notification['success']({
                         message: res2.message,
                         duration: 3
@@ -418,7 +440,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                     })
                     setTimeout(() => {
                         setDrawablecreate(false)
-                        rt.push(`/company/mig?originPath=Admin`)
+                        rt.push(`/company/mig?originPath=Admin&active=bankAccounts`)
                     }, 500)
                 }
                 else {
@@ -457,13 +479,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                     })
                     setTimeout(() => {
                         setDrawableedit(false)
-                        if(process.env.NODE_ENV == "production"){
-                            window.location.href = "https://migsys.herokuapp.com/company/mig?originPath=Admin"
-                        }
-                        else if(process.env.NODE_ENV == "development"){
-                            window.location.href = "http://localhost:3000/company/mig?originPath=Admin"
-                        }
-                        // rt.push(`/company/mig?originPath=Admin`)
+                        rt.push(`/company/mig?originPath=Admin&active=bankAccounts`)
                     }, 500)
                 }
                 else {
@@ -473,18 +489,6 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                     })
                 }
             })
-    }
-    const onChangeBA = (e) => {
-        setBankdata({
-            ...bankdata,
-            [e.target.name]: e.target.value
-        })
-    }
-    const onChangeEditBA = (e) => {
-        setRecordrow({
-            ...recordrow,
-            [e.target.name]: e.target.value
-        })
     }
     const columnsgetBanks = [
         {
@@ -536,9 +540,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                     {
                         actions[index] ?
                             <>{actions[index]}
-                                <Popconfirm title="Yakin hapus data bank account?" onConfirm={() => { handleDeleteBA(record) }} onCancel={() => { message.error("Gagal dihapus") }}>
-                                    <a><DeleteOutlined /></a>
-                                </Popconfirm>
+                                <a onClick={() => { setModaldel(true); setModaldeldata(record) }}><DeleteOutlined /></a>
                                 <a onClick={() => { setDrawableedit(true); console.log("isi record: " + record.name); setRecordrow(record) }}><EditOutlined /></a>
                             </>
                             :
@@ -576,10 +578,9 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                             null
                     }
                     <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40" onClick={() => { setDrawablecreate(true) }}> Create</button>
-                    <Drawer title="Edit data Bank Account MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false) }} width={720}>
-                        <Form layout="vertical" onFinish={handleSubmitEditBA}>
-                            <div className="grid grid-cols-2">
-                                {/* record: {recordrow.name} */}
+                    <Drawer title="Edit data Bank Account MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false); }} width={720} destroyOnClose={true}>
+                        <Form layout="vertical" onFinish={handleSubmitEditBA} initialValues={recordrow}>
+                            <div className="grid grid-cols-2 mb-5">
                                 <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank Name"
                                     rules={[
                                         {
@@ -618,27 +619,28 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                                         },
                                     ]}
                                 >
-                                    <Input onChange={onChangeEditBA} name="currency" defaultValue={recordrow.currency} allowClear />
+                                    {/* <Select
+                                        labelInValue
+                                        defaultValue={{ value: "IDR" }}
+                                        onChange={(value) => { onChangeEditBACurrency(value) }}
+                                        name="currency"
+                                    >
+                                        <Option value="IDR">IDR</Option>
+                                        <Option value="USD">USD</Option>
+                                    </Select> */}
+                                    <select name="currency" onChange={onChangeEditBA} defaultValue={recordrow.currency} style={{width:`100%`, borderRadius:`5px`}}>
+                                        <option value="IDR">IDR</option>
+                                        <option value="USD">USD</option>
+                                    </select>
                                 </Form.Item>
                             </div>
                             <Form.Item>
-                                <button type="submit" className="bg-gray-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-gray-800">Edit</button>
+                                <button type="submit" className="bg-gray-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-gray-800">Save</button>
                             </Form.Item>
                         </Form>
                     </Drawer>
-                    <Drawer title="Create data Bank Account MIG" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720}
-                    // footer={
-                    // <div style={{ textAlign: 'right' }}>
-                    //     <button onClick={() => { setDrawablecreate(false) }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
-                    //         Cancel
-                    //         </button>
-                    //     <button type="primary" className="bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-20">
-                    //         Submit
-                    //         </button>
-                    // </div>
-                    // }
-                    >
-                        <Form layout="vertical" onFinish={handleSubmitCreateBA}>
+                    <Drawer title="Create data Bank Account MIG" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720} destroyOnClose={true}>
+                        <Form layout="vertical" onFinish={handleSubmitCreateBA} initialValues={bankdata}>
                             <div className="grid grid-cols-2 mb-5">
                                 <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank Name"
                                     rules={[
@@ -647,7 +649,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                                             message: 'Nama bank harus diisi',
                                         },
                                     ]}>
-                                    <Input onChange={onChangeBA} name="name" allowClear />
+                                    <Input onChange={onChangeBA} name="name" defaultValue={bankdata.name} />
                                 </Form.Item>
                                 <Form.Item name="account_number" style={{ marginRight: `1rem` }} label="Account Number"
                                     rules={[
@@ -656,7 +658,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                                             message: 'Nomor rekening harus diisi',
                                         },
                                     ]}>
-                                    <Input onChange={onChangeBA} name="account_number" allowClear />
+                                    <Input onChange={onChangeBA} name="account_number" defaultValue={bankdata.account_number} />
                                 </Form.Item>
                                 <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Owner"
                                     rules={[
@@ -665,7 +667,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                                             message: 'Nama penanggung jawab harus diisi',
                                         },
                                     ]}>
-                                    <Input onChange={onChangeBA} name="owner" allowClear />
+                                    <Input onChange={onChangeBA} name="owner" defaultValue={bankdata.owner} />
                                 </Form.Item>
                                 <Form.Item name="currency" style={{ marginRight: `1rem` }} label="Currency"
                                     rules={[
@@ -674,7 +676,16 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                                             message: 'Mata uang harus diisi',
                                         },
                                     ]}>
-                                    <Input onChange={onChangeBA} name="currency" allowClear />
+                                    <Select
+                                        labelInValue
+                                        defaultValue={{ value: "IDR" }}
+                                        onChange={(value) => { onChangeBACurrency(value) }}
+                                        name="currency"
+
+                                    >
+                                        <Option value="IDR">IDR</Option>
+                                        <Option value="USD">USD</Option>
+                                    </Select>
                                 </Form.Item>
                             </div>
                             <Form.Item>
@@ -713,6 +724,13 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                     // }} 
                     columns={columnsgetBanks} dataSource={datagetBanks} />
             </div>
+            <Modal
+                title="Hapus Bank Account"
+                visible={modaldel}
+                onOk={() => { handleDeleteBA(modaldeldata) }}
+                onCancel={() => setModaldel(false)}>
+                Apakah anda yakin ingin menghapus akun bank ini?
+            </Modal>
         </div>
     )
 }
@@ -722,11 +740,15 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGet
     const { TabPane } = Tabs;
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
-    const { originPath } = rt.query
+    var activeTab = "profile"
+    const { originPath, active } = rt.query
+    if (active) {
+        activeTab = active
+    }
     return (
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} st={st}>
             <div className="p-5 bg-white hidden md:block">
-                <Tabs tabPosition={`left`}>
+                <Tabs tabPosition={`left`} defaultActiveKey={activeTab}>
                     <TabPane tab="Profile" key={`profile`}>
                         <MigIndexProfile dataDetailCompany={dataDetailCompany} tok={tok}></MigIndexProfile>
                     </TabPane>
@@ -739,7 +761,7 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGet
                 </Tabs>
             </div>
             <div className="p-5 bg-white block md:hidden">
-                <Tabs tabPosition={`top`}>
+                <Tabs tabPosition={`top`} defaultActiveKey={activeTab}>
                     <TabPane tab="Profile" key={`profile`}>
                         <MigIndexProfile dataDetailCompany={dataDetailCompany} tok={tok}></MigIndexProfile>
                     </TabPane>

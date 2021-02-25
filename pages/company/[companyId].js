@@ -9,6 +9,7 @@ import Tree from 'antd/lib/tree'
 import Drawer from 'antd/lib/drawer'
 import Modal from 'antd/lib/modal'
 import message from 'antd/lib/message'
+import Select from 'antd/lib/select'
 import notification from 'antd/lib/notification'
 import Form from 'antd/lib/form'
 import Popconfirm from 'antd/lib/popconfirm'
@@ -267,6 +268,7 @@ function ClientsDetailLocations({ dataDetailCompany, tok }) {
     const [selectedtree, setSelectedtree] = useState([])
     const [expandedKeys, setExpandedKeys] = useState([])
     const [hoverrowtree, setHoverrowtree] = useState("hidden")
+    const [hoverbgtree, setHoverbgtree] = useState("")
     const [autoExpandParent, setAutoExpandParent] = useState(true);
     const onExpand = (expandedKeys) => {
         setExpandedKeys(expandedKeys);
@@ -364,6 +366,11 @@ function ClientsDetailLocations({ dataDetailCompany, tok }) {
             key: '0-2',
         },
     ];
+    // const treeData2 = treeData.map((doc, idx) => {
+    //     if(doc.children){
+
+    //     }
+    // })
     return (
         <div id="locationsDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
@@ -391,7 +398,7 @@ function ClientsDetailLocations({ dataDetailCompany, tok }) {
                 </div>
             </div>
             <div className="p-5">
-                <h1 className="text-sm font-semibold">Pilih Parent terakhir untuk hapus</h1>
+                <h1 className="text-sm font-semibold">Pilih Parent terakhir</h1>
                 {/* <Tree treeData={treeData} autoExpandParent={autoExpandParent} selectable selectedKeys={selectedtree} checkable checkedKeys={checkedtree} onCheck={() => { setEditable(true) }}>
                 </Tree> */}
                 <Tree
@@ -403,16 +410,27 @@ function ClientsDetailLocations({ dataDetailCompany, tok }) {
                     treeData={treeData}
                     selectable
                     titleRender={(nodeData) => (
-                        <Link href={`/company/${dataDetailCompany.data.company_id}?originPath=Admin`}>
-                            <div className="flex justify-between hover:text-blue-500 text-black">
-                                <div className="mr-20">
-                                    {nodeData.title}
+                        <>
+                            <Link href={`/company/${dataDetailCompany.data.company_id}?originPath=Admin`}>
+                                <div className={`flex justify-between hover:bg-blue-100 text-black`}
+                                    onMouseOver={() => {
+                                        setHoverrowtree("flex");
+                                        console.log("hover: " + hoverrowtree)
+                                    }}
+                                    onMouseLeave={() => {
+                                        setHoverrowtree("hidden");
+                                        console.log("leave: " + hoverrowtree)
+                                    }}
+                                >
+                                    <div className="mr-20">
+                                        {nodeData.title}
+                                    </div>
+                                    {/* <div className={`${hoverrowtree}`}>
+                                        <a><EditOutlined /></a>
+                                    </div> */}
                                 </div>
-                                <div className={`${hoverrowtree}`} onMouseOver={() => { setHoverrowtree("block"); console.log("hover: " + hoverrowtree) }} onMouseLeave={() => { setHoverrowtree("hidden"); console.log("leave: " + hoverrowtree) }}>
-                                    <a><EditOutlined /></a>
-                                </div>
-                            </div>
-                        </Link>
+                            </Link>
+                        </>
                     )
                     }
                     blockNode={true}
@@ -427,6 +445,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
         dataGetBanks.data = []
     }
     const rt = useRouter()
+    const { Option } = Select
     const [editable, setEditable] = useState(false)
     const [drawablecreate, setDrawablecreate] = useState(false)
     const [drawableedit, setDrawableedit] = useState(false)
@@ -471,7 +490,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                     })
                     setTimeout(() => {
                         rt.push(`/company/${companyId}?originPath=Admin`)
-                    }, 3000)
+                    }, 500)
                 }
                 else {
                     notification['error']({
@@ -531,7 +550,9 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                     {
                         actions[index] ?
                             <>{actions[index]}
-                                <a onClick={() => handleDeleteBA(record)}><DeleteOutlined /></a>
+                                <Popconfirm title="Yakin hapus data bank account?" onConfirm={() => handleDeleteBA(record)} onCancel={() => { message.error("Gagal dihapus") }}>
+                                    <a><DeleteOutlined /></a>
+                                </Popconfirm>
                                 <a onClick={() => { setDrawableedit(true); console.log("isi record: " + record.name); setRecordrow(record) }}><EditOutlined /></a>
                             </>
                             :
@@ -560,6 +581,12 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
         setBankdata({
             ...bankdata,
             [e.target.name]: e.target.value
+        })
+    }
+    const onChangeBACurrency = (data) => {
+        setBankdata({
+            ...bankdata,
+            currency: data.value
         })
     }
     const onChangeEditBA = (e) => {
@@ -594,7 +621,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                     setTimeout(() => {
                         setDrawablecreate(false)
                         rt.push(`/company/${companyId}?originPath=Admin`)
-                    }, 3000)
+                    }, 500)
                 }
                 else {
                     notification['error']({
@@ -631,18 +658,12 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                     })
                     setTimeout(() => {
                         setDrawableedit(false)
-                        if (process.env.NODE_ENV == "production") {
-                            window.location.href = `https://migsys.herokuapp.com/company/${companyId}?originPath=Admin`
-                        }
-                        else if (process.env.NODE_ENV == "development") {
-                            window.location.href = `http://localhost:3000/company/${companyId}?originPath=Admin`
-                        }
-                        // rt.push(`/company/${companyId}?originPath=Admin`)
-                    }, 3000)
+                        rt.push(`/company/${companyId}?originPath=Admin`)
+                    }, 500)
                 }
                 else {
                     notification['error']({
-                        message: res2.erroInfo.status_detail,
+                        message: res2.errorInfo.status_detail,
                         duration: 3
                     })
                 }
@@ -661,9 +682,9 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                             null
                     }
                     <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40" onClick={() => { setDrawablecreate(true) }}> Create</button>
-                    <Drawer title="Edit data Bank Account MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false) }} width={720}>
-                        <Form layout="vertical" onFinish={handleSubmitEditBA}>
-                            <div className="grid grid-cols-2">
+                    <Drawer title="Edit data Bank Account MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false) }} width={720} destroyOnClose={true}>
+                        <Form layout="vertical" onFinish={handleSubmitEditBA} initialValues={recordrow}>
+                            <div className="grid grid-cols-2 mb-5">
                                 <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank Name"
                                     rules={[
                                         {
@@ -671,9 +692,8 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                             message: 'Nama bank harus diisi',
                                         },
                                     ]}
-                                    initialValue={recordrow.name}
                                 >
-                                    <Input onChange={onChangeEditBA} name="name" id="editName" />
+                                    <Input onChange={onChangeEditBA} name="name" id="editName" defaultValue={recordrow.name} allowClear />
                                 </Form.Item>
                                 <Form.Item name="account_number" style={{ marginRight: `1rem` }} label="Account Number"
                                     rules={[
@@ -682,9 +702,8 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                             message: 'Nomor rekening harus diisi',
                                         },
                                     ]}
-                                    initialValue={recordrow.account_number}
                                 >
-                                    <Input onChange={onChangeEditBA} name="account_number" id="editAccountNumber" />
+                                    <Input onChange={onChangeEditBA} name="account_number" id="editAccountNumber" defaultValue={recordrow.account_number} allowClear />
                                 </Form.Item>
                                 <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Owner"
                                     rules={[
@@ -693,9 +712,8 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                             message: 'Nama penanggung jawab harus diisi',
                                         },
                                     ]}
-                                    initialValue={recordrow.owner}
                                 >
-                                    <Input onChange={onChangeEditBA} name="owner" id="editOwner" />
+                                    <Input onChange={onChangeEditBA} name="owner" id="editOwner" defaultValue={recordrow.owner} allowClear />
                                 </Form.Item>
                                 <Form.Item name="currency" style={{ marginRight: `1rem` }} label="Currency"
                                     rules={[
@@ -704,26 +722,38 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                             message: 'Mata uang harus diisi',
                                         },
                                     ]}
-                                    initialValue={recordrow.currency}
                                 >
-                                    <Input onChange={onChangeEditBA} name="currency" id="editCurrency" />
+                                    {/* <Select
+                                        labelInValue
+                                        defaultValue={{ value: recordrow.currency }}
+                                        onChange={(value) => { onChangeEditBACurrency(value) }}
+                                        name="currency"
+
+                                    >
+                                        <Option value="IDR">IDR</Option>
+                                        <Option value="USD">USD</Option>
+                                    </Select> */}
+                                    <select name="currency" onChange={onChangeEditBA} defaultValue={recordrow.currency} style={{ width: `100%`, borderRadius: `5px` }}>
+                                        <option value="IDR">IDR</option>
+                                        <option value="USD">USD</option>
+                                    </select>
                                 </Form.Item>
                             </div>
                             <Form.Item>
-                                <button type="submit" className="bg-gray-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-gray-800">Edit</button>
+                                <button type="submit" className="bg-gray-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-gray-800">Save</button>
                             </Form.Item>
                         </Form>
                     </Drawer>
-                    <Drawer title="Create data Bank Account MIG" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720}>
-                        <Form layout="vertical" onFinish={handleSubmitCreateBA}>
-                            <div className="grid grid-cols-2">
+                    <Drawer title="Create data Bank Account MIG" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720} destroyOnClose={true}>
+                        <Form layout="vertical" onFinish={handleSubmitCreateBA} initialValues={bankdata}>
+                            <div className="grid grid-cols-2 mb-5">
                                 <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank Name" rules={[
                                     {
                                         required: true,
                                         message: 'Nama bank harus diisi',
                                     },
                                 ]}>
-                                    <Input onChange={onChangeBA} name="name" value={bankdata.name} />
+                                    <Input onChange={onChangeBA} name="name" defaultValue={bankdata.name} allowClear />
                                 </Form.Item>
                                 <Form.Item name="account_number" style={{ marginRight: `1rem` }} label="Account Number" rules={[
                                     {
@@ -731,7 +761,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                         message: 'Nomor rekening harus diisi',
                                     },
                                 ]}>
-                                    <Input onChange={onChangeBA} name="account_number" defaultValue={bankdata.account_number} />
+                                    <Input onChange={onChangeBA} name="account_number" defaultValue={bankdata.account_number} allowClear />
                                 </Form.Item>
                                 <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Owner" rules={[
                                     {
@@ -739,17 +769,20 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                         message: 'Nama penanggung jawab harus diisi',
                                     },
                                 ]}>
-                                    <Input onChange={onChangeBA} name="owner" value={bankdata.owner} />
+                                    <Input onChange={onChangeBA} name="owner" defaultValue={bankdata.owner} allowClear />
                                 </Form.Item>
                                 <Form.Item name="currency" style={{ marginRight: `1rem` }} label="Currency"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Mata uang harus diisi',
-                                        },
-                                    ]}
                                 >
-                                    <Input onChange={onChangeBA} name="currency" value={bankdata.currency} />
+                                    <Select
+                                        labelInValue
+                                        defaultValue={{ value: "IDR" }}
+                                        onChange={(value) => { onChangeBACurrency(value) }}
+                                        name="currency"
+
+                                    >
+                                        <Option value="IDR">IDR</Option>
+                                        <Option value="USD">USD</Option>
+                                    </Select>
                                 </Form.Item>
                             </div>
                             <Form.Item>
@@ -760,9 +793,9 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                 </div>
             </div>
             <div className="md:p-5">
-                <Table 
-                pagination={{ pageSize: 6 }}
-                scroll={{ x: 200 }}
+                <Table
+                    pagination={{ pageSize: 6 }}
+                    scroll={{ x: 200 }}
                     onRow={(record, rowIndex) => {
                         return {
                             onMouseOver: (event) => {
@@ -799,12 +832,16 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
     const { TabPane } = Tabs;
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
-    const { originPath } = rt.query
+    var activeTab = "profile"
+    const { originPath, active } = rt.query
+    if (active) {
+        activeTab = active
+    }
     // console.log("get banks: " + dataGetBanks.data[0].account_number)
     return (
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} dataDetailCompany={dataDetailCompany} st={st}>
             <div className="p-5 bg-white hidden md:block">
-                <Tabs tabPosition={`left`}>
+                <Tabs tabPosition={`left`} defaultActiveKey={activeTab}>
                     <TabPane tab="Profile" key={`profile`}>
                         <ClientsDetailProfile dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
                     </TabPane>
@@ -816,8 +853,8 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
                     </TabPane>
                 </Tabs>
             </div>
-            <div className="p-5 bg-white block md:hidden">
-                <Tabs tabPosition={`top`}>
+            <div className="p-5 bg-white block md:hidden" >
+                <Tabs tabPosition={`top`} defaultActiveKey={activeTab}>
                     <TabPane tab="Profile" key={`profile`}>
                         <ClientsDetailProfile dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
                     </TabPane>
