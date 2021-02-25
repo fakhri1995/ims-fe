@@ -71,7 +71,8 @@ function Groups({ initProps, dataProfile, dataListAccount, dataDetailGroup, side
                 }
                 else if (!res2.success) {
                     notification['error']({
-                        message: res2.message.errorInfo[3],
+                        // message: res2.message.errorInfo[3],
+                        message: res2.message,
                         duration: 3
                     })
                 }
