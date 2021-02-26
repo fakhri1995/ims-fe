@@ -578,10 +578,10 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                             null
                     }
                     <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40" onClick={() => { setDrawablecreate(true) }}> Create</button>
-                    <Drawer title="Edit data Bank Account MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false); }} width={720} destroyOnClose={true}>
+                    <Drawer title="Edit data Bank Account MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false); }} width={370} destroyOnClose={true}>
                         <Form layout="vertical" onFinish={handleSubmitEditBA} initialValues={recordrow}>
-                            <div className="grid grid-cols-2 mb-5">
-                                <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank Name"
+                            <div className="grid grid-cols-1 mb-5">
+                                <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank"
                                     rules={[
                                         {
                                             required: true,
@@ -591,7 +591,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                                 >
                                     <Input onChange={onChangeEditBA} name="name" defaultValue={recordrow.name} allowClear />
                                 </Form.Item>
-                                <Form.Item name="account_number" style={{ marginRight: `1rem` }} label="Account Number"
+                                <Form.Item name="account_number" style={{ marginRight: `1rem` }} label="No.Rekening"
                                     rules={[
                                         {
                                             required: true,
@@ -601,7 +601,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                                 >
                                     <Input onChange={onChangeEditBA} name="account_number" defaultValue={recordrow.account_number} allowClear />
                                 </Form.Item>
-                                <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Owner"
+                                <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Atas Nama"
                                     rules={[
                                         {
                                             required: true,
@@ -611,7 +611,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                                 >
                                     <Input onChange={onChangeEditBA} name="owner" defaultValue={recordrow.owner} allowClear />
                                 </Form.Item>
-                                <Form.Item name="currency" style={{ marginRight: `1rem` }} label="Currency"
+                                <Form.Item name="currency" style={{ marginRight: `1rem` }} label="Mata Uang"
                                     rules={[
                                         {
                                             required: true,
@@ -619,15 +619,6 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                                         },
                                     ]}
                                 >
-                                    {/* <Select
-                                        labelInValue
-                                        defaultValue={{ value: "IDR" }}
-                                        onChange={(value) => { onChangeEditBACurrency(value) }}
-                                        name="currency"
-                                    >
-                                        <Option value="IDR">IDR</Option>
-                                        <Option value="USD">USD</Option>
-                                    </Select> */}
                                     <select name="currency" onChange={onChangeEditBA} defaultValue={recordrow.currency} style={{width:`100%`, borderRadius:`5px`}}>
                                         <option value="IDR">IDR</option>
                                         <option value="USD">USD</option>
@@ -639,10 +630,10 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                             </Form.Item>
                         </Form>
                     </Drawer>
-                    <Drawer title="Create data Bank Account MIG" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720} destroyOnClose={true}>
+                    <Drawer title="Create data Bank Account MIG" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={370} destroyOnClose={true}>
                         <Form layout="vertical" onFinish={handleSubmitCreateBA} initialValues={bankdata}>
-                            <div className="grid grid-cols-2 mb-5">
-                                <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank Name"
+                            <div className="grid grid-cols-1 mb-5">
+                                <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank"
                                     rules={[
                                         {
                                             required: true,
@@ -651,7 +642,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                                     ]}>
                                     <Input onChange={onChangeBA} name="name" defaultValue={bankdata.name} />
                                 </Form.Item>
-                                <Form.Item name="account_number" style={{ marginRight: `1rem` }} label="Account Number"
+                                <Form.Item name="account_number" style={{ marginRight: `1rem` }} label="No.Rekening"
                                     rules={[
                                         {
                                             required: true,
@@ -660,7 +651,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                                     ]}>
                                     <Input onChange={onChangeBA} name="account_number" defaultValue={bankdata.account_number} />
                                 </Form.Item>
-                                <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Owner"
+                                <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Atas Nama"
                                     rules={[
                                         {
                                             required: true,
@@ -669,7 +660,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                                     ]}>
                                     <Input onChange={onChangeBA} name="owner" defaultValue={bankdata.owner} />
                                 </Form.Item>
-                                <Form.Item name="currency" style={{ marginRight: `1rem` }} label="Currency"
+                                <Form.Item name="currency" style={{ marginRight: `1rem` }} label="Mata Uang"
                                     rules={[
                                         {
                                             required: true,
