@@ -2,9 +2,6 @@ import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
 import Layout from '../../components/layout-dashboard'
 import st from "../../components/layout-dashboard.module.css"
-// import TeamOutlined from '@ant-design/icons/TeamOutlined'
-// import UserOutlined from '@ant-design/icons/UserOutlined'
-// import Link from 'next/link'
 
 function Assets({ initProps, dataProfile, sidemenu }) {
     const rt = useRouter()
