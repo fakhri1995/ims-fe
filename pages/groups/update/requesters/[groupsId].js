@@ -13,7 +13,7 @@ import notification from 'antd/lib/notification'
 import st from '../../../../components/layout-dashboard-groups.module.css'
 import Form from 'antd/lib/form'
 
-function GroupsRequestersDetail({ initProps, dataProfile, dataListAccount, dataDetailGroup, sidemenu, dataGroupHead }) {
+function GroupsRequestersDetail({ initProps, dataProfile, dataListAccount, dataDetailGroup, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
@@ -23,7 +23,7 @@ function GroupsRequestersDetail({ initProps, dataProfile, dataListAccount, dataD
         id: dataDetailGroup.data.group_detail.id,
         name: dataDetailGroup.data.group_detail.name,
         description: dataDetailGroup.data.group_detail.description,
-        group_head: dataGroupHead.data.user_id,
+        group_head: dataDetailGroup.data.group_detail.group_head,
         is_agent: false,
         user_ids: dataDetailGroup.data.group_user
     })
@@ -235,17 +235,6 @@ export async function getServerSideProps({ req, res, params }) {
     })
     const resjsonGetDetailGroup = await resourcesGetDetailGroup.json()
     const dataDetailGroup = resjsonGetDetailGroup
-    const group_head = dataDetailGroup.data.group_detail.group_head
-    
-    //get data  head
-    const resourcesGetGroupHead = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAccountDetail?login_id=${group_head}`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps)
-        },
-    })
-    const resjsonGetGroupHead = await resourcesGetGroupHead.json()
-    const dataGroupHead = resjsonGetGroupHead
     
     //get detail profil yang login
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
@@ -275,8 +264,7 @@ export async function getServerSideProps({ req, res, params }) {
             dataProfile,
             dataListAccount,
             dataDetailGroup,
-            sidemenu: "4",
-            dataGroupHead
+            sidemenu: "4"
         },
     }
 }

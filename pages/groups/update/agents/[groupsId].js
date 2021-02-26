@@ -13,7 +13,7 @@ import notification from 'antd/lib/notification'
 import st from '../../../../components/layout-dashboard-groups.module.css'
 import Form from 'antd/lib/form'
 
-function GroupsAgentsDetail({ initProps, dataProfile, dataListAccount, dataDetailGroup, sidemenu, dataGroupHead }) {
+function GroupsAgentsDetail({ initProps, dataProfile, dataListAccount, dataDetailGroup, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
@@ -23,7 +23,7 @@ function GroupsAgentsDetail({ initProps, dataProfile, dataListAccount, dataDetai
         id: dataDetailGroup.data.group_detail.id,
         name: dataDetailGroup.data.group_detail.name,
         description: dataDetailGroup.data.group_detail.description,
-        group_head: dataGroupHead.data.user_id,
+        group_head: dataDetailGroup.data.group_detail.group_head,
         is_agent: true,
         user_ids: dataDetailGroup.data.group_user
     })
@@ -172,7 +172,7 @@ function GroupsAgentsDetail({ initProps, dataProfile, dataListAccount, dataDetai
                         <Divider style={{borderTop:'1px solid rgba(0, 0, 0, 0.2)'}}/>
                         <h1 className="font-semibold text-base w-auto py-2">Agents</h1>
                         <div className="border-gray-300 p-4 border bg-white w-full h-auto ">
-                            <Radio.Group className="flex" row onChange={onChange} value={value}>
+                            <Radio.Group className="flex flex-col md:flex-row" row onChange={onChange} value={value}>
                                 <Radio className="flex-initial font-bold " value={1}>Add as a Member 
                                 <p className="pl-6 whitespace-normal font-normal" style={{width:'min-content',minWidth:'15rem'}}>Members can be assigned tickets, tasks and other items that belong to this group.</p>
                                 </Radio>
@@ -235,17 +235,6 @@ export async function getServerSideProps({ req, res, params }) {
     })
     const resjsonGetDetailGroup = await resourcesGetDetailGroup.json()
     const dataDetailGroup = resjsonGetDetailGroup
-    const group_head = dataDetailGroup.data.group_detail.group_head
-    
-    //get data  head
-    const resourcesGetGroupHead = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAccountDetail?login_id=${group_head}`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps)
-        },
-    })
-    const resjsonGetGroupHead = await resourcesGetGroupHead.json()
-    const dataGroupHead = resjsonGetGroupHead
     
     //get detail profil yang login
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
@@ -275,8 +264,7 @@ export async function getServerSideProps({ req, res, params }) {
             dataProfile,
             dataListAccount,
             dataDetailGroup,
-            sidemenu: "4",
-            dataGroupHead
+            sidemenu: "4"
         },
     }
 }
