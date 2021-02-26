@@ -16,7 +16,7 @@ import EditOutlined from '@ant-design/icons/EditOutlined'
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import { useState } from 'react'
 import st from '../../../components/layout-dashboard-mig.module.css'
-
+import Popconfirm from 'antd/lib/popconfirm'
 
 function MigIndexProfile({ dataDetailCompany, tok }) {
     const [editable, setEditable] = useState(false)

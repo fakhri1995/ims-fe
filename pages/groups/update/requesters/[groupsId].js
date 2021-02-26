@@ -13,7 +13,7 @@ import notification from 'antd/lib/notification'
 import st from '../../../../components/layout-dashboard-groups.module.css'
 import Form from 'antd/lib/form'
 
-function Groups({ initProps, dataProfile, dataListAccount, dataDetailGroup, sidemenu, dataGroupHead }) {
+function GroupsRequestersDetail({ initProps, dataProfile, dataListAccount, dataDetailGroup, sidemenu, dataGroupHead }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
@@ -281,4 +281,4 @@ export async function getServerSideProps({ req, res, params }) {
     }
 }
 
-export default Groups
+export default GroupsRequestersDetail

@@ -1,17 +1,18 @@
-import Layout from '../../components/layout-dashboard'
+import Layout from '../../../components/layout-dashboard'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import Table from 'antd/lib/table'
 import Tooltip from 'antd/lib/tooltip'
 import Button from 'antd/lib/button'
+import Drawer from 'antd/lib/drawer'
 import CopyOutlined from '@ant-design/icons/CopyOutlined'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import st from '../../components/layout-dashboard.module.css'
+import st from '../../../components/layout-dashboard.module.css'
 
 
-function Roles({ initProps, dataProfile, sidemenu }) {
+function RolesCreate({ initProps, dataProfile, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
@@ -109,9 +110,7 @@ function Roles({ initProps, dataProfile, sidemenu }) {
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <h1 className="font-semibold text-base w-auto py-2">Roles</h1>
                                 <div className="flex space-x-2">
-                                    <Link href="/roles/create">
-                                        <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center" >New Role</div>
-                                    </Link>
+                                    <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center" onClick={() => { setDrawablecreate(true) }}>New Role</div>
                                 </div>
                             </div>
                         </Sticky>
@@ -159,6 +158,19 @@ function Roles({ initProps, dataProfile, sidemenu }) {
                     </div>
                 </div>
 
+                <Drawer title="New Role" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720} footer={
+                    <div style={{ textAlign: 'right' }}>
+                        <button onClick={() => { setDrawablecreate(false) }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
+                            Cancel
+                        </button>
+                        <button type="primary" className="bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-20">
+                            Submit
+                        </button>
+                    </div>
+                }>
+                </Drawer>
+
+
             </>
         </Layout>
     )
@@ -195,4 +207,4 @@ export async function getServerSideProps({ req, res }) {
     }
 }
 
-export default Roles
+export default RolesCreate

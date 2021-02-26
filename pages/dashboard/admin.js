@@ -1,10 +1,10 @@
 import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
-import Layout from '../../components/layout-dashboard'
+import Layout from '../../components/layout-dashboard-main'
 import TeamOutlined from '@ant-design/icons/TeamOutlined'
 import UserOutlined from '@ant-design/icons/UserOutlined'
 import Link from 'next/link'
-import st from "../../components/layout-dashboard.module.css"
+import st from "../../components/layout-dashboard-main.module.css"
 
 function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
     // jscookie.remove('token')

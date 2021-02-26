@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
-import Layout from '../../components/layout-dashboard'
-import st from "../../components/layout-dashboard.module.css"
+import Layout from '../../components/layout-dashboard-main'
+import st from "../../components/layout-dashboard-main.module.css"
 // import TeamOutlined from '@ant-design/icons/TeamOutlined'
 // import UserOutlined from '@ant-design/icons/UserOutlined'
 // import Link from 'next/link'
