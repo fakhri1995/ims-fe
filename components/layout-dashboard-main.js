@@ -4,22 +4,23 @@ import Link from 'next/link'
 import Layout from 'antd/lib/layout'
 import jscookie from 'js-cookie'
 
-import Menu from 'antd/lib/menu'
+// import Menu from 'antd/lib/menu'
 import Avatar from 'antd/lib/avatar'
 import Dropdown from 'antd/lib/dropdown'
 import Breadcrumb from 'antd/lib/breadcrumb'
 import MenuUnfoldOutlined from '@ant-design/icons/MenuUnfoldOutlined'
 import MenuFoldOutlined from '@ant-design/icons/MenuFoldOutlined'
 import UserOutlined from '@ant-design/icons/UserOutlined'
-import BankOutlined from '@ant-design/icons/BankOutlined'
-import InboxOutlined from '@ant-design/icons/InboxOutlined'
-import SettingOutlined from '@ant-design/icons/SettingOutlined'
+// import BankOutlined from '@ant-design/icons/BankOutlined'
+// import InboxOutlined from '@ant-design/icons/InboxOutlined'
+// import SettingOutlined from '@ant-design/icons/SettingOutlined'
 import ExportOutlined from '@ant-design/icons/ExportOutlined'
-import DashboardTwoTone from '@ant-design/icons/DashboardTwoTone'
+// import DashboardTwoTone from '@ant-design/icons/DashboardTwoTone'
 import NotificationOutlined from '@ant-design/icons/NotificationOutlined'
 import QuestionCircleOutlined from '@ant-design/icons/QuestionCircleOutlined'
 import PlusCircleTwoTone from '@ant-design/icons/PlusCircleTwoTone'
 import AlertOutlined from '@ant-design/icons/AlertOutlined'
+import LayoutMenu from '../components/layout-menu'
 
 function LayoutDashboardMain({ children, tok, dataProfile, pathArr, sidemenu, originPath, st }) {
     const rt = useRouter()
@@ -148,53 +149,10 @@ function LayoutDashboardMain({ children, tok, dataProfile, pathArr, sidemenu, or
     var pathBuilder = ""
     return (
         <div className=" h-screen flex">
-            <Sider collapsible collapsed={coll} trigger={null} theme="light" className={`${st.siderLayout} sider`} style={{ borderRight: `1px solid #f0f0f0`, height: `auto` }}>
-                <div className="logo" style={{ height: `32px`, margin: `16px`, background: `gray` }}></div>
-                <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]}>
-                    <Menu.Item key="1" icon={<DashboardTwoTone />}>
-                        <Link href="/dashboard/home">
-                            Dashboard
-                        </Link>
-                    </Menu.Item>
-                    <Menu.Item key="2" icon={<BankOutlined />}>
-                        Companies
-                    </Menu.Item>
-                    <Menu.Item key="3" icon={<InboxOutlined />}>
-                        <Link href="/dashboard/assets">
-                            Assets
-                        </Link>
-                    </Menu.Item>
-                    <Menu.Item key="4" icon={<SettingOutlined />}>
-                        <Link href="/dashboard/admin">
-                            Admin
-                        </Link>
-                    </Menu.Item>
-                </Menu>
-            </Sider>
-            <Sider collapsible collapsed={collsmall} trigger={null} collapsedWidth={0} width={45} theme="light" className={st.siderLayoutSmall} style={{ borderRight: `1px solid #f0f0f0` }}>
-                <div className="logo" style={{ height: `32px`, margin: `16px` }}></div>
-                <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]}>
-                    <Menu.Item key="1" icon={<DashboardTwoTone />}>
-                        <Link href="/dashboard/home">
-                            Dashboard
-                        </Link>
-                    </Menu.Item>
-                    <Menu.Item key="2" icon={<BankOutlined />}>
-                        Companies
-                    </Menu.Item>
-                    <Menu.Item key="3" icon={<InboxOutlined />}>
-                        Assets
-                    </Menu.Item>
-                    <Menu.Item key="4" icon={<SettingOutlined />}>
-                        <Link href="/dashboard/admin">
-                            Admin
-                        </Link>
-                    </Menu.Item>
-                </Menu>
-            </Sider>
+            <LayoutMenu sidemenu={sidemenu} coll={coll} collsmall={collsmall} st={st}></LayoutMenu>
             <div className="h-auto w-full">
                 <Header className="site-layout-background" style={{ padding: 0, backgroundColor: `white`, display: `flex`, alignItems: `center`, flexDirection: `row`, flexWrap: `wrap`, width: `100%`, justifyContent: `space-between`, height: `auto` }}>
-                    <div className="flex">
+                    <div className="flex z-50" >
                         {coll ? <MenuUnfoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className={st.trigger}></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleColl} style={{ padding: `24px`, float: `left` }} className={st.trigger}></MenuFoldOutlined>}
                         {collsmall ? <MenuUnfoldOutlined onClick={handleCollSmall} style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }} className={st.triggerSmall}></MenuUnfoldOutlined> : <MenuFoldOutlined onClick={handleCollSmall} style={{ padding: `24px`, float: `left` }} className={st.triggerSmall}></MenuFoldOutlined>}
                         {
