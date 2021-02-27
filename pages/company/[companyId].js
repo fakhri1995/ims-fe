@@ -16,6 +16,7 @@ import Popconfirm from 'antd/lib/popconfirm'
 import Link from 'next/link'
 import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
+import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import st from '../../components/layout-dashboard-clients.module.css'
 
 
@@ -262,31 +263,11 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
 }
 
 function ClientsDetailLocations({ dataDetailCompany, tok }) {
-    const [editable, setEditable] = useState(false)
-    const [drawablecreate, setDrawablecreate] = useState(false)
-    const [checkedtree, setCheckedtree] = useState([])
-    const [selectedtree, setSelectedtree] = useState([])
     const [expandedKeys, setExpandedKeys] = useState([])
-    const [hoverrowtree, setHoverrowtree] = useState("hidden")
-    const [hoverbgtree, setHoverbgtree] = useState("")
     const [autoExpandParent, setAutoExpandParent] = useState(true);
     const onExpand = (expandedKeys) => {
         setExpandedKeys(expandedKeys);
         setAutoExpandParent(false);
-    };
-
-    const onCheck = (checkedKeys) => {
-        console.log("checked: " + checkedKeys)
-        setEditable(true)
-        setCheckedtree(checkedKeys)
-        if (checkedKeys.length === 0) {
-            setEditable(false)
-        }
-    };
-
-    const onSelect = (selectedKeys, info) => {
-        console.log("selected: " + selectedKeys + " " + info)
-        setSelectedtree(selectedKeys);
     };
     const treeData = [
         {
@@ -366,70 +347,51 @@ function ClientsDetailLocations({ dataDetailCompany, tok }) {
             key: '0-2',
         },
     ];
-    // const treeData2 = treeData.map((doc, idx) => {
-    //     if(doc.children){
-
-    //     }
-    // })
     return (
         <div id="locationsDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
                 <div className="flex space-x-2">
-                    {editable ?
-                        <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("berhasil dihapus") }} onCancel={() => { message.error("Gagal dihapus") }}>
-                            <button className=" bg-red-600 hover:bg-red-800 border text-white py-1 px-3 rounded-md w-24 md:w-40">
-                                Delete
-                            </button>
-                        </Popconfirm>
-                        :
-                        null
-                    }
-                    <Link href={`/company/locations/new/${dataDetailCompany.data.company_id}?originPath=Admin`}>
+                    <Link href={`/company/locations/new?originPath=Admin&companyId=${dataDetailCompany.data.company_id}`}>
                         <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40"> Create</button>
                     </Link>
-                    <Drawer title="Create Locations MIG" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720} footer={
-                        <div style={{ textAlign: 'right' }}>
-                            <button onClick={() => { setDrawablecreate(false) }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
-                                Cancel
-                                </button>
-                            <button type="primary" className="bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-20">
-                                Submit
-                                </button>
-                        </div>
-                    }></Drawer>
                 </div>
             </div>
             <div className="p-5">
                 <h1 className="text-sm font-semibold">Pilih Parent terakhir</h1>
-                {/* <Tree treeData={treeData} autoExpandParent={autoExpandParent} selectable selectedKeys={selectedtree} checkable checkedKeys={checkedtree} onCheck={() => { setEditable(true) }}>
-                </Tree> */}
                 <Tree
                     onExpand={onExpand}
                     expandedKeys={expandedKeys}
                     autoExpandParent={autoExpandParent}
-                    onSelect={onSelect}
-                    selectedKeys={selectedtree}
                     treeData={treeData}
-                    selectable
                     titleRender={(nodeData) => (
                         <>
-                            <Link href={`/company/locations/update/${dataDetailCompany.data.company_id}?originPath=Admin`}>
-                                <div className={`flex justify-between hover:bg-blue-100 text-black`}
-                                    onMouseOver={() => {
-                                        setHoverrowtree("flex");
-                                    }}
-                                    onMouseLeave={() => {
-                                        setHoverrowtree("hidden");
-                                    }}
-                                >
-                                    <div className="mr-20">
-                                        {nodeData.title}
-                                    </div>
-                                    {/* <div className={`${hoverrowtree}`}>
-                                        <a><EditOutlined /></a>
-                                    </div> */}
+                            <div className={`flex justify-between hover:bg-blue-100 text-black`}
+                                onMouseOver={() => {
+                                    var d = document.getElementById(`node${nodeData.key}`)
+                                    d.classList.add("flex")
+                                    d.classList.remove("hidden")
+                                }}
+                                onMouseLeave={() => {
+                                    var e = document.getElementById(`node${nodeData.key}`)
+                                    e.classList.add("hidden")
+                                    e.classList.remove("flex")
+                                }}
+                            >
+                                <div className="mr-20">
+                                    {nodeData.title}
                                 </div>
-                            </Link>
+                                <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
+                                    <Link href={`/company/locations/new?originPath=Admin&parent=${nodeData.title}&companyId=${dataDetailCompany.data.company_id}`}>
+                                        <a className="mx-2 pb-1" alt="add"><PlusOutlined /></a>
+                                    </Link>
+                                    <Link href={`/company/locations/update/${dataDetailCompany.data.company_id}?originPath=Admin&parent=${nodeData.title}`}>
+                                        <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
+                                    </Link>
+                                    <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("berhasil dihapus") }} onCancel={() => { message.error("Gagal dihapus") }}>
+                                        <a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a>
+                                    </Popconfirm>
+                                </div>
+                            </div>
                         </>
                     )
                     }
@@ -931,7 +893,6 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
     if (active) {
         activeTab = active
     }
-    // console.log("get banks: " + dataGetBanks.data[0].account_number)
     return (
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} dataDetailCompany={dataDetailCompany} st={st}>
             <div className="p-5 bg-white hidden md:block">

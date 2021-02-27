@@ -1,21 +1,31 @@
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 import httpcookie from 'cookie'
 import Tree from 'antd/lib/tree'
+import Link from 'next/link'
+import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined'
+import EditOutlined from '@ant-design/icons/EditOutlined'
+import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import Layout from '../../components/layout-dashboard-main'
 import st from "../../components/layout-dashboard-main.module.css"
-import { Children } from 'react'
-// import TeamOutlined from '@ant-design/icons/TeamOutlined'
-// import UserOutlined from '@ant-design/icons/UserOutlined'
-// import Link from 'next/link'
 
-function Assets({ initProps, dataProfile, sidemenu, dataAssetsList }) {
+function AssetsAdmin({ initProps, dataProfile, sidemenu, dataAssetsList }) {
     console.log(dataAssetsList.data)
 
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
+    const { originPath } = rt.query
+    const treeData = dataAssetsList.data
+    const [autoExpandParent, setAutoExpandParent] = useState(true);
+    const [hoverrowtree, setHoverrowtree] = useState("hidden")
+    const [expandedKeys, setExpandedKeys] = useState([])
+    const onExpand = (expandedKeys) => {
+        setExpandedKeys(expandedKeys);
+        setAutoExpandParent(false);
+    };
     return (
-        <Layout tok={tok} pathArr={pathArr} sidemenu={sidemenu} dataProfile={dataProfile} st={st}>
+        <Layout tok={tok} pathArr={pathArr} sidemenu={sidemenu} dataProfile={dataProfile} st={st} originPath={originPath}>
             <div className="w-full h-auto border-t border-opacity-30 border-gray-500 bg-white">
                 <div className="grid grid-cols-1 md:grid-cols-4">
                     <div className="col-span-1 md:col-span-3 flex flex-col">
@@ -28,35 +38,45 @@ function Assets({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                             </div>
                         </div>
                         <div className="p-2 md:p-5">
-                            {/* <Tree
+                            <Tree
                                 onExpand={onExpand}
                                 expandedKeys={expandedKeys}
                                 autoExpandParent={autoExpandParent}
-                                onSelect={onSelect}
-                                selectedKeys={selectedtree}
                                 treeData={treeData}
-                                selectable
                                 titleRender={(nodeData) => (
                                     <>
-                                        <Link href={`/company/locations/update/${dataDetailCompany.data}?originPath=Admin`}>
-                                            <div className={`flex justify-between hover:bg-blue-100 text-black`}
-                                                onMouseOver={() => {
-                                                    setHoverrowtree("flex");
-                                                }}
-                                                onMouseLeave={() => {
-                                                    setHoverrowtree("hidden");
-                                                }}
-                                            >
-                                                <div className="mr-20">
-                                                    {nodeData.title}
-                                                </div>
+                                        <div className={`flex justify-between hover:bg-blue-100 text-black`}
+                                            onMouseOver={() => {
+                                                var d = document.getElementById(`node${nodeData.key}`)
+                                                d.classList.add("flex")
+                                                d.classList.remove("hidden")
+                                            }}
+                                            onMouseLeave={() => {
+                                                var e = document.getElementById(`node${nodeData.key}`)
+                                                e.classList.add("hidden")
+                                                e.classList.remove("flex")
+                                            }}
+                                        >
+                                            <div className="mr-20">
+                                                {nodeData.title}
                                             </div>
-                                        </Link>
+                                            <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
+                                                {/* <Link href={`/company/locations/new?originPath=Admin&parent=${nodeData.title}&companyId=${dataDetailCompany.data.company_id}`}> */}
+                                                    <a className="mx-2 pb-1" alt="add"><PlusOutlined /></a>
+                                                {/* </Link> */}
+                                                {/* <Link href={`/company/locations/update/${dataDetailCompany.data.company_id}?originPath=Admin&parent=${nodeData.title}`}> */}
+                                                    <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
+                                                {/* </Link> */}
+                                                {/* <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("berhasil dihapus") }} onCancel={() => { message.error("Gagal dihapus") }}> */}
+                                                    <a className="mx-2 pb-1" alt="delete"><EyeInvisibleOutlined /></a>
+                                                {/* </Popconfirm> */}
+                                            </div>
+                                        </div>
                                     </>
                                 )
                                 }
                                 blockNode={true}
-                            /> */}
+                            />
                         </div>
                     </div>
                     <div className="col-span-1 md:col-span-1 flex flex-col p-2 md:p-5">
@@ -84,7 +104,6 @@ export async function getServerSideProps({ req, res }) {
         if (typeof cookies === 'string') {
             const cookiesJSON = httpcookie.parse(cookies);
             initProps = cookiesJSON.token
-            // console.log("cookie di admin dashboard ssr: " + initProps)
         }
     }
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
@@ -115,4 +134,4 @@ export async function getServerSideProps({ req, res }) {
     }
 }
 
-export default Assets
+export default AssetsAdmin

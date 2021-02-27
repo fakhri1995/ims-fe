@@ -1,10 +1,11 @@
 import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
-import Layout from '../../components/layout-dashboard-main'
+import Layout from '../../components/layout-dashboard'
 import TeamOutlined from '@ant-design/icons/TeamOutlined'
 import UserOutlined from '@ant-design/icons/UserOutlined'
+import InboxOutlined from '@ant-design/icons/InboxOutlined'
 import Link from 'next/link'
-import st from "../../components/layout-dashboard-main.module.css"
+import st from "../../components/layout-dashboard.module.css"
 
 function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
     // jscookie.remove('token')
@@ -104,6 +105,24 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <UserOutlined /> Clients
+                                </div>
+                            </div>
+                        </Link>
+                    </div>
+                </div>
+
+                <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
+                    <div className="border-b border-gray-300">
+                        <h3 className="font-semibold text-lg mb-0">Assets</h3>
+                        <h3 className="font-normal text-sm text-gray-700">
+                            Keep track of your assets, vendors and contracts, all in one place
+                        </h3>
+                    </div>
+                    <div className="grid md:grid-cols-5 sm:grid-cols-1">
+                        <Link href={'/assets?originPath=Admin'}>
+                            <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                                <div>
+                                    <InboxOutlined /> Assets Types & Field
                                 </div>
                             </div>
                         </Link>

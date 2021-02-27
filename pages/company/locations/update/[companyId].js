@@ -9,9 +9,9 @@ import { useState } from 'react'
 
 function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany }) {
     const tok = initProps
-    const pathArr = ['company', `${dataDetailCompany.data.company_id}`, 'update location']
     const originPath = "Admin"
-    const [parent, setParent] = useState("")
+    const pathArr = ['company', `${dataDetailCompany.data.company_id}`, 'update location']
+    const [par, setPar] = useState(parent)
     const onChangeParent = (value) => {
         setParent()
     }
@@ -41,8 +41,9 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany }
                 <div className="grid grid-cols-1 md:grid-cols-4">
                     <div className="col-span-1 md:col-span-3 flex flex-col">
                         <div className="p-2 md:p-5 border-b flex mb-5 justify-between">
-                            <div className="text-sm font-bold">
-                                <h1 className="mt-2">Update Lokasi | {dataDetailCompany.data.company_name}</h1>
+                            <div>
+                                <h1 className="mt-2 text-sm font-bold">Update Lokasi</h1>
+                                <h1 className="mt-2 text-xs font-medium">{dataDetailCompany.data.company_name}</h1>
                             </div>
                             <div className="flex mx-2">
                                 <Link href={`/company/${dataDetailCompany.data.company_id}?originPath=Admin`}>
@@ -74,7 +75,7 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany }
                                     >
                                         <TreeSelect
                                             style={{ width: '100%' }}
-                                            value={parent}
+                                            value={par}
                                             dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                                             treeData={treeData}
                                             placeholder="Pilih parent"

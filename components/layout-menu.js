@@ -1,7 +1,6 @@
 import Layout from 'antd/lib/layout'
 import Menu from 'antd/lib/menu'
 import { useState, useEffect } from 'react'
-
 import BankOutlined from '@ant-design/icons/BankOutlined'
 import InboxOutlined from '@ant-design/icons/InboxOutlined'
 import SettingOutlined from '@ant-design/icons/SettingOutlined'
@@ -11,7 +10,6 @@ import Link from 'next/link'
 const LayoutMenu = ({ sidemenu, coll, collsmall, st }) => {
     const { SubMenu } = Menu;
     const { Sider } = Layout
-    // console.log(st)
     return (
         <div>
             <Sider collapsible collapsed={coll} trigger={null} theme="light" className={`${st.siderLayout} sider`} style={{ borderRight: `1px solid #f0f0f0`, height:'100%' }}>
@@ -27,9 +25,9 @@ const LayoutMenu = ({ sidemenu, coll, collsmall, st }) => {
                     </Menu.Item>
                     <SubMenu key="3" icon={<InboxOutlined />} title="Assets">
                         <Menu.Item key="sub31">
-                            <Link href="/dashboard/assets">
+                            {/* <Link href="/dashboard/assets"> */}
                                 Assets
-                            </Link>
+                            {/* </Link> */}
                         </Menu.Item>
                         <Menu.Item key="sub32">
                             <Link href="/dashboard/inventory">

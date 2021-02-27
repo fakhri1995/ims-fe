@@ -6,14 +6,17 @@ import Input from 'antd/lib/input'
 import TreeSelect from 'antd/lib/tree-select'
 import st from "../../../../components/layout-dashboard.module.css"
 import { useState } from 'react'
+import { useRouter } from 'next/router'
+
 
 function NewLocations({ initProps, dataProfile, sidemenu, dataDetailCompany }) {
+    const rt = useRouter()
     const tok = initProps
     const pathArr = ['company', `${dataDetailCompany.data.company_id}`, 'new location']
-    const originPath = "Admin"
-    const [parent, setParent] = useState("")
+    const { originPath, parent } = rt.query
+    const [par, setPar] = useState(parent)
     const onChangeParent = (value) => {
-        setParent()
+        setPar(value)
     }
     const treeData = [
         {
@@ -36,19 +39,20 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataDetailCompany }) {
         },
     ];
     return (
-        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} dataDetailCompany={dataDetailCompany} st={st}>
+        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} st={st}>
             <div className="w-full h-auto border-t border-opacity-30 border-gray-500 bg-white">
                 <div className="grid grid-cols-1 md:grid-cols-4">
                     <div className="col-span-1 md:col-span-3 flex flex-col">
                         <div className="p-2 md:p-5 border-b flex mb-5 justify-between">
-                            <div className="text-sm font-bold">
-                                <h1 className="mt-2">Lokasi Baru</h1>
+                            <div>
+                                <h1 className="mt-2 text-sm font-bold">Lokasi Baru</h1>
+                                <h1 className="mt-2 text-xs font-medium">{dataDetailCompany.data.company_name}</h1>
                             </div>
                             <div className="flex mx-2">
                                 <Link href={`/company/${dataDetailCompany.data.company_id}?originPath=Admin`}>
-                                    <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md mx-2">Cancel</button>
+                                    <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-5 rounded-md mx-2">Cancel</button>
                                 </Link>
-                                <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md">Save</button>
+                                <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-5 rounded-md">Save</button>
                             </div>
                         </div>
                         <div className="p-2 md:p-5 shadow-md">
@@ -74,7 +78,7 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataDetailCompany }) {
                                     >
                                         <TreeSelect
                                             style={{ width: '100%' }}
-                                            value={parent}
+                                            value={par}
                                             dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                                             treeData={treeData}
                                             placeholder="Pilih parent"
@@ -155,9 +159,9 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataDetailCompany }) {
     )
 }
 
-export async function getServerSideProps({ req, res, params }) {
+export async function getServerSideProps({ req, res, query }) {
     var initProps = {};
-    const companyid = params.companyId
+    const companyid = query.companyId
     const reqBodyCompanyDetail = {
         login_id: companyid
     }
