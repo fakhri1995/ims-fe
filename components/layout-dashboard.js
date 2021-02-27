@@ -148,7 +148,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
     var pathBuilder = ""
     return (
         <div className="h-full flex">
-            <LayoutMenu sidemenu={sidemenu} coll={coll} collsmall={collsmall} st={st}></LayoutMenu>
+            <LayoutMenu handleCollSmall={handleCollSmall} sidemenu={sidemenu} coll={coll} collsmall={collsmall} st={st}></LayoutMenu>
             <div className="h-auto w-full">
                 <Header className="site-layout-background" style={{ padding: 0, backgroundColor: `white`, display: `flex`, alignItems: `center`, flexDirection: `row`, flexWrap: `wrap`, width: `100%`, justifyContent: `space-between`, height: `auto` }}>
                     <div className="flex z-50">
