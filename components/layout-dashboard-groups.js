@@ -158,7 +158,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
     var pathBuilder = ""
     return (
         <Layout>
-            <LayoutMenu sidemenu={sidemenu} coll={coll} collsmall={collsmall} st={st}></LayoutMenu>
+            <LayoutMenu handleCollSmall={handleCollSmall} sidemenu={sidemenu} coll={coll} collsmall={collsmall} st={st}></LayoutMenu>
             <Layout className="site-layout">
                 <Header className="site-layout-background" style={{ padding: 0, backgroundColor: `white`, display: `flex`, flexDirection: `row`, flexWrap: `wrap`, justifyContent: `space-between`, width: `100%`, height: `auto`, alignItems: `center` }}>
                     <div className="flex z-50">

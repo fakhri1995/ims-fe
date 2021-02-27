@@ -1,19 +1,27 @@
 import Layout from 'antd/lib/layout'
 import Menu from 'antd/lib/menu'
 import { useState, useEffect } from 'react'
-
+import lm from '../components/layout-menu.module.css'
 import BankOutlined from '@ant-design/icons/BankOutlined'
 import InboxOutlined from '@ant-design/icons/InboxOutlined'
 import SettingOutlined from '@ant-design/icons/SettingOutlined'
 import DashboardTwoTone from '@ant-design/icons/DashboardTwoTone'
 import Link from 'next/link'
 
-const LayoutMenu = ({ sidemenu, coll, collsmall, st }) => {
+const LayoutMenu = ({ sidemenu, coll, collsmall, st, handleCollSmall }) => {
     const { SubMenu } = Menu;
     const { Sider } = Layout
+    // const [collsmall, setCollsmall] = useState(true)
+    // const handleCollSmall = () => {
+    //     setCollsmall(prev => !prev)
+    // };
+    const click = () => {
+        this.props.parentMethod();
+    }
     // console.log(st)
     return (
         <div>
+            <div className={`${lm.modal}`} hidden={collsmall} onClick={handleCollSmall}></div>
             <Sider collapsible collapsed={coll} trigger={null} theme="light" className={`${st.siderLayout} sider`} style={{ borderRight: `1px solid #f0f0f0`, height:'100%' }}>
                 <div className="logo" style={{ height: `32px`, margin: `16px`, background: `gray` }}></div>
                 <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]}>
