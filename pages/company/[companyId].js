@@ -410,10 +410,9 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
     const { Option } = Select
     const [editable, setEditable] = useState(false)
     const [drawablecreate, setDrawablecreate] = useState(false)
-    // const [drawablecreatesmall, setDrawablecreatesmall] = useState(false)
     const [drawableedit, setDrawableedit] = useState(false)
-    // const [drawableeditsmall, setDrawableeditsmall] = useState(false)
-    // const [selectedrows, setSelectedrows] = useState([])
+    const [modaldel, setModaldel] = useState(false)
+    const [modaldeldata, setModaldeldata] = useState({})
     const [recordrow, setRecordrow] = useState({
         id: 0,
         company_id: companyId,
@@ -441,13 +440,11 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
             headers: {
                 'Authorization': JSON.parse(tok),
             },
-            // body: JSON.stringify({
-            //     id: rec.company_id
-            // })
         })
             .then(res => res.json())
             .then(res2 => {
                 if (res2.success) {
+                    setModaldel(false)
                     notification['success']({
                         message: res2.message,
                         duration: 3
@@ -514,11 +511,8 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                     {
                         actions[index] ?
                             <>{actions[index]}
-                                <Popconfirm title="Yakin hapus data bank account?" onConfirm={() => handleDeleteBA(record)} onCancel={() => { message.error("Gagal dihapus") }}>
-                                    <a><DeleteOutlined /></a>
-                                </Popconfirm>
+                                <a onClick={() => { setModaldel(true); setModaldeldata(record) }}><DeleteOutlined /></a>
                                 <a className="hidden md:inline" onClick={() => { setDrawableedit(true); setRecordrow(record) }}><EditOutlined /></a>
-                                {/* <a className="inline md:hidden" onClick={() => { setDrawableeditsmall(true); setRecordrow(record) }}><EditOutlined /></a> */}
                             </>
                             :
                             null
@@ -879,6 +873,13 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                     // }} 
                     columns={columnsgetBanks} dataSource={datagetBanks} />
             </div>
+            <Modal
+                title="Hapus Bank Account"
+                visible={modaldel}
+                onOk={() => { handleDeleteBA(modaldeldata) }}
+                onCancel={() => setModaldel(false)}>
+                Apakah anda yakin ingin menghapus akun bank ini?
+            </Modal>
         </div>
     )
 }
