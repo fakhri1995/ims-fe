@@ -6,13 +6,14 @@ import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import Modal from 'antd/lib/modal'
-import Layout from '../../components/layout-dashboard-main'
-import st from "../../components/layout-dashboard-main.module.css"
 import Form from 'antd/lib/form/Form'
 import Input from 'antd/lib/input'
 import TreeSelect from 'antd/lib/tree-select'
 import notification from 'antd/lib/notification'
-import { message, Popconfirm } from 'antd'
+import message from 'antd/lib/message'
+import Popconfirm from 'antd/lib/popconfirm'
+import Layout from '../../components/layout-dashboard'
+import st from '../../components/layout-dashboard-main.module.css'
 
 function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
     const rt = useRouter()
@@ -20,7 +21,46 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
     const treeData = dataAssetsList.data
-    const [parentt, setParentt] = useState("")
+    // const treeDataSelect = []
+    // function changetoValue(datatree) {
+    //     for (var a = 0; a < datatree.length; a++) {
+    //         if (!datatree.children) {
+    //             treeDataSelect.push({
+    //                 title: datatree[a].title,
+    //                 value: datatree[a].key
+    //             })
+    //             return 
+    //         }
+    //         treeDataSelect.push({
+    //             title:datatree[a].title,
+    //             value: datatree[a].key,
+    //             children: changetoValue(datatree.children)
+    //         })
+    //         return treeDataSelect
+    //     }
+    // }
+    // changetoValue(treeData)
+    // console.log("tree data select: "+treeDataSelect)
+    const treeDataDummy = [
+        {
+            title: 'Node1',
+            value: '0-0',
+            children: [
+                {
+                    title: 'Child Node1',
+                    value: '0-0-1',
+                },
+                {
+                    title: 'Child Node2',
+                    value: '0-0-2',
+                },
+            ],
+        },
+        {
+            title: 'Node2',
+            value: '0-1',
+        },
+    ];
     const onChangeParent = (value) => {
         setDatanew({
             ...datanew,
@@ -28,6 +68,8 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
         })
     }
     const [newmodal, setNewmodal] = useState(false)
+    const [newmodalparent, setNewmodalparent] = useState(false)
+    const [parentadd, setParentadd] = useState("")
     const [datanew, setDatanew] = useState({
         name: '',
         parent: ''
@@ -126,42 +168,70 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                 footer={null}
                                 style={{ top: `3rem` }}
                                 width={800}
+                                destroyOnClose
                             >
-                                <Form layout="horizontal" onFinish={handleAddAssets}>
+                                <Form layout="vertical" onFinish={handleAddAssets}>
                                     <div className="grid grid-cols-1 md:grid-cols-3 mb-5">
-                                        <Form.Item name="name" style={{ marginRight: `1rem` }} label="Nama"
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Nama Assets harus diisi',
-                                                },
-                                            ]}>
-                                            <Input onChange={onChangeAddAssets} name="name" value={datanew.name} />
-                                        </Form.Item>
-                                        <Form.Item name="account_number" style={{ marginRight: `1rem` }} label="Deskripsi">
-                                            <Input name="account_number" />
-                                        </Form.Item>
-                                        <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Parent"
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Parent harus diisi',
-                                                },
-                                            ]}>
+                                        <div className="flex flex-col mx-3">
+                                            <h1 className="text-sm">Nama:</h1>
+                                            <Input onChange={onChangeAddAssets} name="name" value={datanew.name} allowClear required />
+                                        </div>
+                                        <div className="flex flex-col mx-3">
+                                            <h1 className="text-sm">Deskripsi:</h1>
+                                            <Input name="description" allowClear />
+                                        </div>
+                                        <div className="flex flex-col mx-3">
+                                            <h1 className="text-sm">Parent:</h1>
                                             <TreeSelect
                                                 style={{ width: '100%' }}
-                                                value={parentt}
                                                 dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                                                 treeData={treeData}
                                                 placeholder="Pilih parent"
                                                 treeDefaultExpandAll
                                                 onChange={(value) => { onChangeParent(value) }}
+                                                allowClear
+                                                required
                                             />
-                                        </Form.Item>
+                                        </div>
                                     </div>
-                                    <Form.Item>
-                                        <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button>
-                                    </Form.Item>
+                                    <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button>
+                                </Form>
+                            </Modal>
+                            <Modal
+                                title={`Tambah Assets Type & Field dari parent ${parentadd}`}
+                                visible={newmodalparent}
+                                onCancel={() => { setNewmodalparent(false); setParentadd("") }}
+                                maskClosable={false}
+                                footer={null}
+                                style={{ top: `3rem` }}
+                                width={800}
+                                destroyOnClose
+                            >
+                                <Form layout="vertical" onFinish={handleAddAssets}>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 mb-5">
+                                        <div className="flex flex-col mx-3">
+                                            <h1 className="text-sm">Nama:</h1>
+                                            <Input onChange={onChangeAddAssets} name="name" value={datanew.name} allowClear required />
+                                        </div>
+                                        <div className="flex flex-col mx-3">
+                                            <h1 className="text-sm">Deskripsi:</h1>
+                                            <Input name="description" allowClear />
+                                        </div>
+                                        <div className="flex flex-col mx-3">
+                                            <h1 className="text-sm">Parent:</h1>
+                                            <TreeSelect
+                                                style={{ width: '100%' }}
+                                                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                                treeData={treeData}
+                                                placeholder="Pilih parent"
+                                                treeDefaultExpandAll
+                                                onChange={(value) => { onChangeParent(value) }}
+                                                allowClear
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button>
                                 </Form>
                             </Modal>
                         </div>
@@ -189,7 +259,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                                 {nodeData.title}
                                             </div>
                                             <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
-                                                <a className="mx-2 pb-1" alt="add"><PlusOutlined /></a>
+                                                <a className="mx-2 pb-1" alt="add" onClick={() => { setNewmodalparent(true); setParentadd(nodeData.key) }}><PlusOutlined /></a>
                                                 <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                                 <Popconfirm onConfirm={() => { message.success("belum nyambung ke API") } /*handleDeleteAssets(nodeData.key)*/} onCancel={() => { message.error("Gagal dihapus") }}>
                                                     <a className="mx-2 pb-1" alt="delete"><EyeInvisibleOutlined /></a>
