@@ -31,7 +31,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                 originPath: "Admin"
                             }
                         }}>
-                            <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <TeamOutlined /> Agents
                                 </div>
@@ -43,7 +43,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                 originPath: "Admin"
                             }
                         }}>
-                            <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <UserOutlined /> Requesters
                                 </div>
@@ -55,7 +55,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                 originPath: "Admin"
                             }
                         }}>
-                            <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <TeamOutlined /> Roles
                                 </div>
@@ -67,7 +67,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                 originPath: "Admin"
                             }
                         }}>
-                            <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <UserOutlined /> Groups
                                 </div>
@@ -90,7 +90,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                 originPath: "Admin"
                             }
                         }}>
-                            <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <TeamOutlined /> MIG Company
                                 </div>
@@ -102,7 +102,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                 originPath: "Admin"
                             }
                         }}>
-                            <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <UserOutlined /> Clients
                                 </div>
@@ -120,7 +120,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                     </div>
                     <div className="grid md:grid-cols-5 sm:grid-cols-1">
                         <Link href={'/assets?originPath=Admin'}>
-                            <div className="border-2 hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <InboxOutlined /> Assets Types & Field
                                 </div>
