@@ -2,28 +2,110 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import httpcookie from 'cookie'
 import Tree from 'antd/lib/tree'
-import Link from 'next/link'
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
+import Modal from 'antd/lib/modal'
 import Layout from '../../components/layout-dashboard-main'
 import st from "../../components/layout-dashboard-main.module.css"
+import Form from 'antd/lib/form/Form'
+import Input from 'antd/lib/input'
+import TreeSelect from 'antd/lib/tree-select'
+import notification from 'antd/lib/notification'
+import { message, Popconfirm } from 'antd'
 
-function AssetsAdmin({ initProps, dataProfile, sidemenu, dataAssetsList }) {
-    console.log(dataAssetsList.data)
-
+function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
     const treeData = dataAssetsList.data
+    const [parentt, setParentt] = useState("")
+    const onChangeParent = (value) => {
+        setDatanew({
+            ...datanew,
+            parent: value
+        })
+    }
+    const [newmodal, setNewmodal] = useState(false)
+    const [datanew, setDatanew] = useState({
+        name: '',
+        parent: ''
+    })
+    const onChangeAddAssets = (e) => {
+        setDatanew({
+            ...datanew,
+            [e.target.name]: e.target.value
+        })
+    }
     const [autoExpandParent, setAutoExpandParent] = useState(true);
-    const [hoverrowtree, setHoverrowtree] = useState("hidden")
     const [expandedKeys, setExpandedKeys] = useState([])
     const onExpand = (expandedKeys) => {
         setExpandedKeys(expandedKeys);
         setAutoExpandParent(false);
-    };
+    }
+    const handleAddAssets = () => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addAsset`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datanew)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    setNewmodal(false)
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/assets?originPath=Admin`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    setNewmodal(false)
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                }
+            })
+    }
+    const handleDeleteAssets = (keyAssets) => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteAsset`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: keyAssets
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    setNewmodal(false)
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/assets?originPath=Admin`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    setNewmodal(false)
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                }
+            })
+    }
     return (
         <Layout tok={tok} pathArr={pathArr} sidemenu={sidemenu} dataProfile={dataProfile} st={st} originPath={originPath}>
             <div className="w-full h-auto border-t border-opacity-30 border-gray-500 bg-white">
@@ -33,9 +115,55 @@ function AssetsAdmin({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                             <div className="text-xs md:text-sm font-semibold">
                                 <h1 className="mt-2">Assets Types & Fields</h1>
                             </div>
-                            <div className="w-auto h-auto p-2 text-white bg-blue-700 rounded-md cursor-pointer hover:bg-blue-900 text-xs md:text-sm font-semibold">
+                            <div className="w-auto h-auto p-2 text-white bg-blue-700 rounded-md cursor-pointer hover:bg-blue-900 text-xs md:text-sm font-semibold" onClick={() => { setNewmodal(true) }}>
                                 New Asset Type
                             </div>
+                            <Modal
+                                title="Tambah Assets Type & Field"
+                                visible={newmodal}
+                                onCancel={() => setNewmodal(false)}
+                                maskClosable={false}
+                                footer={null}
+                                style={{ top: `3rem` }}
+                                width={800}
+                            >
+                                <Form layout="horizontal" onFinish={handleAddAssets}>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 mb-5">
+                                        <Form.Item name="name" style={{ marginRight: `1rem` }} label="Nama"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Nama Assets harus diisi',
+                                                },
+                                            ]}>
+                                            <Input onChange={onChangeAddAssets} name="name" value={datanew.name} />
+                                        </Form.Item>
+                                        <Form.Item name="account_number" style={{ marginRight: `1rem` }} label="Deskripsi">
+                                            <Input name="account_number" />
+                                        </Form.Item>
+                                        <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Parent"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Parent harus diisi',
+                                                },
+                                            ]}>
+                                            <TreeSelect
+                                                style={{ width: '100%' }}
+                                                value={parentt}
+                                                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                                treeData={treeData}
+                                                placeholder="Pilih parent"
+                                                treeDefaultExpandAll
+                                                onChange={(value) => { onChangeParent(value) }}
+                                            />
+                                        </Form.Item>
+                                    </div>
+                                    <Form.Item>
+                                        <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button>
+                                    </Form.Item>
+                                </Form>
+                            </Modal>
                         </div>
                         <div className="p-2 md:p-5">
                             <Tree
@@ -61,15 +189,11 @@ function AssetsAdmin({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                                 {nodeData.title}
                                             </div>
                                             <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
-                                                {/* <Link href={`/company/locations/new?originPath=Admin&parent=${nodeData.title}&companyId=${dataDetailCompany.data.company_id}`}> */}
-                                                    <a className="mx-2 pb-1" alt="add"><PlusOutlined /></a>
-                                                {/* </Link> */}
-                                                {/* <Link href={`/company/locations/update/${dataDetailCompany.data.company_id}?originPath=Admin&parent=${nodeData.title}`}> */}
-                                                    <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
-                                                {/* </Link> */}
-                                                {/* <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("berhasil dihapus") }} onCancel={() => { message.error("Gagal dihapus") }}> */}
+                                                <a className="mx-2 pb-1" alt="add"><PlusOutlined /></a>
+                                                <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
+                                                <Popconfirm onConfirm={() => { message.success("belum nyambung ke API") } /*handleDeleteAssets(nodeData.key)*/} onCancel={() => { message.error("Gagal dihapus") }}>
                                                     <a className="mx-2 pb-1" alt="delete"><EyeInvisibleOutlined /></a>
-                                                {/* </Popconfirm> */}
+                                                </Popconfirm>
                                             </div>
                                         </div>
                                     </>
@@ -134,4 +258,4 @@ export async function getServerSideProps({ req, res }) {
     }
 }
 
-export default AssetsAdmin
+export default AssetsIndex
