@@ -66,7 +66,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/assets/new?originPath=Admin&title=${datanew.name}&parent=${datanew.parent}`)
+                        rt.push(`/assets/update/${datanew.name}?originPath=Admin&title=${datanew.name}&parent=${datanew.parent}&create=true`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -223,7 +223,9 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                             </div>
                                             <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
                                                 <a className="mx-2 pb-1" alt="add" onClick={() => { setNewmodalparent(true); setParentadd(nodeData.value); setParenttitle(nodeData.title) }}><PlusOutlined /></a>
-                                                <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
+                                                <Link href={`/assets/update/${nodeData.title}?originPath=Admin&parent=${nodeData.value}`}>
+                                                    <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
+                                                </Link>
                                                 <Popconfirm onConfirm={() => { handleDeleteAssets(nodeData.id) }} onCancel={() => { message.error("Gagal dihapus") }}>
                                                     <a className="mx-2 pb-1" alt="delete"><EyeInvisibleOutlined /></a>
                                                 </Popconfirm>
