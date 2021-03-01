@@ -512,7 +512,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                         actions[index] ?
                             <>{actions[index]}
                                 <a onClick={() => { setModaldel(true); setModaldeldata(record) }}><DeleteOutlined /></a>
-                                <a className="hidden md:inline" onClick={() => { setDrawableedit(true); setRecordrow(record) }}><EditOutlined /></a>
+                                <a className="inline" onClick={() => { setDrawableedit(true); setRecordrow(record) }}><EditOutlined /></a>
                             </>
                             :
                             null
@@ -641,7 +641,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                             null
                     }
                     <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40 hidden md:block" onClick={() => { setDrawablecreate(true) }}> Create</button>
-                    {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40 block md:hidden" onClick={() => { setDrawablecreatesmall(true) }}> Create</button> */}
+                    <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40 block md:hidden" onClick={() => { setDrawablecreatesmall(true) }}> Create</button>
                     <Drawer title="Edit data Bank Account MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false) }} width={370} destroyOnClose={true}>
                         <Form layout="vertical" onFinish={handleSubmitEditBA} initialValues={recordrow}>
                             <div className="grid grid-cols-1 mb-5">

@@ -12,8 +12,9 @@ import TreeSelect from 'antd/lib/tree-select'
 import notification from 'antd/lib/notification'
 import message from 'antd/lib/message'
 import Popconfirm from 'antd/lib/popconfirm'
+import Link from 'next/link'
 import Layout from '../../components/layout-dashboard'
-import st from '../../components/layout-dashboard-main.module.css'
+import st from '../../components/layout-dashboard.module.css'
 
 function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
     const rt = useRouter()
@@ -21,46 +22,6 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
     const treeData = dataAssetsList.data
-    // const treeDataSelect = []
-    // function changetoValue(datatree) {
-    //     for (var a = 0; a < datatree.length; a++) {
-    //         if (!datatree.children) {
-    //             treeDataSelect.push({
-    //                 title: datatree[a].title,
-    //                 value: datatree[a].key
-    //             })
-    //             return 
-    //         }
-    //         treeDataSelect.push({
-    //             title:datatree[a].title,
-    //             value: datatree[a].key,
-    //             children: changetoValue(datatree.children)
-    //         })
-    //         return treeDataSelect
-    //     }
-    // }
-    // changetoValue(treeData)
-    // console.log("tree data select: "+treeDataSelect)
-    const treeDataDummy = [
-        {
-            title: 'Node1',
-            value: '0-0',
-            children: [
-                {
-                    title: 'Child Node1',
-                    value: '0-0-1',
-                },
-                {
-                    title: 'Child Node2',
-                    value: '0-0-2',
-                },
-            ],
-        },
-        {
-            title: 'Node2',
-            value: '0-1',
-        },
-    ];
     const onChangeParent = (value) => {
         setDatanew({
             ...datanew,
@@ -70,6 +31,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
     const [newmodal, setNewmodal] = useState(false)
     const [newmodalparent, setNewmodalparent] = useState(false)
     const [parentadd, setParentadd] = useState("")
+    const [parenttitle, setParenttitle] = useState("")
     const [datanew, setDatanew] = useState({
         name: '',
         parent: ''
@@ -104,7 +66,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/assets?originPath=Admin`)
+                        rt.push(`/assets/new?originPath=Admin&title=${datanew.name}&parent=${datanew.parent}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -116,15 +78,15 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                 }
             })
     }
-    const handleDeleteAssets = (keyAssets) => {
+    const handleDeleteAssets = (idAssets) => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/deleteAsset`, {
-            method: 'POST',
+            method: 'DELETE',
             headers: {
                 'Authorization': JSON.parse(tok),
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                id: keyAssets
+                id: idAssets
             })
         })
             .then(res => res.json())
@@ -198,7 +160,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                 </Form>
                             </Modal>
                             <Modal
-                                title={`Tambah Assets Type & Field dari parent ${parentadd}`}
+                                title={`Tambah Assets Type & Field dari parent ${parenttitle}`}
                                 visible={newmodalparent}
                                 onCancel={() => { setNewmodalparent(false); setParentadd("") }}
                                 maskClosable={false}
@@ -222,6 +184,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                             <TreeSelect
                                                 style={{ width: '100%' }}
                                                 dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                                defaultValue={parentadd}
                                                 treeData={treeData}
                                                 placeholder="Pilih parent"
                                                 treeDefaultExpandAll
@@ -259,9 +222,9 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                                 {nodeData.title}
                                             </div>
                                             <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
-                                                <a className="mx-2 pb-1" alt="add" onClick={() => { setNewmodalparent(true); setParentadd(nodeData.key) }}><PlusOutlined /></a>
+                                                <a className="mx-2 pb-1" alt="add" onClick={() => { setNewmodalparent(true); setParentadd(nodeData.value); setParenttitle(nodeData.title) }}><PlusOutlined /></a>
                                                 <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
-                                                <Popconfirm onConfirm={() => { message.success("belum nyambung ke API") } /*handleDeleteAssets(nodeData.key)*/} onCancel={() => { message.error("Gagal dihapus") }}>
+                                                <Popconfirm onConfirm={() => { handleDeleteAssets(nodeData.id) }} onCancel={() => { message.error("Gagal dihapus") }}>
                                                     <a className="mx-2 pb-1" alt="delete"><EyeInvisibleOutlined /></a>
                                                 </Popconfirm>
                                             </div>
@@ -323,7 +286,7 @@ export async function getServerSideProps({ req, res }) {
             initProps,
             dataProfile,
             dataAssetsList,
-            sidemenu: "3"
+            sidemenu: "4"
         },
     }
 }
