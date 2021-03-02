@@ -14,9 +14,11 @@ import Select from 'antd/lib/select'
 import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
+import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import { useState } from 'react'
 import st from '../../../components/layout-dashboard-mig.module.css'
 import Popconfirm from 'antd/lib/popconfirm'
+import Link from 'next/link'
 
 function MigIndexProfile({ dataDetailCompany, tok }) {
     const [editable, setEditable] = useState(false)
@@ -188,28 +190,12 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
     )
 }
 
-function MigIndexLocations() {
-    const [editable, setEditable] = useState(false)
-    const [drawablecreate, setDrawablecreate] = useState(false)
-    const [checkedtree, setCheckedtree] = useState([])
-    const [selectedtree, setSelectedtree] = useState([])
+function MigIndexLocations({ dataDetailCompany, tok }) {
     const [expandedKeys, setExpandedKeys] = useState([])
     const [autoExpandParent, setAutoExpandParent] = useState(true);
     const onExpand = (expandedKeys) => {
         setExpandedKeys(expandedKeys);
         setAutoExpandParent(false);
-    };
-
-    const onCheck = (checkedKeys) => {
-        setEditable(true)
-        setCheckedtree(checkedKeys)
-        if (checkedKeys.length === 0) {
-            setEditable(false)
-        }
-    };
-
-    const onSelect = (selectedKeys, info) => {
-        setSelectedtree(selectedKeys);
     };
     const treeData = [
         {
@@ -291,46 +277,55 @@ function MigIndexLocations() {
     ];
     return (
         <div id="locationssDetailMigWrapper">
-            {/* <Sticky containerSelectorFocus="#locationsDetailMigWrapper"> */}
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
                 <div className="flex space-x-2">
-                    {editable ?
-                        <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("berhasil dihapus") }} onCancel={() => { message.error("Gagal dihapus") }}>
-                            <button className=" bg-red-600 hover:bg-red-800 border text-white py-1 px-3 rounded-md w-24 md:w-40">
-                                Delete
-                                </button>
-                        </Popconfirm>
-                        :
-                        null
-                    }
-                    <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40" onClick={() => { setDrawablecreate(true) }}> Create</button>
-                    <Drawer title="Create Locations MIG" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720} footer={
-                        <div style={{ textAlign: 'right' }}>
-                            <button onClick={() => { setDrawablecreate(false) }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
-                                Cancel
-                                </button>
-                            <button type="primary" className="bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-20">
-                                Submit
-                                </button>
-                        </div>
-                    }></Drawer>
+                    <Link href={`/company/locations/new?originPath=Admin&companyId=${dataDetailCompany.data.company_id}`}>
+                        <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40"> Create</button>
+                    </Link>
                 </div>
             </div>
-            {/* </Sticky> */}
-            <div className="md:p-5">
-                <h1 className="text-sm font-semibold">Pilih Parent terakhir untuk hapus</h1>
+            <div className="p-5">
+                <h1 className="text-sm font-semibold">Pilih Parent terakhir</h1>
                 {/* <Tree treeData={treeData} autoExpandParent={autoExpandParent} selectable selectedKeys={selectedtree} checkable checkedKeys={checkedtree} onCheck={() => { setEditable(true) }}>
                 </Tree> */}
                 <Tree
-                    checkable
                     onExpand={onExpand}
                     expandedKeys={expandedKeys}
                     autoExpandParent={autoExpandParent}
-                    onCheck={onCheck}
-                    checkedKeys={checkedtree}
-                    onSelect={onSelect}
-                    selectedKeys={selectedtree}
                     treeData={treeData}
+                    titleRender={(nodeData) => (
+                        <>
+                            <div className={`flex justify-between hover:bg-blue-100 text-black`}
+                                onMouseOver={() => {
+                                    var d = document.getElementById(`node${nodeData.key}`)
+                                    d.classList.add("flex")
+                                    d.classList.remove("hidden")
+                                }}
+                                onMouseLeave={() => {
+                                    var e = document.getElementById(`node${nodeData.key}`)
+                                    e.classList.add("hidden")
+                                    e.classList.remove("flex")
+                                }}
+                            >
+                                <div className="mr-20">
+                                    {nodeData.title}
+                                </div>
+                                <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
+                                    <Link href={`/company/locations/new?originPath=Admin&parent=${nodeData.title}&companyId=${dataDetailCompany.data.company_id}`}>
+                                        <a className="mx-2 pb-1" alt="add"><PlusOutlined /></a>
+                                    </Link>
+                                    <Link href={`/company/locations/update/${dataDetailCompany.data.company_id}?originPath=Admin&parent=${nodeData.title}`}>
+                                        <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
+                                    </Link>
+                                    <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("berhasil dihapus") }} onCancel={() => { message.error("Gagal dihapus") }}>
+                                        <a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a>
+                                    </Popconfirm>
+                                </div>
+                            </div>
+                        </>
+                    )
+                    }
+                    blockNode={true}
                 />
             </div>
         </div>
@@ -619,7 +614,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                                         },
                                     ]}
                                 >
-                                    <select name="currency" onChange={onChangeEditBA} defaultValue={recordrow.currency} style={{width:`100%`, borderRadius:`5px`}}>
+                                    <select name="currency" onChange={onChangeEditBA} defaultValue={recordrow.currency} style={{ width: `100%`, borderRadius: `5px` }}>
                                         <option value="IDR">IDR</option>
                                         <option value="USD">USD</option>
                                     </select>
@@ -747,7 +742,7 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGet
                         <MigIndexBankAccount dataGetBanks={dataGetBanks} tok={tok} />
                     </TabPane>
                     <TabPane tab="Locations" key={`locations`}>
-                        <MigIndexLocations></MigIndexLocations>
+                        <MigIndexLocations dataDetailCompany={dataDetailCompany} tok={tok} />
                     </TabPane>
                 </Tabs>
             </div>
@@ -760,7 +755,7 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGet
                         <MigIndexBankAccount dataGetBanks={dataGetBanks} tok={tok} />
                     </TabPane>
                     <TabPane tab="Locations" key={`locations`}>
-                        <MigIndexLocations></MigIndexLocations>
+                        <MigIndexLocations dataDetailCompany={dataDetailCompany} tok={tok} />
                     </TabPane>
                 </Tabs>
             </div>
