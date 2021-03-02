@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
 import notification from 'antd/lib/notification'
 import EditOutlined from '@ant-design/icons/EditOutlined'
@@ -18,6 +18,7 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
     const rt = useRouter()
     var { create } = rt.query
     const originPath = "Admin"
+    const pathArr = rt.pathname.split("/").slice(1)
     const [editasset, setEditasset] = useState(false)
     const [modalfieldprops, setModalfieldprops] = useState(false)
     // const [idxfield, setIdxfield] = useState(-1)
@@ -51,16 +52,19 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
             dataAssetParentDetail = item
         }
     })
-    const pathArr = ['assets', dataAssetDetail.title]
-    if (create) {
-        notification['success']({
-            message: `Asset ${dataAssetDetail.title} berhasil ditambahkan`,
-            duration: 4
-        })
-    }
+    // const pathArr = ['assets', dataAssetDetail.title]
+    useEffect(() => {
+        if (create) {
+            notification['success']({
+                message: `Asset ${dataAssetDetail.title} berhasil ditambahkan`,
+                duration: 4
+            })
+        }
+    }, [])
     const [dataupdate, setDataupdate] = useState({
         id: dataAssetDetail.id,
         name: '',
+        code: dataAssetDetail.key,
     })
     const onChangeUpdateAssets = (e) => {
         setDataupdate({
@@ -95,7 +99,13 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/assets/update/${dataAssetDetail.title}?originPath=Admin&title=${dataAssetDetail.title}&parent=${dataAssetParentDetail.title}`)
+                        // if(process.env.NODE_ENV == "production"){
+                        //     window.location.href = `https://migsys.herokuapp.com/assets/update/${dataupdate.name}?originPath=Admin&parent=${dataAssetParentDetail.key}`
+                        // }
+                        // else if(process.env.NODE_ENV == "development"){
+                        //     window.location.href = `http://localhost:3000/assets/update/${dataupdate.name}?originPath=Admin&parent=${dataAssetParentDetail.key}`
+                        // }
+                        rt.push(`/assets/update/${dataupdate.name}?originPath=Admin&parent=${dataAssetParentDetail.key}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -199,12 +209,17 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                 <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
                     <Sticky containerSelectorFocus="#formAgentsWrapper">
                         <div className="flex justify-between p-4 border-t-2 border-b-2 bg-white mb-8">
-                            <h1 className="font-semibold py-2">{dataAssetDetail.title}</h1>
+                            <h1 className="font-semibold py-2">{assetsTitle}</h1>
                             <div className="flex space-x-2">
                                 <Link href={`/assets?originPath=Admin`}>
                                     <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button>
                                 </Link>
-                                <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md">Update</button>
+                                {
+                                    editasset ?
+                                        <></>
+                                        :
+                                        <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md">Update</button>
+                                }
                             </div>
                         </div>
                     </Sticky>
@@ -216,22 +231,22 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                                         <div className="grid grid-cols-1 md:grid-cols-3">
                                             <div className="flex flex-col mx-3">
                                                 <h1 className="text-sm">Nama:</h1>
-                                                <Input onChange={onChangeUpdateAssets} name="name" value={dataupdate.name} allowClear required />
+                                                <Input onChange={onChangeUpdateAssets} name="name" defaultValue={assetsTitle} allowClear required />
                                             </div>
                                             <div className="flex flex-col mx-3">
                                                 <h1 className="text-sm">Deskripsi:</h1>
                                                 <Input name="description" allowClear />
                                             </div>
-                                            <div className="flex">
-                                                <button type="submit" className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md mr-5">Save</button>
-                                                <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md" onClick={() => { setEditasset(false) }}>Cancel</button>
+                                            <div className="flex py-1">
+                                                <button type="submit" className=" bg-gray-700 hover:bg-gray-800 border text-white px-3 w-20 rounded-md mr-5">Save</button>
+                                                <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black px-3 rounded-md" onClick={() => { setEditasset(false) }}>Cancel</button>
                                             </div>
                                         </div>
                                     </Form>
                                 </div>
                                 :
                                 <div className="flex">
-                                    <div className="w-auto text-black mr-2 pt-2">{dataAssetParentDetail.title}</div>
+                                    <div className="w-auto text-black mr-2 pt-2">{assetsTitle}</div>
                                     <div className=" text-center p-1 w-10 h-10 rounded cursor-pointer hover:bg-gray-300" onClick={() => { setEditasset(true) }}><EditOutlined /></div>
                                 </div>
                         }
