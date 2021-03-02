@@ -35,12 +35,12 @@ const LayoutMenu = ({ sidemenu, coll, collsmall, st, handleCollSmall }) => {
                     </Menu.Item>
                     <SubMenu key="3" icon={<InboxOutlined />} title="Assets">
                         <Menu.Item key="sub31">
-                            <Link href="/dashboard/assets">
-                                Assets
+                            <Link href="/vendors">
+                                Vendor
                             </Link>
                         </Menu.Item>
                         <Menu.Item key="sub32">
-                            <Link href="/dashboard/inventory">
+                            <Link href="/inventory">
                                 Inventory
                             </Link>
                         </Menu.Item>
@@ -74,12 +74,12 @@ const LayoutMenu = ({ sidemenu, coll, collsmall, st, handleCollSmall }) => {
                     </Menu.Item>
                     <SubMenu key="3" icon={<InboxOutlined />} title="Assets">
                         <Menu.Item key="sub31">
-                            <Link href="/dashboard/assets">
-                                Assets
+                            <Link href="/vendors">
+                                Vendor
                             </Link>
                         </Menu.Item>
                         <Menu.Item key="sub32">
-                            <Link href="/dashboard/inventory">
+                            <Link href="/inventory">
                                 Inventory
                             </Link>
                         </Menu.Item>

@@ -1,0 +1,35 @@
+.headerLayout {
+  padding: 0;
+  background-color: white;
+  display: flex;
+  flex-wrap: wrap;
+}
+.customTable tr:not(:first-child){
+  height: 65px;
+}
+.menuToggle:checked + .menu {
+  display: flex;
+  justify-content: flex-end;
+}
+
+  .siderLayout,
+  .trigger, .breadcrumbClients {
+    display: block;
+  }
+
+  .siderLayoutSmall,
+  .triggerSmall, .breadcrumbClientsSmall {
+    display: none;
+  }
+
+@media only screen and (max-width: 540px) {
+  .siderLayoutSmall,
+  .triggerSmall, .breadcrumbClientsSmall {
+    display: block;
+  }
+
+  .siderLayout,
+  .trigger, .breadcrumbClients{
+    display: none;
+  }
+}
