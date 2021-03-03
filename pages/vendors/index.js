@@ -224,26 +224,32 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                 }
             })
     }
-    const vendors = dataVendors.data.map((doc, idx) => {
-        return ({
-            idx: idx,
-            key: doc.id,
-            id: doc.id,
-            name: doc.name,
-            singkatan_nama: doc.singkatan_nama,
-            npwp: doc.npwp,
-            pic: doc.pic,
-            jabatan_pic: doc.jabatan_pic,
-            alamat: doc.alamat,
-            provinsi: doc.provinsi,
-            kab_kota: doc.kab_kota,
-            kode_pos: doc.kode_pos,
-            telepon: doc.telepon,
-            fax: doc.fax,
-            email: doc.email,
-            website: doc.website
+    var vendors
+    if(dataVendors.data == null){
+        vendors=[]
+    }
+    else{
+        vendors = dataVendors.data.map((doc, idx) => {
+            return ({
+                idx: idx,
+                key: doc.id,
+                id: doc.id,
+                name: doc.name,
+                singkatan_nama: doc.singkatan_nama,
+                npwp: doc.npwp,
+                pic: doc.pic,
+                jabatan_pic: doc.jabatan_pic,
+                alamat: doc.alamat,
+                provinsi: doc.provinsi,
+                kab_kota: doc.kab_kota,
+                kode_pos: doc.kode_pos,
+                telepon: doc.telepon,
+                fax: doc.fax,
+                email: doc.email,
+                website: doc.website
+            })
         })
-    })
+    }
     var actionsArr = []
     for (var i = 0; i < vendors.length; i++) {
         actionsArr.push(false)
@@ -315,6 +321,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
         {
             title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0', // Non-breakable space is char 0xa0 (160 dec)
             dataIndex: 'actions',
+            width: 80,
             render: (text, record, index) => {
                 return {
                     props: {
@@ -325,26 +332,31 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                         {actions[index] ?
                         <>
                             <Tooltip placement="topLeft" title={"Edit"}>
-                            {/* <Button size="medium" shape="circle">
-                                <Link href={{
-                                    pathname: `vendors/update/${record.key}`,
-                                    query: {
-                                        originPath: 'Admin'
-                                    }
-                                }}><a><EditOutlined /></a></Link>
-                            </Button> */}
-                            <Button size="medium" shape="circle" onClick={() => { editVendorForm.resetFields();setDrawableedit(true); console.log(record); setEditvendor(record) }}><EditOutlined /></Button>
+                            <Button size="medium" shape="square" onClick={() => { editVendorForm.resetFields();setDrawableedit(true); console.log(record); setEditvendor(record) }}><EditOutlined /></Button>
                             </Tooltip>
+                            </>
+                        :
+                        null
+                        }
+                    </>
+                }
+            }
+        },
+        {
+            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0', // Non-breakable space is char 0xa0 (160 dec)
+            dataIndex: 'actions',
+            width: 130,
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { background: record.idx%2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children: 
+                    <>
+                        {actions[index] ?
+                        <>
                             <Tooltip placement="topLeft" title={"Delete"}>
-                            {/* <Button size="medium" shape="circle">
-                                <Link href={{
-                                    pathname: `vendors/delete/${record.key}`,
-                                    query: {
-                                        originPath: 'Admin'
-                                    }
-                                }}><a><DeleteOutlined /></a></Link>
-                            </Button> */}
-                            <Button size="medium" shape="circle" onClick={() => { onClickModalDeleteVendor(true,record) }}>
+                            <Button size="medium" shape="square" onClick={() => { onClickModalDeleteVendor(true,record) }}>
                                 <a><DeleteOutlined /></a>
                             </Button>
                             </Tooltip>
