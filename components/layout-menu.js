@@ -40,7 +40,7 @@ const LayoutMenu = ({ sidemenu, coll, collsmall, st, handleCollSmall }) => {
                             </Link>
                         </Menu.Item>
                         <Menu.Item key="sub32">
-                            <Link href="/inventory">
+                            <Link href="/inventories">
                                 Inventory
                             </Link>
                         </Menu.Item>
@@ -79,7 +79,7 @@ const LayoutMenu = ({ sidemenu, coll, collsmall, st, handleCollSmall }) => {
                             </Link>
                         </Menu.Item>
                         <Menu.Item key="sub32">
-                            <Link href="/inventory">
+                            <Link href="/inventories">
                                 Inventory
                             </Link>
                         </Menu.Item>
