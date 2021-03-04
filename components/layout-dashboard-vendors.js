@@ -20,9 +20,9 @@ import NotificationOutlined from '@ant-design/icons/NotificationOutlined'
 import QuestionCircleOutlined from '@ant-design/icons/QuestionCircleOutlined'
 import PlusCircleTwoTone from '@ant-design/icons/PlusCircleTwoTone'
 import AlertOutlined from '@ant-design/icons/AlertOutlined'
-import LayoutMenu from '../components/layout-menu'
+import LayoutMenu from './layout-menu'
 
-function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, originPath, st, subsidemenu }) {
+function LayoutDashboardVendors({ children, tok, dataProfile, pathArr, sidemenu, originPath, st, subsidemenu }) {
     const rt = useRouter()
     var rootBreadcrumb = ""
     var oriPath = ""
@@ -275,4 +275,4 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
     )
 }
 
-export default LayoutDashboard
+export default LayoutDashboardVendors
