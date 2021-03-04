@@ -9,7 +9,8 @@ import Form from 'antd/lib/form'
 import { Input, Tabs, Tree } from 'antd'
 import Divider from 'antd/lib/divider'
 
-function RolesCreate({ initProps, dataProfile, sidemenu }) {
+function RolesUpdate({ initProps, dataProfile, sidemenu, dataDetailRole }) {
+    console.log(dataDetailRole)
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
@@ -18,14 +19,14 @@ function RolesCreate({ initProps, dataProfile, sidemenu }) {
     const { TabPane } = Tabs;
 
     //----------CreateGroup-------------
-    const [newroles, setNewroles] = useState({
-        name: '',
-        description: ''
+    const [editroles, setEditroles] = useState({
+        name: dataDetailRole.name,
+        description: dataDetailRole.description
     })
-    const onChangeCreateRoles = (e) => {
+    const onChangeEditRoles = (e) => {
         var val = e.target.value
-        setNewroles({
-            ...newroles,
+        setEditroles({
+            ...editroles,
             [e.target.name]: val
         })
     }
@@ -86,7 +87,7 @@ function RolesCreate({ initProps, dataProfile, sidemenu }) {
                         <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
                             <Sticky containerSelectorFocus="#formAgentsWrapper">
                                 <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
-                                    <h1 className="font-semibold text-base w-auto py-2">New Roles</h1>
+                                    <h1 className="font-semibold text-base w-auto py-2">Edit Roles</h1>
                                     <div className="flex space-x-2">
                                         <Link href="/roles?originPath=Admin" >
                                             <div className=" text-black text-sm bg-white hover:bg-gray-300 border-2 border-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
@@ -111,9 +112,9 @@ function RolesCreate({ initProps, dataProfile, sidemenu }) {
                                             message: 'Nama role harus diisi',
                                         },
                                     ]}
-                                    initialValue={newroles.name}
+                                    initialValue={editroles.name}
                                 >
-                                    <Input placeholder="Group Name" name={`name`} onChange={onChangeCreateRoles}></Input>
+                                    <Input placeholder="Group Name" name={`name`} onChange={onChangeEditRoles}></Input>
                                 </Form.Item>
                             </div>
 
@@ -125,9 +126,9 @@ function RolesCreate({ initProps, dataProfile, sidemenu }) {
                                             message: 'Deskripsi role harus diisi',
                                         },
                                     ]}
-                                    initialValue={newroles.description}
+                                    initialValue={editroles.description}
                                 >
-                                    <TextArea placeholder="Group Description" rows={2} name={`description`} onChange={onChangeCreateRoles} />
+                                    <TextArea placeholder="Group Description" rows={2} name={`description`} onChange={onChangeEditRoles} />
                                 </Form.Item>
                             </div>
 
@@ -188,8 +189,43 @@ function RolesCreate({ initProps, dataProfile, sidemenu }) {
     )
 }
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req, res, params }) {
     var initProps = {};
+    const idrole = params.rolesId
+    const data = [
+        {
+            key: 1,
+            name: 'Account Admin',
+            description: 'Admin Tamvan',
+            agent: '4 Agents',
+            actionss: 'clone'
+        },
+        {
+            key: 2,
+            name: 'Admin',
+            description: 'Saya Tamvan',
+            agent: 'No Agents',
+            actionss: 'clone'
+        },
+        {
+            key: 3,
+            name: 'SD Supervisor',
+            description: 'Saya Tamvan Sekali',
+            agent: 'No Agents',
+            actionss: 'clone'
+        },
+    ];
+    var dataDetailRole
+    for (let index = 0; index < data.length; index++) {
+        
+        if(data[index].key==idrole){
+            dataDetailRole = data[index]
+            break
+        }else{
+            dataDetailRole = "gagal"
+        }
+    }
+
     if (req && req.headers) {
         const cookies = req.headers.cookie;
         if (!cookies) {
@@ -214,9 +250,10 @@ export async function getServerSideProps({ req, res }) {
         props: {
             initProps,
             dataProfile,
+            dataDetailRole,
             sidemenu: "4"
         },
     }
 }
 
-export default RolesCreate
+export default RolesUpdate

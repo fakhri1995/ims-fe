@@ -21,10 +21,10 @@ import AlertOutlined from '@ant-design/icons/AlertOutlined'
 import jscookie from 'js-cookie'
 import LayoutMenu from '../components/layout-menu'
 
-function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, originPath, dataDetailGroup, st }) {
+function LayoutDashboardGroups({ children, tok, dataProfile, pathArr, sidemenu, originPath, dataDetailGroup, st }) {
     const rt = useRouter()
     var rootBreadcrumb = ""
-    // console.log(dataDetailGroup)
+
     var oriPath = ""
     var childBreacrumb = []
     if (originPath) {
@@ -44,18 +44,18 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
     const childBreacrumbCC = childBreacrumb.map((doc, idx) => {
         return doc[0].toUpperCase() + doc.slice(1)
     })
-    const childBreacrumbDD = childBreacrumbCC
+    var childBreacrumbDD = childBreacrumbCC
     if (dataDetailGroup.length === 0) {
-        childBreacrumbDD[childBreacrumbCC.length - 2] = childBreacrumbDD[childBreacrumbCC.length - 2] + " " + childBreacrumbDD[childBreacrumbCC.length - 1] + " " + childBreacrumbDD[childBreacrumbCC.length - 3]
+        childBreacrumbDD[childBreacrumbCC.length - 3] = childBreacrumbDD[childBreacrumbCC.length - 1].slice(0, -1) + " " +  childBreacrumbDD[childBreacrumbCC.length - 3]
+        childBreacrumbDD[childBreacrumbCC.length - 2] = "New Group"
         childBreacrumbDD.splice(2, 1)
-        // console.log("satu")
     }
     else {
-        // console.log("dua")
-        // console.log(childBreacrumbDD)
-        childBreacrumbDD[childBreacrumbCC.length - 3] = childBreacrumbDD[childBreacrumbCC.length - 3] + " " + childBreacrumbDD[childBreacrumbCC.length - 2] + " " + childBreacrumbDD[childBreacrumbCC.length - 4]
+        childBreacrumbDD[childBreacrumbCC.length - 3] = childBreacrumbDD[childBreacrumbCC.length - 3] + " " + childBreacrumbDD[childBreacrumbCC.length - 4].slice(0, -1) + " " + dataDetailGroup.data.group_detail.name
+        childBreacrumbDD[childBreacrumbCC.length - 4] = childBreacrumbDD[childBreacrumbCC.length - 2].slice(0, -1) + " " + childBreacrumbDD[childBreacrumbCC.length - 4]
         childBreacrumbDD.splice(2, 1)
-        // console.log('udah di splice: '+childBreacrumbDD)
+        childBreacrumbDD[childBreacrumbCC.length - 1] = childBreacrumbDD[childBreacrumbCC.length - 2]
+        childBreacrumbDD.splice(1, 1)
     }
 
     const { Sider, Content, Header } = Layout
@@ -180,7 +180,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                                                 }
                                                 else {
                                                     return (
-                                                        <Breadcrumb.Item key={idx}> <strong>{dataDetailGroup.data.group_detail.name}</strong> </Breadcrumb.Item>
+                                                        <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
                                                     )
                                                 }
                                             }
@@ -253,7 +253,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                                             }
                                             else {
                                                 return (
-                                                    <Breadcrumb.Item key={idx}> <strong>{dataDetailGroup.data.group_detail.name}</strong> </Breadcrumb.Item>
+                                                    <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
                                                 )
                                             }
                                         }
@@ -288,4 +288,4 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
     )
 }
 
-export default LayoutDashboard
+export default LayoutDashboardGroups

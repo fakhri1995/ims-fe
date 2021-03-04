@@ -29,7 +29,14 @@ function Roles({ initProps, dataProfile, sidemenu }) {
                     props: {
                     style: { background: record.key%2 == 1 ? '#f2f2f2' : '#fff' },
                   },
-                    children: <div>{text}</div>,
+                    children: <div><Link href={{
+                        pathname: `/roles/update/${record.key}`,
+                        query: {
+                            originPath: 'Admin'
+                        }
+                    }}><a>{record.name}</a></Link>
+                     <p style={{fontSize:'13px'}}>{record.description}</p></div>,
+                    
                 };
             },
             // sorter: (a, b) => a.user_id - b.user_id,
@@ -81,20 +88,23 @@ function Roles({ initProps, dataProfile, sidemenu }) {
 
     const data = [
         {
-            key: '1',
+            key: 1,
             name: 'Account Admin',
+            description: 'Admin Tamvan',
             agent: '4 Agents',
             actionss: 'clone'
         },
         {
-            key: '2',
+            key: 2,
             name: 'Admin',
+            description: 'Saya Tamvan',
             agent: 'No Agents',
             actionss: 'clone'
         },
         {
-            key: '3',
+            key: 3,
             name: 'SD Supervisor',
+            description: 'Saya Tamvan Sekali',
             agent: 'No Agents',
             actionss: 'clone'
         },
