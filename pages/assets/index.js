@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import httpcookie from 'cookie'
 import Tree from 'antd/lib/tree'
-import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined'
+import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import Modal from 'antd/lib/modal'
@@ -35,7 +35,6 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
     const [datanew, setDatanew] = useState({
         name: '',
         parent: '',
-        inventory_columns: []
     })
     const onChangeAddAssets = (e) => {
         setDatanew({
@@ -229,7 +228,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                                     <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                                 </Link>
                                                 <Popconfirm onConfirm={() => { handleDeleteAssets(nodeData.id) }} onCancel={() => { message.error("Gagal dihapus") }}>
-                                                    <a className="mx-2 pb-1" alt="delete"><EyeInvisibleOutlined /></a>
+                                                    <a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a>
                                                 </Popconfirm>
                                             </div>
                                         </div>
