@@ -8,15 +8,20 @@ import InputNumber from 'antd/lib/input-number'
 import Select from 'antd/lib/select'
 import DatePicker from 'antd/lib/date-picker'
 import TreeSelect from 'antd/lib/tree-select'
+import Spin from 'antd/lib/spin'
+import Sticky from 'wil-react-sticky'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard.module.css'
 
-function InventoryCreate({ initProps, dataProfile, dataAssetsList, sidemenu }) {
+function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsList, sidemenu }) {
     const rt = useRouter()
     const { originPath } = rt.query
     const { Option } = Select
     const pathArr = rt.pathname.split("/").slice(1)
-    const [valuetype, setValuetype] = useState("")
+    const [createInventoryForm] = Form.useForm();
+    const [isdynamic, setIsdynamic] = useState(false)
+    const [loadingdynamic, setLoadingdynamic] = useState(false)
+    const [datadynamic, setDatadynamic] = useState([])
     function flattenArr(dataassets) {
         const result = []
         dataassets.forEach((item, idx) => {
@@ -34,12 +39,6 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, sidemenu }) {
         return result
     }
     const flattenDataAsset = flattenArr(dataAssetsList.data)
-    // var dataAssetDetail = {}
-    // flattenDataAsset.forEach(item => {
-    //     if (item.value == valuetype) {
-    //         dataAssetDetail = item
-    //     }
-    // })
     const [datanew, setDatanew] = useState({
         asset_id: 0,
         vendor_id: 0,
@@ -74,52 +73,72 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, sidemenu }) {
         })
     }
     const onChangeInventoryType = (value) => {
+        setLoadingdynamic(true)
         setDatanew({
             ...datanew,
             asset_code: value
         })
-        console.log("isi change type: "+ datanew.asset_code)
-        setValuetype(value)
         var dataAssetDetail = {}
         flattenDataAsset.forEach(item => {
-            if (item.value == valuetype) {
+            if (item.value == value) {
                 dataAssetDetail = item
             }
         })
         setDatanew({
             ...datanew,
-            asset_id: dataAssetDetail.id
+            asset_id: dataAssetDetail.id,
+            asset_code: dataAssetDetail.value
         })
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryColumns?id=${dataAssetDetail.id}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                console.log("res2: " + res2.data)
+                if (!res2.data || res2.data === typeof (undefined)) {
+                    setLoadingdynamic(false)
+                    setIsdynamic(false)
+                }
+                else {
+                    setIsdynamic(true)
+                    setDatadynamic(res2.data.inventory_columns)
+                    setLoadingdynamic(false)
+                }
+            })
     }
     const handleSubmitInventory = () => {
-        console.log("isi:: " + datanew.asset_code)
+        console.log("isi:: " + datanew.asset_code + " " + datanew.asset_id + " " + datanew.asset_name + " " + datanew.vendor_id)
     }
-    // useEffect(()=>{
-    // if (valuetype !== "") {
-    //     setDatanew({
-    //         ...datanew,
-    //         asset_id: dataAssetDetail.id
-    //     })
-    // }
-    // })
     return (
         <Layout tok={initProps} pathArr={pathArr} dataProfile={dataProfile} dataAssetsList={dataAssetsList} sidemenu={sidemenu} originPath={originPath} st={st}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-                <div className="col-span-4 border-r p-5">
-                    <div className="flex justify-between p-5 w-full h-auto bg-white border-b mb-8">
-                        <div className=" font-semibold">New Inventory</div>
-                        <div className="flex">
-                            <Link href={`/inventory?originPath=Admin`}>
-                                <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md mr-5">Cancel</button>
-                            </Link>
-                            <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={handleSubmitInventory}>Submit</button>
+                <div className="col-span-4 border-r p-5" id="formWrappper">
+                    <Sticky containerSelectorFocus="#formWrapper">
+                        <div className="flex justify-between p-5 w-full h-auto bg-white border-b mb-8">
+                            <div className=" font-semibold">New Inventory</div>
+                            <div className="flex">
+                                <Link href={`/inventory?originPath=Admin`}>
+                                    <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md mr-5">Cancel</button>
+                                </Link>
+                                <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={createInventoryForm.submit}>Submit</button>
+                            </div>
                         </div>
-                    </div>
+                    </Sticky>
                     <div className="flex flex-col">
-                        <div className="mb-5 shadow-md rounded-md w-full h-auto bg-white p-5">
-                            <Form layout="vertical">
-                                <div className="grid grid-cols-1 md:grid-cols-2 mb-5">
-                                    <Form.Item name="asset_type" style={{ marginRight: `1rem` }} label="Tipe Asset">
+                        <div className="mb-10 shadow-md rounded-md w-full h-auto bg-white p-5 relative border-2">
+                            <div className="absolute w-auto px-5 h-10 bg-white font-semibold left-10 -top-3">Data Mandatory</div>
+                            <Form layout="vertical" form={createInventoryForm} onFinish={handleSubmitInventory}>
+                                <div className="grid grid-cols-1 md:grid-cols-2">
+                                    <Form.Item name="asset_type" style={{ marginRight: `1rem` }} label="Tipe Asset"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Tipe Asset harus diisi',
+                                            },
+                                        ]}>
                                         <TreeSelect
                                             style={{ width: '100%' }}
                                             dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
@@ -130,6 +149,23 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, sidemenu }) {
                                             allowClear
                                             required
                                         />
+                                    </Form.Item>
+                                    <Form.Item name="vendor" style={{ marginRight: `1rem` }} label="Vendor"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Vendor harus diisi',
+                                            },
+                                        ]}>
+                                        <Select onChange={(value) => { setDatanew({ ...datanew, vendor_id: value }) }} name="vendor" placeholder="Pilih Vendor" allowClear>
+                                            {
+                                                dataVendorsList.data.map((doc, idx) => {
+                                                    return (
+                                                        <Option value={doc.id}>{doc.name} ({doc.singkatan_nama})</Option>
+                                                    )
+                                                })
+                                            }
+                                        </Select>
                                     </Form.Item>
                                     <Form.Item name="asset_name" style={{ marginRight: `1rem` }} label="Nama"
                                         rules={[
@@ -166,7 +202,6 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, sidemenu }) {
                                             <Option value="used">Used</Option>
                                             <Option value="return">Return</Option>
                                         </Select>
-                                        {/* <Input onChange={onChangeInventory} name="status" id="status" allowClear /> */}
                                     </Form.Item>
                                     <Form.Item name="kepemilikan" style={{ marginRight: `1rem` }} label="Kepemilikan"
                                         rules={[
@@ -180,7 +215,6 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, sidemenu }) {
                                             <Option value="PT.MIG">PT. MIG</Option>
                                             <Option value="BankBukopin">Bank Bukopin</Option>
                                         </Select>
-                                        {/* <Input onChange={onChangeInventory} name="kepemilikan" id="kepemilikan" allowClear /> */}
                                     </Form.Item>
                                     <Form.Item name="kondisi" style={{ marginRight: `1rem` }} label="Kondisi">
                                         <Select onChange={(value) => { setDatanew({ ...datanew, kondisi: value }) }} name="kondisi" allowClear>
@@ -188,7 +222,6 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, sidemenu }) {
                                             <Option value="rusakRingan">Rusak ringan</Option>
                                             <Option value="rusakBerat">Rusak berat</Option>
                                         </Select>
-                                        {/* <Input onChange={onChangeInventory} name="kepemilikan" id="kepemilikan" allowClear /> */}
                                     </Form.Item>
                                     <Form.Item name="tanggal_beli" style={{ marginRight: `1rem` }} label="Tanggal Beli">
                                         <DatePicker onChange={(date, dateString) => { setDatanew({ ...datanew, tanggal_beli: date }) }} name="tanggal_beli" allowClear />
@@ -220,7 +253,6 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, sidemenu }) {
                                             <Option value="penagihan">Penagihan</Option>
                                             <Option value="pajak">Pajak</Option>
                                         </Select>
-                                        {/* <Input onChange={onChangeInventory} name="departmen" id="departmen" allowClear /> */}
                                     </Form.Item>
                                     <Form.Item name="service_point" style={{ marginRight: `1rem` }} label="Service Point">
                                         <Input onChange={onChangeInventory} name="service_point" id="service_point" allowClear />
@@ -236,6 +268,61 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, sidemenu }) {
                                     </Form.Item>
                                 </div>
                             </Form>
+                        </div>
+                        <div className="mb-5 shadow-md rounded-md w-full h-auto bg-white p-5 relative border-2">
+                            <div className="absolute w-auto px-5 h-10 bg-white font-semibold left-10 -top-3">Data Turunan</div>
+                            {
+                                !isdynamic ?
+                                    <Spin spinning={loadingdynamic}>
+                                        <div id="emptyDynamic" className="h-20 flex justify-center items-center">
+                                            <div className="text-gray-300 text-base">Pilih Tipe Asset terlebih dahulu untuk memunculkan input baru</div>
+                                        </div>
+                                    </Spin>
+                                    :
+                                    <>
+                                        {
+                                            datadynamic.map((doc, idx) => {
+                                                return (
+                                                    <div className="grid grid-cols-1 md:grid-cols-2" key={idx}>
+                                                        {doc.data_type === "text" &&
+                                                            <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}>
+                                                                <Input name={doc.name} allowClear defaultValue={doc.default} />
+                                                            </Form.Item>}
+                                                        {doc.data_type === "number" &&
+                                                            <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}>
+                                                                <InputNumber name={doc.name} id={doc.name} allowClear style={{ width: `100%` }} defaultValue={doc.default} />
+                                                            </Form.Item>}
+                                                        {doc.data_type === "decimal" &&
+                                                            <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}>
+                                                                <InputNumber name={doc.name} id={doc.name} allowClear style={{ width: `100%` }} defaultValue={doc.default} />
+                                                            </Form.Item>}
+                                                        {doc.data_type === "textarea" &&
+                                                            <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}>
+                                                                <textarea step="" name={doc.name} allowClear defaultValue={doc.default} />
+                                                            </Form.Item>}
+                                                        {doc.data_type === "checkbox" &&
+                                                            <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}>
+                                                                <div><input type="checkbox" name={doc.name} allowClear defaultValue={doc.default} /> {doc.name}</div>
+                                                            </Form.Item>}
+                                                        {doc.data_type === "select" &&
+                                                            <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}>
+                                                                <Input name={doc.name} allowClear defaultValue={doc.default} />
+                                                            </Form.Item>}
+                                                        {doc.data_type === "tree" &&
+                                                            <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}>
+                                                                <Input name={doc.name} allowClear defaultValue={doc.default} />
+                                                            </Form.Item>}
+                                                        {doc.data_type === "date" &&
+                                                            <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}>
+                                                                <DatePicker name={doc.name} defaultValue={doc.default} allowClear />
+                                                            </Form.Item>
+                                                        }
+                                                    </div>
+                                                )
+                                            })
+                                        }
+                                    </>
+                            }
                         </div>
                     </div>
                 </div>
@@ -276,11 +363,21 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGA = await resourcesGA.json()
     const dataAssetsList = resjsonGA
 
+    const resourcesGV = await fetch(`https://boiling-thicket-46501.herokuapp.com/getVendors`, {
+        method: `GET`,
+        headers: {
+            'Authorization': JSON.parse(initProps),
+        }
+    })
+    const resjsonGV = await resourcesGV.json()
+    const dataVendorsList = resjsonGV
+
     return {
         props: {
             initProps,
             dataProfile,
             dataAssetsList,
+            dataVendorsList,
             sidemenu: "4"
         }
     }
