@@ -385,14 +385,14 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                         <div id="dropWrapper" /*className="w-full h-auto border border-dashed border-opacity-20 border-black pb-2"*/ className="w-full h-auto pb-2" onDrop={(e) => { onChangeDrop(e) }} onDragOver={(e) => { onChangeDragoverDrop(e) }}>
                             <div id="dropAreaTitle" className="h-auto w-full p-2 bg-gray-700 text-white mb-2 flex flex-col">{dataAssetDetail.title} Properties</div>
                             {
-                                dataInvColumns.data.length === 0 ?
+                                !dataInvColumns.data.inventory_columns ?
                                     <div id="dropArea" className="h-32 flex justify-center items-center">
                                         <div className="text-gray-300 text-base">Drag and Drop the custom field to build your own custom Form</div>
                                     </div>
                                     :
                                     <>
                                         {
-                                            dataInvColumns.data.map((doc, idx) => {
+                                            dataInvColumns.data.inventory_columns.map((doc, idx) => {
                                                 return (
                                                     <div key={idx} className="mb-5 cursor-pointer" onClick={() => { setModalupdatefieldprops(true); setRecordfield(doc) }}>
                                                         <h1 className="text-sm">{doc.name}</h1>

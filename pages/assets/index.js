@@ -34,7 +34,8 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
     const [parenttitle, setParenttitle] = useState("")
     const [datanew, setDatanew] = useState({
         name: '',
-        parent: ''
+        parent: '',
+        inventory_columns: []
     })
     const onChangeAddAssets = (e) => {
         setDatanew({
@@ -49,6 +50,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
         setAutoExpandParent(false);
     }
     const handleAddAssets = () => {
+        // rt.push(`/assets/update/${datanew.name}?originPath=Admin&title=${datanew.name}&parent=${datanew.parent}&create=true`)
         fetch(`https://boiling-thicket-46501.herokuapp.com/addAsset`, {
             method: 'POST',
             headers: {
