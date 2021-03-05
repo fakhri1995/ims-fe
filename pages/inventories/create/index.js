@@ -8,7 +8,9 @@ import InputNumber from 'antd/lib/input-number'
 import Select from 'antd/lib/select'
 import DatePicker from 'antd/lib/date-picker'
 import TreeSelect from 'antd/lib/tree-select'
+import Checkbox from 'antd/lib/checkbox'
 import Spin from 'antd/lib/spin'
+import notification from 'antd/lib/notification'
 import Sticky from 'wil-react-sticky'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard.module.css'
@@ -22,6 +24,11 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
     const [isdynamic, setIsdynamic] = useState(false)
     const [loadingdynamic, setLoadingdynamic] = useState(false)
     const [datadynamic, setDatadynamic] = useState([])
+    const [datadynamic2, setDatadynamic2] = useState([])
+    const [objdynamic, setObjdynamic] = useState({
+        inventory_column_id: 0,
+        value: ''
+    })
     function flattenArr(dataassets) {
         const result = []
         dataassets.forEach((item, idx) => {
@@ -105,12 +112,94 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
                 else {
                     setIsdynamic(true)
                     setDatadynamic(res2.data.inventory_columns)
+                    setDatadynamic2(res2.data.inventory_columns.map((doc, idx) => (
+                        {
+                            inventory_column_id: doc.id,
+                            value: doc.default
+                        }
+                    )))
                     setLoadingdynamic(false)
                 }
             })
     }
+    const onChangeDynamic = (e, idInvCol) => {
+        // console.log("inv: "+idInvCol)
+        // console.log("dynamic2: "+ datadynamic2[1].inventory_column_id)
+        // setObjdynamic({
+        //     inventory_column_id: idInvCol,
+        //     value: e.target.value
+        // })
+        console.log("target: " + datadynamic2[0].inventory_column_id+"  "+datadynamic2[1].inventory_column_id)
+        const idx = datadynamic2.map((doc, idx) => { return doc.inventory_column_id }).indexOf(idInvCol)
+        console.log("idx: " + idx)
+        // if (idx === -1 || idx === 0) {
+        //     setDatadynamic2([
+        //         ...datadynamic2,
+        //         objdynamic
+        //     ])
+        //     console.log("isias sini: " + objdynamic.value)
+        // }
+        // else {
+        var items = [...datadynamic2]
+        items[idx] = {
+            inventory_column_id: idInvCol,
+            value: e.target.value
+        }
+        setDatadynamic2(items)
+        console.log("isias situ: " + datadynamic2[1].value)
+        // }
+    }
+    const onChangeDynamicAnt1 = (value, idInvCol) => {
+        setObjdynamic({
+            inventory_column_id: idInvCol,
+            value: value
+        })
+        const idx = datadynamic2.map((doc, idx) => { return doc.inventory_column_id }).indexOf(idInvCol)
+        if (idx === -1 || idx === 0) {
+            setDatadynamic2([
+                ...datadynamic2,
+                objdynamic
+            ])
+        }
+        else {
+            var items = [...datadynamic2]
+            items[idx] = objdynamic
+            setDatadynamic2(items)
+        }
+    }
     const handleSubmitInventory = () => {
-        console.log("isi:: " + datanew.asset_code + " " + datanew.asset_id + " " + datanew.asset_name + " " + datanew.vendor_id)
+        const finalData = {
+            datanew,
+            inventory_values: datadynamic2
+        }
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addInventory`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(finalData)
+        })
+        .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/inventories?originPath=Inventories`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                }
+            })
+        // console.log("isias::: " + datadynamic2.length)
+        // console.log("isi:: " + datanew.asset_code + " " + datanew.asset_id + " " + datanew.asset_name + " " + datanew.vendor_id)
     }
     return (
         <Layout tok={initProps} pathArr={pathArr} dataProfile={dataProfile} dataAssetsList={dataAssetsList} sidemenu={sidemenu} originPath={originPath} st={st}>
@@ -284,38 +373,58 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
                                             datadynamic.map((doc, idx) => {
                                                 return (
                                                     <div className="grid grid-cols-1 md:grid-cols-2" key={idx}>
-                                                        {doc.data_type === "text" &&
-                                                            <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}>
-                                                                <Input name={doc.name} allowClear defaultValue={doc.default} />
-                                                            </Form.Item>}
-                                                        {doc.data_type === "number" &&
-                                                            <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}>
-                                                                <InputNumber name={doc.name} id={doc.name} allowClear style={{ width: `100%` }} defaultValue={doc.default} />
-                                                            </Form.Item>}
-                                                        {doc.data_type === "decimal" &&
-                                                            <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}>
-                                                                <InputNumber name={doc.name} id={doc.name} allowClear style={{ width: `100%` }} defaultValue={doc.default} />
-                                                            </Form.Item>}
-                                                        {doc.data_type === "textarea" &&
-                                                            <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}>
-                                                                <textarea step="" name={doc.name} allowClear defaultValue={doc.default} />
-                                                            </Form.Item>}
-                                                        {doc.data_type === "checkbox" &&
-                                                            <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}>
-                                                                <div><input type="checkbox" name={doc.name} allowClear defaultValue={doc.default} /> {doc.name}</div>
-                                                            </Form.Item>}
-                                                        {doc.data_type === "select" &&
-                                                            <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}>
-                                                                <Input name={doc.name} allowClear defaultValue={doc.default} />
-                                                            </Form.Item>}
-                                                        {doc.data_type === "tree" &&
-                                                            <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}>
-                                                                <Input name={doc.name} allowClear defaultValue={doc.default} />
-                                                            </Form.Item>}
-                                                        {doc.data_type === "date" &&
-                                                            <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}>
-                                                                <DatePicker name={doc.name} defaultValue={doc.default} allowClear />
-                                                            </Form.Item>
+                                                        {
+                                                            doc.required ?
+                                                                <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}
+                                                                    rules={[
+                                                                        {
+                                                                            required: true,
+                                                                            message: `${doc.name} harus diisi`,
+                                                                        },
+                                                                    ]}
+                                                                >
+                                                                    {doc.data_type === "text" &&
+                                                                        <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.default} required />}
+                                                                    {doc.data_type === "number" &&
+                                                                        <InputNumber name={doc.name} onChange={(value) => { onChangeDynamicAnt1(value, doc.id) }} id={doc.name} allowClear style={{ width: `100%` }} defaultValue={doc.default} required />}
+                                                                    {doc.data_type === "decimal" &&
+                                                                        <InputNumber name={doc.name} onChange={(value) => { onChangeDynamicAnt1(value, doc.id) }} id={doc.name} allowClear style={{ width: `100%` }} defaultValue={doc.default} required />}
+                                                                    {doc.data_type === "textarea" &&
+                                                                        <Input.TextArea step="" name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.default} required />}
+                                                                    {doc.data_type === "checkbox" &&
+                                                                        <div><Checkbox name={doc.name} onChange={(value) => { onChangeDynamicAnt1(value, doc.id) }} allowClear defaultValue={doc.default} required /> {doc.name}</div>}
+                                                                    {doc.data_type === "select" &&
+                                                                        <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.default} required />
+                                                                    }
+                                                                    {doc.data_type === "tree" &&
+                                                                        <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.default} required />
+                                                                    }
+                                                                    {doc.data_type === "date" &&
+                                                                        <DatePicker name={doc.name} defaultValue={doc.default} onChange={(date, dateString) => { onChangeDynamicAnt1(date, doc.id) }} allowClear required />
+                                                                    }
+                                                                </Form.Item>
+                                                                :
+                                                                <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}>
+                                                                    {doc.data_type === "text" &&
+                                                                        <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.default} required />}
+                                                                    {doc.data_type === "number" &&
+                                                                        <InputNumber name={doc.name} onChange={(value) => { onChangeDynamicAnt1(value, doc.id) }} id={doc.name} allowClear style={{ width: `100%` }} defaultValue={doc.default} />}
+                                                                    {doc.data_type === "decimal" &&
+                                                                        <InputNumber name={doc.name} onChange={(value) => { onChangeDynamicAnt1(value, doc.id) }} id={doc.name} allowClear style={{ width: `100%` }} defaultValue={doc.default} />}
+                                                                    {doc.data_type === "textarea" &&
+                                                                        <Input.TextArea step="" name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.default} />}
+                                                                    {doc.data_type === "checkbox" &&
+                                                                        <div><Checkbox name={doc.name} onChange={(value) => { onChangeDynamicAnt1(value, doc.id) }} allowClear defaultValue={doc.default} /> {doc.name}</div>}
+                                                                    {doc.data_type === "select" &&
+                                                                        <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.default} />
+                                                                    }
+                                                                    {doc.data_type === "tree" &&
+                                                                        <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.default} />
+                                                                    }
+                                                                    {doc.data_type === "date" &&
+                                                                        <DatePicker name={doc.name} defaultValue={doc.default} onChange={(date, dateString) => { onChangeDynamicAnt1(date, doc.id) }} allowClear />
+                                                                    }
+                                                                </Form.Item>
                                                         }
                                                     </div>
                                                 )
