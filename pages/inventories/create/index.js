@@ -58,9 +58,9 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
         status: '',
         kepemilikan: '',
         kondisi: '',
-        tanggal_beli: '',
-        harga_beli: '',
-        tanggal_efektif: '',
+        tanggal_beli: new Date(),
+        harga_beli: 0,
+        tanggal_efektif: new Date(),
         depresiasi: 0,
         nilai_sisa: 0,
         nilai_buku: 0,
@@ -70,7 +70,8 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
         service_point: '',
         gudang: '',
         used_by: '',
-        managed_by: ''
+        managed_by: '',
+        inventory_values: datadynamic2
     })
     const onChangeInventory = (e) => {
         const val = e.target.value
@@ -123,64 +124,44 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
             })
     }
     const onChangeDynamic = (e, idInvCol) => {
-        // console.log("inv: "+idInvCol)
-        // console.log("dynamic2: "+ datadynamic2[1].inventory_column_id)
-        // setObjdynamic({
-        //     inventory_column_id: idInvCol,
-        //     value: e.target.value
-        // })
-        console.log("target: " + datadynamic2[0].inventory_column_id+"  "+datadynamic2[1].inventory_column_id)
+        console.log("target: " + datadynamic2[0].inventory_column_id + "  " + datadynamic2[1].inventory_column_id)
         const idx = datadynamic2.map((doc, idx) => { return doc.inventory_column_id }).indexOf(idInvCol)
         console.log("idx: " + idx)
-        // if (idx === -1 || idx === 0) {
-        //     setDatadynamic2([
-        //         ...datadynamic2,
-        //         objdynamic
-        //     ])
-        //     console.log("isias sini: " + objdynamic.value)
-        // }
-        // else {
         var items = [...datadynamic2]
         items[idx] = {
             inventory_column_id: idInvCol,
             value: e.target.value
         }
         setDatadynamic2(items)
+        setDatanew({
+            ...datanew,
+            inventory_values: items
+        })
         console.log("isias situ: " + datadynamic2[1].value)
-        // }
     }
     const onChangeDynamicAnt1 = (value, idInvCol) => {
-        setObjdynamic({
-            inventory_column_id: idInvCol,
-            value: value
-        })
         const idx = datadynamic2.map((doc, idx) => { return doc.inventory_column_id }).indexOf(idInvCol)
-        if (idx === -1 || idx === 0) {
-            setDatadynamic2([
-                ...datadynamic2,
-                objdynamic
-            ])
+        var items = [...datadynamic2]
+        items[idx] = {
+            inventory_column_id: idInvCol,
+            value: e.target.value
         }
-        else {
-            var items = [...datadynamic2]
-            items[idx] = objdynamic
-            setDatadynamic2(items)
-        }
+        setDatadynamic2(items)
+        setDatanew({
+            ...datanew,
+            inventory_values: items
+        })
     }
     const handleSubmitInventory = () => {
-        const finalData = {
-            datanew,
-            inventory_values: datadynamic2
-        }
         fetch(`https://boiling-thicket-46501.herokuapp.com/addInventory`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(finalData)
+            body: JSON.stringify(datanew)
         })
-        .then(res => res.json())
+            .then(res => res.json())
             .then(res2 => {
                 if (res2.success) {
                     notification['success']({
@@ -198,8 +179,6 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
                     })
                 }
             })
-        // console.log("isias::: " + datadynamic2.length)
-        // console.log("isi:: " + datanew.asset_code + " " + datanew.asset_id + " " + datanew.asset_name + " " + datanew.vendor_id)
     }
     return (
         <Layout tok={initProps} pathArr={pathArr} dataProfile={dataProfile} dataAssetsList={dataAssetsList} sidemenu={sidemenu} originPath={originPath} st={st}>
