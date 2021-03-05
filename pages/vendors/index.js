@@ -18,6 +18,7 @@ import { comment } from 'postcss'
 import Modal from 'antd/lib/modal'
 
 function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
+    console.log(dataVendors)
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
