@@ -277,7 +277,7 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                 }
             })
     }
-    const handleDeleteField = ()=>{
+    const handleDeleteField = () => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/deleteInventoryColumn`, {
             method: 'DELETE',
             headers: {
@@ -363,7 +363,7 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                                             </div>
                                             <div className="flex py-1">
                                                 <button type="submit" className=" bg-gray-700 hover:bg-gray-800 border text-white px-3 w-20 rounded-md mr-5">Save</button>
-                                                <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black px-3 rounded-md" onClick={() => { setEditasset(false) }}>Cancel</button>
+                                                <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black px-3 rounded-md" onClick={() => { setEditasset(false) }}>Back</button>
                                             </div>
                                         </div>
                                     </Form>
@@ -417,7 +417,7 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                         <div id="decimal" className="text-center pt-4 border rounded-md h-16 text-xs cursor-pointer hover:shadow-md" onDragStart={(e) => { onChangeDragStart(e) }} draggable>Decimal</div>
                         <div id="textarea" className="text-center pt-4 border rounded-md h-16 text-xs cursor-pointer hover:shadow-md" onDragStart={(e) => { onChangeDragStart(e) }} draggable>TextArea</div>
                         <div id="checkbox" className="text-center pt-4 border rounded-md h-16 text-xs cursor-pointer hover:shadow-md" onDragStart={(e) => { onChangeDragStart(e) }} draggable>Checkbox</div>
-                        <div id="select" className="text-center pt-4 border rounded-md h-16 text-xs cursor-pointer hover:shadow-md" onDragStart={(e) => { onChangeDragStart(e) }} draggable>Dropdown</div>
+                        <div id="select" className="text-center pt-4 border rounded-md h-16 text-xs cursor-pointer hover:shadow-md" onDragStart={(e) => { onChangeDragStart(e) }} draggable>Select</div>
                         <div id="tree" className="text-center pt-4 border rounded-md h-16 text-xs cursor-pointer hover:shadow-md" onDragStart={(e) => { onChangeDragStart(e) }} draggable>Tree</div>
                         <div id="date" className="text-center pt-4 border rounded-md h-16 text-xs cursor-pointer hover:shadow-md" onDragStart={(e) => { onChangeDragStart(e) }} draggable>Date</div>
                     </div>
@@ -435,16 +435,16 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                             <div className="grid grid-cols-1 mb-2">
                                 <div className="flex flex-col my-2">
                                     <h1 className="text-sm">Nama Field:</h1>
-                                    <Input name="name" allowClear onChange={onChangeUpdateField} required/>
+                                    <Input name="name" allowClear onChange={onChangeUpdateField} required />
                                 </div>
                                 <div className="flex flex-col my-2">
                                     <h1 className="text-sm">Default:</h1>
                                     {datafield.data_type === "text" && <Input name="default" allowClear onChange={onChangeUpdateField} />}
                                     {datafield.data_type === "number" && <input type="number" name="default" allowClear onChange={onChangeUpdateField} />}
                                     {datafield.data_type === "decimal" && <input type="number" step="0.01" name="default" allowClear onChange={onChangeUpdateField} />}
-                                    {datafield.data_type === "textarea" && <textarea  step="" name="default" allowClear onChange={onChangeUpdateField} />}
-                                    {datafield.data_type === "checkbox" && <input type="checkbox" name="default" allowClear onChange={onChangeUpdateField} />}
-                                    {datafield.data_type === "select" && <Input name="default" allowClear onChange={onChangeUpdateField} />}
+                                    {datafield.data_type === "textarea" && <textarea step="" name="default" allowClear onChange={onChangeUpdateField} />}
+                                    {datafield.data_type === "checkbox" && <div><input type="checkbox" name="default" allowClear onChange={onChangeUpdateField} /> {datafield.name}</div>}
+                                    {datafield.data_type === "select" && <Input name="default" allowClear onChange={onChangeUpdateField} placeholder="Pisahkan dengan ';' untuk banyak pilihan"/>}
                                     {datafield.data_type === "tree" && <Input name="default" allowClear onChange={onChangeUpdateField} />}
                                     {datafield.data_type === "date" && <input type="date" name="default" allowClear onChange={onChangeUpdateField} />}
                                 </div>
@@ -486,8 +486,8 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                                     {recordfield.data_type === "text" && <Input name="default" allowClear onChange={onChangeUpdateField2} defaultValue={recordfield.default} />}
                                     {recordfield.data_type === "number" && <input type="number" name="default" allowClear onChange={onChangeUpdateField2} defaultValue={recordfield.default} />}
                                     {recordfield.data_type === "decimal" && <input type="number" step="0.01" name="default" allowClear onChange={onChangeUpdateField2} defaultValue={recordfield.default} />}
-                                    {recordfield.data_type === "textarea" && <textarea  step="" name="default" allowClear onChange={onChangeUpdateField2} defaultValue={recordfield.default} />}
-                                    {recordfield.data_type === "checkbox" && <input type="checkbox" name="default" allowClear onChange={onChangeUpdateField2} defaultValue={recordfield.default} />}
+                                    {recordfield.data_type === "textarea" && <textarea step="" name="default" allowClear onChange={onChangeUpdateField2} defaultValue={recordfield.default} />}
+                                    {recordfield.data_type === "checkbox" && <div><input type="checkbox" name="default" allowClear onChange={onChangeUpdateField2} defaultValue={recordfield.default} /> {recordfield.name}</div>}
                                     {recordfield.data_type === "select" && <Input name="default" allowClear onChange={onChangeUpdateField2} defaultValue={recordfield.default} />}
                                     {recordfield.data_type === "tree" && <Input name="default" allowClear onChange={onChangeUpdateField2} defaultValue={recordfield.default} />}
                                     {recordfield.data_type === "date" && <input type="date" name="default" allowClear onChange={onChangeUpdateField2} defaultValue={recordfield.default} />}
