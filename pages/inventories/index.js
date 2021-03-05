@@ -102,7 +102,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                         query: {
                             originPath: 'Admin'
                         }
-                    }}><a>{record.name}</a></Link>
+                    }}><a>{record.asset_name}</a></Link>
                     </div>,
                 };
             },
