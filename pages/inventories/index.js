@@ -62,7 +62,11 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
             method: 'DELETE',
             headers: {
                 'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
             },
+            body: JSON.stringify({
+                id: key
+            })
         })
             .then(res => res.json())
             .then(res2 => {

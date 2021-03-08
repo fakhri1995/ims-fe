@@ -205,35 +205,38 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                 expandedKeys={expandedKeys}
                                 autoExpandParent={autoExpandParent}
                                 treeData={treeData}
-                                titleRender={(nodeData) => (
-                                    <>
-                                        <div className={`flex justify-between hover:bg-blue-100 text-black`}
-                                            onMouseOver={() => {
-                                                var d = document.getElementById(`node${nodeData.key}`)
-                                                d.classList.add("flex")
-                                                d.classList.remove("hidden")
-                                            }}
-                                            onMouseLeave={() => {
-                                                var e = document.getElementById(`node${nodeData.key}`)
-                                                e.classList.add("hidden")
-                                                e.classList.remove("flex")
-                                            }}
-                                        >
-                                            <div className="mr-20">
-                                                {nodeData.title}
+                                titleRender={(nodeData) => {
+                                    const prt = nodeData.value.substring(0, nodeData.value.length - 4)
+                                    return (
+                                        <>
+                                            <div className={`flex justify-between hover:bg-blue-100 text-black`}
+                                                onMouseOver={() => {
+                                                    var d = document.getElementById(`node${nodeData.key}`)
+                                                    d.classList.add("flex")
+                                                    d.classList.remove("hidden")
+                                                }}
+                                                onMouseLeave={() => {
+                                                    var e = document.getElementById(`node${nodeData.key}`)
+                                                    e.classList.add("hidden")
+                                                    e.classList.remove("flex")
+                                                }}
+                                            >
+                                                <div className="mr-20">
+                                                    {nodeData.title}
+                                                </div>
+                                                <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
+                                                    <a className="mx-2 pb-1" alt="add" onClick={() => { setNewmodalparent(true); setParentadd(nodeData.value); setParenttitle(nodeData.title) }}><PlusOutlined /></a>
+                                                    <Link href={`/assets/update/${nodeData.title}?originPath=Admin&parent=${prt}&id=${nodeData.id}`}>
+                                                        <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
+                                                    </Link>
+                                                    <Popconfirm onConfirm={() => { handleDeleteAssets(nodeData.id) }} onCancel={() => { message.error("Gagal dihapus") }}>
+                                                        <a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a>
+                                                    </Popconfirm>
+                                                </div>
                                             </div>
-                                            <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
-                                                <a className="mx-2 pb-1" alt="add" onClick={() => { setNewmodalparent(true); setParentadd(nodeData.value); setParenttitle(nodeData.title) }}><PlusOutlined /></a>
-                                                <Link href={`/assets/update/${nodeData.title}?originPath=Admin&parent=${nodeData.value}&id=${nodeData.id}`}>
-                                                    <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
-                                                </Link>
-                                                <Popconfirm onConfirm={() => { handleDeleteAssets(nodeData.id) }} onCancel={() => { message.error("Gagal dihapus") }}>
-                                                    <a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a>
-                                                </Popconfirm>
-                                            </div>
-                                        </div>
-                                    </>
-                                )
+                                        </>
+                                    )
+                                }
                                 }
                                 blockNode={true}
                             />

@@ -21,14 +21,13 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
     const { Option } = Select
     const pathArr = rt.pathname.split("/").slice(1)
     const [createInventoryForm] = Form.useForm();
+    if (!dataVendorsList.data) {
+        dataVendorsList.data = []
+    }
     const [isdynamic, setIsdynamic] = useState(false)
     const [loadingdynamic, setLoadingdynamic] = useState(false)
     const [datadynamic, setDatadynamic] = useState([])
     const [datadynamic2, setDatadynamic2] = useState([])
-    const [objdynamic, setObjdynamic] = useState({
-        inventory_column_id: 0,
-        value: ''
-    })
     function flattenArr(dataassets) {
         const result = []
         dataassets.forEach((item, idx) => {
@@ -105,7 +104,6 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
         })
             .then(res => res.json())
             .then(res2 => {
-                console.log("res2: " + res2.data)
                 if (!res2.data || res2.data === typeof (undefined)) {
                     setLoadingdynamic(false)
                     setIsdynamic(false)
@@ -144,7 +142,7 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
         var items = [...datadynamic2]
         items[idx] = {
             inventory_column_id: idInvCol,
-            value: e.target.value
+            value: value
         }
         setDatadynamic2(items)
         setDatanew({
@@ -153,6 +151,7 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
         })
     }
     const handleSubmitInventory = () => {
+        // console.log(datanew.inventory_values)
         fetch(`https://boiling-thicket-46501.herokuapp.com/addInventory`, {
             method: 'POST',
             headers: {
