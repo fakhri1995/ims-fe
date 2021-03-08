@@ -56,12 +56,16 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
     //------------------------------------------------
 
     //------------------handle delete groups-------------------
-    const handleDeleteGroup = (key) => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteGroup?id=${key}`, {
+    const handleDeleteInventories = (key) => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteInventory`, {
             method: 'DELETE',
             headers: {
                 'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
             },
+            body: JSON.stringify({
+                id: key
+            })
         })
             .then(res => res.json())
             .then(res2 => {
@@ -72,7 +76,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/groups?originPath=Admin`)
+                        rt.push(`/inventories?originPath=Admin`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -186,7 +190,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                         <Modal
                             title="Konfirmasi untuk menghapus grup"
                             visible={warningDelete.istrue}
-                            onOk={() => { handleDeleteGroup(warningDelete.key) }}
+                            onOk={() => { handleDeleteInventories(warningDelete.key) }}
                             onCancel={() => setWarningDelete(false, null)}
                         >
                             Apakah anda yakin ingin menghapus grup <strong>{warningDelete.name}</strong>?
