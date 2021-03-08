@@ -18,24 +18,25 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
     const { TabPane } = Tabs;
-    console.log(dataInventories.data)
-    //--------hook modal delete group-------------
+    // console.log(dataInventories.data)
+
+    //--------hook modal delete inventories-------------
     const [warningDelete, setWarningDelete] = useState({
         istrue: false,
         key: null,
-        name: ""
+        asset_name: ""
     })
-    const onClickModalDeleteGroup = (istrue, record) => {
+    const onClickModalDeleteInventory = (istrue, record) => {
         setWarningDelete({
             ...warningDelete,
             ["istrue"]: istrue,
             ["key"]: record.key,
-            ["name"]: record.name
+            ["asset_name"]: record.asset_name
         })
     }
     //-------------------------------------------
 
-    //------------get agents groups-------------------
+    //------------get data inventories-------------------
     var inventories
     if (dataInventories.data == null) {
         console.log("nodata")
@@ -55,9 +56,9 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
     }
     //------------------------------------------------
 
-    //------------------handle delete groups-------------------
-    const handleDeleteInventories = (key) => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteInventory`, {
+    //------------------handle delete inventory-------------------
+    const handleDeleteInventory = (key) => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteInventory?id=${key}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -88,8 +89,9 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                 }
             })
     }
+    //---------------------------------------------------------
 
-
+    //------------------------kolom table----------------------
     const columnsDD = [
         {
             title: 'Asset Name',
@@ -102,7 +104,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                         style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
                     },
                     children: <div><Link href={{
-                        pathname: `/inventories/update/${record.key}`,
+                        pathname: `/inventories/${record.key}`,
                         query: {
                             originPath: 'Admin'
                         }
@@ -148,7 +150,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                     children:
                         <>
                             {/* <Tooltip placement="topLeft" title={"Delete"}> */}
-                            <Button onClick={() => { onClickModalDeleteGroup(true, record) }}>
+                            <Button onClick={() => { onClickModalDeleteInventory(true, record) }}>
                                 <a><DeleteOutlined /></a>
                             </Button>
 
@@ -158,7 +160,8 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
             }
         }
     ]
-
+    //------------------------------------------------------------------------
+    
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
@@ -190,10 +193,10 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                         <Modal
                             title="Konfirmasi untuk menghapus grup"
                             visible={warningDelete.istrue}
-                            onOk={() => { handleDeleteInventories(warningDelete.key) }}
+                            onOk={() => { handleDeleteInventory(warningDelete.key) }}
                             onCancel={() => setWarningDelete(false, null)}
                         >
-                            Apakah anda yakin ingin menghapus grup <strong>{warningDelete.name}</strong>?
+                            Apakah anda yakin ingin menghapus grup <strong>{warningDelete.asset_name}</strong>?
                             </Modal>
                     </div>
                     <div className="flex flex-col space-y-3 px-4">
