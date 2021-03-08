@@ -124,9 +124,9 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
             })
     }
     const onChangeDynamic = (e, idInvCol) => {
-        console.log("target: " + datadynamic2[0].inventory_column_id + "  " + datadynamic2[1].inventory_column_id)
+        // console.log("target: " + datadynamic2[0].inventory_column_id + "  " + datadynamic2[1].inventory_column_id)
         const idx = datadynamic2.map((doc, idx) => { return doc.inventory_column_id }).indexOf(idInvCol)
-        console.log("idx: " + idx)
+        // console.log("idx: " + idx)
         var items = [...datadynamic2]
         items[idx] = {
             inventory_column_id: idInvCol,
@@ -137,7 +137,7 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
             ...datanew,
             inventory_values: items
         })
-        console.log("isias situ: " + datadynamic2[1].value)
+        // console.log("isias situ: " + datadynamic2[1].value)
     }
     const onChangeDynamicAnt1 = (value, idInvCol) => {
         const idx = datadynamic2.map((doc, idx) => { return doc.inventory_column_id }).indexOf(idInvCol)
