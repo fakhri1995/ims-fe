@@ -228,7 +228,7 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
                                             {
                                                 dataVendorsList.data.map((doc, idx) => {
                                                     return (
-                                                        <Option value={doc.id}>{doc.name} ({doc.singkatan_nama})</Option>
+                                                        <Option value={doc.id}>{doc.name} {doc.singkatan_nama && <>({doc.singkatan_nama})</>}</Option>
                                                     )
                                                 })
                                             }

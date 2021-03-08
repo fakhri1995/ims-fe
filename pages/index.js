@@ -40,7 +40,7 @@ export default function Home({ initProps }) {
           })
           // console.log("token: " + res2.data.token)
           var date = new Date();
-          date.setTime(date.getTime() + (3600 * 1000));
+          date.setTime(date.getTime() + (3600 * 1000 * 24));
           jscookie.set('token', JSON.stringify(res2.data.token), { expires: date })
           // console.log("token di session: " + JSON.parse(jscookie.get('token')))
           rt.push('/dashboard/home')

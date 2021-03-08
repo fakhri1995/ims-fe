@@ -177,7 +177,7 @@ function InventoryUpdate({ initProps, dataProfile, dataAssetsList, dataDetailInv
                                                 required: true,
                                                 message: 'Vendor harus diisi',
                                             },
-                                        ]}>
+                                        ]} initialValue={datanew.vendor_id}>
                                         <Select onChange={(value) => { setDatanew({ ...datanew, vendor_id: value }) }} defaultValue={datanew.vendor_id} name="vendor" placeholder="Pilih Vendor" allowClear>
                                             {
                                                 dataDetailInventory.data.vendors.map((doc, idx) => {
