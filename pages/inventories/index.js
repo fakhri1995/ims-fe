@@ -97,7 +97,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
             title: 'Asset Name',
             dataIndex: 'asset_name',
             key: 'asset_name',
-            width: 800,
+            width: 600,
             render(text, record) {
                 return {
                     props: {
