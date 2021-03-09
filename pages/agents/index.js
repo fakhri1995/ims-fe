@@ -8,6 +8,7 @@ import notification from 'antd/lib/notification'
 import { useState } from 'react'
 import Link from 'next/link'
 import st from '../../components/layout-dashboard.module.css'
+import Button from 'antd/lib/button'
 
 
 function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
@@ -115,20 +116,20 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
                         <div className="font-semibold text-base w-auto">Agents</div>
                     </div>
                     <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
-                        <a className=" text-sm text-center w-auto mr-5">Import</a>
-                        <a className=" text-sm text-center w-auto mr-5">Export</a>
-                        <div className=" text-white bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-3 md:py-2 w-24 md:w-32 text-center text-xs md:text-sm">
-                            <Link href={{
-                                pathname: '/agents/create/',
-                                query: {
-                                    originPath: 'Admin'
-                                }
-                            }}>
-                                <div>
-                                    New Agent
-                                </div>
-                            </Link>
-                        </div>
+                        {/* <a className=" text-sm text-center w-auto mr-5">Import</a>
+                        <a className=" text-sm text-center w-auto mr-5">Export</a> */}
+                        {/* <div className=" text-white bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-3 md:py-2 w-24 md:w-32 text-center text-xs md:text-sm"> */}
+                        <Link href={{
+                            pathname: '/agents/create/',
+                            query: {
+                                originPath: 'Admin'
+                            }
+                        }}>
+                            <Button size="large" type="primary">
+                                Tambah Agent
+                            </Button>
+                        </Link>
+                        {/* </div> */}
                     </div>
                 </div>
                 <div className="h-auto w-full grid grid-cols-1 md:grid-cols-4 mb-5 bg-white px-2 rounded-md">

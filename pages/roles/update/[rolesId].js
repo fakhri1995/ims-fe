@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
+import Button from 'antd/lib/button'
 import st from '../../../components/layout-dashboard.module.css'
 import Form from 'antd/lib/form'
 import { Input, Tabs, Tree } from 'antd'
@@ -17,6 +18,8 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataDetailRole }) {
     const { originPath } = rt.query
     const { TextArea } = Input;
     const { TabPane } = Tabs;
+    const [instanceForm] = Form.useForm()
+    const [loadingupdate, setloadingupdate] = useState(false)
 
     //----------CreateGroup-------------
     const [editroles, setEditroles] = useState({
@@ -79,26 +82,36 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataDetailRole }) {
     const onCheck = (checkedKeys, info) => {
         console.log('onCheck', checkedKeys, info);
     };
+    const handleUpdateRoles = () => {
+        setloadingupdate(true)
+        notification['info']({
+            message: "Belum integrasi API",
+            duration: 3
+        })
+        setloadingupdate(false)
+    }
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
                 <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-                    <Form layout="vertical" style={{ display: 'contents' }}>
+                    <Form layout="vertical" style={{ display: 'contents' }} form={instanceForm} onFinish={handleUpdateRoles}>
                         <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
                             <Sticky containerSelectorFocus="#formAgentsWrapper">
                                 <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                     <h1 className="font-semibold text-base w-auto py-2">Edit Roles</h1>
                                     <div className="flex space-x-2">
                                         <Link href="/roles?originPath=Admin" >
-                                            <div className=" text-black text-sm bg-white hover:bg-gray-300 border-2 border-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
+                                            <Button type="default" size="middle">Batalkan</Button>
+                                            {/* <div className=" text-black text-sm bg-white hover:bg-gray-300 border-2 border-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
                                                 <p>
                                                     Cancel
-                                        </p>
-                                            </div>
+                                                </p>
+                                            </div> */}
                                         </Link>
-                                        <button type="submit" className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
+                                        <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingupdate}>Perbarui</Button>
+                                        {/* <button type="submit" className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
                                             <p>Save</p>
-                                        </button>
+                                        </button> */}
                                     </div>
                                 </div>
                             </Sticky>
@@ -217,11 +230,11 @@ export async function getServerSideProps({ req, res, params }) {
     ];
     var dataDetailRole
     for (let index = 0; index < data.length; index++) {
-        
-        if(data[index].key==idrole){
+
+        if (data[index].key == idrole) {
             dataDetailRole = data[index]
             break
-        }else{
+        } else {
             dataDetailRole = "gagal"
         }
     }

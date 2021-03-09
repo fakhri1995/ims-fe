@@ -6,6 +6,7 @@ import CopyOutlined from '@ant-design/icons/CopyOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import notification from 'antd/lib/notification'
 import { useState } from 'react'
+import Button from 'antd/lib/button'
 import Link from 'next/link'
 import st from '../../components/layout-dashboard.module.css'
 
@@ -117,33 +118,25 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
                         <div className="font-semibold text-base w-auto">Requesters</div>
                     </div>
                     <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
-                        <a className=" text-sm text-center w-auto mr-5">Import</a>
-                        <a className=" text-sm text-center w-auto mr-5">Export</a>
-                        <div className=" text-white text-xs md:text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-3 md:py-2 w-28 md:w-52 text-center">
+                        {/* <a className=" text-sm text-center w-auto mr-5">Import</a>
+                        <a className=" text-sm text-center w-auto mr-5">Export</a> */}
+                        {/* <div className=" text-white text-xs md:text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-3 md:py-2 w-28 md:w-52 text-center"> */}
                             <Link href={{
                                 pathname: '/requesters/create/',
                                 query: {
                                     originPath: 'Admin'
                                 }
                             }}>
-                                <div>
-                                    New Requesters
-                                </div>
+                                <Button type="primary" size="large">
+                                    Tambah Requesters
+                                </Button>
                             </Link>
-                        </div>
+                        {/* </div> */}
                     </div>
                 </div>
                 <div className="h-auto w-full grid grid-cols-1 md:grid-cols-4 mb-5 bg-white px-2">
-                    <div className="flex md:hidden flex-col space-y-3 p-4 md:col-span-1 col-span-1">
-                        <div className="font-semibold text-sm">Requesters</div>
-                        <p className="font-normal text-sm">
-                            This page lets you handpick a set of requesters and add them to your help desk. These requesters will have selective privileges to submit requests to your helpdesk. You can restrict access such that only people who have been added here are allowed to login to your self-service portal and access your knowledge base.
-                        <br /> <br />
-                        You can fill in the details of each of your new requesters manually or import a list of users from a CSV file. Once you have populated your list, your agents can open up each of your requesters and view their ticket history and contact information.
-                        </p>
-                    </div>
                     <div className="md:col-span-3 col-span-1 flex flex-col p-4">
-                        <div className="flex">
+                        <div className="flex flex-wrap">
                             <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={FilterAll}>
                                 All
                             </button>
@@ -245,7 +238,7 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
                             }
                         }}></Table>
                     </div>
-                    <div className="flex md:hidden flex-col space-y-3 p-4 md:col-span-1 col-span-1">
+                    <div className="hidden md:flex flex-col space-y-3 p-4 md:col-span-1 col-span-1">
                         <div className="font-semibold text-sm">Requesters</div>
                         <p className="font-normal text-sm">
                             This page lets you handpick a set of requesters and add them to your help desk. These requesters will have selective privileges to submit requests to your helpdesk. You can restrict access such that only people who have been added here are allowed to login to your self-service portal and access your knowledge base.

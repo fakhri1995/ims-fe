@@ -9,6 +9,7 @@ import Input from 'antd/lib/input'
 import notification from 'antd/lib/notification'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
+import Button from 'antd/lib/button'
 import { useState, useEffect } from 'react'
 import st from '../../../components/layout-dashboard.module.css'
 
@@ -18,6 +19,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     const tok = initProps
     var pathArr = rt.pathname.split("/").slice(1)
     pathArr[pathArr.length - 1] = "Create"
+    const [instanceForm] = Form.useForm();
 
     //useState
     const [newuser, setNewuser] = useState({
@@ -29,9 +31,11 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
         company_id: 66
     })
     const [loadingupload, setLoadingupload] = useState(false)
+    const [loadingsave, setLoadingsave] = useState(false)
 
     //handleCreateButton
     const handleCreateAgents = () => {
+        setLoadingsave(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/addAccountMember`, {
             method: 'POST',
             headers: {
@@ -42,6 +46,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
         })
             .then(res => res.json())
             .then(res2 => {
+                setLoadingsave(false)
                 if (res2.data) {
                     notification['success']({
                         message: res2.data.message,
@@ -133,63 +138,27 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     const uploadButton = (
         <div>
             {loadingupload ? <LoadingOutlined /> : <PlusOutlined />}
-            <div style={{ marginTop: 8 }}>Upload</div>
+            <div style={{ marginTop: 8 }}>Unggah</div>
         </div>
     );
 
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-                {/* <div className=" col-span-1 md:col-span-1 flex md:hidden flex-col space-y-4 p-4">
-                    <div className="font-semibold text-base">Agents</div>
-                    <p className="font-normal text-xs">
-                        When you add a new agent, you will have to provide the agent’s email, set their permission levels and access (full-time or occasional). Agents will receive an email with a confirmation link to activate their account after which they can be assigned to, or respond to tickets. Administrators can also edit an Agent’s profile to include the agent’s title, phone, profile picture, signature etc.
-                    </p>
-                    <div className="font-semibold text-base">Full-time vs Occasional Agents</div>
-                    <p className=" font-normal text-xs">
-                        You can choose whether your agents will need access to your support portal full-time, or will only be logging in occasionally. Occasional agents will use up a Day Pass for each day they login to your support, and you can purchase Day Passes in bulk from the Admin tab. Note that you will only be billed monthly for the number of full-time agents you add.
-                    </p>
-                    <div className="font-semibold text-base">Agent Groups</div>
-                    <p className=" font-normal text-xs">
-                        You can choose whether your agents will need access to your support portal full-time, or will only be logging in occasionally. Occasional agents will use up a Day Pass for each day they login to your support, and you can purchase Day Passes in bulk from the Admin tab. Note that you will only be billed monthly for the number of full-time agents you add.
-                    </p>
-                    <div className="font-semibold text-base">Agent Groups</div>
-                    <p className=" font-normal text-xs">
-                        Choose the tickets this agent can view and actions they can perform within the helpdesk by assigning one or more roles.
-                        Note that you will not be able to modify your own roles, or delete yourself.
-                    </p>
-                </div> */}
                 <div className="col-span-1 md:col-span-3 flex flex-col" id="createAgentsWrapper">
                     <Sticky containerSelectorFocus="#createAgentsWrapper">
                         <div className="flex justify-between p-4 border-t-2 border-b-2 bg-white mb-8">
-                            <h1 className="font-semibold py-2">New Agent</h1>
+                            <h1 className="font-semibold py-2">Agent Baru</h1>
                             <div className="flex space-x-2">
                                 <Link href="/agents?originPath=Admin">
-                                    <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button>
+                                    <Button size="middle" type="default">Batalkan</Button>
+                                    {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 text-xs md:text-sm w-24 h-10 rounded-md">Cancel</button> */}
                                 </Link>
-                                <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={handleCreateAgents}>Save</button>
+                                <Button size="middle" type="primary" loading={loadingsave} onClick={instanceForm.submit}>Simpan</Button>
+                                {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md text-xs md:text-sm w-24 h-10" onClick={handleCreateAgents}>Save</button> */}
                             </div>
                         </div>
                     </Sticky>
-                    <div className="p-4 mb-14">
-                        <h1 className="font-semibold mb-2">Agent type</h1>
-                        <div className="grid grid-cols-1 md:grid-cols-2">
-                            <div className="md:mr-20 col-span-1 md:col-span-1">
-                                <input type="radio" id="fulltime" name="agentType" /> <label htmlFor="fulltime" className="font-semibold text-xs">Full-Time</label>
-                                <br />
-                                <p className="text-sm">
-                                    Consumes an requesters license.
-                                </p>
-                            </div>
-                            <div className=" col-span-1 md:col-span-1">
-                                <input type="radio" id="occasional" name="agentType" /> <label htmlFor="occasional" className="font-semibold text-xs">Occasional</label>
-                                <br />
-                                <p className="text-sm">
-                                    Consumes a day pass for each day that they login.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
                     <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-14">
                         <div className="border-b border-black p-4 font-semibold mb-5">
                             Detail Akun Pengguna
@@ -208,17 +177,41 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                                 </Upload>
                             </div>
                             <div className="p-3 col-span-1 md:col-span-3">
-                                <Form layout="vertical" className="createAgentsForm" onFinish={handleCreateAgents}>
-                                    <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi" name="fullname">
+                                <Form layout="vertical" form={instanceForm} className="createAgentsForm" onFinish={handleCreateAgents}>
+                                    <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi" name="fullname"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Nama Lengkap harus diisi',
+                                            },
+                                        ]}>
                                         <Input value={newuser.fullname} name={`fullname`} onChange={onChangeCreateAgents} />
                                     </Form.Item>
-                                    <Form.Item label="Email" required tooltip="Wajib diisi" name="email">
+                                    <Form.Item label="Email" required tooltip="Wajib diisi" name="email"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Email harus diisi',
+                                            },
+                                        ]}>
                                         <Input value={newuser.email} name={`email`} onChange={onChangeCreateAgents} />
                                     </Form.Item>
-                                    <Form.Item label="No. Handphone" name="phone_number">
+                                    <Form.Item label="No. Handphone" name="phone_number"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'No.Handphone harus diisi',
+                                        },
+                                    ]}>
                                         <Input value={newuser.phone_number} name={`phone_number`} onChange={onChangeCreateAgents} />
                                     </Form.Item>
-                                    <Form.Item label="Role" name="role">
+                                    <Form.Item label="Role" name="role"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Role harus diisi',
+                                        },
+                                    ]}>
                                         <input type="number" value={newuser.role} name={'role'} onChange={onChangeCreateAgents} />
                                     </Form.Item>
                                 </Form>

@@ -12,6 +12,7 @@ import message from 'antd/lib/message'
 import Select from 'antd/lib/select'
 import notification from 'antd/lib/notification'
 import Form from 'antd/lib/form'
+import Button from 'antd/lib/button'
 import Popconfirm from 'antd/lib/popconfirm'
 import Link from 'next/link'
 import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
@@ -25,6 +26,8 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
     const [editable, setEditable] = useState(false)
     const [visible, setVisible] = useState(false)
     const [visiblenon, setVisiblenon] = useState(false)
+    const [loadingbtn, setloadingbtn] = useState(false)
+    const [instanceForm] = Form.useForm()
     const [data1, setData1] = useState({
         id: dataDetailCompany.data.company_id,
         company_name: dataDetailCompany.data.company_name,
@@ -63,6 +66,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
         setLoadingfoto(false)
     }
     const handleEditProfile = () => {
+        setloadingbtn(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateCompanyDetail`, {
             method: 'POST',
             headers: {
@@ -73,6 +77,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
         })
             .then(res => res.json())
             .then(res2 => {
+                setloadingbtn(false)
                 if (res2.data) {
                     notification['success']({
                         message: res2.data.message,
@@ -80,7 +85,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                     })
                     setTimeout(() => {
                         rt.push(`/company/${dataDetailCompany.data.company_id}?originPath=Admin`)
-                    }, 1000)
+                    }, 500)
                 }
                 else if (!res2.success) {
                     notification['error']({
@@ -135,20 +140,18 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
     return (
         <div id="profileDetailMigWrapper">
             <div className="flex justify-start md:justify-end p-3 md:border-t-2 md:border-b-2 bg-white mb-4 md:mb-8">
-                {/* <Sticky containerSelectorFocus="#profileDetailMigWrapper"> */}
                 <div className="flex space-x-2">
                     {editable ?
-                        <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md" onClick={() => { setEditable(false) }}>Cancel</button>
+                        <Button type="default" size="middle" onClick={() => { setEditable(false) }}>Batalkan</Button>
                         :
                         null
                     }
                     {editable ?
-                        <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md" onClick={handleEditProfile}>Save</button>
+                        <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn}>Simpan</Button>
                         :
-                        <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md w-24 md:w-40" onClick={() => { setEditable(true) }}>Edit</button>
+                        <Button type="primary" size="middle" onClick={() => { setEditable(true) }}>Edit</Button>
                     }
                 </div>
-                {/* </Sticky> */}
             </div>
             <div className=" mb-2 md:mb-4 flex md:flex-row flex-col">
                 <h1 className="font-semibold text-base mr-3 pt-1">{dataDetailCompany.data.company_name}</h1>
@@ -156,9 +159,9 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                 <div className="flex">
                     {
                         dataDetailCompany.data.is_enabled ?
-                            <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md text-xs md:text-sm w-auto">AKTIF MODULE</div>
+                            <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md text-xs md:text-sm w-auto">AKTIF MODUL</div>
                             :
-                            <div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md text-xs md:text-sm w-auto">NON-AKTIF MODULE</div>
+                            <div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md text-xs md:text-sm w-auto">NON-AKTIF MODUL</div>
                     }
                 </div>
             </div>
@@ -178,56 +181,90 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                     }
                 </div>
                 <div className="col-span-1 sm:col-span-2 md:col-span-3 w-full h-auto p-3 md:p-5 grid grid-cols-1 md:grid-cols-2">
-                    <div className="md:m-5 mb-5 md:mb-0 ">
-                        <h1 className="font-semibold text-sm">ID Perusahaan:</h1>
-                        {
-                            editable ?
-                                <Input defaultValue={data1.id} name="company_id" onChange={onChangeEditProfile}></Input>
-                                :
-                                <h1 className="text-sm font-normal text-black">{data1.id}</h1>
+                    <Form layout="vertical" form={instanceForm} onFinish={handleEditProfile} initialValues={data1}>
+                        <div className="md:m-5 mb-5 md:mb-0 ">
+                            <h1 className="font-semibold text-sm">ID Perusahaan:</h1>
+                            <h1 className="text-sm font-normal text-black">{data1.id}</h1>
+                        </div>
+                        <div className="md:m-5 mb-5 md:mb-0 ">
+                            {
+                                editable ?
+                                    <Form.Item name="company_name" label="Nama Perusahaan"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Nama Perusahaan wajib diisi',
+                                            },
+                                        ]}>
+                                        <Input defaultValue={data1.company_name} name="company_name" onChange={onChangeEditProfile}></Input>
+                                    </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
+                                        <h1 className="text-sm font-normal text-black">{data1.company_name}</h1>
+                                    </>
 
-                        }
-                    </div>
-                    <div className="md:m-5 mb-5 md:mb-0 ">
-                        <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
-                        {
-                            editable ?
-                                <Input defaultValue={data1.company_name} name="company_name" onChange={onChangeEditProfile}></Input>
-                                :
-                                <h1 className="text-sm font-normal text-black">{data1.company_name}</h1>
+                            }
+                        </div>
+                        <div className="md:m-5 mb-5 md:mb-0 ">
+                            {
+                                editable ?
+                                    <Form.Item name="role" label="Role"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Role wajib diisi',
+                                            },
+                                        ]}>
+                                        <input type="number" defaultValue={data1.role} name={'role'} onChange={onChangeEditProfile} style={{ width: `15rem` }} />
+                                    </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Role:</h1>
+                                        <h1 className="text-sm font-normal text-black">{data1.role}</h1>
+                                    </>
 
-                        }
-                    </div>
-                    <div className="md:m-5 mb-5 md:mb-0 ">
-                        <h1 className="font-semibold text-sm">Role:</h1>
-                        {
-                            editable ?
-                                <input type="number" value={data1.role} name={'role'} onChange={onChangeEditProfile} style={{ width: `15rem` }} />
-                                :
-                                <h1 className="text-sm font-normal text-black">{data1.role}</h1>
-
-                        }
-                    </div>
-                    <div className="md:m-5 mb-5 md:mb-0">
-                        <h1 className="font-semibold text-sm">Alamat:</h1>
-                        {
-                            editable ?
-                                <Input defaultValue={data1.address} name="address" onChange={onChangeEditProfile}></Input>
-                                :
-                                <h1 className="text-sm font-normal text-black">{data1.address}</h1>
-
-                        }
-                    </div>
-                    <div className="md:m-5 mb-5 md:mb-0">
-                        <h1 className="font-semibold text-sm">Telepon:</h1>
-                        {
-                            editable ?
-                                <Input defaultValue={data1.phone_number} name="phone_number" onChange={onChangeEditProfile}></Input>
-                                :
-                                <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
-
-                        }
-                    </div>
+                            }
+                        </div>
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    <Form.Item name="address" label="Alamat"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Alamat wajib diisi',
+                                            },
+                                        ]}>
+                                        <Input defaultValue={data1.address} name="address" onChange={onChangeEditProfile}></Input>
+                                    </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Alamat:</h1>
+                                        <h1 className="text-sm font-normal text-black">{data1.address}</h1>
+                                    </>
+                            }
+                        </div>
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    <Form.Item name="phone_number" label="Telepon"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Telepon wajib diisi',
+                                            },
+                                        ]}>
+                                        <Input defaultValue={data1.phone_number} name="phone_number" onChange={onChangeEditProfile}></Input>
+                                    </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Telepon:</h1>
+                                        <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
+                                    </>
+                            }
+                        </div>
+                    </Form>
                 </div>
             </div>
             <div className="w-9/12 p-3 md:p-5 h-auto">
@@ -352,7 +389,8 @@ function ClientsDetailLocations({ dataDetailCompany, tok }) {
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
                 <div className="flex space-x-2">
                     <Link href={`/company/locations/new?originPath=Admin&companyId=${dataDetailCompany.data.company_id}`}>
-                        <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40"> Create</button>
+                        <Button type="primary" size="large">Tambah</Button>
+                        {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40"> Create</button> */}
                     </Link>
                 </div>
             </div>
@@ -412,6 +450,8 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
     const [drawablecreate, setDrawablecreate] = useState(false)
     const [drawableedit, setDrawableedit] = useState(false)
     const [modaldel, setModaldel] = useState(false)
+    const [loadingbtncreate, setloadingbtncreate] = useState(false)
+    const [loadingbtnedit, setloadingbtnedit] = useState(false)
     const [modaldeldata, setModaldeldata] = useState({})
     const [recordrow, setRecordrow] = useState({
         id: 0,
@@ -555,6 +595,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
         })
     }
     const handleSubmitCreateBA = () => {
+        setloadingbtncreate(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/addBank`, {
             method: 'POST',
             headers: {
@@ -566,6 +607,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
             .then((res) => res.json())
             .then(res2 => {
                 if (res2.success) {
+                    setloadingbtncreate(false)
                     setBankdata({
                         company_id: companyId,
                         name: '',
@@ -592,6 +634,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
     }
     const handleSubmitEditBA = () => {
         console.log("isidata2: " + recordrow)
+        setloadingbtnedit(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateBank`, {
             method: 'PUT',
             headers: {
@@ -602,6 +645,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
         })
             .then((res) => res.json())
             .then(res2 => {
+                setloadingbtnedit(false)
                 if (res2.success) {
                     notification['success']({
                         message: res2.message,
@@ -640,9 +684,10 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                             :
                             null
                     }
-                    <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40 hidden md:block" onClick={() => { setDrawablecreate(true) }}> Create</button>
-                    <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40 block md:hidden" onClick={() => { setDrawablecreatesmall(true) }}> Create</button>
-                    <Drawer title="Edit data Bank Account MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false) }} width={370} destroyOnClose={true}>
+                    <Button type="primary" size="large" onClick={() => { setDrawablecreate(true) }}>Tambah</Button>
+                    {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40 hidden md:block" onClick={() => { setDrawablecreate(true) }}> Create</button>
+                    <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40 block md:hidden" onClick={() => { setDrawablecreatesmall(true) }}> Create</button> */}
+                    <Drawer title="Edit data Rekening Bank" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false) }} width={370} destroyOnClose={true}>
                         <Form layout="vertical" onFinish={handleSubmitEditBA} initialValues={recordrow}>
                             <div className="grid grid-cols-1 mb-5">
                                 <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank"
@@ -690,65 +735,12 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                 </Form.Item>
                             </div>
                             <Form.Item>
-                                <button type="submit" className="bg-gray-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-gray-800">Save</button>
+                                <Button htmlType="submit" type="primary" size="middle" loading={loadingbtnedit}>Edit</Button>
+                                {/* <button type="submit" className="bg-gray-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-gray-800">Save</button> */}
                             </Form.Item>
                         </Form>
                     </Drawer>
-                    {/* <Drawer title="Edit data Bank Account MIG" maskClosable={false} visible={drawableeditsmall} onClose={() => { setDrawableeditsmall(false) }} width={400} destroyOnClose={true}>
-                        <Form layout="vertical" onFinish={handleSubmitEditBA} initialValues={recordrow}>
-                            <div className="grid grid-cols-1 mb-5">
-                                <Form.Item name="name" label="Bank Name"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Nama bank harus diisi',
-                                        },
-                                    ]}
-                                >
-                                    <Input onChange={onChangeEditBA} name="name" id="editName" defaultValue={recordrow.name} allowClear />
-                                </Form.Item>
-                                <Form.Item name="account_number" label="Account Number"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Nomor rekening harus diisi',
-                                        },
-                                    ]}
-                                >
-                                    <Input onChange={onChangeEditBA} name="account_number" id="editAccountNumber" defaultValue={recordrow.account_number} allowClear />
-                                </Form.Item>
-                                <Form.Item name="owner" label="Owner"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Nama penanggung jawab harus diisi',
-                                        },
-                                    ]}
-                                >
-                                    <Input onChange={onChangeEditBA} name="owner" id="editOwner" defaultValue={recordrow.owner} allowClear />
-                                </Form.Item>
-                                <Form.Item name="currency" label="Currency"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Mata uang harus diisi',
-                                        },
-                                    ]}
-                                >
-                                    <select name="currency" onChange={onChangeEditBA} defaultValue={recordrow.currency} style={{ width: `100%`, borderRadius: `5px` }}>
-                                        <option value="IDR">IDR</option>
-                                        <option value="USD">USD</option>
-                                    </select>
-                                </Form.Item>
-                            </div>
-                            <Form.Item>
-                                <button type="submit" className="bg-gray-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-gray-800">Save</button>
-                            </Form.Item>
-                        </Form>
-                    </Drawer> */}
-
-
-                    <Drawer title="Create data Bank Account MIG" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={370} destroyOnClose={true}>
+                    <Drawer title="Buat data Rekening Bank" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={370} destroyOnClose={true}>
                         <Form layout="vertical" onFinish={handleSubmitCreateBA} initialValues={bankdata}>
                             <div className="grid grid-cols-1 mb-5">
                                 <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank" rules={[
@@ -790,56 +782,11 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                 </Form.Item>
                             </div>
                             <Form.Item>
-                                <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button>
+                                <Button htmlType="submit" type="primary" size="middle" loading={loadingbtncreate}>Simpan</Button>
+                                {/* <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button> */}
                             </Form.Item>
                         </Form>
                     </Drawer>
-                    {/* <Drawer title="Create data Bank Account MIG" maskClosable={false} visible={drawablecreatesmall} onClose={() => { setDrawablecreatesmall(false) }} width={400} destroyOnClose={true}>
-                        <Form layout="vertical" onFinish={handleSubmitCreateBA} initialValues={bankdata}>
-                            <div className="grid grid-cols-1 mb-5">
-                                <Form.Item name="name" label="Bank Name" rules={[
-                                    {
-                                        required: true,
-                                        message: 'Nama bank harus diisi',
-                                    },
-                                ]}>
-                                    <Input onChange={onChangeBA} name="name" defaultValue={bankdata.name} allowClear />
-                                </Form.Item>
-                                <Form.Item name="account_number" label="Account Number" rules={[
-                                    {
-                                        required: true,
-                                        message: 'Nomor rekening harus diisi',
-                                    },
-                                ]}>
-                                    <Input onChange={onChangeBA} name="account_number" defaultValue={bankdata.account_number} allowClear />
-                                </Form.Item>
-                                <Form.Item name="owner" label="Owner" rules={[
-                                    {
-                                        required: true,
-                                        message: 'Nama penanggung jawab harus diisi',
-                                    },
-                                ]}>
-                                    <Input onChange={onChangeBA} name="owner" defaultValue={bankdata.owner} allowClear />
-                                </Form.Item>
-                                <Form.Item name="currency" label="Currency"
-                                >
-                                    <Select
-                                        labelInValue
-                                        defaultValue={{ value: "IDR" }}
-                                        onChange={(value) => { onChangeBACurrency(value) }}
-                                        name="currency"
-
-                                    >
-                                        <Option value="IDR">IDR</Option>
-                                        <Option value="USD">USD</Option>
-                                    </Select>
-                                </Form.Item>
-                            </div>
-                            <Form.Item>
-                                <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button>
-                            </Form.Item>
-                        </Form>
-                    </Drawer> */}
                 </div>
             </div>
             <div className="md:p-5">
@@ -862,15 +809,6 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                             }
                         }
                     }}
-                    // rowSelection={{
-                    //     selectedRowKeys: selectedrows, onChange: (selectedRowKeys) => {
-                    //         setSelectedrows(selectedRowKeys)
-                    //         setEditable(true)
-                    //         if (selectedRowKeys.length === 0) {
-                    //             setEditable(false)
-                    //         }
-                    //     }
-                    // }} 
                     columns={columnsgetBanks} dataSource={datagetBanks} />
             </div>
             <Modal
@@ -898,26 +836,26 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} dataDetailCompany={dataDetailCompany} st={st}>
             <div className="p-5 bg-white hidden md:block">
                 <Tabs tabPosition={`left`} defaultActiveKey={activeTab}>
-                    <TabPane tab="Profile" key={`profile`}>
+                    <TabPane tab="Profil" key={`profile`}>
                         <ClientsDetailProfile dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
                     </TabPane>
-                    <TabPane tab="Bank Accounts" key={`bankAccounts`}>
+                    <TabPane tab="Rekening Bank" key={`bankAccounts`}>
                         <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
                     </TabPane>
-                    <TabPane tab="Locations" key={`locations`}>
+                    <TabPane tab="Lokasi" key={`locations`}>
                         <ClientsDetailLocations dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailLocations>
                     </TabPane>
                 </Tabs>
             </div>
             <div className="p-5 bg-white block md:hidden" >
                 <Tabs tabPosition={`top`} defaultActiveKey={activeTab}>
-                    <TabPane tab="Profile" key={`profile`}>
+                    <TabPane tab="Profil" key={`profile`}>
                         <ClientsDetailProfile dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
                     </TabPane>
-                    <TabPane tab="Bank Accounts" key={`bankAccounts`}>
+                    <TabPane tab="Rekening Bank" key={`bankAccounts`}>
                         <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
                     </TabPane>
-                    <TabPane tab="Locations" key={`locations`}>
+                    <TabPane tab="Lokasi" key={`locations`}>
                         <ClientsDetailLocations dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailLocations>
                     </TabPane>
                 </Tabs>

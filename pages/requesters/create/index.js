@@ -7,6 +7,7 @@ import Select from 'antd/lib/select'
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import Input from 'antd/lib/input'
+import Button from 'antd/lib/button'
 import notification from 'antd/lib/notification'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
@@ -20,6 +21,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
     var pathArr = rt.pathname.split("/").slice(1)
     pathArr[pathArr.length - 1] = "Create"
     dataCompanyList = dataCompanyList.data.companies.filter(data => data.company_id !== 66)
+    const [instanceForm] = Form.useForm()
 
     //useState
     const [newuserrequesters, setNewuserrequesters] = useState({
@@ -31,9 +33,11 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
         company_id: 0
     })
     const [loadingupload, setLoadingupload] = useState(false)
+    const [loadingcreate, setLoadingcreate] = useState(false)
 
     //handleCreateButton
     const handleCreateAgents = () => {
+        setLoadingcreate(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/addAccountMember`, {
             method: 'POST',
             headers: {
@@ -44,6 +48,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
         })
             .then(res => res.json())
             .then(res2 => {
+                setLoadingcreate(false)
                 if (res2.data) {
                     notification['success']({
                         message: res2.data.message,
@@ -128,34 +133,17 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                 <div className="col-span-1 md:col-span-3 flex flex-col" id="createAgentsWrapper">
                     <Sticky containerSelectorFocus="#createAgentsWrapper">
                         <div className="flex justify-between p-4 border-t-2 border-b-2 bg-white mb-8">
-                            <h1 className="font-semibold py-2">New Requesters</h1>
+                            <h1 className="font-semibold py-2">Requesters Baru</h1>
                             <div className="flex space-x-2">
                                 <Link href="/requesters?originPath=Admin">
-                                    <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button>
+                                    <Button type="default" size="middle">Batalkan</Button>
+                                    {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button> */}
                                 </Link>
-                                <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={handleCreateAgents}>Save</button>
+                                <Button loading={loadingcreate} onClick={instanceForm.submit} type="primary" size="middle">Simpan</Button>
+                                {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={handleCreateAgents}>Save</button> */}
                             </div>
                         </div>
                     </Sticky>
-                    <div className="p-4 mb-14">
-                        <h1 className="font-semibold mb-2">Requesters type</h1>
-                        <div className="grid grid-cols-1 md:grid-cols-2">
-                            <div className="md:mr-20 col-span-1 md:col-span-1">
-                                <input type="radio" id="fulltime" name="agentType" /> <label htmlFor="fulltime" className="font-semibold text-xs">Full-Time</label>
-                                <br />
-                                <p className="text-sm">
-                                    Consumes an requesters license.
-                                </p>
-                            </div>
-                            <div className=" col-span-1 md:col-span-1">
-                                <input type="radio" id="occasional" name="agentType" /> <label htmlFor="occasional" className="font-semibold text-xs">Occasional</label>
-                                <br />
-                                <p className="text-sm">
-                                    Consumes a day pass for each day that they login.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
                     <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-14">
                         <div className="border-b border-black p-4 font-semibold mb-5">
                             Detail Akun Pengguna
@@ -174,20 +162,50 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                                 </Upload>
                             </div>
                             <div className="p-3 col-span-1 md:col-span-3">
-                                <Form layout="vertical" className="createAgentsForm" onFinish={handleCreateAgents}>
-                                    <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi" name="fullname">
+                                <Form layout="vertical" className="createAgentsForm" onFinish={handleCreateAgents} form={instanceForm}>
+                                    <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi" name="fullname"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Nama Lengkap harus diisi',
+                                            },
+                                        ]}>
                                         <Input value={newuserrequesters.fullname} name={`fullname`} onChange={onChangeCreateRequesters} />
                                     </Form.Item>
-                                    <Form.Item label="Email" required tooltip="Wajib diisi" name="email">
+                                    <Form.Item label="Email" required tooltip="Wajib diisi" name="email"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Email harus diisi',
+                                            },
+                                        ]}>
                                         <Input value={newuserrequesters.email} name={`email`} onChange={onChangeCreateRequesters} />
                                     </Form.Item>
-                                    <Form.Item label="No. Handphone" name="phone_number">
+                                    <Form.Item label="No. Handphone" name="phone_number"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'No. Handphone harus diisi',
+                                        },
+                                    ]}>
                                         <Input value={newuserrequesters.phone_number} name={`phone_number`} onChange={onChangeCreateRequesters} />
                                     </Form.Item>
-                                    <Form.Item label="Role" name="role">
+                                    <Form.Item label="Role" name="role"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Role harus diisi',
+                                        },
+                                    ]}>
                                         <input type="number" value={newuserrequesters.role} name={'role'} onChange={onChangeCreateRequesters} />
                                     </Form.Item>
-                                    <Form.Item label="Company" name="company_id">
+                                    <Form.Item label="Asal Perusahaan" name="company_id"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Asal Perusahaan harus diisi',
+                                            },
+                                        ]}>
                                         <Select onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }} name={`company_id`} allowClear>
                                             <Select.Option >Choose company</Select.Option>
                                             {

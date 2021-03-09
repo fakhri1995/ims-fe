@@ -109,7 +109,7 @@ function InventoryUpdate({ initProps, dataProfile, dataAssetsList, dataDetailInv
         })
     }
     const handleUpdateInventory = () => {
-        console.log("datanew: " + datanew.inventory_values[0].value)
+        // console.log("datanew: " + datanew.inventory_values[0].value)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateInventory`, {
             method: 'PUT',
             headers: {

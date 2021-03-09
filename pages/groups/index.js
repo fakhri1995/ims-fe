@@ -2,7 +2,6 @@ import Layout from '../../components/layout-dashboard-groups'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import Table from 'antd/lib/table'
-import Tooltip from 'antd/lib/tooltip'
 import Button from 'antd/lib/button'
 import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import { useState } from 'react'
@@ -15,7 +14,6 @@ import Menu from 'antd/lib/menu'
 import st from '../../components/layout-dashboard-groups.module.css'
 import notification from 'antd/lib/notification'
 import Modal from 'antd/lib/modal'
-import { set } from 'nprogress'
 
 function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters, sidemenu, dataDetailGroup }) {
     const rt = useRouter()
@@ -73,7 +71,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
             .then(res => res.json())
             .then(res2 => {
                 if (res2.success) {
-                    setWarningDelete(false,null)
+                    setWarningDelete(false, null)
                     notification['success']({
                         message: res2.message,
                         duration: 3
@@ -83,7 +81,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                     }, 500)
                 }
                 else if (!res2.success) {
-                    setWarningDelete(false,null)
+                    setWarningDelete(false, null)
                     notification['error']({
                         message: res2.message,
                         duration: 3
@@ -91,10 +89,10 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                 }
             })
     }
-    
+
     function columns(variabel) {
         var columnsDD = []
-        return(
+        return (
             columnsDD = [
                 {
                     title: 'role',
@@ -104,15 +102,15 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                     render(text, record) {
                         return {
                             props: {
-                            style: { background: record.idx%2 == 1 ? '#f2f2f2' : '#fff' },
-                          },
+                                style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
+                            },
                             children: <div><Link href={{
-                                    pathname: `/groups/update/`+variabel+`/${record.key}`,
-                                    query: {
-                                        originPath: 'Admin'
-                                    }
-                                }}><a>{record.name}</a></Link>
-                                 <p style={{fontSize:'13px'}}>{record.description}</p></div>,
+                                pathname: `/groups/update/` + variabel + `/${record.key}`,
+                                query: {
+                                    originPath: 'Admin'
+                                }
+                            }}><a>{record.name}</a></Link>
+                                <p style={{ fontSize: '13px' }}>{record.description}</p></div>,
                         };
                     },
                 },
@@ -124,17 +122,17 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                     render: (text, record, index) => {
                         return {
                             props: {
-                                style: { background: record.idx%2 == 1 ? '#f2f2f2' : '#fff' },
+                                style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
                             },
-                            children: 
-                            <Button>
-                                <Link href={{
-                                    pathname: `/groups/update/`+variabel+`/${record.key}`,
-                                    query: {
-                                        originPath: 'Admin'
-                                    }
-                                }}><a>Edit</a></Link>
-                            </Button>
+                            children:
+                                <Button>
+                                    <Link href={{
+                                        pathname: `/groups/update/` + variabel + `/${record.key}`,
+                                        query: {
+                                            originPath: 'Admin'
+                                        }
+                                    }}><a>Edit</a></Link>
+                                </Button>
                         }
                     }
                 },
@@ -145,46 +143,46 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                     width: 100,
                     render: (text, record, index) => {
                         return {
-                            
-                            
+
+
                             props: {
-                                style: { background: record.idx%2 == 1 ? '#f2f2f2' : '#fff' },
+                                style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
                             },
-                            children: 
-                            <>
-                            {/* <Tooltip placement="topLeft" title={"Delete"}> */}
-                            <Button onClick={() => { onClickModalDeleteGroup(true,record) }}>
-                                <a><DeleteOutlined /></a>
-                            </Button>
-                            
-                             {/* </Tooltip> */}
-                            </>
+                            children:
+                                <>
+                                    {/* <Tooltip placement="topLeft" title={"Delete"}> */}
+                                    <Button onClick={() => { onClickModalDeleteGroup(true, record) }}>
+                                        <a><DeleteOutlined /></a>
+                                    </Button>
+
+                                    {/* </Tooltip> */}
+                                </>
                         }
                     }
                 }
             ]
         )
     }
-    const menu = () =>{
+    const menu = () => {
         return (
-        <Menu style={{padding:"10px 5px"}}>
-          <Menu.Item  key="0">
-            <Link href={{
-                pathname: '/groups/create/agents',
-                query: {
-                    originPath: "Admin"
-                }
-            }}>Agent Group</Link>
-          </Menu.Item>
-          <Menu.Item key="1">
-          <Link href={{
-                pathname: '/groups/create/requesters',
-                query: {
-                    originPath: "Admin"
-                }
-            }}>Requester Group</Link>
-          </Menu.Item>
-        </Menu>
+            <Menu style={{ padding: "10px 5px" }}>
+                <Menu.Item key="0">
+                    <Link href={{
+                        pathname: '/groups/create/agents',
+                        query: {
+                            originPath: "Admin"
+                        }
+                    }}>Agent Group</Link>
+                </Menu.Item>
+                <Menu.Item key="1">
+                    <Link href={{
+                        pathname: '/groups/create/requesters',
+                        query: {
+                            originPath: "Admin"
+                        }
+                    }}>Requester Group</Link>
+                </Menu.Item>
+            </Menu>
         )
     }
     console.log
@@ -198,11 +196,13 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                                 <h1 className="font-semibold text-base w-auto py-2">Groups</h1>
                                 <div className="flex space-x-2">
                                     <Dropdown overlay={menu} placement="bottomCenter" trigger={['click']}>
-                                        <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center" >
-                                            <p onClick={e => e.preventDefault()}>
-                                            Create New &nbsp;<DownOutlined style={{verticalAlign:'0.2em'}} />
-                                            </p>
-                                        </div>
+                                        {/* <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center" > */}
+                                        {/* <p onClick={e => e.preventDefault()}> */}
+                                        <Button type="primary" size="large">
+                                            Buat Groups&nbsp;<DownOutlined style={{ verticalAlign: '0.2em' }} />
+                                        </Button>
+                                        {/* </p> */}
+                                        {/* </div> */}
                                     </Dropdown>
                                 </div>
                             </div>
@@ -224,8 +224,8 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                         <Modal
                             title="Konfirmasi untuk menghapus grup"
                             visible={warningDelete.istrue}
-                            onOk={() => { handleDeleteGroup(warningDelete.key)}}
-                            onCancel={() => setWarningDelete(false,null)}
+                            onOk={() => { handleDeleteGroup(warningDelete.key) }}
+                            onCancel={() => setWarningDelete(false, null)}
                         >
                             Apakah anda yakin ingin menghapus grup <strong>{warningDelete.name}</strong>?
                             </Modal>
@@ -273,7 +273,7 @@ export async function getServerSideProps({ req, res }) {
     })
     const resjsonGetGroupsAgents = await resourcesGetGroupsAgents.json()
     const dataGroupsAgents = resjsonGetGroupsAgents
-    
+
     const resourcesGetGroupsRequesters = await fetch(`https://boiling-thicket-46501.herokuapp.com/getGroups?is_agent=false`, {
         method: `GET`,
         headers: {

@@ -8,6 +8,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import Modal from 'antd/lib/modal'
+import Button from 'antd/lib/button'
 import notification from 'antd/lib/notification'
 import st from '../../../components/layout-dashboard.module.css'
 
@@ -19,6 +20,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
     const tok = initProps
     var pathArr = rt.pathname.split("/").slice(1)
     pathArr[pathArr.length - 1] = userId
+    const [instanceForm] = Form.useForm()
 
     const [loadingfoto, setLoadingfoto] = useState(false)
     const [data1, setData1] = useState({
@@ -31,6 +33,8 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
     const [visible, setVisible] = useState(false)
     const [visiblenon, setVisiblenon] = useState(false)
     const [visibleubahpass, setVisibleubahpass] = useState(false)
+    const [loadingupdate, setLoadingupdate] = useState(false)
+
     const [datapass, setDatapass] = useState({
         user_id: dataDetailAccount.data.user_id,
         new_password: ''
@@ -59,6 +63,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
         setLoadingfoto(false)
     }
     const handleSubmitEditAccount = () => {
+        setLoadingupdate(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateAccountDetail`, {
             method: 'POST',
             headers: {
@@ -69,6 +74,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
         })
             .then(res => res.json())
             .then(res2 => {
+                setLoadingupdate(false)
                 if (res2.data) {
                     notification['success']({
                         message: res2.data.message,
@@ -76,7 +82,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
                     })
                     setTimeout(() => {
                         rt.push(`/requesters/update/${dataDetailAccount.data.user_id}?originPath=Admin`)
-                    }, 1000)
+                    }, 300)
                 }
                 else if (!res2.success) {
                     notification['error']({
@@ -174,39 +180,22 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
                             <h1 className="font-semibold py-2">Edit Requesters</h1>
                             <div className="flex space-x-2">
                                 <Link href={`/requesters?originPath=Admin`}>
-                                    <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button>
+                                    <Button type="default" size="middle">Batalkan</Button>
+                                    {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button> */}
                                 </Link>
-                                <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={handleSubmitEditAccount}>Update</button>
+                                <Button type="primary" size="middle" loading={loadingupdate} onClick={instanceForm.submit}>Perbarui</Button>
+                                {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={handleSubmitEditAccount}>Update</button> */}
                             </div>
                         </div>
                     </Sticky>
-                    <div className="p-4 mb-14">
-                        <h1 className="font-semibold mb-2">Requesters type</h1>
-                        <div className="grid grid-cols-1 md:grid-cols-2">
-                            <div className="md:mr-20 col-span-1 md:col-span-1">
-                                <input type="radio" id="fulltime" name="agentType" /> <label htmlFor="fulltime" className="font-semibold text-xs">Full-Time</label>
-                                <br />
-                                <p className="text-sm">
-                                    Consumes an requesters license.
-                                </p>
-                            </div>
-                            <div className=" col-span-1 md:col-span-1">
-                                <input type="radio" id="occasional" name="agentType" /> <label htmlFor="occasional" className="font-semibold text-xs">Occasional</label>
-                                <br />
-                                <p className="text-sm">
-                                    Consumes a day pass for each day that they login.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
                     <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-14">
                         <div className="border-b border-black p-4 font-semibold mb-5 flex">
                             <div className="md:mr-5 pt-1">Detail Akun Requesters</div>
                             {
                                 dataDetailAccount.data.attribute.is_enabled ?
-                                    <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md w-auto">AKTIF ACCOUNT</div>
+                                    <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md w-auto">AKTIF AKUN</div>
                                     :
-                                    <div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md w-auto">NON-AKTIF ACCOUNT</div>
+                                    <div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md w-auto">NON-AKTIF AKUN</div>
                             }
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4">
@@ -219,17 +208,39 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
                                 </label>
                             </div>
                             <div className="p-3 col-span-1 md:col-span-3">
-                                <Form layout="vertical">
-                                    <Form.Item label="ID" required tooltip="Wajib diisi">
+                                <Form layout="vertical" initialValues={data1} form={instanceForm} onFinish={handleSubmitEditAccount}>
+                                    <div className="flex flex-col mb-5">
+                                        <h1 className="text-sm">ID</h1>
+                                        <h1 className="text-sm font-semibold">{data1.id}</h1>
+                                    </div>
+                                    {/* <Form.Item label="ID" required tooltip="Wajib diisi">
                                         <Input defaultValue={data1.id} onChange={onChangeEditAgents} name="id" />
-                                    </Form.Item>
-                                    <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi">
+                                    </Form.Item> */}
+                                    <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi" name="fullname" initialValue={data1.fullname}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Nama Lengkap harus diisi',
+                                        },
+                                    ]}>
                                         <Input defaultValue={data1.fullname} onChange={onChangeEditAgents} name="fullname"/>
                                     </Form.Item>
-                                    <Form.Item label="No. Handphone">
+                                    <Form.Item label="No. Handphone" required tooltip="Wajib diisi" name="phone_number" initialValue={data1.phone_number}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'No. Handphone harus diisi',
+                                        },
+                                    ]}>
                                         <Input defaultValue={data1.phone_number} onChange={onChangeEditAgents} name="phone_number"/>
                                     </Form.Item>
-                                    <Form.Item label="Role" required tooltip="Wajib diisi">
+                                    <Form.Item label="Role" required tooltip="Wajib diisi" name="role" initialValue={data1.role}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Role harus diisi',
+                                        },
+                                    ]}>
                                         <input type="number" defaultValue={data1.role} name={'role'} onChange={onChangeEditAgents} />
                                     </Form.Item>
                                 </Form>

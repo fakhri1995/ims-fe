@@ -11,6 +11,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Modal from 'antd/lib/modal'
 import st from '../../../components/layout-dashboard.module.css'
+import { Button } from 'antd'
 // import Link from 'next/link';
 // import Breadcrumb from 'antd/lib/breadcrumb'
 
@@ -24,6 +25,8 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
     const [visible, setVisible] = useState(false)
     const [visiblenon, setVisiblenon] = useState(false)
     const [visibleubahpass, setVisibleubahpass] = useState(false)
+    const [loadingsave, setLoadingsave] = useState(false)
+    const [instanceForm] = Form.useForm();
     const [datapass, setDatapass] = useState({
         user_id: dataDetailAccount.data.user_id,
         new_password: ''
@@ -59,6 +62,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
         setLoadingfoto(false)
     }
     const handleSubmitEditAccount = () => {
+        setLoadingsave(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateAccountDetail`, {
             method: 'POST',
             headers: {
@@ -69,6 +73,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
         })
             .then(res => res.json())
             .then(res2 => {
+                setLoadingsave(false)
                 if (res2.data) {
                     notification['success']({
                         message: res2.data.message,
@@ -173,44 +178,29 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                             <h1 className="font-semibold py-2">Edit Agents</h1>
                             <div className="flex space-x-2">
                                 <Link href={`/agents?originPath=Admin`}>
-                                    <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button>
+                                    <Button type="default" size="middle">
+                                        Batalkan
+                                    </Button>
+                                    {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button> */}
                                 </Link>
-                                <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={handleSubmitEditAccount}>Update</button>
+                                <Button type="primary" size="middle" loading={loadingsave} onClick={instanceForm.submit}>Perbarui</Button>
+                                {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={handleSubmitEditAccount}>Update</button> */}
                             </div>
                         </div>
                     </Sticky>
-                    <div className="p-4 mb-14">
-                        <h1 className="font-semibold mb-2">Agent type</h1>
-                        <div className="grid grid-cols-1 md:grid-cols-2">
-                            <div className="md:mr-20 col-span-1 md:col-span-1">
-                                <input type="radio" id="fulltime" name="agentType" /> <label htmlFor="fulltime" className="font-semibold text-xs">Full-Time</label>
-                                <br />
-                                <p className="text-sm">
-                                    Consumes an agent license.
-                                </p>
-                            </div>
-                            <div className=" col-span-1 md:col-span-1">
-                                <input type="radio" id="occasional" name="agentType" /> <label htmlFor="occasional" className="font-semibold text-xs">Occasional</label>
-                                <br />
-                                <p className="text-sm">
-                                    Consumes a day pass for each day that they login.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
                     <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-14">
                         <div className="border-b border-black p-4 font-semibold mb-5 flex">
                             <div className="md:mr-5 pt-1">Detail Akun Agents</div>
                             {
                                 dataDetailAccount.data.attribute.is_enabled ?
-                                    <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md w-auto">AKTIF ACCOUNT</div>
+                                    <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md w-auto">AKTIF AKUN</div>
                                     :
-                                    <div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md w-auto">NON-AKTIF ACCOUNT</div>
+                                    <div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md w-auto">NON-AKTIF AKUN</div>
                             }
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4">
                             <div className="p-3 col-span-1 md:col-span-1 relative flex flex-col items-center">
-                                <img src={data1.profile_image} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
+                                <img src={data1.profile_image} className=" object-cover w-32 h-32 rounded-full mb-4" />
                                 <label className="custom-file-upload p-2 border-2 inline-block cursor-pointer text-sm rounded-md hover:bg-gray-200">
                                     <input type="file" style={{ display: `none` }} name="profile_image" onChange={onChangeEditFoto} />
                                     {loadingfoto ? <LoadingOutlined /> : <EditOutlined style={{ fontSize: `1.5rem` }} />}
@@ -220,17 +210,39 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                             <div className="p-3 col-span-1 md:col-span-3">
                                 <h1 className="text-xs text-gray-600 mb-1">Email:</h1>
                                 <h1 className="text-sm text-black mb-5">{dataDetailAccount.data.email}</h1>
-                                <Form layout="vertical">
-                                    <Form.Item label="ID" required tooltip="Wajib diisi">
+                                <div className="flex flex-col mb-5">
+                                    <h1 className="text-sm">ID</h1>
+                                    <h1 className="text-sm font-semibold">{data1.id}</h1>
+                                </div>
+                                <Form layout="vertical" form={instanceForm} onFinish={handleSubmitEditAccount} initialValues={data1}>
+                                    {/* <Form.Item label="ID" required tooltip="Wajib diisi">
                                         <Input defaultValue={data1.id} onChange={onChangeEditAgents} name="id" />
+                                    </Form.Item> */}
+                                    <Form.Item label="Nama Lengkap" name="fullname" required tooltip="Wajib diisi" initialValue={data1.fullname}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Nama Lengkap harus diisi',
+                                            },
+                                        ]}>
+                                        <Input defaultValue={data1.fullname} onChange={onChangeEditAgents} name="fullname" required />
                                     </Form.Item>
-                                    <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi">
-                                        <Input defaultValue={data1.fullname} onChange={onChangeEditAgents} name="fullname" />
-                                    </Form.Item>
-                                    <Form.Item label="No. Handphone">
+                                    <Form.Item label="No. Handphone" name="phone_number" required tooltip="Wajib diisi" initialValue={data1.phone_number}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'No. Handphone harus diisi',
+                                        },
+                                    ]}>
                                         <Input defaultValue={data1.phone_number} onChange={onChangeEditAgents} name="phone_number" />
                                     </Form.Item>
-                                    <Form.Item label="Role" required tooltip="Wajib diisi">
+                                    <Form.Item label="Role" name="role" required tooltip="Wajib diisi" initialValue={data1.role}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Role harus diisi',
+                                        },
+                                    ]}>
                                         <input type="number" defaultValue={data1.role} name={'role'} onChange={onChangeEditAgents} />
                                     </Form.Item>
                                 </Form>
