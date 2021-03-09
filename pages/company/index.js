@@ -255,7 +255,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                     {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-40" onClick={() => { setDrawablecreate(true) }}> Create</button> */}
                     <Drawer title="Buat Perusahaan Clients" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false); closeClientsDrawer(); instanceForm.resetFields() }} width={420} destroyOnClose={true}>
                         <div className="w-full h-auto grid grid-cols-1 md:grid-cols-1">
-                            <div className="p-3 col-span-1 md:col-span-1">
+                            <div className="px-3 pt-3 pb-0 col-span-1 md:col-span-1">
                                 <Form.Item name="profile_image">
                                     <Upload
                                         name="profile_image"

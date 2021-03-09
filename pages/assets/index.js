@@ -13,6 +13,7 @@ import notification from 'antd/lib/notification'
 import message from 'antd/lib/message'
 import Popconfirm from 'antd/lib/popconfirm'
 import Link from 'next/link'
+import { Button } from 'antd'
 import Layout from '../../components/layout-dashboard'
 import st from '../../components/layout-dashboard.module.css'
 
@@ -21,6 +22,8 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
+    const [loadingbtn, setloadingbtn] = useState(false)
+    const [loadingbtnfromparent, setloadingbtnparent] = useState(false)
     const treeData = dataAssetsList.data
     const onChangeParent = (value) => {
         setDatanew({
@@ -50,6 +53,8 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
     }
     const handleAddAssets = () => {
         // rt.push(`/assets/update/${datanew.name}?originPath=Admin&title=${datanew.name}&parent=${datanew.parent}&create=true`)
+        setloadingbtn(true)
+        setloadingbtnparent(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/addAsset`, {
             method: 'POST',
             headers: {
@@ -60,6 +65,8 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
         })
             .then(res => res.json())
             .then(res2 => {
+                setloadingbtn(false)
+                setloadingbtnparent(false)
                 if (res2.success) {
                     setNewmodal(false)
                     notification['success']({
@@ -120,9 +127,10 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                             <div className="text-xs md:text-sm font-semibold">
                                 <h1 className="mt-2">Assets Types & Fields</h1>
                             </div>
-                            <div className="w-auto h-auto p-2 text-white bg-blue-700 rounded-md cursor-pointer hover:bg-blue-900 text-xs md:text-sm font-semibold" onClick={() => { setNewmodal(true) }}>
+                            <Button type="primary" size="large" onClick={() => { setNewmodal(true) }}>Tambah Asset Type</Button>
+                            {/* <div className="w-auto h-auto p-2 text-white bg-blue-700 rounded-md cursor-pointer hover:bg-blue-900 text-xs md:text-sm font-semibold" onClick={() => { setNewmodal(true) }}>
                                 New Asset Type
-                            </div>
+                            </div> */}
                             <Modal
                                 title="Tambah Assets Type & Field"
                                 visible={newmodal}
@@ -157,7 +165,8 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                             />
                                         </div>
                                     </div>
-                                    <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button>
+                                    <Button htmlType="submit" loading={loadingbtn} type="primary" size="middle">Submit</Button>
+                                    {/* <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button> */}
                                 </Form>
                             </Modal>
                             <Modal
@@ -195,7 +204,8 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                             />
                                         </div>
                                     </div>
-                                    <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button>
+                                    <Button htmlType="submit" loading={loadingbtnfromparent} type="primary" size="middle">Submit</Button>
+                                    {/* <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button> */}
                                 </Form>
                             </Modal>
                         </div>
