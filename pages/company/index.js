@@ -1,21 +1,16 @@
 import Layout from '../../components/layout-dashboard-clients'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
-// import Tabs from 'antd/lib/tabs'
 import Input from 'antd/lib/input'
 import Form from 'antd/lib/form'
 import Table from 'antd/lib/table'
-// import Tree from 'antd/lib/tree'
-// import Drawer from 'antd/lib/drawer'
-// import Popconfirm from 'antd/lib/popconfirm'
-// import message from 'antd/lib/message'
-// import { useState } from 'react'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import Upload from 'antd/lib/upload'
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import notification from 'antd/lib/notification'
 import Drawer from 'antd/lib/drawer'
+import Button from 'antd/lib/button'
 import Link from 'next/link'
 import { useState } from 'react'
 import st from '../../components/layout-dashboard-clients.module.css'
@@ -27,13 +22,15 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     const { originPath } = rt.query
     const [drawablecreate, setDrawablecreate] = useState(false)
     const [loadingupload, setLoadingupload] = useState(false)
-    const [bankdata, setBankdata] = useState({
+    const [loadingbtn, setloadingbtn] = useState(false)
+    const [instanceForm] = Form.useForm()
+    const [newclients, setnewclients] = useState({
         name: '',
         role: 0,
         address: '',
         phone_number: '',
         image_logo: '',
-        image_of_company: 0
+        member_of_company: 0
     })
     var dataTable = []
     if (!dataCompanyList.data) {
@@ -44,7 +41,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
         })
         rt.push('/dashboard/admin')
     }
-    else{
+    else {
         dataTable = dataCompanyList.data.companies.map((doc, idx) => {
             return ({
                 image_logo: doc.image_logo,
@@ -147,6 +144,17 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
             )
         }
     ]
+    const closeClientsDrawer = () => {
+        setnewclients({
+            name: '',
+            role: 0,
+            address: '',
+            phone_number: '',
+            image_logo: '',
+            member_of_company: 0
+        })
+    }
+
     const beforeUploadProfileImage = (file) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
         if (!isJpgOrPng) {
@@ -173,8 +181,8 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
             })
                 .then(res => res.json())
                 .then(res2 => {
-                    setBankdata({
-                        ...bankdata,
+                    setnewclients({
+                        ...newclients,
                         image_logo: res2.secure_url
                     })
                 })
@@ -183,7 +191,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     const uploadButton = (
         <div>
             {loadingupload ? <LoadingOutlined /> : <PlusOutlined />}
-            <div style={{ marginTop: 8 }}>Upload</div>
+            <div style={{ marginTop: 8 }}>Unggah</div>
         </div>
     );
     const onChangeCreateClients = (e) => {
@@ -191,28 +199,30 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
         if (e.target.name === "role") {
             val = parseInt(e.target.value)
         }
-        setBankdata({
-            ...bankdata,
+        setnewclients({
+            ...newclients,
             [e.target.name]: val
         })
     }
     const handleSubmitCreateClients = () => {
+        setloadingbtn(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyMember`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(bankdata)
+            body: JSON.stringify(newclients)
         })
             .then((res) => res.json())
             .then(res2 => {
+                setloadingbtn(false)
                 if (res2.data) {
                     notification['success']({
                         message: res2.message,
                         duration: 3
                     })
-                    setBankdata({
+                    setnewclients({
                         name: '',
                         role: 0,
                         address: '',
@@ -223,7 +233,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                     setTimeout(() => {
                         setDrawablecreate(false)
                         rt.push(`/company?originPath=Admin`)
-                    }, 3000)
+                    }, 800)
                 }
                 else if (!res2.success) {
                     notification['error']({
@@ -235,30 +245,16 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                     })
                 }
             })
-        console.log("isi bank data: " + bankdata.name)
+        console.log("isi bank data: " + newclients.name)
     }
-    // const onMouseOverCells = (idx) => {
-    //     const ev = events
-    //     ev[idx] = true
-    //     setEvents(ev)
-    //     setAction("block")
-    //     console.log("rows over: " + events[idx] + " " + idx)
-
-    // }
-    // const onMouseLeaveCells = (idx) => {
-    //     const ev = events
-    //     ev[idx] = false
-    //     setEvents(ev)
-    //     setAction("hidden")
-    //     console.log("rows leave: " + events[idx] + " " + idx)
-    // }
     return (
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} st={st}>
             <div className="flex justify-start md:justify-end p-3 md:border-t-2 md:border-b-2 bg-white mb-4 md:mb-8">
                 <div className="flex space-x-2">
-                    <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-40" onClick={() => { setDrawablecreate(true) }}> Create</button>
-                    <Drawer title="Create Company MIG" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={720}>
-                        <div className="w-full h-auto grid grid-cols-1 md:grid-cols-2">
+                    <Button type="primary" size="large" onClick={() => { setDrawablecreate(true) }}>Buat Baru</Button>
+                    {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-40" onClick={() => { setDrawablecreate(true) }}> Create</button> */}
+                    <Drawer title="Buat Perusahaan Clients" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false); closeClientsDrawer(); instanceForm.resetFields() }} width={420} destroyOnClose={true}>
+                        <div className="w-full h-auto grid grid-cols-1 md:grid-cols-1">
                             <div className="p-3 col-span-1 md:col-span-1">
                                 <Form.Item name="profile_image">
                                     <Upload
@@ -269,70 +265,69 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                                         beforeUpload={beforeUploadProfileImage}
                                         onChange={onChangeProfileImage}
                                     >
-                                        {bankdata.image_logo ? <img src={bankdata.image_logo} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                                        {newclients.image_logo ? <img src={newclients.image_logo} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
                                     </Upload>
                                 </Form.Item>
                             </div>
-                            <div className="md:m-4 mb-5 md:mb-0 ">
-                                <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
-                                <Form.Item
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Nama perusahaan!',
-                                        },
-                                    ]}
-                                >
-                                    <Input defaultValue={bankdata.name} name="name" onChange={onChangeCreateClients}></Input>
-                                </Form.Item>
-                            </div>
-                            <div className="md:m-4 mb-5 md:mb-0 ">
-                                <h1 className="font-semibold text-sm">Role:</h1>
-                                <Form.Item
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Role!',
-                                        },
-                                    ]}
-                                >
-                                    <input type="number" value={bankdata.role} name={'role'} onChange={onChangeCreateClients} style={{ width: `20rem` }} />
-                                </Form.Item>
-                            </div>
-                            <div className="md:m-4 mb-5 md:mb-0 ">
-                                <h1 className="font-semibold text-sm">Alamat:</h1>
-                                <Form.Item
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Alamat!',
-                                        },
-                                    ]}
-                                >
-                                    <Input defaultValue={bankdata.address} name="address" onChange={onChangeCreateClients}></Input>
-                                </Form.Item>
-                            </div>
-                            <div className="md:m-4 mb-5 md:mb-0 ">
-                                <h1 className="font-semibold text-sm">Telepon:</h1>
-                                <Form.Item
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Nomor telepon!',
-                                        },
-                                    ]}
-                                >
-                                    <Input defaultValue={bankdata.phone_number} name="phone_number" onChange={onChangeCreateClients}></Input>
-                                </Form.Item>
-                            </div>
+                            <Form layout="vertical" className="createClientsForm" onFinish={handleSubmitCreateClients} form={instanceForm}>
+                                <div className="md:m-4 mb-5 md:mb-0 ">
+                                    <Form.Item name="name" label="Nama Perusahaan"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Nama perusahaan wajib diisi',
+                                            },
+                                        ]}
+                                    >
+                                        <Input value={newclients.name} name="name" onChange={onChangeCreateClients}></Input>
+                                    </Form.Item>
+                                </div>
+                                <div className="md:m-4 mb-5 md:mb-0 ">
+                                    <Form.Item name="role" label="Role"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Role wajib diisi',
+                                            },
+                                        ]}
+                                    >
+                                        <input type="number" value={newclients.role} name={'role'} onChange={onChangeCreateClients} style={{ width: `20rem` }} />
+                                    </Form.Item>
+                                </div>
+                                <div className="md:m-4 mb-5 md:mb-0 ">
+                                    <Form.Item name="address" label="Alamat"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Alamat wajib diisi',
+                                            },
+                                        ]}
+                                    >
+                                        <Input value={newclients.address} name="address" onChange={onChangeCreateClients}></Input>
+                                    </Form.Item>
+                                </div>
+                                <div className="md:m-4 mb-5 md:mb-0 ">
+                                    <Form.Item name="phone_number" label="Telepon"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Nomor telepon wajib diisi',
+                                            },
+                                        ]}
+                                    >
+                                        <Input value={newclients.phone_number} name="phone_number" onChange={onChangeCreateClients}></Input>
+                                    </Form.Item>
+                                </div>
+                                <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn} style={{ marginBottom: `1rem` }}>Simpan</Button>
+                            </Form>
                         </div>
-                        <button className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800" onClick={handleSubmitCreateClients}>Create</button>
+                        {/* <button className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800" onClick={handleSubmitCreateClients}>Simpan</button> */}
                     </Drawer>
                 </div>
             </div>
             <div className="p-5 mt-5 flex flex-col space-y-5 shadow-md rounded-md w-full h-auto bg-white">
                 <Table
-                pagination={{ pageSize: 6 }}
+                    pagination={{ pageSize: 6 }}
                     scroll={{ x: 200 }}
                     onRow={(record, rowIndex) => {
                         return {

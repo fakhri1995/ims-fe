@@ -120,7 +120,8 @@ function Roles({ initProps, dataProfile, sidemenu }) {
                                 <h1 className="font-semibold text-base w-auto py-2">Roles</h1>
                                 <div className="flex space-x-2">
                                     <Link href="/roles/create">
-                                        <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center" >New Role</div>
+                                        <Button type="primary" size="large">Tambah Role</Button>
+                                        {/* <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center" >New Role</div> */}
                                     </Link>
                                 </div>
                             </div>

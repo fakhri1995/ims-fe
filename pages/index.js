@@ -16,6 +16,7 @@ export default function Home({ initProps }) {
     password: ''
   })
   const [alerterror, setAlerterror] = useState(false)
+  const [loadinglogin, setLoadinglogin] = useState(false)
   const onChangeLogin = (e) => {
     setFormdata({
       ...formdata,
@@ -23,6 +24,7 @@ export default function Home({ initProps }) {
     })
   }
   const handleLogin = () => {
+    setLoadinglogin(true)
     fetch(`https://boiling-thicket-46501.herokuapp.com/login`, {
       method: "POST",
       headers: {
@@ -33,6 +35,7 @@ export default function Home({ initProps }) {
     })
       .then(res => res.json())
       .then(res2 => {
+        setLoadinglogin(false)
         if (res2.data) {
           notification['success']({
             message: "Selamat datang di MIGSYS",
@@ -40,7 +43,7 @@ export default function Home({ initProps }) {
           })
           // console.log("token: " + res2.data.token)
           var date = new Date();
-          date.setTime(date.getTime() + (3600 * 1000 * 24));
+          date.setTime(date.getTime() + (3600 * 1000));
           jscookie.set('token', JSON.stringify(res2.data.token), { expires: date })
           // console.log("token di session: " + JSON.parse(jscookie.get('token')))
           rt.push('/dashboard/home')
@@ -92,9 +95,9 @@ export default function Home({ initProps }) {
                     </a> */}
               </Form.Item>
               <Form.Item style={{ justifyContent: `center` }}>
-                <Button type="primary" htmlType="submit" className="login-form-button mb-5" style={{ width: `100%` }}>
+                <Button type="primary" htmlType="submit" loading={loadinglogin} className="login-form-button mb-5" style={{ width: `100%` }}>
                   Log in
-                    </Button>
+                </Button>
               </Form.Item>
             </Form>
           </div>
