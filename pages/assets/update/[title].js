@@ -20,9 +20,6 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
     var { create } = rt.query
     const originPath = "Admin"
     const pathArr = rt.pathname.split("/").slice(1)
-    // if (!dataInvColumns.data) {
-    //     dataInvColumns.data = []
-    // }
 
     const [datawhole, setdatawhole] = useState(dataInvColumns.data.inventory_columns)
     const [datatetap, setdatatetap] = useState(dataInvColumns.data.inventory_columns)
@@ -101,7 +98,7 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
         })
     }
 
-    //Dynamic field
+    //Dynamic field (untuk data baru)
     const [datafield, setDatafield] = useState({
         // asset_id: dataAssetDetail.id,
         name: '',
@@ -110,6 +107,8 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
         required: false,
         unique: false
     })
+
+    //onChange handler
     const onChangeUpdateField = (e) => {
         setDatafield({
             ...datafield,
@@ -433,6 +432,15 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                         duration: 3
                     })
                     setTimeout(() => {
+                        setdatacreate([])
+                        setdataedit([])
+                        setdatadelete([])
+                        // if (process.env.NODE_ENV == "production") {
+                        //     window.location.href = `http://localhost:3000/assets/update/${assetsTitle}?originPath=Admin&parent=${assetsParent}`
+                        // }
+                        // else if (process.env.NODE_ENV == "development") {
+                        //     window.location.href = `https://migsys.herokuapp.com/assets/update/${assetsTitle}?originPath=Admin&parent=${assetsParent}`
+                        // }
                         rt.push(`/assets/update/${assetsTitle}?originPath=Admin&parent=${assetsParent}`)
                     }, 500)
                 }

@@ -34,6 +34,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
             ["asset_name"]: record.asset_name
         })
     }
+    const [modaldelete, setmodaldelete] = useState(false)
     //-------------------------------------------
 
     //------------get data inventories-------------------
@@ -58,6 +59,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
 
     //------------------handle delete inventory-------------------
     const handleDeleteInventory = (key) => {
+        setmodaldelete(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/deleteInventory?id=${key}`, {
             method: 'DELETE',
             headers: {
@@ -70,6 +72,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
         })
             .then(res => res.json())
             .then(res2 => {
+                setmodaldelete(false)
                 if (res2.success) {
                     setWarningDelete(false, null)
                     notification['success']({
@@ -161,7 +164,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
         }
     ]
     //------------------------------------------------------------------------
-    
+
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
@@ -172,11 +175,12 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                                 <h1 className="font-semibold text-base w-auto py-2">All Assets</h1>
                                 <div className="flex space-x-2">
                                     <Link href={`/inventories/create?originPath=Assets`}>
-                                        <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center" >
+                                        <Button type="primary" size="large">Tambah Baru</Button>
+                                        {/* <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center" >
                                             <p>
                                                 Add New
                                             </p>
-                                        </div>
+                                        </div> */}
                                     </Link>
                                 </div>
                             </div>
@@ -195,6 +199,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                             visible={warningDelete.istrue}
                             onOk={() => { handleDeleteInventory(warningDelete.key) }}
                             onCancel={() => setWarningDelete(false, null)}
+                            okButtonProps={{ disabled: modaldelete }}
                         >
                             Apakah anda yakin ingin menghapus grup <strong>{warningDelete.asset_name}</strong>?
                             </Modal>
