@@ -29,6 +29,8 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
     const [loadingdynamic, setLoadingdynamic] = useState(false)
     const [datadynamic, setDatadynamic] = useState([])
     const [datadynamic2, setDatadynamic2] = useState([])
+    const [datadynamic3, setDatadynamic3] = useState([])
+    const [objdynamic, setobjdynamic] = useState({})
     const [loadingbtnsubmit, setloadingbtnsubmit] = useState(false)
     function flattenArr(dataassets) {
         const result = []
@@ -83,20 +85,11 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
     }
     const onChangeInventoryType = (value) => {
         setLoadingdynamic(true)
-        setDatanew({
-            ...datanew,
-            asset_code: value
-        })
         var dataAssetDetail = {}
         flattenDataAsset.forEach(item => {
             if (item.value == value) {
                 dataAssetDetail = item
             }
-        })
-        setDatanew({
-            ...datanew,
-            asset_id: dataAssetDetail.id,
-            asset_code: dataAssetDetail.value
         })
         fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryColumns?id=${dataAssetDetail.id}`, {
             method: `GET`,
@@ -119,14 +112,35 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
                             value: doc.default
                         }
                     )))
+                    setDatadynamic3(res2.data.inventory_columns.map((doc, idx) => (
+                        {
+                            inventory_column_id: doc.id,
+                            value: doc.default
+                        }
+                    )))
+                    setDatanew({
+                        ...datanew,
+                        asset_id: dataAssetDetail.id,
+                        asset_code: value,
+                        inventory_values: res2.data.inventory_columns.map((doc, idx) => (
+                            {
+                                inventory_column_id: doc.id,
+                                value: doc.default
+                            }
+                        ))
+                    })
+                    res2.data.inventory_columns.map((doc, idx) => {
+                        setobjdynamic({
+                            ...objdynamic,
+                            [doc.name]: doc.default
+                        })
+                    })
                     setLoadingdynamic(false)
                 }
             })
     }
     const onChangeDynamic = (e, idInvCol) => {
-        // console.log("target: " + datadynamic2[0].inventory_column_id + "  " + datadynamic2[1].inventory_column_id)
         const idx = datadynamic2.map((doc, idx) => { return doc.inventory_column_id }).indexOf(idInvCol)
-        // console.log("idx: " + idx)
         var items = [...datadynamic2]
         items[idx] = {
             inventory_column_id: idInvCol,
@@ -137,7 +151,6 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
             ...datanew,
             inventory_values: items
         })
-        // console.log("isias situ: " + datadynamic2[1].value)
     }
     const onChangeDynamicAnt1 = (value, idInvCol) => {
         const idx = datadynamic2.map((doc, idx) => { return doc.inventory_column_id }).indexOf(idInvCol)
@@ -153,7 +166,6 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
         })
     }
     const handleSubmitInventory = () => {
-        // console.log(datanew.inventory_values)
         setloadingbtnsubmit(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/addInventory`, {
             method: 'POST',
@@ -191,7 +203,7 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
                         <div className="flex justify-between p-5 w-full h-auto bg-white border-b mb-8">
                             <div className=" font-semibold">Inventori Baru</div>
                             <div className="flex">
-                                <Link href={`/inventory?originPath=Admin`}>
+                                <Link href={`/inventories?originPath=Admin`}>
                                     <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batalkan</Button>
                                 </Link>
                                 <Button type="primary" size="middle" onClick={createInventoryForm.submit} loading={loadingbtnsubmit}>Submit</Button>
@@ -363,7 +375,7 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
                                                                             required: true,
                                                                             message: `${doc.name} harus diisi`,
                                                                         },
-                                                                    ]}
+                                                                    ]} initialValue={objdynamic}
                                                                 >
                                                                     {doc.data_type === "text" &&
                                                                         <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.default} required />}

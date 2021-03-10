@@ -98,7 +98,7 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataDetailRole }) {
                         <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
                             <Sticky containerSelectorFocus="#formAgentsWrapper">
                                 <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
-                                    <h1 className="font-semibold text-base w-auto py-2">Edit Roles</h1>
+                                    <h1 className="font-semibold text-base w-auto ">Edit Roles</h1>
                                     <div className="flex space-x-2">
                                         <Link href="/roles?originPath=Admin" >
                                             <Button type="default" size="middle">Batalkan</Button>
