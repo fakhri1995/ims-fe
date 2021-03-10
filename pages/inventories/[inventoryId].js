@@ -98,7 +98,7 @@ function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColum
         var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
         return time;
       }
-
+      
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
@@ -191,9 +191,13 @@ function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColum
                                         <Timeline.Item>Technical testing</Timeline.Item>
                                         <Timeline.Item label="2015-09-01 09:12:11">Network problems being solved</Timeline.Item>
                                     </Timeline> */}
-                                    <Timeline mode={'left'}> 
+                                    <Timeline mode={'alternate'}> 
                                     {activityLog.map((doc,index) => {
                                         var text
+                                        var data_update = ""
+                                        // console.log(Object.keys(doc.properties.attributes).length)
+                                        // console.log(Object.keys(doc.properties.attributes))
+                                        // console.log(Object.values(doc.properties.attributes))
                                         if (doc.description == "created inventory") {
                                             text =  "Created Inventory Named " + doc.properties.attributes.asset_name +
                                                     ", Own by " + (doc.properties.attributes.kepemilikan=="milikSendiri"?"Milik Sendiri":doc.properties.attributes.kepemilikan) +
@@ -201,7 +205,16 @@ function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColum
                                                     ", Vendor as " +doc.properties.attributes.vendor_name +
                                                     ", Status as " +doc.properties.attributes.status
                                         } else {
-                                            text = "Updated"
+                                            // data_update = doc.properties.attributes.filter((doc,idx)=>{
+                                                // return doc.key !="updated_at"
+                                            // })
+                                            for (let i = 0; i < Object.keys(doc.properties.attributes).length; i++) {
+                                                // if(doc.properties.attributes.key !="updated_at"){
+                                                    data_update = data_update + Object.keys(doc.properties.attributes)[i] + " changed to " + Object.values(doc.properties.attributes)[i] + ", "
+                                                // }
+                                            }
+                                            // console.log("123")
+                                            text = data_update
                                         }
                                             return(
                                                 <Timeline.Item key={index} label={timeConverter(Date.parse(doc.date))}>

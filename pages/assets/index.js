@@ -28,8 +28,16 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
     const onChangeParent = (value) => {
         setDatanew({
             ...datanew,
-            parent: value
+            ["parent"]: value
         })
+    }
+    const fungsiSetParent = (val) => {
+        console.log(val)
+        setParentadd(val);
+        setDatanew({
+            ...datanew,
+            ["parent"]: val
+        });
     }
     const [newmodal, setNewmodal] = useState(false)
     const [newmodalparent, setNewmodalparent] = useState(false)
@@ -67,6 +75,8 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
             .then(res2 => {
                 setloadingbtn(false)
                 setloadingbtnparent(false)
+                console.log(datanew)
+                // return
                 if (res2.success) {
                     setNewmodal(false)
                     notification['success']({
@@ -195,12 +205,13 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                                 style={{ width: '100%' }}
                                                 dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                                                 defaultValue={parentadd}
+                                                // value={parentadd}
                                                 treeData={treeData}
                                                 placeholder="Pilih parent"
                                                 treeDefaultExpandAll
-                                                onChange={(value) => { onChangeParent(value) }}
+                                                // onChange={(value) => { onChangeParent(value) }}
+                                                disabled
                                                 allowClear
-                                                required
                                             />
                                         </div>
                                     </div>
@@ -235,7 +246,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                                     {nodeData.title}
                                                 </div>
                                                 <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
-                                                    <a className="mx-2 pb-1" alt="add" onClick={() => { setNewmodalparent(true); setParentadd(nodeData.value); setParenttitle(nodeData.title) }}><PlusOutlined /></a>
+                                                    <a className="mx-2 pb-1" alt="add" onClick={() => { setNewmodalparent(true); fungsiSetParent(nodeData.value); setParenttitle(nodeData.title) }}><PlusOutlined /></a>
                                                     <Link href={`/assets/update/${nodeData.title}?originPath=Admin&parent=${prt}&id=${nodeData.id}`}>
                                                         <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                                     </Link>
