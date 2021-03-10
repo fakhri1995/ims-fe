@@ -192,7 +192,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                 <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
                     <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
-                            <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
+                            <div className="flex justify-between p-2 pt-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <h1 className="font-semibold text-base w-auto py-2">Groups</h1>
                                 <div className="flex space-x-2">
                                     <Dropdown overlay={menu} placement="bottomCenter" trigger={['click']}>

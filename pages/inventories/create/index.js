@@ -187,7 +187,7 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
                         <div className="flex justify-between p-5 w-full h-auto bg-white border-b mb-8">
                             <div className=" font-semibold">New Inventory</div>
                             <div className="flex">
-                                <Link href={`/inventory?originPath=Admin`}>
+                                <Link href={`/inventories?originPath=Admin`}>
                                     <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md mr-5">Cancel</button>
                                 </Link>
                                 <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={createInventoryForm.submit}>Submit</button>

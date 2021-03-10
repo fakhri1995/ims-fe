@@ -185,12 +185,6 @@ function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColum
                                 </TabPane>
                                 <TabPane tab={'Activity'} key={6}>
                                 <div className={'text-black text-sm flex flex-col bg-white border-gray-300 border cursor-pointer p-3'}>
-                                    {/* <Timeline mode={'left'}>
-                                        <Timeline.Item label="2015-09-01">Create a services</Timeline.Item>
-                                        <Timeline.Item label="2015-09-01 09:12:11">Solve initial network problems</Timeline.Item>
-                                        <Timeline.Item>Technical testing</Timeline.Item>
-                                        <Timeline.Item label="2015-09-01 09:12:11">Network problems being solved</Timeline.Item>
-                                    </Timeline> */}
                                     <Timeline mode={'alternate'}> 
                                     {activityLog.map((doc,index) => {
                                         var text
@@ -205,26 +199,14 @@ function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColum
                                                     ", Vendor as " +doc.properties.attributes.vendor_name +
                                                     ", Status as " +doc.properties.attributes.status
                                         } else {
-                                            // data_update = doc.properties.attributes.filter((doc,idx)=>{
-                                                // return doc.key !="updated_at"
-                                            // })
                                             for (let i = 0; i < Object.keys(doc.properties.attributes).length; i++) {
-                                                // if(doc.properties.attributes.key !="updated_at"){
-                                                    data_update = data_update + Object.keys(doc.properties.attributes)[i] + " changed to " + Object.values(doc.properties.attributes)[i] + ", "
-                                                // }
+                                                data_update = data_update + Object.keys(doc.properties.attributes)[i] + " changed to " + Object.values(doc.properties.attributes)[i] + ", "
                                             }
-                                            // console.log("123")
                                             text = data_update
                                         }
                                             return(
                                                 <Timeline.Item key={index} label={timeConverter(Date.parse(doc.date))}>
-                                                    {/* {doc.description == "created inventory" ? 
-                                                    "Created Inventory Named "+doc.properties.attributes.asset_name: 
-                                                    "Updated Inventory "+ } */}
                                                     {text}
-                                                    {/* if(doc.description == "created inventory"){
-                                                        
-                                                    } */}
                                                 </Timeline.Item>
                                                 )
                                         })

@@ -169,15 +169,17 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                     <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
-                                <h1 className="font-semibold text-base w-auto py-2">All Assets</h1>
+                                <h1 className="font-semibold text-base w-auto pt-2">All Assets</h1>
                                 <div className="flex space-x-2">
                                     <Link href={`/inventories/create?originPath=Assets`}>
-                                        <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center" >
+                                        {/* <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center" >
                                             <p>
                                                 Add New
                                             </p>
-                                        </div>
+                                        </div> */}
+                                        <Button type="primary" size="large">Tambah Inventory</Button>
                                     </Link>
+                                    
                                 </div>
                             </div>
                         </Sticky>

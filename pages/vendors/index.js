@@ -18,7 +18,7 @@ import { comment } from 'postcss'
 import Modal from 'antd/lib/modal'
 
 function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
-    console.log(dataVendors)
+    
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
@@ -28,7 +28,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
     const [drawableedit, setDrawableedit] = useState(false)
     const [createVendorForm] = Form.useForm();
     const [editVendorForm] = Form.useForm();
-    
+    const [loadingbtn, setLoadingbtn] = useState(false)
     // console.log(dataVendor)
     
     //----------CreateVendor-------------
@@ -74,6 +74,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
         })
     }
     const handleCreateVendor = () => {
+        setLoadingbtn(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/addVendor`, {
             method: 'POST',
             headers: {
@@ -84,6 +85,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
         })
             .then(res => res.json())
             .then(res2 => {
+                setLoadingbtn(false)
                 if (res2.success) {
                     createVendorForm.resetFields()
                     closeDrawer()
@@ -122,6 +124,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
         })
     }
     const handleDeleteVendor = (key) => {
+        setLoadingbtn(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/deleteVendor?id=${key}`, {
             method: 'DELETE',
             headers: {
@@ -130,6 +133,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
         })
             .then(res => res.json())
             .then(res2 => {
+                setLoadingbtn(false)
                 if (res2.success) {
                     setWarningDelete(false,null)
                     notification['success']({
@@ -281,7 +285,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
             title: 'PIC',
             dataIndex: 'pic',
             key: 'pic',
-            width: 200,
+            width: 250,
             render(text, record) {
                 return {
                     props: {
@@ -295,7 +299,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
             title: 'Phone',
             dataIndex: 'telepon',
             key: 'telepon',
-            width: 200,
+            width: 150,
             render(text, record) {
                 return {
                     props: {
@@ -333,7 +337,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                         {actions[index] ?
                         <>
                             <Tooltip placement="topLeft" title={"Edit"}>
-                            <Button size="medium" shape="square" onClick={() => { editVendorForm.resetFields();setDrawableedit(true); console.log(record); setEditvendor(record) }}><EditOutlined /></Button>
+                            <Button size="medium" shape="square" onClick={() => { editVendorForm.resetFields();setDrawableedit(true); setEditvendor(record) }}><EditOutlined /></Button>
                             </Tooltip>
                             </>
                         :
@@ -346,7 +350,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
         {
             title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0', // Non-breakable space is char 0xa0 (160 dec)
             dataIndex: 'actions',
-            width: 130,
+            width: 100,
             render: (text, record, index) => {
                 return {
                     props: {
@@ -378,10 +382,13 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                     <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
-                                <h1 className="font-semibold text-base w-auto py-2">Vendors</h1>
+                                <h1 className="font-semibold text-base w-auto pt-2">Vendors</h1>
                                 <div className="flex space-x-2">
                                     {/* <Link href="/roles/create"> */}
-                                        <button className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center" onClick={() => { setDrawablecreate(true) }}>New Vendor</button>
+                                        {/* <button className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center" onClick={() => { setDrawablecreate(true) }}>New Vendor</button> */}
+                                    {/* </Link> */}
+                                    {/* <Link href="/roles/create"> */}
+                                        <Button onClick={() => { setDrawablecreate(true) }} type="primary" size="large">Tambah Vendor</Button>
                                     {/* </Link> */}
                                 </div>
                             </div>
@@ -436,9 +443,9 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                             <button onClick={() => { setDrawablecreate(false), closeDrawer(),createVendorForm.resetFields()  }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
                                 Cancel
                                 </button>
-                            <button type="submit" onClick={createVendorForm.submit} className="bg-gray-700 hover:bg-gray-900 border text-white py-1 px-2 rounded-md w-20">
+                            <Button loading={loadingbtn}  type="primary" onClick={createVendorForm.submit} className=" bg-blue-500 hover:bg-blue-700 border text-white py-1 px-2 rounded-md w-20">
                                 Submit
-                                </button>
+                                </Button>
                         </div>
                     }
                     >
@@ -607,9 +614,9 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                             <button onClick={() => { setDrawableedit(false),editVendorForm.resetFields() }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
                                 Cancel
                                 </button>
-                            <button type="submit" onClick={editVendorForm.submit} className="bg-gray-700 hover:bg-gray-900 border text-white py-1 px-2 rounded-md w-20">
+                            <Button loading={loadingbtn} type="primary" onClick={editVendorForm.submit} className="bg-blue-500 hover:bg-blue-700 border text-white py-1 px-2 rounded-md w-20">
                                 Submit
-                                </button>
+                                </Button>
                         </div>
                     }
                     >

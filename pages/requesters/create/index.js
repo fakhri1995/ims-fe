@@ -132,7 +132,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                 </div>
                 <div className="col-span-1 md:col-span-3 flex flex-col" id="createAgentsWrapper">
                     <Sticky containerSelectorFocus="#createAgentsWrapper">
-                        <div className="flex justify-between p-4 border-t-2 border-b-2 bg-white mb-8">
+                        <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
                             <h1 className="font-semibold py-2">Requesters Baru</h1>
                             <div className="flex space-x-2">
                                 <Link href="/requesters?originPath=Admin">
