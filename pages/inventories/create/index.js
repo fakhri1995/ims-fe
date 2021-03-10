@@ -59,9 +59,9 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
         status: '',
         kepemilikan: '',
         kondisi: '',
-        tanggal_beli: new Date(),
+        tanggal_beli: new Date().toLocaleDateString(),
         harga_beli: 0,
-        tanggal_efektif: new Date(),
+        tanggal_efektif: new Date().toLocaleDateString(),
         depresiasi: 0,
         nilai_sisa: 0,
         nilai_buku: 0,
@@ -295,13 +295,13 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
                                         </Select>
                                     </Form.Item>
                                     <Form.Item name="tanggal_beli" style={{ marginRight: `1rem` }} label="Tanggal Beli">
-                                        <DatePicker onChange={(date, dateString) => { setDatanew({ ...datanew, tanggal_beli: date }) }} name="tanggal_beli" allowClear />
+                                        <DatePicker onChange={(date, dateString) => { setDatanew({ ...datanew, tanggal_beli: dateString }) }} name="tanggal_beli" allowClear format={'YYYY-MM-DD'} />
                                     </Form.Item>
                                     <Form.Item name="harga_beli" style={{ marginRight: `1rem` }} label="Harga Beli">
                                         <InputNumber onChange={(value) => { setDatanew({ ...datanew, harga_beli: value }) }} name="harga_beli" id="harga_beli" allowClear style={{ width: `100%` }} />
                                     </Form.Item>
                                     <Form.Item name="tanggal_efektif" style={{ marginRight: `1rem` }} label="Tanggal Efektif">
-                                        <DatePicker onChange={(date, dateString) => { setDatanew({ ...datanew, tanggal_efektif: date }) }} name="tanggal_efektif" allowClear />
+                                        <DatePicker onChange={(date, dateString) => { setDatanew({ ...datanew, tanggal_efektif: dateString }) }} name="tanggal_efektif" allowClear format={'YYYY-MM-DD'} />
                                     </Form.Item>
                                     <Form.Item name="depresiasi" style={{ marginRight: `1rem` }} label="Depresiasi">
                                         <InputNumber onChange={(value) => { setDatanew({ ...datanew, depresiasi: value }) }} name="depresiasi" id="depresiasi" allowClear style={{ width: `100%` }} />
