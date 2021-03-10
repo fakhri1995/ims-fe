@@ -11,15 +11,23 @@ import Tabs from 'antd/lib/tabs'
 import st from '../../components/layout-dashboard-inventories.module.css'
 import notification from 'antd/lib/notification'
 import Modal from 'antd/lib/modal'
+import { Timeline } from 'antd';
 import { Row, Col, Divider } from 'antd';
+import Router from 'next/router';
 
-function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColumnAndVendor, sidemenu }) {
+function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColumnAndVendor, dataInventoryActivityLog, sidemenu }) {
+    // Router.events.on('routeChangeStart', () => {
+    //     console.log("Mulai")
+    // });
+    // Router.events.on('routeChangeComplete', () => {
+    //     console.log("Selesai")
+    // });
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
     const { TabPane } = Tabs;
-    // console.log(dataInventory)
+    console.log(dataInventoryActivityLog)
     // console.log(dataInventoryColumnAndVendor)
     // console.log(dataInventoryColumnAndVendor.data)
     // console.log(dataInventoryColumnAndVendor.data.assets)
@@ -28,7 +36,8 @@ function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColum
     })
     asset_type = asset_type[0]
     // console.log(asset_type)
-    const inventory = dataInventory.data
+    const inventory = dataInventory.data.inventory
+    const activityLog = dataInventoryActivityLog.data
     //--------hook modal delete inventory-------------
     const [warningDelete, setWarningDelete] = useState({
         istrue: false,
@@ -74,8 +83,22 @@ function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColum
                 }
             })
     }
+
     //--------------------------------------------------------
     
+    var timeConverter = (UNIX_timestamp) => {
+        var a = new Date(UNIX_timestamp);
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var year = a.getFullYear();
+        var month = months[a.getMonth()];
+        var date = a.getDate();
+        var hour = a.getHours();
+        var min = a.getMinutes();
+        var sec = a.getSeconds();
+        var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+        return time;
+      }
+      
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
@@ -161,7 +184,53 @@ function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColum
                                 Content of tab Contracts
                                 </TabPane>
                                 <TabPane tab={'Activity'} key={6}>
-                                Content of tab Activity
+                                <div className={'text-black text-sm flex flex-col bg-white border-gray-300 border cursor-pointer p-3'}>
+                                    {/* <Timeline mode={'left'}>
+                                        <Timeline.Item label="2015-09-01">Create a services</Timeline.Item>
+                                        <Timeline.Item label="2015-09-01 09:12:11">Solve initial network problems</Timeline.Item>
+                                        <Timeline.Item>Technical testing</Timeline.Item>
+                                        <Timeline.Item label="2015-09-01 09:12:11">Network problems being solved</Timeline.Item>
+                                    </Timeline> */}
+                                    <Timeline mode={'alternate'}> 
+                                    {activityLog.map((doc,index) => {
+                                        var text
+                                        var data_update = ""
+                                        // console.log(Object.keys(doc.properties.attributes).length)
+                                        // console.log(Object.keys(doc.properties.attributes))
+                                        // console.log(Object.values(doc.properties.attributes))
+                                        if (doc.description == "created inventory") {
+                                            text =  "Created Inventory Named " + doc.properties.attributes.asset_name +
+                                                    ", Own by " + (doc.properties.attributes.kepemilikan=="milikSendiri"?"Milik Sendiri":doc.properties.attributes.kepemilikan) +
+                                                    "with Asset Type as " +doc.properties.attributes.asset_id_name +
+                                                    ", Vendor as " +doc.properties.attributes.vendor_name +
+                                                    ", Status as " +doc.properties.attributes.status
+                                        } else {
+                                            // data_update = doc.properties.attributes.filter((doc,idx)=>{
+                                                // return doc.key !="updated_at"
+                                            // })
+                                            for (let i = 0; i < Object.keys(doc.properties.attributes).length; i++) {
+                                                // if(doc.properties.attributes.key !="updated_at"){
+                                                    data_update = data_update + Object.keys(doc.properties.attributes)[i] + " changed to " + Object.values(doc.properties.attributes)[i] + ", "
+                                                // }
+                                            }
+                                            // console.log("123")
+                                            text = data_update
+                                        }
+                                            return(
+                                                <Timeline.Item key={index} label={timeConverter(Date.parse(doc.date))}>
+                                                    {/* {doc.description == "created inventory" ? 
+                                                    "Created Inventory Named "+doc.properties.attributes.asset_name: 
+                                                    "Updated Inventory "+ } */}
+                                                    {text}
+                                                    {/* if(doc.description == "created inventory"){
+                                                        
+                                                    } */}
+                                                </Timeline.Item>
+                                                )
+                                        })
+                                    }
+                                    </Timeline>
+                                </div>
                                 </TabPane>
                             </Tabs>
                         </div>
@@ -220,9 +289,9 @@ export async function getServerSideProps({ req, res, params }) {
     })
     const resjsonGetInventory = await resourcesGetInventory.json()
     const dataInventory = resjsonGetInventory
-    const idAsset = dataInventory.data.inventory.asset_id
+    const assetId = dataInventory.data.inventory.asset_id
     
-    const resourcesGetInventoryColumnAndVendor = await fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryColumns?id=${idAsset}`, {
+    const resourcesGetInventoryColumnAndVendor = await fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryColumns?id=${assetId}`, {
         method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
@@ -230,6 +299,15 @@ export async function getServerSideProps({ req, res, params }) {
     })
     const resjsonGetInventoryColumnAndVendor = await resourcesGetInventoryColumnAndVendor.json()
     const dataInventoryColumnAndVendor = resjsonGetInventoryColumnAndVendor
+    
+    const resourcesGetInventoryActivityLog = await fetch(`https://boiling-thicket-46501.herokuapp.com/getActivityInventoryLogs?id=${inventoryid}`, {
+        method: `GET`,
+        headers: {
+            'Authorization': JSON.parse(initProps)
+        }
+    })
+    const resjsonGetInventoryActivityLog = await resourcesGetInventoryActivityLog.json()
+    const dataInventoryActivityLog = resjsonGetInventoryActivityLog
 
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,
@@ -246,6 +324,7 @@ export async function getServerSideProps({ req, res, params }) {
             dataProfile,
             dataInventory,
             dataInventoryColumnAndVendor,
+            dataInventoryActivityLog,
             sidemenu: "sub32"
         },
     }
