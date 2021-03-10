@@ -8,6 +8,7 @@ import Link from 'next/link'
 import Form from 'antd/lib/form/Form'
 import Input from 'antd/lib/input'
 import Checkbox from 'antd/lib/checkbox'
+import { Button } from 'antd'
 import Modal from 'antd/lib/modal'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard-main.module.css'
@@ -19,12 +20,34 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
     var { create } = rt.query
     const originPath = "Admin"
     const pathArr = rt.pathname.split("/").slice(1)
-    if (!dataInvColumns.data) {
-        dataInvColumns.data = []
-    }
+    // if (!dataInvColumns.data) {
+    //     dataInvColumns.data = []
+    // }
+
+    const [datawhole, setdatawhole] = useState(dataInvColumns.data.inventory_columns)
+    const [datatetap, setdatatetap] = useState(dataInvColumns.data.inventory_columns)
+    const [datacreate, setdatacreate] = useState([])
+    const [dataedit, setdataedit] = useState(dataInvColumns.data.inventory_columns.map((doc, idx) => {
+        return ({
+            id: doc.id,
+            name: doc.name,
+            data_type: doc.data_type,
+            default: doc.default,
+            required: doc.required,
+            unique: doc.unique,
+        })
+    }))
+    const [datadelete, setdatadelete] = useState([])
+    const [idxx, setidxx] = useState(0)
+    const [existedln, setexistedln] = useState(dataInvColumns.data.inventory_columns.length)
+
     const [editasset, setEditasset] = useState(false)
     const [modalfieldprops, setModalfieldprops] = useState(false)
     const [modalupdatefieldprops, setModalupdatefieldprops] = useState(false)
+    const [loadingnewfield, setloadingnewfield] = useState(false)
+    const [loadingupdatefield, setloadingupdatefield] = useState(false)
+    const [loadingwhole, setloadingwhole] = useState(false)
+    const [loadingupdateasset, setloadingupdateasset] = useState(false)
     const [recordfield, setRecordfield] = useState({})
     const [idfield, setIdfield] = useState("")
     function flattenArr(dataassets) {
@@ -64,6 +87,8 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
             })
         }
     }, [])
+
+    //Asset types properties
     const [dataupdate, setDataupdate] = useState({
         id: dataAssetDetail.id,
         name: '',
@@ -75,8 +100,10 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
             [e.target.name]: e.target.value
         })
     }
+
+    //Dynamic field
     const [datafield, setDatafield] = useState({
-        asset_id: dataAssetDetail.id,
+        // asset_id: dataAssetDetail.id,
         name: '',
         data_type: '',
         default: '',
@@ -122,6 +149,7 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
     }
 
     const handleUpdateAssets = () => {
+        setloadingupdateasset(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateAsset`, {
             method: 'PUT',
             headers: {
@@ -132,6 +160,7 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
         })
             .then(res => res.json())
             .then(res2 => {
+                setloadingupdateasset(false)
                 if (res2.success) {
                     notification['success']({
                         message: res2.message,
@@ -150,148 +179,255 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
             })
     }
     const handleAddField = () => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/addInventoryColumn`, {
+        setdatacreate([
+            ...datacreate,
+            datafield
+        ])
+        setdatawhole([
+            ...datawhole,
+            datafield
+        ])
+        setModalfieldprops(false)
+        // fetch(`https://boiling-thicket-46501.herokuapp.com/addInventoryColumn`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Authorization': JSON.parse(initProps),
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify(datafield)
+        // })
+        //     .then(res => res.json())
+        //     .then(res2 => {
+        //         setloadingnewfield(false)
+        //         if (res2.success) {
+        //             setModalfieldprops(false)
+        //             notification['success']({
+        //                 message: res2.message,
+        //                 duration: 3
+        //             })
+        //             setTimeout(() => {
+        //                 rt.push(`/assets/update/${assetsTitle}?originPath=Admin&parent=${assetsParent}`)
+        //             }, 500)
+        //         }
+        //         else if (!res2.success) {
+        //             notification['error']({
+        //                 message: res2.message.errorInfo.status_detail,
+        //                 duration: 3
+        //             })
+        //         }
+        //     })
+    }
+
+    const handleUpdateField = (index) => {
+        if (datawhole.length <= existedln) {
+            console.log("masuk <: " + index)
+            if (datatetap.some(dataa => dataa['id'] === recordfield.id)) {
+                setdataedit(prev => prev.map((doc, idx) => {
+                    if (index === idx) {
+                        return ({
+                            id: doc.id,
+                            name: recordfield.name,
+                            data_type: recordfield.data_type,
+                            default: recordfield.default,
+                            required: recordfield.required,
+                            unique: recordfield.unique,
+                        })
+                    }
+                    else {
+                        return doc
+                    }
+                }))
+            }
+            else {
+                setdatacreate(prev => prev.map((doc, idx) => {
+                    if (doc.name === recordfield.name) {
+                        return ({
+                            name: recordfield.name,
+                            data_type: recordfield.data_type,
+                            default: recordfield.default,
+                            required: recordfield.required,
+                            unique: recordfield.unique,
+                        })
+                    }
+                }))
+            }
+        }
+        else {
+            if (datatetap.some(dataaa => dataaa['id'] === recordfield.id)) {
+                setdataedit(prev => prev.map((doc, idx) => {
+                    if (doc.id === recordfield.id) {
+                        return ({
+                            id: doc.id,
+                            name: recordfield.name,
+                            data_type: recordfield.data_type,
+                            default: recordfield.default,
+                            required: recordfield.required,
+                            unique: recordfield.unique,
+                        })
+                    }
+                    else {
+                        return doc
+                    }
+                }))
+            }
+            else {
+                console.log("masuk >: " + index)
+                var idxxx = index - existedln
+                setdatacreate(prev => prev.map((doc, idx) => {
+                    if (idx === idxxx) {
+                        return ({
+                            name: recordfield.name,
+                            data_type: recordfield.data_type,
+                            default: recordfield.default,
+                            required: recordfield.required,
+                            unique: recordfield.unique,
+                        })
+                    }
+                }))
+            }
+        }
+        var datawholee = datawhole
+        datawholee[index] = {
+            id: recordfield.id,
+            asset_id: dataAssetDetail.id,
+            name: recordfield.name,
+            data_type: recordfield.data_type,
+            default: recordfield.default,
+            required: recordfield.required,
+            unique: recordfield.unique,
+            deleted_at: null
+        }
+        setdatawhole(datawholee)
+        setloadingupdatefield(false)
+        setModalupdatefieldprops(false)
+        // setloadingupdatefield(true)
+        // fetch(`https://boiling-thicket-46501.herokuapp.com/updateInventoryColumn`, {
+        //     method: 'PUT',
+        //     headers: {
+        //         'Authorization': JSON.parse(initProps),
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify(recordfield)
+        // })
+        //     .then(res => res.json())
+        //     .then(res2 => {
+        //         setloadingupdatefield(false)
+        //         if (res2.success) {
+        //             setModalupdatefieldprops(false)
+        //             notification['success']({
+        //                 message: res2.message,
+        //                 duration: 3
+        //             })
+        //             setTimeout(() => {
+        //                 rt.push(`/assets/update/${assetsTitle}?originPath=Admin&parent=${assetsParent}`)
+        //             }, 500)
+        //         }
+        //         else if (!res2.success) {
+        //             notification['error']({
+        //                 message: res2.message.errorInfo.status_detail,
+        //                 duration: 3
+        //             })
+        //         }
+        //     })
+    }
+
+    const handleDeleteField = (index) => {
+        console.log(index)
+        if (datawhole.length <= existedln) {
+            if (datatetap.some(dataa => dataa['id'] === recordfield.id)) {
+                setdatadelete([
+                    ...datadelete,
+                    {
+                        id: recordfield.id
+                    }
+                ])
+                setdataedit(prev => prev.filter((doc, idx) => {
+                    return doc.id !== recordfield.id
+                }))
+            }
+            else {
+                setdatacreate(prev => prev.filter((doc, idx) => {
+                    return recordfield.name !== doc.name
+                }))
+            }
+        }
+        else {
+            if (datatetap.some(dataaa => dataaa['id'] === recordfield.id)) {
+                setdatadelete([
+                    ...datadelete,
+                    {
+                        id: recordfield.id
+                    }
+                ])
+                setdataedit(prev => prev.filter((doc, idx) => {
+                    return doc.id !== recordfield.id
+                }))
+            }
+            else {
+                var idxxx = index - existedln
+                setdatacreate(prev => prev.filter((doc, idx) => {
+                    return idxxx !== idx
+                }))
+            }
+        }
+        var indeks = index
+        setdatawhole(prev => prev.filter((doc, idx) => {
+            return indeks !== idx
+        }))
+        setModalupdatefieldprops(false)
+        // fetch(`https://boiling-thicket-46501.herokuapp.com/deleteInventoryColumn`, {
+        //     method: 'DELETE',
+        //     headers: {
+        //         'Authorization': JSON.parse(initProps),
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify({
+        //         id: recordfield.id
+        //     })
+        // })
+        //     .then(res => res.json())
+        //     .then(res2 => {
+        //         if (res2.success) {
+        //             setModalupdatefieldprops(false)
+        //             notification['success']({
+        //                 message: res2.message,
+        //                 duration: 3
+        //             })
+        //             setTimeout(() => {
+        //                 rt.push(`/assets/update/${assetsTitle}?originPath=Admin&parent=${assetsParent}`)
+        //             }, 500)
+        //         }
+        //         else if (!res2.success) {
+        //             notification['error']({
+        //                 message: res2.message.errorInfo.status_detail,
+        //                 duration: 3
+        //             })
+        //         }
+        //     })
+    }
+    const handlingWhole = () => {
+        console.log("isi whole: " + datawhole[datawhole.length - 1].name)
+        console.log("isi datacreate: " + datacreate.length)
+        console.log("dataedit: " + dataedit.length)
+        console.log("isi delete: " + datadelete.length)
+        setloadingwhole(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/cudInventoryColumn`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(datafield)
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                if (res2.success) {
-                    // document.getElementById('dropWrapper').classList.remove("border")
-                    // document.getElementById('dropWrapper').classList.remove("border-dashed")
-                    // document.getElementById('dropWrapper').classList.remove("border-opacity-20")
-                    // document.getElementById('dropWrapper').classList.remove("border-black")
-                    // var titleField = <></>
-                    // var inputField = <></>
-                    // if (idfield === "text") {
-                    //     titleField = document.createElement('h1')
-                    //     titleField.className = "text-sm"
-                    //     titleField.innerHTML = "Text"
-                    //     inputField = document.createElement('div')
-                    //     inputField.className = "w-full h-10 rounded-md border-2 text-gray-400 p-2"
-                    // }
-                    // else if (idfield === "number") {
-                    //     titleField = document.createElement('h1')
-                    //     titleField.className = "text-sm"
-                    //     titleField.innerHTML = "Number"
-                    //     inputField = document.createElement('div')
-                    //     inputField.className = "w-full h-10 rounded-md border-2 text-gray-400 p-2"
-                    //     inputField.innerHTML = "1000000"
-                    // }
-                    // else if (idfield === "textarea") {
-                    //     titleField = document.createElement('h1')
-                    //     titleField.className = "text-sm"
-                    //     titleField.innerHTML = "Text Area"
-                    //     inputField = document.createElement('div')
-                    //     inputField.className = "w-full h-28 rounded-md border-2 text-gray-400 p-2"
-                    // }
-                    // else if (idfield === "decimal") {
-                    //     titleField = document.createElement('h1')
-                    //     titleField.className = "text-sm"
-                    //     titleField.innerHTML = "Decimal"
-                    //     inputField = document.createElement('div')
-                    //     inputField.className = "w-full h-10 rounded-md border-2 text-gray-400 p-2"
-                    //     inputField.innerHTML = "0.11111"
-                    // }
-                    // else if (idfield === "checkbox") {
-                    //     titleField = document.createElement('h1')
-                    //     titleField.className = "text-sm"
-                    //     titleField.innerHTML = "Checkbox"
-                    //     inputField = document.createElement('div')
-                    //     inputField.className = "w-full h-10 rounded-md border-2 text-gray-400 p-2"
-                    //     inputField.innerHTML = "<div class='w-5 h-5 rounded border-gray-700 border mr-5' />"
-                    // }
-                    // else if (idfield === "select") {
-                    //     titleField = document.createElement('h1')
-                    //     titleField.className = "text-sm"
-                    //     titleField.innerHTML = "Select"
-                    //     inputField = document.createElement('div')
-                    //     inputField.className = "w-full h-10 rounded-md border-2 text-gray-400 p-2"
-                    //     inputField.innerHTML = "<select disabled />"
-                    // }
-                    // else if (idfield === "tree") {
-                    //     titleField = document.createElement('h1')
-                    //     titleField.className = "text-sm"
-                    //     titleField.innerHTML = "Tree"
-                    //     inputField = document.createElement('div')
-                    //     inputField.className = "w-full h-10 rounded-md border-2 text-gray-400 p-2"
-                    //     inputField.innerHTML = "Tree"
-                    // }
-                    // else if (idfield === "date") {
-                    //     titleField = document.createElement('h1')
-                    //     titleField.className = "text-sm"
-                    //     titleField.innerHTML = "Date"
-                    //     inputField = document.createElement('div')
-                    //     inputField.className = "w-full h-10 rounded-md border-2 text-gray-400 p-2"
-                    //     inputField.innerHTML = "<input type='date' disabled />"
-                    // }
-                    // document.getElementById("dropWrapper").appendChild(titleField)
-                    // document.getElementById("dropWrapper").appendChild(inputField)
-                    setModalfieldprops(false)
-                    notification['success']({
-                        message: res2.message,
-                        duration: 3
-                    })
-                    setTimeout(() => {
-                        rt.push(`/assets/update/${assetsTitle}?originPath=Admin&parent=${assetsParent}`)
-                    }, 500)
-                }
-                else if (!res2.success) {
-                    notification['error']({
-                        message: res2.message.errorInfo.status_detail,
-                        duration: 3
-                    })
-                }
-            })
-    }
-    const handleUpdateField = () => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/updateInventoryColumn`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': JSON.parse(initProps),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(recordfield)
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                if (res2.success) {
-                    setModalupdatefieldprops(false)
-                    notification['success']({
-                        message: res2.message,
-                        duration: 3
-                    })
-                    setTimeout(() => {
-                        rt.push(`/assets/update/${assetsTitle}?originPath=Admin&parent=${assetsParent}`)
-                    }, 500)
-                }
-                else if (!res2.success) {
-                    notification['error']({
-                        message: res2.message.errorInfo.status_detail,
-                        duration: 3
-                    })
-                }
-            })
-    }
-    const handleDeleteField = () => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteInventoryColumn`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': JSON.parse(initProps),
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify({
-                id: recordfield.id
+                asset_id: dataAssetDetail.id,
+                add_inventory_columns: datacreate,
+                update_inventory_columns: dataedit,
+                delete_inventory_columns: datadelete
             })
         })
             .then(res => res.json())
             .then(res2 => {
+                setloadingwhole(false)
                 if (res2.success) {
-                    setModalupdatefieldprops(false)
                     notification['success']({
                         message: res2.message,
                         duration: 3
@@ -302,7 +438,7 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                 }
                 else if (!res2.success) {
                     notification['error']({
-                        message: res2.message.errorInfo.status_detail,
+                        message: res2.message,
                         duration: 3
                     })
                 }
@@ -336,14 +472,9 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                             <h1 className="font-semibold py-2">{assetsTitle}</h1>
                             <div className="flex space-x-2">
                                 <Link href={`/assets?originPath=Admin`}>
-                                    <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button>
+                                    <Button type="default" size="large">Batalkan</Button>
                                 </Link>
-                                {/* {
-                                    editasset ?
-                                        <></>
-                                        :
-                                        <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md">Update</button>
-                                } */}
+                                <Button type="primary" size="large" loading={loadingwhole} onClick={handlingWhole}>Simpan</Button>
                             </div>
                         </div>
                     </Sticky>
@@ -361,9 +492,11 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                                                 <h1 className="text-sm">Deskripsi:</h1>
                                                 <Input name="description" allowClear />
                                             </div>
-                                            <div className="flex py-1">
-                                                <button type="submit" className=" bg-gray-700 hover:bg-gray-800 border text-white px-3 w-20 rounded-md mr-5">Save</button>
-                                                <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black px-3 rounded-md" onClick={() => { setEditasset(false) }}>Back</button>
+                                            <div className="flex pt-7">
+                                                <Button htmlType="submit" type="primary" size="middle" style={{ marginRight: `1rem` }} loading={loadingupdateasset}>Perbarui</Button>
+                                                <Button onClick={() => { setEditasset(false) }} type="default" size="middle">Batalkan</Button>
+                                                {/* <button type="submit" className=" bg-gray-700 hover:bg-gray-800 border text-white px-3 w-20 rounded-md mr-5">Save</button> */}
+                                                {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black px-3 rounded-md" onClick={() => { setEditasset(false) }}>Back</button> */}
                                             </div>
                                         </div>
                                     </Form>
@@ -376,25 +509,30 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                         }
                     </div>
                     <div className="p-4 mb-4">
-                        <div className="w-full h-auto border border-black pb-2">
-                            <div className="h-auto w-full p-2 bg-gray-500 text-white mb-2">{dataAssetParentDetail.title} Properties</div>
-                            <div className=" text-center">{dataAssetParentDetail.title} Properties akan ditampilkan disini</div>
-                        </div>
-                    </div>
-                    <div className="p-4 mb-4">
-                        <div id="dropWrapper" /*className="w-full h-auto border border-dashed border-opacity-20 border-black pb-2"*/ className="w-full h-auto pb-2" onDrop={(e) => { onChangeDrop(e) }} onDragOver={(e) => { onChangeDragoverDrop(e) }}>
+                        <div id="dropWrapper" className="w-full h-auto p-5 border border-dashed border-opacity-20 border-black" onDrop={(e) => { onChangeDrop(e) }} onDragOver={(e) => { onChangeDragoverDrop(e) }}>
                             <div id="dropAreaTitle" className="h-auto w-full p-2 bg-gray-700 text-white mb-2 flex flex-col">{dataAssetDetail.title} Properties</div>
                             {
-                                !dataInvColumns.data.inventory_columns ?
+                                datawhole.length === 0 ?
                                     <div id="dropArea" className="h-32 flex justify-center items-center">
                                         <div className="text-gray-300 text-base">Drag and Drop the custom field to build your own custom Form</div>
                                     </div>
                                     :
                                     <>
                                         {
-                                            dataInvColumns.data.inventory_columns.map((doc, idx) => {
+                                            datawhole.map((doc, idx) => {
                                                 return (
-                                                    <div key={idx} className="mb-5 cursor-pointer" onClick={() => { setModalupdatefieldprops(true); setRecordfield(doc) }}>
+                                                    <div key={idx} className="cursor-pointer p-3" onClick={() => {
+                                                        setModalupdatefieldprops(true);
+                                                        setRecordfield({
+                                                            id: doc.id,
+                                                            name: doc.name,
+                                                            data_type: doc.data_type,
+                                                            default: doc.default,
+                                                            required: doc.required,
+                                                            unique: doc.unique
+                                                        });
+                                                        setidxx(idx)
+                                                    }}>
                                                         <h1 className="text-sm">{doc.name}</h1>
                                                         <div className="w-full h-10 rounded-md border-2 border-gray-400 text-gray-500 p-2">Tipe data: {doc.data_type}</div>
                                                     </div>
@@ -442,9 +580,9 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                                     {datafield.data_type === "text" && <Input name="default" allowClear onChange={onChangeUpdateField} />}
                                     {datafield.data_type === "number" && <input type="number" name="default" allowClear onChange={onChangeUpdateField} />}
                                     {datafield.data_type === "decimal" && <input type="number" step="0.01" name="default" allowClear onChange={onChangeUpdateField} />}
-                                    {datafield.data_type === "textarea" && <textarea step="" name="default" allowClear onChange={onChangeUpdateField} />}
+                                    {datafield.data_type === "textarea" && <Input.TextArea name="default" allowClear onChange={onChangeUpdateField} />}
                                     {datafield.data_type === "checkbox" && <div><input type="checkbox" name="default" allowClear onChange={onChangeUpdateField} /> {datafield.name}</div>}
-                                    {datafield.data_type === "select" && <Input name="default" allowClear onChange={onChangeUpdateField} placeholder="Pisahkan dengan ';' untuk banyak pilihan"/>}
+                                    {datafield.data_type === "select" && <Input name="default" allowClear onChange={onChangeUpdateField} placeholder="Pisahkan dengan ';' untuk banyak pilihan" />}
                                     {datafield.data_type === "tree" && <Input name="default" allowClear onChange={onChangeUpdateField} />}
                                     {datafield.data_type === "date" && <input type="date" name="default" allowClear onChange={onChangeUpdateField} />}
                                 </div>
@@ -459,8 +597,10 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                             </div>
                             <div className="flex justify-between">
                                 <div className="flex">
-                                    <button className=" bg-gray-800 w-auto h-auto py-1 px-3 text-white rounded-md hover:bg-gray-900 mx-3" onClick={handleAddField}>Simpan</button>
-                                    <button className="bg-white w-auto h-auto py-1 px-3 text-gray-800 rounded-md border border-gray-700" onClick={() => { setModalfieldprops(false) }}>Cancel</button>
+                                    <Button type="default" size="middle" style={{ marginRight: `1rem` }} onClick={() => { setModalfieldprops(false) }}>Batalkan</Button>
+                                    {/* <button className=" bg-gray-800 w-auto h-auto py-1 px-3 text-white rounded-md hover:bg-gray-900 mx-3" onClick={handleAddField}>Simpan</button> */}
+                                    <Button type="primary" size="middle" onClick={handleAddField} loading={loadingnewfield}>Simpan</Button>
+                                    {/* <button className="bg-white w-auto h-auto py-1 px-3 text-gray-800 rounded-md border border-gray-700" onClick={() => { setModalfieldprops(false) }}>Cancel</button> */}
                                 </div>
                             </div>
                         </>
@@ -486,7 +626,7 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                                     {recordfield.data_type === "text" && <Input name="default" allowClear onChange={onChangeUpdateField2} defaultValue={recordfield.default} />}
                                     {recordfield.data_type === "number" && <input type="number" name="default" allowClear onChange={onChangeUpdateField2} defaultValue={recordfield.default} />}
                                     {recordfield.data_type === "decimal" && <input type="number" step="0.01" name="default" allowClear onChange={onChangeUpdateField2} defaultValue={recordfield.default} />}
-                                    {recordfield.data_type === "textarea" && <textarea step="" name="default" allowClear onChange={onChangeUpdateField2} defaultValue={recordfield.default} />}
+                                    {recordfield.data_type === "textarea" && <Input.TextArea step="" name="default" allowClear onChange={onChangeUpdateField2} defaultValue={recordfield.default} />}
                                     {recordfield.data_type === "checkbox" && <div><input type="checkbox" name="default" allowClear onChange={onChangeUpdateField2} defaultValue={recordfield.default} /> {recordfield.name}</div>}
                                     {recordfield.data_type === "select" && <Input name="default" allowClear onChange={onChangeUpdateField2} defaultValue={recordfield.default} />}
                                     {recordfield.data_type === "tree" && <Input name="default" allowClear onChange={onChangeUpdateField2} defaultValue={recordfield.default} />}
@@ -502,10 +642,12 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                                 </div>
                             </div>
                             <div className="flex justify-between">
-                                <button className="bg-white w-auto h-auto py-1 px-3 text-gray-800 rounded-md border border-gray-700" onClick={handleDeleteField}>Hapus Field</button>
+                                <button className="bg-white w-auto h-auto py-1 px-3 text-gray-800 rounded-md border border-gray-700" onClick={() => { handleDeleteField(idxx) }}>Hapus Field</button>
                                 <div className="flex">
-                                    <button className=" bg-gray-800 w-auto h-auto py-1 px-3 text-white rounded-md hover:bg-gray-900 mx-3" onClick={handleUpdateField}>Simpan</button>
-                                    <button className="bg-white w-auto h-auto py-1 px-3 text-gray-800 rounded-md border border-gray-700" onClick={() => { setModalupdatefieldprops(false) }}>Cancel</button>
+                                    <Button type="default" size="middle" style={{ marginRight: `1rem` }} onClick={() => { setModalupdatefieldprops(false) }}>Batalkan</Button>
+                                    <Button type="primary" size="middle" onClick={() => { handleUpdateField(idxx) }} loading={loadingupdatefield}>Perbarui</Button>
+                                    {/* <button className=" bg-gray-800 w-auto h-auto py-1 px-3 text-white rounded-md hover:bg-gray-900 mx-3" onClick={handleUpdateField}>Simpan</button>
+                                    <button className="bg-white w-auto h-auto py-1 px-3 text-gray-800 rounded-md border border-gray-700" onClick={() => { setModalupdatefieldprops(false) }}>Cancel</button> */}
                                 </div>
                             </div>
                         </>
@@ -596,3 +738,75 @@ export async function getServerSideProps({ req, res, query, params }) {
 }
 
 export default AssetsNew
+
+
+                   // document.getElementById('dropWrapper').classList.remove("border")
+                    // document.getElementById('dropWrapper').classList.remove("border-dashed")
+                    // document.getElementById('dropWrapper').classList.remove("border-opacity-20")
+                    // document.getElementById('dropWrapper').classList.remove("border-black")
+                    // var titleField = <></>
+                    // var inputField = <></>
+                    // if (idfield === "text") {
+                    //     titleField = document.createElement('h1')
+                    //     titleField.className = "text-sm"
+                    //     titleField.innerHTML = "Text"
+                    //     inputField = document.createElement('div')
+                    //     inputField.className = "w-full h-10 rounded-md border-2 text-gray-400 p-2"
+                    // }
+                    // else if (idfield === "number") {
+                    //     titleField = document.createElement('h1')
+                    //     titleField.className = "text-sm"
+                    //     titleField.innerHTML = "Number"
+                    //     inputField = document.createElement('div')
+                    //     inputField.className = "w-full h-10 rounded-md border-2 text-gray-400 p-2"
+                    //     inputField.innerHTML = "1000000"
+                    // }
+                    // else if (idfield === "textarea") {
+                    //     titleField = document.createElement('h1')
+                    //     titleField.className = "text-sm"
+                    //     titleField.innerHTML = "Text Area"
+                    //     inputField = document.createElement('div')
+                    //     inputField.className = "w-full h-28 rounded-md border-2 text-gray-400 p-2"
+                    // }
+                    // else if (idfield === "decimal") {
+                    //     titleField = document.createElement('h1')
+                    //     titleField.className = "text-sm"
+                    //     titleField.innerHTML = "Decimal"
+                    //     inputField = document.createElement('div')
+                    //     inputField.className = "w-full h-10 rounded-md border-2 text-gray-400 p-2"
+                    //     inputField.innerHTML = "0.11111"
+                    // }
+                    // else if (idfield === "checkbox") {
+                    //     titleField = document.createElement('h1')
+                    //     titleField.className = "text-sm"
+                    //     titleField.innerHTML = "Checkbox"
+                    //     inputField = document.createElement('div')
+                    //     inputField.className = "w-full h-10 rounded-md border-2 text-gray-400 p-2"
+                    //     inputField.innerHTML = "<div class='w-5 h-5 rounded border-gray-700 border mr-5' />"
+                    // }
+                    // else if (idfield === "select") {
+                    //     titleField = document.createElement('h1')
+                    //     titleField.className = "text-sm"
+                    //     titleField.innerHTML = "Select"
+                    //     inputField = document.createElement('div')
+                    //     inputField.className = "w-full h-10 rounded-md border-2 text-gray-400 p-2"
+                    //     inputField.innerHTML = "<select disabled />"
+                    // }
+                    // else if (idfield === "tree") {
+                    //     titleField = document.createElement('h1')
+                    //     titleField.className = "text-sm"
+                    //     titleField.innerHTML = "Tree"
+                    //     inputField = document.createElement('div')
+                    //     inputField.className = "w-full h-10 rounded-md border-2 text-gray-400 p-2"
+                    //     inputField.innerHTML = "Tree"
+                    // }
+                    // else if (idfield === "date") {
+                    //     titleField = document.createElement('h1')
+                    //     titleField.className = "text-sm"
+                    //     titleField.innerHTML = "Date"
+                    //     inputField = document.createElement('div')
+                    //     inputField.className = "w-full h-10 rounded-md border-2 text-gray-400 p-2"
+                    //     inputField.innerHTML = "<input type='date' disabled />"
+                    // }
+                    // document.getElementById("dropWrapper").appendChild(titleField)
+                    // document.getElementById("dropWrapper").appendChild(inputField)
