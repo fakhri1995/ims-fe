@@ -34,6 +34,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
             ["asset_name"]: record.asset_name
         })
     }
+    const [modaldelete, setmodaldelete] = useState(false)
     //-------------------------------------------
 
     //------------get data inventories-------------------
@@ -58,6 +59,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
 
     //------------------handle delete inventory-------------------
     const handleDeleteInventory = (key) => {
+        setmodaldelete(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/deleteInventory?id=${key}`, {
             method: 'DELETE',
             headers: {
@@ -70,6 +72,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
         })
             .then(res => res.json())
             .then(res2 => {
+                setmodaldelete(false)
                 if (res2.success) {
                     setWarningDelete(false, null)
                     notification['success']({
@@ -161,7 +164,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
         }
     ]
     //------------------------------------------------------------------------
-    
+
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
@@ -197,6 +200,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                             visible={warningDelete.istrue}
                             onOk={() => { handleDeleteInventory(warningDelete.key) }}
                             onCancel={() => setWarningDelete(false, null)}
+                            okButtonProps={{ disabled: modaldelete }}
                         >
                             Apakah anda yakin ingin menghapus grup <strong>{warningDelete.asset_name}</strong>?
                             </Modal>

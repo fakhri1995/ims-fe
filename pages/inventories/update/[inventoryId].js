@@ -9,12 +9,13 @@ import Select from 'antd/lib/select'
 import DatePicker from 'antd/lib/date-picker'
 import TreeSelect from 'antd/lib/tree-select'
 import Checkbox from 'antd/lib/checkbox'
-import Spin from 'antd/lib/spin'
+import { Button } from 'antd'
 import notification from 'antd/lib/notification'
 import Sticky from 'wil-react-sticky'
 import moment from 'moment'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard.module.css'
+
 function InventoryUpdate({ initProps, dataProfile, dataAssetsList, dataDetailInventory, sidemenu, invId }) {
     const rt = useRouter()
     const { originPath } = rt.query
@@ -34,6 +35,7 @@ function InventoryUpdate({ initProps, dataProfile, dataAssetsList, dataDetailInv
     const [loadingdynamic, setLoadingdynamic] = useState(false)
     const [datadynamic, setDatadynamic] = useState([])
     const [datadynamic2, setDatadynamic2] = useState(dataInvDynamic)
+    const [loadingbtnupdate, setloadingbtnupdate] = useState(false)
     const [datanew, setDatanew] = useState({
         id: dataInv.id,
         asset_id: dataInv.asset_id,
@@ -71,10 +73,10 @@ function InventoryUpdate({ initProps, dataProfile, dataAssetsList, dataDetailInv
         })
     }
     const onChangeDynamic = (e, idInvCol) => {
-        const idx = datadynamic2.map((doc, idx) => { 
-            if(doc.id == idInvCol){
-                return(idx)
-            } 
+        const idx = datadynamic2.map((doc, idx) => {
+            if (doc.id == idInvCol) {
+                return (idx)
+            }
         })
         var items = [...datanew.inventory_values]
         items[idx] = {
@@ -110,6 +112,7 @@ function InventoryUpdate({ initProps, dataProfile, dataAssetsList, dataDetailInv
     }
     const handleUpdateInventory = () => {
         // console.log("datanew: " + datanew.inventory_values[0].value)
+        setloadingbtnupdate(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateInventory`, {
             method: 'PUT',
             headers: {
@@ -120,6 +123,7 @@ function InventoryUpdate({ initProps, dataProfile, dataAssetsList, dataDetailInv
         })
             .then(res => res.json())
             .then(res2 => {
+                setloadingbtnupdate(false)
                 if (res2.success) {
                     notification['success']({
                         message: res2.message,
@@ -143,12 +147,12 @@ function InventoryUpdate({ initProps, dataProfile, dataAssetsList, dataDetailInv
                 <div className="col-span-4 border-r p-5" id="updateInvWrappper">
                     <Sticky containerSelectorFocus="#formWrapper">
                         <div className="flex justify-between p-5 w-full h-auto bg-white border-b mb-8">
-                            <div className=" font-semibold">Update Inventory</div>
+                            <div className=" font-semibold">Update Inventori</div>
                             <div className="flex">
                                 <Link href={`/inventories?originPath=Admin`}>
-                                <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md mr-5">Cancel</button>
+                                    <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batalkan</Button>
                                 </Link>
-                                <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={createInventoryForm.submit}>Submit</button>
+                                <Button type="primary" size="middle" onClick={createInventoryForm.submit} loading={loadingbtnupdate}>Perbarui</Button>
                             </div>
                         </div>
                     </Sticky>
