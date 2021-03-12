@@ -20,6 +20,8 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
     const [loadingdynamic, setLoadingdynamic] = useState(false)
     const [datadynamic, setDatadynamic] = useState([])
     const [datadynamic2, setDatadynamic2] = useState([])
+    const [datadynamic3, setDatadynamic3] = useState([])
+    const [objdynamic, setobjdynamic] = useState({})
     const [loadingbtnsubmit, setloadingbtnsubmit] = useState(false)
     function flattenArr(dataassets) {
         const result = []
@@ -50,9 +52,9 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
         status: '',
         kepemilikan: '',
         kondisi: '',
-        tanggal_beli: new Date(),
+        tanggal_beli: new Date().toLocaleDateString(),
         harga_beli: 0,
-        tanggal_efektif: new Date(),
+        tanggal_efektif: new Date().toLocaleDateString(),
         depresiasi: 0,
         nilai_sisa: 0,
         nilai_buku: 0,
@@ -74,20 +76,11 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
     }
     const onChangeInventoryType = (value) => {
         setLoadingdynamic(true)
-        setDatanew({
-            ...datanew,
-            asset_code: value
-        })
         var dataAssetDetail = {}
         flattenDataAsset.forEach(item => {
             if (item.value == value) {
                 dataAssetDetail = item
             }
-        })
-        setDatanew({
-            ...datanew,
-            asset_id: dataAssetDetail.id,
-            asset_code: dataAssetDetail.value
         })
         fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryColumns?id=${dataAssetDetail.id}`, {
             method: `GET`,
@@ -110,14 +103,35 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
                             value: doc.default
                         }
                     )))
+                    setDatadynamic3(res2.data.inventory_columns.map((doc, idx) => (
+                        {
+                            inventory_column_id: doc.id,
+                            value: doc.default
+                        }
+                    )))
+                    setDatanew({
+                        ...datanew,
+                        asset_id: dataAssetDetail.id,
+                        asset_code: value,
+                        inventory_values: res2.data.inventory_columns.map((doc, idx) => (
+                            {
+                                inventory_column_id: doc.id,
+                                value: doc.default
+                            }
+                        ))
+                    })
+                    res2.data.inventory_columns.map((doc, idx) => {
+                        setobjdynamic({
+                            ...objdynamic,
+                            [doc.name]: doc.default
+                        })
+                    })
                     setLoadingdynamic(false)
                 }
             })
     }
     const onChangeDynamic = (e, idInvCol) => {
-        // console.log("target: " + datadynamic2[0].inventory_column_id + "  " + datadynamic2[1].inventory_column_id)
         const idx = datadynamic2.map((doc, idx) => { return doc.inventory_column_id }).indexOf(idInvCol)
-        // console.log("idx: " + idx)
         var items = [...datadynamic2]
         items[idx] = {
             inventory_column_id: idInvCol,
@@ -128,7 +142,6 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
             ...datanew,
             inventory_values: items
         })
-        // console.log("isias situ: " + datadynamic2[1].value)
     }
     const onChangeDynamicAnt1 = (value, idInvCol) => {
         const idx = datadynamic2.map((doc, idx) => { return doc.inventory_column_id }).indexOf(idInvCol)
@@ -144,7 +157,6 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
         })
     }
     const handleSubmitInventory = () => {
-        // console.log(datanew.inventory_values)
         setloadingbtnsubmit(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/addInventory`, {
             method: 'POST',
@@ -183,7 +195,7 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
                             <div className=" font-semibold">Inventori Baru</div>
                             <div className="flex">
                                 <Link href={`/inventories?originPath=Admin`}>
-                                    <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md mr-5">Cancel</button>
+                                    <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batalkan</Button>
                                 </Link>
                                 <Button type="primary" size="middle" onClick={createInventoryForm.submit} loading={loadingbtnsubmit}>Submit</Button>
                             </div>
@@ -286,13 +298,13 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
                                         </Select>
                                     </Form.Item>
                                     <Form.Item name="tanggal_beli" style={{ marginRight: `1rem` }} label="Tanggal Beli">
-                                        <DatePicker onChange={(date, dateString) => { setDatanew({ ...datanew, tanggal_beli: date }) }} name="tanggal_beli" allowClear />
+                                        <DatePicker onChange={(date, dateString) => { setDatanew({ ...datanew, tanggal_beli: dateString }) }} name="tanggal_beli" allowClear format={'YYYY-MM-DD'} />
                                     </Form.Item>
                                     <Form.Item name="harga_beli" style={{ marginRight: `1rem` }} label="Harga Beli">
                                         <InputNumber onChange={(value) => { setDatanew({ ...datanew, harga_beli: value }) }} name="harga_beli" id="harga_beli" allowClear style={{ width: `100%` }} />
                                     </Form.Item>
                                     <Form.Item name="tanggal_efektif" style={{ marginRight: `1rem` }} label="Tanggal Efektif">
-                                        <DatePicker onChange={(date, dateString) => { setDatanew({ ...datanew, tanggal_efektif: date }) }} name="tanggal_efektif" allowClear />
+                                        <DatePicker onChange={(date, dateString) => { setDatanew({ ...datanew, tanggal_efektif: dateString }) }} name="tanggal_efektif" allowClear format={'YYYY-MM-DD'} />
                                     </Form.Item>
                                     <Form.Item name="depresiasi" style={{ marginRight: `1rem` }} label="Depresiasi">
                                         <InputNumber onChange={(value) => { setDatanew({ ...datanew, depresiasi: value }) }} name="depresiasi" id="depresiasi" allowClear style={{ width: `100%` }} />
@@ -354,7 +366,7 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
                                                                             required: true,
                                                                             message: `${doc.name} harus diisi`,
                                                                         },
-                                                                    ]}
+                                                                    ]} initialValue={objdynamic}
                                                                 >
                                                                     {doc.data_type === "text" &&
                                                                         <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.default} required />}

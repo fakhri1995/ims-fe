@@ -15,13 +15,23 @@ function InventoryUpdate({ initProps, dataProfile, dataAssetsList, dataDetailInv
     const pathArr = rt.pathname.split("/").slice(1)
     const [createInventoryForm] = Form.useForm();
     const dataInv = dataDetailInventory.data.inventory
+    if (dataDetailInventory.data.inventory.additional_attributes.length === 0 || dataDetailInventory.data.inventory.additional_attributes === null || typeof (dataDetailInventory.data.inventory.additional_attributes) === undefined) {
+        dataDetailInventory.data.inventory.additional_attributes = []
+    }
     const dataInvDynamic = dataDetailInventory.data.inventory.additional_attributes
-    // const dataMapInvDynamic = dataInvDynamic.map((doc, idx) => {
-    //     return({
-    //         id: doc.inventory_column_id,
-    //         value: doc.value
-    //     })
-    // })
+    const dataMapInvDynamic = dataInvDynamic.map((doc, idx) => {
+        return ({
+            id: doc.id,
+            value: doc.value
+        })
+    })
+    var objDynamic = {}
+    dataInvDynamic.map((doc, idx) => {
+        objDynamic = {
+            ...objDynamic,
+            [doc.name]: doc.value
+        }
+    })
 
     const [isdynamic, setIsdynamic] = useState(false)
     const [loadingdynamic, setLoadingdynamic] = useState(false)
@@ -54,7 +64,7 @@ function InventoryUpdate({ initProps, dataProfile, dataAssetsList, dataDetailInv
         gudang: dataInv.gudang,
         used_by: dataInv.used_by,
         managed_by: dataInv.managed_by,
-        inventory_values: dataInvDynamic
+        inventory_values: dataMapInvDynamic
     })
 
     const onChangeUpdateInventory = (e) => {
@@ -65,11 +75,9 @@ function InventoryUpdate({ initProps, dataProfile, dataAssetsList, dataDetailInv
         })
     }
     const onChangeDynamic = (e, idInvCol) => {
-        const idx = datadynamic2.map((doc, idx) => {
-            if (doc.id == idInvCol) {
-                return (idx)
-            }
-        })
+
+        const idx = datanew.inventory_values.map((doc, idx) => { return doc.id }).indexOf(idInvCol)
+        console.log("idx: " + idx)
         var items = [...datanew.inventory_values]
         items[idx] = {
             id: idInvCol,
@@ -80,22 +88,14 @@ function InventoryUpdate({ initProps, dataProfile, dataAssetsList, dataDetailInv
             ...datanew,
             inventory_values: items
         })
-        // console.log("isias situ: " + datanew.inventory_values[1].value)
     }
     const onChangeDynamicAnt1 = (value, idInvCol) => {
-        const idx = datanew.inventory_values.map((doc, idx) => {
-            if (doc.id == idInvCol) {
-                return (idx)
-            }
-        })
+        const idx = datanew.inventory_values.map((doc, idx) => { return doc.id }).indexOf(idInvCol)
         var items = [...datanew.inventory_values]
-        // console.log("inv column id: " + datanew.inventory_values[0].id)
-        // console.log("idx: " + idx)
         items[idx] = {
             id: idInvCol,
             value: value
         }
-        // console.log("items: " + items[0].value)
         setDatadynamic2(items)
         setDatanew({
             ...datanew,
@@ -103,7 +103,6 @@ function InventoryUpdate({ initProps, dataProfile, dataAssetsList, dataDetailInv
         })
     }
     const handleUpdateInventory = () => {
-        // console.log("datanew: " + datanew.inventory_values[0].value)
         setloadingbtnupdate(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateInventory`, {
             method: 'PUT',
@@ -125,7 +124,7 @@ function InventoryUpdate({ initProps, dataProfile, dataAssetsList, dataDetailInv
                         rt.push(`/inventories/update/${invId}?originPath=Inventories`)
                     }, 500)
                 }
-                else if (!res2.success) {
+                else {
                     notification['error']({
                         message: res2.message.errorInfo.status_detail,
                         duration: 3
@@ -149,9 +148,10 @@ function InventoryUpdate({ initProps, dataProfile, dataAssetsList, dataDetailInv
                         </div>
                     </Sticky>
                     <div className="flex flex-col">
-                        <div className="mb-10 shadow-md rounded-md w-full h-auto bg-white p-5 relative border-2">
-                            <div className="absolute w-auto px-5 h-10 bg-white font-semibold left-10 -top-3">Data Mandatory</div>
-                            <Form layout="vertical" form={createInventoryForm} onFinish={handleUpdateInventory} initialValues={datanew}>
+                        <Form layout="vertical" form={createInventoryForm} onFinish={handleUpdateInventory} initialValues={datanew}>
+
+                            <div className="mb-10 shadow-md rounded-md w-full h-auto bg-white p-5 relative border-2">
+                                <div className="absolute w-auto px-5 h-10 bg-white font-semibold left-10 -top-3">Data Mandatory</div>
                                 <div className="grid grid-cols-1 md:grid-cols-2">
                                     <Form.Item name="asset_type" style={{ marginRight: `1rem` }} label="Tipe Asset">
                                         <TreeSelect
@@ -241,7 +241,7 @@ function InventoryUpdate({ initProps, dataProfile, dataAssetsList, dataDetailInv
                                         </Select>
                                     </Form.Item>
                                     <Form.Item name="tanggal_beli" style={{ marginRight: `1rem` }} label="Tanggal Beli">
-                                        <DatePicker onChange={(date, dateString) => { setDatanew({ ...datanew, tanggal_beli: dateString }) }} name="tanggal_beli" allowClear defaultValue={moment(datanew.tanggal_beli, 'MM/DD/YYYY')} format={'YYYY-MM-DD'} />
+                                        <DatePicker onChange={(date, dateString) => { setDatanew({ ...datanew, tanggal_beli: dateString }) }} name="tanggal_beli" allowClear defaultValue={moment(datanew.tanggal_beli, 'YYYY-MM-DD')} format={'YYYY-MM-DD'} />
                                     </Form.Item>
                                     <Form.Item name="harga_beli" style={{ marginRight: `1rem` }} label="Harga Beli">
                                         <InputNumber onChange={(value) => { setDatanew({ ...datanew, harga_beli: value }) }} name="harga_beli" id="harga_beli" allowClear style={{ width: `100%` }} defaultValue={datanew.harga_beli} />
@@ -284,72 +284,72 @@ function InventoryUpdate({ initProps, dataProfile, dataAssetsList, dataDetailInv
                                         <Input onChange={onChangeUpdateInventory} name="managed_by" id="managed_by" allowClear defaultValue={datanew.managed_by} />
                                     </Form.Item>
                                 </div>
-                            </Form>
-                        </div>
-                        <div className="mb-5 shadow-md rounded-md w-full h-auto bg-white p-5 relative border-2">
-                            <div className="absolute w-auto px-5 h-10 bg-white font-semibold left-10 -top-3">Data Turunan</div>
-                            {
-                                dataInvDynamic.map((doc, idx) => {
-                                    return (
-                                        <div className="grid grid-cols-1 md:grid-cols-2" key={idx}>
-                                            {
-                                                doc.required ?
-                                                    <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}
+                            </div>
+                            <div className="mb-5 shadow-md rounded-md w-full h-auto bg-white p-5 relative border-2">
+                                <div className="absolute w-auto px-5 h-10 bg-white font-semibold left-10 -top-3">Data Turunan</div>
+                                {
+                                    dataInvDynamic.map((doc, idx) => {
+                                        return (
+                                            <div className="grid grid-cols-1 md:grid-cols-2" key={idx}>
+                                                {
+                                                    doc.required ?
+                                                        <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name} initialValue={objDynamic}
                                                         rules={[
                                                             {
                                                                 required: true,
                                                                 message: `${doc.name} harus diisi`,
                                                             },
                                                         ]}
-                                                    >
-                                                        {doc.data_type === "text" &&
-                                                            <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} defaultValue={doc.value} allowClear required />}
-                                                        {doc.data_type === "number" &&
-                                                            <InputNumber name={doc.name} onChange={(value) => { onChangeDynamicAnt1(value, doc.id) }} id={doc.name} allowClear style={{ width: `100%` }} defaultValue={doc.value} required />}
-                                                        {doc.data_type === "decimal" &&
-                                                            <InputNumber name={doc.name} onChange={(value) => { onChangeDynamicAnt1(value, doc.id) }} id={doc.name} allowClear style={{ width: `100%` }} defaultValue={doc.value} required />}
-                                                        {doc.data_type === "textarea" &&
-                                                            <Input.TextArea step="" name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.value} required />}
-                                                        {doc.data_type === "checkbox" &&
-                                                            <div><Checkbox name={doc.name} onChange={(value) => { onChangeDynamicAnt1(value, doc.id) }} allowClear defaultValue={doc.value} required /> {doc.name}</div>}
-                                                        {doc.data_type === "select" &&
-                                                            <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.value} required />
-                                                        }
-                                                        {doc.data_type === "tree" &&
-                                                            <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.value} required />
-                                                        }
-                                                        {doc.data_type === "date" &&
-                                                            <DatePicker name={doc.name} defaultValue={moment(doc.value, 'YYYY-MM-DD')} format={'YYYY-MM-DD'} onChange={(date, dateString) => { onChangeDynamicAnt1(dateString, doc.id) }} allowClear required />
-                                                        }
-                                                    </Form.Item>
-                                                    :
-                                                    <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}>
-                                                        {doc.data_type === "text" &&
-                                                            <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} defaultValue={doc.value} allowClear required />}
-                                                        {doc.data_type === "number" &&
-                                                            <InputNumber name={doc.name} onChange={(value) => { onChangeDynamicAnt1(value, doc.id) }} id={doc.name} allowClear style={{ width: `100%` }} defaultValue={doc.value} />}
-                                                        {doc.data_type === "decimal" &&
-                                                            <InputNumber name={doc.name} onChange={(value) => { onChangeDynamicAnt1(value, doc.id) }} id={doc.name} allowClear style={{ width: `100%` }} defaultValue={doc.value} />}
-                                                        {doc.data_type === "textarea" &&
-                                                            <Input.TextArea step="" name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.value} />}
-                                                        {doc.data_type === "checkbox" &&
-                                                            <div><Checkbox name={doc.name} onChange={(value) => { onChangeDynamicAnt1(value, doc.id) }} allowClear defaultValue={doc.value} /> {doc.name}</div>}
-                                                        {doc.data_type === "select" &&
-                                                            <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.value} />
-                                                        }
-                                                        {doc.data_type === "tree" &&
-                                                            <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.value} />
-                                                        }
-                                                        {doc.data_type === "date" &&
-                                                            <DatePicker name={doc.name} defaultValue={moment(doc.value, 'YYYY-MM-DD')} format={'YYYY-MM-DD'} onChange={(date, dateString) => { onChangeDynamicAnt1(dateString, doc.id) }} allowClear />
-                                                        }
-                                                    </Form.Item>
-                                            }
-                                        </div>
-                                    )
-                                })
-                            }
-                        </div>
+                                                        >
+                                                            {doc.data_type === "text" &&
+                                                                <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} defaultValue={doc.value} allowClear required />}
+                                                            {doc.data_type === "number" &&
+                                                                <InputNumber name={doc.name} onChange={(value) => { onChangeDynamicAnt1(value, doc.id) }} id={doc.name} allowClear style={{ width: `100%` }} defaultValue={doc.value} required />}
+                                                            {doc.data_type === "decimal" &&
+                                                                <InputNumber name={doc.name} onChange={(value) => { onChangeDynamicAnt1(value, doc.id) }} id={doc.name} allowClear style={{ width: `100%` }} defaultValue={doc.value} required />}
+                                                            {doc.data_type === "textarea" &&
+                                                                <Input.TextArea step="" name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.value} required />}
+                                                            {doc.data_type === "checkbox" &&
+                                                                <div><Checkbox name={doc.name} onChange={(value) => { onChangeDynamicAnt1(value, doc.id) }} allowClear defaultValue={doc.value} required /> {doc.name}</div>}
+                                                            {doc.data_type === "select" &&
+                                                                <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.value} required />
+                                                            }
+                                                            {doc.data_type === "tree" &&
+                                                                <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.value} required />
+                                                            }
+                                                            {doc.data_type === "date" &&
+                                                                <DatePicker name={doc.name} defaultValue={moment(doc.value, 'YYYY-MM-DD')} format={'YYYY-MM-DD'} onChange={(date, dateString) => { onChangeDynamicAnt1(dateString, doc.id) }} allowClear required />
+                                                            }
+                                                        </Form.Item>
+                                                        :
+                                                        <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name}>
+                                                            {doc.data_type === "text" &&
+                                                                <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} defaultValue={doc.value} allowClear required />}
+                                                            {doc.data_type === "number" &&
+                                                                <InputNumber name={doc.name} onChange={(value) => { onChangeDynamicAnt1(value, doc.id) }} id={doc.name} allowClear style={{ width: `100%` }} defaultValue={doc.value} />}
+                                                            {doc.data_type === "decimal" &&
+                                                                <InputNumber name={doc.name} onChange={(value) => { onChangeDynamicAnt1(value, doc.id) }} id={doc.name} allowClear style={{ width: `100%` }} defaultValue={doc.value} />}
+                                                            {doc.data_type === "textarea" &&
+                                                                <Input.TextArea step="" name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.value} />}
+                                                            {doc.data_type === "checkbox" &&
+                                                                <div><Checkbox name={doc.name} onChange={(value) => { onChangeDynamicAnt1(value, doc.id) }} allowClear defaultValue={doc.value} /> {doc.name}</div>}
+                                                            {doc.data_type === "select" &&
+                                                                <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.value} />
+                                                            }
+                                                            {doc.data_type === "tree" &&
+                                                                <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} allowClear defaultValue={doc.value} />
+                                                            }
+                                                            {doc.data_type === "date" &&
+                                                                <DatePicker name={doc.name} defaultValue={moment(doc.value, 'YYYY-MM-DD')} format={'YYYY-MM-DD'} onChange={(date, dateString) => { onChangeDynamicAnt1(dateString, doc.id) }} allowClear />
+                                                            }
+                                                        </Form.Item>
+                                                }
+                                            </div>
+                                        )
+                                    })
+                                }
+                            </div>
+                        </Form>
                     </div>
                 </div>
             </div>
