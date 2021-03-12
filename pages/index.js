@@ -1,12 +1,10 @@
 import { useState } from 'react'
-import Form from 'antd/lib/form';
 import { Input, Checkbox, Button, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router'
-import notification from 'antd/lib/notification'
 import jscookie from 'js-cookie'
 import httpcookie from 'cookie'
-
+import {Form, notification} from 'antd'
 
 export default function Home({ initProps }) {
   // console.log("token di login abis dari logout: " + jscookie.get('token'))

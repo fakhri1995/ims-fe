@@ -1,18 +1,12 @@
 import { useRouter } from 'next/router'
-import Layout from '../../../components/layout-dashboard'
-import httpcookie from 'cookie'
-import Form from 'antd/lib/form'
-import Input from 'antd/lib/input'
-import Sticky from 'wil-react-sticky'
 import { useState } from 'react'
+import Layout from '../../../components/layout-dashboard'
+import st from '../../../components/layout-dashboard.module.css'
+import httpcookie from 'cookie'
+import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
 import EditOutlined from '@ant-design/icons/EditOutlined'
-import Modal from 'antd/lib/modal'
-import Button from 'antd/lib/button'
-import notification from 'antd/lib/notification'
-import st from '../../../components/layout-dashboard.module.css'
-
-
+import {Form, Input, Modal, Button, notification} from 'antd'
 
 function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
     const rt = useRouter()

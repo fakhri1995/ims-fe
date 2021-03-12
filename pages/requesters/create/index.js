@@ -1,18 +1,13 @@
 import Layout from '../../../components/layout-dashboard'
 import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
-import Form from 'antd/lib/form'
-import Upload from 'antd/lib/upload'
-import Select from 'antd/lib/select'
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
-import Input from 'antd/lib/input'
-import Button from 'antd/lib/button'
-import notification from 'antd/lib/notification'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
 import { useState } from 'react'
 import st from '../../../components/layout-dashboard.module.css'
+import {Form, Upload, Select, Input, Button, notification} from 'antd'
 
 function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     const rt = useRouter()

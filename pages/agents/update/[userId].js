@@ -1,19 +1,13 @@
 import { useRouter } from 'next/router'
 import Layout from '../../../components/layout-dashboard'
 import httpcookie from 'cookie'
-import Form from 'antd/lib/form'
-import Input from 'antd/lib/input'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
-import notification from 'antd/lib/notification'
 import Sticky from 'wil-react-sticky'
 import { useState } from 'react'
 import Link from 'next/link'
-import Modal from 'antd/lib/modal'
 import st from '../../../components/layout-dashboard.module.css'
-import { Button } from 'antd'
-// import Link from 'next/link';
-// import Breadcrumb from 'antd/lib/breadcrumb'
+import { Button,Form,Input,notification,Modal } from 'antd'
 
 function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
     const rt = useRouter()

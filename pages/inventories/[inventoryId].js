@@ -1,19 +1,12 @@
 import Layout from '../../components/layout-dashboard-inventories'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
-import Table from 'antd/lib/table'
-import Button from 'antd/lib/button'
-import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import Tabs from 'antd/lib/tabs'
+import {Tabs, notification, Modal, Timeline} from 'antd'
 import st from '../../components/layout-dashboard-inventories.module.css'
-import notification from 'antd/lib/notification'
-import Modal from 'antd/lib/modal'
-import { Timeline } from 'antd';
 import { Row, Col, Divider } from 'antd';
-import Router from 'next/router';
 
 function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColumnAndVendor, dataInventoryActivityLog, sidemenu }) {
     // Router.events.on('routeChangeStart', () => {
@@ -125,7 +118,7 @@ function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColum
                         </Sticky>
 
                         <div className="col-span-3 flex flex-col space-y-3">
-                            <Tabs defaultActiveKey="1" tabPosition={"left"} style={{ height: 420 }}>
+                            <Tabs defaultActiveKey="1" tabPosition={"left"}>
                                 <TabPane tab={'Overview'} key={1}>
                                     <div>
                                         <div className={'py-2'}>
@@ -184,7 +177,7 @@ function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColum
                                 Content of tab Contracts
                                 </TabPane>
                                 <TabPane tab={'Activity'} key={6}>
-                                <div className={'text-black text-sm flex flex-col bg-white border-gray-300 border cursor-pointer p-3'}>
+                                <div className={'text-black text-sm flex flex-col bg-white border-gray-300 border cursor-pointer p-3 w-full'}>
                                     <Timeline mode={'alternate'}> 
                                     {activityLog.map((doc,index) => {
                                         var text

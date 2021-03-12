@@ -1,19 +1,12 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
-import notification from 'antd/lib/notification'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
-import Form from 'antd/lib/form/Form'
-import Input from 'antd/lib/input'
-import Checkbox from 'antd/lib/checkbox'
-import { Button } from 'antd'
-import Modal from 'antd/lib/modal'
+import { Button,notification,Form,Input,Checkbox,Modal } from 'antd'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard-main.module.css'
-
-
 
 function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTitle, assetsParent, dataInvColumns }) {
     const rt = useRouter()

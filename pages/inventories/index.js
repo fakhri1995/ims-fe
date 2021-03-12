@@ -1,16 +1,12 @@
 import Layout from '../../components/layout-dashboard-inventories'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
-import Table from 'antd/lib/table'
-import Button from 'antd/lib/button'
+import {Table, Button, Tabs, notification, Modal} from 'antd'
 import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import Tabs from 'antd/lib/tabs'
 import st from '../../components/layout-dashboard-inventories.module.css'
-import notification from 'antd/lib/notification'
-import Modal from 'antd/lib/modal'
 
 function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
     const rt = useRouter()
@@ -18,7 +14,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
     const { TabPane } = Tabs;
-    // console.log(dataInventories.data)
+    console.log(dataInventories)
 
     //--------hook modal delete inventories-------------
     const [warningDelete, setWarningDelete] = useState({
@@ -51,6 +47,8 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                 id: doc.id,
                 asset_name: doc.asset_name,
                 model: doc.model,
+                mig_number: doc.mig_number,
+                lokasi: doc.lokasi,
                 status: doc.status
             })
         })
@@ -97,6 +95,21 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
     //------------------------kolom table----------------------
     const columnsDD = [
         {
+            title: 'No',
+            dataIndex: 'idx',
+            key: 'idx',
+            width: 10,
+            render(text, record) {
+                return {
+                    props: {
+                        style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children: <div>{record.idx+1}
+                    </div>,
+                };
+            },
+        },
+        {
             title: 'Asset Name',
             dataIndex: 'asset_name',
             key: 'asset_name',
@@ -117,7 +130,52 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
             },
         },
         {
-            title: 'Action', // Non-breakable space is char 0xa0 (160 dec)
+            title: 'MIG ID',
+            dataIndex: 'mig_number',
+            key: 'mig_number',
+            width: 50,
+            render(text, record) {
+                return {
+                    props: {
+                        style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children: <div>{record.mig_number}
+                    </div>,
+                };
+            },
+        },
+        {
+            title: 'Lokasi',
+            dataIndex: 'lokasi',
+            key: 'lokasi',
+            width: 50,
+            render(text, record) {
+                return {
+                    props: {
+                        style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children: <div>{record.lokasi}
+                    </div>,
+                };
+            },
+        },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            width: 50,
+            render(text, record) {
+                return {
+                    props: {
+                        style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children: <div>{record.status.charAt(0).toUpperCase() + record.status.slice(1)}
+                    </div>,
+                };
+            },
+        },
+        {
+            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0', // Non-breakable space is char 0xa0 (160 dec)
             dataIndex: 'actionss',
             key: 'action',
             width: 50,
@@ -139,7 +197,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
             }
         },
         {
-            title: 'Action', // Non-breakable space is char 0xa0 (160 dec)
+            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0', // Non-breakable space is char 0xa0 (160 dec)
             dataIndex: 'actionss',
             key: 'action',
             width: 100,
