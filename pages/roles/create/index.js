@@ -1,15 +1,11 @@
-import Layout from '../../../components/layout-dashboard'
-import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+import Layout from '../../../components/layout-dashboard'
+import st from '../../../components/layout-dashboard.module.css'
+import httpcookie from 'cookie'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import Button from 'antd/lib/button'
-import notification from 'antd/lib/notification'
-import st from '../../../components/layout-dashboard.module.css'
-import Form from 'antd/lib/form'
-import { Input, Tabs, Tree } from 'antd'
-import Divider from 'antd/lib/divider'
+import { Input, Tabs, Tree, Button, notification, Form, Divider } from 'antd'
 
 function RolesCreate({ initProps, dataProfile, sidemenu }) {
     const rt = useRouter()

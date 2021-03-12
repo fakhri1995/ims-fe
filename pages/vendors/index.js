@@ -1,21 +1,13 @@
-import Layout from '../../components/layout-dashboard-vendors'
-import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
-import Table from 'antd/lib/table'
-import Tooltip from 'antd/lib/tooltip'
-import Button from 'antd/lib/button'
-import EditOutlined from '@ant-design/icons/EditOutlined'
-import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import { useState } from 'react'
+import Layout from '../../components/layout-dashboard-vendors'
+import st from '../../components/layout-dashboard-vendors.module.css'
+import httpcookie from 'cookie'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import st from '../../components/layout-dashboard-vendors.module.css'
-import Drawer from 'antd/lib/drawer'
-import Form from 'antd/lib/form'
-import { Input } from 'antd'
-import notification from 'antd/lib/notification'
-import { comment } from 'postcss'
-import Modal from 'antd/lib/modal'
+import EditOutlined from '@ant-design/icons/EditOutlined'
+import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
+import { Input, Table, Tooltip, Button, Drawer, Form, notification, Modal } from 'antd'
 
 function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
     
@@ -266,7 +258,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            width: 200,
+            width: 250,
             render(text, record) {
                 return {
                     props: {
@@ -285,7 +277,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
             title: 'PIC',
             dataIndex: 'pic',
             key: 'pic',
-            width: 250,
+            width: 200,
             render(text, record) {
                 return {
                     props: {

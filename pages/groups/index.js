@@ -1,19 +1,12 @@
 import Layout from '../../components/layout-dashboard-groups'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
-import Table from 'antd/lib/table'
-import Button from 'antd/lib/button'
-import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
+import { DeleteOutlined, DownOutlined } from '@ant-design/icons'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import Tabs from 'antd/lib/tabs'
-import DownOutlined from '@ant-design/icons/DownOutlined'
-import Dropdown from 'antd/lib/dropdown'
-import Menu from 'antd/lib/menu'
+import { Tabs, Dropdown, Menu, notification, Modal, Button, Table } from 'antd'
 import st from '../../components/layout-dashboard-groups.module.css'
-import notification from 'antd/lib/notification'
-import Modal from 'antd/lib/modal'
 
 function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters, sidemenu, dataDetailGroup }) {
     const rt = useRouter()

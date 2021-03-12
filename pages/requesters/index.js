@@ -1,15 +1,12 @@
+import { useRouter } from 'next/router'
+import { useState } from 'react'
+import st from '../../components/layout-dashboard.module.css'
 import Layout from '../../components/layout-dashboard'
 import httpcookie from 'cookie'
-import { useRouter } from 'next/router'
-import Table from 'antd/lib/table'
 import CopyOutlined from '@ant-design/icons/CopyOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
-import notification from 'antd/lib/notification'
-import { useState } from 'react'
-import Button from 'antd/lib/button'
 import Link from 'next/link'
-import st from '../../components/layout-dashboard.module.css'
-
+import {Table, notification, Button} from 'antd'
 
 function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const rt = useRouter()

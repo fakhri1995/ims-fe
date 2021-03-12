@@ -1,19 +1,13 @@
 import Layout from '../../components/layout-dashboard-clients'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
-import Input from 'antd/lib/input'
-import Form from 'antd/lib/form'
-import Table from 'antd/lib/table'
 import EditOutlined from '@ant-design/icons/EditOutlined'
-import Upload from 'antd/lib/upload'
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
-import notification from 'antd/lib/notification'
-import Drawer from 'antd/lib/drawer'
-import Button from 'antd/lib/button'
 import Link from 'next/link'
 import { useState } from 'react'
 import st from '../../components/layout-dashboard-clients.module.css'
+import {Input,Form,Table,Upload,notification,Drawer,Button} from 'antd'
 
 function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     const rt = useRouter()

@@ -1,11 +1,9 @@
 import httpcookie from 'cookie'
 import Layout from '../../../../components/layout-dashboard'
 import Link from 'next/link'
-import Form from 'antd/lib/form'
-import Input from 'antd/lib/input'
-import TreeSelect from 'antd/lib/tree-select'
 import st from "../../../../components/layout-dashboard.module.css"
 import { useState } from 'react'
+import {Form,Input,TreeSelect} from 'antd'
 
 function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany }) {
     const tok = initProps

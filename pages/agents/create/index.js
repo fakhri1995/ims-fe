@@ -1,17 +1,13 @@
 import Layout from '../../../components/layout-dashboard'
 import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
-import Form from 'antd/lib/form'
-import Upload from 'antd/lib/upload'
-import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
-import PlusOutlined from '@ant-design/icons/PlusOutlined'
-import Input from 'antd/lib/input'
-import notification from 'antd/lib/notification'
+import { LoadingOutlined } from '@ant-design/icons'
+import { PlusOutlined } from '@ant-design/icons'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
-import Button from 'antd/lib/button'
 import { useState, useEffect } from 'react'
 import st from '../../../components/layout-dashboard.module.css'
+import { Form, Upload, Input, notification, Button } from 'antd'
 
 function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     const rt = useRouter()
@@ -197,21 +193,21 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                                         <Input value={newuser.email} name={`email`} onChange={onChangeCreateAgents} />
                                     </Form.Item>
                                     <Form.Item label="No. Handphone" name="phone_number"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'No.Handphone harus diisi',
-                                        },
-                                    ]}>
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'No.Handphone harus diisi',
+                                            },
+                                        ]}>
                                         <Input value={newuser.phone_number} name={`phone_number`} onChange={onChangeCreateAgents} />
                                     </Form.Item>
                                     <Form.Item label="Role" name="role"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Role harus diisi',
-                                        },
-                                    ]}>
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Role harus diisi',
+                                            },
+                                        ]}>
                                         <input type="number" value={newuser.role} name={'role'} onChange={onChangeCreateAgents} />
                                     </Form.Item>
                                 </Form>

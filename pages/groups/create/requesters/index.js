@@ -4,15 +4,8 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import Divider from 'antd/lib/divider'
-import { Input } from 'antd'
-import { Select } from 'antd'
-import { Radio } from 'antd'
-import Button from 'antd/lib/button'
-import { Row, Col } from 'antd'
-import notification from 'antd/lib/notification'
 import st from '../../../../components/layout-dashboard-groups.module.css'
-import Form from 'antd/lib/form'
+import {Divider,Input,Select,Radio,Row,Col,Button,notification,Form} from 'antd'
 
 function GroupsRequestersCreate({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const rt = useRouter()
