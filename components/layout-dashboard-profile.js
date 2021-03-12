@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import Layout from 'antd/lib/layout'
+import { Layout } from 'antd'
 import jscookie from 'js-cookie'
 
-import Menu from 'antd/lib/menu'
-import Avatar from 'antd/lib/avatar'
-import Dropdown from 'antd/lib/dropdown'
+import { Menu } from 'antd'
+import { Avatar } from 'antd'
+import { Dropdown } from 'antd'
 import ExportOutlined from '@ant-design/icons/ExportOutlined'
-import DashboardTwoTone from '@ant-design/icons/DashboardTwoTone'
-import MenuUnfoldOutlined from '@ant-design/icons/MenuUnfoldOutlined'
-import MenuFoldOutlined from '@ant-design/icons/MenuFoldOutlined'
+import { DashboardTwoTone } from '@ant-design/icons'
+import { MenuUnfoldOutlined } from '@ant-design/icons'
+import { MenuFoldOutlined } from '@ant-design/icons'
 
 function LayoutDashboardProfile({ children, tok, dataProfile, edit, setedit, st }) {
     const rt = useRouter()

@@ -251,7 +251,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} st={st}>
             <div className="flex justify-start md:justify-end p-3 md:border-t-2 md:border-b-2 bg-white mb-4 md:mb-8">
                 <div className="flex space-x-2">
-                    <Button type="primary" size="large" onClick={() => { setDrawablecreate(true) }}>Buat Baru</Button>
+                    <Button type="primary" size="large" onClick={() => { setDrawablecreate(true) }}>Tambah Agents</Button>
                     {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-40" onClick={() => { setDrawablecreate(true) }}> Create</button> */}
                     <Drawer title="Buat Perusahaan Clients" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false); closeClientsDrawer(); instanceForm.resetFields() }} width={420} destroyOnClose={true}>
                         <div className="w-full h-auto grid grid-cols-1 md:grid-cols-1">

@@ -250,7 +250,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                                     <Link href={`/assets/update/${nodeData.title}?originPath=Admin&parent=${prt}&id=${nodeData.id}`}>
                                                         <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                                     </Link>
-                                                    <Popconfirm onConfirm={() => { handleDeleteAssets(nodeData.id) }} onCancel={() => { message.error("Gagal dihapus") }}>
+                                                    <Popconfirm title="Yakin ingin menghapus asset type ini?" onConfirm={() => { handleDeleteAssets(nodeData.id) }} onCancel={() => { message.error("Gagal dihapus") }}>
                                                         <a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a>
                                                     </Popconfirm>
                                                 </div>
