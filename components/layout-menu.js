@@ -36,7 +36,9 @@ const LayoutMenu = ({ sidemenu, coll, collsmall, st, handleCollSmall }) => {
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="2" icon={<Icon component={ticketIconSvg} />}>
-                        Ticket
+                        <Link href="/tickets">
+                            Ticket
+                        </Link>
                     </Menu.Item>
                     <SubMenu key="3" icon={<InboxOutlined />} title="Assets">
                         <Menu.Item key="sub31">
@@ -75,7 +77,9 @@ const LayoutMenu = ({ sidemenu, coll, collsmall, st, handleCollSmall }) => {
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="2" icon={<Icon component={ticketIconSvg} />}>
-                        Ticket
+                        <Link href="/tickets">
+                            Ticket
+                        </Link>
                     </Menu.Item>
                     <SubMenu key="3" icon={<InboxOutlined />} title="Assets">
                         <Menu.Item key="sub31">
