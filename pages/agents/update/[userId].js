@@ -7,7 +7,7 @@ import Sticky from 'wil-react-sticky'
 import { useState } from 'react'
 import Link from 'next/link'
 import st from '../../../components/layout-dashboard.module.css'
-import { Button,Form,Input,notification,Modal } from 'antd'
+import { Button, Form, Input, notification, Modal, Switch } from 'antd'
 
 function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
     const rt = useRouter()
@@ -20,17 +20,20 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
     const [visiblenon, setVisiblenon] = useState(false)
     const [visibleubahpass, setVisibleubahpass] = useState(false)
     const [loadingsave, setLoadingsave] = useState(false)
+    const [loadingubahpass, setloadingubahpass] = useState(false)
+    const [loadingubahaktif, setloadingubahaktif] = useState(false)
+    const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
     const [instanceForm] = Form.useForm();
     const [datapass, setDatapass] = useState({
-        user_id: dataDetailAccount.data.user_id,
+        user_id: dataDetailAccount.data.data.user_id,
         new_password: ''
     })
     const [data1, setData1] = useState({
-        id: dataDetailAccount.data.user_id,
-        fullname: dataDetailAccount.data.fullname,
-        role: dataDetailAccount.data.role,
-        phone_number: dataDetailAccount.data.phone_number,
-        profile_image: dataDetailAccount.data.profile_image
+        id: dataDetailAccount.data.data.user_id,
+        fullname: dataDetailAccount.data.data.fullname,
+        role: dataDetailAccount.data.data.role,
+        phone_number: dataDetailAccount.data.data.phone_number,
+        profile_image: dataDetailAccount.data.data.profile_image
     })
     const onChangeEditAgents = (e) => {
         setData1({
@@ -68,9 +71,9 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
             .then(res => res.json())
             .then(res2 => {
                 setLoadingsave(false)
-                if (res2.data) {
+                if (res2.success) {
                     notification['success']({
-                        message: res2.data.message,
+                        message: res2.message,
                         duration: 3
                     })
                     setTimeout(() => {
@@ -89,9 +92,11 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
         var keaktifan = false
         if (status === "aktif") {
             keaktifan = false
+            setloadingubahaktif(true)
         }
         else if (status === "nonAktif") {
             keaktifan = true
+            setloadingubahnonaktif(true)
         }
         fetch(`https://boiling-thicket-46501.herokuapp.com/accountActivation`, {
             method: 'POST',
@@ -100,21 +105,27 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                user_id: dataDetailAccount.data.user_id,
+                user_id: dataDetailAccount.data.data.user_id,
                 is_enabled: keaktifan
             })
         })
             .then(res => res.json())
             .then(res2 => {
-                if (res2.data) {
+                if (res2.success) {
                     setVisible(false)
                     setVisiblenon(false)
                     notification['success']({
-                        message: res2.data.message,
+                        message: res2.message,
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/agents/update/${dataDetailAccount.data.user_id}?originPath=Admin`)
+                        if (status === "aktif") {
+                            setloadingubahaktif(false)
+                        }
+                        else if (status === "nonAktif") {
+                            setloadingubahnonaktif(false)
+                        }
+                        rt.push(`/agents/update/${dataDetailAccount.data.data.user_id}?originPath=Admin`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -128,7 +139,8 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
             })
     }
     const handleUbahPassword = () => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/updateAccountPassword`, {
+        setloadingubahpass(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/changeAccountPassword`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -138,14 +150,15 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
         })
             .then(res => res.json())
             .then(res2 => {
-                if (res2.data) {
+                if (res2.success) {
                     setVisibleubahpass(false)
                     notification['success']({
-                        message: res2.data.message,
+                        message: res2.message,
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/agents/update/${dataDetailAccount.data.user_id}?originPath=Admin`)
+                        setloadingubahpass(false)
+                        rt.push(`/agents/update/${dataDetailAccount.data.data.user_id}?originPath=Admin`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -175,22 +188,28 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                                     <Button type="default" size="middle">
                                         Batalkan
                                     </Button>
-                                    {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button> */}
                                 </Link>
                                 <Button type="primary" size="middle" loading={loadingsave} onClick={instanceForm.submit}>Perbarui</Button>
-                                {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={handleSubmitEditAccount}>Update</button> */}
                             </div>
                         </div>
                     </Sticky>
-                    <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-14">
+                    <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-8">
                         <div className="border-b border-black p-4 font-semibold mb-5 flex">
                             <div className="md:mr-5 pt-1">Detail Akun Agents</div>
                             {
-                                dataDetailAccount.data.attribute.is_enabled ?
-                                    <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md w-auto">AKTIF AKUN</div>
+                                dataDetailAccount.data.data.attribute.is_enabled ?
+                                    <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md w-auto md:mr-5">AKUN AKTIF</div>
                                     :
-                                    <div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md w-auto">NON-AKTIF AKUN</div>
+                                    <div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md w-auto md:mr-5">AKUN NON-AKTIF</div>
                             }
+                            <div className="pt-1">
+                                {
+                                    dataDetailAccount.data.data.attribute.is_enabled ?
+                                        <Switch checked={true} onChange={() => { setVisible(true) }}></Switch>
+                                        :
+                                        <Switch checked={false} onChange={() => { setVisiblenon(true) }}></Switch>
+                                }
+                            </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4">
                             <div className="p-3 col-span-1 md:col-span-1 relative flex flex-col items-center">
@@ -203,15 +222,12 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                             </div>
                             <div className="p-3 col-span-1 md:col-span-3">
                                 <h1 className="text-xs text-gray-600 mb-1">Email:</h1>
-                                <h1 className="text-sm text-black mb-5">{dataDetailAccount.data.email}</h1>
+                                <h1 className="text-sm text-black mb-5">{dataDetailAccount.data.data.email}</h1>
                                 <div className="flex flex-col mb-5">
                                     <h1 className="text-sm">ID</h1>
                                     <h1 className="text-sm font-semibold">{data1.id}</h1>
                                 </div>
                                 <Form layout="vertical" form={instanceForm} onFinish={handleSubmitEditAccount} initialValues={data1}>
-                                    {/* <Form.Item label="ID" required tooltip="Wajib diisi">
-                                        <Input defaultValue={data1.id} onChange={onChangeEditAgents} name="id" />
-                                    </Form.Item> */}
                                     <Form.Item label="Nama Lengkap" name="fullname" required tooltip="Wajib diisi" initialValue={data1.fullname}
                                         rules={[
                                             {
@@ -222,50 +238,30 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                                         <Input defaultValue={data1.fullname} onChange={onChangeEditAgents} name="fullname" required />
                                     </Form.Item>
                                     <Form.Item label="No. Handphone" name="phone_number" required tooltip="Wajib diisi" initialValue={data1.phone_number}
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'No. Handphone harus diisi',
-                                        },
-                                    ]}>
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'No. Handphone harus diisi',
+                                            },
+                                        ]}>
                                         <Input defaultValue={data1.phone_number} onChange={onChangeEditAgents} name="phone_number" />
                                     </Form.Item>
-                                    <Form.Item label="Role" name="role" required tooltip="Wajib diisi" initialValue={data1.role}
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Role harus diisi',
-                                        },
-                                    ]}>
+                                    {/* <Form.Item label="Role" name="role" required tooltip="Wajib diisi" initialValue={data1.role}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Role harus diisi',
+                                            },
+                                        ]}>
                                         <input type="number" defaultValue={data1.role} name={'role'} onChange={onChangeEditAgents} />
-                                    </Form.Item>
+                                    </Form.Item> */}
                                 </Form>
                             </div>
                         </div>
                     </div>
-                    <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-14">
-                        <div className="border-b border-black p-4 font-semibold mb-5">
-                            Detail Perusahaan
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-4">
-                            <div className="p-3 col-span-1 md:col-span-1">
-                                <img src={dataDetailAccount.data.company.image_logo} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full" />
-                            </div>
-                            <div className="col-span-1 md:col-span-3 p-3 space-y-4">
-                                <div>
-                                    <h1 className="font-semibold text-sm">ID Perusahaan:</h1>
-                                    <h1 className="font-normal text-sm">{dataDetailAccount.data.company.company_id}</h1>
-                                </div>
-                                <div>
-                                    <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
-                                    <h1 className="font-normal text-sm">{dataDetailAccount.data.company.company_name}</h1>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="w-full p-3 md:p-5 h-auto">
+                    {/* <div className="w-full p-3 md:p-5 h-auto">
                         {
-                            dataDetailAccount.data.attribute.is_enabled ?
+                            dataDetailAccount.data.data.attribute.is_enabled ?
                                 <button className=" w-full h-auto py-2 text-center bg-red-600 text-white hover:bg-red-800 rounded-md" onClick={() => { setVisible(true) }}>
                                     Non Aktifkan Akun
                                 </button>
@@ -274,10 +270,10 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                                     Aktifkan Akun
                                 </button>
                         }
-                    </div >
+                    </div > */}
                     <div className="w-full p-3 md:p-5 h-auto">
                         <button className=" w-full h-auto py-2 text-center bg-white text-black hover:bg-blue-100 hover:text-blue-700 rounded-md" onClick={() => { setVisibleubahpass(true) }}>
-                            Ubah Password
+                            <strong>Ubah Password</strong>
                         </button>
                     </div >
                     <Modal
@@ -285,22 +281,26 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                         visible={visible}
                         onOk={() => { handleActivationAgents("aktif") }}
                         onCancel={() => setVisible(false)}
+                        okButtonProps={{ disabled: loadingubahaktif }}
                     >
-                        Apakah anda yakin ingin menon-aktifkan akun perusahaan <strong>{dataDetailAccount.data.fullname}</strong>?
+                        Apakah anda yakin ingin menon-aktifkan akun perusahaan <strong>{dataDetailAccount.data.data.fullname}</strong>?
                     </Modal>
                     <Modal
                         title="Konfirmasi untuk mengakaktifkan akun"
                         visible={visiblenon}
                         onOk={() => { handleActivationAgents("nonAktif") }}
                         onCancel={() => setVisiblenon(false)}
+                        okButtonProps={{ disabled: loadingubahnonaktif }}
                     >
-                        Apakah anda yakin ingin melakukan aktivasi akun perusahaan <strong>{dataDetailAccount.data.fullname}</strong>?`
+                        Apakah anda yakin ingin melakukan aktivasi akun perusahaan <strong>{dataDetailAccount.data.data.fullname}</strong>?`
                     </Modal>
                     <Modal
                         title="Ubah Password"
                         visible={visibleubahpass}
                         onOk={handleUbahPassword}
                         onCancel={() => setVisibleubahpass(false)}
+                        destroyOnClose={true}
+                        okButtonProps={{ disabled: loadingubahpass }}
                     >
                         <Input.Password name="new_password" value={datapass.new_password} placeholder="Password Baru" type="password" onChange={(e) => { setDatapass({ ...datapass, [e.target.name]: e.target.value }) }} style={{ marginBottom: `2rem` }} />
                     </Modal>

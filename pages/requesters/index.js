@@ -23,7 +23,7 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
         rt.push('/dashboard/admin')
     }
     else {
-        dataDD = dataListAccount.data.accounts.filter(data => data.company_id !== 66).map((doc, idx) => {
+        dataDD = dataListAccount.data.data.accounts.filter(data => data.company_id !== 66).map((doc, idx) => {
             return ({
                 user_id: doc.user_id,
                 profile_image: doc.profile_image,

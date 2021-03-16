@@ -67,79 +67,97 @@ function TicketsIndex({ initProps, dataProfile, dataTicketList, sidemenu }) {
                         <div className="w-full h-auto border rounded-md p-3">
                             {/* Ini list per item*/}
                             {
-                                dataTicketList.data.length !== 0 ?
+                                dataTicketList.data.tickets.length !== 0 ?
                                     <>
-                                        <div className="flex flex-col md:flex-row justify-between divide-x-2 w-full mb-5 border-b">
-                                            <Link href={`/tickets/${0}`}>
-                                                <div className="w-9/12 p-3 flex items-center">
-                                                    <div className="mr-3">
-                                                        <Checkbox style={{ marginTop: `0.3rem` }}></Checkbox>
-                                                    </div>
-                                                    <div className="flex justify-between w-full">
-                                                        <div>
-                                                            <h1><a href="#">Request dari Andi Darussalam: Adobe Premiere</a> #SR-8</h1>
-                                                            <h1>Dari: <strong>Andi Darussalam</strong></h1>
-                                                            <h1>Dibuat: 4 hari yang lalu | Batas waktu sisa: 1 hari</h1>
+                                        {
+                                            dataTicketList.data.tickets.map((doc, idx) => {
+                                                return (
+                                                    <div className="flex flex-col md:flex-row justify-between divide-x-2 w-full mb-5 border-b">
+                                                        <div className="w-9/12 p-3 flex items-center">
+                                                            <div className="mr-3">
+                                                                <Checkbox style={{ marginTop: `0.3rem` }}></Checkbox>
+                                                            </div>
+                                                            <Link href={`/tickets/${doc.id}?subject_type_id=${doc.subject_type_id}&type=${doc.type}`}>
+                                                                <div className="flex justify-between w-full cursor-pointer">
+                                                                    <div>
+                                                                        <h1>
+                                                                            {doc.type === "Service Request" && <a href="#">Request dari Andi Darussalam: Adobe Premiere</a>}
+                                                                            {doc.type === "Incident" && <a href="#">Incident </a>}
+                                                                            {doc.type === "Incident" && <>#INC-{doc.subject_type_id}</>} {doc.type === "Service Request" && <>#SR-{doc.subject_type_id}</>}
+                                                                        </h1>
+                                                                        <h1>Dari: <strong>Andi Darussalam</strong></h1>
+                                                                        <h1>Dibuat: 4 hari yang lalu | Batas waktu sisa: 1 hari</h1>
+                                                                    </div>
+                                                                    <div className="flex justify-center items-center">
+                                                                        <div className="rounded-md w-auto h-auto px-2 py-1 bg-red-100 border border-red-200 text-red-600">Lewat</div>
+                                                                    </div>
+                                                                </div>
+                                                            </Link>
                                                         </div>
-                                                        <div className="flex justify-center items-center">
-                                                            <div className="rounded-md w-auto h-auto px-2 py-1 bg-red-100 border border-red-200 text-red-600">Lewat</div>
+                                                        <div className="flex flex-col w-3/12 p-3">
+                                                            <div className="w-full text-sm mb-1">
+                                                                Dilimpahkan ke:
+                                                                <Select
+                                                                    showSearch
+                                                                    optionFilterProp="children"
+                                                                    filterOption={(input, option) =>
+                                                                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                                                    }
+                                                                    bordered={false}
+                                                                    placeholder="Cari"
+                                                                    style={{ width: `100%`, fontWeight: `bold` }}
+                                                                    size="small"
+                                                                >
+                                                                    {/* <Option value="jack">Jack</Option>
+                                                                    <Option value="lucy">Lucy</Option>
+                                                                    <Option value="tom">Tom</Option> */}
+                                                                    <Option value="none">None</Option>
+                                                                    {/* <OptGroup label="Groups"> */}
+                                                                    <Option value="keuangan">Divisi Keuangan</Option>
+                                                                    <Option value="sdm">Divisi SDM</Option>
+                                                                    {/* </OptGroup> */}
+                                                                    {/* <OptGroup label="Agents"> */}
+                                                                    <Option value="Ardi Wijaya">Ardi Wijaya</Option>
+                                                                    <Option value="Bono Samsuddin">Bono Samsuddin</Option>
+                                                                    {/* </OptGroup> */}
+                                                                </Select>
+                                                            </div>
+                                                            <div className="w-full text-sm mb-1">
+                                                                Status:
+                                                                <Select
+                                                                    bordered={false}
+                                                                    placeholder="Pilih Status"
+                                                                    style={{ fontWeight: `bold` }}
+                                                                    size="small"
+                                                                >
+                                                                    <Option value="open">Open</Option>
+                                                                    <Option value="pending">Pending</Option>
+                                                                    <Option value="resolved">Resolved</Option>
+                                                                    <Option value="closed">Closed</Option>
+                                                                </Select>
+                                                            </div>
+                                                            <div className="w-full text-sm mb-1">
+                                                                Prioritas:
+                                                                <Select
+                                                                    bordered={false}
+                                                                    placeholder="Pilih Status"
+                                                                    style={{ fontWeight: `bold` }}
+                                                                    size="small"
+                                                                    defaultValue="sedang"
+                                                                >
+                                                                    <Option value="rendah"><div className="flex items-center"><div className="w-3 h-3 bg-green-600 mr-1" />Rendah</div></Option>
+                                                                    <Option value="sedang"><div className="flex items-center"><div className="w-3 h-3 bg-blue-600 mr-1" />Sedang</div></Option>
+                                                                    <Option value="tinggi"><div className="flex items-center"><div className="w-3 h-3 bg-yellow-600 mr-1" />Tinggi</div></Option>
+                                                                    <Option value="darurat"><div className="flex items-center"><div className="w-3 h-3 bg-red-600 mr-1" />Darurat</div></Option>
+                                                                </Select>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </Link>
-                                            <div className="flex flex-col w-3/12 p-3">
-                                                <div className="w-full text-sm mb-1">
-                                                    Dilimpahkan ke:
-                                                    <Select
-                                                        bordered={false}
-                                                        placeholder="Cari"
-                                                        style={{ width: `100%`, fontWeight: `bold` }}
-                                                        size="small"
-                                                    >
-                                                        <Option value="none">None</Option>
-                                                        <OptGroup label="Groups">
-                                                            <Option value="keuangan">Divisi Keuangan</Option>
-                                                            <Option value="sdm">Divisi SDM</Option>
-                                                        </OptGroup>
-                                                        <OptGroup label="Agents">
-                                                            <Option value="Ardi Wijaya">Ardi Wijaya</Option>
-                                                            <Option value="Bono Samsuddin">Bono Samsuddin</Option>
-                                                        </OptGroup>
-                                                    </Select>
-                                                </div>
-                                                <div className="w-full text-sm mb-1">
-                                                    Status:
-                                                    <Select
-                                                        bordered={false}
-                                                        placeholder="Pilih Status"
-                                                        style={{ fontWeight: `bold` }}
-                                                        size="small"
-                                                    >
-                                                        <Option value="open">Open</Option>
-                                                        <Option value="pending">Pending</Option>
-                                                        <Option value="resolved">Resolved</Option>
-                                                        <Option value="closed">Closed</Option>
-                                                    </Select>
-                                                </div>
-                                                <div className="w-full text-sm mb-1">
-                                                    Prioritas:
-                                                    <Select
-                                                        bordered={false}
-                                                        placeholder="Pilih Status"
-                                                        style={{ fontWeight: `bold` }}
-                                                        size="small"
-                                                        defaultValue="sedang"
-                                                    >
-                                                        <Option value="rendah"><div className="flex items-center"><div className="w-3 h-3 bg-green-600 mr-1" />Rendah</div></Option>
-                                                        <Option value="sedang"><div className="flex items-center"><div className="w-3 h-3 bg-blue-600 mr-1" />Sedang</div></Option>
-                                                        <Option value="tinggi"><div className="flex items-center"><div className="w-3 h-3 bg-yellow-600 mr-1" />Tinggi</div></Option>
-                                                        <Option value="darurat"><div className="flex items-center"><div className="w-3 h-3 bg-red-600 mr-1" />Darurat</div></Option>
-                                                    </Select>
-                                                </div>
-                                            </div>
-                                        </div>
+                                                )
+                                            })
+                                        }
 
-                                        <div className="flex flex-col md:flex-row justify-between divide-x-2 w-full mb-5 border-b">
+                                        {/* <div className="flex flex-col md:flex-row justify-between divide-x-2 w-full mb-5 border-b">
                                             <div className="w-9/12 p-3 flex items-center">
                                                 <div className="mr-3">
                                                     <Checkbox style={{ marginTop: `0.3rem` }}></Checkbox>
@@ -205,7 +223,7 @@ function TicketsIndex({ initProps, dataProfile, dataTicketList, sidemenu }) {
                                                     </Select>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> */}
                                     </>
                                     :
                                     <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>

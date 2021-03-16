@@ -23,7 +23,7 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
         rt.push('/dashboard/admin')
     }
     else {
-        dataDD = dataListAccount.data.accounts.map((doc, idx) => {
+        dataDD = dataListAccount.data.data.accounts.map((doc, idx) => {
             return ({
                 user_id: doc.user_id,
                 profile_image: doc.profile_image,
@@ -257,7 +257,7 @@ export async function getServerSideProps({ req, res }) {
     var initProps = {};
     const reqBodyAccountList = {
         page: 1,
-        rows: 10,
+        rows: 50,
         order_by: "asc"
     }
     if (req && req.headers) {

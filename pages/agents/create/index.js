@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react'
 import st from '../../../components/layout-dashboard.module.css'
 import { Form, Upload, Input, notification, Button } from 'antd'
 
-function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
+function AgentsCreate({ initProps, dataProfile, sidemenu }) {
     const rt = useRouter()
     const { originPath } = rt.query
     const tok = initProps
@@ -21,7 +21,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     const [newuser, setNewuser] = useState({
         fullname: '',
         email: '',
-        role: 0,
+        role: 2,
         phone_number: '',
         profile_image: '',
         company_id: 66
@@ -201,7 +201,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                                         ]}>
                                         <Input value={newuser.phone_number} name={`phone_number`} onChange={onChangeCreateAgents} />
                                     </Form.Item>
-                                    <Form.Item label="Role" name="role"
+                                    {/* <Form.Item label="Role" name="role"
                                         rules={[
                                             {
                                                 required: true,
@@ -209,7 +209,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                                             },
                                         ]}>
                                         <input type="number" value={newuser.role} name={'role'} onChange={onChangeCreateAgents} />
-                                    </Form.Item>
+                                    </Form.Item> */}
                                 </Form>
                             </div>
                         </div>
@@ -243,7 +243,7 @@ export async function getServerSideProps({ req, res }) {
     var initProps = {};
     const reqBody = {
         page: 1,
-        rows: 10,
+        rows: 50,
         order_by: "asc"
     }
     if (req && req.headers) {
@@ -267,22 +267,21 @@ export async function getServerSideProps({ req, res }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyList`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(reqBody)
-    })
-    const resjsonGCL = await resourcesGCL.json()
-    const dataCompanyList = resjsonGCL
+    // const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyList`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify(reqBody)
+    // })
+    // const resjsonGCL = await resourcesGCL.json()
+    // const dataCompanyList = resjsonGCL
 
     return {
         props: {
             initProps,
             dataProfile,
-            dataCompanyList,
             sidemenu: "4"
         }
     }

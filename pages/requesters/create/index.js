@@ -15,14 +15,14 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
     const tok = initProps
     var pathArr = rt.pathname.split("/").slice(1)
     pathArr[pathArr.length - 1] = "Create"
-    dataCompanyList = dataCompanyList.data.companies.filter(data => data.company_id !== 66)
+    dataCompanyList = dataCompanyList.data.data.companies.filter(data => data.company_id !== 66)
     const [instanceForm] = Form.useForm()
 
     //useState
     const [newuserrequesters, setNewuserrequesters] = useState({
         fullname: '',
         email: '',
-        role: 0,
+        role: 2,
         phone_number: '',
         profile_image: '',
         company_id: 0
@@ -44,9 +44,9 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
             .then(res => res.json())
             .then(res2 => {
                 setLoadingcreate(false)
-                if (res2.data) {
+                if (res2.success) {
                     notification['success']({
-                        message: res2.data.message,
+                        message: res2.message,
                         duration: 3
                     })
                     setTimeout(() => {
@@ -185,7 +185,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                                     ]}>
                                         <Input value={newuserrequesters.phone_number} name={`phone_number`} onChange={onChangeCreateRequesters} />
                                     </Form.Item>
-                                    <Form.Item label="Role" name="role"
+                                    {/* <Form.Item label="Role" name="role"
                                     rules={[
                                         {
                                             required: true,
@@ -193,7 +193,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                                         },
                                     ]}>
                                         <input type="number" value={newuserrequesters.role} name={'role'} onChange={onChangeCreateRequesters} />
-                                    </Form.Item>
+                                    </Form.Item> */}
                                     <Form.Item label="Asal Perusahaan" name="company_id"
                                         rules={[
                                             {
@@ -234,7 +234,7 @@ export async function getServerSideProps({ req, res }) {
     var initProps = {};
     const reqBody = {
         page: 1,
-        rows: 10,
+        rows: 50,
         order_by: "asc"
     }
     if (req && req.headers) {

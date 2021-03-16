@@ -3,11 +3,12 @@ import httpcookie from 'cookie'
 import { useState } from 'react'
 import Link from 'next/link'
 import { EditOutlined, PlusCircleTwoTone } from '@ant-design/icons'
-import { Select, Collapse, Button, Form, Empty, Timeline } from 'antd'
+import { Select, Collapse, Button, Form, Empty, Timeline, DatePicker, notification } from 'antd'
 import Layout from '../../../components/layout-dashboard-tickets'
 import st from '../../../components/layout-dashboard.module.css'
+import moment from 'moment'
 
-function TicketsDetail({ initProps, dataProfile, dataTicketList, sidemenu }) {
+function TicketsDetail({ initProps, dataProfile, dataIncidentList, dataTicketsList, dataSRList, type, subject_type_id, sidemenu }) {
     //Initialization
     const rt = useRouter()
     const { ticketsId } = rt.query
@@ -15,6 +16,24 @@ function TicketsDetail({ initProps, dataProfile, dataTicketList, sidemenu }) {
     const { Panel } = Collapse
     const [updateTicketsForm] = Form.useForm()
     const pathArr = ['tickets', ticketsId]
+    var incidentDetail = {}
+    incidentDetail = dataIncidentList.data.filter(dataa => {
+        return dataa.id == subject_type_id
+    })[0]
+    var ticketsDetail = {}
+    ticketsDetail = dataTicketsList.data.tickets.filter(dataa => {
+        return dataa.id == ticketsId
+    })[0]
+    var defaultduetime = ""
+    var defaultdateduetime = ""
+    if (ticketsDetail.due_to === null) {
+        defaultduetime = Math.floor(((new Date().getTime() + (14 * 24 * 60 * 60 * 1000)) - new Date().getTime()) / (1000 * 3600 * 24))
+        defaultdateduetime = new Date((new Date().getTime() + (14 * 24 * 60 * 60 * 1000))).toLocaleString()
+    }
+    else {
+        defaultduetime = Math.floor((+ new Date(ticketsDetail.due_to).getTime() - new Date().getTime()) / (1000 * 3600 * 24))
+        defaultdateduetime = new Date(ticketsDetail.due_to).toLocaleString()
+    }
 
     //useState
     const [tab, settab] = useState({
@@ -26,6 +45,9 @@ function TicketsDetail({ initProps, dataProfile, dataTicketList, sidemenu }) {
         approval: "hidden",
         activities: "hidden"
     })
+    const [changeduetime, setchangeduetime] = useState(false)
+    const [dataduetime, setdataduetime] = useState("")
+    const [loadingduetime, setloadingduetime] = useState(false)
 
     //onChange
     const onChangeTab = (e, jenis) => {
@@ -54,6 +76,41 @@ function TicketsDetail({ initProps, dataProfile, dataTicketList, sidemenu }) {
 
 
     //handler
+    const handleChangeDueTime = () => {
+        const dataupdateduetime = {
+            id: ticketsId,
+            due_to: moment(dataduetime, 'YYYY-MM-DD')
+        }
+        setloadingduetime(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateTicket`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataupdateduetime)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingduetime(false)
+                setchangeduetime(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/tickets/${ticketsId}?subject_type_id=${subject_type_id}&type=${type}`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                }
+            })
+    }
 
     return (
         <Layout tok={initProps} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} st={st}>
@@ -64,7 +121,8 @@ function TicketsDetail({ initProps, dataProfile, dataTicketList, sidemenu }) {
                             <div className="p-5 flex items-center">
                                 <div className="w-10 h-10 rounded-full bg-purple-500 text-white mr-5 flex items-center justify-center">Y</div>
                                 <div className="flex flex-col">
-                                    <h1 className="text-lg font-semibold">Request dari: Andi Darussalam - <span className="text-blue-700">New CRM Account</span></h1>
+                                    {type === "Service Request" && <h1 className="text-lg font-semibold">Request dari: Andi Darussalam - <span className="text-blue-700">New CRM Account</span></h1>}
+                                    {type === "Incident" && <h1 className="text-lg font-semibold">#INC {incidentDetail.id} - {incidentDetail.subject}</h1>}
                                     <h1 className="text-sm"><a href="#">Andi Darussalam</a> melaporkan 4 hari yang lalu (Sun, 7 Maret 2021 11:00 PM) via Portal</h1>
                                     <h1 className="text-sm">Request untuk: diri sendiri</h1>
                                 </div>
@@ -202,6 +260,7 @@ function TicketsDetail({ initProps, dataProfile, dataTicketList, sidemenu }) {
                                     </Timeline>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -219,10 +278,27 @@ function TicketsDetail({ initProps, dataProfile, dataTicketList, sidemenu }) {
                             <p className=" col-span-1 font-semibold">Approval</p>
                             <p>Not Requested</p>
                         </div>
-                        <div className="grid grid-cols-3 mb-3">
+                        <div className="grid grid-cols-3">
                             <p className=" col-span-1 font-semibold">Batas Waktu</p>
-                            <p className=" w-auto">2 hari yang lalu <br />11-03-2021 02:00 PM</p>
+                            <p className=" w-auto">{defaultduetime} hari lagi <br />{defaultdateduetime}</p>
                         </div>
+                        <button className=" text-blue-500" onClick={() => { setchangeduetime(true) }}>Ubah</button>
+                        {changeduetime ?
+                            <div className="flex flex-col divide-y-2 space-y-2 shadow-md p-3">
+                                <div className="flex flex-col">
+                                    <p className="mb-0">Batas waktu?</p>
+                                    <div>
+                                        <DatePicker defaultValue={moment(ticketsDetail.due_to, "YYYY-MM-DD")} onChange={(date, dateString) => { setdataduetime(dateString) }} name="due_time" allowClear format={'YYYY-MM-DD'}></DatePicker>
+                                    </div>
+                                </div>
+                                <div className="flex justify-end pt-3">
+                                    <Button type="default" size="middle" onClick={() => { setchangeduetime(false) }} style={{ marginRight: `0.5rem` }}>Batalkan</Button>
+                                    <Button type="primary" size="middle" loading={loadingduetime} onClick={handleChangeDueTime}>Simpan</Button>
+                                </div>
+                            </div>
+                            :
+                            null
+                        }
                     </div>
                     <div className="flex flex-col">
                         <Collapse bordered={false} defaultActiveKey={['2']}>
@@ -334,7 +410,9 @@ function TicketsDetail({ initProps, dataProfile, dataTicketList, sidemenu }) {
     )
 }
 
-export async function getServerSideProps({ req, res, params }) {
+export async function getServerSideProps({ req, res, query }) {
+    const type = query.type
+    const subject_type_id = query.subject_type_id
     var initProps = {};
     if (req && req.headers) {
         const cookies = req.headers.cookie;
@@ -356,6 +434,29 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
+    var dataIncidentList = []
+    const dataSRList = []
+    if (type === "Incident") {
+        const resourcesGI = await fetch(`https://boiling-thicket-46501.herokuapp.com/getIncidents`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps)
+            }
+        })
+        const resjsonGI = await resourcesGI.json()
+        dataIncidentList = resjsonGI
+    }
+    // else if(type === "Service Request"){
+    //     const resourcesGSR = await fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets`, {
+    //         method: `GET`,
+    //         headers: {
+    //             'Authorization': JSON.parse(initProps)
+    //         }
+    //     })
+    //     const resjsonGSR = await resourcesGSR.json()
+    //     dataIncidentList = resjsonGSR
+    // }
+
     const resourcesGT = await fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets`, {
         method: `GET`,
         headers: {
@@ -363,13 +464,17 @@ export async function getServerSideProps({ req, res, params }) {
         }
     })
     const resjsonGT = await resourcesGT.json()
-    const dataTicketList = resjsonGT
+    const dataTicketsList = resjsonGT
 
     return {
         props: {
             initProps,
             dataProfile,
-            dataTicketList,
+            dataIncidentList,
+            dataTicketsList,
+            dataSRList,
+            type,
+            subject_type_id,
             sidemenu: "4"
         },
     }
