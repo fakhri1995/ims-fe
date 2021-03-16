@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
 import { useState } from 'react'
-import Link from 'next/link'
 import { EditOutlined, PlusCircleTwoTone } from '@ant-design/icons'
 import { Select, Collapse, Button, Form, Empty, Timeline, DatePicker, notification } from 'antd'
 import Layout from '../../../components/layout-dashboard-tickets'
@@ -10,12 +9,14 @@ import moment from 'moment'
 
 function TicketsDetail({ initProps, dataProfile, dataIncidentList, dataTicketsList, dataSRList, type, subject_type_id, sidemenu }) {
     //Initialization
+    // 0.Destrukturisasi library
     const rt = useRouter()
     const { ticketsId } = rt.query
     const { Option, OptGroup } = Select;
     const { Panel } = Collapse
     const [updateTicketsForm] = Form.useForm()
     const pathArr = ['tickets', ticketsId]
+    // 1.Inisialisasi data
     var incidentDetail = {}
     incidentDetail = dataIncidentList.data.filter(dataa => {
         return dataa.id == subject_type_id
@@ -24,16 +25,25 @@ function TicketsDetail({ initProps, dataProfile, dataIncidentList, dataTicketsLi
     ticketsDetail = dataTicketsList.data.tickets.filter(dataa => {
         return dataa.id == ticketsId
     })[0]
+    // 2.Pendefinisian tanggal
     var defaultduetime = ""
     var defaultdateduetime = ""
     if (ticketsDetail.due_to === null) {
-        defaultduetime = Math.floor(((new Date().getTime() + (14 * 24 * 60 * 60 * 1000)) - new Date().getTime()) / (1000 * 3600 * 24))
-        defaultdateduetime = new Date((new Date().getTime() + (14 * 24 * 60 * 60 * 1000))).toLocaleString()
+        defaultduetime = Math.floor(((new Date(ticketsDetail.created_at).getTime() + (14 * 24 * 60 * 60 * 1000)) - new Date().getTime()) / (1000 * 3600 * 24))
+        defaultdateduetime = new Date((new Date(ticketsDetail.created_at).getTime() + (14 * 24 * 60 * 60 * 1000))).toLocaleString()
     }
     else {
-        defaultduetime = Math.floor((+ new Date(ticketsDetail.due_to).getTime() - new Date().getTime()) / (1000 * 3600 * 24))
+        defaultduetime = Math.floor((new Date(ticketsDetail.due_to).getTime() - new Date().getTime()) / (1000 * 3600 * 24))
         defaultdateduetime = new Date(ticketsDetail.due_to).toLocaleString()
     }
+    // 3.Get Nama requesters, created_at, dll
+    // var requestersName = {}
+    // requestersName = dataTicketsList.data.list_account.filter(dataa => {
+    //     return dataa.user_id === incidentDetail.requester
+    // })[0]
+    // requestersName = requestersName.fullname
+    const createdat = Math.floor((new Date().getTime() - new Date(ticketsDetail.created_at)) / (1000 * 3600 * 24))
+
 
     //useState
     const [tab, settab] = useState({
@@ -79,7 +89,7 @@ function TicketsDetail({ initProps, dataProfile, dataIncidentList, dataTicketsLi
     const handleChangeDueTime = () => {
         const dataupdateduetime = {
             id: ticketsId,
-            due_to: moment(dataduetime, 'YYYY-MM-DD')
+            due_to: new Date(dataduetime)
         }
         setloadingduetime(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateTicket`, {
@@ -123,7 +133,7 @@ function TicketsDetail({ initProps, dataProfile, dataIncidentList, dataTicketsLi
                                 <div className="flex flex-col">
                                     {type === "Service Request" && <h1 className="text-lg font-semibold">Request dari: Andi Darussalam - <span className="text-blue-700">New CRM Account</span></h1>}
                                     {type === "Incident" && <h1 className="text-lg font-semibold">#INC {incidentDetail.id} - {incidentDetail.subject}</h1>}
-                                    <h1 className="text-sm"><a href="#">Andi Darussalam</a> melaporkan 4 hari yang lalu (Sun, 7 Maret 2021 11:00 PM) via Portal</h1>
+                                    <h1 className="text-sm"><a href="#">Andi Darussalam</a> melaporkan {createdat} hari yang lalu ({new Date(ticketsDetail.created_at).toLocaleString()}) via Portal</h1>
                                     <h1 className="text-sm">Request untuk: diri sendiri</h1>
                                 </div>
                             </div>
@@ -194,9 +204,16 @@ function TicketsDetail({ initProps, dataProfile, dataIncidentList, dataTicketsLi
                                 </div>
                                 <div className="flex flex-col">
                                     <h1 className="text-xs font-semibold text-gray-400">Deskripsi: </h1>
-                                    <div className="mb-3">
-                                        Raise a request for a new username and password for access to the CRM account. If the request can be linked to any of the employee's other accounts, authorization needs to be provided.
-                                    </div>
+                                    {
+                                        incidentDetail.description ?
+                                            <div className="mb-3">
+                                                {incidentDetail.description}
+                                            </div>
+                                            :
+                                            <div className="mb-3">
+                                                Deskripsi masih kosong
+                                            </div>
+                                    }
                                     <div><strong>Kapan akan menggunakan service ini?:</strong> Tue, 9 Mar, 2021 at 10:45 AM</div>
                                 </div>
                             </div>
@@ -288,7 +305,12 @@ function TicketsDetail({ initProps, dataProfile, dataIncidentList, dataTicketsLi
                                 <div className="flex flex-col">
                                     <p className="mb-0">Batas waktu?</p>
                                     <div>
-                                        <DatePicker defaultValue={moment(ticketsDetail.due_to, "YYYY-MM-DD")} onChange={(date, dateString) => { setdataduetime(dateString) }} name="due_time" allowClear format={'YYYY-MM-DD'}></DatePicker>
+                                        {
+                                            ticketsDetail.due_to === null ?
+                                                <DatePicker onChange={(date, dateString) => { setdataduetime(dateString) }} name="due_time" allowClear></DatePicker>
+                                                :
+                                                <DatePicker defaultValue={moment(ticketsDetail.due_to)} onChange={(date, dateString) => { setdataduetime(dateString) }} name="due_time" allowClear></DatePicker>
+                                        }
                                     </div>
                                 </div>
                                 <div className="flex justify-end pt-3">
