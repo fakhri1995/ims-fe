@@ -255,6 +255,11 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                                         ]}>
                                         <input type="number" defaultValue={data1.role} name={'role'} onChange={onChangeEditAgents} />
                                     </Form.Item> */}
+                                    <div className="w-full h-auto">
+                                        <button className=" w-full h-auto py-2 text-center bg-blue-500 hover:bg-blue-700 text-white rounded-md" onClick={() => { setVisibleubahpass(true) }}>
+                                            <strong>Ubah Password</strong>
+                                        </button>
+                                    </div >
                                 </Form>
                             </div>
                         </div>
@@ -271,11 +276,6 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                                 </button>
                         }
                     </div > */}
-                    <div className="w-full p-3 md:p-5 h-auto">
-                        <button className=" w-full h-auto py-2 text-center bg-white text-black hover:bg-blue-100 hover:text-blue-700 rounded-md" onClick={() => { setVisibleubahpass(true) }}>
-                            <strong>Ubah Password</strong>
-                        </button>
-                    </div >
                     <Modal
                         title="Konfirmasi untuk menon-aktifkan akun"
                         visible={visible}
