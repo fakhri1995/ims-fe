@@ -20,11 +20,11 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     const [instanceForm] = Form.useForm()
     const [newclients, setnewclients] = useState({
         name: '',
-        role: 0,
+        role: 2,
         address: '',
         phone_number: '',
         image_logo: '',
-        member_of_company: 0
+        parent_id: null
     })
     var dataTable = []
     if (!dataCompanyList.data.data) {
@@ -145,7 +145,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
             address: '',
             phone_number: '',
             image_logo: '',
-            member_of_company: 0
+            parent_id: null
         })
     }
 
@@ -175,6 +175,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
             })
                 .then(res => res.json())
                 .then(res2 => {
+                    setLoadingupload(false)
                     setnewclients({
                         ...newclients,
                         image_logo: res2.secure_url
@@ -211,7 +212,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
             .then((res) => res.json())
             .then(res2 => {
                 setloadingbtn(false)
-                if (res2.data) {
+                if (res2.success) {
                     notification['success']({
                         message: res2.message,
                         duration: 3
@@ -222,7 +223,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                         address: '',
                         phone_number: '',
                         image_logo: '',
-                        image_of_company: 0
+                        parent_id: null
                     })
                     setTimeout(() => {
                         setDrawablecreate(false)
@@ -273,7 +274,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                                             },
                                         ]}
                                     >
-                                        <Input value={newclients.name} name="name" onChange={onChangeCreateClients}></Input>
+                                        <Input name="name" onChange={onChangeCreateClients}></Input>
                                     </Form.Item>
                                 </div>
                                 {/* <div className="md:m-4 mb-5 md:mb-0 ">
@@ -297,7 +298,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                                             },
                                         ]}
                                     >
-                                        <Input value={newclients.address} name="address" onChange={onChangeCreateClients}></Input>
+                                        <Input name="address" onChange={onChangeCreateClients}></Input>
                                     </Form.Item>
                                 </div>
                                 <div className="md:m-4 mb-5 md:mb-0 ">
@@ -309,7 +310,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                                             },
                                         ]}
                                     >
-                                        <Input value={newclients.phone_number} name="phone_number" onChange={onChangeCreateClients}></Input>
+                                        <Input name="phone_number" onChange={onChangeCreateClients}></Input>
                                     </Form.Item>
                                 </div>
                                 <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn} style={{ marginBottom: `1rem` }}>Simpan</Button>
@@ -380,7 +381,7 @@ export async function getServerSideProps({ req, res }) {
     var initProps = {};
     const reqBody = {
         page: 1,
-        rows: 10,
+        rows: 50,
         order_by: "asc"
     }
     if (req && req.headers) {

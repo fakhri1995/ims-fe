@@ -43,9 +43,9 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
             .then(res => res.json())
             .then(res2 => {
                 setLoadingsave(false)
-                if (res2.data) {
+                if (res2.success) {
                     notification['success']({
-                        message: res2.data.message,
+                        message: res2.message,
                         duration: 3
                     })
                     setTimeout(() => {
