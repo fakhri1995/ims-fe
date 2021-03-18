@@ -1,7 +1,7 @@
 import ExportOutlined from '@ant-design/icons/ExportOutlined'
 import AlertOutlined from '@ant-design/icons/AlertOutlined'
-import { Avatar } from 'antd'
-import { Dropdown } from 'antd'
+import { Avatar, Dropdown } from 'antd'
+import Link from 'next/link'
 import UserOutlined from '@ant-design/icons/UserOutlined'
 import NotificationOutlined from '@ant-design/icons/NotificationOutlined'
 import QuestionCircleOutlined from '@ant-design/icons/QuestionCircleOutlined'
@@ -36,7 +36,9 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
             <div style={{ fontSize: '14px' }} className="w-auto h-auto grid grid-cols-1 md:grid-cols-3 shadow-md rounded bg-white">
                 <div className=" col-span-1 md:col-span-1 text-xs md:text-sm m-3 md:m-2 space-y-3 px-8">
                     <div className="flex justify-center">
-                        <p><AlertOutlined className="p-2" />Incident</p>
+                        <Link href={`/incidents/create?originPath=Tickets`}>
+                        <p><AlertOutlined className="p-2" />Incidentttttttttttt</p>
+                        </Link>
                     </div>
                     <div className="flex justify-center">
                         <p><AlertOutlined className="p-2" />Release</p>

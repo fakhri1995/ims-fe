@@ -15,7 +15,7 @@ function GroupsAgentsCreate({ initProps, dataProfile, dataListAccount, sidemenu 
     const dataDetailGroup = []
     const [instanceForm] = Form.useForm()
     const [loadingbtn, setLoadingbtn] = useState(false)
-
+    // console.log(dataProfile)
     //----------CreateGroup-------------
     const [newgroup, setNewgroup] = useState({
         name: '',
@@ -50,6 +50,7 @@ function GroupsAgentsCreate({ initProps, dataProfile, dataListAccount, sidemenu 
     }
     //----------------------------------------------
     const handleCreateGroup = () => {
+        // console.log(newgroup)
         setLoadingbtn(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/addGroup`, {
             method: 'POST',
@@ -73,8 +74,8 @@ function GroupsAgentsCreate({ initProps, dataProfile, dataListAccount, sidemenu 
                 }
                 else if (!res2.success) {
                     notification['error']({
-                        // message: res2.message.errorInfo[3],
-                        message: res2.message,
+                        message: res2.message.errorInfo[3],
+                        // message: res2.message,
                         duration: 3
                     })
                 }
@@ -91,15 +92,16 @@ function GroupsAgentsCreate({ initProps, dataProfile, dataListAccount, sidemenu 
     //------------------------------------------
 
     //------------populate list account-------------
-    const dataDD = dataListAccount.data.accounts.map((doc, idx) => {
+    const dataDD = dataListAccount.data.data.accounts.map((doc, idx) => {
         return ({
             value: doc.user_id,
             label: doc.fullname,
         })
     })
+    // console.log(dataDD)
     //----------------------------------------------
     const { TextArea } = Input;
-
+    const { Option } = Select;
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} dataDetailGroup={dataDetailGroup} st={st}>
             <>
@@ -165,7 +167,7 @@ function GroupsAgentsCreate({ initProps, dataProfile, dataListAccount, sidemenu 
                                     ]}
                                     initialValue={newgroup.group_head}
                                 >
-                                    <Select showSearch placeholder="Add Group Head" name={`group_head`} showArrow options={dataDD} onChange={onChangeCreateGroupHeadGroup} style={{ width: '100%', lineHeight: '2.4' }} />
+                                    <Select showSearch placeholder="Add Group Head" name={`group_head`} showArrow options={dataDD} optionFilterProp="label" onChange={onChangeCreateGroupHeadGroup} style={{ width: '100%', lineHeight: '2.4' }} />
                                 </Form.Item>
                             </div>
 
@@ -183,15 +185,15 @@ function GroupsAgentsCreate({ initProps, dataProfile, dataListAccount, sidemenu 
                                 </Radio.Group>
                                 <Row>
                                     <Col flex="auto">
-                                        <Select showSearch placeholder="Add an Agent" showArrow mode="multiple" options={dataDD} onChange={handleChangeAddAgent} style={{ width: '100%', padding: '0 5px', lineHeight: '2.4' }} />
+                                        <Select 
+                                        showSearch placeholder="Add an Agent" 
+                                        showArrow mode="multiple"  
+                                        onChange={handleChangeAddAgent} 
+                                        style={{ width: '100%', padding: '0 5px', lineHeight: '2.4' }} 
+                                        optionFilterProp="label"
+                                        options={dataDD}
+                                        />
                                     </Col>
-                                    {/* <Col flex="100px">
-                                    <div className=" text-black text-sm bg-white hover:bg-gray-300 border border-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
-                                        <p onClick={handleClick}>
-                                        Add
-                                        </p>
-                                    </div>
-                                </Col> */}
                                 </Row>
                             </div>
                         </div>
