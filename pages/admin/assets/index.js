@@ -6,14 +6,13 @@ import EditOutlined from '@ant-design/icons/EditOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import Link from 'next/link'
 import { Button,Tree,Modal,Form,Input,TreeSelect,notification,message,Popconfirm } from 'antd'
-import Layout from '../../components/layout-dashboard'
-import st from '../../components/layout-dashboard.module.css'
+import Layout from '../../../components/layout-dashboard'
+import st from '../../../components/layout-dashboard.module.css'
 
 function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
-    const { originPath } = rt.query
     const [loadingbtn, setloadingbtn] = useState(false)
     const [loadingbtnfromparent, setloadingbtnparent] = useState(false)
     const treeData = dataAssetsList.data
@@ -76,7 +75,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/assets/update/${datanew.name}?originPath=Admin&title=${datanew.name}&parent=${datanew.parent}&create=true`)
+                        rt.push(`/admin/assets/${datanew.name}?parent=${datanew.parent}&create=true`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -108,7 +107,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/assets?originPath=Admin`)
+                        rt.push(`/admin/assets`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -121,7 +120,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
             })
     }
     return (
-        <Layout tok={tok} pathArr={pathArr} sidemenu={sidemenu} dataProfile={dataProfile} st={st} originPath={originPath}>
+        <Layout tok={tok} pathArr={pathArr} sidemenu={sidemenu} dataProfile={dataProfile} st={st}>
             <div className="w-full h-auto border-t border-opacity-30 border-gray-500 bg-white">
                 <div className="grid grid-cols-1 md:grid-cols-4">
                     <div className="col-span-1 md:col-span-3 flex flex-col">
@@ -239,7 +238,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                                 </div>
                                                 <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
                                                     <a className="mx-2 pb-1" alt="add" onClick={() => { setNewmodalparent(true); fungsiSetParent(nodeData.value); setParenttitle(nodeData.title) }}><PlusOutlined /></a>
-                                                    <Link href={`/assets/update/${nodeData.title}?originPath=Admin&parent=${prt}&id=${nodeData.id}`}>
+                                                    <Link href={`/admin/assets/${nodeData.title}?parent=${prt}&id=${nodeData.id}`}>
                                                         <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                                     </Link>
                                                     <Popconfirm title="Yakin ingin menghapus asset type ini?" onConfirm={() => { handleDeleteAssets(nodeData.id) }} onCancel={() => { message.error("Gagal dihapus") }}>

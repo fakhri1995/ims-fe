@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import st from '../../components/layout-dashboard.module.css'
-import Layout from '../../components/layout-dashboard'
+import st from '../../../components/layout-dashboard.module.css'
+import Layout from '../../../components/layout-dashboard'
 import httpcookie from 'cookie'
 import CopyOutlined from '@ant-design/icons/CopyOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
@@ -93,10 +93,7 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
                             <>{actions[index]}
                                 <a><CopyOutlined /></a>
                                 <Link href={{
-                                    pathname: `/requesters/update/${record.user_id}`,
-                                    query: {
-                                        originPath: 'Admin'
-                                    }
+                                    pathname: `/admin/requesters/${record.user_id}`,
                                 }}><a><EditOutlined /></a></Link>
                             </>
                             :
@@ -119,10 +116,7 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
                         <a className=" text-sm text-center w-auto mr-5">Export</a> */}
                         {/* <div className=" text-white text-xs md:text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-3 md:py-2 w-28 md:w-52 text-center"> */}
                             <Link href={{
-                                pathname: '/requesters/create/',
-                                query: {
-                                    originPath: 'Admin'
-                                }
+                                pathname: '/admin/requesters/create/',
                             }}>
                                 <Button type="primary" size="large">
                                     Tambah Requesters

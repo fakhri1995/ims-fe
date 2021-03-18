@@ -1,39 +1,39 @@
 import { useRouter } from 'next/router'
-import Layout from '../../../components/layout-dashboard'
-import httpcookie from 'cookie'
-import EditOutlined from '@ant-design/icons/EditOutlined'
-import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
-import Sticky from 'wil-react-sticky'
 import { useState } from 'react'
+import Layout from '../../../../components/layout-dashboard'
+import st from '../../../../components/layout-dashboard.module.css'
+import httpcookie from 'cookie'
+import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
-import st from '../../../components/layout-dashboard.module.css'
-import { Button, Form, Input, notification, Modal, Switch } from 'antd'
+import EditOutlined from '@ant-design/icons/EditOutlined'
+import { Form, Input, Modal, Button, notification, Switch } from 'antd'
 
-function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
+function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
     const rt = useRouter()
-    const { userId, originPath } = rt.query
     const tok = initProps
     var pathArr = rt.pathname.split("/").slice(1)
-    pathArr[pathArr.length - 1] = userId
+    pathArr[pathArr.length - 1] = dataDetailAccount.data.data.fullname
+    const [instanceForm] = Form.useForm()
+
     const [loadingfoto, setLoadingfoto] = useState(false)
-    const [visible, setVisible] = useState(false)
-    const [visiblenon, setVisiblenon] = useState(false)
-    const [visibleubahpass, setVisibleubahpass] = useState(false)
-    const [loadingsave, setLoadingsave] = useState(false)
-    const [loadingubahpass, setloadingubahpass] = useState(false)
-    const [loadingubahaktif, setloadingubahaktif] = useState(false)
-    const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
-    const [instanceForm] = Form.useForm();
-    const [datapass, setDatapass] = useState({
-        user_id: dataDetailAccount.data.data.user_id,
-        new_password: ''
-    })
     const [data1, setData1] = useState({
         id: dataDetailAccount.data.data.user_id,
         fullname: dataDetailAccount.data.data.fullname,
         role: dataDetailAccount.data.data.role,
         phone_number: dataDetailAccount.data.data.phone_number,
         profile_image: dataDetailAccount.data.data.profile_image
+    })
+    const [visible, setVisible] = useState(false)
+    const [visiblenon, setVisiblenon] = useState(false)
+    const [visibleubahpass, setVisibleubahpass] = useState(false)
+    const [loadingupdate, setLoadingupdate] = useState(false)
+    const [loadingubahpass, setloadingubahpass] = useState(false)
+    const [loadingubahaktif, setloadingubahaktif] = useState(false)
+    const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
+
+    const [datapass, setDatapass] = useState({
+        user_id: dataDetailAccount.data.data.user_id,
+        new_password: ''
     })
     const onChangeEditAgents = (e) => {
         setData1({
@@ -59,7 +59,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
         setLoadingfoto(false)
     }
     const handleSubmitEditAccount = () => {
-        setLoadingsave(true)
+        setLoadingupdate(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateAccountDetail`, {
             method: 'POST',
             headers: {
@@ -70,15 +70,15 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
         })
             .then(res => res.json())
             .then(res2 => {
-                setLoadingsave(false)
+                setLoadingupdate(false)
                 if (res2.success) {
                     notification['success']({
                         message: res2.message,
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/agents?originPath=Admin`)
-                    }, 1000)
+                        rt.push(`/admin/requesters/${dataDetailAccount.data.data.user_id}`)
+                    }, 300)
                 }
                 else if (!res2.success) {
                     notification['error']({
@@ -88,7 +88,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                 }
             })
     }
-    const handleActivationAgents = (status) => {
+    const handleActivationRequesters = (status) => {
         var keaktifan = false
         if (status === "aktif") {
             keaktifan = false
@@ -125,7 +125,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                         else if (status === "nonAktif") {
                             setloadingubahnonaktif(false)
                         }
-                        rt.push(`/agents/update/${dataDetailAccount.data.data.user_id}?originPath=Admin`)
+                        rt.push(`/admin/requesters/${dataDetailAccount.data.data.user_id}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -158,7 +158,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                     })
                     setTimeout(() => {
                         setloadingubahpass(false)
-                        rt.push(`/agents/update/${dataDetailAccount.data.data.user_id}?originPath=Admin`)
+                        rt.push(`/admin/requesters/${dataDetailAccount.data.data.user_id}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -171,31 +171,32 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
             })
     }
     return (
-        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} dataDetailAccount={dataDetailAccount} st={st}>
+        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} dataDetailAccount={dataDetailAccount} st={st}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
                 <div className=" col-span-1 md:col-span-1 flex md:hidden flex-col space-y-4 p-4">
-                    <div className="font-semibold text-base">Agents</div>
+                    <div className="font-semibold text-base">Requesters</div>
                     <p className="font-normal text-xs">
-                        When you add a new agent, you will have to provide the agent’s email, set their permission levels and access (full-time or occasional). Agents will receive an email with a confirmation link to activate their account after which they can be assigned to, or respond to tickets. Administrators can also edit an Agent’s profile to include the agent’s title, phone, profile picture, signature etc.
+                        This page lets you handpick a set of requesters and add them to your help desk. These requesters will have selective privileges to submit requests to your helpdesk. You can restrict access such that only people who have been added here are allowed to login to your self-service portal and access your knowledge base. <br /> <br />
+                        You can fill in the details of each of your new requesters manually or import a list of users from a CSV file. Once you have populated your list, your agents can open up each of your requesters and view their ticket history and contact information.
                     </p>
                 </div>
                 <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
                     <Sticky containerSelectorFocus="#formAgentsWrapper">
                         <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
-                            <h1 className="font-semibold py-2">Edit Agents</h1>
+                            <h1 className="font-semibold py-2">Edit Requesters</h1>
                             <div className="flex space-x-2">
-                                <Link href={`/agents?originPath=Admin`}>
-                                    <Button type="default" size="middle">
-                                        Batalkan
-                                    </Button>
+                                <Link href={`/admin/requesters`}>
+                                    <Button type="default" size="middle">Batalkan</Button>
+                                    {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button> */}
                                 </Link>
-                                <Button type="primary" size="middle" loading={loadingsave} onClick={instanceForm.submit}>Perbarui</Button>
+                                <Button type="primary" size="middle" loading={loadingupdate} onClick={instanceForm.submit}>Perbarui</Button>
+                                {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={handleSubmitEditAccount}>Update</button> */}
                             </div>
                         </div>
                     </Sticky>
-                    <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-8">
+                    <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-5">
                         <div className="border-b border-black p-4 font-semibold mb-5 flex">
-                            <div className="md:mr-5 pt-1">Detail Akun Agents</div>
+                            <div className="md:mr-5 pt-1">Detail Akun Requesters</div>
                             {
                                 dataDetailAccount.data.data.attribute.is_enabled ?
                                     <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md w-auto md:mr-5">AKUN AKTIF</div>
@@ -212,8 +213,8 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                             </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4">
-                            <div className="p-3 col-span-1 md:col-span-1 relative flex flex-col items-center">
-                                <img src={data1.profile_image} className=" object-cover w-32 h-32 rounded-full mb-4" />
+                            <div className="p-3 col-span-1 md:col-span-1">
+                                <img src={data1.profile_image} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
                                 <label className="custom-file-upload p-2 border-2 inline-block cursor-pointer text-sm rounded-md hover:bg-gray-200">
                                     <input type="file" style={{ display: `none` }} name="profile_image" onChange={onChangeEditFoto} />
                                     {loadingfoto ? <LoadingOutlined /> : <EditOutlined style={{ fontSize: `1.5rem` }} />}
@@ -221,23 +222,21 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                                 </label>
                             </div>
                             <div className="p-3 col-span-1 md:col-span-3">
-                                <h1 className="text-xs text-gray-600 mb-1">Email:</h1>
-                                <h1 className="text-sm text-black mb-5">{dataDetailAccount.data.data.email}</h1>
-                                <div className="flex flex-col mb-5">
-                                    <h1 className="text-sm">ID</h1>
-                                    <h1 className="text-sm font-semibold">{data1.id}</h1>
-                                </div>
-                                <Form layout="vertical" form={instanceForm} onFinish={handleSubmitEditAccount} initialValues={data1}>
-                                    <Form.Item label="Nama Lengkap" name="fullname" required tooltip="Wajib diisi" initialValue={data1.fullname}
+                                <Form layout="vertical" initialValues={data1} form={instanceForm} onFinish={handleSubmitEditAccount}>
+                                    <div className="flex flex-col mb-5">
+                                        <h1 className="text-sm">ID</h1>
+                                        <h1 className="text-sm font-semibold">{data1.id}</h1>
+                                    </div>
+                                    <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi" name="fullname" initialValue={data1.fullname}
                                         rules={[
                                             {
                                                 required: true,
                                                 message: 'Nama Lengkap harus diisi',
                                             },
                                         ]}>
-                                        <Input defaultValue={data1.fullname} onChange={onChangeEditAgents} name="fullname" required />
+                                        <Input defaultValue={data1.fullname} onChange={onChangeEditAgents} name="fullname" />
                                     </Form.Item>
-                                    <Form.Item label="No. Handphone" name="phone_number" required tooltip="Wajib diisi" initialValue={data1.phone_number}
+                                    <Form.Item label="No. Handphone" required tooltip="Wajib diisi" name="phone_number" initialValue={data1.phone_number}
                                         rules={[
                                             {
                                                 required: true,
@@ -246,7 +245,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                                         ]}>
                                         <Input defaultValue={data1.phone_number} onChange={onChangeEditAgents} name="phone_number" />
                                     </Form.Item>
-                                    {/* <Form.Item label="Role" name="role" required tooltip="Wajib diisi" initialValue={data1.role}
+                                    {/* <Form.Item label="Role" required tooltip="Wajib diisi" name="role" initialValue={data1.role}
                                         rules={[
                                             {
                                                 required: true,
@@ -255,15 +254,35 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                                         ]}>
                                         <input type="number" defaultValue={data1.role} name={'role'} onChange={onChangeEditAgents} />
                                     </Form.Item> */}
-                                    <div className="w-full h-auto">
-                                        <button className=" w-full h-auto py-2 text-center bg-blue-500 hover:bg-blue-700 text-white rounded-md" onClick={() => { setVisibleubahpass(true) }}>
-                                            <strong>Ubah Password</strong>
-                                        </button>
-                                    </div >
                                 </Form>
+                                <div className="w-full h-auto">
+                                    <button className=" w-full h-auto py-2 text-center bg-blue-500 hover:bg-blue-700 text-white rounded-md" onClick={() => { setVisibleubahpass(true) }}>
+                                        <strong>Ubah Password</strong>
+                                    </button>
+                                </div >
                             </div>
                         </div>
                     </div>
+                    {/* <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-14">
+                        <div className="border-b border-black p-4 font-semibold mb-5">
+                            Detail Perusahaan
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-4">
+                            <div className="p-3 col-span-1 md:col-span-1">
+                                <img src={dataDetailAccount.data.data.company.image_logo} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full" />
+                            </div>
+                            <div className="col-span-1 md:col-span-3 p-3 space-y-4">
+                                <div>
+                                    <h1 className="font-semibold text-sm">ID Perusahaan:</h1>
+                                    <h1 className="font-normal text-sm">{dataDetailAccount.data.data.company.company_id}</h1>
+                                </div>
+                                <div>
+                                    <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
+                                    <h1 className="font-normal text-sm">{dataDetailAccount.data.data.company.company_name}</h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div> */}
                     {/* <div className="w-full p-3 md:p-5 h-auto">
                         {
                             dataDetailAccount.data.data.attribute.is_enabled ?
@@ -279,7 +298,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                     <Modal
                         title="Konfirmasi untuk menon-aktifkan akun"
                         visible={visible}
-                        onOk={() => { handleActivationAgents("aktif") }}
+                        onOk={() => { handleActivationRequesters("aktif") }}
                         onCancel={() => setVisible(false)}
                         okButtonProps={{ disabled: loadingubahaktif }}
                     >
@@ -288,7 +307,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                     <Modal
                         title="Konfirmasi untuk mengakaktifkan akun"
                         visible={visiblenon}
-                        onOk={() => { handleActivationAgents("nonAktif") }}
+                        onOk={() => { handleActivationRequesters("nonAktif") }}
                         onCancel={() => setVisiblenon(false)}
                         okButtonProps={{ disabled: loadingubahnonaktif }}
                     >
@@ -306,9 +325,10 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                     </Modal>
                 </div>
                 <div className="col-span-1 md:col-span-1 hidden md:flex flex-col space-y-4 p-4">
-                    <div className="font-semibold text-base">Agents</div>
+                    <div className="font-semibold text-base">Requesters</div>
                     <p className="font-normal text-sm">
-                        When you add a new agent, you will have to provide the agent’s email, set their permission levels and access (full-time or occasional). Agents will receive an email with a confirmation link to activate their account after which they can be assigned to, or respond to tickets. Administrators can also edit an Agent’s profile to include the agent’s title, phone, profile picture, signature etc.
+                        This page lets you handpick a set of requesters and add them to your help desk. These requesters will have selective privileges to submit requests to your helpdesk. You can restrict access such that only people who have been added here are allowed to login to your self-service portal and access your knowledge base. <br /> <br />
+                        You can fill in the details of each of your new requesters manually or import a list of users from a CSV file. Once you have populated your list, your agents can open up each of your requesters and view their ticket history and contact information.
                     </p>
                 </div>
             </div>
@@ -363,4 +383,4 @@ export async function getServerSideProps({ req, res, params }) {
     }
 }
 
-export default AgentsDetail
+export default RequestersDetail

@@ -1,4 +1,4 @@
-import Layout from '../../../components/layout-dashboard'
+import Layout from '../../../../components/layout-dashboard'
 import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
 import { LoadingOutlined } from '@ant-design/icons'
@@ -6,7 +6,7 @@ import { PlusOutlined } from '@ant-design/icons'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import st from '../../../components/layout-dashboard.module.css'
+import st from '../../../../components/layout-dashboard.module.css'
 import { Form, Upload, Input, notification, Button } from 'antd'
 
 function AgentsCreate({ initProps, dataProfile, sidemenu }) {
@@ -49,7 +49,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/agents?originPath=Admin`)
+                        rt.push(`/admin/agents`)
                     }, 1000)
                 }
                 else if (!res2.success) {
@@ -146,7 +146,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                         <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
                             <h1 className="font-semibold py-2">Agent Baru</h1>
                             <div className="flex space-x-2">
-                                <Link href="/agents?originPath=Admin">
+                                <Link href="/admin/agents">
                                     <Button size="middle" type="default">Batalkan</Button>
                                     {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 text-xs md:text-sm w-24 h-10 rounded-md">Cancel</button> */}
                                 </Link>

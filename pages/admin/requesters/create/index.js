@@ -1,4 +1,4 @@
-import Layout from '../../../components/layout-dashboard'
+import Layout from '../../../../components/layout-dashboard'
 import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
@@ -6,12 +6,11 @@ import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
 import { useState } from 'react'
-import st from '../../../components/layout-dashboard.module.css'
+import st from '../../../../components/layout-dashboard.module.css'
 import {Form, Upload, Select, Input, Button, notification} from 'antd'
 
 function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     const rt = useRouter()
-    const { originPath } = rt.query
     const tok = initProps
     var pathArr = rt.pathname.split("/").slice(1)
     pathArr[pathArr.length - 1] = "Create"
@@ -50,7 +49,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/requesters?originPath=Admin`)
+                        rt.push(`/admin/requesters`)
                     }, 1000)
                 }
                 else if (!res2.success) {
@@ -115,7 +114,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
     );
 
     return (
-        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
+        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} st={st}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
                 <div className=" col-span-1 md:col-span-1 flex md:hidden flex-col space-y-4 p-4">
                     <div className="font-semibold text-sm">Requesters</div>

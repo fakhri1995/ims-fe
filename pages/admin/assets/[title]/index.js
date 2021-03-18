@@ -5,19 +5,18 @@ import { EditOutlined } from '@ant-design/icons'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
 import { Button, notification, Form, Input, Checkbox, Modal } from 'antd'
-import Layout from '../../../components/layout-dashboard'
-import st from '../../../components/layout-dashboard-main.module.css'
+import Layout from '../../../../components/layout-dashboard'
+import st from '../../../../components/layout-dashboard-main.module.css'
 
 function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTitle, assetsParent, dataInvColumns }) {
     const rt = useRouter()
     var { create } = rt.query
-    const originPath = "Admin"
     const pathArr = rt.pathname.split("/").slice(1)
-
-    const [datawhole, setdatawhole] = useState(dataInvColumns.data.inventory_columns)
-    const [datatetap, setdatatetap] = useState(dataInvColumns.data.inventory_columns)
+    pathArr[pathArr.length - 1] = assetsTitle
+    const [datawhole, setdatawhole] = useState(dataInvColumns.data.inventory_columns_turunan)
+    const [datatetap, setdatatetap] = useState(dataInvColumns.data.inventory_columns_turunan)
     const [datacreate, setdatacreate] = useState([])
-    const [dataedit, setdataedit] = useState(dataInvColumns.data.inventory_columns.map((doc, idx) => {
+    const [dataedit, setdataedit] = useState(dataInvColumns.data.inventory_columns_turunan.map((doc, idx) => {
         return ({
             id: doc.id,
             name: doc.name,
@@ -29,7 +28,7 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
     }))
     const [datadelete, setdatadelete] = useState([])
     const [idxx, setidxx] = useState(0)
-    const [existedln, setexistedln] = useState(dataInvColumns.data.inventory_columns.length)
+    const [existedln, setexistedln] = useState(dataInvColumns.data.inventory_columns_turunan.length)
 
     const [editasset, setEditasset] = useState(false)
     const [modalfieldprops, setModalfieldprops] = useState(false)
@@ -159,7 +158,7 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/assets/update/${dataupdate.name}?originPath=Admin&parent=${dataAssetParentDetail.key}`)
+                        rt.push(`/admin/assets/${dataupdate.name}?parent=${dataAssetParentDetail.key}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -175,6 +174,13 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
             ...datacreate,
             datafield
         ])
+        setDatafield({
+            name: '',
+            data_type: '',
+            default: '',
+            required: false,
+            unique: false
+        })
         setdatawhole([
             ...datawhole,
             datafield
@@ -212,7 +218,6 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
 
     const handleUpdateField = (index) => {
         if (datawhole.length <= existedln) {
-            console.log("masuk <: " + index)
             if (datatetap.some(dataa => dataa['id'] === recordfield.id)) {
                 setdataedit(prev => prev.map((doc, idx) => {
                     if (index === idx) {
@@ -428,13 +433,13 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                         setdatacreate([])
                         setdataedit([])
                         setdatadelete([])
-                        // if (process.env.NODE_ENV == "production") {
-                        //     window.location.href = `http://localhost:3000/assets/update/${assetsTitle}?originPath=Admin&parent=${assetsParent}`
+                        // if (process.env.NODE_ENV == "development") {
+                        //     window.location.href = `http://localhost:3000/admin/assets/${assetsTitle}?parent=${assetsParent}`
                         // }
-                        // else if (process.env.NODE_ENV == "development") {
-                        //     window.location.href = `https://migsys.herokuapp.com/assets/update/${assetsTitle}?originPath=Admin&parent=${assetsParent}`
+                        // else if (process.env.NODE_ENV == "production") {
+                        //     window.location.href = `https://migsys.herokuapp.com/admin/assets/${assetsTitle}?parent=${assetsParent}`
                         // }
-                        rt.push(`/assets/update/${assetsTitle}?originPath=Admin&parent=${assetsParent}`)
+                        rt.push(`/admin/assets/${assetsTitle}?parent=${assetsParent}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -465,14 +470,14 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
         e.preventDefault()
     }
     return (
-        <Layout tok={initProps} pathArr={pathArr} dataProfile={dataProfile} dataAssetsList={dataAssetsList} sidemenu={sidemenu} originPath={originPath} st={st}>
+        <Layout tok={initProps} pathArr={pathArr} dataProfile={dataProfile} dataAssetsList={dataAssetsList} sidemenu={sidemenu} st={st}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
                 <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
                     <Sticky containerSelectorFocus="#formAgentsWrapper">
                         <div className="flex justify-between p-4 border-t-2 border-b-2 bg-white mb-8">
                             <h1 className="font-semibold py-2">{assetsTitle}</h1>
                             <div className="flex space-x-2">
-                                <Link href={`/assets?originPath=Admin`}>
+                                <Link href={`/admin/assets`}>
                                     <Button type="default" size="large">Batalkan</Button>
                                 </Link>
                                 <Button type="primary" size="large" loading={loadingwhole} onClick={handlingWhole}>Simpan</Button>
