@@ -1,4 +1,4 @@
-import Layout from '../../components/layout-dashboard-inventories'
+import Layout from '../../components/layout-dashboard2'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
@@ -17,7 +17,8 @@ function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColum
     // });
     const rt = useRouter()
     const tok = initProps
-    const pathArr = rt.pathname.split("/").slice(1)
+    // const pathArr = rt.pathname.split("/").slice(1)
+    const pathArr = ['inventories', dataInventory.data.inventory.asset_name]
     const { originPath } = rt.query
     const { TabPane } = Tabs;
     console.log(dataInventoryActivityLog)
