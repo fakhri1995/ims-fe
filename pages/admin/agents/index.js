@@ -1,11 +1,11 @@
-import Layout from '../../components/layout-dashboard'
+import Layout from '../../../components/layout-dashboard'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import CopyOutlined from '@ant-design/icons/CopyOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import { useState } from 'react'
 import Link from 'next/link'
-import st from '../../components/layout-dashboard.module.css'
+import st from '../../../components/layout-dashboard.module.css'
 import {Table,notification,Button} from 'antd'
 
 function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
@@ -23,7 +23,7 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
         rt.push('/dashboard/admin')
     }
     else {
-        dataDD = dataListAccount.data.accounts.map((doc, idx) => {
+        dataDD = dataListAccount.data.data.accounts.map((doc, idx) => {
             return ({
                 user_id: doc.user_id,
                 profile_image: doc.profile_image,
@@ -92,10 +92,7 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
                             <>{actions[index]}
                                 <a><CopyOutlined /></a>
                                 <Link href={{
-                                    pathname: `/agents/update/${record.user_id}`,
-                                    query: {
-                                        originPath: 'Admin'
-                                    }
+                                    pathname: `/admin/agents/${record.user_id}`,
                                 }}><a><EditOutlined /></a></Link>
                             </>
                             :
@@ -117,10 +114,7 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
                         <a className=" text-sm text-center w-auto mr-5">Export</a> */}
                         {/* <div className=" text-white bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-3 md:py-2 w-24 md:w-32 text-center text-xs md:text-sm"> */}
                         <Link href={{
-                            pathname: '/agents/create/',
-                            query: {
-                                originPath: 'Admin'
-                            }
+                            pathname: '/admin/agents/create/',
                         }}>
                             <Button size="large" type="primary">
                                 Tambah Agent
@@ -257,7 +251,7 @@ export async function getServerSideProps({ req, res }) {
     var initProps = {};
     const reqBodyAccountList = {
         page: 1,
-        rows: 10,
+        rows: 50,
         order_by: "asc"
     }
     if (req && req.headers) {

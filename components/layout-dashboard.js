@@ -9,14 +9,10 @@ import MenuFoldOutlined from '@ant-design/icons/MenuFoldOutlined'
 import LayoutMenu from '../components/layout-menu'
 import LayoutMenuHeader from './layout-menu-header'
 
-function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, originPath, st }) {
+function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, st }) {
     const rt = useRouter()
     var rootBreadcrumb = ""
-    var oriPath = ""
     var childBreacrumb = []
-    if (originPath) {
-        oriPath = originPath
-    }
     if (pathArr) {
         if (pathArr[0] === "dashboard") {
             rootBreadcrumb = pathArr[1]
@@ -32,10 +28,9 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
         return doc[0].toUpperCase() + doc.slice(1)
     })
     const childBreacrumbDD = childBreacrumbCC
-    if (childBreacrumbDD[1] === "Update") {
-        // childBreacrumbDD[childBreacrumbDD.length - 2] = childBreacrumbDD[childBreacrumbDD.length - 2] + " " + childBreacrumbDD[childBreacrumbDD.length - 1]
-        childBreacrumbDD.splice(2, 1)
-    }
+    // if (childBreacrumbDD[1] === "Update") {
+    //     childBreacrumbDD.splice(2, 1)
+    // }
     const { Sider, Content, Header } = Layout
     const [coll, setColl] = useState(true)
     const [collsmall, setCollsmall] = useState(true)
@@ -83,32 +78,32 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                         {
                             pathArr ?
                                 <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 10px`, backgroundColor: `white` }} className={st.breadcrumbClients}>
-                                    {pathArr[0] === "dashboard" && <Breadcrumb.Item> <strong>{rootBreadcrumb}</strong></Breadcrumb.Item>}
-                                    {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${oriPath.toLowerCase()}`}><strong>{oriPath}</strong></Breadcrumb.Item>}
+                                    {/* {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${pathArr[0]}`}><strong>{pathArr[0]}</strong></Breadcrumb.Item>} */}
                                     {childBreacrumbDD.length !== 0 ?
                                         childBreacrumbDD.map((doc, idx) => {
                                             pathBuilder = pathBuilder + `/${pathArr[idx]}`
+                                            if (idx === 0) {
+                                                return (
+                                                    <Breadcrumb.Item key={idx} href={`/dashboard/${pathArr[idx]}`}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                )
+                                            }
                                             if (idx === childBreacrumbDD.length - 1 && idx > 0) {
-                                                if (childBreacrumbDD[idx] === "Create") {
-                                                    return (
-                                                        <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
-                                                    )
-                                                }
                                                 return (
                                                     <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
                                                 )
                                             }
                                             else {
                                                 return (
-                                                    <Breadcrumb.Item key={idx}>
-                                                        <Link href={{
+                                                    <Breadcrumb.Item key={idx} href={pathBuilder}>
+                                                        <strong>{doc}</strong>
+                                                        {/* <Link href={{
                                                             pathname: pathBuilder,
                                                             query: {
                                                                 originPath: oriPath
                                                             }
                                                         }}>
                                                             <strong>{doc}</strong>
-                                                        </Link>
+                                                        </Link> */}
                                                     </Breadcrumb.Item>
                                                 )
                                             }
@@ -132,32 +127,32 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, origin
                     {
                         pathArr ?
                             <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 24px`, fontSize: `0.825rem`, width: `100%` }} className={st.breadcrumbClientsSmall}>
-                                {pathArr[0] === "dashboard" && <Breadcrumb.Item> <strong>{rootBreadcrumb}</strong></Breadcrumb.Item>}
-                                {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${oriPath.toLowerCase()}`}><strong>{oriPath}</strong></Breadcrumb.Item>}
+                                {/* {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${pathArr[0]}`}><strong>{pathArr[0]}</strong></Breadcrumb.Item>} */}
                                 {childBreacrumbDD.length !== 0 ?
                                     childBreacrumbDD.map((doc, idx) => {
                                         pathBuilder = pathBuilder + `/${pathArr[idx]}`
+                                        if (idx === 0) {
+                                            return (
+                                                <Breadcrumb.Item key={idx} href={`dashboard/${doc}`}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                            )
+                                        }
                                         if (idx === childBreacrumbDD.length - 1 && idx > 0) {
-                                            if (childBreacrumbDD[idx] === "Create") {
-                                                return (
-                                                    <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
-                                                )
-                                            }
                                             return (
                                                 <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
                                             )
                                         }
                                         else {
                                             return (
-                                                <Breadcrumb.Item key={idx}>
-                                                    <Link href={{
+                                                <Breadcrumb.Item key={idx} href={pathBuilder}>
+                                                    <strong>{doc}</strong>
+                                                    {/* <Link href={{
                                                         pathname: pathBuilder,
                                                         query: {
                                                             originPath: oriPath
                                                         }
                                                     }}>
                                                         <strong>{doc}</strong>
-                                                    </Link>
+                                                    </Link> */}
                                                 </Breadcrumb.Item>
                                             )
                                         }

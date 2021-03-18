@@ -20,14 +20,14 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     const [instanceForm] = Form.useForm()
     const [newclients, setnewclients] = useState({
         name: '',
-        role: 0,
+        role: 2,
         address: '',
         phone_number: '',
         image_logo: '',
-        member_of_company: 0
+        parent_id: null
     })
     var dataTable = []
-    if (!dataCompanyList.data) {
+    if (!dataCompanyList.data.data) {
         dataTable = []
         notification['error']({
             message: dataCompanyList.message.errorInfo.status_detail,
@@ -36,7 +36,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
         rt.push('/dashboard/admin')
     }
     else {
-        dataTable = dataCompanyList.data.companies.map((doc, idx) => {
+        dataTable = dataCompanyList.data.data.companies.map((doc, idx) => {
             return ({
                 image_logo: doc.image_logo,
                 company_id: doc.company_id,
@@ -141,11 +141,11 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     const closeClientsDrawer = () => {
         setnewclients({
             name: '',
-            role: 0,
+            role: 2,
             address: '',
             phone_number: '',
             image_logo: '',
-            member_of_company: 0
+            parent_id: null
         })
     }
 
@@ -175,6 +175,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
             })
                 .then(res => res.json())
                 .then(res2 => {
+                    setLoadingupload(false)
                     setnewclients({
                         ...newclients,
                         image_logo: res2.secure_url
@@ -211,7 +212,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
             .then((res) => res.json())
             .then(res2 => {
                 setloadingbtn(false)
-                if (res2.data) {
+                if (res2.success) {
                     notification['success']({
                         message: res2.message,
                         duration: 3
@@ -222,7 +223,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                         address: '',
                         phone_number: '',
                         image_logo: '',
-                        image_of_company: 0
+                        parent_id: null
                     })
                     setTimeout(() => {
                         setDrawablecreate(false)
@@ -245,7 +246,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} st={st}>
             <div className="flex justify-start md:justify-end p-3 md:border-t-2 md:border-b-2 bg-white mb-4 md:mb-8">
                 <div className="flex space-x-2">
-                    <Button type="primary" size="large" onClick={() => { setDrawablecreate(true) }}>Tambah Agents</Button>
+                    <Button type="primary" size="large" onClick={() => { setDrawablecreate(true) }}>Tambah Perusahaan</Button>
                     {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-40" onClick={() => { setDrawablecreate(true) }}> Create</button> */}
                     <Drawer title="Buat Perusahaan Clients" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false); closeClientsDrawer(); instanceForm.resetFields() }} width={420} destroyOnClose={true}>
                         <div className="w-full h-auto grid grid-cols-1 md:grid-cols-1">
@@ -273,10 +274,10 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                                             },
                                         ]}
                                     >
-                                        <Input value={newclients.name} name="name" onChange={onChangeCreateClients}></Input>
+                                        <Input name="name" onChange={onChangeCreateClients}></Input>
                                     </Form.Item>
                                 </div>
-                                <div className="md:m-4 mb-5 md:mb-0 ">
+                                {/* <div className="md:m-4 mb-5 md:mb-0 ">
                                     <Form.Item name="role" label="Role"
                                         rules={[
                                             {
@@ -287,7 +288,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                                     >
                                         <input type="number" value={newclients.role} name={'role'} onChange={onChangeCreateClients} style={{ width: `20rem` }} />
                                     </Form.Item>
-                                </div>
+                                </div> */}
                                 <div className="md:m-4 mb-5 md:mb-0 ">
                                     <Form.Item name="address" label="Alamat"
                                         rules={[
@@ -297,7 +298,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                                             },
                                         ]}
                                     >
-                                        <Input value={newclients.address} name="address" onChange={onChangeCreateClients}></Input>
+                                        <Input name="address" onChange={onChangeCreateClients}></Input>
                                     </Form.Item>
                                 </div>
                                 <div className="md:m-4 mb-5 md:mb-0 ">
@@ -309,7 +310,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                                             },
                                         ]}
                                     >
-                                        <Input value={newclients.phone_number} name="phone_number" onChange={onChangeCreateClients}></Input>
+                                        <Input name="phone_number" onChange={onChangeCreateClients}></Input>
                                     </Form.Item>
                                 </div>
                                 <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn} style={{ marginBottom: `1rem` }}>Simpan</Button>
@@ -380,7 +381,7 @@ export async function getServerSideProps({ req, res }) {
     var initProps = {};
     const reqBody = {
         page: 1,
-        rows: 10,
+        rows: 50,
         order_by: "asc"
     }
     if (req && req.headers) {

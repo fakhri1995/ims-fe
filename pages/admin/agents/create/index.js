@@ -1,56 +1,55 @@
-import Layout from '../../../components/layout-dashboard'
+import Layout from '../../../../components/layout-dashboard'
 import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
-import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
-import PlusOutlined from '@ant-design/icons/PlusOutlined'
+import { LoadingOutlined } from '@ant-design/icons'
+import { PlusOutlined } from '@ant-design/icons'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
-import { useState } from 'react'
-import st from '../../../components/layout-dashboard.module.css'
-import {Form, Upload, Select, Input, Button, notification} from 'antd'
+import { useState, useEffect } from 'react'
+import st from '../../../../components/layout-dashboard.module.css'
+import { Form, Upload, Input, notification, Button } from 'antd'
 
-function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
+function AgentsCreate({ initProps, dataProfile, sidemenu }) {
     const rt = useRouter()
     const { originPath } = rt.query
     const tok = initProps
     var pathArr = rt.pathname.split("/").slice(1)
     pathArr[pathArr.length - 1] = "Create"
-    dataCompanyList = dataCompanyList.data.companies.filter(data => data.company_id !== 66)
-    const [instanceForm] = Form.useForm()
+    const [instanceForm] = Form.useForm();
 
     //useState
-    const [newuserrequesters, setNewuserrequesters] = useState({
+    const [newuser, setNewuser] = useState({
         fullname: '',
         email: '',
-        role: 0,
+        role: 2,
         phone_number: '',
         profile_image: '',
-        company_id: 0
+        company_id: 66
     })
     const [loadingupload, setLoadingupload] = useState(false)
-    const [loadingcreate, setLoadingcreate] = useState(false)
+    const [loadingsave, setLoadingsave] = useState(false)
 
     //handleCreateButton
     const handleCreateAgents = () => {
-        setLoadingcreate(true)
+        setLoadingsave(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/addAccountMember`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(newuserrequesters)
+            body: JSON.stringify(newuser)
         })
             .then(res => res.json())
             .then(res2 => {
-                setLoadingcreate(false)
-                if (res2.data) {
+                setLoadingsave(false)
+                if (res2.success) {
                     notification['success']({
-                        message: res2.data.message,
+                        message: res2.message,
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/requesters?originPath=Admin`)
+                        rt.push(`/admin/agents`)
                     }, 1000)
                 }
                 else if (!res2.success) {
@@ -60,15 +59,15 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                     })
                 }
             })
-        console.log("isi new user: " + newuserrequesters.profile_image)
+        console.log("isi new user: " + newuser.profile_image)
     }
-    const onChangeCreateRequesters = (e) => {
+    const onChangeCreateAgents = (e) => {
         var val = e.target.value
         if (e.target.name === "role") {
             val = parseInt(e.target.value)
         }
-        setNewuserrequesters({
-            ...newuserrequesters,
+        setNewuser({
+            ...newuser,
             [e.target.name]: val
         })
     }
@@ -93,6 +92,17 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
             console.log("isi upload: " + info.file.originFileObj.name)
             const formData = new FormData()
             formData.append('file', info.file.originFileObj)
+            // fetch("/api/upload", {
+            //     method: "POST",
+            //     body: formData
+            // })
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         console.log(data);
+            //     })
+            //     .catch(error => {
+            //         console.error(error);
+            //     });
             formData.append('upload_preset', 'migsys')
             return fetch(`https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`, {
                 method: 'POST',
@@ -100,42 +110,48 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
             })
                 .then(res => res.json())
                 .then(res2 => {
-                    setNewuserrequesters({
-                        ...newuserrequesters,
+                    setNewuser({
+                        ...newuser,
                         profile_image: res2.secure_url
                     })
                 })
+            //or
+            // getBase64(info.file.originFileObj, (imageUrl) => {
+            //     setNewuser({
+            //         ...newuser,
+            //         profile_image: imageUrl,
+            //     })
+            //     setLoadingupload(false)
+            // }
+            // );
         }
+    }
+    function getBase64(img, callback) {
+        const reader = new FileReader();
+        reader.addEventListener('load', () => callback(reader.result));
+        reader.readAsDataURL(img);
     }
     const uploadButton = (
         <div>
             {loadingupload ? <LoadingOutlined /> : <PlusOutlined />}
-            <div style={{ marginTop: 8 }}>Upload</div>
+            <div style={{ marginTop: 8 }}>Unggah</div>
         </div>
     );
 
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-                <div className=" col-span-1 md:col-span-1 flex md:hidden flex-col space-y-4 p-4">
-                    <div className="font-semibold text-sm">Requesters</div>
-                    <p className="font-normal text-sm">
-                        This page lets you handpick a set of requesters and add them to your help desk. These requesters will have selective privileges to submit requests to your helpdesk. You can restrict access such that only people who have been added here are allowed to login to your self-service portal and access your knowledge base.
-                        <br /> <br />
-                        You can fill in the details of each of your new requesters manually or import a list of users from a CSV file. Once you have populated your list, your agents can open up each of your requesters and view their ticket history and contact information.
-                    </p>
-                </div>
                 <div className="col-span-1 md:col-span-3 flex flex-col" id="createAgentsWrapper">
                     <Sticky containerSelectorFocus="#createAgentsWrapper">
                         <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
-                            <h1 className="font-semibold py-2">Requesters Baru</h1>
+                            <h1 className="font-semibold py-2">Agent Baru</h1>
                             <div className="flex space-x-2">
-                                <Link href="/requesters?originPath=Admin">
-                                    <Button type="default" size="middle">Batalkan</Button>
-                                    {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button> */}
+                                <Link href="/admin/agents">
+                                    <Button size="middle" type="default">Batalkan</Button>
+                                    {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 text-xs md:text-sm w-24 h-10 rounded-md">Cancel</button> */}
                                 </Link>
-                                <Button loading={loadingcreate} onClick={instanceForm.submit} type="primary" size="middle">Simpan</Button>
-                                {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={handleCreateAgents}>Save</button> */}
+                                <Button size="middle" type="primary" loading={loadingsave} onClick={instanceForm.submit}>Simpan</Button>
+                                {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md text-xs md:text-sm w-24 h-10" onClick={handleCreateAgents}>Save</button> */}
                             </div>
                         </div>
                     </Sticky>
@@ -153,11 +169,11 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                                     beforeUpload={beforeUploadProfileImage}
                                     onChange={onChangeProfileImage}
                                 >
-                                    {newuserrequesters.profile_image ? <img src={newuserrequesters.profile_image} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                                    {newuser.profile_image ? <img src={newuser.profile_image} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
                                 </Upload>
                             </div>
                             <div className="p-3 col-span-1 md:col-span-3">
-                                <Form layout="vertical" className="createAgentsForm" onFinish={handleCreateAgents} form={instanceForm}>
+                                <Form layout="vertical" form={instanceForm} className="createAgentsForm" onFinish={handleCreateAgents}>
                                     <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi" name="fullname"
                                         rules={[
                                             {
@@ -165,7 +181,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                                                 message: 'Nama Lengkap harus diisi',
                                             },
                                         ]}>
-                                        <Input value={newuserrequesters.fullname} name={`fullname`} onChange={onChangeCreateRequesters} />
+                                        <Input value={newuser.fullname} name={`fullname`} onChange={onChangeCreateAgents} />
                                     </Form.Item>
                                     <Form.Item label="Email" required tooltip="Wajib diisi" name="email"
                                         rules={[
@@ -174,55 +190,48 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                                                 message: 'Email harus diisi',
                                             },
                                         ]}>
-                                        <Input value={newuserrequesters.email} name={`email`} onChange={onChangeCreateRequesters} />
+                                        <Input value={newuser.email} name={`email`} onChange={onChangeCreateAgents} />
                                     </Form.Item>
                                     <Form.Item label="No. Handphone" name="phone_number"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'No. Handphone harus diisi',
-                                        },
-                                    ]}>
-                                        <Input value={newuserrequesters.phone_number} name={`phone_number`} onChange={onChangeCreateRequesters} />
-                                    </Form.Item>
-                                    <Form.Item label="Role" name="role"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Role harus diisi',
-                                        },
-                                    ]}>
-                                        <input type="number" value={newuserrequesters.role} name={'role'} onChange={onChangeCreateRequesters} />
-                                    </Form.Item>
-                                    <Form.Item label="Asal Perusahaan" name="company_id"
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Asal Perusahaan harus diisi',
+                                                message: 'No.Handphone harus diisi',
                                             },
                                         ]}>
-                                        <Select onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }} name={`company_id`} allowClear>
-                                            <Select.Option >Choose company</Select.Option>
-                                            {
-                                                dataCompanyList.map((doc, idx) => {
-                                                    return (
-                                                        <Select.Option title={doc.company_name} key={idx} value={doc.company_id}>{doc.company_name}</Select.Option>
-                                                    )
-                                                })
-                                            }
-                                        </Select>
+                                        <Input value={newuser.phone_number} name={`phone_number`} onChange={onChangeCreateAgents} />
                                     </Form.Item>
+                                    {/* <Form.Item label="Role" name="role"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Role harus diisi',
+                                            },
+                                        ]}>
+                                        <input type="number" value={newuser.role} name={'role'} onChange={onChangeCreateAgents} />
+                                    </Form.Item> */}
                                 </Form>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className=" col-span-1 md:col-span-1 hidden md:flex flex-col space-y-4 p-4">
-                    <div className="font-semibold text-sm">Requesters</div>
-                    <p className="font-normal text-sm">
-                        This page lets you handpick a set of requesters and add them to your help desk. These requesters will have selective privileges to submit requests to your helpdesk. You can restrict access such that only people who have been added here are allowed to login to your self-service portal and access your knowledge base.
-                        <br /> <br />
-                        You can fill in the details of each of your new requesters manually or import a list of users from a CSV file. Once you have populated your list, your agents can open up each of your requesters and view their ticket history and contact information.
+                    <div className="font-semibold text-base">Agents</div>
+                    <p className="font-normal text-xs">
+                        When you add a new agent, you will have to provide the agent’s email, set their permission levels and access (full-time or occasional). Agents will receive an email with a confirmation link to activate their account after which they can be assigned to, or respond to tickets. Administrators can also edit an Agent’s profile to include the agent’s title, phone, profile picture, signature etc.
+                    </p>
+                    <div className="font-semibold text-base">Full-time vs Occasional Agents</div>
+                    <p className=" font-normal text-xs">
+                        You can choose whether your agents will need access to your support portal full-time, or will only be logging in occasionally. Occasional agents will use up a Day Pass for each day they login to your support, and you can purchase Day Passes in bulk from the Admin tab. Note that you will only be billed monthly for the number of full-time agents you add.
+                    </p>
+                    <div className="font-semibold text-base">Agent Groups</div>
+                    <p className=" font-normal text-xs">
+                        You can choose whether your agents will need access to your support portal full-time, or will only be logging in occasionally. Occasional agents will use up a Day Pass for each day they login to your support, and you can purchase Day Passes in bulk from the Admin tab. Note that you will only be billed monthly for the number of full-time agents you add.
+                    </p>
+                    <div className="font-semibold text-base">Agent Groups</div>
+                    <p className=" font-normal text-xs">
+                        Choose the tickets this agent can view and actions they can perform within the helpdesk by assigning one or more roles.
+                        Note that you will not be able to modify your own roles, or delete yourself.
                     </p>
                 </div>
             </div>
@@ -234,7 +243,7 @@ export async function getServerSideProps({ req, res }) {
     var initProps = {};
     const reqBody = {
         page: 1,
-        rows: 10,
+        rows: 50,
         order_by: "asc"
     }
     if (req && req.headers) {
@@ -258,25 +267,24 @@ export async function getServerSideProps({ req, res }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyList`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(reqBody)
-    })
-    const resjsonGCL = await resourcesGCL.json()
-    const dataCompanyList = resjsonGCL
+    // const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyList`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify(reqBody)
+    // })
+    // const resjsonGCL = await resourcesGCL.json()
+    // const dataCompanyList = resjsonGCL
 
     return {
         props: {
             initProps,
             dataProfile,
-            dataCompanyList,
             sidemenu: "4"
         }
     }
 }
 
-export default RequestersCreate
+export default AgentsCreate

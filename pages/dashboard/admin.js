@@ -26,10 +26,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                     </div>
                     <div className="grid md:grid-cols-5 sm:grid-cols-1">
                         <Link href={{
-                            pathname: '/agents',
-                            query: {
-                                originPath: "Admin"
-                            }
+                            pathname: '/admin/agents',
                         }}>
                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
@@ -38,10 +35,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             </div>
                         </Link>
                         <Link href={{
-                            pathname: '/requesters',
-                            query: {
-                                originPath: "Admin"
-                            }
+                            pathname: '/admin/requesters',
                         }}>
                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
@@ -119,7 +113,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                         </h3>
                     </div>
                     <div className="grid md:grid-cols-5 sm:grid-cols-1">
-                        <Link href={'/assets?originPath=Admin'}>
+                        <Link href={'/admin/assets'}>
                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
                                     <InboxOutlined /> Assets Types & Field

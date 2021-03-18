@@ -7,7 +7,7 @@ import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import st from '../../components/layout-dashboard-clients.module.css'
-import {Tabs,Input,Table,Tree,Drawer,Modal,message,Select,notification,Form,Button,Popconfirm} from 'antd'
+import { Tabs, Input, Table, Tree, Drawer, Modal, message, Select, notification, Form, Button, Popconfirm, Switch } from 'antd'
 
 function ClientsDetailProfile({ dataDetailCompany, tok }) {
     const rt = useRouter()
@@ -15,14 +15,16 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
     const [visible, setVisible] = useState(false)
     const [visiblenon, setVisiblenon] = useState(false)
     const [loadingbtn, setloadingbtn] = useState(false)
+    const [loadingubahaktif, setloadingubahaktif] = useState(false)
+    const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
     const [instanceForm] = Form.useForm()
     const [data1, setData1] = useState({
-        id: dataDetailCompany.data.company_id,
-        company_name: dataDetailCompany.data.company_name,
-        role: dataDetailCompany.data.role,
-        address: dataDetailCompany.data.address,
-        phone_number: dataDetailCompany.data.phone_number,
-        image_logo: dataDetailCompany.data.image_logo
+        id: dataDetailCompany.data.data.company_id,
+        company_name: dataDetailCompany.data.data.company_name,
+        role: dataDetailCompany.data.data.role,
+        address: dataDetailCompany.data.data.address,
+        phone_number: dataDetailCompany.data.data.phone_number,
+        image_logo: dataDetailCompany.data.data.image_logo
     })
     const [loadingfoto, setLoadingfoto] = useState(false)
 
@@ -66,13 +68,13 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
             .then(res => res.json())
             .then(res2 => {
                 setloadingbtn(false)
-                if (res2.data) {
+                if (res2.success) {
                     notification['success']({
-                        message: res2.data.message,
+                        message: res2.message,
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/company/${dataDetailCompany.data.company_id}?originPath=Admin`)
+                        rt.push(`/company/${dataDetailCompany.data.data.company_id}?originPath=Admin`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -87,9 +89,11 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
         var keaktifan = false
         if (status === "aktif") {
             keaktifan = false
+            setloadingubahaktif(true)
         }
         else if (status === "nonAktif") {
             keaktifan = true
+            setloadingubahnonaktif(true)
         }
         fetch(`https://boiling-thicket-46501.herokuapp.com/companyActivation`, {
             method: 'POST',
@@ -98,21 +102,27 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                company_id: dataDetailCompany.data.company_id,
+                company_id: dataDetailCompany.data.data.company_id,
                 is_enabled: keaktifan
             })
         })
             .then(res => res.json())
             .then(res2 => {
-                if (res2.data) {
+                if (res2.success) {
                     setVisible(false)
                     setVisiblenon(false)
                     notification['success']({
-                        message: res2.data.message,
+                        message: res2.message,
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/company/${dataDetailCompany.data.company_id}?originPath=Admin`)
+                        if (status === "aktif") {
+                            setloadingubahaktif(false)
+                        }
+                        else if (status === "nonAktif") {
+                            setloadingubahnonaktif(false)
+                        }
+                        rt.push(`/company/${dataDetailCompany.data.data.company_id}?originPath=Admin`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -142,14 +152,22 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                 </div>
             </div>
             <div className=" mb-2 md:mb-4 flex md:flex-row flex-col">
-                <h1 className="font-semibold text-base mr-3 pt-1">{dataDetailCompany.data.company_name}</h1>
+                <h1 className="font-semibold text-base mr-3 pt-1">{dataDetailCompany.data.data.company_name}</h1>
                 <h1 className="mr-3 pt-1 hidden md:block">|</h1>
-                <div className="flex">
+                <div className="flex md:mr-5">
                     {
-                        dataDetailCompany.data.is_enabled ?
-                            <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md text-xs md:text-sm w-auto">AKTIF MODUL</div>
+                        dataDetailCompany.data.data.is_enabled ?
+                            <div className=" bg-blue-100 text-blue-600 border-blue-600 border pt-1 h-auto px-3 rounded-md text-xs md:text-sm w-auto">AKTIF</div>
                             :
-                            <div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md text-xs md:text-sm w-auto">NON-AKTIF MODUL</div>
+                            <div className=" bg-red-100 text-red-600 border-red-600 border pt-1 h-auto px-3 rounded-md text-xs md:text-sm w-auto">NON-AKTIF</div>
+                    }
+                </div>
+                <div className="pt-1">
+                    {
+                        dataDetailCompany.data.data.is_enabled ?
+                            <Switch checked={true} onChange={() => { setVisible(true) }}></Switch>
+                            :
+                            <Switch checked={false} onChange={() => { setVisiblenon(true) }}></Switch>
                     }
                 </div>
             </div>
@@ -194,7 +212,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
 
                             }
                         </div>
-                        <div className="md:m-5 mb-5 md:mb-0 ">
+                        {/* <div className="md:m-5 mb-5 md:mb-0 ">
                             {
                                 editable ?
                                     <Form.Item name="role" label="Role"
@@ -213,7 +231,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                                     </>
 
                             }
-                        </div>
+                        </div> */}
                         <div className="md:m-5 mb-5 md:mb-0">
                             {
                                 editable ?
@@ -255,9 +273,9 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                     </Form>
                 </div>
             </div>
-            <div className="w-9/12 p-3 md:p-5 h-auto">
+            {/* <div className="w-9/12 p-3 md:p-5 h-auto">
                 {
-                    dataDetailCompany.data.is_enabled ?
+                    dataDetailCompany.data.data.is_enabled ?
                         <button className=" w-full h-auto py-2 text-center bg-red-600 text-white hover:bg-red-800 rounded-md" onClick={() => { setVisible(true) }}>
                             Non Aktifkan Perusahaan
                         </button>
@@ -266,22 +284,24 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                             Aktifkan Perusahaan
                         </button>
                 }
-            </div >
+            </div > */}
             <Modal
                 title="Konfirmasi untuk menon-aktifkan akun"
                 visible={visible}
                 onOk={() => { handleActivationClients("aktif") }}
                 onCancel={() => setVisible(false)}
+                okButtonProps={{ disabled: loadingubahaktif }}
             >
-                Apakah anda yakin ingin menon-aktifkan akun perusahaan <strong>{dataDetailCompany.data.company_name}</strong>?
+                Apakah anda yakin ingin menon-aktifkan akun perusahaan <strong>{dataDetailCompany.data.datacompany_name}</strong>?
             </Modal>
             <Modal
                 title="Konfirmasi untuk mengakaktifkan akun"
                 visible={visiblenon}
                 onOk={() => { handleActivationClients("nonAktif") }}
                 onCancel={() => setVisiblenon(false)}
+                okButtonProps={{ disabled: loadingubahnonaktif }}
             >
-                Apakah anda yakin ingin melakukan aktivasi akun perusahaan <strong>{dataDetailCompany.data.company_name}</strong>?`
+                Apakah anda yakin ingin melakukan aktivasi akun perusahaan <strong>{dataDetailCompany.data.data.company_name}</strong>?`
             </Modal>
         </div >
     )
@@ -376,7 +396,7 @@ function ClientsDetailLocations({ dataDetailCompany, tok }) {
         <div id="locationsDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
                 <div className="flex space-x-2">
-                    <Link href={`/company/locations/new?originPath=Admin&companyId=${dataDetailCompany.data.company_id}`}>
+                    <Link href={`/company/locations/new?originPath=Admin&companyId=${dataDetailCompany.data.data.company_id}`}>
                         <Button type="primary" size="large">Tambah</Button>
                         {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40"> Create</button> */}
                     </Link>
@@ -407,10 +427,10 @@ function ClientsDetailLocations({ dataDetailCompany, tok }) {
                                     {nodeData.title}
                                 </div>
                                 <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
-                                    <Link href={`/company/locations/new?originPath=Admin&parent=${nodeData.title}&companyId=${dataDetailCompany.data.company_id}`}>
+                                    <Link href={`/company/locations/new?originPath=Admin&parent=${nodeData.title}&companyId=${dataDetailCompany.data.data.company_id}`}>
                                         <a className="mx-2 pb-1" alt="add"><PlusOutlined /></a>
                                     </Link>
-                                    <Link href={`/company/locations/update/${dataDetailCompany.data.company_id}?originPath=Admin&parent=${nodeData.title}`}>
+                                    <Link href={`/company/locations/update/${dataDetailCompany.data.data.company_id}?originPath=Admin&parent=${nodeData.title}`}>
                                         <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                     </Link>
                                     <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("berhasil dihapus") }} onCancel={() => { message.error("Gagal dihapus") }}>
@@ -828,7 +848,7 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
                         <ClientsDetailProfile dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
                     </TabPane>
                     <TabPane tab="Rekening Bank" key={`bankAccounts`}>
-                        <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
+                        <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.data.company_id} />
                     </TabPane>
                     <TabPane tab="Lokasi" key={`locations`}>
                         <ClientsDetailLocations dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailLocations>
@@ -841,7 +861,7 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
                         <ClientsDetailProfile dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
                     </TabPane>
                     <TabPane tab="Rekening Bank" key={`bankAccounts`}>
-                        <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
+                        <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.data.company_id} />
                     </TabPane>
                     <TabPane tab="Lokasi" key={`locations`}>
                         <ClientsDetailLocations dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailLocations>
@@ -891,7 +911,7 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonGC = await resourcesGC.json()
     const dataDetailCompany = resjsonGC
 
-    const resourcesGB = await fetch(`https://boiling-thicket-46501.herokuapp.com/getBanks?id=${dataDetailCompany.data.company_id}`, {
+    const resourcesGB = await fetch(`https://boiling-thicket-46501.herokuapp.com/getBanks?id=${dataDetailCompany.data.data.company_id}`, {
         method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps),

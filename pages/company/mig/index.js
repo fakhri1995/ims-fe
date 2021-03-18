@@ -18,12 +18,12 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
         setEditable(true)
     }
     const [data1, setData1] = useState({
-        id: dataDetailCompany.data.company_id,
-        company_name: dataDetailCompany.data.company_name,
-        role: dataDetailCompany.data.role,
-        address: dataDetailCompany.data.address,
-        phone_number: dataDetailCompany.data.phone_number,
-        image_logo: dataDetailCompany.data.image_logo
+        id: dataDetailCompany.data.data.company_id,
+        company_name: dataDetailCompany.data.data.company_name,
+        role: dataDetailCompany.data.data.role,
+        address: dataDetailCompany.data.data.address,
+        phone_number: dataDetailCompany.data.data.phone_number,
+        image_logo: dataDetailCompany.data.data.image_logo
     })
     const [loadingfoto, setLoadingfoto] = useState(false)
 
@@ -67,9 +67,9 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
             .then(res => res.json())
             .then(res2 => {
                 setloadingbtn(false)
-                if (res2.data) {
+                if (res2.success) {
                     notification['success']({
-                        message: res2.data.message,
+                        message: res2.message,
                         duration: 3
                     })
                     setTimeout(() => {
@@ -106,14 +106,14 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
                 {/* </Sticky> */}
             </div>
             <div className=" mb-2 md:mb-4 flex md:flex-row flex-col">
-                <h1 className="font-semibold text-base mr-3 pt-1">{dataDetailCompany.data.company_name}</h1>
+                <h1 className="font-semibold text-base mr-3 pt-1">{dataDetailCompany.data.data.company_name}</h1>
                 <h1 className="mr-3 pt-1 hidden md:block">|</h1>
                 <div className="flex">
                     {
-                        dataDetailCompany.data.is_enabled ?
-                            <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md text-xs md:text-sm w-auto">AKTIF MODUL</div>
+                        dataDetailCompany.data.data.is_enabled ?
+                            <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md text-xs md:text-sm w-auto">AKTIF</div>
                             :
-                            <div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md text-xs md:text-sm w-auto">NON-AKTIF MODUL</div>
+                            <div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md text-xs md:text-sm w-auto">NON-AKTIF</div>
                     }
                 </div>
             </div>
@@ -156,7 +156,7 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
                                 </>
                         }
                     </div>
-                    <div className="md:m-5 mb-5 md:mb-0 ">
+                    {/* <div className="md:m-5 mb-5 md:mb-0 ">
                         {
                             editable ?
                                 <Form.Item name="role" label="Role"
@@ -174,7 +174,7 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
                                     <h1 className="text-sm font-normal text-black">{data1.role}</h1>
                                 </>
                         }
-                    </div>
+                    </div> */}
                     <div className="md:m-5 mb-5 md:mb-0">
                         {
                             editable ?
@@ -219,97 +219,21 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
     )
 }
 
-function MigIndexLocations({ dataDetailCompany, tok }) {
+function MigIndexLocations({ dataLocations, dataDetailCompany, tok }) {
     const [expandedKeys, setExpandedKeys] = useState([])
     const [autoExpandParent, setAutoExpandParent] = useState(true);
+    const [datalocations, setdatalocations] = useState(dataLocations.data)
+    const [loadingtambah, setloadingtambah] = useState(false)
     const onExpand = (expandedKeys) => {
         setExpandedKeys(expandedKeys);
         setAutoExpandParent(false);
     };
-    const treeData = [
-        {
-            title: 'HUB-1',
-            key: 'hub1',
-            children: [
-                {
-                    title: 'Jakarta',
-                    key: '0-0-0',
-                    children: [
-                        {
-                            title: 'Slipi',
-                            key: '0-0-0-0',
-                        },
-                        {
-                            title: 'Tebet',
-                            key: '0-0-0-1',
-                        },
-                        {
-                            title: 'Pancoran',
-                            key: '0-0-0-2',
-                        },
-                        {
-                            title: 'Pluit',
-                            key: '0-0-0-3',
-                        },
-                    ],
-                },
-                {
-                    title: 'Bogor',
-                    key: '0-0-1',
-                    children: [
-                        {
-                            title: 'Cibinong',
-                            key: '0-0-1-0',
-                        },
-                        {
-                            title: 'Parung',
-                            key: '0-0-1-1',
-                        },
-                    ],
-                },
-                {
-                    title: 'Depok',
-                    key: '0-0-2',
-                },
-                {
-                    title: 'Tangerang',
-                    key: '0-0-3',
-                },
-                {
-                    title: 'Banten',
-                    key: '0-0-4',
-                },
-            ],
-        },
-        {
-            title: 'HUB-2',
-            key: '0-1',
-            children: [
-                {
-                    title: '0-1-0-0',
-                    key: '0-1-0-0',
-                },
-                {
-                    title: '0-1-0-1',
-                    key: '0-1-0-1',
-                },
-                {
-                    title: '0-1-0-2',
-                    key: '0-1-0-2',
-                },
-            ],
-        },
-        {
-            title: 'HUB-3',
-            key: '0-2',
-        },
-    ];
     return (
         <div id="locationssDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
                 <div className="flex space-x-2">
-                    <Link href={`/company/locations/new?originPath=Admin&companyId=${dataDetailCompany.data.company_id}`}>
-                        <Button type="primary" size="middle">Tambah</Button>
+                    <Link href={`/company/locations/new?originPath=Admin&companyId=${dataDetailCompany.data.data.company_id}`}>
+                        <Button type="primary" size="middle" loading={loadingtambah} onClick={() => { setloadingtambah(true) }}>Tambah</Button>
                         {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40"> Create</button> */}
                     </Link>
                 </div>
@@ -322,7 +246,7 @@ function MigIndexLocations({ dataDetailCompany, tok }) {
                     onExpand={onExpand}
                     expandedKeys={expandedKeys}
                     autoExpandParent={autoExpandParent}
-                    treeData={treeData}
+                    treeData={datalocations}
                     titleRender={(nodeData) => (
                         <>
                             <div className={`flex justify-between hover:bg-blue-100 text-black`}
@@ -341,10 +265,10 @@ function MigIndexLocations({ dataDetailCompany, tok }) {
                                     {nodeData.title}
                                 </div>
                                 <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
-                                    <Link href={`/company/locations/new?originPath=Admin&parent=${nodeData.title}&companyId=${dataDetailCompany.data.company_id}`}>
+                                    <Link href={`/company/locations/new?originPath=Admin&parent=${nodeData.id}&companyId=${dataDetailCompany.data.data.company_id}`}>
                                         <a className="mx-2 pb-1" alt="add"><PlusOutlined /></a>
                                     </Link>
-                                    <Link href={`/company/locations/update/${dataDetailCompany.data.company_id}?originPath=Admin&parent=${nodeData.title}`}>
+                                    <Link href={`/company/locations/update/${nodeData.id}?originPath=Admin&parent=${nodeData.title}`}>
                                         <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                     </Link>
                                     <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("berhasil dihapus") }} onCancel={() => { message.error("Gagal dihapus") }}>
@@ -755,7 +679,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
     )
 }
 
-function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGetBanks }) {
+function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGetBanks, dataLocations }) {
     const rt = useRouter()
     const { TabPane } = Tabs;
     const tok = initProps
@@ -776,7 +700,7 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGet
                         <MigIndexBankAccount dataGetBanks={dataGetBanks} tok={tok} />
                     </TabPane>
                     <TabPane tab="Lokasi" key={`locations`}>
-                        <MigIndexLocations dataDetailCompany={dataDetailCompany} tok={tok} />
+                        <MigIndexLocations dataLocations={dataLocations} dataDetailCompany={dataDetailCompany} tok={tok} />
                     </TabPane>
                 </Tabs>
             </div>
@@ -789,7 +713,7 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGet
                         <MigIndexBankAccount dataGetBanks={dataGetBanks} tok={tok} />
                     </TabPane>
                     <TabPane tab="Lokasi" key={`locations`}>
-                        <MigIndexLocations dataDetailCompany={dataDetailCompany} tok={tok} />
+                        <MigIndexLocations dataLocations={dataLocations} dataDetailCompany={dataDetailCompany} tok={tok} />
                     </TabPane>
                 </Tabs>
             </div>
@@ -833,7 +757,7 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGC = await resourcesGC.json()
     const dataDetailCompany = resjsonGC
 
-    const resourcesGB = await fetch(`https://boiling-thicket-46501.herokuapp.com/getBanks?id=${dataDetailCompany.data.company_id}`, {
+    const resourcesGB = await fetch(`https://boiling-thicket-46501.herokuapp.com/getBanks?id=${dataDetailCompany.data.data.company_id}`, {
         method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps),
@@ -841,12 +765,22 @@ export async function getServerSideProps({ req, res }) {
     })
     const resjsonGB = await resourcesGB.json()
     const dataGetBanks = resjsonGB
+
+    const resourcesGL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
+        method: `POST`,
+        headers: {
+            'Authorization': JSON.parse(initProps),
+        },
+    })
+    const resjsonGL = await resourcesGL.json()
+    const dataLocations = resjsonGL
     return {
         props: {
             initProps,
             dataProfile,
             dataDetailCompany,
             dataGetBanks,
+            dataLocations,
             sidemenu: "4"
         },
     }
