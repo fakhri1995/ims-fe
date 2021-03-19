@@ -44,10 +44,10 @@ function GroupsAgentsCreate({ initProps, dataProfile, dataListAccount, sidemenu 
     const handleCreateIncident = () => {
         setLoadingbtn(true)
         let formData = new FormData();
-        // newincident['file'].forEach(file => {
-        //     formData.append('file[]', file);
-        // });
-        formData.append('file', newincident.file[0]);
+        newincident['file'].forEach(file => {
+            formData.append('file[]', file);
+        });
+        // formData.append('file', newincident.file[0]);
         formData.append('requester', newincident.requester);
         formData.append('subject', newincident.subject);
         formData.append('description', newincident.description);

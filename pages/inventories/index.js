@@ -14,7 +14,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
     const { TabPane } = Tabs;
-    console.log(dataInventories)
+    // console.log(dataInventories)
 
     //--------hook modal delete inventories-------------
     const [warningDelete, setWarningDelete] = useState({
@@ -227,7 +227,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
                 <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-                    <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
+                    <div className=" col-span-1 md:col-span-4 flex flex-col" id="formAgentsWrapper">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <h1 className="font-semibold text-base w-auto pt-2">All Assets</h1>
@@ -263,22 +263,12 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                             Apakah anda yakin ingin menghapus grup <strong>{warningDelete.asset_name}</strong>?
                             </Modal>
                     </div>
-                    <div className="flex flex-col space-y-3 px-4">
+                    {/* <div className="flex flex-col space-y-3 px-4">
                         <div className="font-semibold text-sm">Groups</div>
                         <p className="font-normal text-sm">
                             You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that the same agent can be a member of multiple groups as well
                         </p>
-                        {/* <br />
-                        <div className="font-semibold text-sm">Auto-ticket Assignment</div>
-                        <p className="font-normal text-sm">
-                            Once you create homogeneous agent groups, you can choose to automatically assign new tickets in this group to the next agent in Round Robin. Learn more about automatic ticket assignment
-                        </p>
-                        <br />
-                        <div className="font-semibold text-sm">Working Hours</div>
-                        <p className="font-normal text-sm">
-                        You can assign a different set of business hours and holidays to each Group. For example, you can separate agents by shifts and assign them different business hours, or create separate groups for each time zone your agents work at
-                        </p> */}
-                    </div>
+                    </div> */}
                 </div>
             </>
         </Layout>
