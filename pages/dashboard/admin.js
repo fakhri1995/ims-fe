@@ -121,7 +121,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             </div>
                         </Link>
                         <Link href={{
-                            pathname: '/inventories/',
+                            pathname: '/inventories',
                             query: {
                                 originPath: "Admin"
                             }
