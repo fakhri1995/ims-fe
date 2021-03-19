@@ -87,7 +87,7 @@ function GroupsRequestersDetail({ initProps, dataProfile, dataListAccount, dataD
     //------------------------------------------
 
     //------------populate list account-------------
-    const dataDD = dataListAccount.data.accounts.map((doc, idx) => {
+    const dataDD = dataListAccount.data.data.accounts.map((doc, idx) => {
         return ({
             value: doc.user_id,
             label: doc.fullname,
@@ -164,7 +164,7 @@ function GroupsRequestersDetail({ initProps, dataProfile, dataListAccount, dataD
                                     ]}
                                     initialValue={editgroup.group_head}
                                 >
-                                    <Select showSearch placeholder="Add Group Head" name={`group_head`} showArrow options={dataDD} onChange={onChangeEditGroupHeadGroup} style={{ width: '100%', lineHeight: '2.4' }} />
+                                    <Select showSearch placeholder="Add Group Head" name={`group_head`} showArrow options={dataDD} optionFilterProp="label" onChange={onChangeEditGroupHeadGroup} style={{ width: '100%', lineHeight: '2.4' }} />
                                 </Form.Item>
                             </div>
 
@@ -182,7 +182,7 @@ function GroupsRequestersDetail({ initProps, dataProfile, dataListAccount, dataD
                                 </Radio.Group>
                                 <Row>
                                     <Col flex="auto">
-                                        <Select placeholder="Add an Agent" showArrow mode="multiple" onChange={handleChangeEditAgent} defaultValue={editgroup.user_ids} options={dataDD} style={{ width: '100%', padding: '0 5px', lineHeight: '2.4' }} />
+                                        <Select placeholder="Add an Agent" showArrow mode="multiple" optionFilterProp="label" onChange={handleChangeEditAgent} defaultValue={editgroup.user_ids} options={dataDD} style={{ width: '100%', padding: '0 5px', lineHeight: '2.4' }} />
                                     </Col>
                                     {/* <Col flex="100px">
                                     <div className=" text-black text-sm bg-white hover:bg-gray-300 border border-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >

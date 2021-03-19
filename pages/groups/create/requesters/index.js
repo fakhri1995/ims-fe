@@ -91,7 +91,7 @@ function GroupsRequestersCreate({ initProps, dataProfile, dataListAccount, sidem
     //------------------------------------------
 
     //------------populate list account-------------
-    const dataDD = dataListAccount.data.accounts.map((doc, idx) => {
+    const dataDD = dataListAccount.data.data.accounts.map((doc, idx) => {
         return ({
             value: doc.user_id,
             label: doc.fullname,
@@ -161,7 +161,7 @@ function GroupsRequestersCreate({ initProps, dataProfile, dataListAccount, sidem
                                     ]}
                                     initialValue={newgroup.group_head}
                                 >
-                                    <Select showSearch placeholder="Add Group Head" name={`group_head`} showArrow options={dataDD} onChange={onChangeCreateGroupHeadGroup} style={{ width: '100%', lineHeight: '2.4' }} />
+                                    <Select showSearch placeholder="Add Group Head" name={`group_head`} showArrow options={dataDD} optionFilterProp="label" onChange={onChangeCreateGroupHeadGroup} style={{ width: '100%', lineHeight: '2.4' }} />
                                 </Form.Item>
                             </div>
 
@@ -179,7 +179,7 @@ function GroupsRequestersCreate({ initProps, dataProfile, dataListAccount, sidem
                                 </Radio.Group>
                                 <Row>
                                     <Col flex="auto">
-                                        <Select showSearch placeholder="Add an Agent" showArrow mode="multiple" options={dataDD} onChange={handleChangeAddAgent} style={{ width: '100%', padding: '0 5px', lineHeight: '2.4' }} />
+                                        <Select showSearch placeholder="Add an Agent" showArrow mode="multiple" options={dataDD} optionFilterProp="label" onChange={handleChangeAddAgent} style={{ width: '100%', padding: '0 5px', lineHeight: '2.4' }} />
                                     </Col>
                                     {/* <Col flex="100px">
                                     <div className=" text-black text-sm bg-white hover:bg-gray-300 border border-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
