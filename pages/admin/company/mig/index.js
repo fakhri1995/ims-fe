@@ -1,4 +1,4 @@
-import Layout from '../../../components/layout-dashboard-mig'
+import Layout from '../../../../components/layout-dashboard2'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
@@ -6,7 +6,7 @@ import EditOutlined from '@ant-design/icons/EditOutlined'
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import { useState } from 'react'
-import st from '../../../components/layout-dashboard-mig.module.css'
+import st from '../../../../components/layout-dashboard-mig.module.css'
 import Link from 'next/link'
 import { Tabs, Input, Form, Table, Tree, Drawer, notification, message, Modal, Select, Button, Popconfirm } from 'antd'
 
@@ -73,7 +73,7 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/company/mig?originPath=Admin`)
+                        rt.push(`/admin/company/mig`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -232,7 +232,7 @@ function MigIndexLocations({ dataLocations, dataDetailCompany, tok }) {
         <div id="locationssDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
                 <div className="flex space-x-2">
-                    <Link href={`/company/locations/new?originPath=Admin&companyId=${dataDetailCompany.data.data.company_id}`}>
+                    <Link href={`/admin/company/locations/new?companyId=${dataDetailCompany.data.data.company_id}&parent=`}>
                         <Button type="primary" size="middle" loading={loadingtambah} onClick={() => { setloadingtambah(true) }}>Tambah</Button>
                         {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40"> Create</button> */}
                     </Link>
@@ -265,10 +265,10 @@ function MigIndexLocations({ dataLocations, dataDetailCompany, tok }) {
                                     {nodeData.title}
                                 </div>
                                 <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
-                                    <Link href={`/company/locations/new?originPath=Admin&parent=${nodeData.id}&companyId=${dataDetailCompany.data.data.company_id}`}>
+                                    <Link href={`/admin/company/locations/new?parent=${nodeData.id}&companyId=${dataDetailCompany.data.data.company_id}`}>
                                         <a className="mx-2 pb-1" alt="add"><PlusOutlined /></a>
                                     </Link>
-                                    <Link href={`/company/locations/update/${nodeData.id}?originPath=Admin&parent=${nodeData.title}`}>
+                                    <Link href={`/admin/company/locations/update/${nodeData.id}?parent=${nodeData.title}`}>
                                         <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                     </Link>
                                     <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("berhasil dihapus") }} onCancel={() => { message.error("Gagal dihapus") }}>
@@ -358,7 +358,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/company/mig?originPath=Admin`)
+                        rt.push(`/admin/company/mig`)
                     }, 500)
                 }
                 else {
@@ -396,7 +396,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                     })
                     setTimeout(() => {
                         setDrawablecreate(false)
-                        rt.push(`/company/mig?originPath=Admin&active=bankAccounts`)
+                        rt.push(`/admin/company/mig?active=bankAccounts`)
                     }, 500)
                 }
                 else {
@@ -437,7 +437,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                     })
                     setTimeout(() => {
                         setDrawableedit(false)
-                        rt.push(`/company/mig?originPath=Admin&active=bankAccounts`)
+                        rt.push(`/admin/company/mig?active=bankAccounts`)
                     }, 500)
                 }
                 else {
@@ -683,14 +683,15 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGet
     const rt = useRouter()
     const { TabPane } = Tabs;
     const tok = initProps
-    const pathArr = rt.pathname.split("/").slice(1)
+    // const pathArr = rt.pathname.split("/").slice(1)
+    const pathArr = ['admin', "company", 'mig', "MIG"]
     var activeTab = "profile"
-    const { originPath, active } = rt.query
+    const { active } = rt.query
     if (active) {
         activeTab = active
     }
     return (
-        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} st={st}>
+        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
             <div className="p-5 bg-white hidden md:block">
                 <Tabs tabPosition={`left`} defaultActiveKey={activeTab}>
                     <TabPane tab="Profil" key={`profile`}>

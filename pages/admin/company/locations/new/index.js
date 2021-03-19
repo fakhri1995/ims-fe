@@ -1,16 +1,18 @@
 import httpcookie from 'cookie'
-import Layout from '../../../../components/layout-dashboard'
+import Layout from '../../../../../components/layout-dashboard'
 import Link from 'next/link'
-import st from "../../../../components/layout-dashboard.module.css"
+import st from "../../../../../components/layout-dashboard.module.css"
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons'
-import { Form, Input, TreeSelect, Button, Upload, message } from 'antd'
+import { Form, Input, TreeSelect, Button, Upload, message, notification } from 'antd'
 
-function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, dataLocations, companyid }) {
+function NewLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, dataLocations, parentt }) {
+    const rt = useRouter()
     const tok = initProps
-    const originPath = "Admin"
-    const [updateLocationForm] = Form.useForm()
-    const pathArr = ['company', `${dataDetailCompany.data.data.company_id}`, 'update location']
+    const pathArr = ['admin', 'company', `${dataDetailCompany.data.data.company_id}`, 'new location']
+    const { parent } = rt.query
+    const [createLocationForm] = Form.useForm()
     const [par, setPar] = useState()
 
     //flattening dataLocations
@@ -33,22 +35,22 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, 
     const flattenDataLocations = flattenArr(dataLocations.data)
     var dataLocationsDetail = {}
     flattenDataLocations.forEach(item => {
-        if (item.id == companyid) {
+        if (item.id == parent) {
             dataLocationsDetail = item
         }
     })
 
     //useState
     const [dataloc, setdataloc] = useState(dataLocations.data)
-    const [dataupdate, setdataupdate] = useState({
-        name: dataDetailCompany.data.data.company_name,
+    const [datanew, setdatanew] = useState({
+        name: '',
         role: 2,
-        address: dataDetailCompany.data.data.address,
-        phone_number: dataDetailCompany.data.data.phone_number,
-        image_logo: dataDetailCompany.data.data.image_logo,
+        address: '',
+        phone_number: '',
+        image_logo: '',
         parent_id: dataLocationsDetail.id
     })
-    const [loadingupdate, setloadingupdate] = useState(false)
+    const [loadingcreate, setloadingcreate] = useState(false)
     const [loadingupload, setloadingupload] = useState(false)
 
     //Upload Image
@@ -80,8 +82,8 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, 
                 .then(res => res.json())
                 .then(res2 => {
                     setloadingupload(false)
-                    setdataupdate({
-                        ...dataupdate,
+                    setdatanew({
+                        ...datanew,
                         image_logo: res2.secure_url
                     })
                 })
@@ -93,6 +95,7 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, 
             <div style={{ marginTop: 8 }}>Unggah</div>
         </div>
     );
+
     // const treeData = [
     //     {
     //         title: 'Node1',
@@ -113,83 +116,74 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, 
     //         value: '0-1',
     //     },
     // ];
+
     //onChange
     const onChangeParent = (value) => {
         setPar(value)
-        setdataupdate({
-            ...dataupdate,
+        setdatanew({
+            ...datanew,
             parent_id: value
         })
     }
     const onChangeForm = (e) => {
-        setdataupdate({
-            ...dataupdate,
+        setdatanew({
+            ...datanew,
             [e.target.name]: e.target.value
         })
     }
 
     //Handler
-    const handleUpdateLocationsMig = () => {
-        console.log("yy: "+dataupdate.parent_id)
-        // setloadingupdate(true)
-        // fetch(`https://boiling-thicket-46501.herokuapp.com/UpdateCompanyDetail`, {
-        //     method: 'PUT',
-        //     headers: {
-        //         'Authorization': JSON.parse(tok),
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify(dataupdate)
-        // })
-        //     .then((res) => res.json())
-        //     .then(res2 => {
-        //         setloadingupdate(false)
-        //         if (res2.success) {
-        //             notification['success']({
-        //                 message: res2.message,
-        //                 duration: 3
-        //             })
-        //             setnewclients({
-        //                 name: '',
-        //                 role: 0,
-        //                 address: '',
-        //                 phone_number: '',
-        //                 image_logo: '',
-        //                 parent_id: 0
-        //             })
-        //             setTimeout(() => {
-        //                 rt.push(`/company/mig?originPath=Admin`)
-        //             }, 800)
-        //         }
-        //         else if (!res2.success) {
-        //             notification['error']({
-        //                 message: res2.message.errorInfo.status_detail,
-        //                 duration: 3,
-        //                 style: {
-        //                     zIndex: `1000`
-        //                 }
-        //             })
-        //         }
-        //     })
+    const handleCreateLocationsMig = () => {
+        setloadingcreate(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyMember`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datanew)
+        })
+            .then((res) => res.json())
+            .then(res2 => {
+                setloadingcreate(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/admin/company/mig`)
+                    }, 800)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3,
+                        style: {
+                            zIndex: `1000`
+                        }
+                    })
+                }
+            })
     }
 
     return (
-        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} dataDetailCompany={dataDetailCompany} st={st}>
+        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
             <div className="w-full h-auto border-t border-opacity-30 border-gray-500 bg-white">
                 <div className="grid grid-cols-1 md:grid-cols-4">
                     <div className="col-span-1 md:col-span-3 flex flex-col">
                         <div className="p-2 md:p-5 border-b flex mb-5 justify-between">
                             <div>
-                                <h1 className="mt-2 text-sm font-bold">Update Lokasi</h1>
-                                <h1 className="mt-2 text-xs font-medium">{dataDetailCompany.data.data.company_name}</h1>
+                                <h1 className="mt-2 text-sm font-bold">Lokasi Baru</h1>
+                                <h1 className="mt-2 text-xs font-medium">{dataDetailCompany.data.company_name}</h1>
                             </div>
                             <div className="flex mx-2">
-                                <Link href={`/company/${dataDetailCompany.data.data.company_id}?originPath=Admin`}>
+                                <Link href={`/admin/company/mig`}>
                                     <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batalkan</Button>
-                                    {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md mx-2">Cancel</button> */}
+                                    {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-5 rounded-md mx-2">Cancel</button> */}
                                 </Link>
-                                <Button type="default" size="middle" style={{ marginRight: `1rem` }} onClick={handleUpdateLocationsMig}>cek</Button>
-                                <Button type="primary" size="middle" loading={loadingupdate} onClick={updateLocationForm.submit}>Perbarui</Button>
-                                {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md">Save</button> */}
+                                <Button type="primary" size="middle" loading={loadingcreate} onClick={createLocationForm.submit}>Simpan</Button>
+                                {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-5 rounded-md">Save</button> */}
                             </div>
                         </div>
                         <div className="p-3 col-span-1 md:col-span-1">
@@ -201,11 +195,11 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, 
                                 beforeUpload={beforeUploadProfileImage}
                                 onChange={onChangeProfileImage}
                             >
-                                {dataupdate.image_logo ? <img src={dataupdate.image_logo} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                                {datanew.image_logo ? <img src={datanew.image_logo} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
                             </Upload>
                         </div>
                         <div className="p-2 md:p-5 shadow-md">
-                            <Form layout="vertical" form={updateLocationForm} onFinish={handleUpdateLocationsMig} initialValues={dataupdate}>
+                            <Form layout="vertical" form={createLocationForm} onFinish={handleCreateLocationsMig} initialValues={datanew}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 mb-5">
                                     <Form.Item name="name" style={{ marginRight: `1rem` }} label="Nama Anak Perusahaan"
                                         rules={[
@@ -215,9 +209,9 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, 
                                             },
                                         ]}
                                     >
-                                        <Input defaultValue={dataupdate.name} name="name" id="name" allowClear onChange={onChangeForm} />
+                                        <Input name="name" id="name" allowClear onChange={onChangeForm} />
                                     </Form.Item>
-                                    <Form.Item name="parent" style={{ marginRight: `1rem` }} label="Parent Perusahaan"
+                                    <Form.Item name="parent_id" style={{ marginRight: `1rem` }} label="Parent Perusahaan"
                                         rules={[
                                             {
                                                 required: true,
@@ -227,7 +221,7 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, 
                                     >
                                         <TreeSelect
                                             style={{ width: '100%' }}
-                                            defaultValue={dataupdate.parent_id}
+                                            defaultValue={datanew.parent_id}
                                             dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                                             treeData={dataloc}
                                             placeholder="Pilih parent"
@@ -243,7 +237,7 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, 
                                             },
                                         ]}
                                     >
-                                        <Input defaultValue={dataupdate.address} name="address" id="address" allowClear onChange={onChangeForm} />
+                                        <Input name="address" id="address" allowClear onChange={onChangeForm} />
                                     </Form.Item>
                                     <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="No. Telepeon"
                                         rules={[
@@ -253,10 +247,10 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, 
                                             },
                                         ]}
                                     >
-                                        <Input defaultValue={dataupdate.phone_number} name="phone_number" id="phone_number" allowClear onChange={onChangeForm} />
+                                        <Input name="phone_number" id="phone_number" allowClear onChange={onChangeForm} />
                                     </Form.Item>
                                 </div>
-                                <h1 className="text-sm font-semibold">Address</h1>
+                                {/* <h1 className="text-sm font-semibold">Address</h1>
                                 <div className="grid grid-cols-1 md:grid-cols-2 mb-5">
                                     <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Alamat 1">
                                         <Input name="owner" id="editOwner" allowClear />
@@ -280,7 +274,7 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, 
                                             <Input name="owner" id="editOwner" allowClear />
                                         </Form.Item>
                                     </div>
-                                </div>
+                                </div> */}
                             </Form>
                         </div>
                     </div>
@@ -298,9 +292,10 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, 
     )
 }
 
-export async function getServerSideProps({ req, res, params }) {
+export async function getServerSideProps({ req, res, query }) {
     var initProps = {};
-    const companyid = params.companyId
+    const companyid = query.companyId
+    const parentt = query.parent
     const reqBodyCompanyDetail = {
         login_id: companyid
     }
@@ -352,10 +347,10 @@ export async function getServerSideProps({ req, res, params }) {
             dataProfile,
             dataDetailCompany,
             dataLocations,
-            sidemenu: "4",
-            companyid
+            parentt,
+            sidemenu: "4"
         },
     }
 }
 
-export default UpdateLocations
+export default NewLocations

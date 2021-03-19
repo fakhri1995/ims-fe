@@ -79,10 +79,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                     </div>
                     <div className="grid md:grid-cols-5 sm:grid-cols-1">
                         <Link href={{
-                            pathname: '/company/mig/',
-                            query: {
-                                originPath: "Admin"
-                            }
+                            pathname: '/admin/company/mig/',
                         }}>
                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
@@ -91,10 +88,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             </div>
                         </Link>
                         <Link href={{
-                            pathname: '/company/',
-                            query: {
-                                originPath: "Admin"
-                            }
+                            pathname: '/admin/company/',
                         }}>
                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
