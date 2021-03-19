@@ -5,17 +5,18 @@ import httpcookie from 'cookie'
 import { Button, notification, Checkbox, Form, Input, InputNumber, Select, DatePicker, TreeSelect } from 'antd'
 import Sticky from 'wil-react-sticky'
 import moment from 'moment'
-import Layout from '../../../components/layout-dashboard'
+import Layout from '../../../components/layout-dashboard2'
 import st from '../../../components/layout-dashboard.module.css'
 
 function InventoryUpdate({ initProps, dataProfile, dataAssetsList, dataDetailInventory, sidemenu, invId }) {
     const rt = useRouter()
     const { originPath } = rt.query
     const { Option } = Select
-    const pathArr = rt.pathname.split("/").slice(1)
+    const pathArr = ['inventories', dataDetailInventory.data.inventory.asset_name]
+    // const pathArr = rt.pathname.split("/").slice(1)
     const [createInventoryForm] = Form.useForm();
     const dataInv = dataDetailInventory.data.inventory
-    if (dataDetailInventory.data.inventory.additional_attributes.length === 0 || dataDetailInventory.data.inventory.additional_attributes === null || typeof (dataDetailInventory.data.inventory.additional_attributes) === undefined) {
+    if (dataDetailInventory.data.inventory.additional_attributes === "Inventory Column Name of an Inventory Value not Found") {
         dataDetailInventory.data.inventory.additional_attributes = []
     }
     const dataInvDynamic = dataDetailInventory.data.inventory.additional_attributes
@@ -294,12 +295,12 @@ function InventoryUpdate({ initProps, dataProfile, dataAssetsList, dataDetailInv
                                                 {
                                                     doc.required ?
                                                         <Form.Item name={doc.name} style={{ marginRight: `1rem` }} label={doc.name} initialValue={objDynamic}
-                                                        rules={[
-                                                            {
-                                                                required: true,
-                                                                message: `${doc.name} harus diisi`,
-                                                            },
-                                                        ]}
+                                                            rules={[
+                                                                {
+                                                                    required: true,
+                                                                    message: `${doc.name} harus diisi`,
+                                                                },
+                                                            ]}
                                                         >
                                                             {doc.data_type === "text" &&
                                                                 <Input name={doc.name} onChange={(e) => { onChangeDynamic(e, doc.id) }} defaultValue={doc.value} allowClear required />}

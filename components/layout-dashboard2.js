@@ -9,28 +9,19 @@ import MenuFoldOutlined from '@ant-design/icons/MenuFoldOutlined'
 import LayoutMenu from '../components/layout-menu'
 import LayoutMenuHeader from './layout-menu-header'
 
-function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, st }) {
+function LayoutDashboard2({ children, tok, dataProfile, pathArr, sidemenu, st }) {
     const rt = useRouter()
     var rootBreadcrumb = ""
     var childBreacrumb = []
     if (pathArr) {
-        if (pathArr[0] === "dashboard") {
-            rootBreadcrumb = pathArr[1]
-            rootBreadcrumb = rootBreadcrumb[0].toUpperCase() + rootBreadcrumb.slice(1)
-        }
-        else {
-            for (var i = 0; i < pathArr.length; i++) {
-                childBreacrumb.push(pathArr[i])
-            }
+        for (var i = 0; i < pathArr.length; i++) {
+            childBreacrumb.push(pathArr[i])
         }
     }
     const childBreacrumbCC = childBreacrumb.map((doc, idx) => {
         return doc[0].toUpperCase() + doc.slice(1)
     })
     const childBreacrumbDD = childBreacrumbCC
-    // if (childBreacrumbDD[1] === "Update") {
-    //     childBreacrumbDD.splice(2, 1)
-    // }
     const { Sider, Content, Header } = Layout
     const [coll, setColl] = useState(true)
     const [collsmall, setCollsmall] = useState(true)
@@ -84,7 +75,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, st }) 
                                             pathBuilder = pathBuilder + `/${pathArr[idx]}`
                                             if (idx === 0) {
                                                 return (
-                                                    <Breadcrumb.Item key={idx} href={`/dashboard/${pathArr[idx]}`}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                    <Breadcrumb.Item key={idx} href={`/${pathArr[idx]}`}> <strong>{doc}</strong> </Breadcrumb.Item>
                                                 )
                                             }
                                             else if (idx === childBreacrumbDD.length - 1 && idx > 0) {
@@ -133,7 +124,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, st }) 
                                         pathBuilder = pathBuilder + `/${pathArr[idx]}`
                                         if (idx === 0) {
                                             return (
-                                                <Breadcrumb.Item key={idx} href={`dashboard/${doc}`}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                <Breadcrumb.Item key={idx} href={`/${pathArr[idx]}`}> <strong>{doc}</strong> </Breadcrumb.Item>
                                             )
                                         }
                                         else if (idx === childBreacrumbDD.length - 1 && idx > 0) {
@@ -173,4 +164,4 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, st }) 
     )
 }
 
-export default LayoutDashboard
+export default LayoutDashboard2
