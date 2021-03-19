@@ -4,7 +4,7 @@ import Link from 'next/link'
 import httpcookie from 'cookie'
 import { Button, Form,Input,InputNumber,Select,DatePicker,TreeSelect,Checkbox,Spin,notification } from 'antd'
 import Sticky from 'wil-react-sticky'
-import Layout from '../../../components/layout-dashboard'
+import Layout from '../../../components/layout-dashboard2'
 import st from '../../../components/layout-dashboard.module.css'
 
 function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsList, sidemenu }) {
