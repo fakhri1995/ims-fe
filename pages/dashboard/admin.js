@@ -128,6 +128,24 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                         </Link>
                     </div>
                 </div>
+
+                <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
+                    <div className="border-b border-gray-300">
+                        <h3 className="font-semibold text-lg mb-0">Service Management</h3>
+                        <h3 className="font-normal text-sm text-gray-700">
+                            Keep track of your assets, vendors and contracts, all in one place
+                        </h3>
+                    </div>
+                    <div className="grid md:grid-cols-5 sm:grid-cols-1">
+                        <Link href={'/admin/service'}>
+                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                                <div>
+                                    <InboxOutlined /> Service Catalog
+                                </div>
+                            </div>
+                        </Link>
+                    </div>
+                </div>
             </div>
         </Layout>
     )

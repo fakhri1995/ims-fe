@@ -497,7 +497,7 @@ export async function getServerSideProps({ req, res, query }) {
             dataSRList,
             type,
             subject_type_id,
-            sidemenu: "4"
+            sidemenu: "2"
         },
     }
 }
