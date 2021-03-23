@@ -1,4 +1,4 @@
-import Layout from '../../components/layout-dashboard-clients'
+import Layout from '../../../components/layout-dashboard'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import EditOutlined from '@ant-design/icons/EditOutlined'
@@ -6,14 +6,13 @@ import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import Link from 'next/link'
 import { useState } from 'react'
-import st from '../../components/layout-dashboard-clients.module.css'
-import {Input,Form,Table,Upload,notification,Drawer,Button} from 'antd'
+import st from '../../../components/layout-dashboard-clients.module.css'
+import { Input, Form, Table, Upload, notification, Drawer, Button, TreeSelect } from 'antd'
 
-function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
+function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataLocations }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
-    const { originPath } = rt.query
     const [drawablecreate, setDrawablecreate] = useState(false)
     const [loadingupload, setLoadingupload] = useState(false)
     const [loadingbtn, setloadingbtn] = useState(false)
@@ -24,7 +23,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
         address: '',
         phone_number: '',
         image_logo: '',
-        parent_id: null
+        parent_id: 0
     })
     var dataTable = []
     if (!dataCompanyList.data.data) {
@@ -57,7 +56,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
             dataIndex: 'image_logo',
             render: (text, record, index) => (
                 <>
-                    <Link href={`/company/${record.company_id}?originPath=Admin`}>
+                    <Link href={`/admin/company/${record.company_id}`}>
                         <a><img src={record.image_logo} alt="imageProfile" className=" object-cover w-10 h-10 rounded-full" /></a>
                     </Link>
                 </>
@@ -68,7 +67,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
             dataIndex: 'company_id',
             render: (text, record, index) => (
                 <>
-                    <Link href={`/company/${record.company_id}?originPath=Admin`}>
+                    <Link href={`/admin/company/${record.company_id}`}>
                         <a><h1>{record.company_id}</h1></a>
                     </Link>
                 </>
@@ -81,7 +80,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
             dataIndex: 'company_name',
             render: (text, record, index) => (
                 <>
-                    <Link href={`/company/${record.company_id}?originPath=Admin`}>
+                    <Link href={`/admin/company/${record.company_id}`}>
                         <a><h1>{record.company_name}</h1></a>
                     </Link>
                 </>
@@ -94,7 +93,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
             dataIndex: 'is_enabled',
             render: (text, record, index) => (
                 <>
-                    <Link href={`/company/${record.company_id}?originPath=Admin`}>
+                    <Link href={`/admin/company/${record.company_id}`}>
                         {
                             record.is_enabled ?
                                 <a><div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md text-center w-40">AKTIF MODULE</div></a>
@@ -124,7 +123,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                     {
                         events[index] ?
                             <>
-                                <Link href={`/company/${record.company_id}?originPath=Admin`}>
+                                <Link href={`/admin/company/${record.company_id}`}>
                                     {/* {events[index]} */}
                                     {/* <Link href={`/company/${record.company_id}?originPath=Admin`}> */}
                                     <a><EditOutlined /></a>
@@ -199,6 +198,12 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
             [e.target.name]: val
         })
     }
+    const onChangeParent = (value) => {
+        setnewclients({
+            ...newclients,
+            parent_id: value
+        })
+    }
     const handleSubmitCreateClients = () => {
         setloadingbtn(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyMember`, {
@@ -227,7 +232,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                     })
                     setTimeout(() => {
                         setDrawablecreate(false)
-                        rt.push(`/company?originPath=Admin`)
+                        rt.push(`/admin/company`)
                     }, 800)
                 }
                 else if (!res2.success) {
@@ -243,11 +248,10 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
         console.log("isi bank data: " + newclients.name)
     }
     return (
-        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} st={st}>
+        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
             <div className="flex justify-start md:justify-end p-3 md:border-t-2 md:border-b-2 bg-white mb-4 md:mb-8">
                 <div className="flex space-x-2">
                     <Button type="primary" size="large" onClick={() => { setDrawablecreate(true) }}>Tambah Perusahaan</Button>
-                    {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-40" onClick={() => { setDrawablecreate(true) }}> Create</button> */}
                     <Drawer title="Buat Perusahaan Clients" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false); closeClientsDrawer(); instanceForm.resetFields() }} width={420} destroyOnClose={true}>
                         <div className="w-full h-auto grid grid-cols-1 md:grid-cols-1">
                             <div className="px-3 pt-3 pb-0 col-span-1 md:col-span-1">
@@ -313,10 +317,27 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                                         <Input name="phone_number" onChange={onChangeCreateClients}></Input>
                                     </Form.Item>
                                 </div>
+                                <div className="mb:m-4 mb-5 md:mb-0">
+                                    <Form.Item name="parent_id" label="Parent Perusahaan"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Nomor telepon wajib diisi',
+                                            },
+                                        ]}>
+                                        <TreeSelect
+                                            style={{ width: '100%' }}
+                                            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                            treeData={dataLocations.data}
+                                            placeholder="Pilih parent"
+                                            treeDefaultExpandAll
+                                            onChange={(value) => { onChangeParent(value) }}
+                                        />
+                                    </Form.Item>
+                                </div>
                                 <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn} style={{ marginBottom: `1rem` }}>Simpan</Button>
                             </Form>
                         </div>
-                        {/* <button className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800" onClick={handleSubmitCreateClients}>Simpan</button> */}
                     </Drawer>
                 </div>
             </div>
@@ -415,11 +436,22 @@ export async function getServerSideProps({ req, res }) {
     })
     const resjsonGCL = await resourcesGCL.json()
     const dataCompanyList = resjsonGCL
+
+    const resourcesGL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
+        method: `POST`,
+        headers: {
+            'Authorization': JSON.parse(initProps),
+        },
+    })
+    const resjsonGL = await resourcesGL.json()
+    const dataLocations = resjsonGL
+
     return {
         props: {
             initProps,
             dataProfile,
             dataCompanyList,
+            dataLocations,
             sidemenu: "4"
         }
     }

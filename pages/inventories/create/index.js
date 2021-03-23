@@ -96,14 +96,14 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
                 }
                 else {
                     setIsdynamic(true)
-                    setDatadynamic(res2.data.inventory_columns)
-                    setDatadynamic2(res2.data.inventory_columns.map((doc, idx) => (
+                    setDatadynamic(res2.data.inventory_columns_turunan)
+                    setDatadynamic2(res2.data.inventory_columns_turunan.map((doc, idx) => (
                         {
                             inventory_column_id: doc.id,
                             value: doc.default
                         }
                     )))
-                    setDatadynamic3(res2.data.inventory_columns.map((doc, idx) => (
+                    setDatadynamic3(res2.data.inventory_columns_turunan.map((doc, idx) => (
                         {
                             inventory_column_id: doc.id,
                             value: doc.default
@@ -113,14 +113,14 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
                         ...datanew,
                         asset_id: dataAssetDetail.id,
                         asset_code: value,
-                        inventory_values: res2.data.inventory_columns.map((doc, idx) => (
+                        inventory_values: res2.data.inventory_columns_turunan.map((doc, idx) => (
                             {
                                 inventory_column_id: doc.id,
                                 value: doc.default
                             }
                         ))
                     })
-                    res2.data.inventory_columns.map((doc, idx) => {
+                    res2.data.inventory_columns_turunan.map((doc, idx) => {
                         setobjdynamic({
                             ...objdynamic,
                             [doc.name]: doc.default

@@ -1,4 +1,4 @@
-import Layout from '../../components/layout-dashboard-clients'
+import Layout from '../../../components/layout-dashboard'
 import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
 import { useState } from 'react'
@@ -6,7 +6,7 @@ import Link from 'next/link'
 import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
-import st from '../../components/layout-dashboard-clients.module.css'
+import st from '../../../components/layout-dashboard-clients.module.css'
 import { Tabs, Input, Table, Tree, Drawer, Modal, message, Select, notification, Form, Button, Popconfirm, Switch } from 'antd'
 
 function ClientsDetailProfile({ dataDetailCompany, tok }) {
@@ -74,7 +74,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/company/${dataDetailCompany.data.data.company_id}?originPath=Admin`)
+                        rt.push(`/admin/company/${dataDetailCompany.data.data.company_id}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -122,7 +122,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                         else if (status === "nonAktif") {
                             setloadingubahnonaktif(false)
                         }
-                        rt.push(`/company/${dataDetailCompany.data.data.company_id}?originPath=Admin`)
+                        rt.push(`/admin/company/${dataDetailCompany.data.data.company_id}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -396,7 +396,7 @@ function ClientsDetailLocations({ dataDetailCompany, tok }) {
         <div id="locationsDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
                 <div className="flex space-x-2">
-                    <Link href={`/company/locations/new?originPath=Admin&companyId=${dataDetailCompany.data.data.company_id}`}>
+                    <Link href={`/admin/company/locations/new?companyId=${dataDetailCompany.data.data.company_id}`}>
                         <Button type="primary" size="large">Tambah</Button>
                         {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40"> Create</button> */}
                     </Link>
@@ -427,10 +427,10 @@ function ClientsDetailLocations({ dataDetailCompany, tok }) {
                                     {nodeData.title}
                                 </div>
                                 <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
-                                    <Link href={`/company/locations/new?originPath=Admin&parent=${nodeData.title}&companyId=${dataDetailCompany.data.data.company_id}`}>
+                                    <Link href={`/admin/company/locations/new?parent=${nodeData.title}&companyId=${dataDetailCompany.data.data.company_id}`}>
                                         <a className="mx-2 pb-1" alt="add"><PlusOutlined /></a>
                                     </Link>
-                                    <Link href={`/company/locations/update/${dataDetailCompany.data.data.company_id}?originPath=Admin&parent=${nodeData.title}`}>
+                                    <Link href={`/admin/company/locations/update/${dataDetailCompany.data.data.company_id}?parent=${nodeData.title}`}>
                                         <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                     </Link>
                                     <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("berhasil dihapus") }} onCancel={() => { message.error("Gagal dihapus") }}>
@@ -498,7 +498,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/company/${companyId}?originPath=Admin`)
+                        rt.push(`/admin/company/${companyId}`)
                     }, 500)
                 }
                 else {
@@ -629,7 +629,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                     })
                     setTimeout(() => {
                         setDrawablecreate(false)
-                        rt.push(`/company/${companyId}?originPath=Admin`)
+                        rt.push(`/admin/company/${companyId}`)
                     }, 500)
                 }
                 else {
@@ -669,7 +669,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                     })
                     setTimeout(() => {
                         setDrawableedit(false)
-                        rt.push(`/company/${companyId}?originPath=Admin`)
+                        rt.push(`/admin/company/${companyId}`)
                     }, 500)
                 }
                 else {
@@ -688,7 +688,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                         editable ?
                             <button className=" bg-gray-600 hover:bg-gray-800 border text-white py-1 px-2 rounded-md w-24 md:w-40" onClick={() => { setDrawableedit(true) }}>
                                 Edit
-                                </button>
+                            </button>
                             :
                             null
                     }
@@ -835,13 +835,14 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
     const { TabPane } = Tabs;
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
+    pathArr[pathArr.length - 1] = dataDetailCompany.data.data.company_name
     var activeTab = "profile"
-    const { originPath, active } = rt.query
+    const { active } = rt.query
     if (active) {
         activeTab = active
     }
     return (
-        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} dataDetailCompany={dataDetailCompany} st={st}>
+        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} dataDetailCompany={dataDetailCompany} st={st}>
             <div className="p-5 bg-white hidden md:block">
                 <Tabs tabPosition={`left`} defaultActiveKey={activeTab}>
                     <TabPane tab="Profil" key={`profile`}>
