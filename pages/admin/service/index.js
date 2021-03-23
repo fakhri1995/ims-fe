@@ -74,7 +74,7 @@ function ServiceCatalog({ initProps, dataProfile, sidemenu }) {
             key: 'itemName',
             render: (text, record, index) => (
                 <>
-                    <Link href="#">
+                    <Link href="/admin/service/1">
                         <a href="#"><h1 className="font-semibold hover:text-gray-500">{record.itemName}</h1></a>
                     </Link>
                 </>
@@ -86,7 +86,7 @@ function ServiceCatalog({ initProps, dataProfile, sidemenu }) {
             key: 'categoryName',
             render: (text, record, index) => (
                 <>
-                    <Link href="#">
+                    <Link href="/admin/service/1">
                         <a href="#"><h1 className="hover:text-gray-500">{record.categoryName}</h1></a>
                     </Link>
                 </>
@@ -98,7 +98,7 @@ function ServiceCatalog({ initProps, dataProfile, sidemenu }) {
             key: 'usageType',
             render: (text, record, index) => (
                 <>
-                    <Link href="#">
+                    <Link href="/admin/service/1">
                         <a href="#"><h1 className="hover:text-gray-500">{record.usageType}</h1></a>
                     </Link>
                 </>
@@ -110,7 +110,7 @@ function ServiceCatalog({ initProps, dataProfile, sidemenu }) {
             key: 'status',
             render: (text, record, index) => (
                 <>
-                    <Link href="#">
+                    <Link href="/admin/service/1">
                         <a href="#">
                             <div className="py-1 px-2 rounded-l-full rounded-r-full text-green-500 border border-green-500 bg-green-100 text-center text-xs">{record.status}</div>
                         </a>
@@ -119,65 +119,6 @@ function ServiceCatalog({ initProps, dataProfile, sidemenu }) {
             )
         },
     ]
-
-    //Menu
-    const menu = (
-        <Menu>
-            <Menu.Item key="1" onClick={() => setmodaltambahkateg(true)}>
-                Service Category
-          </Menu.Item>
-            <Menu.Item key="2" onClick={()=> rt.push(`/admin/service/create`)}>
-                Service Item
-          </Menu.Item>
-        </Menu>
-    );
-
-    //onChange
-    const onChangeTab = (e, jenis) => {
-        if (jenis === "all") {
-            settab({ all: "block", hardware: 'hidden', software: "hidden", hrd: "hidden" })
-            setdatatable(dataSource)
-        }
-        else if (jenis === "hardware") {
-            settab({ all: "hidden", hardware: 'block', software: "hidden", hrd: "hidden" })
-            setdataeditkateg({
-                ...dataeditkateg,
-                name: "Hardware Provisioning"
-            })
-            setdatatable(dataSource)
-            setdatatable(prev => {
-                return prev.filter((doc, idx) => { return doc.categoryName == "Hardware Provisioning" })
-            })
-        }
-        else if (jenis === "software") {
-            settab({ all: "hidden", hardware: 'hidden', software: "block", hrd: "hidden" })
-            setdataeditkateg({
-                ...dataeditkateg,
-                name: "Software Installation"
-            })
-            setdatatable(dataSource)
-            setdatatable(prev => {
-                return prev.filter((doc, idx) => { return doc.categoryName == "Software Installation" })
-            })
-        }
-        else if (jenis === "hrd") {
-            settab({ all: "hidden", hardware: 'hidden', software: "hidden", hrd: "block" })
-            setdataeditkateg({
-                ...dataeditkateg,
-                name: "HR Management"
-            })
-            setdatatable(dataSource)
-            setdatatable(prev => {
-                return prev.filter((doc, idx) => { return doc.categoryName == "HR Management" })
-            })
-        }
-    }
-    const onChangeEditCategory = (e) => {
-
-    }
-    const onChangeTambahCategory = (e) => {
-
-    }
 
     //useState
     const [tab, settab] = useState({
@@ -199,6 +140,90 @@ function ServiceCatalog({ initProps, dataProfile, sidemenu }) {
     const [modaltambahkateg, setmodaltambahkateg] = useState(false)
     const [loadingbtneditkateg, setloadingbtneditkateg] = useState(false)
     const [loadingbtntambahkateg, setloadingbtntambahkateg] = useState(false)
+    const [datacurrtable, setdatacurrtable] = useState(dataSource)
+
+    //Menu
+    const menu = (
+        <Menu>
+            <Menu.Item key="1" onClick={() => setmodaltambahkateg(true)}>
+                Service Category
+          </Menu.Item>
+            <Menu.Item key="2" onClick={() => rt.push(`/admin/service/create`)}>
+                Service Item
+          </Menu.Item>
+        </Menu>
+    );
+
+    //onChange
+    const onChangeTab = (e, jenis) => {
+        if (jenis === "all") {
+            settab({ all: "block", hardware: 'hidden', software: "hidden", hrd: "hidden" })
+            setdatatable(dataSource)
+            setdatacurrtable(dataSource)
+        }
+        else if (jenis === "hardware") {
+            settab({ all: "hidden", hardware: 'block', software: "hidden", hrd: "hidden" })
+            setdataeditkateg({
+                ...dataeditkateg,
+                name: "Hardware Provisioning"
+            })
+            setdatatable(dataSource)
+            setdatatable(prev => {
+                return prev.filter((doc, idx) => { return doc.categoryName == "Hardware Provisioning" })
+            })
+            setdatacurrtable(dataSource)
+            setdatacurrtable(prev => {
+                return prev.filter((doc, idx) => { return doc.categoryName == "Hardware Provisioning" })
+            })
+        }
+        else if (jenis === "software") {
+            settab({ all: "hidden", hardware: 'hidden', software: "block", hrd: "hidden" })
+            setdataeditkateg({
+                ...dataeditkateg,
+                name: "Software Installation"
+            })
+            setdatatable(dataSource)
+            setdatatable(prev => {
+                return prev.filter((doc, idx) => { return doc.categoryName == "Software Installation" })
+            })
+            setdatacurrtable(dataSource)
+            setdatacurrtable(prev => {
+                return prev.filter((doc, idx) => { return doc.categoryName == "Software Installation" })
+            })
+        }
+        else if (jenis === "hrd") {
+            settab({ all: "hidden", hardware: 'hidden', software: "hidden", hrd: "block" })
+            setdataeditkateg({
+                ...dataeditkateg,
+                name: "HR Management"
+            })
+            setdatatable(dataSource)
+            setdatatable(prev => {
+                return prev.filter((doc, idx) => { return doc.categoryName == "HR Management" })
+            })
+            setdatacurrtable(dataSource)
+            setdatacurrtable(prev => {
+                return prev.filter((doc, idx) => { return doc.categoryName == "HR Management" })
+            })
+        }
+    }
+    const onChangeEditCategory = (e) => {
+
+    }
+    const onChangeTambahCategory = (e) => {
+
+    }
+    const onSearchService = (val) => {
+        console.log(datacurrtable.length)
+        if (val === "") {
+            setdatatable(datacurrtable)
+        }
+        setdatatable(prev => {
+            return prev.filter(dataa => {
+                return dataa.itemName.toLowerCase().includes(val.toLowerCase())
+            })
+        })
+    }
 
     //handler
     const handleEditCategory = () => {
@@ -292,7 +317,7 @@ function ServiceCatalog({ initProps, dataProfile, sidemenu }) {
                                     <p className="text-xs text-gray-500 pl-3">Viewing all service items from all categories.</p>
                                 </div>
                                 <div>
-                                    <Search placeholder="input search text" allowClear style={{ width: `100%` }} />
+                                    <Search placeholder="Cari Nama Item" allowClear style={{ width: `100%` }} onSearch={(value) => { onSearchService(value) }} />
                                 </div>
                             </div>
                             <div>
@@ -300,19 +325,53 @@ function ServiceCatalog({ initProps, dataProfile, sidemenu }) {
                             </div>
                         </div>
 
-                        {/* Hardware, Software, HR */}
-                        <div className={`py-5 px-7 flex flex-col`}>
+                        {/* Hardware */}
+                        <div className={`${tab.hardware} py-5 px-7 flex flex-col`}>
                             <div className="flex justify-between items-center mb-5">
                                 <div className="flex items-center">
                                     <div className="flex items-center mr-3">
                                         {tab.hardware === "block" && <p className="font-semibold m-0">Hardware Provisioning</p>}
+                                    </div>
+                                    <div className="w-auto h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center" onClick={() => setmodaleditkateg(true)}><EditOutlined /></div>
+                                </div>
+                                <div>
+                                    <Search placeholder="input search text" allowClear style={{ width: `100%` }} onSearch={(value) => { onSearchService(value) }} />
+                                </div>
+                            </div>
+                            <div>
+                                <Table columns={columns} dataSource={datatable} rowSelection={{ type: 'checkbox' }} />
+                            </div>
+                        </div>
+
+                        {/* Software */}
+                        <div className={`${tab.software} py-5 px-7 flex flex-col`}>
+                            <div className="flex justify-between items-center mb-5">
+                                <div className="flex items-center">
+                                    <div className="flex items-center mr-3">
                                         {tab.software === "block" && <p className="font-semibold m-0">Software Installation</p>}
+                                    </div>
+                                    <div className="w-auto h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center" onClick={() => setmodaleditkateg(true)}><EditOutlined /></div>
+                                </div>
+                                <div>
+                                    <Search placeholder="input search text" allowClear style={{ width: `100%` }} onSearch={(value) => { onSearchService(value) }} />
+                                </div>
+                            </div>
+                            <div>
+                                <Table columns={columns} dataSource={datatable} rowSelection={{ type: 'checkbox' }} />
+                            </div>
+                        </div>
+
+                        {/* Software */}
+                        <div className={`${tab.hrd} py-5 px-7 flex flex-col`}>
+                            <div className="flex justify-between items-center mb-5">
+                                <div className="flex items-center">
+                                    <div className="flex items-center mr-3">
                                         {tab.hrd === "block" && <p className="font-semibold m-0">HR Management</p>}
                                     </div>
                                     <div className="w-auto h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center" onClick={() => setmodaleditkateg(true)}><EditOutlined /></div>
                                 </div>
                                 <div>
-                                    <Search placeholder="input search text" allowClear style={{ width: `100%` }} />
+                                    <Search placeholder="input search text" allowClear style={{ width: `100%` }} onSearch={(value) => { onSearchService(value) }} />
                                 </div>
                             </div>
                             <div>

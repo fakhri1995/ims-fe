@@ -6,9 +6,10 @@ import { Button, Anchor, Dropdown, Menu, Upload, Form, Input, message, Select, C
 import Layout from '../../../../components/layout-dashboard'
 import st from '../../../../components/layout-dashboard.module.css'
 
-function ServiceCreate({ initProps, dataProfile, sidemenu }) {
+function ServiceUpdate({ initProps, dataProfile, sidemenu }) {
     const rt = useRouter()
     const pathArr = rt.pathname.split("/").slice(1)
+    pathArr[pathArr.length - 1] = "Adobe Illustrator CC"
     const { Link } = Anchor
     const { Option } = Select
 
@@ -99,18 +100,13 @@ function ServiceCreate({ initProps, dataProfile, sidemenu }) {
         }))
     }
 
-    //handler
-    const handleCreateService = () => {
-        message.info('belum nyambung API')
-    }
-
     //Render Components
     const menu = (
         <Menu>
-            <Menu.Item key="1" onClick={handleCreateService}>
+            <Menu.Item key="1" onClick={() => { message.info('belum nyambung ke API') }}>
                 Save & Publish
           </Menu.Item>
-            <Menu.Item key="2" onClick={handleCreateService}>
+            <Menu.Item key="2" onClick={() => { message.info('belum nyambung ke API') }}>
                 Save As Draft
           </Menu.Item>
         </Menu>
@@ -126,20 +122,22 @@ function ServiceCreate({ initProps, dataProfile, sidemenu }) {
         <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
             <div className="w-full h-80 border-t border-opacity-30 border-gray-500 bg-white">
                 <div className="w-full flex justify-between p-3">
-                    <div>
-                        <p className="font-semibold text-lg">Tambah Service Item</p>
+                    <div className="flex items-center">
+                        <p className="font-semibold text-lg mr-3 my-0">Adobe Illustrator CC</p>
+                        <div className="py-1 px-2 rounded-l-full rounded-r-full text-green-500 border border-green-500 bg-green-100 text-center text-xs">Published</div>
                     </div>
                     <div>
                         <Button type="default" size="middle" style={{ marginRight: `1rem` }} onClick={() => { rt.push('/admin/service') }}>Batalkan</Button>
+                        <Button type="ghost" size="middle" style={{ marginRight: `1rem` }} onClick={() => { message.info("belum ke API") }}>Hapus</Button>
                         <Dropdown overlay={menu} trigger={['click']}>
                             <Button style={{ backgroundColor: `rgb(24,144,255)`, color: `white` }}>
-                                Simpan <DownOutlined />
+                                Edit <DownOutlined />
                             </Button>
                         </Dropdown>
                     </div>
                 </div>
                 <div className="w-full grid grid-cols-7">
-                    <div className="col-span-1 flex flex-col">
+                    <div className="col-span-1 flex flex-col p-3">
                         <Anchor>
                             <Link href="#generalDetail" title="General Detail" />
                             <Link href="#customFields" title="Custom Fields" />
@@ -298,4 +296,4 @@ export async function getServerSideProps({ req, res }) {
     }
 }
 
-export default ServiceCreate
+export default ServiceUpdate
