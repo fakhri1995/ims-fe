@@ -1,5 +1,5 @@
-import Layout from '../../../components/layout-dashboard-groups'
-import st from '../../../components/layout-dashboard-groups.module.css'
+import Layout from '../../../components/layout-dashboard2'
+import st from '../../../components/layout-dashboard.module.css'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
@@ -8,10 +8,11 @@ import Sticky from 'wil-react-sticky'
 import UploadOutlined from '@ant-design/icons/UploadOutlined'
 import {Divider,Input,Select,Radio,Row,Col,Button,notification,Form,Upload} from 'antd'
 
-function GroupsAgentsCreate({ initProps, dataProfile, dataListAccount, sidemenu }) {
+function IncidentsCreate({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
-    const pathArr = rt.pathname.split("/").slice(1)
+    // const pathArr = rt.pathname.split("/").slice(1)
+    const pathArr = ['incidents']
     const { originPath } = rt.query
     const dataDetailGroup = []
     const [instanceForm] = Form.useForm()
@@ -269,4 +270,4 @@ export async function getServerSideProps({ req, res }) {
     }
 }
 
-export default GroupsAgentsCreate
+export default IncidentsCreate
