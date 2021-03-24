@@ -3,78 +3,97 @@ import { useState } from 'react'
 import httpcookie from 'cookie'
 import { DownOutlined, FolderOpenOutlined, EditOutlined } from '@ant-design/icons'
 import Link from 'next/link'
-import { Button, Table, Dropdown, Menu, Form, Input, message, Select } from 'antd'
+import { Button, Table, Dropdown, Menu, Form, Input, Select, notification, Modal } from 'antd'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard.module.css'
-import Modal from 'antd/lib/modal/Modal'
 
-
-function ServiceCatalog({ initProps, dataProfile, sidemenu }) {
+function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dataListServiceItem, sidemenu }) {
     const rt = useRouter()
     const pathArr = rt.pathname.split("/").slice(1)
     const { Option } = Select
     const { Search } = Input
+    const tabnameArr = ["all"]
+    const loop = ["block"]
+    dataListServiceCategories.data.map((doc, idx) => {
+        var nama = doc.nama_kategori.split(" ")[0]
+        tabnameArr.push(nama)
+    })
+    for (var i = 0; i < dataListServiceCategories.data.length; i++) {
+        loop.push("hidden")
+    }
 
-    //dataDummies
-    const dataSource = [
-        {
-            key: '1',
-            itemName: 'Adobe Illustrator',
-            categoryName: 'Software Installation',
+    //data Source
+    const dataListServiceItemMap = dataListServiceItem.data.map((doc, idx) => {
+        return ({
+            id: doc.id,
+            itemName: doc.nama_service_item,
+            categoryName: doc.nama_kategori,
             usageType: 'Permanent',
-            status: 'Published'
-        },
-        {
-            key: '2',
-            itemName: 'Adobe Photoshop CS6',
-            categoryName: 'Software Installation',
-            usageType: 'Permanent',
-            status: 'Published'
-        },
-        {
-            key: '3',
-            itemName: 'Microsoft Outlook',
-            categoryName: 'Software Installation',
-            usageType: 'Permanent',
-            status: 'Published'
-        },
-        {
-            key: '4',
-            itemName: 'Microsoft Excel',
-            categoryName: 'Software Installation',
-            usageType: 'Permanent',
-            status: 'Published'
-        },
-        {
-            key: '5',
-            itemName: 'Apple Macbook',
-            categoryName: 'Hardware Provisioning',
-            usageType: 'Permanent',
-            status: 'Published'
-        },
-        {
-            key: '6',
-            itemName: 'Scan Printer Epson',
-            categoryName: 'Hardware Provisioning',
-            usageType: 'Permanent',
-            status: 'Published'
-        },
-        {
-            key: '7',
-            itemName: 'Employement Verification Letter',
-            categoryName: 'HR Management',
-            usageType: 'Permanent',
-            status: 'Published'
-        },
-    ];
+            status: doc.is_publish
+        })
+    })
+    // const dataSource = [
+    //     {
+    //         key: '1',
+    //         itemName: 'Adobe Illustrator',
+    //         categoryName: 'Software Installation',
+    //         usageType: 'Permanent',
+    //         status: 'Published'
+    //     },
+    //     {
+    //         key: '2',
+    //         itemName: 'Adobe Photoshop CS6',
+    //         categoryName: 'Software Installation',
+    //         usageType: 'Permanent',
+    //         status: 'Published'
+    //     },
+    //     {
+    //         key: '3',
+    //         itemName: 'Microsoft Outlook',
+    //         categoryName: 'Software Installation',
+    //         usageType: 'Permanent',
+    //         status: 'Published'
+    //     },
+    //     {
+    //         key: '4',
+    //         itemName: 'Microsoft Excel',
+    //         categoryName: 'Software Installation',
+    //         usageType: 'Permanent',
+    //         status: 'Published'
+    //     },
+    //     {
+    //         key: '5',
+    //         itemName: 'Apple Macbook',
+    //         categoryName: 'Hardware Provisioning',
+    //         usageType: 'Permanent',
+    //         status: 'Published'
+    //     },
+    //     {
+    //         key: '6',
+    //         itemName: 'Scan Printer Epson',
+    //         categoryName: 'Hardware Provisioning',
+    //         usageType: 'Permanent',
+    //         status: 'Published'
+    //     },
+    //     {
+    //         key: '7',
+    //         itemName: 'Employement Verification Letter',
+    //         categoryName: 'HR Management',
+    //         usageType: 'Permanent',
+    //         status: 'Published'
+    //     },
+    // ];
     const columns = [
+        {
+            key: 'id'
+        },
         {
             title: 'Nama Item',
             dataIndex: 'itemName',
             key: 'itemName',
             render: (text, record, index) => (
                 <>
-                    <Link href="/admin/service/1">
+                    <Link href={`/admin/service/${record.id}`}>
                         <a href="#"><h1 className="font-semibold hover:text-gray-500">{record.itemName}</h1></a>
                     </Link>
                 </>
@@ -86,7 +105,7 @@ function ServiceCatalog({ initProps, dataProfile, sidemenu }) {
             key: 'categoryName',
             render: (text, record, index) => (
                 <>
-                    <Link href="/admin/service/1">
+                    <Link href={`/admin/service/${record.id}`}>
                         <a href="#"><h1 className="hover:text-gray-500">{record.categoryName}</h1></a>
                     </Link>
                 </>
@@ -98,7 +117,7 @@ function ServiceCatalog({ initProps, dataProfile, sidemenu }) {
             key: 'usageType',
             render: (text, record, index) => (
                 <>
-                    <Link href="/admin/service/1">
+                    <Link href={`/admin/service/${record.id}`}>
                         <a href="#"><h1 className="hover:text-gray-500">{record.usageType}</h1></a>
                     </Link>
                 </>
@@ -110,9 +129,14 @@ function ServiceCatalog({ initProps, dataProfile, sidemenu }) {
             key: 'status',
             render: (text, record, index) => (
                 <>
-                    <Link href="/admin/service/1">
+                    <Link href={`/admin/service/${record.id}`}>
                         <a href="#">
-                            <div className="py-1 px-2 rounded-l-full rounded-r-full text-green-500 border border-green-500 bg-green-100 text-center text-xs">{record.status}</div>
+                            {
+                                record.status ?
+                                    <div className="py-1 px-2 rounded-l-full rounded-r-full text-green-500 border border-green-500 bg-green-100 text-center text-xs">Published</div>
+                                    :
+                                    <div className="py-1 px-2 rounded-l-full rounded-r-full text-gray-500 border border-gray-500 bg-gray-100 text-center text-xs">Draft</div>
+                            }
                         </a>
                     </Link>
                 </>
@@ -121,26 +145,24 @@ function ServiceCatalog({ initProps, dataProfile, sidemenu }) {
     ]
 
     //useState
-    const [tab, settab] = useState({
-        all: "block",
-        hardware: "hidden",
-        software: "hidden",
-        hrd: "hidden",
-    })
-    const [datatable, setdatatable] = useState(dataSource)
+    const [datatable, setdatatable] = useState(dataListServiceItemMap)
+    const [datacurrtable, setdatacurrtable] = useState(dataListServiceItemMap)
     const [dataeditkateg, setdataeditkateg] = useState({
-        name: '',
-        description: ''
+        id: 0,
+        nama_kategori: '',
+        deskripsi: ''
     })
     const [datatambahkateg, setdatatambahkateg] = useState({
-        name: '',
-        description: ''
+        nama_kategori: '',
+        deskripsi: ''
     })
+    const [tabnameArrVal, settabnameArrVal] = useState(loop)
     const [modaleditkateg, setmodaleditkateg] = useState(false)
     const [modaltambahkateg, setmodaltambahkateg] = useState(false)
+    const [modalkonfhapuskateg, setmodalkonfhapuskateg] = useState(false)
     const [loadingbtneditkateg, setloadingbtneditkateg] = useState(false)
     const [loadingbtntambahkateg, setloadingbtntambahkateg] = useState(false)
-    const [datacurrtable, setdatacurrtable] = useState(dataSource)
+    const [loadingbtnhapuskateg, setloadingbtnhapuskateg] = useState(false)
 
     //Menu
     const menu = (
@@ -155,66 +177,60 @@ function ServiceCatalog({ initProps, dataProfile, sidemenu }) {
     );
 
     //onChange
-    const onChangeTab = (e, jenis) => {
-        if (jenis === "all") {
-            settab({ all: "block", hardware: 'hidden', software: "hidden", hrd: "hidden" })
-            setdatatable(dataSource)
-            setdatacurrtable(dataSource)
+    const onChangeTab = (e, jenis, idxjenis, namakateg, deskripsi, id) => {
+        if (idxjenis === 0) {
+            const temp = tabnameArrVal
+            temp[0] = "block"
+            settabnameArrVal(temp)
+            for (var i = 0; i < tabnameArrVal.length; i++) {
+                if (i != 0) {
+                    const temp2 = tabnameArrVal
+                    temp2[i] = "hidden"
+                    settabnameArrVal(temp2)
+                }
+            }
+            setdatatable(dataListServiceItemMap)
+            setdatacurrtable(dataListServiceItemMap)
         }
-        else if (jenis === "hardware") {
-            settab({ all: "hidden", hardware: 'block', software: "hidden", hrd: "hidden" })
+        else {
+            const temp3 = tabnameArrVal
+            temp3[idxjenis] = "block"
+            settabnameArrVal(temp3)
+            for (var i = 0; i < tabnameArrVal.length; i++) {
+                if (i != idxjenis) {
+                    const temp4 = tabnameArrVal
+                    temp4[i] = "hidden"
+                    settabnameArrVal(temp4)
+                }
+            }
             setdataeditkateg({
-                ...dataeditkateg,
-                name: "Hardware Provisioning"
+                id: id,
+                nama_kategori: namakateg,
+                deskripsi: deskripsi
             })
-            setdatatable(dataSource)
+            setdatatable(dataListServiceItemMap)
             setdatatable(prev => {
-                return prev.filter((doc, idx) => { return doc.categoryName == "Hardware Provisioning" })
+                return prev.filter((doc, idx) => { return doc.categoryName == namakateg })
             })
-            setdatacurrtable(dataSource)
+            setdatacurrtable(dataListServiceItemMap)
             setdatacurrtable(prev => {
-                return prev.filter((doc, idx) => { return doc.categoryName == "Hardware Provisioning" })
-            })
-        }
-        else if (jenis === "software") {
-            settab({ all: "hidden", hardware: 'hidden', software: "block", hrd: "hidden" })
-            setdataeditkateg({
-                ...dataeditkateg,
-                name: "Software Installation"
-            })
-            setdatatable(dataSource)
-            setdatatable(prev => {
-                return prev.filter((doc, idx) => { return doc.categoryName == "Software Installation" })
-            })
-            setdatacurrtable(dataSource)
-            setdatacurrtable(prev => {
-                return prev.filter((doc, idx) => { return doc.categoryName == "Software Installation" })
-            })
-        }
-        else if (jenis === "hrd") {
-            settab({ all: "hidden", hardware: 'hidden', software: "hidden", hrd: "block" })
-            setdataeditkateg({
-                ...dataeditkateg,
-                name: "HR Management"
-            })
-            setdatatable(dataSource)
-            setdatatable(prev => {
-                return prev.filter((doc, idx) => { return doc.categoryName == "HR Management" })
-            })
-            setdatacurrtable(dataSource)
-            setdatacurrtable(prev => {
-                return prev.filter((doc, idx) => { return doc.categoryName == "HR Management" })
+                return prev.filter((doc, idx) => { return doc.categoryName == namakateg })
             })
         }
     }
     const onChangeEditCategory = (e) => {
-
+        setdataeditkateg({
+            ...dataeditkateg,
+            [e.target.name]: e.target.value
+        })
     }
     const onChangeTambahCategory = (e) => {
-
+        setdatatambahkateg({
+            ...datatambahkateg,
+            [e.target.name]: e.target.value
+        })
     }
     const onSearchService = (val) => {
-        console.log(datacurrtable.length)
         if (val === "") {
             setdatatable(datacurrtable)
         }
@@ -226,11 +242,106 @@ function ServiceCatalog({ initProps, dataProfile, sidemenu }) {
     }
 
     //handler
+    const handleHapusCategory = () => {
+        setloadingbtnhapuskateg(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteServiceCategory`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: idkateg
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        setloadingbtnhapuskateg(false)
+                        setmodalkonfhapuskateg(false)
+                        rt.push(`/admin/service`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                    setloadingbtnhapuskateg(false)
+                    setmodalkonfhapuskateg(false)
+                }
+            })
+    }
     const handleEditCategory = () => {
-        message.info("belum nyambung ke API")
+        setloadingbtneditkateg(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateServiceCategory`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataeditkateg)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        setloadingbtneditkateg(false)
+                        setmodaleditkateg(false)
+                        rt.push(`/admin/service`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                    setloadingbtneditkateg(false)
+                    setmodaleditkateg(false)
+                }
+            })
     }
     const handleTambahCategory = () => {
-        message.info("belum nyambung ke API")
+        setloadingbtntambahkateg(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addServiceCategory`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datatambahkateg)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        setmodaltambahkateg(false)
+                        setloadingbtntambahkateg(false)
+                        rt.push(`/admin/service`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                    setmodaltambahkateg(false)
+                    setloadingbtntambahkateg(false)
+                }
+            })
     }
     return (
         <Layout tok={initProps} pathArr={pathArr} dataProfile={dataProfile} sidemenu={sidemenu} st={st}>
@@ -254,59 +365,43 @@ function ServiceCatalog({ initProps, dataProfile, sidemenu }) {
                         </div>
                         <div>
                             {
-                                tab.all === "block" ?
-                                    < div className={`p-2 cursor-pointer flex items-center text-sm font-semibold bg-blue-700 text-white rounded`}>
+                                tabnameArrVal[0] === "block" ?
+                                    < div className={`p-2 cursor-pointer flex items-center text-sm font-semibold bg-blue-700 text-white rounded`} onClick={(e) => { onChangeTab(e, 'all', 0, "semua") }}>
                                         <FolderOpenOutlined style={{ marginRight: `0.7rem` }} />
                                         Semua Service
                                     </div>
                                     :
-                                    < div className={`p-2 cursor-pointer hover:text-gray-900 flex items-center text-sm font-semibold`} onClick={(e) => { onChangeTab(e, 'all') }}>
+                                    < div className={`p-2 cursor-pointer hover:text-gray-900 flex items-center text-sm font-semibold`} onClick={(e) => { onChangeTab(e, 'all', 0, "semua") }}>
                                         <FolderOpenOutlined style={{ marginRight: `0.7rem` }} />
                                         Semua Service
                                     </div>
                             }
                             <hr />
                             {
-                                tab.hardware === "block" ?
-                                    <div className={`p-2 cursor-pointer flex items-center text-sm font-semibold bg-blue-700 text-white rounded`}>
-                                        <FolderOpenOutlined style={{ marginRight: `0.7rem` }} />
-                                        Hardware Provisioning
-                                    </div>
-                                    :
-                                    <div className={`p-2 cursor-pointer hover:text-gray-900 flex items-center text-sm font-semibold`} onClick={(e) => { onChangeTab(e, 'hardware') }}>
-                                        <FolderOpenOutlined style={{ marginRight: `0.7rem` }} />
-                                        Hardware Provisioning
-                                    </div>
-                            }
-                            {
-                                tab.software === "block" ?
-                                    <div className={`p-2 cursor-pointer flex items-center text-sm font-semibold bg-blue-700 text-white rounded`}>
-                                        <FolderOpenOutlined style={{ marginRight: `0.7rem` }} />
-                                        Software Installation
-                                    </div>
-                                    :
-                                    <div className={`p-2 cursor-pointer hover:text-gray-900 flex items-center text-sm font-semibold`} onClick={(e) => { onChangeTab(e, 'software') }}>
-                                        <FolderOpenOutlined style={{ marginRight: `0.7rem` }} />
-                                        Software Installation
-                                    </div>
-                            }
-                            {
-                                tab.hrd === "block" ?
-                                    <div className={`p-2 cursor-pointer flex items-center text-sm font-semibold bg-blue-700 text-white rounded`}>
-                                        <FolderOpenOutlined style={{ marginRight: `0.7rem` }} />
-                                        HR Management
-                                    </div>
-                                    :
-                                    <div className={`p-2 cursor-pointer hover:text-gray-900 flex items-center text-sm font-semibold`} onClick={(e) => { onChangeTab(e, 'hrd') }}>
-                                        <FolderOpenOutlined style={{ marginRight: `0.7rem` }} />
-                                        HR Management
-                                    </div>
+                                dataListServiceCategories.data.map((doc, idx) => {
+                                    return (
+                                        <>
+                                            {
+                                                tabnameArrVal[idx + 1] === "block" ?
+                                                    <div className={`p-2 cursor-pointer flex items-center text-sm font-semibold bg-blue-700 text-white rounded`}>
+                                                        <FolderOpenOutlined style={{ marginRight: `0.7rem` }} />
+                                                        {doc.nama_kategori}
+                                                    </div>
+                                                    :
+                                                    <div className={`p-2 cursor-pointer hover:text-gray-900 flex items-center text-sm font-semibold`} onClick={(e) => { onChangeTab(e, tabnameArr[idx + 1], (idx + 1), doc.nama_kategori, doc.deskripsi, doc.id) }}>
+                                                        <FolderOpenOutlined style={{ marginRight: `0.7rem` }} />
+                                                        {doc.nama_kategori}
+                                                    </div>
+                                            }
+                                        </>
+                                    )
+                                })
                             }
                         </div>
                     </div>
                     <div className="col-span-6">
                         {/* All */}
-                        <div className={`${tab.all} py-5 px-7 flex flex-col`}>
+                        <div className={`${tabnameArrVal[0]} py-5 px-7 flex flex-col`}>
                             <div className="flex justify-between items-center mb-5">
                                 <div>
                                     <Select bordered={false} defaultValue={`1`} size="large" style={{ fontWeight: `bold` }}>
@@ -325,59 +420,27 @@ function ServiceCatalog({ initProps, dataProfile, sidemenu }) {
                             </div>
                         </div>
 
-                        {/* Hardware */}
-                        <div className={`${tab.hardware} py-5 px-7 flex flex-col`}>
-                            <div className="flex justify-between items-center mb-5">
-                                <div className="flex items-center">
-                                    <div className="flex items-center mr-3">
-                                        {tab.hardware === "block" && <p className="font-semibold m-0">Hardware Provisioning</p>}
+                        {dataListServiceCategories.data.map((doc, idx) => {
+                            return (
+                                <div className={`${tabnameArrVal[idx + 1]} py-5 px-7 flex flex-col`}>
+                                    <div className="flex justify-between items-center mb-5">
+                                        <div className="flex items-center">
+                                            <div className="flex items-center mr-3">
+                                                {tabnameArrVal[idx + 1] === "block" && <p className="font-semibold m-0">{doc.nama_kategori}</p>}
+                                            </div>
+                                            <div className="w-auto h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center" onClick={() => setmodaleditkateg(true)}><EditOutlined /></div>
+                                        </div>
+                                        <div>
+                                            <Search placeholder="input search text" allowClear style={{ width: `100%` }} onSearch={(value) => { onSearchService(value) }} />
+                                        </div>
                                     </div>
-                                    <div className="w-auto h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center" onClick={() => setmodaleditkateg(true)}><EditOutlined /></div>
-                                </div>
-                                <div>
-                                    <Search placeholder="input search text" allowClear style={{ width: `100%` }} onSearch={(value) => { onSearchService(value) }} />
-                                </div>
-                            </div>
-                            <div>
-                                <Table columns={columns} dataSource={datatable} rowSelection={{ type: 'checkbox' }} />
-                            </div>
-                        </div>
-
-                        {/* Software */}
-                        <div className={`${tab.software} py-5 px-7 flex flex-col`}>
-                            <div className="flex justify-between items-center mb-5">
-                                <div className="flex items-center">
-                                    <div className="flex items-center mr-3">
-                                        {tab.software === "block" && <p className="font-semibold m-0">Software Installation</p>}
+                                    <div>
+                                        <Table columns={columns} dataSource={datatable} rowSelection={{ type: 'checkbox' }} />
                                     </div>
-                                    <div className="w-auto h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center" onClick={() => setmodaleditkateg(true)}><EditOutlined /></div>
                                 </div>
-                                <div>
-                                    <Search placeholder="input search text" allowClear style={{ width: `100%` }} onSearch={(value) => { onSearchService(value) }} />
-                                </div>
-                            </div>
-                            <div>
-                                <Table columns={columns} dataSource={datatable} rowSelection={{ type: 'checkbox' }} />
-                            </div>
-                        </div>
-
-                        {/* Software */}
-                        <div className={`${tab.hrd} py-5 px-7 flex flex-col`}>
-                            <div className="flex justify-between items-center mb-5">
-                                <div className="flex items-center">
-                                    <div className="flex items-center mr-3">
-                                        {tab.hrd === "block" && <p className="font-semibold m-0">HR Management</p>}
-                                    </div>
-                                    <div className="w-auto h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center" onClick={() => setmodaleditkateg(true)}><EditOutlined /></div>
-                                </div>
-                                <div>
-                                    <Search placeholder="input search text" allowClear style={{ width: `100%` }} onSearch={(value) => { onSearchService(value) }} />
-                                </div>
-                            </div>
-                            <div>
-                                <Table columns={columns} dataSource={datatable} rowSelection={{ type: 'checkbox' }} />
-                            </div>
-                        </div>
+                            )
+                        })
+                        }
 
                         {/* Modal */}
                         <Modal
@@ -392,20 +455,23 @@ function ServiceCatalog({ initProps, dataProfile, sidemenu }) {
                         >
                             <Form layout="vertical" onFinish={handleEditCategory} initialValues={dataeditkateg}>
                                 <div className="flex flex-col mb-5">
-                                    <Form.Item label="Nama Kategori" name="name"
+                                    <Form.Item label="Nama Kategori" name="nama_kategori"
                                         rules={[
                                             {
                                                 required: true,
                                                 message: 'Nama Kategori wajib diisi',
                                             },
                                         ]}>
-                                        <Input onChange={onChangeEditCategory} name="name" defaultValue={dataeditkateg.name} allowClear />
+                                        <Input onChange={onChangeEditCategory} name="nama_kategori" defaultValue={dataeditkateg.nama_kategori} allowClear />
                                     </Form.Item>
-                                    <Form.Item label="Deskripsi" name="description">
-                                        <Input.TextArea onChange={onChangeEditCategory} defaultValue={dataeditkateg.description} name="description" allowClear />
+                                    <Form.Item label="Deskripsi" name="deskripsi">
+                                        <Input.TextArea onChange={onChangeEditCategory} defaultValue={dataeditkateg.deskripsi} name="deskripsi" allowClear />
                                     </Form.Item>
                                 </div>
-                                <Button loading={loadingbtneditkateg} type="primary" size="large">Edit</Button>
+                                <div className="flex justify-between">
+                                    <Button onClick={() => { setmodaleditkateg(false); setmodalkonfhapuskateg(true) }} type="default" size="large">Hapus</Button>
+                                    <Button htmlType="submit" loading={loadingbtneditkateg} type="primary" size="large">Edit</Button>
+                                </div>
                             </Form>
                         </Modal>
 
@@ -419,23 +485,36 @@ function ServiceCatalog({ initProps, dataProfile, sidemenu }) {
                             width={800}
                             destroyOnClose={true}
                         >
-                            <Form layout="vertical" onFinish={handleTambahCategory}>
+                            <Form layout="vertical" onFinish={handleTambahCategory} initialValues={datatambahkateg}>
                                 <div className="flex flex-col mb-5">
-                                    <Form.Item label="Nama Kategori" name="name"
+                                    <Form.Item label="Nama Kategori" name="nama_kategori"
                                         rules={[
                                             {
                                                 required: true,
                                                 message: 'Nama Kategori wajib diisi',
                                             },
                                         ]}>
-                                        <Input onChange={onChangeTambahCategory} name="name" allowClear />
+                                        <Input onChange={onChangeTambahCategory} name="nama_kategori" defaultValue={datatambahkateg.nama_kategori} allowClear />
                                     </Form.Item>
-                                    <Form.Item label="Deskripsi" name="description">
-                                        <Input.TextArea onChange={onChangeTambahCategory} name="description" allowClear />
+                                    <Form.Item label="Deskripsi" name="deskripsi">
+                                        <Input.TextArea onChange={onChangeTambahCategory} name="deskripsi" defaultValue={datatambahkateg.deskripsi} allowClear />
                                     </Form.Item>
                                 </div>
-                                <Button loading={loadingbtntambahkateg} type="primary" size="large">Tambah</Button>
+                                <Button htmlType="submit" loading={loadingbtntambahkateg} type="primary" size="large">Tambah</Button>
                             </Form>
+                        </Modal>
+                        <Modal
+                            title={`Konfirmasi hapus kategori`}
+                            visible={modalkonfhapuskateg}
+                            okButtonProps={{ disabled: loadingbtnhapuskateg }}
+                            onCancel={() => { setmodalkonfhapuskateg(false) }}
+                            onOk={handleHapusCategory}
+                            maskClosable={false}
+                            style={{ top: `3rem` }}
+                            width={500}
+                            destroyOnClose={true}
+                        >
+                            Yakin ingin hapus kategori ini?
                         </Modal>
                     </div>
                 </div>
@@ -466,10 +545,30 @@ export async function getServerSideProps({ req, res }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
+    const resourcesGSI = await fetch(`https://boiling-thicket-46501.herokuapp.com/getServiceItems`, {
+        method: `GET`,
+        headers: {
+            'Authorization': JSON.parse(initProps)
+        }
+    })
+    const resjsonGSI = await resourcesGSI.json()
+    const dataListServiceItem = resjsonGSI
+
+    const resourcesGSC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getServiceCategories`, {
+        method: `GET`,
+        headers: {
+            'Authorization': JSON.parse(initProps)
+        }
+    })
+    const resjsonGSC = await resourcesGSC.json()
+    const dataListServiceCategories = resjsonGSC
+
     return {
         props: {
             initProps,
             dataProfile,
+            dataListServiceCategories,
+            dataListServiceItem,
             sidemenu: "4"
         },
     }
