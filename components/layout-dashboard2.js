@@ -74,9 +74,15 @@ function LayoutDashboard2({ children, tok, dataProfile, pathArr, sidemenu, st })
                                         childBreacrumbDD.map((doc, idx) => {
                                             pathBuilder = pathBuilder + `/${pathArr[idx]}`
                                             if (idx === 0) {
-                                                return (
-                                                    <Breadcrumb.Item key={idx} href={`/${pathArr[idx]}`}> <strong>{doc}</strong> </Breadcrumb.Item>
-                                                )
+                                                if (pathArr[idx]==='incidents'){
+                                                    return (
+                                                        <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                    )
+                                                }else {
+                                                    return (
+                                                        <Breadcrumb.Item key={idx} href={`/${pathArr[idx]}`}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                    )
+                                                }
                                             }
                                             else if (idx === childBreacrumbDD.length - 1 && idx > 0) {
                                                 return (
