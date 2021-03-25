@@ -8,17 +8,16 @@ import Sticky from 'wil-react-sticky'
 import UploadOutlined from '@ant-design/icons/UploadOutlined'
 import {Divider,Input,Select,Radio,Row,Col,Button,notification,Form,Upload} from 'antd'
 
-function IncidentsCreate({ initProps, dataProfile, dataListAccount, sidemenu }) {
+function IncidentsCreate({ initProps, dataProfile, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     // const pathArr = rt.pathname.split("/").slice(1)
     const pathArr = ['incidents']
     const { originPath } = rt.query
-    const dataDetailGroup = []
     const [instanceForm] = Form.useForm()
     const [loadingbtn, setLoadingbtn] = useState(false)
     
-    //----------CreateGroup-------------
+    //----------Create Incident-------------
     const [newincident, setNewincident] = useState({
         requester: dataProfile.data.user_id,
         requester_email: dataProfile.data.email,
@@ -34,14 +33,7 @@ function IncidentsCreate({ initProps, dataProfile, dataListAccount, sidemenu }) 
             [e.target.name]: val
         })
     }
-    //------------add agent---------------
-    const handleChangeAddAgent = (value) => {
-        setNewgroup({
-            ...newgroup,
-            ["user_ids"]: value
-        })
-    }
-    //----------------------------------------------
+    //-----------------Handle create incident-----------------------------
     const handleCreateIncident = () => {
         setLoadingbtn(true)
         let formData = new FormData();
@@ -57,7 +49,6 @@ function IncidentsCreate({ initProps, dataProfile, dataListAccount, sidemenu }) 
         //     console.log(value);
         //  }
         // console.log(formData.values().requester)
-        setLoadingbtn(false)
         fetch(`https://boiling-thicket-46501.herokuapp.com/addIncident`, {
             method: 'POST',
             headers: {
@@ -89,29 +80,13 @@ function IncidentsCreate({ initProps, dataProfile, dataListAccount, sidemenu }) 
     }
     //------------------------------------------
 
-    //------------populate list account-------------
-    // const dataDD = dataListAccount.data.accounts.map((doc, idx) => {
-    //     return ({
-    //         value: doc.user_id,
-    //         label: doc.fullname,
-    //     })
-    // })
     //----------------------------------------------
     const { TextArea } = Input;
 
-    const test = () =>  {
-        setNewincident({
-        ...newincident,
-        file: fileList
-        })
-    }
     const checkFile = () => {
         console.log (newincident)
     }
-    // let formData = new FormData();
     const [fileList,setFileList] = useState([])
-    // const [uploading,setUploading] = useState(false)
-
     const props = {
         onRemove: file => {
             const index = fileList.indexOf(file)
@@ -127,7 +102,7 @@ function IncidentsCreate({ initProps, dataProfile, dataListAccount, sidemenu }) 
     }
     
     return (
-        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} dataDetailGroup={dataDetailGroup} st={st}>
+        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
                 <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
                     <Form layout="vertical" onFinish={handleCreateIncident} style={{ display: 'contents' }} form={instanceForm}>
@@ -223,11 +198,6 @@ function IncidentsCreate({ initProps, dataProfile, dataListAccount, sidemenu }) 
 
 export async function getServerSideProps({ req, res }) {
     var initProps = {};
-    const reqBodyAccountList = {
-        page: 1,
-        rows: 50,
-        order_by: "asc"
-    }
     if (req && req.headers) {
         const cookies = req.headers.cookie;
         if (!cookies) {
@@ -249,22 +219,10 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAccountList`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(reqBodyAccountList)
-    })
-    const resjsonLA = await resourcesLA.json()
-    const dataListAccount = resjsonLA
-
     return {
         props: {
             initProps,
             dataProfile,
-            dataListAccount,
             sidemenu: "4"
         },
     }

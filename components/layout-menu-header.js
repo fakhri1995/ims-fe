@@ -40,13 +40,13 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
             {/* <div style={{ fontSize: '14px' }} className="w-auto h-auto grid grid-cols-1 md:grid-cols-3 shadow-md rounded bg-white"> */} 
                 <div className=" col-span-1 md:col-span-1 text-xs md:text-sm m-3 md:m-2 px-2 h-auto">
                     <Link href={`/incidents/create?originPath=Tickets`}>
-                        <div className="flex justify-start" >
-                            <TicketIconSvg className={"pt-1"}/> &nbsp; &nbsp; <p className="p-2">Incident</p>
+                        <div className="flex justify-start pt-2 pl-2 hover:bg-gray-200" >
+                            <TicketIconSvg className={"pt-1"}/> &nbsp; &nbsp; <p className="p-1">Incident</p>
                         </div>
                     </Link>
-                    <Link href={`/contract/create?originPath=Tickets`}>
-                        <div className="flex justify-start" >
-                            <ContractIconSvg className={"pt-1"}/> &nbsp; &nbsp; <p className="p-2">Contract</p>
+                    <Link href={`/contracts/create?originPath=Tickets`}>
+                        <div className="flex justify-start pt-2 pl-2 hover:bg-gray-200" >
+                            <ContractIconSvg className={"pt-1"}/> &nbsp; &nbsp; <p className="p-1">Contract</p>
                         </div>
                     </Link>
                     {/* <div className="flex justify-center">
