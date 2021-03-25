@@ -416,7 +416,7 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                                 </div>
                             </div>
                             <div>
-                                <Table columns={columns} dataSource={datatable} rowSelection={{ type: 'checkbox' }} />
+                                <Table columns={columns} dataSource={datatable} />
                             </div>
                         </div>
 

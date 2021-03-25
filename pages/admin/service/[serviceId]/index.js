@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import httpcookie from 'cookie'
 import { DownOutlined, MinusCircleTwoTone } from '@ant-design/icons'
-import { Button, Anchor, Dropdown, Menu, Form, Input, notification, Select, Checkbox, Modal } from 'antd'
+import { Button, Anchor, Dropdown, Menu, Form, Input, notification, Select, Checkbox, Modal, Switch } from 'antd'
 import Layout from '../../../../components/layout-dashboard'
 import st from '../../../../components/layout-dashboard.module.css'
 
@@ -91,6 +91,8 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
     const [loadingupdate, setloadingupdate] = useState(false)
     const [loadinghapus, setloadinghapus] = useState(false)
     const [modalkonfhapuskateg, setmodalkonfhapuskateg] = useState(false)
+    const [modalpublish, setmodalpublish] = useState(false)
+    const [modalnonpublish, setmodalnonpublish] = useState(false)
 
     //onChange
     const onChangeAddAdditionalItems = (val) => {
@@ -133,7 +135,6 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
             ...dataupdate,
             new_child_ids: idfields
         }
-        // console.log("obj: " + objupdate.child_ids)
         setloadingupdate(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateServiceItem`, {
             method: 'PUT',
@@ -197,18 +198,89 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
                 }
             })
     }
+    const handlePublish = () => {
+        setloadinghapus(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/depublishingServiceItem`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: serviceid
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        setloadinghapus(false)
+                        setmodalpublish(false)
+                        rt.push(`/admin/service/${serviceid}`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                    setloadinghapus(false)
+                    setmodalpublish(false)
+                }
+            })
+    }
+
+    const handleNonPublish = () => {
+        setloadinghapus(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/publishingServiceItem`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: serviceid
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        setloadinghapus(false)
+                        setmodalnonpublish(false)
+                        rt.push(`/admin/service/${serviceid}`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                    setloadinghapus(false)
+                    setmodalnonpublish(false)
+                }
+            })
+    }
 
     //Render Components
-    const menu = (
-        <Menu>
-            <Menu.Item key="1" onClick={handleUpdateService}>
-                Save & Publish
-          </Menu.Item>
-            <Menu.Item key="2" onClick={handleUpdateService}>
-                Save As Draft
-          </Menu.Item>
-        </Menu>
-    );
+    // const menu = (
+    //     <Menu>
+    //         <Menu.Item key="1" onClick={handleUpdateService}>
+    //             Save & Publish
+    //       </Menu.Item>
+    //         <Menu.Item key="2" onClick={handleUpdateService}>
+    //             Save As Draft
+    //       </Menu.Item>
+    //     </Menu>
+    // );
     // const uploadButton = (
     //     <div>
     //         {loadingupload ? <LoadingOutlined /> : <PlusOutlined />}
@@ -223,20 +295,26 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
                     <div className="flex items-center">
                         <p className="font-semibold text-lg mr-3 my-0">{dataDetailServiceItem.data.service.nama_service_item}</p>
                         {
-                            dataDetailServiceItem.data.service.is_published ?
-                                <div className="py-1 px-2 rounded-l-full rounded-r-full text-green-500 border border-green-500 bg-green-100 text-center text-xs">Published</div>
+                            dataDetailServiceItem.data.service.is_publish ?
+                                <div className="py-1 px-2 rounded-l-full rounded-r-full text-green-500 border border-green-500 bg-green-100 text-center text-xs mr-3">Published</div>
                                 :
-                                <div className="py-1 px-2 rounded-l-full rounded-r-full text-gray-500 border border-gray-500 bg-gray-100 text-center text-xs">Draft</div>
+                                <div className="py-1 px-2 rounded-l-full rounded-r-full text-gray-500 border border-gray-500 bg-gray-100 text-center text-xs mr-3">Draft</div>
+                        }
+                        {
+                            dataDetailServiceItem.data.service.is_publish ?
+                                <Switch checked={true} onChange={() => { setmodalpublish(true) }}></Switch>
+                                :
+                                <Switch checked={false} onChange={() => { setmodalnonpublish(true) }}></Switch>
                         }
                     </div>
                     <div>
                         <Button type="default" size="middle" style={{ marginRight: `1rem` }} onClick={() => { rt.push('/admin/service') }}>Batalkan</Button>
                         <Button type="ghost" size="middle" style={{ marginRight: `1rem` }} onClick={() => { setmodalkonfhapuskateg(true) }}>Hapus</Button>
-                        <Dropdown overlay={menu} trigger={['click']}>
-                            <Button style={{ backgroundColor: `rgb(24,144,255)`, color: `white` }} loading={loadingupdate}>
-                                Edit <DownOutlined />
-                            </Button>
-                        </Dropdown>
+                        {/* <Dropdown overlay={menu} trigger={['click']}> */}
+                        <Button style={{ backgroundColor: `rgb(24,144,255)`, color: `white`, width: `5rem` }} loading={loadingupdate} onClick={handleUpdateService}>
+                            Edit {/*<DownOutlined />*/}
+                        </Button>
+                        {/* </Dropdown> */}
                     </div>
                 </div>
                 <div className="w-full grid grid-cols-7">
@@ -371,6 +449,32 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
                             destroyOnClose={true}
                         >
                             Yakin ingin hapus Service Item: <strong>{dataDetailServiceItem.data.service.nama_service_item}</strong>?
+                        </Modal>
+                        <Modal
+                            title={`Konfirmasi Draft Service Item`}
+                            visible={modalpublish}
+                            okButtonProps={{ disabled: loadinghapus }}
+                            onCancel={() => { setmodalpublish(false) }}
+                            onOk={handlePublish}
+                            maskClosable={false}
+                            style={{ top: `3rem` }}
+                            width={500}
+                            destroyOnClose={true}
+                        >
+                            Yakin ingin mengubah status menjadi draft pada Service Item: <strong>{dataDetailServiceItem.data.service.nama_service_item}</strong>?
+                        </Modal>
+                        <Modal
+                            title={`Konfirmasi Publish Service Item`}
+                            visible={modalnonpublish}
+                            okButtonProps={{ disabled: loadinghapus }}
+                            onCancel={() => { setmodalnonpublish(false) }}
+                            onOk={handleNonPublish}
+                            maskClosable={false}
+                            style={{ top: `3rem` }}
+                            width={500}
+                            destroyOnClose={true}
+                        >
+                            Yakin ingin mengubah status menjadi Published pada Service Item: <strong>{dataDetailServiceItem.data.service.nama_service_item}</strong>?
                         </Modal>
                     </div>
                 </div>
