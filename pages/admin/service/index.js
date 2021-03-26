@@ -27,8 +27,8 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
         return ({
             id: doc.id,
             itemName: doc.nama_service_item,
+            shortDesc: doc.deskripsi_singkat,
             categoryName: doc.nama_kategori,
-            usageType: 'Permanent',
             status: doc.is_publish
         })
     })
@@ -84,9 +84,9 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
     //     },
     // ];
     const columns = [
-        {
-            key: 'id'
-        },
+        // {
+        //     key: 'id'
+        // },
         {
             title: 'Nama Item',
             dataIndex: 'itemName',
@@ -100,25 +100,25 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
             )
         },
         {
+            title: 'Deskripsi',
+            dataIndex: 'shortDesc',
+            key: 'shortDesc',
+            render: (text, record, index) => (
+                <>
+                    <Link href={`/admin/service/${record.id}`}>
+                        <a href="#"><h1 className="hover:text-gray-500 text-xs">{record.shortDesc}</h1></a>
+                    </Link>
+                </>
+            )
+        },
+        {
             title: 'Kategori',
             dataIndex: 'categoryName',
             key: 'categoryName',
             render: (text, record, index) => (
                 <>
                     <Link href={`/admin/service/${record.id}`}>
-                        <a href="#"><h1 className="hover:text-gray-500">{record.categoryName}</h1></a>
-                    </Link>
-                </>
-            )
-        },
-        {
-            title: 'Tipe Penggunaan',
-            dataIndex: 'usageType',
-            key: 'usageType',
-            render: (text, record, index) => (
-                <>
-                    <Link href={`/admin/service/${record.id}`}>
-                        <a href="#"><h1 className="hover:text-gray-500">{record.usageType}</h1></a>
+                        <a href="#"><h1 className="hover:text-gray-500 text-sm">{record.categoryName}</h1></a>
                     </Link>
                 </>
             )
@@ -157,6 +157,7 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
         deskripsi: ''
     })
     const [tabnameArrVal, settabnameArrVal] = useState(loop)
+    const [defaultpub, setdefaultpub] = useState(1)
     const [modaleditkateg, setmodaleditkateg] = useState(false)
     const [modaltambahkateg, setmodaltambahkateg] = useState(false)
     const [modalkonfhapuskateg, setmodalkonfhapuskateg] = useState(false)
@@ -178,6 +179,7 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
 
     //onChange
     const onChangeTab = (e, jenis, idxjenis, namakateg, deskripsi, id) => {
+        setdefaultpub(1)
         if (idxjenis === 0) {
             const temp = tabnameArrVal
             temp[0] = "block"
@@ -239,6 +241,27 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                 return dataa.itemName.toLowerCase().includes(val.toLowerCase())
             })
         })
+    }
+    const onChangePublishment = (val) => {
+        if (val === 1) {
+            setdatatable(dataListServiceItemMap)
+            setdatacurrtable(dataListServiceItemMap)
+            setdefaultpub(1)
+        }
+        else if (val === true) {
+            setdatatable(dataListServiceItemMap)
+            setdatatable(prev => prev.filter(dataa => dataa.status === true))
+            setdatacurrtable(dataListServiceItemMap)
+            setdatacurrtable(prev => prev.filter(dataa => dataa.status === true))
+            setdefaultpub(val)
+        }
+        else if (val === false) {
+            setdatatable(dataListServiceItemMap)
+            setdatatable(prev => prev.filter(dataa => dataa.status === false))
+            setdatacurrtable(dataListServiceItemMap)
+            setdatacurrtable(prev => prev.filter(dataa => dataa.status === false))
+            setdefaultpub(val)
+        }
     }
 
     //handler
@@ -404,10 +427,10 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                         <div className={`${tabnameArrVal[0]} py-5 px-7 flex flex-col`}>
                             <div className="flex justify-between items-center mb-5">
                                 <div>
-                                    <Select bordered={false} defaultValue={`1`} size="large" style={{ fontWeight: `bold` }}>
-                                        <Option value={`1`}>All Service Items</Option>
-                                        <Option value={`published`}>Published</Option>
-                                        <Option value={`drafts`}>Drafts</Option>
+                                    <Select bordered={false} defaultValue={defaultpub} size="large" style={{ fontWeight: `bold` }} onChange={(value) => { onChangePublishment(value) }}>
+                                        <Option value={1}>All Service Items</Option>
+                                        <Option value={true}>Published</Option>
+                                        <Option value={false}>Drafts</Option>
                                     </Select>
                                     <p className="text-xs text-gray-500 pl-3">Viewing all service items from all categories.</p>
                                 </div>
@@ -424,18 +447,21 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                             return (
                                 <div className={`${tabnameArrVal[idx + 1]} py-5 px-7 flex flex-col`}>
                                     <div className="flex justify-between items-center mb-5">
-                                        <div className="flex items-center">
-                                            <div className="flex items-center mr-3">
-                                                {tabnameArrVal[idx + 1] === "block" && <p className="font-semibold m-0">{doc.nama_kategori}</p>}
+                                        <div className="flex flex-col justify-center">
+                                            <div className="flex items-center mb-1">
+                                                <div className="flex items-center mr-3">
+                                                    {tabnameArrVal[idx + 1] === "block" && <p className="font-semibold m-0">{doc.nama_kategori}</p>}
+                                                </div>
+                                                <div className="w-auto h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center" onClick={() => setmodaleditkateg(true)}><EditOutlined /></div>
                                             </div>
-                                            <div className="w-auto h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center" onClick={() => setmodaleditkateg(true)}><EditOutlined /></div>
+                                            <p className="text-xs text-gray-500">{doc.deskripsi}</p>
                                         </div>
                                         <div>
-                                            <Search placeholder="input search text" allowClear style={{ width: `100%` }} onSearch={(value) => { onSearchService(value) }} />
+                                            <Search placeholder="Cari Nama Item" allowClear style={{ width: `100%` }} onSearch={(value) => { onSearchService(value) }} />
                                         </div>
                                     </div>
                                     <div>
-                                        <Table columns={columns} dataSource={datatable} rowSelection={{ type: 'checkbox' }} />
+                                        <Table columns={columns} dataSource={datatable} />
                                     </div>
                                 </div>
                             )
@@ -470,7 +496,7 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                                 </div>
                                 <div className="flex justify-between">
                                     <Button onClick={() => { setmodaleditkateg(false); setmodalkonfhapuskateg(true) }} type="default" size="large">Hapus</Button>
-                                    <Button htmlType="submit" loading={loadingbtneditkateg} type="primary" size="large">Edit</Button>
+                                    <Button htmlType="submit" loading={loadingbtneditkateg} type="primary" size="large">Simpan</Button>
                                 </div>
                             </Form>
                         </Modal>

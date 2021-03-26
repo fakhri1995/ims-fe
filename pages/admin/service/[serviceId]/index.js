@@ -5,6 +5,7 @@ import { DownOutlined, MinusCircleTwoTone } from '@ant-design/icons'
 import { Button, Anchor, Dropdown, Menu, Form, Input, notification, Select, Checkbox, Modal, Switch } from 'antd'
 import Layout from '../../../../components/layout-dashboard'
 import st from '../../../../components/layout-dashboard.module.css'
+import { data } from 'autoprefixer'
 
 function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataListServiceItem, dataListServiceCategories, serviceid, sidemenu }) {
     const rt = useRouter()
@@ -14,7 +15,7 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
     const { Option } = Select
 
     //data dummies
-    const dataListServiceItemMap = dataListServiceItem.data.map((doc, idx) => {
+    const dataListServiceItemMap = dataListServiceItem.data.filter(dataa => { return dataa.id != serviceid }).map((doc, idx) => {
         return ({
             id: doc.id,
             itemName: doc.nama_service_item,
@@ -312,7 +313,7 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
                         <Button type="ghost" size="middle" style={{ marginRight: `1rem` }} onClick={() => { setmodalkonfhapuskateg(true) }}>Hapus</Button>
                         {/* <Dropdown overlay={menu} trigger={['click']}> */}
                         <Button style={{ backgroundColor: `rgb(24,144,255)`, color: `white`, width: `5rem` }} loading={loadingupdate} onClick={handleUpdateService}>
-                            Edit {/*<DownOutlined />*/}
+                            Simpan {/*<DownOutlined />*/}
                         </Button>
                         {/* </Dropdown> */}
                     </div>
