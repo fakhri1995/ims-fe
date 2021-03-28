@@ -84,9 +84,6 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
     //     },
     // ];
     const columns = [
-        // {
-        //     key: 'id'
-        // },
         {
             title: 'Nama Item',
             dataIndex: 'itemName',
