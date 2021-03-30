@@ -7,7 +7,9 @@ import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import st from '../../../components/layout-dashboard-clients.module.css'
-import { Tabs, Input, Table, Tree, Drawer, Modal, message, Select, notification, Form, Button, Popconfirm, Switch } from 'antd'
+import { Tabs, Input, Table, Tree, Drawer, Modal, message, Select, notification, Form, Button, Popconfirm, Switch, DatePicker } from 'antd'
+import moment from 'moment'
+import { data } from 'autoprefixer'
 
 function ClientsDetailProfile({ dataDetailCompany, tok }) {
     const rt = useRouter()
@@ -24,7 +26,14 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
         role: dataDetailCompany.data.data.role,
         address: dataDetailCompany.data.data.address,
         phone_number: dataDetailCompany.data.data.phone_number,
-        image_logo: dataDetailCompany.data.data.image_logo
+        image_logo: dataDetailCompany.data.data.image_logo,
+        singkatan: "",
+        tanggal_pkp: '',
+        penanggung_jawab: '',
+        npwp: '',
+        fax: '',
+        email: '',
+        website: ''
     })
     const [loadingfoto, setLoadingfoto] = useState(false)
 
@@ -55,6 +64,9 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
         })
         setLoadingfoto(false)
     }
+
+
+    //handler
     const handleEditProfile = () => {
         setloadingbtn(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateCompanyDetail`, {
@@ -154,137 +166,233 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
             <div className=" mb-2 md:mb-4 flex md:flex-row flex-col">
                 <h1 className="font-semibold text-base mr-3 pt-1">{dataDetailCompany.data.data.company_name}</h1>
                 <h1 className="mr-3 pt-1 hidden md:block">|</h1>
-                <div className="flex md:mr-5">
+                {/* <div className="flex md:mr-5">
                     {
                         dataDetailCompany.data.data.is_enabled ?
-                            <div className=" bg-blue-100 text-blue-600 border-blue-600 border pt-1 h-auto px-3 rounded-md text-xs md:text-sm w-auto">AKTIF</div>
+                            <div className=" bg-blue-100 text-blue-600 border-blue-600 border pt-1 h-8 px-3 rounded-md text-xs md:text-sm w-auto">AKTIF</div>
                             :
-                            <div className=" bg-red-100 text-red-600 border-red-600 border pt-1 h-auto px-3 rounded-md text-xs md:text-sm w-auto">NON-AKTIF</div>
+                            <div className=" bg-red-100 text-red-600 border-red-600 border pt-1 h-8 px-3 rounded-md text-xs md:text-sm w-auto">NON-AKTIF</div>
                     }
-                </div>
+                </div> */}
                 <div className="pt-1">
                     {
                         dataDetailCompany.data.data.is_enabled ?
-                            <Switch checked={true} onChange={() => { setVisible(true) }}></Switch>
+                            <Switch checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
                             :
-                            <Switch checked={false} onChange={() => { setVisiblenon(true) }}></Switch>
+                            <Switch checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
                     }
                 </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-col-3 md:grid-cols-4 mb-4">
-                <div className="p-3 relative col-span-1 sm:col-span-1 md:col-span-1 flex flex-col">
+            <div className="grid grid-cols-1 sm:grid-col-3 md:grid-cols-5 mb-4">
+                <div className="p-3 relative col-span-1 sm:col-span-1 md:col-span-1 flex flex-col justify-self-center">
                     <img src={data1.image_logo} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
                     {editable ?
-                        <div>
-                            <label className="custom-file-upload w-auto p-2 border-2 cursor-pointer text-sm rounded-md hover:bg-gray-200">
+                        <>
+                            <label className="custom-file-upload w-full p-2 border-2 cursor-pointer text-sm rounded-md hover:bg-gray-200 flex justify-center">
                                 <input type="file" style={{ display: `none` }} name="profile_image" onChange={onChangeEditProfileFoto} />
                                 {loadingfoto ? <LoadingOutlined /> : <EditOutlined style={{ fontSize: `1.5rem` }} />}
                                     Ganti Foto
-                        </label>
-                        </div>
+                            </label>
+                        </>
                         :
                         null
                     }
                 </div>
-                <div className="col-span-1 sm:col-span-2 md:col-span-3 w-full h-auto p-3 md:p-5 grid grid-cols-1 md:grid-cols-2">
-                    <Form layout="vertical" form={instanceForm} onFinish={handleEditProfile} initialValues={data1}>
+                <div className="col-span-1 sm:col-span-2 md:col-span-4 w-full h-auto p-3 md:p-5 flex">
+                    <Form layout="vertical" form={instanceForm} onFinish={handleEditProfile} initialValues={data1} style={{ width: `100%` }}>
                         <div className="md:m-5 mb-5 md:mb-0 ">
                             <h1 className="font-semibold text-sm">ID Perusahaan:</h1>
                             <h1 className="text-sm font-normal text-black">{data1.id}</h1>
                         </div>
-                        <div className="md:m-5 mb-5 md:mb-0 ">
-                            {
-                                editable ?
-                                    <Form.Item name="company_name" label="Nama Perusahaan"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Nama Perusahaan wajib diisi',
-                                            },
-                                        ]}>
-                                        <Input defaultValue={data1.company_name} name="company_name" onChange={onChangeEditProfile}></Input>
-                                    </Form.Item>
-                                    :
-                                    <>
-                                        <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
-                                        <h1 className="text-sm font-normal text-black">{data1.company_name}</h1>
-                                    </>
+                        <div className="grid grid-cols-1 md:grid-cols-2">
+                            <div className="md:m-5 mb-5 md:mb-0">
+                                {
+                                    editable ?
+                                        <Form.Item name="company_name" label="Nama Perusahaan"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Nama Perusahaan wajib diisi',
+                                                },
+                                            ]}>
+                                            <Input defaultValue={data1.company_name} name="company_name" onChange={onChangeEditProfile}></Input>
+                                        </Form.Item>
+                                        :
+                                        <>
+                                            <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
+                                            <h1 className="text-sm font-normal text-black">{data1.company_name}</h1>
+                                        </>
 
-                            }
-                        </div>
-                        {/* <div className="md:m-5 mb-5 md:mb-0 ">
-                            {
-                                editable ?
-                                    <Form.Item name="role" label="Role"
-                                        rules={[
+                                }
+                            </div>
+                            <div className="md:m-5 mb-5 md:mb-0">
+                                {
+                                    editable ?
+                                        <Form.Item name="address" label="Alamat"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Alamat wajib diisi',
+                                                },
+                                            ]}>
+                                            <Input defaultValue={data1.address} name="address" onChange={onChangeEditProfile}></Input>
+                                        </Form.Item>
+                                        :
+                                        <>
+                                            <h1 className="font-semibold text-sm">Alamat:</h1>
+                                            <h1 className="text-sm font-normal text-black">{data1.address}</h1>
+                                        </>
+                                }
+                            </div>
+                            <div className="md:m-5 mb-5 md:mb-0">
+                                {
+                                    editable ?
+                                        <Form.Item name="phone_number" label="Telepon"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Telepon wajib diisi',
+                                                },
+                                            ]}>
+                                            <Input defaultValue={data1.phone_number} name="phone_number" onChange={onChangeEditProfile}></Input>
+                                        </Form.Item>
+                                        :
+                                        <>
+                                            <h1 className="font-semibold text-sm">Telepon:</h1>
+                                            <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
+                                        </>
+                                }
+                            </div>
+                            <div className="md:m-5 mb-5 md:mb-0">
+                                {
+                                    editable ?
+                                        <Form.Item name="singkatan" label="Singkatan">
+                                            <Input defaultValue={data1.singkatan} name="singkatan" onChange={onChangeEditProfile}></Input>
+                                        </Form.Item>
+                                        :
+                                        <>
+                                            <h1 className="font-semibold text-sm">Singkatan:</h1>
                                             {
-                                                required: true,
-                                                message: 'Role wajib diisi',
-                                            },
-                                        ]}>
-                                        <input type="number" defaultValue={data1.role} name={'role'} onChange={onChangeEditProfile} style={{ width: `15rem` }} />
-                                    </Form.Item>
-                                    :
-                                    <>
-                                        <h1 className="font-semibold text-sm">Role:</h1>
-                                        <h1 className="text-sm font-normal text-black">{data1.role}</h1>
-                                    </>
-
-                            }
-                        </div> */}
-                        <div className="md:m-5 mb-5 md:mb-0">
-                            {
-                                editable ?
-                                    <Form.Item name="address" label="Alamat"
-                                        rules={[
+                                                data1.singkatan === '' ?
+                                                    <h1 className="text-sm font-normal text-black">-</h1>
+                                                    :
+                                                    <h1 className="text-sm font-normal text-black">{data1.singkatan}</h1>
+                                            }
+                                        </>
+                                }
+                            </div>
+                            <div className="md:m-5 mb-5 md:mb-0">
+                                {
+                                    editable ?
+                                        <Form.Item name="tanggal_pkp" label="Tanggal PKP">
+                                            <DatePicker onChange={(date, dateString) => { setData1({ ...data1, tanggal_pkp: moment(date, "YYYY-MM-DD") }) }} style={{ width: `100%` }}></DatePicker>
+                                        </Form.Item>
+                                        :
+                                        <>
+                                            <h1 className="font-semibold text-sm">Tanggal PKP:</h1>
                                             {
-                                                required: true,
-                                                message: 'Alamat wajib diisi',
-                                            },
-                                        ]}>
-                                        <Input defaultValue={data1.address} name="address" onChange={onChangeEditProfile}></Input>
-                                    </Form.Item>
-                                    :
-                                    <>
-                                        <h1 className="font-semibold text-sm">Alamat:</h1>
-                                        <h1 className="text-sm font-normal text-black">{data1.address}</h1>
-                                    </>
-                            }
-                        </div>
-                        <div className="md:m-5 mb-5 md:mb-0">
-                            {
-                                editable ?
-                                    <Form.Item name="phone_number" label="Telepon"
-                                        rules={[
+                                                data1.tanggal_pkp === '' ?
+                                                    <h1 className="text-sm font-normal text-black">-</h1>
+                                                    :
+                                                    <h1 className="text-sm font-normal text-black">{data1.tanggal_pkp.toLocaleString()}</h1>
+                                            }
+                                        </>
+                                }
+                            </div>
+                            <div className="md:m-5 mb-5 md:mb-0">
+                                {
+                                    editable ?
+                                        <Form.Item name="penanggung_jawab" label="Penanggung Jawab">
+                                            <Input defaultValue={data1.penanggung_jawab} name="penanggung_jawab" onChange={onChangeEditProfile}></Input>
+                                        </Form.Item>
+                                        :
+                                        <>
+                                            <h1 className="font-semibold text-sm">Penanggung Jawab:</h1>
                                             {
-                                                required: true,
-                                                message: 'Telepon wajib diisi',
-                                            },
-                                        ]}>
-                                        <Input defaultValue={data1.phone_number} name="phone_number" onChange={onChangeEditProfile}></Input>
-                                    </Form.Item>
-                                    :
-                                    <>
-                                        <h1 className="font-semibold text-sm">Telepon:</h1>
-                                        <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
-                                    </>
-                            }
+                                                data1.penanggung_jawab === '' ?
+                                                    <h1 className="text-sm font-normal text-black">-</h1>
+                                                    :
+                                                    <h1 className="text-sm font-normal text-black">{data1.penanggung_jawab}</h1>
+                                            }
+                                        </>
+                                }
+                            </div>
+                            <div className="md:m-5 mb-5 md:mb-0">
+                                {
+                                    editable ?
+                                        <Form.Item name="npwp" label="NPWP">
+                                            <Input defaultValue={data1.npwp} name="npwp" onChange={onChangeEditProfile}></Input>
+                                        </Form.Item>
+                                        :
+                                        <>
+                                            <h1 className="font-semibold text-sm">NPWP:</h1>
+                                            {
+                                                data1.npwp === '' ?
+                                                    <h1 className="text-sm font-normal text-black">-</h1>
+                                                    :
+                                                    <h1 className="text-sm font-normal text-black">{data1.npwp}</h1>
+                                            }
+                                        </>
+                                }
+                            </div>
+                            <div className="md:m-5 mb-5 md:mb-0">
+                                {
+                                    editable ?
+                                        <Form.Item name="fax" label="Fax">
+                                            <Input defaultValue={data1.fax} name="fax" onChange={onChangeEditProfile}></Input>
+                                        </Form.Item>
+                                        :
+                                        <>
+                                            <h1 className="font-semibold text-sm">Fax:</h1>
+                                            {
+                                                data1.fax === '' ?
+                                                    <h1 className="text-sm font-normal text-black">-</h1>
+                                                    :
+                                                    <h1 className="text-sm font-normal text-black">{data1.fax}</h1>
+                                            }
+                                        </>
+                                }
+                            </div>
+                            <div className="md:m-5 mb-5 md:mb-0">
+                                {
+                                    editable ?
+                                        <Form.Item name="email" label="Email">
+                                            <Input defaultValue={data1.email} name="email" onChange={onChangeEditProfile}></Input>
+                                        </Form.Item>
+                                        :
+                                        <>
+                                            <h1 className="font-semibold text-sm">Email:</h1>
+                                            {
+                                                data1.email === '' ?
+                                                    <h1 className="text-sm font-normal text-black">-</h1>
+                                                    :
+                                                    <h1 className="text-sm font-normal text-black">{data1.email}</h1>
+                                            }
+                                        </>
+                                }
+                            </div>
+                            <div className="md:m-5 mb-5 md:mb-0">
+                                {
+                                    editable ?
+                                        <Form.Item name="website" label="Website">
+                                            <Input defaultValue={data1.website} name="website" onChange={onChangeEditProfile}></Input>
+                                        </Form.Item>
+                                        :
+                                        <>
+                                            <h1 className="font-semibold text-sm">Website:</h1>
+                                            {
+                                                data1.website === '' ?
+                                                    <h1 className="text-sm font-normal text-black">-</h1>
+                                                    :
+                                                    <h1 className="text-sm font-normal text-black">{data1.website}</h1>
+                                            }
+                                        </>
+                                }
+                            </div>
                         </div>
                     </Form>
                 </div>
             </div>
-            {/* <div className="w-9/12 p-3 md:p-5 h-auto">
-                {
-                    dataDetailCompany.data.data.is_enabled ?
-                        <button className=" w-full h-auto py-2 text-center bg-red-600 text-white hover:bg-red-800 rounded-md" onClick={() => { setVisible(true) }}>
-                            Non Aktifkan Perusahaan
-                        </button>
-                        :
-                        <button className=" w-full h-auto py-2 text-center bg-blue-600 text-white hover:bg-blue-800 rounded-md" onClick={() => { setVisiblenon(true) }}>
-                            Aktifkan Perusahaan
-                        </button>
-                }
-            </div > */}
             <Modal
                 title="Konfirmasi untuk menon-aktifkan akun"
                 visible={visible}
@@ -843,7 +951,7 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
     }
     return (
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} dataDetailCompany={dataDetailCompany} st={st}>
-            <div className="p-5 bg-white hidden md:block">
+            <div className="px-5 pt-5 pb-0 bg-white hidden md:block">
                 <Tabs tabPosition={`left`} defaultActiveKey={activeTab}>
                     <TabPane tab="Profil" key={`profile`}>
                         <ClientsDetailProfile dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
@@ -856,7 +964,7 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
                     </TabPane>
                 </Tabs>
             </div>
-            <div className="p-5 bg-white block md:hidden" >
+            <div className="px-5 pt-5 pb-0 bg-white block md:hidden" >
                 <Tabs tabPosition={`top`} defaultActiveKey={activeTab}>
                     <TabPane tab="Profil" key={`profile`}>
                         <ClientsDetailProfile dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>

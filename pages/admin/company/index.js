@@ -7,7 +7,7 @@ import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import Link from 'next/link'
 import { useState } from 'react'
 import st from '../../../components/layout-dashboard-clients.module.css'
-import { Input, Form, Table, Upload, notification, Drawer, Button, TreeSelect } from 'antd'
+import { Input, Form, Table, Upload, notification, Drawer, Button, TreeSelect, Select } from 'antd'
 
 function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataLocations }) {
     const rt = useRouter()
@@ -17,6 +17,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
     const [loadingupload, setLoadingupload] = useState(false)
     const [loadingbtn, setloadingbtn] = useState(false)
     const [instanceForm] = Form.useForm()
+    const { Option } = Select
     const [newclients, setnewclients] = useState({
         name: '',
         role: 2,
@@ -140,7 +141,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
     const closeClientsDrawer = () => {
         setnewclients({
             name: '',
-            role: 2,
+            role: 0,
             address: '',
             phone_number: '',
             image_logo: '',
@@ -333,6 +334,19 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
                                             treeDefaultExpandAll
                                             onChange={(value) => { onChangeParent(value) }}
                                         />
+                                    </Form.Item>
+                                </div>
+                                <div className="mb:m-4 mb-5 md:mb-0">
+                                    <Form.Item label="Role" name="role" rules={[
+                                        {
+                                            required: true,
+                                            message: 'Role Wajib diisi',
+                                        },
+                                    ]} style={{ marginRight: `1rem` }}>
+                                        <Select placeholder="Pilih role" onChange={(value) => { setnewclients({ ...newclients, role: value }) }}>
+                                            <Option value={2}>Klien</Option>
+                                            <Option value={3}>Cabang</Option>
+                                        </Select>
                                     </Form.Item>
                                 </div>
                                 <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn} style={{ marginBottom: `1rem` }}>Simpan</Button>
