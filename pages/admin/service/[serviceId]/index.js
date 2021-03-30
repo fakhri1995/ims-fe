@@ -5,6 +5,7 @@ import { DownOutlined, MinusCircleTwoTone } from '@ant-design/icons'
 import { Button, Anchor, Dropdown, Menu, Form, Input, notification, Select, Checkbox, Modal, Switch } from 'antd'
 import Layout from '../../../../components/layout-dashboard'
 import st from '../../../../components/layout-dashboard.module.css'
+import { data } from 'autoprefixer'
 
 function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataListServiceItem, dataListServiceCategories, serviceid, sidemenu }) {
     const rt = useRouter()
@@ -13,8 +14,8 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
     const { Link } = Anchor
     const { Option } = Select
 
-    //data dummies
-    const dataListServiceItemMap = dataListServiceItem.data.map((doc, idx) => {
+    //data
+    const dataListServiceItemMap = dataListServiceItem.data.filter(dataa => { return dataa.id != serviceid }).map((doc, idx) => {
         return ({
             id: doc.id,
             itemName: doc.nama_service_item,
@@ -23,61 +24,8 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
             status: doc.is_publish
         })
     })
-    // const dataSource = [
-    //     {
-    //         key: '1',
-    //         itemName: 'Adobe Illustrator',
-    //         categoryName: 'Software Installation',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    //     {
-    //         key: '2',
-    //         itemName: 'Adobe Photoshop CS6',
-    //         categoryName: 'Software Installation',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    //     {
-    //         key: '3',
-    //         itemName: 'Microsoft Outlook',
-    //         categoryName: 'Software Installation',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    //     {
-    //         key: '4',
-    //         itemName: 'Microsoft Excel',
-    //         categoryName: 'Software Installation',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    //     {
-    //         key: '5',
-    //         itemName: 'Apple Macbook',
-    //         categoryName: 'Hardware Provisioning',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    //     {
-    //         key: '6',
-    //         itemName: 'Scan Printer Epson',
-    //         categoryName: 'Hardware Provisioning',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    //     {
-    //         key: '7',
-    //         itemName: 'Employement Verification Letter',
-    //         categoryName: 'HR Management',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    // ];
 
     //useState
-
-
     const [dataupdate, setdataupdate] = useState({
         id: serviceid,
         id_service_kategori: dataDetailServiceItem.data.service.id_service_kategori,
@@ -290,29 +238,29 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
 
     return (
         <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
-            <div className="w-full h-80 border-t border-opacity-30 border-gray-500 bg-white">
+            <div className="w-full border-t border-opacity-30 border-gray-500 bg-white">
                 <div className="w-full flex justify-between p-3">
                     <div className="flex items-center">
                         <p className="font-semibold text-lg mr-3 my-0">{dataDetailServiceItem.data.service.nama_service_item}</p>
-                        {
+                        {/* {
                             dataDetailServiceItem.data.service.is_publish ?
                                 <div className="py-1 px-2 rounded-l-full rounded-r-full text-green-500 border border-green-500 bg-green-100 text-center text-xs mr-3">Published</div>
                                 :
                                 <div className="py-1 px-2 rounded-l-full rounded-r-full text-gray-500 border border-gray-500 bg-gray-100 text-center text-xs mr-3">Draft</div>
-                        }
+                        } */}
                         {
                             dataDetailServiceItem.data.service.is_publish ?
-                                <Switch checked={true} onChange={() => { setmodalpublish(true) }}></Switch>
+                                <Switch checked={true} onChange={() => { setmodalpublish(true) }} checkedChildren={"Published"}></Switch>
                                 :
-                                <Switch checked={false} onChange={() => { setmodalnonpublish(true) }}></Switch>
+                                <Switch checked={false} onChange={() => { setmodalnonpublish(true) }} unCheckedChildren={"Draft"}></Switch>
                         }
                     </div>
                     <div>
                         <Button type="default" size="middle" style={{ marginRight: `1rem` }} onClick={() => { rt.push('/admin/service') }}>Batalkan</Button>
                         <Button type="ghost" size="middle" style={{ marginRight: `1rem` }} onClick={() => { setmodalkonfhapuskateg(true) }}>Hapus</Button>
                         {/* <Dropdown overlay={menu} trigger={['click']}> */}
-                        <Button style={{ backgroundColor: `rgb(24,144,255)`, color: `white`, width: `5rem` }} loading={loadingupdate} onClick={handleUpdateService}>
-                            Edit {/*<DownOutlined />*/}
+                        <Button style={{ backgroundColor: `rgb(24,144,255)`, color: `white` }} loading={loadingupdate} onClick={handleUpdateService}>
+                            Simpan {/*<DownOutlined />*/}
                         </Button>
                         {/* </Dropdown> */}
                     </div>

@@ -160,9 +160,9 @@ function ServiceCreate({ initProps, dataProfile, dataListServiceCategories, data
     //Render Components
     const menu = (
         <Menu>
-            <Menu.Item key="1" onClick={handleCreateService}>
+            {/* <Menu.Item key="1" onClick={handleCreateService}>
                 Save & Publish
-          </Menu.Item>
+          </Menu.Item> */}
             <Menu.Item key="2" onClick={handleCreateService}>
                 Save As Draft
           </Menu.Item>
@@ -184,11 +184,11 @@ function ServiceCreate({ initProps, dataProfile, dataListServiceCategories, data
                     </div>
                     <div>
                         <Button type="default" size="middle" style={{ marginRight: `1rem` }} onClick={() => { rt.push('/admin/service') }}>Batalkan</Button>
-                        <Dropdown overlay={menu} trigger={['click']}>
-                            <Button style={{ backgroundColor: `rgb(24,144,255)`, color: `white` }} loading={loadingbtntambahitem}>
-                                Simpan <DownOutlined />
-                            </Button>
-                        </Dropdown>
+                        {/* <Dropdown overlay={menu} trigger={['click']}> */}
+                        <Button style={{ backgroundColor: `rgb(24,144,255)`, color: `white` }} loading={loadingbtntambahitem} onClick={handleCreateService}>
+                            Simpan {/*<DownOutlined />*/}
+                        </Button>
+                        {/* </Dropdown> */}
                     </div>
                 </div>
                 <div className="w-full grid grid-cols-7">

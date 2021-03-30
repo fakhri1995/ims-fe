@@ -113,7 +113,7 @@ function TicketsIndex({ initProps, dataProfile, dataTicketList, sidemenu }) {
                                                                     </div>
                                                                     <div className="flex justify-center items-center">
                                                                         {defaultduetime > 5 && <div className="rounded-md w-auto h-auto px-2 py-1 bg-green-100 border border-green-200 text-green-600">Baru</div>}
-                                                                        {defaultduetime <= 5 && <div className="rounded-md w-auto h-auto px-2 py-1 bg-yellow-100 border border-yellow-200 text-yellow-600">Segera Respon</div>}
+                                                                        {(defaultduetime >= 0 && defaultduetime <= 5) && <div className="rounded-md w-auto h-auto px-2 py-1 bg-yellow-100 border border-yellow-200 text-yellow-600">Segera Respon</div>}
                                                                         {defaultduetime < 0 && <div className="rounded-md w-auto h-auto px-2 py-1 bg-red-100 border border-red-200 text-red-600">Lewat</div>}
                                                                     </div>
                                                                 </div>
