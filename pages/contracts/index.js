@@ -6,59 +6,61 @@ import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import st from '../../components/layout-dashboard-inventories.module.css'
+import st from '../../components/layout-dashboard.module.css'
 
-function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
+function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
-    const pathArr = rt.pathname.split("/").slice(1)
+    // const pathArr = rt.pathname.split("/").slice(1)
+    const pathArr = ['admin', 'contracts']
     // const { originPath } = rt.query
     const { TabPane } = Tabs;
-    // console.log(dataInventories)
+    console.log(dataContracts)
 
-    //--------hook modal delete inventories-------------
+    //--------hook modal delete contracts-------------
     const [warningDelete, setWarningDelete] = useState({
         istrue: false,
         key: null,
-        asset_name: ""
+        nomor_kontrak: ""
     })
-    const onClickModalDeleteInventory = (istrue, record) => {
+    const onClickModalDeleteContract = (istrue, record) => {
         setWarningDelete({
             ...warningDelete,
             ["istrue"]: istrue,
             ["key"]: record.key,
-            ["asset_name"]: record.asset_name
+            ["nomor_kontrak"]: record.nomor_kontrak
         })
     }
     const [modaldelete, setmodaldelete] = useState(false)
     //-------------------------------------------
 
-    //------------get data inventories-------------------
-    var inventories
-    if (dataInventories.data == null) {
+    //------------get data contracts-------------------
+    var contracts
+    if (dataContracts.data == null) {
         console.log("nodata")
-        inventories = []
+        contracts = []
     }
     else {
-        inventories = dataInventories.data.map((doc, idx) => {
+        contracts = dataContracts
+        .data.map((doc, idx) => {
             return ({
                 idx: idx,
                 key: doc.id,
                 id: doc.id,
-                asset_name: doc.asset_name,
-                model: doc.model,
-                mig_number: doc.mig_number,
-                lokasi: doc.lokasi,
-                status: doc.status
+                id_client_company: doc.id_client_company,
+                id_tipe_kontrak: doc.id_tipe_kontrak,
+                nomor_kontrak: doc.nomor_kontrak,
+                tanggal_mulai: doc.tanggal_mulai,
+                tanggal_selesai: doc.tanggal_selesai
             })
         })
     }
     //------------------------------------------------
 
-    //------------------handle delete inventory-------------------
-    const handleDeleteInventory = (key) => {
+    //------------------handle delete contract-------------------
+    const handleDeleteContract = (key) => {
         setmodaldelete(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteInventory?id=${key}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteContract?id=${key}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -78,7 +80,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/inventories`)
+                        rt.push(`/contracts?originPath=Admin`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -109,67 +111,88 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                 };
             },
         },
+        // {
+        //     title: 'Company ID',
+        //     dataIndex: 'id_client_company',
+        //     key: 'id_client_company',
+        //     width: 50,
+        //     render(text, record) {
+        //         return {
+        //             props: {
+        //                 style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
+        //             },
+        //             children: <div><Link href={{
+        //                 pathname: `/inventories/${record.key}`,
+        //                 query: {
+        //                     originPath: 'Admin'
+        //                 }
+        //             }}><a>{record.id_client_company}</a></Link>
+        //             </div>,
+        //         };
+        //     },
+        // },
+        // {
+        //     title: 'Tipe Kontrak ID',
+        //     dataIndex: 'id_tipe_kontrak',
+        //     key: 'id_tipe_kontrak',
+        //     width: 50,
+        //     render(text, record) {
+        //         return {
+        //             props: {
+        //                 style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
+        //             },
+        //             children: <div>{record.id_tipe_kontrak}
+        //             </div>,
+        //         };
+        //     },
+        // },
         {
-            title: 'Asset Name',
-            dataIndex: 'asset_name',
-            key: 'asset_name',
-            width: 60,
+            title: 'Nomor Kontrak',
+            dataIndex: 'nomor_kontrak',
+            key: 'nomor_kontrak',
+            width: 50,
             render(text, record) {
                 return {
                     props: {
                         style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
                     },
-                    children: <div><Link href={{
-                        pathname: `/inventories/${record.key}`,
+                    children: 
+                    <div><Link href={{
+                        pathname: `/contracts/${record.key}`,
                         query: {
                             originPath: 'Admin'
                         }
-                    }}><a>{record.asset_name}</a></Link>
-                    </div>,
+                    }}><a>{record.nomor_kontrak}</a></Link>
+                    </div>
                 };
             },
         },
         {
-            title: 'MIG ID',
-            dataIndex: 'mig_number',
-            key: 'mig_number',
+            title: 'Tanggal Mulai',
+            dataIndex: 'tanggal_mulai',
+            key: 'tanggal_mulai',
             width: 50,
             render(text, record) {
                 return {
                     props: {
                         style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
                     },
-                    children: <div>{record.mig_number}
+                    children: <div>{record.tanggal_mulai}
                     </div>,
                 };
             },
         },
         {
-            title: 'Lokasi',
-            dataIndex: 'lokasi',
-            key: 'lokasi',
+            title: 'Tanggal Selesai',
+            dataIndex: 'tanggal_selesai',
+            key: 'tanggal_selesai',
             width: 50,
             render(text, record) {
                 return {
                     props: {
                         style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
                     },
-                    children: <div>{record.lokasi}
-                    </div>,
-                };
-            },
-        },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            width: 50,
-            render(text, record) {
-                return {
-                    props: {
-                        style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children: <div>{record.status.charAt(0).toUpperCase() + record.status.slice(1)}
+                    children: <div>{record.tanggal_selesai}
                     </div>,
                 };
             },
@@ -187,7 +210,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                     children:
                         <Button>
                             <Link href={{
-                                pathname: `/inventories/update/${record.key}`,
+                                pathname: `/contracts/update/${record.key}`,
                             }}><a>Edit</a></Link>
                         </Button>
                 }
@@ -208,7 +231,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                     children:
                         <>
                             {/* <Tooltip placement="topLeft" title={"Delete"}> */}
-                            <Button onClick={() => { onClickModalDeleteInventory(true, record) }}>
+                            <Button onClick={() => { onClickModalDeleteContract(true, record) }}>
                                 <a><DeleteOutlined /></a>
                             </Button>
 
@@ -227,10 +250,10 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                     <div className=" col-span-1 md:col-span-4 flex flex-col" id="formAgentsWrapper">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
-                                <h1 className="font-semibold text-base w-auto pt-2">Daftar Inventori</h1>
+                                <h1 className="font-semibold text-base w-auto pt-2">Daftar Kontrak</h1>
                                 <div className="flex space-x-2">
-                                    <Link href={`/inventories/create`}>
-                                        <Button type="primary" size="large">Tambah Inventori</Button>
+                                    <Link href={`/contracts/create`}>
+                                        <Button type="primary" size="large">Tambah Kontrak</Button>
                                     </Link>
                                 </div>
                             </div>
@@ -238,7 +261,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
 
                         <div className="col-span-3 flex flex-col space-y-3">
 
-                            <Table scroll={{ x: 400 }} dataSource={inventories} columns={columnsDD} onRow={(record, rowIndex) => {
+                            <Table scroll={{ x: 400 }} dataSource={contracts} columns={columnsDD} onRow={(record, rowIndex) => {
                             }}>
                             </Table>
 
@@ -247,11 +270,11 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                         <Modal
                             title="Konfirmasi untuk menghapus grup"
                             visible={warningDelete.istrue}
-                            onOk={() => { handleDeleteInventory(warningDelete.key) }}
+                            onOk={() => { handleDeleteContract(warningDelete.key) }}
                             onCancel={() => setWarningDelete(false, null)}
                             okButtonProps={{ disabled: modaldelete }}
                         >
-                            Apakah anda yakin ingin menghapus inventori <strong>{warningDelete.asset_name}</strong>?
+                            Apakah anda yakin ingin menghapus kontrak <strong>{warningDelete.nomor_kontrak}</strong>?
                             </Modal>
                     </div>
                     {/* <div className="flex flex-col space-y-3 px-4">
@@ -279,14 +302,14 @@ export async function getServerSideProps({ req, res }) {
             initProps = cookiesJSON.token
         }
     }
-    const resourcesGetInventories = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAllInventories`, {
+    const resourcesGetContracts = await fetch(`https://boiling-thicket-46501.herokuapp.com/getContracts`, {
         method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
     })
-    const resjsonGetInventories = await resourcesGetInventories.json()
-    const dataInventories = resjsonGetInventories
+    const resjsonGetContracts = await resourcesGetContracts.json()
+    const dataContracts = resjsonGetContracts
 
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,
@@ -301,10 +324,10 @@ export async function getServerSideProps({ req, res }) {
         props: {
             initProps,
             dataProfile,
-            dataInventories,
-            sidemenu: "sub32"
+            dataContracts,
+            sidemenu: "4"
         },
     }
 }
 
-export default Inventories
+export default Contracts

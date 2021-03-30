@@ -91,7 +91,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                     title: 'role',
                     dataIndex: 'name',
                     key: 'role',
-                    width: 800,
+                    width: 300,
                     render(text, record) {
                         return {
                             props: {
