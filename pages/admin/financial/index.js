@@ -87,6 +87,13 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
             .then(res => res.json())
             .then(res2 => {
                 setloadingcreate(false)
+                settambahbtn(true)
+                setdatacreate({
+                    nama: '',
+                    jenis: '',
+                    tahun_penggunaan: 0,
+                    deskripsi: ''
+                })
                 if (res2.success) {
                     notification['success']({
                         message: res2.message,
@@ -253,7 +260,7 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
                             <div id="thead" className="grid grid-cols-9 justify-center items-center border-b-2 border-gray-600 p-2 bg-gray-100">
                                 <div className=" col-span-2 font-semibold text-sm">Nama</div>
                                 <div className=" col-span-2 font-semibold text-sm">Tipe</div>
-                                <div className=" col-span-1 font-semibold text-sm">Daya Tahan</div>
+                                <div className=" col-span-1 font-semibold text-sm">Tahun Penggunaan</div>
                                 <div className=" col-span-3 font-semibold text-sm">Deskripsi</div>
                                 <div className=" col-span-1"></div>
                             </div>

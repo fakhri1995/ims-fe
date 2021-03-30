@@ -104,6 +104,7 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
     })
     const [tabnameArrVal, settabnameArrVal] = useState(loop)
     const [defaultpub, setdefaultpub] = useState(1)
+    const [idkateg, setidkateg] = useState(0)
     const [modaleditkateg, setmodaleditkateg] = useState(false)
     const [modaltambahkateg, setmodaltambahkateg] = useState(false)
     const [modalkonfhapuskateg, setmodalkonfhapuskateg] = useState(false)
@@ -126,6 +127,7 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
     //onChange
     const onChangeTab = (e, jenis, idxjenis, namakateg, deskripsi, id) => {
         setdefaultpub(1)
+        setidkateg(id)
         if (idxjenis === 0) {
             const temp = tabnameArrVal
             temp[0] = "block"
@@ -299,7 +301,13 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                     setTimeout(() => {
                         setmodaltambahkateg(false)
                         setloadingbtntambahkateg(false)
-                        rt.push(`/admin/service`)
+                        if (process.env.NODE_ENV == "production") {
+                            window.location.href = `https://migsys.herokuapp.com/admin/service`
+                        }
+                        else if (process.env.NODE_ENV == "development") {
+                            window.location.href = `http://localhost:3000/admin/service`
+                        }
+                        // rt.push(`/admin/service`)
                     }, 500)
                 }
                 else if (!res2.success) {

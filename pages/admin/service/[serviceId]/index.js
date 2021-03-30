@@ -242,17 +242,17 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
                 <div className="w-full flex justify-between p-3">
                     <div className="flex items-center">
                         <p className="font-semibold text-lg mr-3 my-0">{dataDetailServiceItem.data.service.nama_service_item}</p>
-                        {
+                        {/* {
                             dataDetailServiceItem.data.service.is_publish ?
                                 <div className="py-1 px-2 rounded-l-full rounded-r-full text-green-500 border border-green-500 bg-green-100 text-center text-xs mr-3">Published</div>
                                 :
                                 <div className="py-1 px-2 rounded-l-full rounded-r-full text-gray-500 border border-gray-500 bg-gray-100 text-center text-xs mr-3">Draft</div>
-                        }
+                        } */}
                         {
                             dataDetailServiceItem.data.service.is_publish ?
-                                <Switch checked={true} onChange={() => { setmodalpublish(true) }}></Switch>
+                                <Switch checked={true} onChange={() => { setmodalpublish(true) }} checkedChildren={"Published"}></Switch>
                                 :
-                                <Switch checked={false} onChange={() => { setmodalnonpublish(true) }}></Switch>
+                                <Switch checked={false} onChange={() => { setmodalnonpublish(true) }} unCheckedChildren={"Draft"}></Switch>
                         }
                     </div>
                     <div>
