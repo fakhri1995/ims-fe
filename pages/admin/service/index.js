@@ -32,57 +32,6 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
             status: doc.is_publish
         })
     })
-    // const dataSource = [
-    //     {
-    //         key: '1',
-    //         itemName: 'Adobe Illustrator',
-    //         categoryName: 'Software Installation',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    //     {
-    //         key: '2',
-    //         itemName: 'Adobe Photoshop CS6',
-    //         categoryName: 'Software Installation',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    //     {
-    //         key: '3',
-    //         itemName: 'Microsoft Outlook',
-    //         categoryName: 'Software Installation',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    //     {
-    //         key: '4',
-    //         itemName: 'Microsoft Excel',
-    //         categoryName: 'Software Installation',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    //     {
-    //         key: '5',
-    //         itemName: 'Apple Macbook',
-    //         categoryName: 'Hardware Provisioning',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    //     {
-    //         key: '6',
-    //         itemName: 'Scan Printer Epson',
-    //         categoryName: 'Hardware Provisioning',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    //     {
-    //         key: '7',
-    //         itemName: 'Employement Verification Letter',
-    //         categoryName: 'HR Management',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    // ];
     const columns = [
         {
             title: 'Nama Item',
@@ -365,7 +314,7 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
     }
     return (
         <Layout tok={initProps} pathArr={pathArr} dataProfile={dataProfile} sidemenu={sidemenu} st={st}>
-            <div className="w-full h-80 border-t border-opacity-30 border-gray-500 bg-white">
+            <div className="w-full border-t border-opacity-30 border-gray-500 bg-white">
                 <div className="w-full flex justify-between p-3">
                     <div>
                         <p className="font-semibold text-lg">Service Catalog</p>
@@ -436,7 +385,7 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                                 </div>
                             </div>
                             <div>
-                                <Table columns={columns} dataSource={datatable} />
+                                <Table columns={columns} dataSource={datatable} pagination={{ pageSize: 8 }} />
                             </div>
                         </div>
 
@@ -458,7 +407,7 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                                         </div>
                                     </div>
                                     <div>
-                                        <Table columns={columns} dataSource={datatable} />
+                                        <Table columns={columns} dataSource={datatable} pagination={{ pageSize: 8 }} />
                                     </div>
                                 </div>
                             )

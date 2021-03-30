@@ -160,9 +160,9 @@ function ServiceCreate({ initProps, dataProfile, dataListServiceCategories, data
     //Render Components
     const menu = (
         <Menu>
-            <Menu.Item key="1" onClick={handleCreateService}>
+            {/* <Menu.Item key="1" onClick={handleCreateService}>
                 Save & Publish
-          </Menu.Item>
+          </Menu.Item> */}
             <Menu.Item key="2" onClick={handleCreateService}>
                 Save As Draft
           </Menu.Item>

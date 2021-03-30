@@ -14,7 +14,7 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
     const { Link } = Anchor
     const { Option } = Select
 
-    //data dummies
+    //data
     const dataListServiceItemMap = dataListServiceItem.data.filter(dataa => { return dataa.id != serviceid }).map((doc, idx) => {
         return ({
             id: doc.id,
@@ -24,61 +24,8 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
             status: doc.is_publish
         })
     })
-    // const dataSource = [
-    //     {
-    //         key: '1',
-    //         itemName: 'Adobe Illustrator',
-    //         categoryName: 'Software Installation',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    //     {
-    //         key: '2',
-    //         itemName: 'Adobe Photoshop CS6',
-    //         categoryName: 'Software Installation',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    //     {
-    //         key: '3',
-    //         itemName: 'Microsoft Outlook',
-    //         categoryName: 'Software Installation',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    //     {
-    //         key: '4',
-    //         itemName: 'Microsoft Excel',
-    //         categoryName: 'Software Installation',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    //     {
-    //         key: '5',
-    //         itemName: 'Apple Macbook',
-    //         categoryName: 'Hardware Provisioning',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    //     {
-    //         key: '6',
-    //         itemName: 'Scan Printer Epson',
-    //         categoryName: 'Hardware Provisioning',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    //     {
-    //         key: '7',
-    //         itemName: 'Employement Verification Letter',
-    //         categoryName: 'HR Management',
-    //         usageType: 'Permanent',
-    //         status: 'Published'
-    //     },
-    // ];
 
     //useState
-
-
     const [dataupdate, setdataupdate] = useState({
         id: serviceid,
         id_service_kategori: dataDetailServiceItem.data.service.id_service_kategori,
@@ -291,7 +238,7 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
 
     return (
         <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
-            <div className="w-full h-80 border-t border-opacity-30 border-gray-500 bg-white">
+            <div className="w-full border-t border-opacity-30 border-gray-500 bg-white">
                 <div className="w-full flex justify-between p-3">
                     <div className="flex items-center">
                         <p className="font-semibold text-lg mr-3 my-0">{dataDetailServiceItem.data.service.nama_service_item}</p>
@@ -312,7 +259,7 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
                         <Button type="default" size="middle" style={{ marginRight: `1rem` }} onClick={() => { rt.push('/admin/service') }}>Batalkan</Button>
                         <Button type="ghost" size="middle" style={{ marginRight: `1rem` }} onClick={() => { setmodalkonfhapuskateg(true) }}>Hapus</Button>
                         {/* <Dropdown overlay={menu} trigger={['click']}> */}
-                        <Button style={{ backgroundColor: `rgb(24,144,255)`, color: `white`, width: `5rem` }} loading={loadingupdate} onClick={handleUpdateService}>
+                        <Button style={{ backgroundColor: `rgb(24,144,255)`, color: `white` }} loading={loadingupdate} onClick={handleUpdateService}>
                             Simpan {/*<DownOutlined />*/}
                         </Button>
                         {/* </Dropdown> */}
