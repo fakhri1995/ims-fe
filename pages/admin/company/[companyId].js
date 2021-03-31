@@ -9,7 +9,6 @@ import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import st from '../../../components/layout-dashboard-clients.module.css'
 import { Tabs, Input, Table, Tree, Drawer, Modal, message, Select, notification, Form, Button, Popconfirm, Switch, DatePicker } from 'antd'
 import moment from 'moment'
-import { data } from 'autoprefixer'
 
 function ClientsDetailProfile({ dataDetailCompany, tok }) {
     const rt = useRouter()
@@ -28,7 +27,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
         phone_number: dataDetailCompany.data.data.phone_number,
         image_logo: dataDetailCompany.data.data.image_logo,
         singkatan: "",
-        tanggal_pkp: '',
+        tanggal_pkp: moment(new Date()),
         penanggung_jawab: '',
         npwp: '',
         fax: '',
@@ -166,14 +165,6 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
             <div className=" mb-2 md:mb-4 flex md:flex-row flex-col">
                 <h1 className="font-semibold text-base mr-3 pt-1">{dataDetailCompany.data.data.company_name}</h1>
                 <h1 className="mr-3 pt-1 hidden md:block">|</h1>
-                {/* <div className="flex md:mr-5">
-                    {
-                        dataDetailCompany.data.data.is_enabled ?
-                            <div className=" bg-blue-100 text-blue-600 border-blue-600 border pt-1 h-8 px-3 rounded-md text-xs md:text-sm w-auto">AKTIF</div>
-                            :
-                            <div className=" bg-red-100 text-red-600 border-red-600 border pt-1 h-8 px-3 rounded-md text-xs md:text-sm w-auto">NON-AKTIF</div>
-                    }
-                </div> */}
                 <div className="pt-1">
                     {
                         dataDetailCompany.data.data.is_enabled ?
@@ -284,18 +275,26 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                             <div className="md:m-5 mb-5 md:mb-0">
                                 {
                                     editable ?
-                                        <Form.Item name="tanggal_pkp" label="Tanggal PKP">
-                                            <DatePicker onChange={(date, dateString) => { setData1({ ...data1, tanggal_pkp: moment(date, "YYYY-MM-DD") }) }} style={{ width: `100%` }}></DatePicker>
+                                        <Form.Item name="tanggal_pkp" label="Tanggal PKP"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Tanggal PKP wajib diisi',
+                                                },
+                                            ]}>
+                                            <DatePicker onChange={(date, dateString) => { setData1({ ...data1, tanggal_pkp: moment(date) }) }} style={{ width: `100%` }} defaultValue={data1.tanggal_pkp}></DatePicker>
                                         </Form.Item>
                                         :
                                         <>
                                             <h1 className="font-semibold text-sm">Tanggal PKP:</h1>
-                                            {
-                                                data1.tanggal_pkp === '' ?
+                                            <h1 className="text-sm font-normal text-black">{data1.tanggal_pkp.locale('id').format('LL')}</h1>
+                                            {/* {
+                                                data1.tanggal_pkp.getTime() - new Date().getTime() > 0 ?
                                                     <h1 className="text-sm font-normal text-black">-</h1>
                                                     :
-                                                    <h1 className="text-sm font-normal text-black">{data1.tanggal_pkp.toLocaleString()}</h1>
-                                            }
+                                                    <h1 className="text-sm font-normal text-black">{data1.tanggal_pkp.toDateString()}</h1>
+
+                                            } */}
                                         </>
                                 }
                             </div>
