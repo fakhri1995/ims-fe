@@ -985,7 +985,7 @@ export async function getServerSideProps({ req, res, params }) {
     var initProps = {};
     const companyid = params.companyId
     const reqBodyCompanyDetail = {
-        login_id: companyid
+        company_id: companyid
     }
     if (req && req.headers) {
         const cookies = req.headers.cookie;
