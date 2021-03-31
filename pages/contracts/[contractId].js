@@ -38,7 +38,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
         setWarningDelete({
             ...warningDelete,
             ["istrue"]: istrue,
-            ["key"]: record.key,
+            ["key"]: record.id,
             ["nomor_kontrak"]: record.nomor_kontrak
         })
     }
@@ -46,7 +46,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
         setWarningTerminate({
             ...warningTerminate,
             ["istrue"]: istrue,
-            ["key"]: record.key,
+            ["key"]: record.id,
             ["nomor_kontrak"]: record.nomor_kontrak
         })
     }
