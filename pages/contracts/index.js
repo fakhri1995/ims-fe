@@ -15,7 +15,7 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
     const pathArr = ['admin', 'contracts']
     // const { originPath } = rt.query
     const { TabPane } = Tabs;
-    console.log(dataContracts)
+    // console.log(dataContracts)
 
     //--------hook modal delete contracts-------------
     const [warningDelete, setWarningDelete] = useState({
@@ -51,7 +51,8 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                 id_tipe_kontrak: doc.id_tipe_kontrak,
                 nomor_kontrak: doc.nomor_kontrak,
                 tanggal_mulai: doc.tanggal_mulai,
-                tanggal_selesai: doc.tanggal_selesai
+                tanggal_selesai: doc.tanggal_selesai,
+                is_active: doc.is_active
             })
         })
     }
@@ -150,7 +151,7 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
             title: 'Nomor Kontrak',
             dataIndex: 'nomor_kontrak',
             key: 'nomor_kontrak',
-            width: 50,
+            width: 200,
             render(text, record) {
                 return {
                     props: {
@@ -164,6 +165,21 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                         }
                     }}><a>{record.nomor_kontrak}</a></Link>
                     </div>
+                };
+            },
+        },
+        {
+            title: 'Status',
+            dataIndex: 'is_active',
+            key: 'is_active',
+            width: 50,
+            render(text, record) {
+                return {
+                    props: {
+                        style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children: <div>{record.is_active?"Aktif":"Non-Aktif"}
+                    </div>,
                 };
             },
         },

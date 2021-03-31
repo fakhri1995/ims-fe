@@ -22,9 +22,12 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
     const [opendrawer, setOpendrawer] = useState(false)
     const contract = contractData.data.contract
     const [dataServiceItems, setDataServiceItems] = useState([])
-
+    const [validation,setValidation] = useState({
+        harga: true,
+        id_terms_of_payment: true
+    })
     //----------Create Contract Parameter-------------
-    const [updatecontract, setNewcontract] = useState({
+    const [updatecontract, setUpdatecontract] = useState({
         id: contract.id,
         id_client_company: contract.id_client_company,
         id_tipe_kontrak: contract.id_tipe_kontrak,
@@ -36,7 +39,7 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
     })
     const onChangeCreateContract = (e) => {
         var val = e.target.value
-        setNewcontract({
+        setUpdatecontract({
             ...updatecontract,
             [e.target.name]: val
         })
@@ -45,33 +48,42 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
         setSelectedServiceItemTemp(serviceItemTemp.serviceItemValues)
         var items = serviceItemTemp.serviceItemValues
         setDataServiceItems(items)
-        setNewcontract({
+        setUpdatecontract({
             ...updatecontract,
             service_items: items
         })
+        const validationHarga = items.every(item => item.harga);
+        const validationTerms = items.every(item => item.id_terms_of_payment);
+        setValidation({...validation,harga:validationHarga,id_terms_of_payment:validationTerms})
     }
     const onChangeServicePriceItems = (e,id) => {
         var val = e.target.value
-        const idx = serviceItemTemp.serviceItemValues.map(item=>item.key).indexOf(id)
+        const idx = serviceItemTemp.serviceItemValues.map(item=>item.id_service_item).indexOf(id)
+        // console.log(idx,id)
         var items = [...dataServiceItems]
         items[idx].id_service_item = id
         items[idx].harga = val
         setDataServiceItems(items)
-        setNewcontract({
+        setUpdatecontract({
             ...updatecontract,
             service_items: items
         })
+        const validationHarga = items.every(item => item.harga);
+        setValidation({...validation,harga:validationHarga})
     }
 
     const onChangeServiceTermsofPaymentItems = (val,id) => {
-        const idx = serviceItemTemp.serviceItemValues.map(item=>item.key).indexOf(id)
+        const idx = serviceItemTemp.serviceItemValues.map(item=>item.id_service_item).indexOf(id)
+        // console.log(idx)
         var items = [...dataServiceItems]
         items[idx].id_terms_of_payment = val
         setDataServiceItems(items)
-        setNewcontract({
+        setUpdatecontract({
             ...updatecontract,
             service_items: items
         })
+        const validationTerms = items.every(item => item.id_terms_of_payment);
+        setValidation({...validation,id_terms_of_payment:validationTerms})
     }
     const DynamicComponent = () => {
         return (
@@ -99,10 +111,10 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
                                 <Input className={''} defaultValue={item.nama} readOnly></Input>
                             </div>
                             <div className="col-span-1 md:col-span-1 flex flex-col px-2 py-2">
-                                <Input name={"harga"+item.key} key={"harga"+item.key} type="number" defaultValue={dataServiceItems[idx].harga} onBlur={(e)=>{ onChangeServicePriceItems(e,item.key)}} prefix="IDR" suffix="Rupiah" allowClear ></Input>
+                                <Input name={"harga"+item.key} key={"harga"+item.key} type="number" defaultValue={dataServiceItems[idx].harga} onBlur={(e)=>{ onChangeServicePriceItems(e,item.id_service_item)}} prefix="IDR" suffix="Rupiah" allowClear ></Input>
                             </div>
                             <div className="col-span-1 md:col-span-1 flex flex-col pl-2 py-2">
-                                <Select name={"terms"+item.key} key={"terms"+item.key} className={''} defaultValue={dataServiceItems[idx].id_terms_of_payment} allowClear onChange={(val)=>{onChangeServiceTermsofPaymentItems(val,item.key)}}>
+                                <Select name={"terms"+item.key} key={"terms"+item.key} className={''} defaultValue={dataServiceItems[idx].id_terms_of_payment} allowClear onChange={(val)=>{onChangeServiceTermsofPaymentItems(val,item.id_service_item)}}>
                                     {
                                         contractInputData.data.term_of_payments.map((item,idx)=>{
                                             return (<Option key={item.id} value={item.id}>{item.nama}</Option>)
@@ -223,12 +235,30 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
             ...serviceItemTemp,
             serviceItemValues: contractData.data.service_item_kontraks
         })
+        setUpdatecontract({
+            ...updatecontract,
+            service_items: contractData.data.service_item_kontraks
+        })
     }, [])
     //----------------------------------------------
+    const[flag,setFlag] = useState({
+        ket1: false,
+        ket2: false
+    })
     const checkFile = () => {
         // var abc = dataServiceItems.map((item,idx)=>{return item.id})
-        // setSelectedRowKeys(abc)        
-        console.log (dataServiceItems)
+        // setSelectedRowKeys(abc) 
+        // updatecontract.service_items.map((obj,idx)=>{
+        //     if(obj.harga == "" || obj.harga == null || obj.harga == undefined){
+        //        setFlag({...flag,ket1:true})
+        //     }
+        //     if(obj.id_terms_of_payment == null || obj.id_terms_of_payment == "" || obj.id_terms_of_payment == undefined){
+        //         setFlag({...flag,ket2:true})
+        //     }
+        // })      
+        console.log(validation)
+        // console.log(validation.every(item=>item.harga && item.id_terms_of_payment))
+        // updatecontract.service_items.values
         // console.log (serviceItemTemp)
         // console.log(selectedRowKeys)
         // console.log (dataServiceItems)
@@ -244,7 +274,7 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
         // console.log (dataServiceItems)
     }
     const check = () => {
-        
+        console.log(updatecontract.service_items)
     }
     
     return (
@@ -257,13 +287,23 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
                                 <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                     <h1 className="font-semibold text-base w-auto">Ubah Kontrak</h1>
                                     <div className="flex space-x-2">
-                                        <Link href="/groups?originPath=Admin" >
+                                        <Link href="/contracts?originPath=Admin" >
                                             <Button type="default" size="middle">Batalkan</Button>
                                         </Link>
-                                        <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn}>Simpan</Button>
+                                        <Button disabled={!(validation.harga && validation.id_terms_of_payment) } type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn}>Simpan</Button>
                                     </div>
                                 </div>
                             </Sticky>
+                            <p className="text-red-600 float-right ml-auto">
+                                {
+                                    validation.harga?"":"Harga pada item service harus terisi semua"
+                                }
+                            </p>
+                            <p className="text-red-600 float-right ml-auto">
+                                {
+                                    validation.id_terms_of_payment?"":"Terms of Payment pada item service harus terisi semua"
+                                }
+                            </p>
                             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-3">
                                 <div className=" col-span-1 md:col-span-1 flex flex-col" >
                                     <div className="pb-4 md:mb-0 ">
@@ -290,7 +330,7 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
                                             ]}
                                             initialValue={updatecontract.tanggal_mulai}
                                         >
-                                            <DatePicker defaultValue={updatecontract.tanggal_mulai} style={{width:"100%"}} placeholder="Tanggal Mulai" name={`tanggal_mulai`} onChange={(date, dateString) => {setNewcontract({...updatecontract,tanggal_mulai: dateString})}} allowClear></DatePicker>
+                                            <DatePicker defaultValue={updatecontract.tanggal_mulai} style={{width:"100%"}} placeholder="Tanggal Mulai" name={`tanggal_mulai`} onChange={(date, dateString) => {setUpdatecontract({...updatecontract,tanggal_mulai: dateString})}} allowClear></DatePicker>
                                         </Form.Item>
                                     </div>
 
@@ -319,7 +359,7 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
                                             ]}
                                             initialValue={updatecontract.id_client_company}
                                         >
-                                            <Select placeholder="Klien" name={`id_client_company`} onChange={(value) => {setNewcontract({...updatecontract,id_client_company: value})}} options={populateListCompany} allowClear/>
+                                            <Select showSearch optionFilterProp="label" placeholder="Klien" name={`id_client_company`} onChange={(value) => {setUpdatecontract({...updatecontract,id_client_company: value})}} options={populateListCompany} allowClear/>
                                         </Form.Item>
                                     </div>
 
@@ -333,7 +373,7 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
                                             ]}
                                             initialValue={updatecontract.tanggal_selesai}
                                         >
-                                            <DatePicker defaultValue={updatecontract.tanggal_selesai} style={{width:"100%"}} placeholder="Tanggal Selesai" name={`tanggal_selesai`} onChange={(date, dateString) => {setNewcontract({...updatecontract,tanggal_selesai: dateString})}} allowClear></DatePicker>
+                                            <DatePicker defaultValue={updatecontract.tanggal_selesai} style={{width:"100%"}} placeholder="Tanggal Selesai" name={`tanggal_selesai`} onChange={(date, dateString) => {setUpdatecontract({...updatecontract,tanggal_selesai: dateString})}} allowClear></DatePicker>
                                         </Form.Item>
                                     </div>
 
@@ -347,7 +387,7 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
                                             ]}
                                             initialValue={updatecontract.id_tipe_kontrak}
                                         >
-                                            <Select placeholder="Tipe" name={`id_tipe_kontrak`} onChange={(value) => {setNewcontract({...updatecontract,id_tipe_kontrak: value})}} allowClear>
+                                            <Select placeholder="Tipe" name={`id_tipe_kontrak`} onChange={(value) => {setUpdatecontract({...updatecontract,id_tipe_kontrak: value})}} allowClear>
                                                 {
                                                     contractInputData.data.contract_types.map((doc,index)=>{
                                                         return(
@@ -369,10 +409,10 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
                                 <DynamicComponent></DynamicComponent>
                             </div>
                             
-                            <Drawer title="Add Service Item" maskClosable={false} visible={opendrawer} onClose={() => { setOpendrawer(false),setServiceItemTemp({...serviceItemTemp,serviceItemValues:selectedServiceItemTemp}),setSelectedRowKeys(selectedServiceItemTemp.map(item=>item.key))}} destroyOnClose={true} width={700} 
+                            <Drawer title="Add Service Item" maskClosable={false} visible={opendrawer} onClose={() => { setOpendrawer(false),setServiceItemTemp({...serviceItemTemp,serviceItemValues:selectedServiceItemTemp}),setSelectedRowKeys(selectedServiceItemTemp.map(item=>item.id_service_item))}} destroyOnClose={true} width={700} 
                                 footer={
                                 <div style={{ textAlign: 'right' }}>
-                                        <button onClick={() => { setOpendrawer(false),setServiceItemTemp({...serviceItemTemp,serviceItemValues:selectedServiceItemTemp}),setSelectedRowKeys(selectedServiceItemTemp.map(item=>item.key))}} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
+                                        <button onClick={() => { setOpendrawer(false),setServiceItemTemp({...serviceItemTemp,serviceItemValues:selectedServiceItemTemp}),setSelectedRowKeys(selectedServiceItemTemp.map(item=>item.id_service_item))}} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
                                             Cancel
                                             </button>
                                         <Button type="primary" onClick={()=>{onAddService(),setOpendrawer(false)}} className=" bg-blue-500 hover:bg-blue-700 border text-white py-1 px-2 rounded-md w-20">

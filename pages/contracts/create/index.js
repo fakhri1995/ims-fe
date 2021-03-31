@@ -20,7 +20,11 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
     const [loadingbtn, setLoadingbtn] = useState(false)
     const [opendrawer, setOpendrawer] = useState(false)
     const [dataServiceItems, setDataServiceItems] = useState([])
-    console.log(contractInputData)
+    const [validation,setValidation] = useState({
+        harga: true,
+        id_terms_of_payment: true
+    })
+    // console.log(contractInputData)
     //----------Create Incident Parameter-------------
     const [newcontract, setNewcontract] = useState({
         id_client_company: "",
@@ -40,28 +44,28 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
     }
     const onAddService = () => {
         setSelectedServiceItemTemp(serviceItemTemp.serviceItemValues)
+        var items = serviceItemTemp.serviceItemValues
         // var items = [...dataServiceItems]
-        var items = serviceItemTemp.serviceItemValues.map((item,index)=>{
-            return ({
-                id_service_item: item.key,
-                harga: "",
-                id_terms_of_payment: ""
-            })
-        })
+        // var items = serviceItemTemp.serviceItemValues.map((item,index)=>{
+        //     return ({
+        //         id_service_item: item.key,
+        //         harga: "",
+        //         id_terms_of_payment: ""
+        //     })
+        // })
         setDataServiceItems(items)
         setNewcontract({
             ...newcontract,
             service_items: items
         })
+        const validationHarga = items.every(item => item.harga);
+        const validationTerms = items.every(item => item.id_terms_of_payment);
+        setValidation({...validation,harga:validationHarga,id_terms_of_payment:validationTerms})
     }
     const onChangeServicePriceItems = (e,id) => {
         var val = e.target.value
-        const idx = serviceItemTemp.serviceItemValues.map(item=>item.key).indexOf(id)
+        const idx = serviceItemTemp.serviceItemValues.map(item=>item.id_service_item).indexOf(id)
         var items = [...dataServiceItems]
-        // items[idx] = {
-        //     id_service_item: id,
-        //     harga: val
-        // }
         items[idx].id_service_item = id
         items[idx].harga = val
         setDataServiceItems(items)
@@ -69,21 +73,21 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
             ...newcontract,
             service_items: items
         })
+        const validationHarga = items.every(item => item.harga);
+        setValidation({...validation,harga:validationHarga})
     }
 
     const onChangeServiceTermsofPaymentItems = (val,id) => {
-        const idx = serviceItemTemp.serviceItemValues.map(item=>item.key).indexOf(id)
+        const idx = serviceItemTemp.serviceItemValues.map(item=>item.id_service_item).indexOf(id)
         var items = [...dataServiceItems]
-        // items[idx] = {
-        //     id_service_item: id,
-        //     id_terms_of_payment: val
-        // }
         items[idx].id_terms_of_payment = val
         setDataServiceItems(items)
         setNewcontract({
             ...newcontract,
             service_items: items
         })
+        const validationTerms = items.every(item => item.id_terms_of_payment);
+        setValidation({...validation,id_terms_of_payment:validationTerms})
     }
     const DynamicComponent = () => {
         return (
@@ -113,10 +117,10 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                 <Input className={''} defaultValue={item.nama} readOnly></Input>
                             </div>
                             <div className="col-span-1 md:col-span-1 flex flex-col px-2 py-2">
-                                <Input name={"harga"+item.key} key={"harga"+item.key} type="number" defaultValue={dataServiceItems[idx].harga} onBlur={(e)=>{ onChangeServicePriceItems(e,item.key)}} prefix="IDR" suffix="Rupiah" allowClear ></Input>
+                                <Input name={"harga"+item.key} required key={"harga"+item.key} type="number" defaultValue={dataServiceItems[idx].harga} onBlur={(e)=>{ onChangeServicePriceItems(e,item.id_service_item)}} prefix="IDR" suffix="Rupiah" allowClear ></Input>
                             </div>
                             <div className="col-span-1 md:col-span-1 flex flex-col pl-2 py-2">
-                                <Select name={"terms"+item.key} key={"terms"+item.key} className={''} defaultValue={dataServiceItems[idx].id_terms_of_payment} allowClear onChange={(val)=>{onChangeServiceTermsofPaymentItems(val,item.key)}}>
+                                <Select name={"terms"+item.key} key={"terms"+item.key} className={''} defaultValue={dataServiceItems[idx].id_terms_of_payment} allowClear onChange={(val)=>{onChangeServiceTermsofPaymentItems(val,item.id_service_item)}}>
                                     {
                                         contractInputData.data.term_of_payments.map((item,idx)=>{
                                             return (<Option key={item.id} value={item.id}>{item.nama}</Option>)
@@ -134,16 +138,25 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
     //----------state untuk selected row dan temp row-------------
     const[selectedServiceItemTemp, setSelectedServiceItemTemp] = useState([])
     const [serviceItemTemp, setServiceItemTemp] = useState({
-        serviceItemValues: [],
-        serviceItemKeys: []
+        serviceItemValues: []
     })
     const [selectedRowKeys, setSelectedRowKeys] = useState([]) //untuk menyimpan data yang di cheklist atau dipilih
     const onSelectChange = (selectedRowKeys,selectedRows) => {
+        const a3 = selectedRows.map(t1 => ({...t1, ...dataServiceItems.find(t2 => t2.id_service_item === t1.key)}))
+        a3.map((obj)=>{
+            if(obj.harga == null){
+                obj.harga = ""
+            }
+            if(obj.id_terms_of_payment == null){
+                obj.id_terms_of_payment = ""
+            }
+            obj.id_service_item = obj.key
+        })
+        console.log(a3)
         setSelectedRowKeys(selectedRowKeys)
         setServiceItemTemp({
             ...serviceItemTemp,
-            serviceItemValues: selectedRows,
-            serviceItemKeys: selectedRowKeys
+            serviceItemValues: a3
         })
         console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     }
@@ -222,8 +235,8 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
     const checkFile = () => {
         // console.log (selectedServiceItemTemp)
         // console.log (serviceItemTemp)
-        console.log (dataServiceItems)
-        console.log (newcontract)
+        // console.log (dataServiceItems)
+        console.log (validation)
         // var satu = selectedServiceItemTemp.map(item=>item.key)
         // var dua = dataServiceItems.map(item=>item.id_service_item)
         // // console.log (newcontract,selectedServiceItemTemp,dataServiceItems)
@@ -235,7 +248,7 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
         // console.log (dataServiceItems)
     }
     const check = () => {
-        
+        console.log(newcontract.service_items)
     }
     
     return (
@@ -251,10 +264,20 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                         <Link href="/contracts?originPath=Admin" >
                                             <Button type="default" size="middle">Batalkan</Button>
                                         </Link>
-                                        <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn}>Simpan</Button>
+                                        <Button disabled={!(validation.harga && validation.id_terms_of_payment) } type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn}>Simpan</Button>
                                     </div>
                                 </div>
                             </Sticky>
+                            <p className="text-red-600 float-right ml-auto">
+                                {
+                                    validation.harga?"":"Harga pada item service harus terisi semua"
+                                }
+                            </p>
+                            <p className="text-red-600 float-right ml-auto">
+                                {
+                                    validation.id_terms_of_payment?"":"Terms of Payment pada item service harus terisi semua"
+                                }
+                            </p>
                             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-3">
                                 <div className=" col-span-1 md:col-span-1 flex flex-col" >
                                     <div className="pb-4 md:mb-0 ">
@@ -310,7 +333,7 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                             ]}
                                             initialValue={newcontract.id_client_company}
                                         >
-                                            <Select placeholder="Klien" name={`id_client_company`} onChange={(value) => {setNewcontract({...newcontract,id_client_company: value})}} options={populateListCompany} allowClear/>
+                                            <Select showSearch optionFilterProp="label" placeholder="Klien" name={`id_client_company`} onChange={(value) => {setNewcontract({...newcontract,id_client_company: value})}} options={populateListCompany} allowClear/>
                                         </Form.Item>
                                     </div>
 
@@ -360,10 +383,10 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                 <DynamicComponent></DynamicComponent>
                             </div>
                             
-                            <Drawer title="Add Service Item" maskClosable={false} visible={opendrawer} onClose={() => { setOpendrawer(false),setServiceItemTemp({...serviceItemTemp,serviceItemKeys:selectedServiceItemTemp.map(item=>item.key),serviceItemValues:selectedServiceItemTemp}),setSelectedRowKeys(selectedServiceItemTemp.map(item=>item.key))}} destroyOnClose={true} width={700} 
+                            <Drawer title="Add Service Item" maskClosable={false} visible={opendrawer} onClose={() => { setOpendrawer(false),setServiceItemTemp({...serviceItemTemp,serviceItemValues:selectedServiceItemTemp}),setSelectedRowKeys(selectedServiceItemTemp.map(item=>item.id_service_item))}} destroyOnClose={true} width={700} 
                                 footer={
                                 <div style={{ textAlign: 'right' }}>
-                                        <button onClick={() => { setOpendrawer(false),setServiceItemTemp({...serviceItemTemp,serviceItemKeys:selectedServiceItemTemp.map(item=>item.key),serviceItemValues:selectedServiceItemTemp}),setSelectedRowKeys(selectedServiceItemTemp.map(item=>item.key))}} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
+                                        <button onClick={() => { setOpendrawer(false),setServiceItemTemp({...serviceItemTemp,serviceItemValues:selectedServiceItemTemp}),setSelectedRowKeys(selectedServiceItemTemp.map(item=>item.id_service_item))}} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
                                             Cancel
                                             </button>
                                         <Button type="primary" onClick={()=>{onAddService(),setOpendrawer(false)}} className=" bg-blue-500 hover:bg-blue-700 border text-white py-1 px-2 rounded-md w-20">
