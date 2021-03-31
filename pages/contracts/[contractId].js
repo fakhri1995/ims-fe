@@ -68,7 +68,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                     duration: 3
                 })
                 setTimeout(() => {
-                    rt.push(`/groups?originPath=Admin`)
+                    rt.push(`/contracts?originPath=Admin`)
                 }, 500)
             }
             else if (!res2.success) {
@@ -88,6 +88,9 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                 'Authorization': JSON.parse(tok),
                 'Content-Type': 'application/json'
             },
+            body: JSON.stringify({
+                id: key
+            })
         })
             .then(res => res.json())
             .then(res2 => {
@@ -98,7 +101,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/groups?originPath=Admin`)
+                        rt.push(`/contracts?originPath=Admin`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -138,21 +141,30 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                     <div className=" col-span-1 md:col-span-4 flex flex-col" id="formAgentsWrapper">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
-                                <h1 className="font-semibold text-base w-auto py-2">{contract.nomor_kontrak}</h1>
+                                <div className={'flex'}>
+                                <h1 className="font-semibold text-base w-auto py-2 pr-4">{contract.nomor_kontrak}</h1>
+                                {
+                                    contract.is_active 
+                                    ?
+                                    <div className=" relative top-1 h-9 bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md w-auto md:mr-5">AKTIF</div>
+                                    :
+                                    <div className=" relative top-1 h-9 bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md w-auto md:mr-5">NON-AKTIF</div>
+                                }
+                                </div>
                                 <div className="flex space-x-2">
                                     <Link href={`/contracts/update/${contract.id}?originPath=Admin`}>
-                                        <div className=" text-white text-sm bg-blue-500 hover:bg-blue-600 border-gray-900 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
+                                        <div className=" text-white text-sm bg-blue-500 hover:bg-blue-600 border-gray-900 cursor-pointer h-10 py-2 w-20 text-center" >
                                             <p>
                                                 Edit
                                             </p>
                                         </div>
                                     </Link>
-                                    <button onClick={()=>{onClickModalTerminateContract(true,contract)}} className=" text-white text-sm bg-red-600 border-gray-900  hover:bg-red-700 cursor-pointer rounded-md h-10 py-2 w-20 text-center">
+                                    <button onClick={()=>{onClickModalTerminateContract(true,contract)}} className=" text-white text-sm bg-red-600 border-gray-900  hover:bg-red-700 cursor-pointer h-10 py-2 w-20 text-center">
                                             <p>
                                                 Terminate
                                             </p>
                                     </button>
-                                    <button onClick={()=>{onClickModalDeleteContract(true,contract)}} className=" text-black text-sm bg-white border-gray-900 border-2 hover:bg-gray-400 cursor-pointer rounded-md h-10 py-2 w-20 text-center">
+                                    <button onClick={()=>{onClickModalDeleteContract(true,contract)}} className=" text-black text-sm bg-white border-gray-900 border-2 hover:bg-gray-400 cursor-pointer h-10 py-2 w-20 text-center">
                                             <p>
                                                 Delete
                                             </p>
@@ -241,7 +253,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                                                                     Nama Service Item
                                                                 </div>
                                                                 <div className={'col-span-2'}>
-                                                                    {item.nama_service_item}
+                                                                    {item.nama}
                                                                 </div>
                                                             </div>
                                                             <div className={'grid grid-cols-1 md:grid-cols-3 p-2'} >
