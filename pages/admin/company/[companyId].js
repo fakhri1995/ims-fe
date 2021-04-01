@@ -19,6 +19,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
     const [loadingubahaktif, setloadingubahaktif] = useState(false)
     const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
     const [instanceForm] = Form.useForm()
+    console.log("kk: " + typeof (dataDetailCompany.data.data.singkatan))
     const [data1, setData1] = useState({
         id: dataDetailCompany.data.data.company_id,
         company_name: dataDetailCompany.data.data.company_name,
@@ -26,13 +27,13 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
         address: dataDetailCompany.data.data.address,
         phone_number: dataDetailCompany.data.data.phone_number,
         image_logo: dataDetailCompany.data.data.image_logo,
-        singkatan: "",
-        tanggal_pkp: moment(new Date()),
-        penanggung_jawab: '',
-        npwp: '',
-        fax: '',
-        email: '',
-        website: ''
+        singkatan: dataDetailCompany.data.data.singkatan,
+        tanggal_pkp: moment(dataDetailCompany.data.data.tanggal_pkp)/*moment(new Date())*/,
+        penanggung_jawab: dataDetailCompany.data.data.penanggung_jawab,
+        npwp: dataDetailCompany.data.data.npwp,
+        fax: dataDetailCompany.data.data.fax,
+        email: dataDetailCompany.data.data.email,
+        website: dataDetailCompany.data.data.website
     })
     const [loadingfoto, setLoadingfoto] = useState(false)
 
@@ -263,12 +264,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                                         :
                                         <>
                                             <h1 className="font-semibold text-sm">Singkatan:</h1>
-                                            {
-                                                data1.singkatan === '' ?
-                                                    <h1 className="text-sm font-normal text-black">-</h1>
-                                                    :
-                                                    <h1 className="text-sm font-normal text-black">{data1.singkatan}</h1>
-                                            }
+                                            <h1 className="text-sm font-normal text-black">{data1.singkatan}</h1>
                                         </>
                                 }
                             </div>
@@ -287,14 +283,14 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                                         :
                                         <>
                                             <h1 className="font-semibold text-sm">Tanggal PKP:</h1>
-                                            <h1 className="text-sm font-normal text-black">{data1.tanggal_pkp.locale('id').format('LL')}</h1>
-                                            {/* {
-                                                data1.tanggal_pkp.getTime() - new Date().getTime() > 0 ?
+                                            {/* <h1 className="text-sm font-normal text-black">{data1.tanggal_pkp.locale('id').format('LL')}</h1> */}
+                                            {
+                                                data1.tanggal_pkp === null ?
                                                     <h1 className="text-sm font-normal text-black">-</h1>
                                                     :
-                                                    <h1 className="text-sm font-normal text-black">{data1.tanggal_pkp.toDateString()}</h1>
+                                                    <h1 className="text-sm font-normal text-black">{data1.tanggal_pkp.locale('id').format('LL')}</h1>
 
-                                            } */}
+                                            }
                                         </>
                                 }
                             </div>
@@ -307,12 +303,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                                         :
                                         <>
                                             <h1 className="font-semibold text-sm">Penanggung Jawab:</h1>
-                                            {
-                                                data1.penanggung_jawab === '' ?
-                                                    <h1 className="text-sm font-normal text-black">-</h1>
-                                                    :
-                                                    <h1 className="text-sm font-normal text-black">{data1.penanggung_jawab}</h1>
-                                            }
+                                            <h1 className="text-sm font-normal text-black">{data1.penanggung_jawab}</h1>
                                         </>
                                 }
                             </div>
@@ -325,12 +316,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                                         :
                                         <>
                                             <h1 className="font-semibold text-sm">NPWP:</h1>
-                                            {
-                                                data1.npwp === '' ?
-                                                    <h1 className="text-sm font-normal text-black">-</h1>
-                                                    :
-                                                    <h1 className="text-sm font-normal text-black">{data1.npwp}</h1>
-                                            }
+                                            <h1 className="text-sm font-normal text-black">{data1.npwp}</h1>
                                         </>
                                 }
                             </div>
@@ -343,12 +329,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                                         :
                                         <>
                                             <h1 className="font-semibold text-sm">Fax:</h1>
-                                            {
-                                                data1.fax === '' ?
-                                                    <h1 className="text-sm font-normal text-black">-</h1>
-                                                    :
-                                                    <h1 className="text-sm font-normal text-black">{data1.fax}</h1>
-                                            }
+                                            <h1 className="text-sm font-normal text-black">{data1.fax}</h1>
                                         </>
                                 }
                             </div>
@@ -361,12 +342,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                                         :
                                         <>
                                             <h1 className="font-semibold text-sm">Email:</h1>
-                                            {
-                                                data1.email === '' ?
-                                                    <h1 className="text-sm font-normal text-black">-</h1>
-                                                    :
-                                                    <h1 className="text-sm font-normal text-black">{data1.email}</h1>
-                                            }
+                                            <h1 className="text-sm font-normal text-black">{data1.email}</h1>
                                         </>
                                 }
                             </div>
@@ -379,12 +355,8 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                                         :
                                         <>
                                             <h1 className="font-semibold text-sm">Website:</h1>
-                                            {
-                                                data1.website === '' ?
-                                                    <h1 className="text-sm font-normal text-black">-</h1>
-                                                    :
-                                                    <h1 className="text-sm font-normal text-black">{data1.website}</h1>
-                                            }
+
+                                            <h1 className="text-sm font-normal text-black">{data1.website}</h1>
                                         </>
                                 }
                             </div>
