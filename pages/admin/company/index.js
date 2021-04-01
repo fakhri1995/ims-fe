@@ -282,18 +282,6 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
                                         <Input name="name" onChange={onChangeCreateClients}></Input>
                                     </Form.Item>
                                 </div>
-                                {/* <div className="md:m-4 mb-5 md:mb-0 ">
-                                    <Form.Item name="role" label="Role"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Role wajib diisi',
-                                            },
-                                        ]}
-                                    >
-                                        <input type="number" value={newclients.role} name={'role'} onChange={onChangeCreateClients} style={{ width: `20rem` }} />
-                                    </Form.Item>
-                                </div> */}
                                 <div className="md:m-4 mb-5 md:mb-0 ">
                                     <Form.Item name="address" label="Alamat"
                                         rules={[

@@ -256,7 +256,7 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
 
                         </div>
 
-                        <div id="tabel" className="flex flex-col">
+                        <div id="tabel" className="flex flex-col overflow-x-auto md:overscroll-none">
                             <div id="thead" className="grid grid-cols-9 justify-center items-center border-b-2 border-gray-600 p-2 bg-gray-100">
                                 <div className=" col-span-2 font-semibold text-sm">Nama</div>
                                 <div className=" col-span-2 font-semibold text-sm">Tipe</div>
