@@ -42,7 +42,7 @@ function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColum
         setWarningDelete({
             ...warningDelete,
             ["istrue"]: istrue,
-            ["key"]: record.key,
+            ["key"]: record.id,
             ["asset_name"]: record.asset_name
         })
     }
