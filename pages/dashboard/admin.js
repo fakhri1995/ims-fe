@@ -44,6 +44,29 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             </div>
                         </Link>
                         <Link href={{
+                            pathname: '/groups',
+                            query: {
+                                originPath: "Admin"
+                            }
+                        }}>
+                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                                <div>
+                                    <UserOutlined /> Groups
+                                </div>
+                            </div>
+                        </Link>
+                    </div>
+                </div>
+
+                <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
+                    <div className="border-b border-gray-300">
+                        <h3 className="font-semibold text-lg mb-0">Features Management</h3>
+                        <h3 className="font-normal text-sm text-gray-700">
+                            Manajemen untuk pengaturan akses fitur dari tiap role
+                        </h3>
+                    </div>
+                    <div className="grid md:grid-cols-5 sm:grid-cols-1">
+                        <Link href={{
                             pathname: '/roles',
                             query: {
                                 originPath: "Admin"
@@ -55,15 +78,17 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                 </div>
                             </div>
                         </Link>
-                        <Link href={{
-                            pathname: '/groups',
-                            query: {
-                                originPath: "Admin"
-                            }
-                        }}>
+                        <Link href={'/admin/modules'}>
                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
-                                    <UserOutlined /> Groups
+                                    <InboxOutlined /> Modules
+                                </div>
+                            </div>
+                        </Link>
+                        <Link href={'/admin/features'}>
+                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                                <div>
+                                    <InboxOutlined /> Features
                                 </div>
                             </div>
                         </Link>
