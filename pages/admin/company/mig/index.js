@@ -725,7 +725,7 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGet
 export async function getServerSideProps({ req, res }) {
     var initProps = {};
     const reqBodyMigDetail = {
-        login_id: 66
+        company_id: 66
     }
     if (req && req.headers) {
         const cookies = req.headers.cookie;

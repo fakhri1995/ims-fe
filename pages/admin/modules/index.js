@@ -2,8 +2,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import httpcookie from 'cookie'
 import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
-import Link from 'next/link'
-import { Button, Table, Dropdown, Menu, Form, Input, Select, notification, Modal, Drawer, Checkbox } from 'antd'
+import { Button, Form, Input, Modal, Drawer, Checkbox } from 'antd'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard.module.css'
 
@@ -40,8 +39,6 @@ const ModulesIndex = ({ initProps, dataProfile, sidemenu }) => {
 
     const rt = useRouter()
     const pathArr = rt.pathname.split("/").slice(1)
-    const { Option } = Select
-    const { Search } = Input
     const tabnameArr = []
     const loop = []
     datajson.data.map((doc, idx) => {
