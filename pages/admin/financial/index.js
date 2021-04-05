@@ -3,7 +3,7 @@ import { useState } from 'react'
 import httpcookie from 'cookie'
 import { PlusCircleTwoTone, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import Link from 'next/link'
-import { Button, Empty, Form, Input, Select, notification, Modal } from 'antd'
+import { Button, Table, Form, Input, Select, notification, Modal } from 'antd'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard.module.css'
 
@@ -11,6 +11,67 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
     const rt = useRouter()
     const pathArr = rt.pathname.split("/").slice(1)
     const { Option } = Select
+
+    //data Table
+    const columns = [
+        {
+            title: 'Nama',
+            dataIndex: 'nama',
+            key: 'nama',
+        },
+        {
+            title: 'Tipe',
+            dataIndex: 'jenis',
+            key: 'jenis',
+        },
+        {
+            title: 'Tahun Penggunaan',
+            dataIndex: 'tahun_penggunaan',
+            key: 'tahun_penggunaan',
+            align: 'center',
+            render: (text, record, index) => (
+                <div className="flex justify-center">
+                    {text}
+                </div>
+            )
+        },
+        {
+            title: 'Deskripsi',
+            dataIndex: 'deskripsi',
+            key: 'deskripsi',
+        },
+        {
+            dataIndex: 'status',
+            key: 'status',
+            render: (text, record, index) => (
+                <div className="flex">
+                    <div className=" h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center mr-3" onClick={() => {
+                        setdataedit({
+                            id: record.id,
+                            nama: record.nama,
+                            jenis: record.jenis,
+                            tahun_penggunaan: record.tahun_penggunaan,
+                            deskripsi: record.deskripsi
+                        })
+                        setmodaledit(true)
+                    }}>
+                        <EditOutlined />
+                    </div>
+                    <div className=" h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center" onClick={() => { setmodaldelete(true); setiddelete(record.id) }}><DeleteOutlined /></div>
+                </div>
+            )
+        },
+    ]
+
+    const dataListDepreciationsMap = dataGetDepreciations.data.map((doc, idx) => {
+        return ({
+            id: doc.id,
+            nama: doc.nama,
+            jenis: doc.jenis,
+            tahun_penggunaan: doc.tahun_penggunaan,
+            deskripsi: doc.deskripsi
+        })
+    })
 
     //useState
     const [recordrow, setrecordrow] = useState({})
@@ -180,7 +241,7 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
     return (
         <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
             <div className="w-full grid grid-cols-5 border-t border-opacity-30 border-gray-500 bg-white">
-                <div className=" col-span-4 flex flex-col">
+                <div className="col-span-5 lg:col-span-4 flex flex-col">
                     <div className="border-b border-opacity-30 border-gray-400 flex items-center p-4 mb-5">
                         <h1 className="font-semibold">Financial</h1>
                     </div>
@@ -195,47 +256,49 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
                                 <div className="flex flex-col mb-4">
                                     <div className="flex items-center font-bold mb-3">Tambah Depresiasi Baru</div>
                                     <div className=" flex flex-col">
-                                        <Form layout="vertical" onFinish={handleCreate} initialValues={datacreate}>
-                                            <div className="grid grid-cols-3">
-                                                <Form.Item label="Nama" name="nama" rules={[
-                                                    {
-                                                        required: true,
-                                                        message: 'Nama wajib diisi',
-                                                    },
-                                                ]} style={{ marginRight: `1rem` }}>
-                                                    <Input name="nama" onChange={onChangeCreate} defaultValue={datacreate.nama} />
-                                                </Form.Item>
-                                                <Form.Item label="Tipe" name="jenis" rules={[
-                                                    {
-                                                        required: true,
-                                                        message: 'Wajib diisi',
-                                                    },
-                                                ]} style={{ marginRight: `1rem` }}>
-                                                    <Select defaultValue={datacreate.jenis} onChange={(value) => { setdatacreate({ ...datacreate, jenis: value }) }}>
-                                                        <Option value={"Declining Balance"}>Declining Balance</Option>
-                                                        <Option value={'Staright Line'}>Staright Line</Option>
-                                                        <Option value={'Sum of Years Digit'}>Sum of Years Digit</Option>
-                                                    </Select>
-                                                </Form.Item>
-                                                <Form.Item label="Daya Tahan (tahun)" name="tahun_penggunaan" rules={[
-                                                    {
-                                                        required: true,
-                                                        message: 'Wajib diisi',
-                                                    },
-                                                ]} style={{ marginRight: `1rem` }}>
-                                                    <Input name="tahun_penggunaan" onChange={onChangeCreate} defaultValue={datacreate.tahun_penggunaan} />
-                                                </Form.Item>
-                                            </div>
-                                            <div className="mb-2">
-                                                <Form.Item label="Deskripsi" name="deskripsi">
-                                                    <Input.TextArea name="deskripsi" onChange={onChangeCreate} defaultValue={datacreate.deskripsi} style={{ width: `100%` }}></Input.TextArea>
-                                                </Form.Item>
-                                            </div>
-                                            <div className="flex justify-end items-center">
-                                                <Button type="default" onClick={() => { settambahbtn(true) }} size="middle" style={{ marginRight: `1rem` }}>Batalkan</Button>
-                                                <Button type="primary" htmlType="submit" loading={loadingcreate} size="middle">Simpan</Button>
-                                            </div>
-                                        </Form>
+                                        <div className="w-full">
+                                            <Form layout="vertical" onFinish={handleCreate} initialValues={datacreate} style={{ width: `100%` }}>
+                                                <div className="w-full md:grid md:grid-cols-3">
+                                                    <Form.Item label="Nama" name="nama" rules={[
+                                                        {
+                                                            required: true,
+                                                            message: 'Nama wajib diisi',
+                                                        },
+                                                    ]} style={{ marginRight: `1rem` }}>
+                                                        <Input name="nama" onChange={onChangeCreate} defaultValue={datacreate.nama} />
+                                                    </Form.Item>
+                                                    <Form.Item label="Tipe" name="jenis" rules={[
+                                                        {
+                                                            required: true,
+                                                            message: 'Wajib diisi',
+                                                        },
+                                                    ]} style={{ marginRight: `1rem` }}>
+                                                        <Select defaultValue={datacreate.jenis} onChange={(value) => { setdatacreate({ ...datacreate, jenis: value }) }}>
+                                                            <Option value={"Declining Balance"}>Declining Balance</Option>
+                                                            <Option value={'Staright Line'}>Staright Line</Option>
+                                                            <Option value={'Sum of Years Digit'}>Sum of Years Digit</Option>
+                                                        </Select>
+                                                    </Form.Item>
+                                                    <Form.Item label="Daya Tahan (tahun)" name="tahun_penggunaan" rules={[
+                                                        {
+                                                            required: true,
+                                                            message: 'Wajib diisi',
+                                                        },
+                                                    ]} style={{ marginRight: `1rem` }}>
+                                                        <Input name="tahun_penggunaan" onChange={onChangeCreate} defaultValue={datacreate.tahun_penggunaan} />
+                                                    </Form.Item>
+                                                </div>
+                                                <div className="mb-2">
+                                                    <Form.Item label="Deskripsi" name="deskripsi">
+                                                        <Input.TextArea name="deskripsi" onChange={onChangeCreate} defaultValue={datacreate.deskripsi} style={{ width: `100%` }}></Input.TextArea>
+                                                    </Form.Item>
+                                                </div>
+                                                <div className="flex justify-end items-center">
+                                                    <Button type="default" onClick={() => { settambahbtn(true) }} size="middle" style={{ marginRight: `1rem` }}>Batalkan</Button>
+                                                    <Button type="primary" htmlType="submit" loading={loadingcreate} size="middle">Simpan</Button>
+                                                </div>
+                                            </Form>
+                                        </div>
                                     </div>
                                 </div>
                                 :
@@ -255,8 +318,8 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
                             }
 
                         </div>
-
-                        <div id="tabel" className="flex flex-col overflow-x-auto md:overscroll-none">
+                        <Table columns={columns} dataSource={dataListDepreciationsMap} pagination={{ pageSize: 8 }} scroll={{ x: 300 }}></Table>
+                        {/* <div id="tabel" className="flex flex-col overflow-x-scroll">
                             <div id="thead" className="grid grid-cols-9 justify-center items-center border-b-2 border-gray-600 p-2 bg-gray-100">
                                 <div className=" col-span-2 font-semibold text-sm">Nama</div>
                                 <div className=" col-span-2 font-semibold text-sm">Tipe</div>
@@ -302,61 +365,36 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
                                             }
                                         </>
                                 }
-
-                                {/* <div className="grid grid-cols-9 justify-center items-center p-4 hover:bg-gray-200">
-                                    <div className=" col-span-2 font-semibold text-sm">SL-5</div>
-                                    <div className=" col-span-2 text-sm">Straight Line</div>
-                                    <div className=" col-span-1 text-sm">5 Tahun</div>
-                                    <div className=" col-span-3 text-sm">Straight Line 5 Tahun</div>
-                                    <div className="col-span-1">
-                                        {
-
-                                        }
-                                        <button></button>
-                                        <button></button>
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-9 justify-center items-center p-4 hover:bg-gray-200">
-                                    <div className=" col-span-2 font-semibold text-sm">SL-5</div>
-                                    <div className=" col-span-2 text-sm">Straight Line</div>
-                                    <div className=" col-span-1 text-sm">5 Tahun</div>
-                                    <div className=" col-span-3 text-sm">Straight Line 5 Tahun</div>
-                                    <div className="col-span-1">
-                                        {
-
-                                        }
-                                        <button></button>
-                                        <button></button>
-                                    </div>
-                                </div> */}
                             </div>
-                            <Modal
-                                title={`Konfirmasi hapus depresiasi`}
-                                visible={modaldelete}
-                                okButtonProps={{ disabled: loadingdelete }}
-                                onCancel={() => { setmodaldelete(false) }}
-                                onOk={handleDelete}
-                                maskClosable={false}
-                                style={{ top: `3rem` }}
-                                width={500}
-                                destroyOnClose={true}
-                            >
-                                Yakin ingin hapus depresiasi ini?
+                        </div> */}
+                        <Modal
+                            title={`Konfirmasi hapus depresiasi`}
+                            visible={modaldelete}
+                            okButtonProps={{ disabled: loadingdelete }}
+                            onCancel={() => { setmodaldelete(false) }}
+                            onOk={handleDelete}
+                            maskClosable={false}
+                            style={{ top: `3rem` }}
+                            width={500}
+                            destroyOnClose={true}
+                        >
+                            Yakin ingin hapus depresiasi ini?
                             </Modal>
-                            <Modal
-                                title={`Edit Depresiasi`}
-                                visible={modaledit}
-                                onCancel={() => { setmodaledit(false) }}
-                                footer={null}
-                                maskClosable={false}
-                                style={{ top: `3rem` }}
-                                width={700}
-                                destroyOnClose={true}>
-                                <div className="flex flex-col mb-4">
-                                    <div className="flex items-center font-bold mb-3">Edit Depresiasi</div>
-                                    <div className=" flex flex-col">
+                        <Modal
+                            title={`Edit Depresiasi`}
+                            visible={modaledit}
+                            onCancel={() => { setmodaledit(false) }}
+                            footer={null}
+                            maskClosable={false}
+                            style={{ top: `3rem` }}
+                            width={700}
+                            destroyOnClose={true}>
+                            <div className="flex flex-col mb-4">
+                                <div className="flex items-center font-bold mb-3">Edit Depresiasi</div>
+                                <div className=" flex flex-col">
+                                    <div className="w-full">
                                         <Form layout="vertical" onFinish={handleEdit} initialValues={dataedit}>
-                                            <div className="grid grid-cols-3">
+                                            <div className=" w-full md:grid grid-cols-3">
                                                 <Form.Item label="Nama" name="nama" rules={[
                                                     {
                                                         required: true,
@@ -400,8 +438,8 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
                                         </Form>
                                     </div>
                                 </div>
-                            </Modal>
-                        </div>
+                            </div>
+                        </Modal>
                     </div>
                 </div>
             </div>
