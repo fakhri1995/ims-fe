@@ -2,9 +2,10 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import httpcookie from 'cookie'
 import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
-import { Button, Form, Input, Modal, Drawer, Checkbox } from 'antd'
+import { Button, Form, Input, Modal, Drawer, Checkbox, Select } from 'antd'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard.module.css'
+import Sticky from 'wil-react-sticky'
 
 const ModulesIndex = ({ initProps, dataProfile, sidemenu }) => {
     //dataSource
@@ -39,6 +40,7 @@ const ModulesIndex = ({ initProps, dataProfile, sidemenu }) => {
 
     const rt = useRouter()
     const pathArr = rt.pathname.split("/").slice(1)
+    const { Option } = Select
     const tabnameArr = []
     const loop = []
     datajson.data.map((doc, idx) => {
@@ -58,6 +60,7 @@ const ModulesIndex = ({ initProps, dataProfile, sidemenu }) => {
     const [tabnameArrVal, settabnameArrVal] = useState(loop)
     const [idmodule, setidmodule] = useState(0)
     const [modulselected, setmodulselected] = useState(datajson.data[0].nama_kategori)
+    const [currentselectkateg, setcurrentselectkateg] = useState(datajson.data[0].nama_kategori)
     const [datafeature, setdatafeature] = useState()
     const [datacurrfeature, setdatacurrfeature] = useState()
     const [dataeditmodule, setdataeditmodule] = useState({
@@ -121,77 +124,150 @@ const ModulesIndex = ({ initProps, dataProfile, sidemenu }) => {
         )
         // }
     }
+    const onChangeTabSmall = (namakateg) => {
+        setcurrentselectkateg(namakateg)
+        var variable = {}
+        if (namakateg != 'all') {
+            variable = datajson.data.filter(dataa => { return dataa.nama_kategori == namakateg }).map((doc, idx) => {
+                return ({
+                    idxjenis: idx + 1,
+                    id: doc.id,
+                    deskripsi: doc.deskripsi
+                })
+            })[0]
+        }
+        setmodulselected(namakateg)
+        setidmodule(variable.id)
+        // if (namakateg == 'all') {
+        //     const temp = tabnameArrVal
+        //     temp[0] = "block"
+        //     settabnameArrVal(temp)
+        //     for (var i = 0; i < tabnameArrVal.length; i++) {
+        //         if (i != 0) {
+        //             const temp2 = tabnameArrVal
+        //             temp2[i] = "hidden"
+        //             settabnameArrVal(temp2)
+        //         }
+        //     }
+        //     setdatatable(dataListServiceItemMap)
+        //     setdatacurrtable(dataListServiceItemMap)
+        // }
+        // else {
+        const temp3 = tabnameArrVal
+        temp3[variable.idxjenis] = "block"
+        settabnameArrVal(temp3)
+        for (var i = 0; i < tabnameArrVal.length; i++) {
+            if (i != variable.idxjenis) {
+                const temp4 = tabnameArrVal
+                temp4[i] = "hidden"
+                settabnameArrVal(temp4)
+            }
+        }
+        setdataeditmodule({
+            id: variable.id,
+            nama_kategori: namakateg,
+            deskripsi: variable.deskripsi
+        })
+        setdatafeature()
+        setdatafeature(
+            // prev => {
+            //     return prev.filter((doc, idx) => { return doc.categoryName == namakateg })
+            // }
+        )
+        setdatacurrfeature()
+        setdatacurrfeature(
+            // prev => {
+            //     return prev.filter((doc, idx) => { return doc.categoryName == namakateg })
+            // }
+        )
+        // }
+    }
 
 
     return (
         <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} st={st} pathArr={pathArr}>
-            <div className="w-full grid grid-cols-5 border-t border-opacity-30 border-gray-500 bg-white">
-                <div className="col-span-5 border-b border-opacity-30 border-gray-400 flex items-center justify-between p-4 mb-5">
-                    <h1 className="font-bold">Modules</h1>
-                    <Button type="primary" size="large" onClick={() => { setdrawablecreate(true) }}>Tambah Module</Button>
-                </div>
-                <div className="col-span-5">
-                    <div className="w-full grid grid-cols-9">
-                        <div className="col-span-2 flex flex-col border-r pr-2">
-                            <div>
-                                {
-                                    datajson.data.map((doc, idx) => {
-                                        return (
-                                            <>
-                                                {
-                                                    tabnameArrVal[idx] === "block" ?
-                                                        <div className={`p-2 cursor-pointer flex items-center text-sm font-semibold bg-blue-700 text-white rounded`}>
-                                                            {/* <FolderOpenOutlined style={{ marginRight: `0.7rem` }} /> */}
-                                                            {doc.nama_kategori}
-                                                        </div>
-                                                        :
-                                                        <div className={`p-2 cursor-pointer hover:text-gray-900 flex items-center text-sm font-semibold`} onClick={(e) => { onChangeTab(e, tabnameArr[idx], (idx), doc.nama_kategori, doc.deskripsi, doc.id) }}>
-                                                            {/* <FolderOpenOutlined style={{ marginRight: `0.7rem` }} /> */}
-                                                            {doc.nama_kategori}
-                                                        </div>
-                                                }
-                                            </>
-                                        )
-                                    })
-                                }
+            <div id="containerListModules" className="w-full border-t border-opacity-30 border-gray-500">
+                <Sticky containerSelectorFocus="#containerListModules">
+                    <div className="w-full border-b border-opacity-30 border-gray-400 flex items-center justify-between p-4 mb-5 bg-white">
+                        <h1 className="font-bold">Modules</h1>
+                        <Button type="primary" size="large" onClick={() => { setdrawablecreate(true) }}>Tambah Module</Button>
+                    </div>
+                </Sticky>
+                <div className="w-full grid grid-cols-5 bg-white">
+                    <div className="col-span-5">
+                        <div className="w-full grid grid-cols-9">
+                            <div className="col-span-2 hidden md:flex flex-col border-r pr-2">
+                                <div>
+                                    {
+                                        datajson.data.map((doc, idx) => {
+                                            return (
+                                                <>
+                                                    {
+                                                        tabnameArrVal[idx] === "block" ?
+                                                            <div className={`p-2 cursor-pointer flex items-center text-sm font-semibold bg-blue-700 text-white rounded`}>
+                                                                {/* <FolderOpenOutlined style={{ marginRight: `0.7rem` }} /> */}
+                                                                {doc.nama_kategori}
+                                                            </div>
+                                                            :
+                                                            <div className={`p-2 cursor-pointer hover:text-gray-900 flex items-center text-sm font-semibold`} onClick={(e) => { onChangeTab(e, tabnameArr[idx], (idx), doc.nama_kategori, doc.deskripsi, doc.id) }}>
+                                                                {/* <FolderOpenOutlined style={{ marginRight: `0.7rem` }} /> */}
+                                                                {doc.nama_kategori}
+                                                            </div>
+                                                    }
+                                                </>
+                                            )
+                                        })
+                                    }
+                                </div>
                             </div>
-                        </div>
-                        <div className="col-span-7">
-                            {datajson.data.map((doc, idx) => {
-                                return (
-                                    <div className={`${tabnameArrVal[idx]} py-5 px-7 flex flex-col`}>
-                                        <div className="flex justify-between items-center mb-5">
-                                            <div className="flex flex-col justify-center">
-                                                <div className="flex items-center mb-1">
-                                                    <div className="flex items-center mr-3">
-                                                        {tabnameArrVal[idx] === "block" && <p className="font-semibold m-0">{doc.nama_kategori}</p>}
+                            <div className=" col-span-9 md:col-span-7">
+                                <div className="w-full flex md:hidden mb-5">
+                                    <Select defaultValue={currentselectkateg} onChange={(value) => { onChangeTabSmall(value) }} style={{ width: `100%` }}>
+                                        {
+                                            datajson.data.map((doc, idx) => {
+                                                return (
+                                                    <Option value={doc.nama_kategori}>{doc.nama_kategori}</Option>
+                                                )
+                                            })
+                                        }
+                                    </Select>
+                                </div>
+                                {datajson.data.map((doc, idx) => {
+                                    return (
+                                        <div className={`${tabnameArrVal[idx]} p-0 md:py-5 md:px-7 flex flex-col`}>
+                                            <div className="flex justify-between items-center mb-1 md:mb-5">
+                                                <div className="flex flex-col justify-center">
+                                                    <div className="flex items-center mb-1">
+                                                        <div className="flex items-center mr-3">
+                                                            {tabnameArrVal[idx] === "block" && <p className="font-semibold m-0">{doc.nama_kategori}</p>}
+                                                        </div>
+                                                        <div className="w-auto h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center mr-3" onClick={() => setdrawableedit(true)}><EditOutlined /></div>
+                                                        <div className="w-auto h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center mr-3" onClick={() => setmodaldelete(true)}><DeleteOutlined /></div>
                                                     </div>
-                                                    <div className="w-auto h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center mr-3" onClick={() => setdrawableedit(true)}><EditOutlined /></div>
-                                                    <div className="w-auto h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center mr-3" onClick={() => setmodaldelete(true)}><DeleteOutlined /></div>
+                                                    <p className="text-xs text-gray-500">{doc.deskripsi}</p>
                                                 </div>
-                                                <p className="text-xs text-gray-500">{doc.deskripsi}</p>
+                                            </div>
+                                            <div>
+                                                {
+                                                    datafeatures.map((doc, idx) => {
+                                                        return (
+                                                            <div className="border-b mb-3 p-3">
+                                                                <p className="mb-0 text-sm">{doc}</p>
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
                                             </div>
                                         </div>
-                                        <div>
-                                            {
-                                                datafeatures.map((doc, idx) => {
-                                                    return (
-                                                        <div className="border-b mb-3 p-3">
-                                                            <p className="mb-0 text-sm">{doc}</p>
-                                                        </div>
-                                                    )
-                                                })
-                                            }
-                                        </div>
-                                    </div>
-                                )
-                            })
-                            }
+                                    )
+                                })
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <Drawer title={`Tambah Module`} maskClosable={false} visible={drawablecreate} onClose={() => { setdrawablecreate(false); /*closeClientsDrawer(); instanceForm.resetFields()*/ }} width={420} destroyOnClose={true}>
+            <Drawer title={`Tambah Module`} maskClosable={false} visible={drawablecreate} onClose={() => { setdrawablecreate(false); /*closeClientsDrawer(); instanceForm.resetFields()*/ }} width={380} destroyOnClose={true}>
                 <div className="flex flex-col">
                     <Form layout="vertical">
                         <Form.Item label="Nama Module" rules={[
@@ -229,7 +305,7 @@ const ModulesIndex = ({ initProps, dataProfile, sidemenu }) => {
                     </Form>
                 </div>
             </Drawer>
-            <Drawer title={`Edit Module ${modulselected}`} maskClosable={false} visible={drawableedit} onClose={() => { setdrawableedit(false); /*closeClientsDrawer(); instanceForm.resetFields()*/ }} width={420} destroyOnClose={true}>
+            <Drawer title={`Edit Module ${modulselected}`} maskClosable={false} visible={drawableedit} onClose={() => { setdrawableedit(false); /*closeClientsDrawer(); instanceForm.resetFields()*/ }} width={380} destroyOnClose={true}>
                 <div className="flex flex-col">
                     <Form layout="vertical">
                         <Form.Item label="Nama Module" rules={[

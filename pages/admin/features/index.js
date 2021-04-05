@@ -142,17 +142,19 @@ const FeaturesIndex = ({ initProps, dataProfile, sidemenu }) => {
     return (
         <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} st={st} pathArr={pathArr}>
             <div className="w-full grid grid-cols-5 border-t border-opacity-30 border-gray-500 bg-white">
-                <div className="col-span-5 border-b border-opacity-30 border-gray-400 flex items-center justify-between p-4 mb-5">
+                <div className="col-span-5 border-b border-opacity-30 border-gray-400 flex items-center justify-between px-0 py-4 md:p-4 mb-5">
                     <h1 className="font-bold">Features</h1>
                     <Button type="primary" size="large" onClick={() => { setdrawcreate(true) }}>Tambah Feature</Button>
                 </div>
-                <div className="col-span-5 p-5 flex flex-col">
+                <div className="col-span-5 p-0 md:p-5 flex flex-col">
                     {/* <Search placeholder="Cari Nama Feature" allowClear style={{ width: `40%`, marginBottom: `1rem` }} onSearch={(value) => { onSearchService(value) }} /> */}
-                    <Input prefix={<SearchOutlined />} placeholder="Cari Fitur" style={{ borderRadius: `0.5rem`, marginBottom: `1rem`, width: `40%` }} onChange={onCariFeature} allowClear />
-                    <Table columns={columnsFeature} dataSource={datatable} pagination={{ pageSize: 8 }}></Table>
+                    <div className="w-full md:w-5/12">
+                        <Input prefix={<SearchOutlined />} placeholder="Cari Fitur" style={{ borderRadius: `0.5rem`, marginBottom: `1rem`, width: `100%` }} onChange={onCariFeature} allowClear />
+                    </div>
+                    <Table columns={columnsFeature} dataSource={datatable} pagination={{ pageSize: 8 }} scroll={{ x: 300 }}></Table>
                 </div>
             </div>
-            <Drawer title={`Tambah Feature`} maskClosable={false} visible={drawcreate} onClose={() => { setdrawcreate(false); /*closeClientsDrawer(); instanceForm.resetFields()*/ }} width={420} destroyOnClose={true}>
+            <Drawer title={`Tambah Feature`} maskClosable={false} visible={drawcreate} onClose={() => { setdrawcreate(false); /*closeClientsDrawer(); instanceForm.resetFields()*/ }} width={380} destroyOnClose={true}>
                 <div className="flex flex-col">
                     <Form layout="vertical" initialValues={datacreate}>
                         <Form.Item label="Nama Feature" name="nama" rules={[
@@ -178,7 +180,7 @@ const FeaturesIndex = ({ initProps, dataProfile, sidemenu }) => {
                     </Form>
                 </div>
             </Drawer>
-            <Drawer title={`Edit Feature`} maskClosable={false} visible={drawedit} onClose={() => { setdrawedit(false); /*closeClientsDrawer(); instanceForm.resetFields()*/ }} width={420} destroyOnClose={true}>
+            <Drawer title={`Edit Feature`} maskClosable={false} visible={drawedit} onClose={() => { setdrawedit(false); /*closeClientsDrawer(); instanceForm.resetFields()*/ }} width={380} destroyOnClose={true}>
                 <div className="flex flex-col">
                     <Form layout="vertical" initialValues={dataedit}>
                         <Form.Item label="Nama Feature" rules={[
