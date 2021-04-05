@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Button, Table, Dropdown, Menu, Form, Input, Select, notification, Modal } from 'antd'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard.module.css'
+import Sticky from 'wil-react-sticky'
 
 function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dataListServiceItem, sidemenu }) {
     const rt = useRouter()
@@ -103,6 +104,7 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
         deskripsi: ''
     })
     const [tabnameArrVal, settabnameArrVal] = useState(loop)
+    const [currentselectkateg, setcurrentselectkateg] = useState("all")
     const [defaultpub, setdefaultpub] = useState(1)
     const [idkateg, setidkateg] = useState(0)
     const [modaleditkateg, setmodaleditkateg] = useState(false)
@@ -157,6 +159,60 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                 id: id,
                 nama_kategori: namakateg,
                 deskripsi: deskripsi
+            })
+            setdatatable(dataListServiceItemMap)
+            setdatatable(prev => {
+                return prev.filter((doc, idx) => { return doc.categoryName == namakateg })
+            })
+            setdatacurrtable(dataListServiceItemMap)
+            setdatacurrtable(prev => {
+                return prev.filter((doc, idx) => { return doc.categoryName == namakateg })
+            })
+        }
+    }
+    const onChangeTabSmall = (namakateg) => {
+        setcurrentselectkateg(namakateg)
+        var variable = {}
+        if (namakateg != 'all') {
+            variable = dataListServiceCategories.data.filter(dataa => { return dataa.nama_kategori == namakateg }).map((doc, idx) => {
+                return ({
+                    idxjenis: idx + 1,
+                    id: doc.id,
+                    deskripsi: doc.deskripsi
+                })
+            })[0]
+        }
+        setdefaultpub(1)
+        setidkateg(variable.id)
+        if (namakateg == 'all') {
+            const temp = tabnameArrVal
+            temp[0] = "block"
+            settabnameArrVal(temp)
+            for (var i = 0; i < tabnameArrVal.length; i++) {
+                if (i != 0) {
+                    const temp2 = tabnameArrVal
+                    temp2[i] = "hidden"
+                    settabnameArrVal(temp2)
+                }
+            }
+            setdatatable(dataListServiceItemMap)
+            setdatacurrtable(dataListServiceItemMap)
+        }
+        else {
+            const temp3 = tabnameArrVal
+            temp3[variable.idxjenis] = "block"
+            settabnameArrVal(temp3)
+            for (var i = 0; i < tabnameArrVal.length; i++) {
+                if (i != variable.idxjenis) {
+                    const temp4 = tabnameArrVal
+                    temp4[i] = "hidden"
+                    settabnameArrVal(temp4)
+                }
+            }
+            setdataeditkateg({
+                id: variable.id,
+                nama_kategori: namakateg,
+                deskripsi: variable.deskripsi
             })
             setdatatable(dataListServiceItemMap)
             setdatatable(prev => {
@@ -322,33 +378,35 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
     }
     return (
         <Layout tok={initProps} pathArr={pathArr} dataProfile={dataProfile} sidemenu={sidemenu} st={st}>
-            <div className="w-full border-t border-opacity-30 border-gray-500 bg-white">
-                <div className="w-full flex justify-between p-3">
-                    <div>
-                        <p className="font-semibold text-lg">Service Catalog</p>
+            <div id="containerListService" className="w-full border-t border-opacity-30 border-gray-500 bg-white">
+                <Sticky containerSelectorFocus="#containerListService">
+                    <div className="w-full flex justify-between p-3 bg-white">
+                        <div>
+                            <p className="font-semibold text-lg">Service Catalog</p>
+                        </div>
+                        <div>
+                            <Dropdown overlay={menu} trigger={['click']}>
+                                <Button style={{ backgroundColor: `rgb(24,144,255)`, color: `white` }}>
+                                    Tambah Baru <DownOutlined />
+                                </Button>
+                            </Dropdown>
+                        </div>
                     </div>
-                    <div>
-                        <Dropdown overlay={menu} trigger={['click']}>
-                            <Button style={{ backgroundColor: `rgb(24,144,255)`, color: `white` }}>
-                                Tambah Baru <DownOutlined />
-                            </Button>
-                        </Dropdown>
-                    </div>
-                </div>
+                </Sticky>
                 <div className="w-full grid grid-cols-8">
-                    <div className="col-span-2 flex flex-col">
+                    <div className="col-span-2 flex-col hidden md:flex">
                         <div className="p-3">
                             <p className=" text-base font-semibold">Service Categories</p>
                         </div>
                         <div>
                             {
                                 tabnameArrVal[0] === "block" ?
-                                    < div className={`p-2 cursor-pointer flex items-center text-sm font-semibold bg-blue-700 text-white rounded`} onClick={(e) => { onChangeTab(e, 'all', 0, "semua") }}>
+                                    < div className={`p-2 cursor-pointer flex items-center text-sm font-semibold bg-blue-700 text-white rounded`} onClick={(e) => { onChangeTab(e, 'all', 0, "all") }}>
                                         <FolderOpenOutlined style={{ marginRight: `0.7rem` }} />
                                         Semua Service
                                     </div>
                                     :
-                                    < div className={`p-2 cursor-pointer hover:text-gray-900 flex items-center text-sm font-semibold`} onClick={(e) => { onChangeTab(e, 'all', 0, "semua") }}>
+                                    < div className={`p-2 cursor-pointer hover:text-gray-900 flex items-center text-sm font-semibold`} onClick={(e) => { onChangeTab(e, 'all', 0, "all") }}>
                                         <FolderOpenOutlined style={{ marginRight: `0.7rem` }} />
                                         Semua Service
                                     </div>
@@ -376,10 +434,10 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                             }
                         </div>
                     </div>
-                    <div className="col-span-6">
+                    <div className=" col-span-8 md:col-span-6">
                         {/* All */}
-                        <div className={`${tabnameArrVal[0]} py-5 px-7 flex flex-col`}>
-                            <div className="flex justify-between items-center mb-5">
+                        <div className={`${tabnameArrVal[0]} py-1 md:py-5 px-0 md:px-7 flex flex-col`}>
+                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
                                 <div>
                                     <Select bordered={false} defaultValue={defaultpub} size="large" style={{ fontWeight: `bold` }} onChange={(value) => { onChangePublishment(value) }}>
                                         <Option value={1}>All Service Items</Option>
@@ -392,15 +450,27 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                                     <Search placeholder="Cari Nama Item" allowClear style={{ width: `100%` }} onSearch={(value) => { onSearchService(value) }} />
                                 </div>
                             </div>
+                            <div className="w-full flex md:hidden mb-3">
+                                <Select defaultValue={currentselectkateg} onChange={(value) => { onChangeTabSmall(value) }} style={{ width: `100%` }}>
+                                    <Option value={'all'}>Semua Service</Option>
+                                    {
+                                        dataListServiceCategories.data.map((doc, idx) => {
+                                            return (
+                                                <Option value={doc.nama_kategori}>{doc.nama_kategori}</Option>
+                                            )
+                                        })
+                                    }
+                                </Select>
+                            </div>
                             <div>
-                                <Table columns={columns} dataSource={datatable} pagination={{ pageSize: 8 }} />
+                                <Table columns={columns} dataSource={datatable} pagination={{ pageSize: 8 }} scroll={{ x: 300 }} />
                             </div>
                         </div>
 
                         {dataListServiceCategories.data.map((doc, idx) => {
                             return (
                                 <div className={`${tabnameArrVal[idx + 1]} py-5 px-7 flex flex-col`}>
-                                    <div className="flex justify-between items-center mb-5">
+                                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-5">
                                         <div className="flex flex-col justify-center">
                                             <div className="flex items-center mb-1">
                                                 <div className="flex items-center mr-3">
@@ -413,6 +483,18 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                                         <div>
                                             <Search placeholder="Cari Nama Item" allowClear style={{ width: `100%` }} onSearch={(value) => { onSearchService(value) }} />
                                         </div>
+                                    </div>
+                                    <div className="w-full flex md:hidden mb-3">
+                                        <Select defaultValue={currentselectkateg} onChange={(value) => { onChangeTabSmall(value) }} style={{ width: `100%` }}>
+                                            <Option value={'all'}>Semua Service</Option>
+                                            {
+                                                dataListServiceCategories.data.map((doc, idx) => {
+                                                    return (
+                                                        <Option value={doc.nama_kategori}>{doc.nama_kategori}</Option>
+                                                    )
+                                                })
+                                            }
+                                        </Select>
                                     </div>
                                     <div>
                                         <Table columns={columns} dataSource={datatable} pagination={{ pageSize: 8 }} />

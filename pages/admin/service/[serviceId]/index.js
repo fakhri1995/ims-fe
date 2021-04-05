@@ -239,7 +239,7 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
     return (
         <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
             <div className="w-full border-t border-opacity-30 border-gray-500 bg-white">
-                <div className="w-full flex justify-between p-3">
+                <div className="w-full flex flex-col md:flex-row justify-between p-3">
                     <div className="flex items-center">
                         <p className="font-semibold text-lg mr-3 my-0">{dataDetailServiceItem.data.service.nama_service_item}</p>
                         {/* {
@@ -255,7 +255,7 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
                                 <Switch checked={false} onChange={() => { setmodalnonpublish(true) }} unCheckedChildren={"Draft"}></Switch>
                         }
                     </div>
-                    <div>
+                    <div className="pt-3">
                         <Button type="default" size="middle" style={{ marginRight: `1rem` }} onClick={() => { rt.push('/admin/service') }}>Batalkan</Button>
                         <Button type="ghost" size="middle" style={{ marginRight: `1rem` }} onClick={() => { setmodalkonfhapuskateg(true) }}>Hapus</Button>
                         {/* <Dropdown overlay={menu} trigger={['click']}> */}
@@ -266,7 +266,7 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
                     </div>
                 </div>
                 <div className="w-full grid grid-cols-7">
-                    <div className="col-span-1 flex flex-col p-3">
+                    <div className="col-span-7 lg:col-span-1 flex flex-col p-3">
                         <Anchor>
                             <Link href="#generalDetail" title="General Detail" />
                             <Link href="#customFields" title="Custom Fields" />
@@ -274,7 +274,7 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
                             <Link href="#settings" title="Settings" />
                         </Anchor>
                     </div>
-                    <div className="col-span-6 flex flex-col">
+                    <div className="col-span-7 lg:col-span-6 flex flex-col">
                         <div id="generalDetail" className="mb-5 flex flex-col">
                             <div className="flex justify-between items-center p-3">
                                 <div>
@@ -297,7 +297,7 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
                                         </Upload>
                                     </div>
                                 </div> */}
-                                <div className=" w-7/12">
+                                <div className="w-full lg:w-7/12">
                                     <Form layout="vertical" onFinish={handleUpdateService} initialValues={dataupdate}>
                                         <Form.Item label="Item Name" name="nama_service_item"
                                             rules={[

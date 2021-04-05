@@ -178,7 +178,7 @@ function ServiceCreate({ initProps, dataProfile, dataListServiceCategories, data
     return (
         <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
             <div className="w-full h-80 border-t border-opacity-30 border-gray-500 bg-white">
-                <div className="w-full flex justify-between p-3">
+                <div className="w-full flex flex-col md:flex-row justify-between p-3">
                     <div>
                         <p className="font-semibold text-lg">Tambah Service Item</p>
                     </div>
@@ -192,7 +192,7 @@ function ServiceCreate({ initProps, dataProfile, dataListServiceCategories, data
                     </div>
                 </div>
                 <div className="w-full grid grid-cols-7">
-                    <div className="col-span-1 flex flex-col">
+                    <div className=" col-span-7 md:col-span-1 flex flex-col">
                         <Anchor>
                             <Link href="#generalDetail" title="General Detail" />
                             <Link href="#customFields" title="Custom Fields" />
@@ -200,7 +200,7 @@ function ServiceCreate({ initProps, dataProfile, dataListServiceCategories, data
                             <Link href="#settings" title="Settings" />
                         </Anchor>
                     </div>
-                    <div className="col-span-6 flex flex-col">
+                    <div className=" col-span-7 md:col-span-6 flex flex-col">
                         <div id="generalDetail" className="mb-5 flex flex-col">
                             <div className="flex justify-between items-center p-3">
                                 <div>
@@ -223,7 +223,7 @@ function ServiceCreate({ initProps, dataProfile, dataListServiceCategories, data
                                         </Upload>
                                     </div>
                                 </div> */}
-                                <div className=" w-7/12">
+                                <div className=" w-full md:w-7/12">
                                     <Form layout="vertical" onFinish={handleCreateService} initialValues={datanew}>
                                         <Form.Item label="Item Name" name="nama_service_item"
                                             rules={[
