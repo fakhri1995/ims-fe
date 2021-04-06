@@ -2,7 +2,7 @@ import Layout from '../../../components/layout-dashboard2'
 import st from '../../../components/layout-dashboard.module.css'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
 import PlusSquareOutlined from '@ant-design/icons/PlusSquareOutlined'
@@ -96,13 +96,13 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
             {
                 selectedServiceItemTemp.length > 0 ?
                 <>
-                <div className="col-span-1 md:col-span-1 flex flex-col pr-2">
+                <div className="col-span-1 hidden md:col-span-1 md:flex flex-col pr-2">
                     <h3>Nama Service Item</h3>
                 </div>
-                <div className="col-span-1 md:col-span-1 flex flex-col px-2">
+                <div className="col-span-1 hidden md:col-span-1 md:flex flex-col px-2">
                     <h3>Harga</h3>
                 </div>
-                <div className="col-span-1 md:col-span-1 flex flex-col pl-2">
+                <div className="col-span-1 hidden md:col-span-1 md:flex flex-col pl-2">
                     <h3>Terms of Payment</h3>
                 </div>
                 </>
@@ -110,17 +110,15 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
             }
             {
                 selectedServiceItemTemp.map((item,idx)=>{
-                    // var boba = [...dataServiceItems]
-                    // console.log(boba[idx].harga)
                     return (
                         <>
-                            <div className="col-span-1 md:col-span-1 flex flex-col pr-2 py-2">
+                            <div className="col-span-1 md:col-span-1 flex flex-col md:pr-2 py-2">
                                 <Input className={''} defaultValue={item.nama} readOnly></Input>
                             </div>
-                            <div className="col-span-1 md:col-span-1 flex flex-col px-2 py-2">
+                            <div className="col-span-1 md:col-span-1 flex flex-col md:px-2 py-2">
                                 <Input name={"harga"+item.key} required key={"harga"+item.key} type="number" defaultValue={dataServiceItems[idx].harga} onBlur={(e)=>{ onChangeServicePriceItems(e,item.id_service_item)}} prefix="IDR" suffix="Rupiah" allowClear ></Input>
                             </div>
-                            <div className="col-span-1 md:col-span-1 flex flex-col pl-2 py-2">
+                            <div className="col-span-1 md:col-span-1 flex flex-col md:pl-2 py-2">
                                 <Select name={"terms"+item.key} key={"terms"+item.key} className={''} defaultValue={dataServiceItems[idx].id_terms_of_payment} allowClear onChange={(val)=>{onChangeServiceTermsofPaymentItems(val,item.id_service_item)}}>
                                     {
                                         contractInputData.data.term_of_payments.map((item,idx)=>{
@@ -128,6 +126,11 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                         })
                                     }
                                 </Select>
+                            </div>
+                            <div className={'block md:hidden'}>
+                                <br></br>
+                                <hr className=""></hr>
+                                <br></br>
                             </div>
                         </>
                     )
@@ -190,7 +193,9 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
             deskripsi: doc.deskripsi_singkat,
         })
     }))
+    const [idCategory, setIdCategory] = useState(null)
     const onChangeCategory = (val) => {
+        setIdCategory(val)
         const listServiceByCategory = contractInputData.data.service_items.map((doc, idx) => {
             return ({
                 id_service_kategori: doc.id_service_kategori,
@@ -204,9 +209,10 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
         setPopulateListService(listServiceByCategory)
         // console.log(listServiceByCategory)
     }
-    const [defaultCategory, SetDefaultCategory] = useState(null)
+    const [defaultCategory, setDefaultCategory] = useState(null)
     const clearFilterCategory = () => {
-        SetDefaultCategory(null)
+        setDefaultCategory(null)
+        setIdCategory(null)
         setPopulateListService(contractInputData.data.service_items.map((doc, idx) => {
             return ({
                 key: doc.id,
@@ -226,7 +232,12 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                 deskripsi: doc.deskripsi_singkat,
             })
         }).filter((doc)=>{
-            return doc.nama.toLowerCase().includes(val)
+            if(idCategory != null){
+                return doc.id_service_kategori == idCategory && doc.nama.toLowerCase().includes(val)
+            }
+            else{
+                return doc.nama.toLowerCase().includes(val)
+            }
         })
         setPopulateListService(listServiceByCategory)
         // console.log(listServiceByCategory)
@@ -300,7 +311,17 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
     const check = () => {
         console.log(newcontract.service_items)
     }
-    
+    const [widthDrawer, setWidthDrawer] = useState(600)
+    useEffect(() => {
+        var w = window.innerWidth
+        if(w < 414){
+            setWidthDrawer(300)
+        }
+        else if(w < 640){
+            setWidthDrawer(400)
+        }
+        // console.log(w)
+    }, [])
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
@@ -433,7 +454,8 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                 <DynamicComponent></DynamicComponent>
                             </div>
                             
-                            <Drawer title="Add Service Item" maskClosable={false} visible={opendrawer} onClose={() => { setOpendrawer(false),setServiceItemTemp({...serviceItemTemp,serviceItemValues:selectedServiceItemTemp}),setSelectedRowKeys(selectedServiceItemTemp.map(item=>item.id_service_item))}} destroyOnClose={true} width={700} 
+                            <Drawer title="Add Service Item" maskClosable={false} visible={opendrawer} onClose={() => { setOpendrawer(false),setServiceItemTemp({...serviceItemTemp,serviceItemValues:selectedServiceItemTemp}),setSelectedRowKeys(selectedServiceItemTemp.map(item=>item.id_service_item))}} destroyOnClose={true} 
+                                width={widthDrawer}
                                 footer={
                                 <div style={{ textAlign: 'right' }}>
                                         <button onClick={() => { setOpendrawer(false),setServiceItemTemp({...serviceItemTemp,serviceItemValues:selectedServiceItemTemp}),setSelectedRowKeys(selectedServiceItemTemp.map(item=>item.id_service_item))}} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
@@ -446,8 +468,8 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                 }
                                 >
                                     <div className={'flex flex-row justify-between'}>
-                                        <div className={'pb-6 flex'}>
-                                            <Select value={defaultCategory} placeholder="Service Category" className={'w-48'} onChange={(value)=>{onChangeCategory(value),SetDefaultCategory(value)}} name={`service_categories`}>
+                                        <div className={'pb-2 flex'}>
+                                            <Select value={defaultCategory} placeholder="Service Category" className={'w-36 md:w-48'} onChange={(value)=>{onChangeCategory(value),setDefaultCategory(value)}} name={`service_categories`}>
                                                         {
                                                             contractInputData.data.service_categories.map((doc,index)=>{
                                                                 return(
@@ -461,11 +483,13 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                             </div>
                                         </div>
                                         
-                                            <div className={''}>
+                                            <div className={'pl-2 hidden sm:block'}>
                                                 <Input allowClear onChange={(e)=>(searchServiceItem(e))} prefix={<SearchOutlined />} placeholder="Search"></Input>
                                             </div>
 
-                                       
+                                    </div>
+                                    <div className={'py-2 block sm:hidden'}>
+                                        <Input allowClear onChange={(e)=>(searchServiceItem(e))} prefix={<SearchOutlined />} placeholder="Search"></Input>
                                     </div>
                                 <Table
                                     rowSelection={rowSelection}
