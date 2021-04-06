@@ -6,6 +6,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
 import PlusSquareOutlined from '@ant-design/icons/PlusSquareOutlined'
+import SearchOutlined from '@ant-design/icons/SearchOutlined'
 import {DatePicker,Table,Drawer,Input,Select,Button,notification,Form} from 'antd'
 
 function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu }) {
@@ -181,13 +182,62 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
         }),
     };
     //-------------populate list service---------------
-    const populateListService = contractInputData.data.service_items.map((doc, idx) => {
+    const [populateListService, setPopulateListService] = useState(
+        contractInputData.data.service_items.map((doc, idx) => {
         return ({
             key: doc.id,
             nama: doc.nama_service_item,
             deskripsi: doc.deskripsi_singkat,
         })
-    })
+    }))
+    const onChangeCategory = (val) => {
+        const listServiceByCategory = contractInputData.data.service_items.map((doc, idx) => {
+            return ({
+                id_service_kategori: doc.id_service_kategori,
+                key: doc.id,
+                nama: doc.nama_service_item,
+                deskripsi: doc.deskripsi_singkat,
+            })
+        }).filter((doc)=>{
+            return doc.id_service_kategori == val
+        })
+        setPopulateListService(listServiceByCategory)
+        // console.log(listServiceByCategory)
+    }
+    const [defaultCategory, SetDefaultCategory] = useState(null)
+    const clearFilterCategory = () => {
+        SetDefaultCategory(null)
+        setPopulateListService(contractInputData.data.service_items.map((doc, idx) => {
+            return ({
+                key: doc.id,
+                nama: doc.nama_service_item,
+                deskripsi: doc.deskripsi_singkat,
+            })
+        }))
+    }
+    const searchServiceItem = (e) => {
+        // console.log(e.target.value)
+        var val = e.target.value
+        const listServiceByCategory = contractInputData.data.service_items.map((doc, idx) => {
+            return ({
+                id_service_kategori: doc.id_service_kategori,
+                key: doc.id,
+                nama: doc.nama_service_item,
+                deskripsi: doc.deskripsi_singkat,
+            })
+        }).filter((doc)=>{
+            return doc.nama.toLowerCase().includes(val)
+        })
+        setPopulateListService(listServiceByCategory)
+        // console.log(listServiceByCategory)
+    }
+    // const populateListService = contractInputData.data.service_items.map((doc, idx) => {
+    //     return ({
+    //         key: doc.id,
+    //         nama: doc.nama_service_item,
+    //         deskripsi: doc.deskripsi_singkat,
+    //     })
+    // })
     //--------------populate list company ------------
     const populateListCompany = contractInputData.data.companies.filter((doc,idx)=>(doc.id!==66)).map((doc, idx) => {
         return ({
@@ -229,7 +279,7 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
             })
     }
     //------------------------------------------
-
+    
     //----------------------------------------------
     
     const checkFile = () => {
@@ -395,6 +445,28 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                     </div>
                                 }
                                 >
+                                    <div className={'flex flex-row justify-between'}>
+                                        <div className={'pb-6 flex'}>
+                                            <Select value={defaultCategory} placeholder="Service Category" className={'w-48'} onChange={(value)=>{onChangeCategory(value),SetDefaultCategory(value)}} name={`service_categories`}>
+                                                        {
+                                                            contractInputData.data.service_categories.map((doc,index)=>{
+                                                                return(
+                                                                    <Option key={doc.id} value={doc.id}>{doc.nama_kategori}</Option>
+                                                                    )
+                                                                })
+                                                            }
+                                            </Select>
+                                            <div className={'pl-2'}>
+                                                <Button className={''} onClick={clearFilterCategory}>Clear Filter</Button>
+                                            </div>
+                                        </div>
+                                        
+                                            <div className={''}>
+                                                <Input allowClear onChange={(e)=>(searchServiceItem(e))} prefix={<SearchOutlined />} placeholder="Search"></Input>
+                                            </div>
+
+                                       
+                                    </div>
                                 <Table
                                     rowSelection={rowSelection}
                                     columns={columnsTableListService}
