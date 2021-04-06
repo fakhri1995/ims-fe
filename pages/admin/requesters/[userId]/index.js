@@ -367,10 +367,14 @@ export async function getServerSideProps({ req, res, params }) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            login_id: userid
+            account_id: userid
         })
     })
     const resjsonDA = await resourcesDA.json()
+    if (!resjsonDA) {
+        res.writeHead(302, { Location: '/admin/requesters' })
+        res.end()
+    }
     const dataDetailAccount = resjsonDA
 
     return {
