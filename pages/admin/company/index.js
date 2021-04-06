@@ -33,7 +33,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
             message: dataCompanyList.message.errorInfo.status_detail,
             duration: 3
         })
-        rt.push('/dashboard/admin')
+        rt.push('/admin/company')
     }
     else {
         dataTable = dataCompanyList.data.data.companies.map((doc, idx) => {
