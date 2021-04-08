@@ -181,7 +181,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
                 <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-                    <div className=" col-span-1 md:col-span-4 flex flex-col" id="formAgentsWrapper">
+                    <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <div className={'flex'}>
@@ -212,7 +212,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                                             </p>
                                         </div>
                                     </Link>
-                                    <button onClick={()=>{onClickModalDeleteContract(true,contract)}} className=" text-black text-sm bg-white border-gray-900 border-2 hover:bg-gray-400 cursor-pointer h-10 py-2 w-20 text-center">
+                                    <button onClick={()=>{onClickModalDeleteContract(true,contract)}} className=" text-black text-sm bg-white border-gray-300 border hover:bg-gray-200 cursor-pointer h-10 py-2 w-20 text-center">
                                             <p>
                                                 Delete
                                             </p>

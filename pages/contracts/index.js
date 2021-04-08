@@ -3,6 +3,7 @@ import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import {Table, Button, Tabs, notification, Modal} from 'antd'
 import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
+import EditOutlined from '@ant-design/icons/EditOutlined'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
@@ -202,7 +203,7 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
             title: 'Tanggal Selesai',
             dataIndex: 'tanggal_selesai',
             key: 'tanggal_selesai',
-            width: 50,
+            width: 150,
             render(text, record) {
                 return {
                     props: {
@@ -227,7 +228,7 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                         <Button>
                             <Link href={{
                                 pathname: `/contracts/update/${record.key}`,
-                            }}><a>Edit</a></Link>
+                            }}><EditOutlined/></Link>
                         </Button>
                 }
             }

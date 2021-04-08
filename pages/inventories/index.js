@@ -3,6 +3,7 @@ import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import {Table, Button, Tabs, notification, Modal} from 'antd'
 import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
+import EditOutlined from '@ant-design/icons/EditOutlined'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
@@ -113,7 +114,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
             title: 'Asset Name',
             dataIndex: 'asset_name',
             key: 'asset_name',
-            width: 60,
+            width: 100,
             render(text, record) {
                 return {
                     props: {
@@ -133,7 +134,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
             title: 'MIG ID',
             dataIndex: 'mig_number',
             key: 'mig_number',
-            width: 50,
+            width: 100,
             render(text, record) {
                 return {
                     props: {
@@ -148,7 +149,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
             title: 'Lokasi',
             dataIndex: 'lokasi',
             key: 'lokasi',
-            width: 50,
+            width: 100,
             render(text, record) {
                 return {
                     props: {
@@ -188,7 +189,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                         <Button>
                             <Link href={{
                                 pathname: `/inventories/update/${record.key}`,
-                            }}><a>Edit</a></Link>
+                            }}><EditOutlined/></Link>
                         </Button>
                 }
             }
@@ -197,7 +198,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
             title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0', // Non-breakable space is char 0xa0 (160 dec)
             dataIndex: 'actionss',
             key: 'action',
-            width: 100,
+            width: 50,
             render: (text, record, index) => {
                 return {
 
