@@ -18,48 +18,93 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
             title: 'Nama',
             dataIndex: 'nama',
             key: 'nama',
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.nama}
+                        </>
+                }
+            }
         },
         {
             title: 'Tipe',
             dataIndex: 'jenis',
             key: 'jenis',
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.jenis}
+                        </>
+                }
+            }
         },
         {
             title: 'Tahun Penggunaan',
             dataIndex: 'tahun_penggunaan',
             key: 'tahun_penggunaan',
             align: 'center',
-            render: (text, record, index) => (
-                <div className="flex justify-center">
-                    {text}
-                </div>
-            )
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <div className="flex justify-center">
+                            {text}
+                        </div>
+                }
+            }
         },
         {
             title: 'Deskripsi',
             dataIndex: 'deskripsi',
             key: 'deskripsi',
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.deskripsi}
+                        </>
+                }
+            }
         },
         {
             dataIndex: 'status',
             key: 'status',
-            render: (text, record, index) => (
-                <div className="flex">
-                    <div className=" h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center mr-3" onClick={() => {
-                        setdataedit({
-                            id: record.id,
-                            nama: record.nama,
-                            jenis: record.jenis,
-                            tahun_penggunaan: record.tahun_penggunaan,
-                            deskripsi: record.deskripsi
-                        })
-                        setmodaledit(true)
-                    }}>
-                        <EditOutlined />
-                    </div>
-                    <div className=" h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center" onClick={() => { setmodaldelete(true); setiddelete(record.id) }}><DeleteOutlined /></div>
-                </div>
-            )
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <div className="flex">
+                            <div className=" h-6 px-1 border hover:border-blue-500 hover:text-blue-500 rounded-sm cursor-pointer flex justify-center items-center mr-3" onClick={() => {
+                                setdataedit({
+                                    id: record.id,
+                                    nama: record.nama,
+                                    jenis: record.jenis,
+                                    tahun_penggunaan: record.tahun_penggunaan,
+                                    deskripsi: record.deskripsi
+                                })
+                                setmodaledit(true)
+                            }}>
+                                <EditOutlined />
+                            </div>
+                            <div className=" h-6 px-1 border hover:border-blue-500 hover:text-blue-500 rounded-sm cursor-pointer flex justify-center items-center" onClick={() => { setmodaldelete(true); setiddelete(record.id) }}><DeleteOutlined /></div>
+                        </div>
+                }
+            }
         },
     ]
 
@@ -310,9 +355,10 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
                             </div>
                             {
                                 tambahbtn ?
-                                    <button className={`${tambahbtn} text-blue-500 hover:text-blue-700 text-sm flex items-center`} onClick={() => { settambahbtn(false) }}>
-                                        <PlusCircleTwoTone style={{ marginRight: `0.2rem`, marginTop: `0.1rem` }} /> Tambah Baru
-                                    </button>
+                                    // <button className={`${tambahbtn} text-blue-500 hover:text-blue-700 text-sm flex items-center`} onClick={() => { settambahbtn(false) }}>
+                                    //     <PlusCircleTwoTone style={{ marginRight: `0.2rem`, marginTop: `0.1rem` }} /> Tambah Baru
+                                    // </button>
+                                    <Button type="primary" onClick={() => { settambahbtn(false) }}>Add New</Button>
                                     :
                                     null
                             }

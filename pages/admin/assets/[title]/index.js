@@ -478,9 +478,9 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                             <h1 className="font-semibold py-2">{assetsTitle}</h1>
                             <div className="flex space-x-2">
                                 <Link href={`/admin/assets`}>
-                                    <Button type="default" size="large">Batalkan</Button>
+                                    <Button type="default">Cancel</Button>
                                 </Link>
-                                <Button type="primary" size="large" loading={loadingwhole} onClick={handlingWhole}>Simpan</Button>
+                                <Button type="primary" loading={loadingwhole} onClick={handlingWhole}>Save</Button>
                             </div>
                         </div>
                     </Sticky>
@@ -516,7 +516,7 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                     </div>
                     <div className="p-4 mb-4">
                         <div id="dropWrapper" className="w-full h-auto p-5 border border-dashed border-opacity-20 border-black" onDrop={(e) => { onChangeDrop(e) }} onDragOver={(e) => { onChangeDragoverDrop(e) }}>
-                            <div id="dropAreaTitle" className="h-auto w-full p-2 bg-gray-700 text-white mb-2 flex flex-col">{dataAssetDetail.title} Properties</div>
+                            <div id="dropAreaTitle" className="h-auto w-full p-2 bg-primary text-white mb-2 flex flex-col">{dataAssetDetail.title} Properties</div>
                             {
                                 datawhole.length === 0 ?
                                     <div id="dropArea" className="h-32 flex justify-center items-center">
@@ -551,7 +551,7 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                     </div>
                 </div>
                 <div className="col-span-1 md:col-span-1 hidden md:flex flex-col space-y-4 p-4">
-                    <div className="font-semibold text-base">Tambah Custom Field</div>
+                    <div className="font-semibold text-base">Add Custom Field</div>
                     <p className="font-normal text-sm">
                         Drag and drop any field type into the "Asset Type Field" form, to add a new custom field
                     </p>

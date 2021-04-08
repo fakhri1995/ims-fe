@@ -23,75 +23,93 @@ const FeaturesIndex = ({ initProps, dataProfile, sidemenu }) => {
             title: 'Feature ID',
             dataIndex: 'feature_id',
             key: 'feature_id',
-            render: (text, record, index) => (
-                <>
-                    {/* <Link href={`/admin/service/${record.id}`}> */}
-                    <a href="#" onClick={() => {
-                        setdrawedit(true); setdataedit({
-                            nama: record.nama,
-                            deskripsi: record.deskripsi
-                        })
-                    }}>
-                        <h1 className="font-semibold hover:text-gray-500">{record.feature_id}</h1>
-                    </a>
-                    {/* </Link> */}
-                </>
-            )
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            <a href="#" onClick={() => {
+                                setdrawedit(true); setdataedit({
+                                    nama: record.nama,
+                                    deskripsi: record.deskripsi
+                                })
+                            }}>
+                                <h1 className="font-semibold hover:text-gray-500">{record.feature_id}</h1>
+                            </a>
+                        </>
+                }
+            }
         },
         {
             title: 'Nama',
             dataIndex: 'nama',
             key: 'nama',
-            render: (text, record, index) => (
-                <>
-                    {/* <Link href={`/admin/service/${record.id}`}> */}
-                    <a href="#" onClick={() => {
-                        setdrawedit(true); setdataedit({
-                            nama: record.nama,
-                            deskripsi: record.deskripsi
-                        })
-                    }}>
-                        <h1 className="hover:text-gray-500 text-xs">{record.nama}</h1>
-                    </a>
-                    {/* </Link> */}
-                </>
-            )
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            <a href="#" onClick={() => {
+                                setdrawedit(true); setdataedit({
+                                    nama: record.nama,
+                                    deskripsi: record.deskripsi
+                                })
+                            }}>
+                                <h1 className="hover:text-gray-500 text-xs">{record.nama}</h1>
+                            </a>
+                        </>
+                }
+            }
         },
         {
             title: 'Deskripsi',
             dataIndex: 'deskripsi',
             key: 'deskripsi',
-            render: (text, record, index) => (
-                <>
-                    {/* <Link href={`/admin/service/${record.id}`}> */}
-                    <a href="#" onClick={() => {
-                        setdrawedit(true); setdataedit({
-                            nama: record.nama,
-                            deskripsi: record.deskripsi
-                        })
-                    }}>
-                        <h1 className="hover:text-gray-500 text-xs">{record.deskripsi}</h1>
-                    </a>
-                    {/* </Link> */}
-                </>
-            )
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            <a href="#" onClick={() => {
+                                setdrawedit(true); setdataedit({
+                                    nama: record.nama,
+                                    deskripsi: record.deskripsi
+                                })
+                            }}>
+                                <h1 className="hover:text-gray-500 text-xs">{record.deskripsi}</h1>
+                            </a>
+                        </>
+                }
+            }
         },
         {
             title: 'Key',
             dataIndex: 'key',
             key: 'key',
-            render: (text, record, index) => (
-                <>
-                    <a href="#" onClick={() => {
-                        setdrawedit(true); setdataedit({
-                            nama: record.nama,
-                            deskripsi: record.deskripsi
-                        })
-                    }}>
-                        <h1 className="hover:text-gray-500 text-xs">{record.key}</h1>
-                    </a>
-                </>
-            )
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            <a href="#" onClick={() => {
+                                setdrawedit(true); setdataedit({
+                                    nama: record.nama,
+                                    deskripsi: record.deskripsi
+                                })
+                            }}>
+                                <h1 className="hover:text-gray-500 text-xs">{record.key}</h1>
+                            </a>
+                        </>
+                }
+            }
         },
     ]
 
@@ -149,7 +167,7 @@ const FeaturesIndex = ({ initProps, dataProfile, sidemenu }) => {
                 <div className="col-span-5 p-0 md:p-5 flex flex-col">
                     {/* <Search placeholder="Cari Nama Feature" allowClear style={{ width: `40%`, marginBottom: `1rem` }} onSearch={(value) => { onSearchService(value) }} /> */}
                     <div className="w-full md:w-5/12">
-                        <Input prefix={<SearchOutlined />} placeholder="Cari Fitur" style={{ borderRadius: `0.5rem`, marginBottom: `1rem`, width: `100%` }} onChange={onCariFeature} allowClear />
+                        <Input prefix={<SearchOutlined />} placeholder="Cari Fitur" style={{ borderRadius: `0.1rem`, marginBottom: `1rem`, width: `100%` }} onChange={onCariFeature} allowClear />
                     </div>
                     <Table columns={columnsFeature} dataSource={datatable} pagination={{ pageSize: 8 }} scroll={{ x: 300 }}></Table>
                 </div>

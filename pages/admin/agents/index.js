@@ -6,7 +6,7 @@ import EditOutlined from '@ant-design/icons/EditOutlined'
 import { useState } from 'react'
 import Link from 'next/link'
 import st from '../../../components/layout-dashboard.module.css'
-import {Table,notification,Button} from 'antd'
+import { Table, notification, Button } from 'antd'
 
 function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const rt = useRouter()
@@ -56,57 +56,112 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const columnsDD = [
         {
             dataIndex: 'profil_image',
-            render: (text, record, index) => (
-                <>
-                    <img src={record.profile_image} alt="imageProfile" className=" object-cover w-10 h-10 rounded-full" />
-                </>
-            )
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            <img src={record.profile_image} alt="imageProfile" className=" object-cover w-10 h-10 rounded-full" />
+                        </>
+                }
+            }
         },
         {
             title: 'ID',
             dataIndex: 'user_id',
-            sorter: (a, b) => a.user_id - b.user_id,
-            sortDirections: ['descend', 'ascend'],
+            // sorter: (a, b) => a.user_id - b.user_id,
+            // sortDirections: ['descend', 'ascend'],
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.user_id}
+                        </>
+                }
+            }
         },
         {
             title: 'Nama',
             dataIndex: 'fullname',
-            sorter: (a, b) => a.fullname.localeCompare(b.fullname),
-            sortDirections: ['descend', 'ascend'],
+            // sorter: (a, b) => a.fullname.localeCompare(b.fullname),
+            // sortDirections: ['descend', 'ascend'],
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.fullname}
+                        </>
+                }
+            }
         },
         {
             title: 'Email',
             dataIndex: 'email',
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.email}
+                        </>
+                }
+            }
         },
         {
             title: 'No Handphone',
             dataIndex: 'phone_number',
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.phone_number}
+                        </>
+                }
+            }
         },
         {
-            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
+            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
             dataIndex: 'actionss',
-            render: (text, record, index) => (
-                <>
-                    {
-                        actions[index] ?
-                            <>{actions[index]}
-                                <a><CopyOutlined /></a>
-                                <Link href={{
-                                    pathname: `/admin/agents/${record.user_id}`,
-                                }}><a><EditOutlined /></a></Link>
-                            </>
-                            :
-                            null
-                    }
-                </>
-            )
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {
+                                actions[index] ?
+                                    <>{actions[index]}
+                                        <Button onClick={() => { rt.push(`/admin/agents/${record.user_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
+                                            <EditOutlined />
+                                        </Button>
+                                    </>
+                                    :
+                                    null
+                            }
+                        </>
+                }
+            }
         }
     ];
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
-                <div className="h-20 w-full grid grid-cols-1 md:grid-cols-3 border-gray-400 md:border-t md:border-b bg-white mb-5 p-4 rounded-md">
-                    <div className=" col-span-1 md:col-span-2 flex items-center">
+                <div className="h-20 w-full grid grid-cols-1 md:grid-cols-3 border-gray-400 md:border-t md:border-b bg-white mb-5 p-4">
+                    <div className=" col-span-1 md:col-span-2 flex items-center mb-2 md:mb-0">
                         <div className="font-semibold text-base w-auto">Agents</div>
                     </div>
                     <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
@@ -117,22 +172,22 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
                             pathname: '/admin/agents/create/',
                         }}>
                             <Button size="large" type="primary">
-                                Tambah Agent
+                                Add New
                             </Button>
                         </Link>
                         {/* </div> */}
                     </div>
                 </div>
-                <div className="h-auto w-full grid grid-cols-1 md:grid-cols-4 mb-5 bg-white px-2 rounded-md">
-                    <div className="flex md:hidden flex-col space-y-3 p-4 md:col-span-1 col-span-1">
+                <div className="h-auto w-full grid grid-cols-1 md:grid-cols-5 mb-5 bg-white rounded-md">
+                    {/* <div className="flex md:hidden flex-col space-y-3 p-4 md:col-span-1 col-span-1">
                         <div className="font-semibold text-sm">Agents</div>
                         <p className="font-normal text-sm">
                             The list shows all Agents added in your help desk. You can edit an existing agent’s permissions and access rights by hovering over the agent and clicking on <EditOutlined />. <br />
                             You can add new agents by clicking on the “New Agent” button.
                         </p>
-                    </div>
-                    <div className="md:col-span-3 col-span-1 flex flex-col p-4">
-                        <div className="flex flex-wrap">
+                    </div> */}
+                    <div className="md:col-span-5 col-span-1 flex flex-col py-3">
+                        <div className="flex flex-wrap mb-2">
                             <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={FilterAll}>
                                 All
                             </button>
@@ -234,13 +289,13 @@ function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
                             }
                         }}></Table>
                     </div>
-                    <div className="hidden md:flex flex-col space-y-3 p-4 md:col-span-1 col-span-1">
+                    {/* <div className="hidden md:flex flex-col space-y-3 p-4 md:col-span-1 col-span-1">
                         <div className="font-semibold text-sm">Agents</div>
                         <p className="font-normal text-sm">
                             The list shows all Agents added in your help desk. You can edit an existing agent’s permissions and access rights by hovering over the agent and clicking on <EditOutlined />. <br />
                             You can add new agents by clicking on the “New Agent” button.
                         </p>
-                    </div>
+                    </div> */}
                 </div>
             </>
         </Layout>

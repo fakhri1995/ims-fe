@@ -11,7 +11,11 @@ module.exports = {
       },
       fontFamily:{
         mont: ['Montserrat']
-      }
+      },
+      backgroundColor: theme => ({
+        'primary': '#1890ff',
+        'secondary': '#60A5FA'
+      })
     },
   },
   variants: {

@@ -140,21 +140,21 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
 
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
-            <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-                <div className="col-span-1 md:col-span-3 flex flex-col" id="createAgentsWrapper">
+            <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4" id="createAgentsWrapper">
+                <div className=" col-span-1 md:col-span-4">
                     <Sticky containerSelectorFocus="#createAgentsWrapper">
-                        <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
+                        <div className=" col-span-4 flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
                             <h1 className="font-semibold py-2">Agent Baru</h1>
                             <div className="flex space-x-2">
                                 <Link href="/admin/agents">
-                                    <Button size="middle" type="default">Batalkan</Button>
-                                    {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 text-xs md:text-sm w-24 h-10 rounded-md">Cancel</button> */}
+                                    <Button type="default">Cancel</Button>
                                 </Link>
-                                <Button size="middle" type="primary" loading={loadingsave} onClick={instanceForm.submit}>Simpan</Button>
-                                {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md text-xs md:text-sm w-24 h-10" onClick={handleCreateAgents}>Save</button> */}
+                                <Button type="primary" loading={loadingsave} onClick={instanceForm.submit}>Save</Button>
                             </div>
                         </div>
                     </Sticky>
+                </div>
+                <div className="col-span-1 md:col-span-3 flex flex-col">
                     <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-14">
                         <div className="border-b border-black p-4 font-semibold mb-5">
                             Detail Akun Pengguna
@@ -215,7 +215,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                         </div>
                     </div>
                 </div>
-                <div className=" col-span-1 md:col-span-1 hidden md:flex flex-col space-y-4 p-4">
+                {/* <div className=" col-span-1 md:col-span-1 hidden md:flex flex-col space-y-4 p-4">
                     <div className="font-semibold text-base">Agents</div>
                     <p className="font-normal text-xs">
                         When you add a new agent, you will have to provide the agent’s email, set their permission levels and access (full-time or occasional). Agents will receive an email with a confirmation link to activate their account after which they can be assigned to, or respond to tickets. Administrators can also edit an Agent’s profile to include the agent’s title, phone, profile picture, signature etc.
@@ -233,7 +233,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                         Choose the tickets this agent can view and actions they can perform within the helpdesk by assigning one or more roles.
                         Note that you will not be able to modify your own roles, or delete yourself.
                     </p>
-                </div>
+                </div> */}
             </div>
         </Layout>
     )
