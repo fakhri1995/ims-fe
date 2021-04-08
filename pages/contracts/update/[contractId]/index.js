@@ -6,6 +6,7 @@ import { useState,useEffect } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
 import PlusSquareOutlined from '@ant-design/icons/PlusSquareOutlined'
+import SearchOutlined from '@ant-design/icons/SearchOutlined'
 import {DatePicker,Table,Drawer,Input,Select,Button,notification,Form} from 'antd'
 import moment from 'moment'
 
@@ -91,13 +92,13 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
             {
                 selectedServiceItemTemp.length > 0 ?
                 <>
-                <div className="col-span-1 md:col-span-1 flex flex-col pr-2">
+                <div className="col-span-1 hidden md:col-span-1 md:flex flex-col pr-2">
                     <h3>Nama Service Item</h3>
                 </div>
-                <div className="col-span-1 md:col-span-1 flex flex-col px-2">
+                <div className="col-span-1 hidden md:col-span-1 md:flex flex-col px-2">
                     <h3>Harga</h3>
                 </div>
-                <div className="col-span-1 md:col-span-1 flex flex-col pl-2">
+                <div className="col-span-1 hidden md:col-span-1 md:flex flex-col pl-2">
                     <h3>Terms of Payment</h3>
                 </div>
                 </>
@@ -107,13 +108,13 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
                 selectedServiceItemTemp.map((item,idx)=>{
                     return (
                         <>
-                            <div className="col-span-1 md:col-span-1 flex flex-col pr-2 py-2">
+                            <div className="col-span-1 md:col-span-1 flex flex-col md:pr-2 py-2">
                                 <Input className={''} defaultValue={item.nama} readOnly></Input>
                             </div>
-                            <div className="col-span-1 md:col-span-1 flex flex-col px-2 py-2">
+                            <div className="col-span-1 md:col-span-1 flex flex-col md:px-2 py-2">
                                 <Input name={"harga"+item.key} key={"harga"+item.key} type="number" defaultValue={dataServiceItems[idx].harga} onBlur={(e)=>{ onChangeServicePriceItems(e,item.id_service_item)}} prefix="IDR" suffix="Rupiah" allowClear ></Input>
                             </div>
-                            <div className="col-span-1 md:col-span-1 flex flex-col pl-2 py-2">
+                            <div className="col-span-1 md:col-span-1 flex flex-col md:pl-2 py-2">
                                 <Select name={"terms"+item.key} key={"terms"+item.key} className={''} defaultValue={dataServiceItems[idx].id_terms_of_payment} allowClear onChange={(val)=>{onChangeServiceTermsofPaymentItems(val,item.id_service_item)}}>
                                     {
                                         contractInputData.data.term_of_payments.map((item,idx)=>{
@@ -121,6 +122,11 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
                                         })
                                     }
                                 </Select>
+                            </div>
+                            <div className={'block md:hidden'}>
+                                <br></br>
+                                <hr className=""></hr>
+                                <br></br>
                             </div>
                         </>
                     )
@@ -179,13 +185,70 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
         }),
     };
     //-------------populate list service---------------
-    const populateListService = contractInputData.data.service_items.map((doc, idx) => {
+    const [populateListService, setPopulateListService] = useState(
+        contractInputData.data.service_items.map((doc, idx) => {
         return ({
             key: doc.id,
             nama: doc.nama_service_item,
             deskripsi: doc.deskripsi_singkat,
         })
-    })
+    }))
+    const [idCategory, setIdCategory] = useState(null)
+    const onChangeCategory = (val) => {
+        setIdCategory(val)
+        const listServiceByCategory = contractInputData.data.service_items.map((doc, idx) => {
+            return ({
+                id_service_kategori: doc.id_service_kategori,
+                key: doc.id,
+                nama: doc.nama_service_item,
+                deskripsi: doc.deskripsi_singkat,
+            })
+        }).filter((doc)=>{
+            return doc.id_service_kategori == val
+        })
+        setPopulateListService(listServiceByCategory)
+        // console.log(listServiceByCategory)
+    }
+    const [defaultCategory, setDefaultCategory] = useState(null)
+    const clearFilterCategory = () => {
+        setDefaultCategory(null)
+        setIdCategory(null)
+        setPopulateListService(contractInputData.data.service_items.map((doc, idx) => {
+            return ({
+                key: doc.id,
+                nama: doc.nama_service_item,
+                deskripsi: doc.deskripsi_singkat,
+            })
+        }))
+    }
+    const searchServiceItem = (e) => {
+        // console.log(e.target.value)
+        var val = e.target.value
+        const listServiceByCategory = contractInputData.data.service_items.map((doc, idx) => {
+            return ({
+                id_service_kategori: doc.id_service_kategori,
+                key: doc.id,
+                nama: doc.nama_service_item,
+                deskripsi: doc.deskripsi_singkat,
+            })
+        }).filter((doc)=>{
+            if(idCategory != null){
+                return doc.id_service_kategori == idCategory && doc.nama.toLowerCase().includes(val)
+            }
+            else{
+                return doc.nama.toLowerCase().includes(val)
+            }
+        })
+        setPopulateListService(listServiceByCategory)
+        // console.log(listServiceByCategory)
+    }
+    // const populateListService = contractInputData.data.service_items.map((doc, idx) => {
+    //     return ({
+    //         key: doc.id,
+    //         nama: doc.nama_service_item,
+    //         deskripsi: doc.deskripsi_singkat,
+    //     })
+    // })
     //--------------populate list company ------------
     const populateListCompany = contractInputData.data.companies.filter((doc,idx)=>(doc.id!==66)).map((doc, idx) => {
         return ({
@@ -276,6 +339,17 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
     const check = () => {
         console.log(updatecontract.service_items)
     }
+    const [widthDrawer, setWidthDrawer] = useState(600)
+    useEffect(() => {
+        var w = window.innerWidth
+        if(w < 414){
+            setWidthDrawer(300)
+        }
+        else if(w < 640){
+            setWidthDrawer(400)
+        }
+        // console.log(w)
+    }, [])
     
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
@@ -409,7 +483,8 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
                                 <DynamicComponent></DynamicComponent>
                             </div>
                             
-                            <Drawer title="Add Service Item" maskClosable={false} visible={opendrawer} onClose={() => { setOpendrawer(false),setServiceItemTemp({...serviceItemTemp,serviceItemValues:selectedServiceItemTemp}),setSelectedRowKeys(selectedServiceItemTemp.map(item=>item.id_service_item))}} destroyOnClose={true} width={700} 
+                            <Drawer title="Add Service Item" maskClosable={false} visible={opendrawer} onClose={() => { setOpendrawer(false),setServiceItemTemp({...serviceItemTemp,serviceItemValues:selectedServiceItemTemp}),setSelectedRowKeys(selectedServiceItemTemp.map(item=>item.id_service_item))}} destroyOnClose={true}
+                                width={widthDrawer}
                                 footer={
                                 <div style={{ textAlign: 'right' }}>
                                         <button onClick={() => { setOpendrawer(false),setServiceItemTemp({...serviceItemTemp,serviceItemValues:selectedServiceItemTemp}),setSelectedRowKeys(selectedServiceItemTemp.map(item=>item.id_service_item))}} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
@@ -421,11 +496,35 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
                                     </div>
                                 }
                                 >
-                                <Table
-                                    rowSelection={rowSelection}
-                                    columns={columnsTableListService}
-                                    dataSource={populateListService}
-                                />
+                                    <div className={'flex flex-row justify-between'}>
+                                        <div className={'pb-6 flex'}>
+                                            <Select value={defaultCategory} placeholder="Service Category" className={'w-48'} onChange={(value)=>{onChangeCategory(value),setDefaultCategory(value)}} name={`service_categories`}>
+                                                        {
+                                                            contractInputData.data.service_categories.map((doc,index)=>{
+                                                                return(
+                                                                    <Option key={doc.id} value={doc.id}>{doc.nama_kategori}</Option>
+                                                                    )
+                                                                })
+                                                            }
+                                            </Select>
+                                            <div className={'pl-2'}>
+                                                <Button className={''} onClick={clearFilterCategory}>Clear Filter</Button>
+                                            </div>
+                                        </div>
+                                        
+                                            <div className={'pl-2 hidden sm:block'}>
+                                                <Input allowClear onChange={(e)=>(searchServiceItem(e))} prefix={<SearchOutlined />} placeholder="Search"></Input>
+                                            </div>
+                                                            
+                                    </div>
+                                    <div className={'py-2 block sm:hidden'}>
+                                        <Input allowClear onChange={(e)=>(searchServiceItem(e))} prefix={<SearchOutlined />} placeholder="Search"></Input>
+                                    </div>
+                                    <Table
+                                        rowSelection={rowSelection}
+                                        columns={columnsTableListService}
+                                        dataSource={populateListService}
+                                    />
                             </Drawer>
                                 {/* <Button onClick={checkFile}>Check Data</Button>
                                 <Button onClick={check}>Check Data 2</Button> */}

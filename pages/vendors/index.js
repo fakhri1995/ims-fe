@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Layout from '../../components/layout-dashboard-vendors'
 import st from '../../components/layout-dashboard-vendors.module.css'
 import httpcookie from 'cookie'
@@ -367,11 +367,23 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
         }
     ];
 
+    const [widthDrawer, setWidthDrawer] = useState(600)
+    useEffect(() => {
+        var w = window.innerWidth
+        if(w < 414){
+            setWidthDrawer(300)
+        }
+        else if(w < 640){
+            setWidthDrawer(400)
+        }
+        // console.log(w)
+    }, [])
+    
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
                 <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-                    <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
+                    <div className=" col-span-1 md:col-span-4 flex flex-col" id="formAgentsWrapper">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <h1 className="font-semibold text-base w-auto pt-2">Vendors</h1>
@@ -419,17 +431,18 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
 
                     </div>
                     <div className="flex flex-col space-y-3 px-4">
-                        <div className="font-semibold text-sm">Vendors</div>
+                        {/* <div className="font-semibold text-sm">Vendors</div>
                         <p className="font-normal text-sm">
                         Migsys lets you manage products and vendors side by side with your help desk. You can add multiple vendors to each of 
                         your products and access contact information and details such as price, warranty and address alongside your product. 
                         When you are managing your products, you can easily gather basic information such as cost, see how any of the other vendors 
                         are priced and check to see if it’s still covered under a warranty. You can also quickly contact the vendor for troubleshooting 
                         and fixing service issues.
-                    </p>
+                    </p> */}
                     </div>
                 </div>
-                <Drawer title="New Vendor" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false), closeDrawer(),createVendorForm.resetFields() }} destroyOnClose={true} width={700} 
+                <Drawer title="New Vendor" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false), closeDrawer(),createVendorForm.resetFields() }} destroyOnClose={true} 
+                width={widthDrawer} 
                     footer={
                     <div style={{ textAlign: 'right' }}>
                             <button onClick={() => { setDrawablecreate(false), closeDrawer(),createVendorForm.resetFields()  }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
@@ -600,7 +613,8 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                             </div>
                         </Form>
                 </Drawer>
-                <Drawer title="Edit Vendor" maskClosable={true} visible={drawableedit} onClose={() => { setDrawableedit(false),closeDrawerEdit(),editVendorForm.resetFields() }} destroyOnClose={true} width={700} 
+                <Drawer title="Edit Vendor" maskClosable={true} visible={drawableedit} onClose={() => { setDrawableedit(false),closeDrawerEdit(),editVendorForm.resetFields() }} destroyOnClose={true} 
+                width={widthDrawer} 
                     footer={
                     <div style={{ textAlign: 'right' }}>
                             <button onClick={() => { setDrawableedit(false),editVendorForm.resetFields() }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">

@@ -196,10 +196,10 @@ function GroupsAgentsDetail({ initProps, dataProfile, dataListAccount, dataDetai
                         </div>
                     </Form>
                     <div className={`${st.grupdesc} flex flex-col space-y-3 px-4`}>
-                        <div className="font-semibold text-sm">Groups</div>
+                        {/* <div className="font-semibold text-sm">Groups</div>
                         <p className="font-normal text-xs md:text-sm">
                             You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that the same agent can be a member of multiple groups as well
-                        </p>
+                        </p> */}
                     </div>
                 </div>
             </>

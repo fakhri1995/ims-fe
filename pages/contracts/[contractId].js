@@ -34,6 +34,11 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
         key: null,
         nomor_kontrak: ""
     })
+    const [warningActivate, setWarningActivate] = useState({
+        istrue: false,
+        key: null,
+        nomor_kontrak: ""
+    })
     const onClickModalDeleteContract = (istrue, record) => {
         setWarningDelete({
             ...warningDelete,
@@ -50,9 +55,47 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
             ["nomor_kontrak"]: record.nomor_kontrak
         })
     }
+    const onClickModalTerminateActivate = (istrue, record) => {
+        setWarningActivate({
+            ...warningActivate,
+            ["istrue"]: istrue,
+            ["key"]: record.id,
+            ["nomor_kontrak"]: record.nomor_kontrak
+        })
+    }
     //-------------------terminate contract------------------------
     const handleTerminateContract = (id) => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/deactivatingContract?id=${id}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(res => res.json())
+        .then(res2 => {
+            if (res2.success) {
+                setWarningDelete(false, null)
+                notification['success']({
+                    message: res2.message,
+                    duration: 3
+                })
+                setTimeout(() => {
+                    rt.push(`/contracts?originPath=Admin`)
+                }, 500)
+            }
+            else if (!res2.success) {
+                setWarningDelete(false, null)
+                notification['error']({
+                    message: res2.message,
+                    duration: 3
+                })
+            }
+        })
+    }
+    //-------------------activate contract------------------------
+    const handleActivateContract = (id) => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/activatingContract?id=${id}`, {
             method: 'PUT',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -138,7 +181,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
                 <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-                    <div className=" col-span-1 md:col-span-4 flex flex-col" id="formAgentsWrapper">
+                    <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <div className={'flex'}>
@@ -151,20 +194,25 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                                     <div className=" relative top-1 h-9 bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md w-auto md:mr-5">NON-AKTIF</div>
                                 }
                                 </div>
-                                <div className="flex space-x-2">
+                                <div className="flex space-x-2 pt-1">
+                                    <button onClick={()=>{onClickModalTerminateActivate(true,contract)}} className=" text-white text-sm bg-green-600 border-gray-900  hover:bg-green-700 cursor-pointer h-10 py-2.5 w-20 text-center">
+                                            <p>
+                                                Activate
+                                            </p>
+                                    </button>
+                                    <button onClick={()=>{onClickModalTerminateContract(true,contract)}} className=" text-white text-sm bg-red-600 border-gray-900  hover:bg-red-700 cursor-pointer h-10 py-2.5 w-20 text-center">
+                                            <p>
+                                                Terminate
+                                            </p>
+                                    </button>
                                     <Link href={`/contracts/update/${contract.id}?originPath=Admin`}>
-                                        <div className=" text-white text-sm bg-blue-500 hover:bg-blue-600 border-gray-900 cursor-pointer h-10 py-2 w-20 text-center" >
+                                        <div className=" text-white text-sm bg-blue-500 hover:bg-blue-600 border-gray-900 cursor-pointer h-10 py-2.5 w-20 text-center" >
                                             <p>
                                                 Edit
                                             </p>
                                         </div>
                                     </Link>
-                                    <button onClick={()=>{onClickModalTerminateContract(true,contract)}} className=" text-white text-sm bg-red-600 border-gray-900  hover:bg-red-700 cursor-pointer h-10 py-2 w-20 text-center">
-                                            <p>
-                                                Terminate
-                                            </p>
-                                    </button>
-                                    <button onClick={()=>{onClickModalDeleteContract(true,contract)}} className=" text-black text-sm bg-white border-gray-900 border-2 hover:bg-gray-400 cursor-pointer h-10 py-2 w-20 text-center">
+                                    <button onClick={()=>{onClickModalDeleteContract(true,contract)}} className=" text-black text-sm bg-white border-gray-300 border hover:bg-gray-200 cursor-pointer h-10 py-2 w-20 text-center">
                                             <p>
                                                 Delete
                                             </p>
@@ -335,6 +383,14 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                             onCancel={() => setWarningTerminate(false, null)}
                         >
                             Apakah anda yakin ingin mengakhiri kontrak <strong>{warningTerminate.nomor_kontrak}</strong>?
+                        </Modal>
+                        <Modal
+                            title="Konfirmasi untuk mengaktifkan kontrak"
+                            visible={warningActivate.istrue}
+                            onOk={() => { handleActivateContract(warningActivate.key) }}
+                            onCancel={() => setWarningActivate(false, null)}
+                        >
+                            Apakah anda yakin ingin mengaktifkan kontrak <strong>{warningActivate.nomor_kontrak}</strong>?
                         </Modal>
                     </div>
                     {/* <div className="flex flex-col space-y-3 px-4">

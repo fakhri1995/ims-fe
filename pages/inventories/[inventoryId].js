@@ -97,19 +97,19 @@ function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColum
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
                 <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-                    <div className=" col-span-1 md:col-span-4 flex flex-col" id="formAgentsWrapper">
+                    <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <h1 className="font-semibold text-base w-auto py-2">{inventory.asset_name}</h1>
                                 <div className="flex space-x-2">
                                     <Link href={`/inventories/update/${inventory.id}?originPath=Assets`}>
-                                        <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 border-gray-900 border-2 cursor-pointer rounded-md h-10 py-2 w-20 text-center" >
+                                        <div className=" text-white text-sm bg-blue-500 hover:bg-blue-600 border-gray-600 border cursor-pointer h-10 py-2 w-20 text-center" >
                                             <p>
                                                 Edit
                                             </p>
                                         </div>
                                     </Link>
-                                    <button onClick={()=>{onClickModalDeleteInventory(true,inventory)}} className=" text-black text-sm bg-white border-gray-900 border-2 hover:bg-gray-400 cursor-pointer rounded-md h-10 py-2 w-20 text-center">
+                                    <button onClick={()=>{onClickModalDeleteInventory(true,inventory)}} className=" text-black text-sm bg-white border-gray-300 border hover:bg-gray-200 cursor-pointer h-10 py-2 w-20 text-center">
                                             <p>
                                                 Delete
                                             </p>
