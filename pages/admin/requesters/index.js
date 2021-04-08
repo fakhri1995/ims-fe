@@ -6,7 +6,7 @@ import httpcookie from 'cookie'
 import CopyOutlined from '@ant-design/icons/CopyOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import Link from 'next/link'
-import {Table, notification, Button} from 'antd'
+import { Table, notification, Button } from 'antd'
 
 function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const rt = useRouter()
@@ -57,50 +57,124 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const columnsDD = [
         {
             dataIndex: 'profil_image',
-            render: (text, record, index) => (
-                <>
-                    <img src={record.profile_image} alt="imageProfile" className=" object-cover w-10 h-10 rounded-full" />
-                </>
-            )
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            <img src={record.profile_image} alt="imageProfile" className=" object-cover w-10 h-10 rounded-full" />
+                        </>
+                }
+            }
+            // render: (text, record, index) => (
+            //     <>
+            //         <img src={record.profile_image} alt="imageProfile" className=" object-cover w-10 h-10 rounded-full" />
+            //     </>
+            // )
         },
         {
             title: 'ID',
             dataIndex: 'user_id',
-            sorter: (a, b) => a.user_id - b.user_id,
-            sortDirections: ['descend', 'ascend'],
+            // sorter: (a, b) => a.user_id - b.user_id,
+            // sortDirections: ['descend', 'ascend'],
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.user_id}
+                        </>
+                }
+            }
         },
         {
             title: 'Nama',
             dataIndex: 'fullname',
-            sorter: (a, b) => a.fullname.localeCompare(b.fullname),
-            sortDirections: ['descend', 'ascend'],
+            // sorter: (a, b) => a.fullname.localeCompare(b.fullname),
+            // sortDirections: ['descend', 'ascend'],
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.fullname}
+                        </>
+                }
+            }
         },
         {
             title: 'Email',
             dataIndex: 'email',
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.email}
+                        </>
+                }
+            }
         },
         {
             title: 'No Handphone',
             dataIndex: 'phone_number',
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.phone_number}
+                        </>
+                }
+            }
         },
         {
-            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
+            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
             dataIndex: 'actionss',
-            render: (text, record, index) => (
-                <>
-                    {
-                        actions[index] ?
-                            <>{actions[index]}
-                                <a><CopyOutlined /></a>
-                                <Link href={{
-                                    pathname: `/admin/requesters/${record.user_id}`,
-                                }}><a><EditOutlined /></a></Link>
-                            </>
-                            :
-                            null
-                    }
-                </>
-            )
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {
+                                actions[index] ?
+                                    <>{actions[index]}
+                                        <Button onClick={() => { rt.push(`/admin/requesters/${record.user_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
+                                            <EditOutlined />
+                                        </Button>
+                                    </>
+                                    :
+                                    null
+                            }
+                        </>
+                }
+            }
+            // render: (text, record, index) => (
+            //     <>
+            //         {
+            //             actions[index] ?
+            //                 <>{actions[index]}
+            //                     <Button onClick={() => { rt.push(`/admin/requesters/${record.user_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
+            //                         <EditOutlined />
+            //                     </Button>
+            //                 </>
+            //                 :
+            //                 null
+            //         }
+            //     </>
+            // )
         }
     ];
 
@@ -108,26 +182,26 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
                 <div className="h-20 w-full grid grid-cols-1 md:grid-cols-3 border-gray-400 md:border-t md:border-b p-4 bg-white mb-5">
-                    <div className="col-span-1 md:col-span-2 flex items-center">
+                    <div className="col-span-1 md:col-span-2 flex items-center mb-2 md:mb-0">
                         <div className="font-semibold text-base w-auto">Requesters</div>
                     </div>
                     <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
                         {/* <a className=" text-sm text-center w-auto mr-5">Import</a>
                         <a className=" text-sm text-center w-auto mr-5">Export</a> */}
                         {/* <div className=" text-white text-xs md:text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-3 md:py-2 w-28 md:w-52 text-center"> */}
-                            <Link href={{
-                                pathname: '/admin/requesters/create/',
-                            }}>
-                                <Button type="primary" size="large">
-                                    Tambah Requesters
+                        <Link href={{
+                            pathname: '/admin/requesters/create/',
+                        }}>
+                            <Button type="primary" size="large">
+                                Add New
                                 </Button>
-                            </Link>
+                        </Link>
                         {/* </div> */}
                     </div>
                 </div>
-                <div className="h-auto w-full grid grid-cols-1 md:grid-cols-4 mb-5 bg-white px-2">
-                    <div className="md:col-span-3 col-span-1 flex flex-col p-4">
-                        <div className="flex flex-wrap">
+                <div className="h-auto w-full grid grid-cols-1 md:grid-cols-5 mb-5 bg-white">
+                    <div className="md:col-span-5 col-span-1 flex flex-col py-3">
+                        <div className="flex flex-wrap mb-2">
                             <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={FilterAll}>
                                 All
                             </button>
@@ -229,14 +303,14 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
                             }
                         }}></Table>
                     </div>
-                    <div className="hidden md:flex flex-col space-y-3 p-4 md:col-span-1 col-span-1">
+                    {/* <div className="hidden md:flex flex-col space-y-3 p-4 md:col-span-1 col-span-1">
                         <div className="font-semibold text-sm">Requesters</div>
                         <p className="font-normal text-sm">
                             This page lets you handpick a set of requesters and add them to your help desk. These requesters will have selective privileges to submit requests to your helpdesk. You can restrict access such that only people who have been added here are allowed to login to your self-service portal and access your knowledge base.
                         <br /> <br />
                         You can fill in the details of each of your new requesters manually or import a list of users from a CSV file. Once you have populated your list, your agents can open up each of your requesters and view their ticket history and contact information.
                         </p>
-                    </div>
+                    </div> */}
                 </div>
             </>
         </Layout>

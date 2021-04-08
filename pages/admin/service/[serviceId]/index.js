@@ -256,8 +256,8 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
                         }
                     </div>
                     <div className="pt-3">
-                        <Button type="default" size="middle" style={{ marginRight: `1rem` }} onClick={() => { rt.push('/admin/service') }}>Batalkan</Button>
-                        <Button type="ghost" size="middle" style={{ marginRight: `1rem` }} onClick={() => { setmodalkonfhapuskateg(true) }}>Hapus</Button>
+                        <Button type="default" style={{ marginRight: `1rem` }} onClick={() => { rt.push('/admin/service') }}>Batalkan</Button>
+                        <Button type="ghost" style={{ marginRight: `1rem` }} onClick={() => { setmodalkonfhapuskateg(true) }}>Hapus</Button>
                         {/* <Dropdown overlay={menu} trigger={['click']}> */}
                         <Button style={{ backgroundColor: `rgb(24,144,255)`, color: `white` }} loading={loadingupdate} onClick={handleUpdateService}>
                             Simpan {/*<DownOutlined />*/}

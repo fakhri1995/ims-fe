@@ -128,7 +128,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                             <div className="text-xs md:text-sm font-semibold">
                                 <h1 className="mt-2">Assets Types & Fields</h1>
                             </div>
-                            <Button type="primary" size="large" onClick={() => { setNewmodal(true) }}>Tambah Asset Type</Button>
+                            <Button type="primary" size="large" onClick={() => { setNewmodal(true) }}>Add New</Button>
                             {/* <div className="w-auto h-auto p-2 text-white bg-blue-700 rounded-md cursor-pointer hover:bg-blue-900 text-xs md:text-sm font-semibold" onClick={() => { setNewmodal(true) }}>
                                 New Asset Type
                             </div> */}

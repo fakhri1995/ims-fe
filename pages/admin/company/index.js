@@ -36,7 +36,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
         rt.push('/admin/company')
     }
     else {
-        dataTable = dataCompanyList.data.data.companies.map((doc, idx) => {
+        dataTable = dataCompanyList.data.data.companies.filter(dataa => dataa.company_id != 66).map((doc, idx) => {
             return ({
                 image_logo: doc.image_logo,
                 company_id: doc.company_id,
@@ -54,88 +54,124 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
     const [colorhover, setColorhover] = useState("")
     const columnsTable = [
         {
+            title: 'Logo',
             dataIndex: 'image_logo',
-            render: (text, record, index) => (
-                <>
-                    <Link href={`/admin/company/${record.company_id}`}>
-                        <a><img src={record.image_logo} alt="imageProfile" className=" object-cover w-10 h-10 rounded-full" /></a>
-                    </Link>
-                </>
-            )
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            <Link href={`/admin/company/${record.company_id}`}>
+                                <a><img src={record.image_logo} alt="imageProfile" className=" object-cover w-10 h-10 rounded-full" /></a>
+                            </Link>
+                        </>
+                }
+            }
         },
         {
             title: 'ID',
             dataIndex: 'company_id',
-            render: (text, record, index) => (
-                <>
-                    <Link href={`/admin/company/${record.company_id}`}>
-                        <a><h1>{record.company_id}</h1></a>
-                    </Link>
-                </>
-            ),
-            sorter: (a, b) => a.company_id - b.company_id,
-            sortDirections: ['descend', 'ascend'],
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            <Link href={`/admin/company/${record.company_id}`}>
+                                <a><h1>{record.company_id}</h1></a>
+                            </Link>
+                        </>
+                }
+            },
+            // sorter: (a, b) => a.company_id - b.company_id,
+            // sortDirections: ['descend', 'ascend'],
         },
         {
             title: 'Nama Perusahaan',
             dataIndex: 'company_name',
-            render: (text, record, index) => (
-                <>
-                    <Link href={`/admin/company/${record.company_id}`}>
-                        <a><h1>{record.company_name}</h1></a>
-                    </Link>
-                </>
-            ),
-            sorter: (a, b) => a.company_name.localeCompare(b.company_name),
-            sortDirections: ['descend', 'ascend'],
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            <Link href={`/admin/company/${record.company_id}`}>
+                                <a><h1>{record.company_name}</h1></a>
+                            </Link>
+                        </>
+                }
+            },
+            // sorter: (a, b) => a.company_name.localeCompare(b.company_name),
+            // sortDirections: ['descend', 'ascend'],
         },
         {
             title: 'Status',
             dataIndex: 'is_enabled',
-            render: (text, record, index) => (
-                <>
-                    <Link href={`/admin/company/${record.company_id}`}>
-                        {
-                            record.is_enabled ?
-                                <a><div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md text-center w-40">AKTIF MODULE</div></a>
-                                :
-                                <a><div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md text-center w-52">NON-AKTIF MODULE</div></a>
-                        }
-                    </Link>
-                </>
-            ),
-            filters: [
-                {
-                    text: 'Aktif',
-                    value: true,
-                },
-                {
-                    text: 'Non-aktif',
-                    value: false,
-                },
-            ],
-            onFilter: (value, record) => record.is_enabled === value,
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            <Link href={`/admin/company/${record.company_id}`}>
+                                {
+                                    record.is_enabled ?
+                                        <a><div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md text-center w-40">AKTIF MODULE</div></a>
+                                        :
+                                        <a><div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md text-center w-52">NON-AKTIF MODULE</div></a>
+                                }
+                            </Link>
+                        </>
+                }
+            },
+            // filters: [
+            //     {
+            //         text: 'Aktif',
+            //         value: true,
+            //     },
+            //     {
+            //         text: 'Non-aktif',
+            //         value: false,
+            //     },
+            // ],
+            // onFilter: (value, record) => record.is_enabled === value,
         },
         {
-            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
+            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
             dataIndex: 'actionss',
-            render: (text, record, index) => (
-                <>
-                    {
-                        events[index] ?
-                            <>
-                                <Link href={`/admin/company/${record.company_id}`}>
-                                    {/* {events[index]} */}
-                                    {/* <Link href={`/company/${record.company_id}?originPath=Admin`}> */}
-                                    <a><EditOutlined /></a>
-                                    {/* </Link> */}
-                                </Link>
-                            </>
-                            :
-                            null
-                    }
-                </>
-            )
+            align: `center`,
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+
+                        <>
+                            {
+                                events[index] ?
+                                    <>
+                                        <Button onClick={() => { rt.push(`/admin/company/${record.company_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
+                                            <EditOutlined />
+                                        </Button>
+                                        {/* <Link href={`/admin/company/${record.company_id}`}> */}
+                                        {/* {events[index]} */}
+                                        {/* <Link href={`/company/${record.company_id}?originPath=Admin`}> */}
+                                        {/* <a><EditOutlined /></a> */}
+                                        {/* </Link> */}
+                                        {/* </Link> */}
+                                    </>
+                                    :
+                                    null
+                            }
+                        </>
+                }
+            }
         }
     ]
     const closeClientsDrawer = () => {
@@ -251,96 +287,9 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
     return (
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
             <div className="flex justify-start md:justify-end p-3 md:border-t-2 md:border-b-2 bg-white mb-4 md:mb-8">
-                <div className="flex space-x-2">
+                <div className=" w-full flex justify-between items-center px-2">
+                    <h1 className="font-bold">Clients</h1>
                     <Button type="primary" size="large" onClick={() => { setDrawablecreate(true) }}>Tambah Perusahaan</Button>
-                    <Drawer title="Buat Perusahaan Clients" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false); closeClientsDrawer(); instanceForm.resetFields() }} width={420} destroyOnClose={true}>
-                        <div className="w-full h-auto grid grid-cols-1 md:grid-cols-1">
-                            <div className="px-3 pt-3 pb-0 col-span-1 md:col-span-1">
-                                <Form.Item name="profile_image">
-                                    <Upload
-                                        name="profile_image"
-                                        listType="picture-card"
-                                        className="profileImage"
-                                        showUploadList={false}
-                                        beforeUpload={beforeUploadProfileImage}
-                                        onChange={onChangeProfileImage}
-                                    >
-                                        {newclients.image_logo ? <img src={newclients.image_logo} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-                                    </Upload>
-                                </Form.Item>
-                            </div>
-                            <Form layout="vertical" className="createClientsForm" onFinish={handleSubmitCreateClients} form={instanceForm}>
-                                <div className="md:m-4 mb-5 md:mb-0 ">
-                                    <Form.Item name="name" label="Nama Perusahaan"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Nama perusahaan wajib diisi',
-                                            },
-                                        ]}
-                                    >
-                                        <Input name="name" onChange={onChangeCreateClients}></Input>
-                                    </Form.Item>
-                                </div>
-                                <div className="md:m-4 mb-5 md:mb-0 ">
-                                    <Form.Item name="address" label="Alamat"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Alamat wajib diisi',
-                                            },
-                                        ]}
-                                    >
-                                        <Input name="address" onChange={onChangeCreateClients}></Input>
-                                    </Form.Item>
-                                </div>
-                                <div className="md:m-4 mb-5 md:mb-0 ">
-                                    <Form.Item name="phone_number" label="Telepon"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Nomor telepon wajib diisi',
-                                            },
-                                        ]}
-                                    >
-                                        <Input name="phone_number" onChange={onChangeCreateClients}></Input>
-                                    </Form.Item>
-                                </div>
-                                <div className="mb:m-4 mb-5 md:mb-0">
-                                    <Form.Item name="parent_id" label="Parent Perusahaan"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Nomor telepon wajib diisi',
-                                            },
-                                        ]}>
-                                        <TreeSelect
-                                            style={{ width: '100%' }}
-                                            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                            treeData={dataLocations.data}
-                                            placeholder="Pilih parent"
-                                            treeDefaultExpandAll
-                                            onChange={(value) => { onChangeParent(value) }}
-                                        />
-                                    </Form.Item>
-                                </div>
-                                <div className="mb:m-4 mb-5 md:mb-0">
-                                    <Form.Item label="Role" name="role" rules={[
-                                        {
-                                            required: true,
-                                            message: 'Role Wajib diisi',
-                                        },
-                                    ]} style={{ marginRight: `1rem` }}>
-                                        <Select placeholder="Pilih role" onChange={(value) => { setnewclients({ ...newclients, role: value }) }}>
-                                            <Option value={2}>Klien</Option>
-                                            <Option value={3}>Cabang</Option>
-                                        </Select>
-                                    </Form.Item>
-                                </div>
-                                <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn} style={{ marginBottom: `1rem` }}>Simpan</Button>
-                            </Form>
-                        </div>
-                    </Drawer>
                 </div>
             </div>
             <div className="p-5 mt-5 flex flex-col space-y-5 shadow-md rounded-md w-full h-auto bg-white">
@@ -396,6 +345,94 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
                     })
                 } */}
             </div>
+            <Drawer title="Buat Perusahaan Clients" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false); closeClientsDrawer(); instanceForm.resetFields() }} width={420} destroyOnClose={true}>
+                <div className="w-full h-auto grid grid-cols-1 md:grid-cols-1">
+                    <div className="px-3 pt-3 pb-0 col-span-1 md:col-span-1">
+                        <Form.Item name="profile_image">
+                            <Upload
+                                name="profile_image"
+                                listType="picture-card"
+                                className="profileImage"
+                                showUploadList={false}
+                                beforeUpload={beforeUploadProfileImage}
+                                onChange={onChangeProfileImage}
+                            >
+                                {newclients.image_logo ? <img src={newclients.image_logo} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                            </Upload>
+                        </Form.Item>
+                    </div>
+                    <Form layout="vertical" className="createClientsForm" onFinish={handleSubmitCreateClients} form={instanceForm}>
+                        <div className="md:m-4 mb-5 md:mb-0 ">
+                            <Form.Item name="name" label="Nama Perusahaan"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Nama perusahaan wajib diisi',
+                                    },
+                                ]}
+                            >
+                                <Input name="name" onChange={onChangeCreateClients}></Input>
+                            </Form.Item>
+                        </div>
+                        <div className="md:m-4 mb-5 md:mb-0 ">
+                            <Form.Item name="address" label="Alamat"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Alamat wajib diisi',
+                                    },
+                                ]}
+                            >
+                                <Input name="address" onChange={onChangeCreateClients}></Input>
+                            </Form.Item>
+                        </div>
+                        <div className="md:m-4 mb-5 md:mb-0 ">
+                            <Form.Item name="phone_number" label="Telepon"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Nomor telepon wajib diisi',
+                                    },
+                                ]}
+                            >
+                                <Input name="phone_number" onChange={onChangeCreateClients}></Input>
+                            </Form.Item>
+                        </div>
+                        <div className="mb:m-4 mb-5 md:mb-0">
+                            <Form.Item name="parent_id" label="Parent Perusahaan"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Nomor telepon wajib diisi',
+                                    },
+                                ]}>
+                                <TreeSelect
+
+                                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                    treeData={dataLocations.data}
+                                    placeholder="Pilih parent"
+                                    treeDefaultExpandAll
+                                    onChange={(value) => { onChangeParent(value) }}
+                                />
+                            </Form.Item>
+                        </div>
+                        <div className="mb:m-4 mb-5 md:mb-0">
+                            <Form.Item label="Role" name="role" rules={[
+                                {
+                                    required: true,
+                                    message: 'Role Wajib diisi',
+                                },
+                            ]}>
+                                <Select placeholder="Pilih role" onChange={(value) => { setnewclients({ ...newclients, role: value }) }}>
+                                    <Option value={2}>Klien</Option>
+                                    <Option value={3}>Cabang</Option>
+                                </Select>
+                            </Form.Item>
+                        </div>
+                        <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn} style={{ marginBottom: `1rem` }}>Simpan</Button>
+                    </Form>
+                </div>
+            </Drawer>
         </Layout>
     )
 }

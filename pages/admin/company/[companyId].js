@@ -152,14 +152,14 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
             <div className="flex justify-start md:justify-end p-3 md:border-t-2 md:border-b-2 bg-white mb-4 md:mb-8">
                 <div className="flex space-x-2">
                     {editable ?
-                        <Button type="default" size="middle" onClick={() => { setEditable(false) }}>Batalkan</Button>
+                        <Button type="default" onClick={() => { setEditable(false) }}>Cancel</Button>
                         :
                         null
                     }
                     {editable ?
-                        <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn}>Simpan</Button>
+                        <Button type="primary" onClick={instanceForm.submit} loading={loadingbtn}>Save</Button>
                         :
-                        <Button type="primary" size="middle" onClick={() => { setEditable(true) }}>Edit</Button>
+                        <Button type="primary" onClick={() => { setEditable(true) }}>Edit</Button>
                     }
                 </div>
             </div>
@@ -176,13 +176,13 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                 </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-col-3 md:grid-cols-5 mb-4">
-                <div className="p-3 relative col-span-1 sm:col-span-1 md:col-span-1 flex flex-col justify-self-center">
+                <div className="p-3 relative col-span-1 sm:col-span-1 md:col-span-1 flex flex-col items-center">
                     <img src={data1.image_logo} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
                     {editable ?
                         <>
-                            <label className="custom-file-upload w-full p-2 border-2 cursor-pointer text-sm rounded-md hover:bg-gray-200 flex justify-center">
+                            <label className="custom-file-upload py-2 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3">
                                 <input type="file" style={{ display: `none` }} name="profile_image" onChange={onChangeEditProfileFoto} />
-                                {loadingfoto ? <LoadingOutlined /> : <EditOutlined style={{ fontSize: `1.5rem` }} />}
+                                {loadingfoto ? <LoadingOutlined /> : <EditOutlined style={{ fontSize: `1.2rem` }} />}
                                     Ganti Foto
                             </label>
                         </>
@@ -476,7 +476,7 @@ function ClientsDetailLocations({ dataDetailCompany, tok }) {
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
                 <div className="flex space-x-2">
                     <Link href={`/admin/company/locations/new?companyId=${dataDetailCompany.data.data.company_id}`}>
-                        <Button type="primary" size="large">Tambah</Button>
+                        <Button type="primary">Tambah</Button>
                         {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40"> Create</button> */}
                     </Link>
                 </div>
@@ -591,61 +591,139 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
     const columnsgetBanks = [
         {
             title: 'No.',
-            dataIndex: 'key'
+            dataIndex: 'key',
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.key}
+                        </>
+                }
+            }
         },
         {
             title: 'ID',
-            dataIndex: 'id'
+            dataIndex: 'id',
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.id}
+                        </>
+                }
+            }
         },
         {
             title: 'Bank',
             dataIndex: 'name',
-            sorter: (a, b) => a.bank.localeCompare(b.bank),
-            sortDirections: ['descend', 'ascend'],
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.name}
+                        </>
+                }
+            }
+            // sorter: (a, b) => a.bank.localeCompare(b.bank),
+            // sortDirections: ['descend', 'ascend'],
         },
         {
             title: 'Nomor Rekening',
             dataIndex: 'account_number',
-            sorter: (a, b) => a.norek - b.norek,
-            sortDirections: ['descend', 'ascend'],
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.account_number}
+                        </>
+                }
+            }
+            // sorter: (a, b) => a.norek - b.norek,
+            // sortDirections: ['descend', 'ascend'],
         },
         {
             title: 'Atas Nama',
             dataIndex: 'owner',
-            sorter: (a, b) => a.an.localeCompare(b.an),
-            sortDirections: ['descend', 'ascend'],
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.owner}
+                        </>
+                }
+            }
+            // sorter: (a, b) => a.an.localeCompare(b.an),
+            // sortDirections: ['descend', 'ascend'],
         },
         {
             title: 'Mata Uang',
             dataIndex: 'currency',
-            filters: [
-                {
-                    text: 'IDR',
-                    value: 'IDR',
-                },
-                {
-                    text: 'USD',
-                    value: 'USD',
-                },
-            ],
-            onFilter: (value, record) => record.currency.indexOf(value) === 0,
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.currency}
+                        </>
+                }
+            }
+            // filters: [
+            //     {
+            //         text: 'IDR',
+            //         value: 'IDR',
+            //     },
+            //     {
+            //         text: 'USD',
+            //         value: 'USD',
+            //     },
+            // ],
+            // onFilter: (value, record) => record.currency.indexOf(value) === 0,
         },
         {
-            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
+            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
             dataIndex: 'actionss',
-            render: (text, record, index) => (
-                <>
-                    {
-                        actions[index] ?
-                            <>{actions[index]}
-                                <a onClick={() => { setModaldel(true); setModaldeldata(record) }}><DeleteOutlined /></a>
-                                <a className="inline" onClick={() => { setDrawableedit(true); setRecordrow(record) }}><EditOutlined /></a>
-                            </>
-                            :
-                            null
-                    }
-                </>
-            )
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {
+                                actions[index] ?
+                                    <>{actions[index]}
+                                        <Button onClick={() => { setModaldel(true); setModaldeldata(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
+                                            <DeleteOutlined />
+                                        </Button>
+                                        <Button onClick={() => { setDrawableedit(true); setRecordrow(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
+                                            <EditOutlined />
+                                        </Button>
+                                        {/* <a onClick={() => { setModaldel(true); setModaldeldata(record) }}><DeleteOutlined /></a>
+                                        <a className="inline" onClick={() => { setDrawableedit(true); setRecordrow(record) }}><EditOutlined /></a> */}
+                                    </>
+                                    :
+                                    null
+                            }
+                        </>
+                }
+            }
         }
     ];
     var datagetBanks = []
@@ -771,7 +849,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                             :
                             null
                     }
-                    <Button type="primary" size="large" onClick={() => { setDrawablecreate(true) }}>Tambah</Button>
+                    <Button type="primary" onClick={() => { setDrawablecreate(true) }}>Add New</Button>
                     {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40 hidden md:block" onClick={() => { setDrawablecreate(true) }}> Create</button>
                     <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40 block md:hidden" onClick={() => { setDrawablecreatesmall(true) }}> Create</button> */}
                     <Drawer title="Edit data Rekening Bank" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false) }} width={370} destroyOnClose={true}>

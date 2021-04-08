@@ -180,13 +180,13 @@ function ServiceCreate({ initProps, dataProfile, dataListServiceCategories, data
             <div className="w-full h-80 border-t border-opacity-30 border-gray-500 bg-white">
                 <div className="w-full flex flex-col md:flex-row justify-between p-3">
                     <div>
-                        <p className="font-semibold text-lg">Tambah Service Item</p>
+                        <p className="font-semibold text-lg">Add Service Item</p>
                     </div>
                     <div>
-                        <Button type="default" size="middle" style={{ marginRight: `1rem` }} onClick={() => { rt.push('/admin/service') }}>Batalkan</Button>
+                        <Button type="default" style={{ marginRight: `1rem` }} onClick={() => { rt.push('/admin/service') }}>Cancel</Button>
                         {/* <Dropdown overlay={menu} trigger={['click']}> */}
                         <Button style={{ backgroundColor: `rgb(24,144,255)`, color: `white` }} loading={loadingbtntambahitem} onClick={handleCreateService}>
-                            Simpan {/*<DownOutlined />*/}
+                            Save {/*<DownOutlined />*/}
                         </Button>
                         {/* </Dropdown> */}
                     </div>

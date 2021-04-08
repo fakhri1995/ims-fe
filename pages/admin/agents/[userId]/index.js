@@ -171,53 +171,54 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
     }
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} dataDetailAccount={dataDetailAccount} st={st}>
-            <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-                <div className=" col-span-1 md:col-span-1 flex md:hidden flex-col space-y-4 p-4">
-                    <div className="font-semibold text-base">Agents</div>
-                    <p className="font-normal text-xs">
-                        When you add a new agent, you will have to provide the agent’s email, set their permission levels and access (full-time or occasional). Agents will receive an email with a confirmation link to activate their account after which they can be assigned to, or respond to tickets. Administrators can also edit an Agent’s profile to include the agent’s title, phone, profile picture, signature etc.
-                    </p>
-                </div>
-                <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
+            <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4" id="formAgentsWrapper">
+                <div className=" col-span-1 md:col-span-4">
                     <Sticky containerSelectorFocus="#formAgentsWrapper">
                         <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
                             <h1 className="font-semibold py-2">Edit Agents</h1>
                             <div className="flex space-x-2">
                                 <Link href={`/admin/agents`}>
-                                    <Button type="default" size="middle">
-                                        Batalkan
+                                    <Button type="default">
+                                        Cancel
                                     </Button>
                                 </Link>
-                                <Button type="primary" size="middle" loading={loadingsave} onClick={instanceForm.submit}>Perbarui</Button>
+                                <Button type="primary" loading={loadingsave} onClick={instanceForm.submit}>Save</Button>
                             </div>
                         </div>
                     </Sticky>
+                </div>
+                <div className=" col-span-1 md:col-span-3 flex flex-col">
                     <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-8">
                         <div className="border-b border-black p-4 font-semibold mb-5 flex">
                             <div className="md:mr-5 pt-1">Detail Akun Agents</div>
-                            {
+                            {/* {
                                 dataDetailAccount.data.data.attribute.is_enabled ?
                                     <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md w-auto md:mr-5">AKUN AKTIF</div>
                                     :
                                     <div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md w-auto md:mr-5">AKUN NON-AKTIF</div>
-                            }
+                            } */}
                             <div className="pt-1">
                                 {
                                     dataDetailAccount.data.data.attribute.is_enabled ?
-                                        <Switch checked={true} onChange={() => { setVisible(true) }}></Switch>
+                                        <Switch checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
                                         :
-                                        <Switch checked={false} onChange={() => { setVisiblenon(true) }}></Switch>
+                                        <Switch checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
                                 }
                             </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4">
                             <div className="p-3 col-span-1 md:col-span-1 relative flex flex-col items-center">
                                 <img src={data1.profile_image} className=" object-cover w-32 h-32 rounded-full mb-4" />
-                                <label className="custom-file-upload p-2 border-2 inline-block cursor-pointer text-sm rounded-md hover:bg-gray-200">
+                                <label className="custom-file-upload py-2 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3">
                                     <input type="file" style={{ display: `none` }} name="profile_image" onChange={onChangeEditFoto} />
-                                    {loadingfoto ? <LoadingOutlined /> : <EditOutlined style={{ fontSize: `1.5rem` }} />}
+                                    {loadingfoto ? <LoadingOutlined /> : <EditOutlined style={{ fontSize: `1.2rem` }} />}
                                     Ganti Foto
                                 </label>
+                                <div className="w-full h-auto">
+                                    <button className=" w-full h-auto py-2 text-center bg-primary hover:bg-secondary text-white rounded-sm" onClick={() => { setVisibleubahpass(true) }}>
+                                        Ubah Password
+                                    </button>
+                                </div >
                             </div>
                             <div className="p-3 col-span-1 md:col-span-3">
                                 <h1 className="text-xs text-gray-600 mb-1">Email:</h1>
@@ -245,36 +246,10 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                                         ]}>
                                         <Input defaultValue={data1.phone_number} onChange={onChangeEditAgents} name="phone_number" />
                                     </Form.Item>
-                                    {/* <Form.Item label="Role" name="role" required tooltip="Wajib diisi" initialValue={data1.role}
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Role harus diisi',
-                                            },
-                                        ]}>
-                                        <input type="number" defaultValue={data1.role} name={'role'} onChange={onChangeEditAgents} />
-                                    </Form.Item> */}
                                 </Form>
-                                <div className="w-full h-auto">
-                                    <button className=" w-full h-auto py-2 text-center bg-blue-500 hover:bg-blue-700 text-white rounded-md" onClick={() => { setVisibleubahpass(true) }}>
-                                        <strong>Ubah Password</strong>
-                                    </button>
-                                </div >
                             </div>
                         </div>
                     </div>
-                    {/* <div className="w-full p-3 md:p-5 h-auto">
-                        {
-                            dataDetailAccount.data.data.attribute.is_enabled ?
-                                <button className=" w-full h-auto py-2 text-center bg-red-600 text-white hover:bg-red-800 rounded-md" onClick={() => { setVisible(true) }}>
-                                    Non Aktifkan Akun
-                                </button>
-                                :
-                                <button className=" w-full h-auto py-2 text-center bg-blue-600 text-white hover:bg-blue-800 rounded-md" onClick={() => { setVisiblenon(true) }}>
-                                    Aktifkan Akun
-                                </button>
-                        }
-                    </div > */}
                     <Modal
                         title="Konfirmasi untuk menon-aktifkan akun"
                         visible={visible}
@@ -303,12 +278,6 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
                     >
                         <Input.Password name="new_password" value={datapass.new_password} placeholder="Password Baru" type="password" onChange={(e) => { setDatapass({ ...datapass, [e.target.name]: e.target.value }) }} style={{ marginBottom: `2rem` }} />
                     </Modal>
-                </div>
-                <div className="col-span-1 md:col-span-1 hidden md:flex flex-col space-y-4 p-4">
-                    <div className="font-semibold text-base">Agents</div>
-                    <p className="font-normal text-sm">
-                        When you add a new agent, you will have to provide the agent’s email, set their permission levels and access (full-time or occasional). Agents will receive an email with a confirmation link to activate their account after which they can be assigned to, or respond to tickets. Administrators can also edit an Agent’s profile to include the agent’s title, phone, profile picture, signature etc.
-                    </p>
                 </div>
             </div>
         </Layout>

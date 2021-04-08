@@ -173,53 +173,54 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} dataDetailAccount={dataDetailAccount} st={st}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-                <div className=" col-span-1 md:col-span-1 flex md:hidden flex-col space-y-4 p-4">
+                {/* <div className=" col-span-1 md:col-span-1 flex md:hidden flex-col space-y-4 p-4">
                     <div className="font-semibold text-base">Requesters</div>
                     <p className="font-normal text-xs">
                         This page lets you handpick a set of requesters and add them to your help desk. These requesters will have selective privileges to submit requests to your helpdesk. You can restrict access such that only people who have been added here are allowed to login to your self-service portal and access your knowledge base. <br /> <br />
                         You can fill in the details of each of your new requesters manually or import a list of users from a CSV file. Once you have populated your list, your agents can open up each of your requesters and view their ticket history and contact information.
                     </p>
-                </div>
-                <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
+                </div> */}
+                <div className="col-span-1 md:col-span-4">
                     <Sticky containerSelectorFocus="#formAgentsWrapper">
                         <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
                             <h1 className="font-semibold py-2">Edit Requesters</h1>
                             <div className="flex space-x-2">
                                 <Link href={`/admin/requesters`}>
-                                    <Button type="default" size="middle">Batalkan</Button>
+                                    <Button type="default">Cancel</Button>
                                     {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button> */}
                                 </Link>
-                                <Button type="primary" size="middle" loading={loadingupdate} onClick={instanceForm.submit}>Perbarui</Button>
+                                <Button type="primary" loading={loadingupdate} onClick={instanceForm.submit}>Save</Button>
                                 {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={handleSubmitEditAccount}>Update</button> */}
                             </div>
                         </div>
                     </Sticky>
+                </div>
+                <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
                     <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-5">
                         <div className="border-b border-black p-4 font-semibold mb-5 flex">
-                            <div className="md:mr-5 pt-1">Detail Akun Requesters</div>
-                            {
-                                dataDetailAccount.data.data.attribute.is_enabled ?
-                                    <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md w-auto md:mr-5">AKUN AKTIF</div>
-                                    :
-                                    <div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md w-auto md:mr-5">AKUN NON-AKTIF</div>
-                            }
+                            <div className=" mr-3 md:mr-5 pt-1">Detail Akun Requesters</div>
                             <div className="pt-1">
                                 {
                                     dataDetailAccount.data.data.attribute.is_enabled ?
-                                        <Switch checked={true} onChange={() => { setVisible(true) }}></Switch>
+                                        <Switch checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
                                         :
-                                        <Switch checked={false} onChange={() => { setVisiblenon(true) }}></Switch>
+                                        <Switch checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
                                 }
                             </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4">
-                            <div className="p-3 col-span-1 md:col-span-1">
+                            <div className="p-3 col-span-1 md:col-span-1 flex flex-col items-center">
                                 <img src={data1.profile_image} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
-                                <label className="custom-file-upload p-2 border-2 inline-block cursor-pointer text-sm rounded-md hover:bg-gray-200">
+                                <label className="custom-file-upload py-2 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3">
                                     <input type="file" style={{ display: `none` }} name="profile_image" onChange={onChangeEditFoto} />
-                                    {loadingfoto ? <LoadingOutlined /> : <EditOutlined style={{ fontSize: `1.5rem` }} />}
+                                    {loadingfoto ? <LoadingOutlined /> : <EditOutlined style={{ fontSize: `1.2rem` }} />}
                                     Ganti Foto
                                 </label>
+                                <div className="w-full h-auto">
+                                    <button className="w-full h-auto py-2 text-center bg-primary hover:bg-secondary text-white rounded-sm" onClick={() => { setVisibleubahpass(true) }}>
+                                        Ubah Password
+                                    </button>
+                                </div >
                             </div>
                             <div className="p-3 col-span-1 md:col-span-3">
                                 <Form layout="vertical" initialValues={data1} form={instanceForm} onFinish={handleSubmitEditAccount}>
@@ -255,11 +256,6 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
                                         <input type="number" defaultValue={data1.role} name={'role'} onChange={onChangeEditAgents} />
                                     </Form.Item> */}
                                 </Form>
-                                <div className="w-full h-auto">
-                                    <button className=" w-full h-auto py-2 text-center bg-blue-500 hover:bg-blue-700 text-white rounded-md" onClick={() => { setVisibleubahpass(true) }}>
-                                        <strong>Ubah Password</strong>
-                                    </button>
-                                </div >
                             </div>
                         </div>
                     </div>
@@ -324,13 +320,13 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
                         <Input.Password name="new_password" value={datapass.new_password} placeholder="Password Baru" type="password" onChange={(e) => { setDatapass({ ...datapass, [e.target.name]: e.target.value }) }} style={{ marginBottom: `2rem` }} />
                     </Modal>
                 </div>
-                <div className="col-span-1 md:col-span-1 hidden md:flex flex-col space-y-4 p-4">
+                {/* <div className="col-span-1 md:col-span-1 hidden md:flex flex-col space-y-4 p-4">
                     <div className="font-semibold text-base">Requesters</div>
                     <p className="font-normal text-sm">
                         This page lets you handpick a set of requesters and add them to your help desk. These requesters will have selective privileges to submit requests to your helpdesk. You can restrict access such that only people who have been added here are allowed to login to your self-service portal and access your knowledge base. <br /> <br />
                         You can fill in the details of each of your new requesters manually or import a list of users from a CSV file. Once you have populated your list, your agents can open up each of your requesters and view their ticket history and contact information.
                     </p>
-                </div>
+                </div> */}
             </div>
         </Layout>
     )

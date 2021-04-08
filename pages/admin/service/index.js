@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import httpcookie from 'cookie'
-import { DownOutlined, FolderOpenOutlined, EditOutlined } from '@ant-design/icons'
+import { DownOutlined, FolderOpenOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
 import Link from 'next/link'
 import { Button, Table, Dropdown, Menu, Form, Input, Select, notification, Modal } from 'antd'
 import Layout from '../../../components/layout-dashboard'
@@ -38,56 +38,80 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
             title: 'Nama Item',
             dataIndex: 'itemName',
             key: 'itemName',
-            render: (text, record, index) => (
-                <>
-                    <Link href={`/admin/service/${record.id}`}>
-                        <a href="#"><h1 className="font-semibold hover:text-gray-500">{record.itemName}</h1></a>
-                    </Link>
-                </>
-            )
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            <Link href={`/admin/service/${record.id}`}>
+                                <a href="#"><h1 className="font-semibold hover:text-gray-500">{record.itemName}</h1></a>
+                            </Link>
+                        </>
+                }
+            }
         },
         {
             title: 'Deskripsi',
             dataIndex: 'shortDesc',
             key: 'shortDesc',
-            render: (text, record, index) => (
-                <>
-                    <Link href={`/admin/service/${record.id}`}>
-                        <a href="#"><h1 className="hover:text-gray-500 text-xs">{record.shortDesc}</h1></a>
-                    </Link>
-                </>
-            )
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            <Link href={`/admin/service/${record.id}`}>
+                                <a href="#"><h1 className="hover:text-gray-500 text-xs">{record.shortDesc}</h1></a>
+                            </Link>
+                        </>
+                }
+            }
         },
         {
             title: 'Kategori',
             dataIndex: 'categoryName',
             key: 'categoryName',
-            render: (text, record, index) => (
-                <>
-                    <Link href={`/admin/service/${record.id}`}>
-                        <a href="#"><h1 className="hover:text-gray-500 text-sm">{record.categoryName}</h1></a>
-                    </Link>
-                </>
-            )
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            <Link href={`/admin/service/${record.id}`}>
+                                <a href="#"><h1 className="hover:text-gray-500 text-sm">{record.categoryName}</h1></a>
+                            </Link>
+                        </>
+                }
+            }
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
-            render: (text, record, index) => (
-                <>
-                    <Link href={`/admin/service/${record.id}`}>
-                        <a href="#">
-                            {
-                                record.status ?
-                                    <div className="py-1 px-2 rounded-l-full rounded-r-full text-green-500 border border-green-500 bg-green-100 text-center text-xs">Published</div>
-                                    :
-                                    <div className="py-1 px-2 rounded-l-full rounded-r-full text-gray-500 border border-gray-500 bg-gray-100 text-center text-xs">Draft</div>
-                            }
-                        </a>
-                    </Link>
-                </>
-            )
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            <Link href={`/admin/service/${record.id}`}>
+                                <a href="#">
+                                    {
+                                        record.status ?
+                                            <div className="py-1 px-2 rounded-l-full rounded-r-full text-green-500 border border-green-500 bg-green-100 text-center text-xs">Published</div>
+                                            :
+                                            <div className="py-1 px-2 rounded-l-full rounded-r-full text-gray-500 border border-gray-500 bg-gray-100 text-center text-xs">Draft</div>
+                                    }
+                                </a>
+                            </Link>
+                        </>
+                }
+            }
         },
     ]
 
@@ -246,6 +270,18 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
             })
         })
     }
+    const onCariService = (e) => {
+        if (e.target.value === "") {
+            setdatatable(datacurrtable)
+        }
+        else {
+            setdatatable(prev => {
+                return prev.filter(dataa => {
+                    return dataa.itemName.toLowerCase().includes(e.target.value.toLowerCase())
+                })
+            })
+        }
+    }
     const onChangePublishment = (val) => {
         if (val === 1) {
             setdatatable(dataListServiceItemMap)
@@ -401,7 +437,7 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                         <div>
                             {
                                 tabnameArrVal[0] === "block" ?
-                                    < div className={`p-2 cursor-pointer flex items-center text-sm font-semibold bg-blue-700 text-white rounded`} onClick={(e) => { onChangeTab(e, 'all', 0, "all") }}>
+                                    < div className={`p-2 cursor-pointer flex items-center text-sm font-semibold bg-primary text-white rounded`} onClick={(e) => { onChangeTab(e, 'all', 0, "all") }}>
                                         <FolderOpenOutlined style={{ marginRight: `0.7rem` }} />
                                         Semua Service
                                     </div>
@@ -418,7 +454,7 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                                         <>
                                             {
                                                 tabnameArrVal[idx + 1] === "block" ?
-                                                    <div className={`p-2 cursor-pointer flex items-center text-sm font-semibold bg-blue-700 text-white rounded`}>
+                                                    <div className={`p-2 cursor-pointer flex items-center text-sm font-semibold bg-primary text-white rounded`}>
                                                         <FolderOpenOutlined style={{ marginRight: `0.7rem` }} />
                                                         {doc.nama_kategori}
                                                     </div>
@@ -447,7 +483,8 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                                     <p className="text-xs text-gray-500 pl-3">Viewing all service items from all categories.</p>
                                 </div>
                                 <div>
-                                    <Search placeholder="Cari Nama Item" allowClear style={{ width: `100%` }} onSearch={(value) => { onSearchService(value) }} />
+                                    <Input prefix={<SearchOutlined />} placeholder="Cari Service Item" style={{ borderRadius: `0.1rem`, marginBottom: `1rem`, width: `100%` }} onChange={onCariService} allowClear />
+                                    {/* <Search placeholder="Cari Nama Item" allowClear style={{ width: `100%` }} onSearch={(value) => { onSearchService(value) }} /> */}
                                 </div>
                             </div>
                             <div className="w-full flex md:hidden mb-3">
@@ -476,12 +513,13 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                                                 <div className="flex items-center mr-3">
                                                     {tabnameArrVal[idx + 1] === "block" && <p className="font-semibold m-0">{doc.nama_kategori}</p>}
                                                 </div>
-                                                <div className="w-auto h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center" onClick={() => setmodaleditkateg(true)}><EditOutlined /></div>
+                                                <div className="w-auto h-6 px-1 border rounded-sm cursor-pointer hover:border-blue-500 hover:text-blue-500 flex justify-center items-center" onClick={() => setmodaleditkateg(true)}><EditOutlined /></div>
                                             </div>
                                             <p className="text-xs text-gray-500">{doc.deskripsi}</p>
                                         </div>
                                         <div>
-                                            <Search placeholder="Cari Nama Item" allowClear style={{ width: `100%` }} onSearch={(value) => { onSearchService(value) }} />
+                                            <Input prefix={<SearchOutlined />} placeholder="Cari Service Item" style={{ borderRadius: `0.1rem`, marginBottom: `1rem`, width: `100%` }} onChange={onCariService} allowClear />
+                                            {/* <Search placeholder="Cari Nama Item" allowClear style={{ width: `100%` }} onSearch={(value) => { onSearchService(value) }} /> */}
                                         </div>
                                     </div>
                                     <div className="w-full flex md:hidden mb-3">

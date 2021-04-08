@@ -190,7 +190,7 @@ const ModulesIndex = ({ initProps, dataProfile, sidemenu }) => {
                 <Sticky containerSelectorFocus="#containerListModules">
                     <div className="w-full border-b border-opacity-30 border-gray-400 flex items-center justify-between p-4 mb-5 bg-white">
                         <h1 className="font-bold">Modules</h1>
-                        <Button type="primary" size="large" onClick={() => { setdrawablecreate(true) }}>Tambah Module</Button>
+                        <Button type="primary" size="large" onClick={() => { setdrawablecreate(true) }}>Add New</Button>
                     </div>
                 </Sticky>
                 <div className="w-full grid grid-cols-5 bg-white">
@@ -204,7 +204,7 @@ const ModulesIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                 <>
                                                     {
                                                         tabnameArrVal[idx] === "block" ?
-                                                            <div className={`p-2 cursor-pointer flex items-center text-sm font-semibold bg-blue-700 text-white rounded`}>
+                                                            <div className={`p-2 cursor-pointer flex items-center bg-primary text-white rounded-sm`}>
                                                                 {/* <FolderOpenOutlined style={{ marginRight: `0.7rem` }} /> */}
                                                                 {doc.nama_kategori}
                                                             </div>
@@ -241,8 +241,14 @@ const ModulesIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                         <div className="flex items-center mr-3">
                                                             {tabnameArrVal[idx] === "block" && <p className="font-semibold m-0">{doc.nama_kategori}</p>}
                                                         </div>
-                                                        <div className="w-auto h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center mr-3" onClick={() => setdrawableedit(true)}><EditOutlined /></div>
-                                                        <div className="w-auto h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center mr-3" onClick={() => setmodaldelete(true)}><DeleteOutlined /></div>
+                                                        <Button onClick={() => { setdrawableedit(true) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
+                                                            <EditOutlined />
+                                                        </Button>
+                                                        {/* <div className="w-auto h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center mr-3" onClick={() => setdrawableedit(true)}><EditOutlined /></div> */}
+                                                        <Button onClick={() => { setmodaldelete(true) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
+                                                            <DeleteOutlined />
+                                                        </Button>
+                                                        {/* <div className="w-auto h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center mr-3" onClick={() => setmodaldelete(true)}><DeleteOutlined /></div> */}
                                                     </div>
                                                     <p className="text-xs text-gray-500">{doc.deskripsi}</p>
                                                 </div>
@@ -286,7 +292,7 @@ const ModulesIndex = ({ initProps, dataProfile, sidemenu }) => {
                         ]}>
                             <Input />
                         </Form.Item>
-                        <Input prefix={<SearchOutlined />} placeholder="Cari Fitur" style={{ borderRadius: `0.5rem`, marginBottom: `1rem` }} />
+                        <Input prefix={<SearchOutlined />} placeholder="Cari Fitur" style={{ borderRadius: `0.1rem`, marginBottom: `1rem` }} />
                         <div className=" overflow-y-auto h-80 mb-5">
                             {
                                 datafeatures.map((doc, idx) => {

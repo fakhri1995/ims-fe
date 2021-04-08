@@ -1,4 +1,4 @@
-import Layout from '../../../../components/layout-dashboard2'
+import Layout from '../../../../components/layout-dashboard'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
@@ -90,16 +90,16 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
                 {/* <Sticky containerSelectorFocus="#profileeDetailMigWrapper"> */}
                 <div className="flex space-x-2">
                     {editable ?
-                        <Button type="default" size="middle" onClick={() => { setEditable(false) }}>Batalkan</Button>
+                        <Button type="default" onClick={() => { setEditable(false) }}>Cancel</Button>
                         // <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md" onClick={() => { setEditable(false) }}>Cancel</button>
                         :
                         null
                     }
                     {editable ?
-                        <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn}>Simpan</Button>
+                        <Button type="primary" onClick={instanceForm.submit} loading={loadingbtn}>Save</Button>
                         // <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md" onClick={handleEditProfile}>Save</button>
                         :
-                        <Button type="primary" size="middle" onClick={() => { setEditable(true) }}>Edit</Button>
+                        <Button type="primary" onClick={() => { setEditable(true) }}>Edit</Button>
                         // <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md w-40" onClick={() => { setEditable(true) }}>Edit</button>
                     }
                 </div>
@@ -111,52 +111,54 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
                 <div className="flex">
                     {
                         dataDetailCompany.data.data.is_enabled ?
-                            <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md text-xs md:text-sm w-auto">AKTIF</div>
+                            <div className=" bg-blue-100 text-blue-600 border-blue-600 border pt-2 px-3 rounded-md text-xs md:text-sm w-auto">AKTIF</div>
                             :
-                            <div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md text-xs md:text-sm w-auto">NON-AKTIF</div>
+                            <div className=" bg-red-100 text-red-600 border-red-600 border pt-1 px-3 rounded-md text-xs md:text-sm w-auto">NON-AKTIF</div>
                     }
                 </div>
             </div>
-            <div className="p-3 relative flex flex-col">
-                <img src={data1.image_logo} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
-                {editable ?
-                    <div>
-                        <label className="custom-file-upload w-auto p-2 border-2 cursor-pointer text-sm rounded-md hover:bg-gray-200">
-                            <input type="file" style={{ display: `none` }} name="profile_image" onChange={onChangeEditProfileFoto} />
-                            {loadingfoto ? <LoadingOutlined /> : <EditOutlined style={{ fontSize: `1.5rem` }} />}
+            <div className="grid grid-cols-1 sm:grid-col-3 md:grid-cols-5 mb-4">
+                <div className="p-3 relative col-span-1 sm:col-span-1 md:col-span-1 flex flex-col items-center">
+                    <img src={data1.image_logo} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
+                    {editable ?
+                        <div>
+                            <label className="custom-file-upload py-2 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3">
+                                <input type="file" style={{ display: `none` }} name="profile_image" onChange={onChangeEditProfileFoto} />
+                                {loadingfoto ? <LoadingOutlined /> : <EditOutlined style={{ fontSize: `1.2rem` }} />}
                                     Ganti Foto
                         </label>
-                    </div>
-                    :
-                    null
-                }
-            </div>
-            <div className="w-full h-auto p-3 md:p-5 grid  grid-cols-1 md:grid-cols-2">
-                <Form layout="vertical" form={instanceForm} onFinish={handleEditProfile} initialValues={data1}>
-                    <div className="md:m-5 mb-5 md:mb-0 ">
-                        <h1 className="font-semibold text-sm">ID Perusahaan:</h1>
-                        <h1 className="text-sm font-normal text-black">{data1.id}</h1>
-                    </div>
-                    <div className="md:m-5 mb-5 md:mb-0 ">
-                        {
-                            editable ?
-                                <Form.Item name="company_name" label="Nama Perusahaan"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Nama Perusahaan wajib diisi',
-                                        },
-                                    ]}>
-                                    <Input defaultValue={data1.company_name} name="company_name" onChange={onChangeEditProfile}></Input>
-                                </Form.Item>
-                                :
-                                <>
-                                    <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
-                                    <h1 className="text-sm font-normal text-black">{data1.company_name}</h1>
-                                </>
-                        }
-                    </div>
-                    {/* <div className="md:m-5 mb-5 md:mb-0 ">
+                        </div>
+                        :
+                        null
+                    }
+                </div>
+                <div className="w-full h-auto p-3 md:p-5 col-span-1 sm:col-span-2 md:col-span-4 flex">
+                    <Form layout="vertical" form={instanceForm} onFinish={handleEditProfile} initialValues={data1} style={{ width: `100%` }}>
+                        <div className="md:m-5 mb-5 md:mb-0 ">
+                            <h1 className="font-semibold text-sm">ID Perusahaan:</h1>
+                            <h1 className="text-sm font-normal text-black">{data1.id}</h1>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2">
+                            <div className="md:m-5 mb-5 md:mb-0 ">
+                                {
+                                    editable ?
+                                        <Form.Item name="company_name" label="Nama Perusahaan"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Nama Perusahaan wajib diisi',
+                                                },
+                                            ]}>
+                                            <Input defaultValue={data1.company_name} name="company_name" onChange={onChangeEditProfile}></Input>
+                                        </Form.Item>
+                                        :
+                                        <>
+                                            <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
+                                            <h1 className="text-sm font-normal text-black">{data1.company_name}</h1>
+                                        </>
+                                }
+                            </div>
+                            {/* <div className="md:m-5 mb-5 md:mb-0 ">
                         {
                             editable ?
                                 <Form.Item name="role" label="Role"
@@ -175,45 +177,47 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
                                 </>
                         }
                     </div> */}
-                    <div className="md:m-5 mb-5 md:mb-0">
-                        {
-                            editable ?
-                                <Form.Item name="address" label="Alamat"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Alamat wajib diisi',
-                                        },
-                                    ]}>
-                                    <Input defaultValue={data1.address} name="address" onChange={onChangeEditProfile}></Input>
-                                </Form.Item>
-                                :
-                                <>
-                                    <h1 className="font-semibold text-sm">Alamat:</h1>
-                                    <h1 className="text-sm font-normal text-black">{data1.address}</h1>
-                                </>
-                        }
-                    </div>
-                    <div className="md:m-5 mb-5 md:mb-0">
-                        {
-                            editable ?
-                                <Form.Item name="phone_number" label="Telepon"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Telepon wajib diisi',
-                                        },
-                                    ]}>
-                                    <Input defaultValue={data1.phone_number} name="phone_number" onChange={onChangeEditProfile}></Input>
-                                </Form.Item>
-                                :
-                                <>
-                                    <h1 className="font-semibold text-sm">Telepon:</h1>
-                                    <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
-                                </>
-                        }
-                    </div>
-                </Form>
+                            <div className="md:m-5 mb-5 md:mb-0">
+                                {
+                                    editable ?
+                                        <Form.Item name="address" label="Alamat"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Alamat wajib diisi',
+                                                },
+                                            ]}>
+                                            <Input defaultValue={data1.address} name="address" onChange={onChangeEditProfile}></Input>
+                                        </Form.Item>
+                                        :
+                                        <>
+                                            <h1 className="font-semibold text-sm">Alamat:</h1>
+                                            <h1 className="text-sm font-normal text-black">{data1.address}</h1>
+                                        </>
+                                }
+                            </div>
+                            <div className="md:m-5 mb-5 md:mb-0">
+                                {
+                                    editable ?
+                                        <Form.Item name="phone_number" label="Telepon"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Telepon wajib diisi',
+                                                },
+                                            ]}>
+                                            <Input defaultValue={data1.phone_number} name="phone_number" onChange={onChangeEditProfile}></Input>
+                                        </Form.Item>
+                                        :
+                                        <>
+                                            <h1 className="font-semibold text-sm">Telepon:</h1>
+                                            <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
+                                        </>
+                                }
+                            </div>
+                        </div>
+                    </Form>
+                </div>
             </div>
         </div>
     )
@@ -451,61 +455,139 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
     const columnsgetBanks = [
         {
             title: 'No.',
-            dataIndex: 'key'
+            dataIndex: 'key',
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.key}
+                        </>
+                }
+            }
         },
         {
             title: 'ID',
-            dataIndex: 'id'
+            dataIndex: 'id',
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.id}
+                        </>
+                }
+            }
         },
         {
             title: 'Bank',
             dataIndex: 'name',
-            sorter: (a, b) => a.name.localeCompare(b.name),
-            sortDirections: ['descend', 'ascend'],
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.name}
+                        </>
+                }
+            }
+            // sorter: (a, b) => a.name.localeCompare(b.name),
+            // sortDirections: ['descend', 'ascend'],
         },
         {
             title: 'Nomor Rekening',
             dataIndex: 'account_number',
-            sorter: (a, b) => a.account_number - b.account_number,
-            sortDirections: ['descend', 'ascend'],
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.account_number}
+                        </>
+                }
+            }
+            // sorter: (a, b) => a.account_number - b.account_number,
+            // sortDirections: ['descend', 'ascend'],
         },
         {
             title: 'Atas Nama',
             dataIndex: 'owner',
-            sorter: (a, b) => a.owner.localeCompare(b.owner),
-            sortDirections: ['descend', 'ascend'],
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.owner}
+                        </>
+                }
+            }
+            // sorter: (a, b) => a.owner.localeCompare(b.owner),
+            // sortDirections: ['descend', 'ascend'],
         },
         {
             title: 'Mata Uang',
             dataIndex: 'currency',
-            filters: [
-                {
-                    text: 'IDR',
-                    value: 'IDR',
-                },
-                {
-                    text: 'USD',
-                    value: 'USD',
-                },
-            ],
-            onFilter: (value, record) => record.currency.indexOf(value) === 0,
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {record.currency}
+                        </>
+                }
+            }
+            // filters: [
+            //     {
+            //         text: 'IDR',
+            //         value: 'IDR',
+            //     },
+            //     {
+            //         text: 'USD',
+            //         value: 'USD',
+            //     },
+            // ],
+            // onFilter: (value, record) => record.currency.indexOf(value) === 0,
         },
         {
-            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
+            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
             dataIndex: 'actionss',
-            render: (text, record, index) => (
-                <>
-                    {
-                        actions[index] ?
-                            <>{actions[index]}
-                                <a onClick={() => { setModaldel(true); setModaldeldata(record) }}><DeleteOutlined /></a>
-                                <a onClick={() => { setDrawableedit(true); console.log("isi record: " + record.name); setRecordrow(record) }}><EditOutlined /></a>
-                            </>
-                            :
-                            null
-                    }
-                </>
-            )
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <>
+                            {
+                                actions[index] ?
+                                    <>{actions[index]}
+                                        <Button onClick={() => { setModaldel(true); setModaldeldata(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
+                                            <DeleteOutlined />
+                                        </Button>
+                                        <Button onClick={() => { setDrawableedit(true); setRecordrow(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
+                                            <EditOutlined />
+                                        </Button>
+                                        {/* <a onClick={() => { setModaldel(true); setModaldeldata(record) }}><DeleteOutlined /></a>
+                                        <a className="inline" onClick={() => { setDrawableedit(true); setRecordrow(record) }}><EditOutlined /></a> */}
+                                    </>
+                                    :
+                                    null
+                            }
+                        </>
+                }
+            }
         }
     ];
     var datagetBanks = []
@@ -535,7 +617,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                             :
                             null
                     }
-                    <Button type="primary" size="large" onClick={() => { setDrawablecreate(true) }}>Tambah</Button>
+                    <Button type="primary" onClick={() => { setDrawablecreate(true) }}>Add New</Button>
                     {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40" onClick={() => { setDrawablecreate(true) }}> Create</button> */}
                     <Drawer title="Edit data Rekening Bank Perusahan MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false); }} width={370} destroyOnClose={true}>
                         <Form layout="vertical" onFinish={handleSubmitEditBA} initialValues={recordrow}>
