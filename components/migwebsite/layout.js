@@ -19,7 +19,7 @@ function layout({ children }) {
                     </div>
                     <div theme="light" mode="horizontal" style={{lineHeight:'3.9rem',}} className={' float-right'} defaultSelectedKeys={['2']}>
                         <Button type="text" className={'mx-2'} key="1">Company</Button>
-                        <Button type="text" className={'mx-2 '} key="2">Solution</Button>
+                        <Button type="text" className={'mx-2 mr-4'} key="2">Solution</Button>
                         <Button type="text" className={'mx-2 px-4 border-green-800 text-white'} style={{backgroundColor:'#188E4D', color:'white'}} key="3">Get Started</Button>
                     </div>
                 </Header>
