@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import httpcookie from 'cookie'
-import { Button, Form,Input,InputNumber,Select,DatePicker,TreeSelect,Checkbox,Spin,notification } from 'antd'
+import { Button, Form, Input, InputNumber, Select, DatePicker, TreeSelect, Checkbox, Spin, notification } from 'antd'
 import Sticky from 'wil-react-sticky'
 import Layout from '../../../components/layout-dashboard2'
 import st from '../../../components/layout-dashboard.module.css'
@@ -192,12 +192,12 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
                 <div className="col-span-4 border-r p-5" id="formWrappper">
                     <Sticky containerSelectorFocus="#formWrapper">
                         <div className="flex justify-between p-5 w-full h-auto bg-white border-b mb-8">
-                            <div className=" font-semibold">Inventori Baru</div>
+                            <div className=" font-semibold">New Inventory</div>
                             <div className="flex">
                                 <Link href={`/inventories?originPath=Admin`}>
-                                    <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batalkan</Button>
+                                    <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Cancel</Button>
                                 </Link>
-                                <Button type="primary" size="middle" onClick={createInventoryForm.submit} loading={loadingbtnsubmit}>Submit</Button>
+                                <Button type="primary" size="middle" onClick={createInventoryForm.submit} loading={loadingbtnsubmit}>Save</Button>
                             </div>
                         </div>
                     </Sticky>
@@ -298,13 +298,13 @@ function InventoryCreate({ initProps, dataProfile, dataAssetsList, dataVendorsLi
                                         </Select>
                                     </Form.Item>
                                     <Form.Item name="tanggal_beli" style={{ marginRight: `1rem` }} label="Tanggal Beli">
-                                        <DatePicker onChange={(date, dateString) => { setDatanew({ ...datanew, tanggal_beli: dateString }) }} name="tanggal_beli" allowClear format={'YYYY-MM-DD'} />
+                                        <DatePicker onChange={(date, dateString) => { setDatanew({ ...datanew, tanggal_beli: dateString }) }} name="tanggal_beli" allowClear format={'YYYY-MM-DD'} style={{ width: `100%` }} />
                                     </Form.Item>
                                     <Form.Item name="harga_beli" style={{ marginRight: `1rem` }} label="Harga Beli">
                                         <InputNumber onChange={(value) => { setDatanew({ ...datanew, harga_beli: value }) }} name="harga_beli" id="harga_beli" allowClear style={{ width: `100%` }} />
                                     </Form.Item>
                                     <Form.Item name="tanggal_efektif" style={{ marginRight: `1rem` }} label="Tanggal Efektif">
-                                        <DatePicker onChange={(date, dateString) => { setDatanew({ ...datanew, tanggal_efektif: dateString }) }} name="tanggal_efektif" allowClear format={'YYYY-MM-DD'} />
+                                        <DatePicker onChange={(date, dateString) => { setDatanew({ ...datanew, tanggal_efektif: dateString }) }} name="tanggal_efektif" allowClear format={'YYYY-MM-DD'} style={{ width: `100%` }} />
                                     </Form.Item>
                                     <Form.Item name="depresiasi" style={{ marginRight: `1rem` }} label="Depresiasi">
                                         <InputNumber onChange={(value) => { setDatanew({ ...datanew, depresiasi: value }) }} name="depresiasi" id="depresiasi" allowClear style={{ width: `100%` }} />

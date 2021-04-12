@@ -592,16 +592,18 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                                     {datafield.data_type === "tree" && <Input name="default" allowClear onChange={onChangeUpdateField} />}
                                     {datafield.data_type === "date" && <input type="date" name="default" allowClear onChange={onChangeUpdateField} />}
                                 </div>
-                                <div className="flex flex-col my-2">
-                                    <h1 className="text-sm">Required:</h1>
-                                    <Checkbox name="required" onChange={onChangeCheckboxRequired} />
-                                </div>
-                                <div className="flex flex-col my-2">
-                                    <h1 className="text-sm">Unique:</h1>
-                                    <Checkbox name="unique" onChange={onChangeCheckboxUnique} />
+                                <div className="flex">
+                                    <div className="flex flex-col my-2 mr-3">
+                                        <h1 className="text-sm">Required:</h1>
+                                        <Checkbox name="required" onChange={onChangeCheckboxRequired} />
+                                    </div>
+                                    <div className="flex flex-col my-2">
+                                        <h1 className="text-sm">Unique:</h1>
+                                        <Checkbox name="unique" onChange={onChangeCheckboxUnique} />
+                                    </div>
                                 </div>
                             </div>
-                            <div className="flex justify-between">
+                            <div className="flex justify-end">
                                 <div className="flex">
                                     <Button type="default" size="middle" style={{ marginRight: `1rem` }} onClick={() => { setModalfieldprops(false) }}>Batalkan</Button>
                                     {/* <button className=" bg-gray-800 w-auto h-auto py-1 px-3 text-white rounded-md hover:bg-gray-900 mx-3" onClick={handleAddField}>Simpan</button> */}
@@ -638,17 +640,19 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                                     {recordfield.data_type === "tree" && <Input name="default" allowClear onChange={onChangeUpdateField2} defaultValue={recordfield.default} />}
                                     {recordfield.data_type === "date" && <input type="date" name="default" allowClear onChange={onChangeUpdateField2} defaultValue={recordfield.default} />}
                                 </div>
-                                <div className="flex flex-col my-2">
-                                    <h1 className="text-sm">Required:</h1>
-                                    <Checkbox name="required" onChange={onChangeCheckboxRequired2} checked={recordfield.required} />
-                                </div>
-                                <div className="flex flex-col my-2">
-                                    <h1 className="text-sm">Unique:</h1>
-                                    <Checkbox name="unique" onChange={onChangeCheckboxUnique2} checked={recordfield.unique} />
+                                <div className="flex">
+                                    <div className="flex flex-col my-2 mr-3">
+                                        <h1 className="text-sm">Required:</h1>
+                                        <Checkbox name="required" onChange={onChangeCheckboxRequired2} checked={recordfield.required} />
+                                    </div>
+                                    <div className="flex flex-col my-2">
+                                        <h1 className="text-sm">Unique:</h1>
+                                        <Checkbox name="unique" onChange={onChangeCheckboxUnique2} checked={recordfield.unique} />
+                                    </div>
                                 </div>
                             </div>
                             <div className="flex justify-between">
-                                <button className="bg-white w-auto h-auto py-1 px-3 text-gray-800 rounded-md border border-gray-700" onClick={() => { handleDeleteField(idxx) }}>Hapus Field</button>
+                                <button className="bg-white w-auto h-auto py-1 px-3 hover:text-blue-500 hover:border-blue-500 text-gray-800 rounded-sm border border-gray-400" onClick={() => { handleDeleteField(idxx) }}>Delete Field</button>
                                 <div className="flex">
                                     <Button type="default" size="middle" style={{ marginRight: `1rem` }} onClick={() => { setModalupdatefieldprops(false) }}>Batalkan</Button>
                                     <Button type="primary" size="middle" onClick={() => { handleUpdateField(idxx) }} loading={loadingupdatefield}>Perbarui</Button>

@@ -148,16 +148,16 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
                     },
                     children:
                         <>
-                            {
+                            {/* {
                                 actions[index] ?
-                                    <>{actions[index]}
+                                    <>{actions[index]} */}
                                         <Button onClick={() => { rt.push(`/admin/requesters/${record.user_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
                                             <EditOutlined />
                                         </Button>
-                                    </>
+                                    {/* </>
                                     :
                                     null
-                            }
+                            } */}
                         </>
                 }
             }
@@ -284,24 +284,24 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
                                 Z
                             </button>
                         </div>
-                        <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} onRow={(record, rowIndex) => {
-                            return {
-                                onMouseOver: (event) => {
-                                    var actionsCopy = actions
-                                    actionsCopy[rowIndex] = true
-                                    setActions(actionsCopy)
-                                    setAction("block")
-                                    // console.log("row: " + actions[rowIndex] + " " + rowIndex)
-                                },
-                                onMouseLeave: (event) => {
-                                    var actionsCopy = actions
-                                    actionsCopy[rowIndex] = false
-                                    setActions(actionsCopy)
-                                    setAction("hidden")
-                                    // console.log("row leave: " + actions[rowIndex] + " " + rowIndex)
-                                }
-                            }
-                        }}></Table>
+                        <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD}
+                            // onRow={(record, rowIndex) => {
+                            //     return {
+                            //         onMouseOver: (event) => {
+                            //             var actionsCopy = actions
+                            //             actionsCopy[rowIndex] = true
+                            //             setActions(actionsCopy)
+                            //             setAction("block")
+                            //         },
+                            //         onMouseLeave: (event) => {
+                            //             var actionsCopy = actions
+                            //             actionsCopy[rowIndex] = false
+                            //             setActions(actionsCopy)
+                            //             setAction("hidden")
+                            //         }
+                            //     }
+                            // }}
+                        ></Table>
                     </div>
                     {/* <div className="hidden md:flex flex-col space-y-3 p-4 md:col-span-1 col-span-1">
                         <div className="font-semibold text-sm">Requesters</div>

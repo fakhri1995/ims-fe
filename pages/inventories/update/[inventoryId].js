@@ -139,12 +139,12 @@ function InventoryUpdate({ initProps, dataProfile, dataAssetsList, dataDetailInv
                 <div className="col-span-4 border-r p-5" id="updateInvWrappper">
                     <Sticky containerSelectorFocus="#formWrapper">
                         <div className="flex justify-between p-5 w-full h-auto bg-white border-b mb-8">
-                            <div className=" font-semibold">Update Inventori</div>
+                            <div className=" font-semibold">Edit Inventory</div>
                             <div className="flex">
                                 <Link href={`/inventories?originPath=Admin`}>
-                                    <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batalkan</Button>
+                                    <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Cancel</Button>
                                 </Link>
-                                <Button type="primary" size="middle" onClick={createInventoryForm.submit} loading={loadingbtnupdate}>Perbarui</Button>
+                                <Button type="primary" size="middle" onClick={createInventoryForm.submit} loading={loadingbtnupdate}>Save</Button>
                             </div>
                         </div>
                     </Sticky>

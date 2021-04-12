@@ -5,7 +5,7 @@ import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import Link from 'next/link'
-import { Button,Tree,Modal,Form,Input,TreeSelect,notification,message,Popconfirm } from 'antd'
+import { Button, Tree, Modal, Form, Input, TreeSelect, notification, message, Popconfirm } from 'antd'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard.module.css'
 
@@ -15,6 +15,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
     const pathArr = rt.pathname.split("/").slice(1)
     const [loadingbtn, setloadingbtn] = useState(false)
     const [loadingbtnfromparent, setloadingbtnparent] = useState(false)
+    const [loadingdelete, setlaodingdelete] = useState(false)
     const treeData = dataAssetsList.data
     const onChangeParent = (value) => {
         setDatanew({
@@ -32,11 +33,15 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
     }
     const [newmodal, setNewmodal] = useState(false)
     const [newmodalparent, setNewmodalparent] = useState(false)
+    const [modaldelete, setmodaldelete] = useState(false)
     const [parentadd, setParentadd] = useState("")
     const [parenttitle, setParenttitle] = useState("")
     const [datanew, setDatanew] = useState({
         name: '',
         parent: '',
+    })
+    const [datadelete, setDatadelete] = useState({
+        id: 0,
     })
     const onChangeAddAssets = (e) => {
         setDatanew({
@@ -87,20 +92,20 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                 }
             })
     }
-    const handleDeleteAssets = (idAssets) => {
+    const handleDeleteAssets = () => {
+        setlaodingdelete(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/deleteAsset`, {
             method: 'DELETE',
             headers: {
                 'Authorization': JSON.parse(tok),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                id: idAssets
-            })
+            body: JSON.stringify(datadelete)
         })
             .then(res => res.json())
             .then(res2 => {
                 if (res2.success) {
+                    setlaodingdelete(false)
                     setNewmodal(false)
                     notification['success']({
                         message: res2.message,
@@ -111,6 +116,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                     }, 500)
                 }
                 else if (!res2.success) {
+                    setlaodingdelete(false)
                     setNewmodal(false)
                     notification['error']({
                         message: res2.message.errorInfo.status_detail,
@@ -123,7 +129,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
         <Layout tok={tok} pathArr={pathArr} sidemenu={sidemenu} dataProfile={dataProfile} st={st}>
             <div className="w-full h-auto border-t border-opacity-30 border-gray-500 bg-white">
                 <div className="grid grid-cols-1 md:grid-cols-4">
-                    <div className="col-span-1 md:col-span-3 flex flex-col">
+                    <div className="col-span-1 md:col-span-4 flex flex-col">
                         <div className="p-2 md:p-5 mb-5 border-b flex justify-between">
                             <div className="text-xs md:text-sm font-semibold">
                                 <h1 className="mt-2">Assets Types & Fields</h1>
@@ -166,7 +172,10 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                             />
                                         </div>
                                     </div>
-                                    <Button htmlType="submit" loading={loadingbtn} type="primary" size="middle">Submit</Button>
+                                    <div className="flex justify-end">
+                                        <Button type="default" onClick={() => { setNewmodal(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
+                                        <Button htmlType="submit" loading={loadingbtn} type="primary" size="middle">Save</Button>
+                                    </div>
                                     {/* <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button> */}
                                 </Form>
                             </Modal>
@@ -210,8 +219,21 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                     {/* <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button> */}
                                 </Form>
                             </Modal>
+                            <Modal
+                                title={`Konfirmasi hapus asset`}
+                                visible={modaldelete}
+                                okButtonProps={{ disabled: loadingdelete }}
+                                onCancel={() => { setmodaldelete(false) }}
+                                onOk={handleDeleteAssets}
+                                maskClosable={false}
+                                style={{ top: `3rem` }}
+                                width={500}
+                                destroyOnClose={true}
+                            >
+                                Yakin ingin hapus asset ini?
+                        </Modal>
                         </div>
-                        <div className="p-2 md:p-5">
+                        <div className="p-2 md:p-5 w-full md:w-8/12">
                             <Tree
                                 onExpand={onExpand}
                                 expandedKeys={expandedKeys}
@@ -241,9 +263,9 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                                     <Link href={`/admin/assets/${nodeData.title}?parent=${prt}&id=${nodeData.id}`}>
                                                         <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                                     </Link>
-                                                    <Popconfirm title="Yakin ingin menghapus asset type ini?" onConfirm={() => { handleDeleteAssets(nodeData.id) }} onCancel={() => { message.error("Gagal dihapus") }}>
-                                                        <a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a>
-                                                    </Popconfirm>
+                                                    {/* <Popconfirm title="Yakin ingin menghapus asset type ini?" onConfirm={() => { handleDeleteAssets(nodeData.id) }} onCancel={() => { message.error("Gagal dihapus") }}> */}
+                                                    <button onClick={() => { setmodaldelete(true); setDatadelete({ ...datadelete, id: nodeData.id }) }}><a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a></button>
+                                                    {/* </Popconfirm> */}
                                                 </div>
                                             </div>
                                         </>
@@ -254,14 +276,14 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                             />
                         </div>
                     </div>
-                    <div className="col-span-1 md:col-span-1 flex flex-col p-2 md:p-5">
+                    {/* <div className="col-span-1 md:col-span-1 flex flex-col p-2 md:p-5">
                         <h1 className="text-xs md:text-sm font-semibold mb-5">Asset Types & Fields</h1>
                         <p className="text-xs md:text-sm">
                             Freshservice lets you maintain a repository of assets by creating a structure of configuration types in your help desk. You can add asset types at the root level or within another asset type, and have several items mapped to those types.You can also disable the default asset types so that only the ones you need are visible.
                         <br /><br />
                         When you open an asset, you can find out whether it is currently being used, its business impact and the employee it’s assigned to in your team. In addition you will also be able to pull out specifications, relationship details etc. about the asset without switching between different pages.
                         </p>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </Layout>

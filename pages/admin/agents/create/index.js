@@ -144,8 +144,8 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                 <div className=" col-span-1 md:col-span-4">
                     <Sticky containerSelectorFocus="#createAgentsWrapper">
                         <div className=" col-span-4 flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
-                            <h1 className="font-semibold py-2">Agent Baru</h1>
-                            <div className="flex space-x-2">
+                            <h1 className="font-semibold py-2"></h1>
+                            <div className="flex space-x-2">New agent
                                 <Link href="/admin/agents">
                                     <Button type="default">Cancel</Button>
                                 </Link>

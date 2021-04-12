@@ -1,12 +1,10 @@
 import ExportOutlined from '@ant-design/icons/ExportOutlined'
-import AlertOutlined from '@ant-design/icons/AlertOutlined'
 import { Avatar, Dropdown } from 'antd'
 import Link from 'next/link'
 import UserOutlined from '@ant-design/icons/UserOutlined'
 import NotificationOutlined from '@ant-design/icons/NotificationOutlined'
 import QuestionCircleOutlined from '@ant-design/icons/QuestionCircleOutlined'
 import PlusCircleTwoTone from '@ant-design/icons/PlusCircleTwoTone'
-import Icon from '@ant-design/icons'
 import { TicketIconSvg, ContractIconSvg} from './icon'
 
 function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
