@@ -27,7 +27,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
         parent_id: 0
     })
     var dataTable = []
-    if (!dataCompanyList.data.data) {
+    if (!dataCompanyList.data) {
         dataTable = []
         notification['error']({
             message: dataCompanyList.message.errorInfo.status_detail,
@@ -36,7 +36,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
         rt.push('/admin/company')
     }
     else {
-        dataTable = dataCompanyList.data.data.companies.filter(dataa => dataa.company_id != 66).map((doc, idx) => {
+        dataTable = dataCompanyList.data.filter(dataa => dataa.company_id != 66).map((doc, idx) => {
             return ({
                 image_logo: doc.image_logo,
                 company_id: doc.company_id,
@@ -465,13 +465,13 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyList`, {
+    const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientList`, {
         method: `POST`,
         headers: {
             'Authorization': JSON.parse(initProps),
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(reqBody)
+        // body: JSON.stringify(reqBody)
     })
     const resjsonGCL = await resourcesGCL.json()
     const dataCompanyList = resjsonGCL
