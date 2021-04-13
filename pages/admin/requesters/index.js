@@ -6,13 +6,14 @@ import httpcookie from 'cookie'
 import CopyOutlined from '@ant-design/icons/CopyOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import Link from 'next/link'
-import { Table, notification, Button } from 'antd'
+import { Table, notification, Button, Select } from 'antd'
 
-function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
+function Requesters({ initProps, dataProfile, dataListAccount, dataCompanyList, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
+    const { Option } = Select
     var dataDD = []
     if (!dataListAccount.data) {
         dataDD = []
@@ -29,7 +30,8 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
                 profile_image: doc.profile_image,
                 fullname: doc.fullname,
                 email: doc.email,
-                phone_number: doc.phone_number
+                phone_number: doc.phone_number,
+                company_id: doc.company_id
             })
         })
     }
@@ -148,16 +150,16 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
                     },
                     children:
                         <>
-                            {
+                            {/* {
                                 actions[index] ?
-                                    <>{actions[index]}
-                                        <Button onClick={() => { rt.push(`/admin/requesters/${record.user_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
-                                            <EditOutlined />
-                                        </Button>
-                                    </>
+                                    <>{actions[index]} */}
+                            <Button onClick={() => { rt.push(`/admin/requesters/${record.user_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
+                                <EditOutlined />
+                            </Button>
+                            {/* </>
                                     :
                                     null
-                            }
+                            } */}
                         </>
                 }
             }
@@ -177,6 +179,21 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
             // )
         }
     ];
+
+    const onFilterByCompany = (val) => {
+        setDataSource(dataDD)
+        if (val === "all") {
+            setDataSource(dataDD)
+        }
+        else {
+            setDataSource(prev => {
+                return prev.filter(dataa => {
+                    console.log(dataa.company_id)
+                    return dataa.company_id === val
+                })
+            })
+        }
+    }
 
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
@@ -284,24 +301,36 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
                                 Z
                             </button>
                         </div>
-                        <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} onRow={(record, rowIndex) => {
-                            return {
-                                onMouseOver: (event) => {
-                                    var actionsCopy = actions
-                                    actionsCopy[rowIndex] = true
-                                    setActions(actionsCopy)
-                                    setAction("block")
-                                    // console.log("row: " + actions[rowIndex] + " " + rowIndex)
-                                },
-                                onMouseLeave: (event) => {
-                                    var actionsCopy = actions
-                                    actionsCopy[rowIndex] = false
-                                    setActions(actionsCopy)
-                                    setAction("hidden")
-                                    // console.log("row leave: " + actions[rowIndex] + " " + rowIndex)
+                        <div className="flex mb-2">
+                            <Select placeholder="Filter by companies" defaultValue={"all"} onChange={(value) => { onFilterByCompany(value) }} style={{ width: `40%` }}>
+                                <Option value={"all"}>Semua</Option>
+                                {
+                                    dataCompanyList.data.data.companies.filter(dataa => dataa.company_id !== 66).map((doc, idx) => {
+                                        return (
+                                            <Option key={idx} value={doc.company_id}>{doc.company_id}: {doc.company_name}</Option>
+                                        )
+                                    })
                                 }
-                            }
-                        }}></Table>
+                            </Select>
+                        </div>
+                        <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD}
+                        // onRow={(record, rowIndex) => {
+                        //     return {
+                        //         onMouseOver: (event) => {
+                        //             var actionsCopy = actions
+                        //             actionsCopy[rowIndex] = true
+                        //             setActions(actionsCopy)
+                        //             setAction("block")
+                        //         },
+                        //         onMouseLeave: (event) => {
+                        //             var actionsCopy = actions
+                        //             actionsCopy[rowIndex] = false
+                        //             setActions(actionsCopy)
+                        //             setAction("hidden")
+                        //         }
+                        //     }
+                        // }}
+                        ></Table>
                     </div>
                     {/* <div className="hidden md:flex flex-col space-y-3 p-4 md:col-span-1 col-span-1">
                         <div className="font-semibold text-sm">Requesters</div>
@@ -320,6 +349,11 @@ function Requesters({ initProps, dataProfile, dataListAccount, sidemenu }) {
 export async function getServerSideProps({ req, res }) {
     var initProps = {};
     const reqBodyAccountList = {
+        page: 1,
+        rows: 50,
+        order_by: "asc"
+    }
+    const reqBody = {
         page: 1,
         rows: 50,
         order_by: "asc"
@@ -354,11 +388,24 @@ export async function getServerSideProps({ req, res }) {
     })
     const resjsonLA = await resourcesLA.json()
     const dataListAccount = resjsonLA
+
+    const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyList`, {
+        method: `POST`,
+        headers: {
+            'Authorization': JSON.parse(initProps),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(reqBody)
+    })
+    const resjsonGCL = await resourcesGCL.json()
+    const dataCompanyList = resjsonGCL
+
     return {
         props: {
             initProps,
             dataProfile,
             dataListAccount,
+            dataCompanyList,
             sidemenu: "4"
         },
     }

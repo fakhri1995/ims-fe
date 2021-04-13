@@ -305,8 +305,8 @@ const ModulesIndex = ({ initProps, dataProfile, sidemenu }) => {
                             }
                         </div>
                         <div className="flex justify-end">
-                            <Button type="default" onClick={() => { setdrawableedit(false) }} style={{ marginRight: `1rem` }}>Batalkan</Button>
-                            <Button type="primary" onClick={() => { setdrawableedit(false) }}>Simpan</Button>
+                            <Button type="default" onClick={() => { setdrawableedit(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
+                            <Button type="primary" onClick={() => { setdrawableedit(false) }}>Save</Button>
                         </div>
                     </Form>
                 </div>
@@ -343,8 +343,8 @@ const ModulesIndex = ({ initProps, dataProfile, sidemenu }) => {
                             }
                         </div>
                         <div className="flex justify-end">
-                            <Button type="default" onClick={() => { setdrawableedit(false) }} style={{ marginRight: `1rem` }}>Batalkan</Button>
-                            <Button type="primary" onClick={() => { setdrawableedit(false) }}>Simpan</Button>
+                            <Button type="default" onClick={() => { setdrawableedit(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
+                            <Button type="primary" onClick={() => { setdrawableedit(false) }}>Save</Button>
                         </div>
                     </Form>
                 </div>

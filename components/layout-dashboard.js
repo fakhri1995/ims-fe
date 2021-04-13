@@ -92,9 +92,16 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, st }) 
                                                     )
                                                 }
                                                 else if (idx === childBreacrumbDD.length - 1 && idx > 0) {
-                                                    return (
-                                                        <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
-                                                    )
+                                                    if (doc === "Assets") {
+                                                        return (
+                                                            <Breadcrumb.Item key={idx}> <strong>{"Assets Types & Fields"}</strong> </Breadcrumb.Item>
+                                                        )
+                                                    }
+                                                    else {
+                                                        return (
+                                                            <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                        )
+                                                    }
                                                 }
                                                 else {
                                                     return (

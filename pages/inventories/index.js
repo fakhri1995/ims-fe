@@ -231,7 +231,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                                 <h1 className="font-semibold text-base w-auto pt-2">Daftar Inventori</h1>
                                 <div className="flex space-x-2">
                                     <Link href={`/inventories/create`}>
-                                        <Button type="primary" size="large">Tambah Inventori</Button>
+                                        <Button type="primary" size="large">Add New</Button>
                                     </Link>
                                 </div>
                             </div>

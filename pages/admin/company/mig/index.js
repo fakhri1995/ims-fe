@@ -224,7 +224,7 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
 }
 
 function MigIndexLocations({ dataLocations, dataDetailCompany, tok }) {
-    const [expandedKeys, setExpandedKeys] = useState([])
+    const [expandedKeys, setExpandedKeys] = useState([dataLocations.data[0].key])
     const [autoExpandParent, setAutoExpandParent] = useState(true);
     const [datalocations, setdatalocations] = useState(dataLocations.data)
     const [loadingtambah, setloadingtambah] = useState(false)
