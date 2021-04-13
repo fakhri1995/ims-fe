@@ -153,9 +153,9 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
                     children:
 
                         <>
-                            {
+                            {/* {
                                 events[index] ?
-                                    <>
+                                    <> */}
                                         <Button onClick={() => { rt.push(`/admin/company/${record.company_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
                                             <EditOutlined />
                                         </Button>
@@ -165,10 +165,10 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
                                         {/* <a><EditOutlined /></a> */}
                                         {/* </Link> */}
                                         {/* </Link> */}
-                                    </>
+                                    {/* </>
                                     :
                                     null
-                            }
+                            } */}
                         </>
                 }
             }
@@ -296,24 +296,24 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
                 <Table
                     pagination={{ pageSize: 6 }}
                     scroll={{ x: 200 }}
-                    onRow={(record, rowIndex) => {
-                        return {
-                            onMouseOver: (event) => {
-                                var eventscopy = events
-                                eventscopy[rowIndex] = true
-                                setEvents(eventscopy)
-                                setEvent("block")
-                                setColorhover("bg-blue-100")
-                            },
-                            onMouseLeave: (event) => {
-                                var eventscopy = events
-                                eventscopy[rowIndex] = false
-                                setEvents(eventscopy)
-                                setEvent("hidden")
-                                setColorhover("")
-                            }
-                        }
-                    }}
+                    // onRow={(record, rowIndex) => {
+                    //     return {
+                    //         onMouseOver: (event) => {
+                    //             var eventscopy = events
+                    //             eventscopy[rowIndex] = true
+                    //             setEvents(eventscopy)
+                    //             setEvent("block")
+                    //             setColorhover("bg-blue-100")
+                    //         },
+                    //         onMouseLeave: (event) => {
+                    //             var eventscopy = events
+                    //             eventscopy[rowIndex] = false
+                    //             setEvents(eventscopy)
+                    //             setEvent("hidden")
+                    //             setColorhover("")
+                    //         }
+                    //     }
+                    // }}
                     columns={columnsTable}
                     dataSource={dataTable}
                 />
@@ -345,7 +345,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
                     })
                 } */}
             </div>
-            <Drawer title="Buat Perusahaan Clients" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false); closeClientsDrawer(); instanceForm.resetFields() }} width={420} destroyOnClose={true}>
+            <Drawer title="Buat Perusahaan Clients" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false); closeClientsDrawer(); instanceForm.resetFields() }} width={370} destroyOnClose={true}>
                 <div className="w-full h-auto grid grid-cols-1 md:grid-cols-1">
                     <div className="px-3 pt-3 pb-0 col-span-1 md:col-span-1">
                         <Form.Item name="profile_image">

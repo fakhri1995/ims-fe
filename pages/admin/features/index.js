@@ -162,7 +162,7 @@ const FeaturesIndex = ({ initProps, dataProfile, sidemenu }) => {
             <div className="w-full grid grid-cols-5 border-t border-opacity-30 border-gray-500 bg-white">
                 <div className="col-span-5 border-b border-opacity-30 border-gray-400 flex items-center justify-between px-0 py-4 md:p-4 mb-5">
                     <h1 className="font-bold">Features</h1>
-                    <Button type="primary" size="large" onClick={() => { setdrawcreate(true) }}>Tambah Feature</Button>
+                    <Button type="primary" size="large" onClick={() => { setdrawcreate(true) }}>Add New</Button>
                 </div>
                 <div className="col-span-5 p-0 md:p-5 flex flex-col">
                     {/* <Search placeholder="Cari Nama Feature" allowClear style={{ width: `40%`, marginBottom: `1rem` }} onSearch={(value) => { onSearchService(value) }} /> */}
@@ -218,8 +218,8 @@ const FeaturesIndex = ({ initProps, dataProfile, sidemenu }) => {
                             <Input.TextArea defaultValue={dataedit.deskripsi} />
                         </Form.Item>
                         <div className="flex justify-end">
-                            <Button type="default" onClick={() => { setdrawedit(false) }} style={{ marginRight: `1rem` }}>Batalkan</Button>
-                            <Button htmlType="submit" type="primary" onClick={() => { setdrawedit(false) }}>Simpan</Button>
+                            <Button type="default" onClick={() => { setdrawedit(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
+                            <Button htmlType="submit" type="primary" onClick={() => { setdrawedit(false) }}>Save</Button>
                         </div>
                     </Form>
                 </div>

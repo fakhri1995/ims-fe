@@ -422,8 +422,8 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                         </div>
                         <div>
                             <Dropdown overlay={menu} trigger={['click']}>
-                                <Button style={{ backgroundColor: `rgb(24,144,255)`, color: `white` }}>
-                                    Tambah Baru <DownOutlined />
+                                <Button size="large" style={{ backgroundColor: `rgb(24,144,255)`, color: `white` }}>
+                                    Add New <DownOutlined />
                                 </Button>
                             </Dropdown>
                         </div>
@@ -569,8 +569,11 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                                     </Form.Item>
                                 </div>
                                 <div className="flex justify-between">
-                                    <Button onClick={() => { setmodaleditkateg(false); setmodalkonfhapuskateg(true) }} type="default" size="large">Hapus</Button>
-                                    <Button htmlType="submit" loading={loadingbtneditkateg} type="primary" size="large">Simpan</Button>
+                                    <Button onClick={() => { setmodaleditkateg(false); setmodalkonfhapuskateg(true) }} type="default">Delete</Button>
+                                    <div className="flex">
+                                        <Button type="default" onClick={() => { setmodaleditkateg(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
+                                        <Button htmlType="submit" loading={loadingbtneditkateg} type="primary">Save</Button>
+                                    </div>
                                 </div>
                             </Form>
                         </Modal>
@@ -599,8 +602,11 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                                     <Form.Item label="Deskripsi" name="deskripsi">
                                         <Input.TextArea onChange={onChangeTambahCategory} name="deskripsi" defaultValue={datatambahkateg.deskripsi} allowClear />
                                     </Form.Item>
+                                    <div className="flex justify-end">
+                                        <Button type="default" onClick={() => { setmodaltambahkateg(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
+                                        <Button htmlType="submit" loading={loadingbtntambahkateg} type="primary">Save</Button>
+                                    </div>
                                 </div>
-                                <Button htmlType="submit" loading={loadingbtntambahkateg} type="primary" size="large">Tambah</Button>
                             </Form>
                         </Modal>
                         <Modal

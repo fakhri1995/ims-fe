@@ -899,10 +899,14 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                     </select>
                                 </Form.Item>
                             </div>
-                            <Form.Item>
-                                <Button htmlType="submit" type="primary" size="middle" loading={loadingbtnedit}>Edit</Button>
-                                {/* <button type="submit" className="bg-gray-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-gray-800">Save</button> */}
-                            </Form.Item>
+                            <div className="flex justify-end">
+                                <Button type="default" onClick={() => { setDrawableedit(false) }} style={{ marginRight: `1rem` }} size="middle">Cancel</Button>
+                                <Form.Item>
+                                    <Button htmlType="submit" type="primary" size="middle" loading={loadingbtnedit}>Save</Button>
+                                    {/* <button type="submit" className="bg-gray-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-gray-800">Save</button> */}
+                                </Form.Item>
+                            </div>
+
                         </Form>
                     </Drawer>
                     <Drawer title="Buat data Rekening Bank" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false) }} width={370} destroyOnClose={true}>
@@ -946,10 +950,13 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                                     </Select>
                                 </Form.Item>
                             </div>
-                            <Form.Item>
-                                <Button htmlType="submit" type="primary" size="middle" loading={loadingbtncreate}>Simpan</Button>
-                                {/* <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button> */}
-                            </Form.Item>
+                            <div className="flex justify-end">
+                                <Button type="default" onClick={() => { setDrawablecreate(false) }} style={{ marginRight: `1rem` }} size="middle">Cancel</Button>
+                                <Form.Item>
+                                    <Button htmlType="submit" type="primary" size="middle" loading={loadingbtncreate}>Save</Button>
+                                    {/* <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button> */}
+                                </Form.Item>
+                            </div>
                         </Form>
                     </Drawer>
                 </div>

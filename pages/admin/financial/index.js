@@ -339,8 +339,8 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
                                                     </Form.Item>
                                                 </div>
                                                 <div className="flex justify-end items-center">
-                                                    <Button type="default" onClick={() => { settambahbtn(true) }} size="middle" style={{ marginRight: `1rem` }}>Batalkan</Button>
-                                                    <Button type="primary" htmlType="submit" loading={loadingcreate} size="middle">Simpan</Button>
+                                                    <Button type="default" onClick={() => { settambahbtn(true) }} size="middle" style={{ marginRight: `1rem` }}>Cancel</Button>
+                                                    <Button type="primary" htmlType="submit" loading={loadingcreate} size="middle">Save</Button>
                                                 </div>
                                             </Form>
                                         </div>
@@ -478,8 +478,8 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
                                             <div className="flex justify-end items-center">
                                                 <Button type="default" onClick={() => {
                                                     setmodaledit(false)
-                                                }} size="middle" style={{ marginRight: `1rem` }}>Batalkan</Button>
-                                                <Button type="primary" htmlType="submit" loading={loadingedit} size="middle">Update</Button>
+                                                }} size="middle" style={{ marginRight: `1rem` }}>Cancel</Button>
+                                                <Button type="primary" htmlType="submit" loading={loadingedit} size="middle">Save</Button>
                                             </div>
                                         </Form>
                                     </div>
