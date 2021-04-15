@@ -40,9 +40,9 @@ function layout({ children }) {
                 <Content className="site-layout" style={{ padding: '0px', marginTop: 64 }}>
                     <div className="site-layout-background" style={{ padding: 0, minHeight: 380 }}>
                         <div>
-                            <div className=" bg-white h-screen">
-                                <div className="px-1 md:px-10 relative" id="wrapper">
-                                    <main className="" style={{ padding: 24, height: `auto` }}>
+                            <div className=" bg-white h-full">
+                                <div className="px-0 relative" id="wrapper">
+                                    <main className="" style={{ padding: '24px 0px', height: `auto` }}>
                                         {children}
                                     </main>
                                 </div>

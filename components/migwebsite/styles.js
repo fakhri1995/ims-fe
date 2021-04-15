@@ -5,46 +5,41 @@ import React from 'react'
 //             Helvetica, sans-serif;
 const Styles = (props) => (
   <div>
-      <style jsx global>{`
-      .row:after { clear: both; }
-
-      .row:before, .row:after {
-        content: " ";
-        display: table; }
-      
-      @media (min-width: 768px) {
-        .col { 
-          float: left;
-          width: 33.33333333%; }
-      
-        .alignImgRight { text-align: right; }
-      }
-      .header{
-        padding: 0 50px;
-      }
-      @media (max-width: 540px){
-        .header{
-          padding: 0 25px;
+    <style jsx global>{`
+        .section3{
+          top: -50px;
         }
-      }
-      h1 {
-        display: block;
-        font-size: 3em;
-        margin-top: 0.67em;
-        margin-bottom: 0.67em;
-        margin-left: 0;
-        margin-right: 0;
-        font-weight: bold;
-      }
-      h4 {
-        display: block;
-        font-size: 1em;
-        margin-top: 1.33em;
-        margin-bottom: 1.33em;
-        margin-left: 0;
-        margin-right: 0;
-        font-weight: bold;
-      }
+        .section2{
+          margin: 0 auto 0;
+          width: 60%;
+          z-index: 10;
+        }
+        @media (max-width: 768px) {
+          .section2{
+            margin: 0 auto 0;
+            width: 100%;
+          }
+        }
+        .section1{
+          margin: 0 2rem 0;
+          padding-bottom: 3rem;
+        }
+        @media (max-width: 768px) {
+          .section1{
+            padding-bottom: 1rem;
+          }
+        }
+        p {
+          margin: 0rem;
+        }
+        .header{
+          padding: 0 50px;
+        }
+        @media (max-width: 540px){
+          .header{
+            padding: 0 25px;
+          }
+        }
         .center {
           margin: auto;
           width: 90%;
@@ -56,7 +51,8 @@ const Styles = (props) => (
           padding: 1rem 0rem;
           background: white;
           border: 1px;
-          width: -webkit-fill-available;
+          width: inherit;
+          place-items: flex-start;
         }
         
         body {
