@@ -13,6 +13,8 @@ function MyApp({ Component, pageProps }) {
     <>
       <Head>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css"></link>
+        {/* <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script> */}
         <title>MIGSys</title>
       </Head>
       <Component {...pageProps} />

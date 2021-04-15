@@ -4,9 +4,14 @@ import React from 'react'
 import Link from 'next/link'
 import Layout from '../../../components/migwebsite/layout.js'
 import { Typography, Space, Button, Row, Col } from 'antd'
+import Flickity from 'react-flickity-component'
 
 function LandingPage({ }) {
     const { Title } = Typography;
+    const flickityOptions = {
+        initialIndex: 0,
+        wrapAround: 'true',
+    }
     // const tok = initProps
     // const cook = jscookie.get('token')
     // console.log("cookie di dashboard: " + cook)
@@ -72,6 +77,51 @@ function LandingPage({ }) {
                         <p className={'text-4xl text-center font-extrabold'}>20+</p>
                         <p className={'text-base text-center'} style={{margin:'0 auto 0'}}>years experienced</p>
                     </div>
+                </div>
+            </section>
+            <section className={'section4'}>
+                <div className={'text-center'}>
+                    <Flickity
+                        className={'carousel'} // default ''
+                        elementType={'div'} // default 'div'
+                        options={flickityOptions} // takes flickity options {}
+                        disableImagesLoaded={false} // default false
+                        reloadOnUpdate // default false
+                        static // default false
+                        >
+                        <div className={'w-full'}>
+                            <div className={'text-base md:text-4xl font-bold inline-block pb-12 px-4 md:px-64'} style={{color:'#188E4D'}}>
+                                <p>“I Absolutely love the way Goodkit handles systematic design”</p>
+                            </div>
+                            <div className={' relative -top-7 md:-top-12 mt-4 md:mt-8'}>
+                                <div className={'w-auto inline-block'}>
+                                    <img src="/avatar.png"></img>
+                                </div>
+                                <div className={'font-bold pb-1'}>
+                                    <p>Adhi Bramantya</p>
+                                </div>
+                                <div>
+                                    <p>CFO Bank Bukopin</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className={'w-full'}>
+                            <div className={'text-base md:text-4xl font-bold inline-block pb-12 px-4 md:px-64'} style={{color:'#188E4D'}}>
+                                <p>“I Absolutely love the way Goodkit handles systematic design”</p>
+                            </div>
+                            <div className={' relative -top-7 md:-top-12 mt-4 md:mt-8'}>
+                                <div className={'w-auto inline-block'}>
+                                    <img src="/avatar.png"></img>
+                                </div>
+                                <div className={'font-bold pb-1'}>
+                                    <p>Adhi Bramantya</p>
+                                </div>
+                                <div>
+                                    <p>CFO Bank Bukopin</p>
+                                </div>
+                            </div>
+                        </div>
+                    </Flickity>
                 </div>
             </section>
 
