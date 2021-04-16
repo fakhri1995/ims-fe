@@ -8,6 +8,7 @@ module.exports = {
         '108' : '27rem',
         '120' : '30rem',
         '224' : '37rem',
+        '500' : '50rem',
       },
       fontFamily:{
         mont: ['Montserrat']

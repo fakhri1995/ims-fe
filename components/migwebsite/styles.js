@@ -1,14 +1,87 @@
 // File components/style.js
 
 import React from 'react'
-
+// font-family: -apple-system, BlinkMacSystemFont, Avenir Next, Avenir,
+//             Helvetica, sans-serif;
 const Styles = (props) => (
   <div>
-      <style jsx global>{`
+    <style jsx global>{`
+        .section4 .flickity-page-dots{
+          display:none;
+        }
+        .section4 .flickity-prev-next-button{
+          background:#188E4D;
+          border-radius:0%;
+        }
+        .section4 .flickity-button{
+          color:white;
+        }
+        @media (max-width: 768px){
+          .section4 .flickity-page-dots{
+            display:block;
+            bottom:-70px;
+          }
+          .section4 .flickity-page-dots .dot{
+            background:#93D9B5;
+          }
+        }
+        .section4{
+          height:auto;
+          margin:120px auto;
+        }
+        .section3{
+          top: -50px;
+        }
+        .section2{
+          margin: 0 auto 0;
+          width: 60%;
+          z-index: 10;
+        }
+        @media (max-width: 768px) {
+          .section2{
+            margin: 0 auto 0;
+            width: 100%;
+          }
+        }
+        .section1{
+          margin: 0 2rem 0;
+          padding-bottom: 3rem;
+        }
+        @media (max-width: 768px) {
+          .section1{
+            padding-bottom: 1rem;
+          }
+        }
+        p {
+          margin: 0rem;
+        }
+        .header{
+          padding: 0 50px;
+        }
+        @media (max-width: 540px){
+          .header{
+            padding: 0 25px;
+          }
+        }
+        .center {
+          margin: auto;
+          width: 90%;
+          padding: 10px;
+        }
+        .menuToggle:checked + .menu {
+          display: grid;
+          margin: 1.5rem 0rem;
+          padding: 1rem 0rem;
+          background: white;
+          border: 1px;
+          width: inherit;
+          place-items: flex-start;
+        }
+        
         body {
           margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Avenir Next, Avenir,
-            Helvetica, sans-serif;
+          
+          font-family: Raleway;
         }
         .hero {
           width: 100%;
