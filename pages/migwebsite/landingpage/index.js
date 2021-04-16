@@ -1,9 +1,8 @@
 // File pages/index.js
 
 import React from 'react'
-import Link from 'next/link'
 import Layout from '../../../components/migwebsite/layout.js'
-import { Typography, Space, Button, Row, Col } from 'antd'
+import { Typography } from 'antd'
 import Flickity from 'react-flickity-component'
 
 function LandingPage({ }) {
