@@ -8,22 +8,34 @@ import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import { useState } from 'react'
 import st from '../../../../components/layout-dashboard-mig.module.css'
 import Link from 'next/link'
-import { Tabs, Input, Form, Table, Tree, Drawer, notification, message, Modal, Select, Button, Popconfirm } from 'antd'
+import { Tabs, Input, Form, Table, Tree, Drawer, notification, message, Modal, Select, Button, Popconfirm, DatePicker } from 'antd'
+import moment from 'moment'
 
 function MigIndexProfile({ dataDetailCompany, tok }) {
+    const rt = useRouter()
     const [editable, setEditable] = useState(false)
     const [loadingbtn, setloadingbtn] = useState(false)
     const [instanceForm] = Form.useForm()
     const onClickEdit = () => {
         setEditable(true)
     }
+    if(dataDetailCompany.data.data.tanggal_pkp === null){
+        dataDetailCompany.data.data.tanggal_pkp = new Date()
+    }
     const [data1, setData1] = useState({
-        id: dataDetailCompany.data.data.company_id,
+        // id: dataDetailCompany.data.data.company_id,
         company_name: dataDetailCompany.data.data.company_name,
-        role: dataDetailCompany.data.data.role,
+        // role: dataDetailCompany.data.data.role,
         address: dataDetailCompany.data.data.address,
         phone_number: dataDetailCompany.data.data.phone_number,
-        image_logo: dataDetailCompany.data.data.image_logo
+        image_logo: dataDetailCompany.data.data.image_logo,
+        singkatan: dataDetailCompany.data.data.singkatan,
+        tanggal_pkp: moment(dataDetailCompany.data.data.tanggal_pkp)/*moment(new Date())*/,
+        penanggung_jawab: dataDetailCompany.data.data.penanggung_jawab,
+        npwp: dataDetailCompany.data.data.npwp,
+        fax: dataDetailCompany.data.data.fax,
+        email: dataDetailCompany.data.data.email,
+        website: dataDetailCompany.data.data.website
     })
     const [loadingfoto, setLoadingfoto] = useState(false)
 
@@ -56,7 +68,7 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
     }
     const handleEditProfile = () => {
         setloadingbtn(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/updateCompanyDetail`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateMainCompany`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -158,25 +170,6 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
                                         </>
                                 }
                             </div>
-                            {/* <div className="md:m-5 mb-5 md:mb-0 ">
-                        {
-                            editable ?
-                                <Form.Item name="role" label="Role"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Role wajib diisi',
-                                        },
-                                    ]}>
-                                    <input type="number" defaultValue={data1.role} name={'role'} onChange={onChangeEditProfile} style={{ width: `15rem` }} />
-                                </Form.Item>
-                                :
-                                <>
-                                    <h1 className="font-semibold text-sm">Role:</h1>
-                                    <h1 className="text-sm font-normal text-black">{data1.role}</h1>
-                                </>
-                        }
-                    </div> */}
                             <div className="md:m-5 mb-5 md:mb-0">
                                 {
                                     editable ?
@@ -212,6 +205,111 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
                                         <>
                                             <h1 className="font-semibold text-sm">Telepon:</h1>
                                             <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
+                                        </>
+                                }
+                            </div>
+                            <div className="md:m-5 mb-5 md:mb-0">
+                                {
+                                    editable ?
+                                        <Form.Item name="singkatan" label="Singkatan">
+                                            <Input defaultValue={data1.singkatan} name="singkatan" onChange={onChangeEditProfile}></Input>
+                                        </Form.Item>
+                                        :
+                                        <>
+                                            <h1 className="font-semibold text-sm">Singkatan:</h1>
+                                            <h1 className="text-sm font-normal text-black">{data1.singkatan}</h1>
+                                        </>
+                                }
+                            </div>
+                            <div className="md:m-5 mb-5 md:mb-0">
+                                {
+                                    editable ?
+                                        <Form.Item name="tanggal_pkp" label="Tanggal PKP"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Tanggal PKP wajib diisi',
+                                                },
+                                            ]}>
+                                            <DatePicker onChange={(date, dateString) => { setData1({ ...data1, tanggal_pkp: moment(date) }) }} style={{ width: `100%` }} defaultValue={data1.tanggal_pkp}></DatePicker>
+                                        </Form.Item>
+                                        :
+                                        <>
+                                            <h1 className="font-semibold text-sm">Tanggal PKP:</h1>
+                                            {/* <h1 className="text-sm font-normal text-black">{data1.tanggal_pkp.locale('id').format('LL')}</h1> */}
+                                            {
+                                                data1.tanggal_pkp === null ?
+                                                    <h1 className="text-sm font-normal text-black">-</h1>
+                                                    :
+                                                    <h1 className="text-sm font-normal text-black">{data1.tanggal_pkp.locale('id').format('LL')}</h1>
+
+                                            }
+                                        </>
+                                }
+                            </div>
+                            <div className="md:m-5 mb-5 md:mb-0">
+                                {
+                                    editable ?
+                                        <Form.Item name="penanggung_jawab" label="Penanggung Jawab">
+                                            <Input defaultValue={data1.penanggung_jawab} name="penanggung_jawab" onChange={onChangeEditProfile}></Input>
+                                        </Form.Item>
+                                        :
+                                        <>
+                                            <h1 className="font-semibold text-sm">Penanggung Jawab:</h1>
+                                            <h1 className="text-sm font-normal text-black">{data1.penanggung_jawab}</h1>
+                                        </>
+                                }
+                            </div>
+                            <div className="md:m-5 mb-5 md:mb-0">
+                                {
+                                    editable ?
+                                        <Form.Item name="npwp" label="NPWP">
+                                            <Input defaultValue={data1.npwp} name="npwp" onChange={onChangeEditProfile}></Input>
+                                        </Form.Item>
+                                        :
+                                        <>
+                                            <h1 className="font-semibold text-sm">NPWP:</h1>
+                                            <h1 className="text-sm font-normal text-black">{data1.npwp}</h1>
+                                        </>
+                                }
+                            </div>
+                            <div className="md:m-5 mb-5 md:mb-0">
+                                {
+                                    editable ?
+                                        <Form.Item name="fax" label="Fax">
+                                            <Input defaultValue={data1.fax} name="fax" onChange={onChangeEditProfile}></Input>
+                                        </Form.Item>
+                                        :
+                                        <>
+                                            <h1 className="font-semibold text-sm">Fax:</h1>
+                                            <h1 className="text-sm font-normal text-black">{data1.fax}</h1>
+                                        </>
+                                }
+                            </div>
+                            <div className="md:m-5 mb-5 md:mb-0">
+                                {
+                                    editable ?
+                                        <Form.Item name="email" label="Email">
+                                            <Input defaultValue={data1.email} name="email" onChange={onChangeEditProfile}></Input>
+                                        </Form.Item>
+                                        :
+                                        <>
+                                            <h1 className="font-semibold text-sm">Email:</h1>
+                                            <h1 className="text-sm font-normal text-black">{data1.email}</h1>
+                                        </>
+                                }
+                            </div>
+                            <div className="md:m-5 mb-5 md:mb-0">
+                                {
+                                    editable ?
+                                        <Form.Item name="website" label="Website">
+                                            <Input defaultValue={data1.website} name="website" onChange={onChangeEditProfile}></Input>
+                                        </Form.Item>
+                                        :
+                                        <>
+                                            <h1 className="font-semibold text-sm">Website:</h1>
+
+                                            <h1 className="text-sm font-normal text-black">{data1.website}</h1>
                                         </>
                                 }
                             </div>
@@ -829,13 +927,13 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyDetail`, {
+    const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getMainCompanyDetail`, {
         method: `POST`,
         headers: {
             'Authorization': JSON.parse(initProps),
-            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/json'
         },
-        body: JSON.stringify(reqBodyMigDetail)
+        // body: JSON.stringify(reqBodyMigDetail)
     })
     const resjsonGC = await resourcesGC.json()
     const dataDetailCompany = resjsonGC

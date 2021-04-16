@@ -14,7 +14,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
     const tok = initProps
     var pathArr = rt.pathname.split("/").slice(1)
     pathArr[pathArr.length - 1] = "Create"
-    dataCompanyList = dataCompanyList.data.data.companies.filter(data => data.company_id !== 66)
+    dataCompanyList = dataCompanyList.data.filter(data => data.company_id !== 66)
     const [instanceForm] = Form.useForm()
 
     //useState
@@ -32,7 +32,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
     //handleCreateButton
     const handleCreateAgents = () => {
         setLoadingcreate(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/addAccountMember`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addRequesterMember`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -121,7 +121,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                         <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
                             <h1 className="font-semibold py-2">New Requesters</h1>
                             <div className="flex space-x-2">
-                                <Link href="/requesters?originPath=Admin">
+                                <Link href="/admin/requesters">
                                     <Button type="default">Cancel</Button>
                                     {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button> */}
                                 </Link>
@@ -259,7 +259,7 @@ export async function getServerSideProps({ req, res }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyList`, {
+    const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
         method: `POST`,
         headers: {
             'Authorization': JSON.parse(initProps),

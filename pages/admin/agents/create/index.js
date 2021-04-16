@@ -21,7 +21,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
     const [newuser, setNewuser] = useState({
         fullname: '',
         email: '',
-        role: 2,
+        // role: 2,
         phone_number: '',
         profile_image: '',
         company_id: 66
@@ -32,7 +32,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
     //handleCreateButton
     const handleCreateAgents = () => {
         setLoadingsave(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/addAccountMember`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addAgentMember`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),
