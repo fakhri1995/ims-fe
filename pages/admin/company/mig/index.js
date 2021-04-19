@@ -405,14 +405,12 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
     // const [selectedrows, setSelectedrows] = useState([])
     const [recordrow, setRecordrow] = useState({
         id: 0,
-        company_id: 66,
         name: '',
         account_number: '',
         owner: '',
         currency: ''
     })
     const [bankdata, setBankdata] = useState({
-        company_id: 66,
         name: '',
         account_number: '',
         owner: '',
@@ -444,7 +442,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
     }
     const handleDeleteBA = (rec) => {
         setloadingdelete(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteBank?id=${rec.id}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteMainBank?id=${rec.id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -473,7 +471,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
     }
     const handleSubmitCreateBA = () => {
         setloadingbtncreate(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/addBank`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addMainBank`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -513,7 +511,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
     const handleSubmitEditBA = () => {
         console.log("isidata2: " + recordrow)
         setloadingbtnedit(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/updateBank`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateMainBank`, {
             method: 'PUT',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -938,7 +936,7 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGC = await resourcesGC.json()
     const dataDetailCompany = resjsonGC
 
-    const resourcesGB = await fetch(`https://boiling-thicket-46501.herokuapp.com/getBanks?id=${dataDetailCompany.data.data.company_id}`, {
+    const resourcesGB = await fetch(`https://boiling-thicket-46501.herokuapp.com/getMainBanks`, {
         method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps),
