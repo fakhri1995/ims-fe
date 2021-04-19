@@ -1,10 +1,10 @@
-import { useState } from 'react'
-import { Input, Checkbox, Button, message } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { useRouter } from 'next/router'
-import jscookie from 'js-cookie'
-import httpcookie from 'cookie'
-import { Form, notification } from 'antd'
+// import { useState } from 'react'
+// import { Input, Checkbox, Button, message } from 'antd';
+// import { UserOutlined, LockOutlined } from '@ant-design/icons';
+// import { useRouter } from 'next/router'
+// import jscookie from 'js-cookie'
+// import httpcookie from 'cookie'
+// import { Form, notification } from 'antd'
 import LandingPage from '../pages/migwebsite/landingpage'
 
 export default function Home({ }) {

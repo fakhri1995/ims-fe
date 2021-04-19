@@ -42,7 +42,7 @@ function layout({ children }) {
                         <div>
                             <div className=" bg-white h-full">
                                 <div className="px-0 relative" id="wrapper">
-                                    <main className="" style={{ padding: '24px 0px 0px 0px', height: `auto` }}>
+                                    <main className="" style={{ padding: '0px', height: `auto` }}>
                                         {children}
                                     </main>
                                 </div>
