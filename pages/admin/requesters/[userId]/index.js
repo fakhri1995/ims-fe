@@ -8,20 +8,20 @@ import Link from 'next/link'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import { Form, Input, Modal, Button, notification, Switch } from 'antd'
 
-function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu }) {
+function RequestersDetail({ initProps, dataProfile, dataDetailRequester, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     var pathArr = rt.pathname.split("/").slice(1)
-    pathArr[pathArr.length - 1] = dataDetailAccount.data.data.fullname
+    pathArr[pathArr.length - 1] = dataDetailRequester.data.data.fullname
     const [instanceForm] = Form.useForm()
 
     const [loadingfoto, setLoadingfoto] = useState(false)
     const [data1, setData1] = useState({
-        id: dataDetailAccount.data.data.user_id,
-        fullname: dataDetailAccount.data.data.fullname,
-        role: dataDetailAccount.data.data.role,
-        phone_number: dataDetailAccount.data.data.phone_number,
-        profile_image: dataDetailAccount.data.data.profile_image
+        id: dataDetailRequester.data.data.user_id,
+        fullname: dataDetailRequester.data.data.fullname,
+        role: dataDetailRequester.data.data.role,
+        phone_number: dataDetailRequester.data.data.phone_number,
+        profile_image: dataDetailRequester.data.data.profile_image
     })
     const [visible, setVisible] = useState(false)
     const [visiblenon, setVisiblenon] = useState(false)
@@ -32,7 +32,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
     const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
 
     const [datapass, setDatapass] = useState({
-        user_id: dataDetailAccount.data.data.user_id,
+        user_id: dataDetailRequester.data.data.user_id,
         new_password: ''
     })
     const onChangeEditAgents = (e) => {
@@ -60,7 +60,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
     }
     const handleSubmitEditAccount = () => {
         setLoadingupdate(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/updateAccountDetail`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateRequesterDetail`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -77,7 +77,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/requesters/${dataDetailAccount.data.data.user_id}`)
+                        rt.push(`/admin/requesters/${dataDetailRequester.data.data.user_id}`)
                     }, 300)
                 }
                 else if (!res2.success) {
@@ -98,14 +98,14 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
             keaktifan = true
             setloadingubahnonaktif(true)
         }
-        fetch(`https://boiling-thicket-46501.herokuapp.com/accountActivation`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/requesterActivation`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                user_id: dataDetailAccount.data.data.user_id,
+                user_id: dataDetailRequester.data.data.user_id,
                 is_enabled: keaktifan
             })
         })
@@ -125,7 +125,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
                         else if (status === "nonAktif") {
                             setloadingubahnonaktif(false)
                         }
-                        rt.push(`/admin/requesters/${dataDetailAccount.data.data.user_id}`)
+                        rt.push(`/admin/requesters/${dataDetailRequester.data.data.user_id}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -140,7 +140,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
     }
     const handleUbahPassword = () => {
         setloadingubahpass(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/changeAccountPassword`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/changeRequesterPassword`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -158,7 +158,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
                     })
                     setTimeout(() => {
                         setloadingubahpass(false)
-                        rt.push(`/admin/requesters/${dataDetailAccount.data.data.user_id}`)
+                        rt.push(`/admin/requesters/${dataDetailRequester.data.data.user_id}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -171,7 +171,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
             })
     }
     return (
-        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} dataDetailAccount={dataDetailAccount} st={st}>
+        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} dataDetailAccount={dataDetailRequester} st={st}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
                 {/* <div className=" col-span-1 md:col-span-1 flex md:hidden flex-col space-y-4 p-4">
                     <div className="font-semibold text-base">Requesters</div>
@@ -201,7 +201,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
                             <div className=" mr-3 md:mr-5 pt-1">Detail Akun Requesters</div>
                             <div className="pt-1">
                                 {
-                                    dataDetailAccount.data.data.attribute.is_enabled ?
+                                    dataDetailRequester.data.data.attribute.is_enabled ?
                                         <Switch checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
                                         :
                                         <Switch checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
@@ -298,7 +298,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
                         onCancel={() => setVisible(false)}
                         okButtonProps={{ disabled: loadingubahaktif }}
                     >
-                        Apakah anda yakin ingin menon-aktifkan akun perusahaan <strong>{dataDetailAccount.data.data.fullname}</strong>?
+                        Apakah anda yakin ingin menon-aktifkan akun perusahaan <strong>{dataDetailRequester.data.data.fullname}</strong>?
                     </Modal>
                     <Modal
                         title="Konfirmasi untuk mengakaktifkan akun"
@@ -307,7 +307,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailAccount, sidemenu 
                         onCancel={() => setVisiblenon(false)}
                         okButtonProps={{ disabled: loadingubahnonaktif }}
                     >
-                        Apakah anda yakin ingin melakukan aktivasi akun perusahaan <strong>{dataDetailAccount.data.data.fullname}</strong>?`
+                        Apakah anda yakin ingin melakukan aktivasi akun perusahaan <strong>{dataDetailRequester.data.data.fullname}</strong>?`
                     </Modal>
                     <Modal
                         title="Ubah Password"
@@ -356,7 +356,7 @@ export async function getServerSideProps({ req, res, params }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    const resourcesDA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAccountDetail`, {
+    const resourcesDA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterDetail`, {
         method: `POST`,
         headers: {
             'Authorization': JSON.parse(initProps),
@@ -371,12 +371,12 @@ export async function getServerSideProps({ req, res, params }) {
         res.writeHead(302, { Location: '/admin/requesters' })
         res.end()
     }
-    const dataDetailAccount = resjsonDA
+    const dataDetailRequester = resjsonDA
 
     return {
         props: {
             initProps,
-            dataDetailAccount,
+            dataDetailRequester,
             dataProfile,
             sidemenu: "4"
         },

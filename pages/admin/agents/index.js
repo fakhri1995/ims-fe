@@ -8,22 +8,22 @@ import Link from 'next/link'
 import st from '../../../components/layout-dashboard.module.css'
 import { Table, notification, Button } from 'antd'
 
-function Agents({ initProps, dataProfile, dataListAccount, sidemenu }) {
+function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
     var dataDD = []
-    if (!dataListAccount.data) {
+    if (!dataListAgent) {
         dataDD = []
         notification['error']({
-            message: dataListAccount.message.errorInfo.status_detail,
+            message: dataListAgent.message.errorInfo.status_detail,
             duration: 3
         })
         rt.push('/dashboard/admin')
     }
     else {
-        dataDD = dataListAccount.data.data.accounts.filter(dataa => dataa.company_id === 66).map((doc, idx) => {
+        dataDD = dataListAgent.data.map((doc, idx) => {
             return ({
                 user_id: doc.user_id,
                 profile_image: doc.profile_image,
@@ -329,7 +329,7 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAccountList`, {
+    const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList`, {
         method: `POST`,
         headers: {
             'Authorization': JSON.parse(initProps),
@@ -338,12 +338,12 @@ export async function getServerSideProps({ req, res }) {
         body: JSON.stringify(reqBodyAccountList)
     })
     const resjsonLA = await resourcesLA.json()
-    const dataListAccount = resjsonLA
+    const dataListAgent = resjsonLA
     return {
         props: {
             initProps,
             dataProfile,
-            dataListAccount,
+            dataListAgent,
             sidemenu: "4"
         },
     }

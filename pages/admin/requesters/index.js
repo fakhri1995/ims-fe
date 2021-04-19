@@ -8,23 +8,23 @@ import EditOutlined from '@ant-design/icons/EditOutlined'
 import Link from 'next/link'
 import { Table, notification, Button, Select } from 'antd'
 
-function Requesters({ initProps, dataProfile, dataListAccount, dataCompanyList, sidemenu }) {
+function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
     const { Option } = Select
     var dataDD = []
-    if (!dataListAccount.data) {
+    if (!dataListRequester) {
         dataDD = []
         notification['error']({
-            message: dataListAccount.message.errorInfo.status_detail,
+            message: dataListRequester.message.errorInfo.status_detail,
             duration: 3
         })
         rt.push('/dashboard/admin')
     }
     else {
-        dataDD = dataListAccount.data.data.accounts.filter(data => data.company_id !== 66).map((doc, idx) => {
+        dataDD = dataListRequester.data.map((doc, idx) => {
             return ({
                 user_id: doc.user_id,
                 profile_image: doc.profile_image,
@@ -305,7 +305,7 @@ function Requesters({ initProps, dataProfile, dataListAccount, dataCompanyList, 
                             <Select placeholder="Filter by companies" defaultValue={"all"} onChange={(value) => { onFilterByCompany(value) }} style={{ width: `40%` }}>
                                 <Option value={"all"}>Semua</Option>
                                 {
-                                    dataCompanyList.data.data.companies.filter(dataa => dataa.company_id !== 66).map((doc, idx) => {
+                                    dataCompanyList.data.filter(dataa => dataa.company_id !== 66).map((doc, idx) => {
                                         return (
                                             <Option key={idx} value={doc.company_id}>{doc.company_id}: {doc.company_name}</Option>
                                         )
@@ -378,7 +378,7 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAccountList`, {
+    const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
         method: `POST`,
         headers: {
             'Authorization': JSON.parse(initProps),
@@ -387,9 +387,9 @@ export async function getServerSideProps({ req, res }) {
         body: JSON.stringify(reqBodyAccountList)
     })
     const resjsonLA = await resourcesLA.json()
-    const dataListAccount = resjsonLA
+    const dataListRequester = resjsonLA
 
-    const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyList`, {
+    const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
         method: `POST`,
         headers: {
             'Authorization': JSON.parse(initProps),
@@ -404,7 +404,7 @@ export async function getServerSideProps({ req, res }) {
         props: {
             initProps,
             dataProfile,
-            dataListAccount,
+            dataListRequester,
             dataCompanyList,
             sidemenu: "4"
         },
