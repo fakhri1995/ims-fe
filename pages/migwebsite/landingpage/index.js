@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Layout from '../../../components/migwebsite/layout.js'
 import { Typography, Space, Button, Row, Col } from 'antd'
 import Flickity from 'react-flickity-component'
-
+import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
 function LandingPage({ }) {
     const { Title } = Typography;
     const flickityOptions = {
@@ -122,6 +122,22 @@ function LandingPage({ }) {
                             </div>
                         </div>
                     </Flickity>
+                </div>
+            </section>
+            <section className={'section5'}>
+                <div className={'block md:flex relative justify-between px-8 md:px-32 lg:px-64'}style={{top:'45%'}}>
+                    <div className={'flex-col text-2xl md:text-3xl text-white font-bold -top-4 md:top-0 relative'} style={{}}>
+                        <p>Let’s be better together</p>
+                    </div>
+                    <div className={'flex-col w-auto'}>
+                        <button className={'text-white flex border-2 text-base md:text-lg border-white px-4 mt-1 focus:outline-none'}>Contact Sales &nbsp;
+                            {/* <svg id="icon-arrow-right2" viewBox="0 0 32 32" width={20} className={''}>
+                                <path d="M19.414 27.414l10-10c0.781-0.781 0.781-2.047 0-2.828l-10-10c-0.781-0.781-2.047-0.781-2.828 0s-0.781 2.047 0 2.828l6.586 6.586h-19.172c-1.105 0-2 0.895-2 2s0.895 2 2 2h19.172l-6.586 6.586c-0.39 0.39-0.586 0.902-0.586 1.414s0.195 1.024 0.586 1.414c0.781 0.781 2.047 0.781 2.828 0z"></path>
+                            </svg> */}
+                            <ArrowRightOutlined className={'pt-1'}/>
+                        </button>
+
+                    </div>
                 </div>
             </section>
 
