@@ -42,7 +42,7 @@ function layout({ children }) {
                         <div>
                             <div className=" bg-white h-full">
                                 <div className="px-0 relative" id="wrapper">
-                                    <main className="" style={{ padding: '24px 0px', height: `auto` }}>
+                                    <main className="" style={{ padding: '24px 0px 0px 0px', height: `auto` }}>
                                         {children}
                                     </main>
                                 </div>
@@ -50,7 +50,31 @@ function layout({ children }) {
                         </div>
                     </div>
                 </Content>
-                <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+                <Footer className={''} style={{ textAlign: 'left' }}>
+                    <div className={' flex flex-col md:flex-row'}>
+                            <div className="" style={{minWidth:'150px',width:'150px'}} >
+                                <img src='/mig.png'/>
+                            </div>  
+                            <div className={'flex flex-col md:flex-row px-0 md:px-20'}>
+                                <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
+                                    <p className={'font-bold py-1'}>Company</p>
+                                    <p className={' py-1'}>About Us</p>
+                                    <p className={' py-1'}>Careers</p>
+                                </div>
+                                <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
+                                    <p className={'font-bold py-1'}>Solutions</p>
+                                    <p className={' py-1'}>Advantages</p>
+                                    <p className={' py-1'}>Hardware</p>
+                                    <p className={' py-1'}>Software</p>
+                                    <p className={' py-1'}>People</p>
+                                </div>
+                                <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
+                                    <p className={'font-bold py-1'}>Help</p>
+                                    <p className={' py-1'}>Contact Us</p>
+                                </div>
+                            </div>
+                    </div>
+                </Footer>
             </Layout>
 
         </>

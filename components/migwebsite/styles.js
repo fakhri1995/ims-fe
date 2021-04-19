@@ -6,12 +6,17 @@ import React from 'react'
 const Styles = (props) => (
   <div>
     <style jsx global>{`
+        .section5{
+          height:300px;
+          background:#93D9B5;
+        }
         .section4 .flickity-page-dots{
           display:none;
         }
         .section4 .flickity-prev-next-button{
           background:#188E4D;
           border-radius:0%;
+          display: block;
         }
         .section4 .flickity-button{
           color:white;
@@ -23,6 +28,9 @@ const Styles = (props) => (
           }
           .section4 .flickity-page-dots .dot{
             background:#93D9B5;
+          }
+          .section4 .flickity-prev-next-button{
+            display: none;
           }
         }
         .section4{

@@ -19,11 +19,13 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
     const [loadingubahaktif, setloadingubahaktif] = useState(false)
     const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
     const [instanceForm] = Form.useForm()
-    console.log("kk: " + typeof (dataDetailCompany.data.data.singkatan))
+    if(dataDetailCompany.data.data.tanggal_pkp === null){
+        dataDetailCompany.data.data.tanggal_pkp = new Date()
+    }
     const [data1, setData1] = useState({
         id: dataDetailCompany.data.data.company_id,
         company_name: dataDetailCompany.data.data.company_name,
-        role: dataDetailCompany.data.data.role,
+        // role: dataDetailCompany.data.data.role,
         address: dataDetailCompany.data.data.address,
         phone_number: dataDetailCompany.data.data.phone_number,
         image_logo: dataDetailCompany.data.data.image_logo,
@@ -69,7 +71,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
     //handler
     const handleEditProfile = () => {
         setloadingbtn(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/updateCompanyDetail`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateCompanyClient`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -107,7 +109,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
             keaktifan = true
             setloadingubahnonaktif(true)
         }
-        fetch(`https://boiling-thicket-46501.herokuapp.com/companyActivation`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/companyClientActivation`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -561,33 +563,6 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
     }
     const [actions, setActions] = useState(actionsArr)
     const [action, setAction] = useState(false)
-    const handleDeleteBA = (rec) => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteBank?id=${rec.id}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': JSON.parse(tok),
-            },
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                if (res2.success) {
-                    setModaldel(false)
-                    notification['success']({
-                        message: res2.message,
-                        duration: 3
-                    })
-                    setTimeout(() => {
-                        rt.push(`/admin/company/${companyId}`)
-                    }, 500)
-                }
-                else {
-                    notification['error']({
-                        message: res2.message,
-                        duration: 3
-                    })
-                }
-            })
-    }
     const columnsgetBanks = [
         {
             title: 'No.',
@@ -709,11 +684,11 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                             {
                                 actions[index] ?
                                     <>{actions[index]}
-                                        <Button onClick={() => { setModaldel(true); setModaldeldata(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
-                                            <DeleteOutlined />
-                                        </Button>
                                         <Button onClick={() => { setDrawableedit(true); setRecordrow(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
                                             <EditOutlined />
+                                        </Button>
+                                        <Button onClick={() => { setModaldel(true); setModaldeldata(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
+                                            <DeleteOutlined />
                                         </Button>
                                         {/* <a onClick={() => { setModaldel(true); setModaldeldata(record) }}><DeleteOutlined /></a>
                                         <a className="inline" onClick={() => { setDrawableedit(true); setRecordrow(record) }}><EditOutlined /></a> */}
@@ -761,7 +736,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
     }
     const handleSubmitCreateBA = () => {
         setloadingbtncreate(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/addBank`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addClientBank`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -800,7 +775,7 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
     const handleSubmitEditBA = () => {
         console.log("isidata2: " + recordrow)
         setloadingbtnedit(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/updateBank`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateClientBank`, {
             method: 'PUT',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -832,6 +807,33 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                 else {
                     notification['error']({
                         message: res2.errorInfo.status_detail,
+                        duration: 3
+                    })
+                }
+            })
+    }
+    const handleDeleteBA = (rec) => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteClientBank?id=${rec.id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': JSON.parse(tok),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    setModaldel(false)
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/admin/company/${companyId}`)
+                    }, 500)
+                }
+                else {
+                    notification['error']({
+                        message: res2.message,
                         duration: 3
                     })
                 }
@@ -1065,7 +1067,7 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyDetail`, {
+    const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientDetail`, {
         method: `POST`,
         headers: {
             'Authorization': JSON.parse(initProps),
@@ -1076,7 +1078,7 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonGC = await resourcesGC.json()
     const dataDetailCompany = resjsonGC
 
-    const resourcesGB = await fetch(`https://boiling-thicket-46501.herokuapp.com/getBanks?id=${dataDetailCompany.data.data.company_id}`, {
+    const resourcesGB = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientBanks?id=${dataDetailCompany.data.data.company_id}`, {
         method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps),

@@ -63,7 +63,7 @@ export default function Home({ initProps }) {
       {/* {
         spin1 ?
           <Spin size="large"> */}
-      <div className="container-xl bg-blue-600 h-screen">
+      <div className="container-xl h-screen" style={{background:`linear-gradient(#035ea3, #198e07)`}}>
         <div className="pt-20 relative" id="wrapper">
           <div className="mx-auto bg-white rounded-lg w-10/12 md:w-5/12 h-80 md:h-80 text-black shadow-lg px-3 md:px-5 py-10 text-center">
             <h1 className="mb-5 font-mont text-xl font-semibold">Log In MIGSYS v3</h1>

@@ -243,7 +243,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
     }
     const handleSubmitCreateClients = () => {
         setloadingbtn(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyMember`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyClient`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -465,7 +465,7 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientList`, {
+    const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
         method: `POST`,
         headers: {
             'Authorization': JSON.parse(initProps),
