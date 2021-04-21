@@ -12,9 +12,11 @@ function layout({ children }) {
             <Styles />
             <Layout className={'h-auto'}>
                 <Header className={'header border-b'} style={{ background:'white', position: 'fixed', zIndex: 20, width: '100%' }}>
-                    <div className="logo top-3 sm:top-2 absolute w-24 sm:w-32" >
-                        <img width={'auto'} height={'auto'} src='/mig.png'/>
-                    </div>
+                    <Link href="/">
+                        <div className="logo top-3 sm:top-2 absolute w-24 sm:w-32" >
+                            <img width={'auto'} height={'auto'} src='/mig.png'/>
+                        </div>
+                    </Link>
                     <label htmlFor={`menutoggle`} className="md:hidden block float-right cursor-pointer mt-5">
                             <svg className="fill-current text-gray-900" xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 20 20">
                                 <title>Menu</title>
@@ -24,7 +26,7 @@ function layout({ children }) {
                     <input className={`hidden menuToggle`} type="checkbox" id={`menutoggle`} />
                     <div theme="light" mode="horizontal" style={{lineHeight:'3.9rem',}} className={'hidden md:block float-right menu'}>
                         
-                        <Button type="text" className={'mx-2'} style={{fontWeight:'600'}} key="1">
+                        <Button type="text" className={'mx-2'} style={{fontWeight:'600'}} key="0">
                             <Link href="/login">
                                     Login Ke Admin
                             </Link>
@@ -47,7 +49,7 @@ function layout({ children }) {
                         </div>
                     </div>
                 </Content>
-                <Footer className={''} style={{ textAlign: 'left' }}>
+                <Footer className={''} style={{ textAlign: 'left', backgroundColor:'white' }}>
                     <div className={' flex flex-col md:flex-row'}>
                             <div className="" style={{minWidth:'150px',width:'150px'}} >
                                 <img src='/mig.png'/>
@@ -60,10 +62,10 @@ function layout({ children }) {
                                 </div>
                                 <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
                                     <p className={'font-bold py-1'}>Solutions</p>
-                                    <Link href={{pathname: '/advantages'}}><p className={' py-1'}>Advantages</p></Link>
-                                    <Link href={{pathname: '/hardware'}}><p className={' py-1'}>Hardware</p></Link>
-                                    <Link href={{pathname: '/software'}}><p className={' py-1'}>Software</p></Link>
-                                    <Link href={{pathname: '/people'}}><p className={' py-1'}>People</p></Link>
+                                    <Link href={{pathname: '/advantages'}}><p className={'cursor-pointer py-1'}>Advantages</p></Link>
+                                    <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer py-1'}>Hardware</p></Link>
+                                    <Link href={{pathname: '/software'}}><p className={'cursor-pointer py-1'}>Software</p></Link>
+                                    <Link href={{pathname: '/people'}}><p className={'cursor-pointer py-1'}>People</p></Link>
                                 </div>
                                 <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
                                     <p className={'font-bold py-1'}>Help</p>

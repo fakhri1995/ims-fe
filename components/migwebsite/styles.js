@@ -8,22 +8,18 @@ const Styles = (props) => (
     <style jsx global>{`
         .item-hardware{
           background:#E8E6EE;
-          flex: 0 1 calc(33.3333333333334% - 12vw);
-          margin: 6vw;
-          width: 15vw;
-          height: 15vw;
+          flex: 0 1 calc(33.3333333333334% - 18vw);
+          margin: 0 9vw 9vw 9vw;
+          width: 12vw;
+          height: 12vw;
         }
         @media (max-width: 768px){
           .item-hardware{
             flex: 0 1 calc(50% - 4vw);
-            margin: 2vw;
+            margin: 0 2vw 2vw 2vw;
             width: 10vw;
             height: 30vw;
           }
-        }
-        .section5advantages{
-          height:300px;
-          background:#93D9B5;
         }
         .section3advantages{
           background:#F4F4F4;
@@ -35,7 +31,7 @@ const Styles = (props) => (
           background:#F4F4F4;
         }
         .section5landingpage{
-          height:300px;
+          height:170px;
           background:#93D9B5;
         }
         .section4landingpage .flickity-page-dots{
@@ -45,6 +41,7 @@ const Styles = (props) => (
           background:#188E4D;
           border-radius:0%;
           display: block;
+          margin: 0 30px;
         }
         .section4landingpage .flickity-button{
           color:white;
@@ -80,11 +77,14 @@ const Styles = (props) => (
           }
         }
         .section1landingpage{
-          margin: 0 2rem 0;
+          margin: 0 5rem 0;
+          padding-top: 1rem;
           padding-bottom: 3rem;
         }
         @media (max-width: 768px) {
           .section1landingpage{
+            margin: 0 1rem 0;
+            padding-top: 1rem;
             padding-bottom: 1rem;
           }
         }
