@@ -1,28 +1,28 @@
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import httpcookie from 'cookie'
-import { SearchOutlined } from '@ant-design/icons'
+import { SearchOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import Link from 'next/link'
-import { Button, Form, Input, Drawer, Table } from 'antd'
+import { Button, Form, Input, Drawer, Table, notification, Modal, message } from 'antd'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard.module.css'
 
-const FeaturesIndex = ({ initProps, dataProfile, sidemenu }) => {
+const FeaturesIndex = ({ initProps, dataProfile, dataListFeatures, sidemenu }) => {
     //Definisi table
-    const dataRaw = []
-    for (var i = 0; i < 10; i++) {
-        dataRaw.push({
-            feature_id: i + 1,
-            nama: `feature local ${i + 1}`,
-            deskripsi: `ini deskripsi fari feature local ${i + 1}`,
-            key: `009090990-${i + 1}`
-        })
-    }
+    // const dataRaw = []
+    // for (var i = 0; i < 10; i++) {
+    //     dataRaw.push({
+    //         feature_id: i + 1,
+    //         nama: `feature local ${i + 1}`,
+    //         deskripsi: `ini deskripsi fari feature local ${i + 1}`,
+    //         key: `009090990-${i + 1}`
+    //     })
+    // }
     const columnsFeature = [
         {
             title: 'Feature ID',
-            dataIndex: 'feature_id',
-            key: 'feature_id',
+            dataIndex: 'id',
+            key: 'id',
             render: (text, record, index) => {
                 return {
                     props: {
@@ -32,20 +32,21 @@ const FeaturesIndex = ({ initProps, dataProfile, sidemenu }) => {
                         <>
                             <a href="#" onClick={() => {
                                 setdrawedit(true); setdataedit({
-                                    nama: record.nama,
-                                    deskripsi: record.deskripsi
+                                    id: record.id,
+                                    name: record.name,
+                                    description: record.description
                                 })
                             }}>
-                                <h1 className="font-semibold hover:text-gray-500">{record.feature_id}</h1>
+                                <h1 className="font-semibold hover:text-gray-500">{record.id}</h1>
                             </a>
                         </>
                 }
             }
         },
         {
-            title: 'Nama',
-            dataIndex: 'nama',
-            key: 'nama',
+            title: 'Nama Feature',
+            dataIndex: 'name',
+            key: 'name',
             render: (text, record, index) => {
                 return {
                     props: {
@@ -55,11 +56,12 @@ const FeaturesIndex = ({ initProps, dataProfile, sidemenu }) => {
                         <>
                             <a href="#" onClick={() => {
                                 setdrawedit(true); setdataedit({
-                                    nama: record.nama,
-                                    deskripsi: record.deskripsi
+                                    id: record.id,
+                                    name: record.name,
+                                    description: record.description
                                 })
                             }}>
-                                <h1 className="hover:text-gray-500 text-xs">{record.nama}</h1>
+                                <h1 className="hover:text-gray-500">{record.name}</h1>
                             </a>
                         </>
                 }
@@ -67,8 +69,8 @@ const FeaturesIndex = ({ initProps, dataProfile, sidemenu }) => {
         },
         {
             title: 'Deskripsi',
-            dataIndex: 'deskripsi',
-            key: 'deskripsi',
+            dataIndex: 'description',
+            key: 'description',
             render: (text, record, index) => {
                 return {
                     props: {
@@ -78,11 +80,12 @@ const FeaturesIndex = ({ initProps, dataProfile, sidemenu }) => {
                         <>
                             <a href="#" onClick={() => {
                                 setdrawedit(true); setdataedit({
-                                    nama: record.nama,
-                                    deskripsi: record.deskripsi
+                                    id: record.id,
+                                    name: record.name,
+                                    description: record.description
                                 })
                             }}>
-                                <h1 className="hover:text-gray-500 text-xs">{record.deskripsi}</h1>
+                                <h1 className="hover:text-gray-500 text-xs">{record.description}</h1>
                             </a>
                         </>
                 }
@@ -90,8 +93,8 @@ const FeaturesIndex = ({ initProps, dataProfile, sidemenu }) => {
         },
         {
             title: 'Key',
-            dataIndex: 'key',
-            key: 'key',
+            dataIndex: 'path_url',
+            key: 'path_url',
             render: (text, record, index) => {
                 return {
                     props: {
@@ -101,13 +104,39 @@ const FeaturesIndex = ({ initProps, dataProfile, sidemenu }) => {
                         <>
                             <a href="#" onClick={() => {
                                 setdrawedit(true); setdataedit({
-                                    nama: record.nama,
-                                    deskripsi: record.deskripsi
+                                    id: record.id,
+                                    name: record.name,
+                                    description: record.description
                                 })
                             }}>
-                                <h1 className="hover:text-gray-500 text-xs">{record.key}</h1>
+                                <h1 className="hover:text-gray-500 text-xs">{record.path_url}</h1>
                             </a>
                         </>
+                }
+            }
+        },
+        {
+            dataIndex: 'status',
+            key: 'status',
+            render: (text, record, index) => {
+                return {
+                    props: {
+                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <div className="flex">
+                            <div className=" h-6 px-1 border hover:border-blue-500 hover:text-blue-500 rounded-sm cursor-pointer flex justify-center items-center mr-3" onClick={() => {
+                                setdrawedit(true)
+                                setdataedit({
+                                    id: record.id,
+                                    name: record.name,
+                                    description: record.description
+                                })
+                            }}>
+                                <EditOutlined />
+                            </div>
+                            <div className=" h-6 px-1 border hover:border-blue-500 hover:text-blue-500 rounded-sm cursor-pointer flex justify-center items-center" onClick={() => { setmodaldelete(true); setdatadelete({ ...datadelete, id: parseInt(record.id) }); setfeatureselected(record.name) }}><DeleteOutlined /></div>
+                        </div>
                 }
             }
         },
@@ -119,16 +148,29 @@ const FeaturesIndex = ({ initProps, dataProfile, sidemenu }) => {
 
 
     //useState
-    const [datatable, setdatatable] = useState(dataRaw)
+    const [datatable, setdatatable] = useState(dataListFeatures.data)
+
+    //create
     const [drawcreate, setdrawcreate] = useState(false)
-    const [drawedit, setdrawedit] = useState(false)
+    const [loadingcreate, setloadingcreate] = useState(false)
     const [datacreate, setdatacreate] = useState({
-        nama: '',
-        deskripsi: ''
+        name: '',
+        description: ''
     })
+    //update
+    const [drawedit, setdrawedit] = useState(false)
+    const [loadingedit, setloadingedit] = useState(false)
     const [dataedit, setdataedit] = useState({
-        nama: '',
-        deskripsi: ''
+        id: 0,
+        name: '',
+        description: ''
+    })
+    //delete
+    const [modaldelete, setmodaldelete] = useState(false)
+    const [loadingdelete, setloadingdelete] = useState(false)
+    const [featureselected, setfeatureselected] = useState("")
+    const [datadelete, setdatadelete] = useState({
+        id: 0,
     })
 
 
@@ -146,16 +188,88 @@ const FeaturesIndex = ({ initProps, dataProfile, sidemenu }) => {
     const onCariFeature = (e) => {
         console.log("asa: " + e.target.value)
         if (e.target.value === "") {
-            setdatatable(dataRaw)
+            setdatatable(dataListFeatures.data)
         }
         else {
-            setdatatable(dataRaw)
+            setdatatable(dataListFeatures.data)
             setdatatable(prev => {
                 return prev.filter(dataa => {
-                    return dataa.nama.toLowerCase().includes(e.target.value.toLowerCase())
+                    return dataa.name.toLowerCase().includes(e.target.value.toLowerCase())
                 })
             })
         }
+    }
+    const handleDelete = () => {
+        setloadingdelete(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteFeature`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datadelete)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        setloadingdelete(false)
+                        setmodaldelete(false)
+                        rt.push(`/admin/features`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setloadingdelete(false)
+                    setmodaldelete(false)
+                }
+            })
+    }
+    const handleEdit = ()=>{
+        notification['warning']({
+            message: "API still not available",
+            duration: 3
+        })
+    }
+    const handleCreate = () => {
+        setloadingcreate(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addFeature`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datacreate)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        setloadingcreate(false)
+                        setdrawcreate(false)
+                        rt.push(`/admin/features`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                    setloadingcreate(false)
+                    setdrawcreate(false)
+                }
+            })
     }
     return (
         <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} st={st} pathArr={pathArr}>
@@ -174,22 +288,22 @@ const FeaturesIndex = ({ initProps, dataProfile, sidemenu }) => {
             </div>
             <Drawer title={`Tambah Feature`} maskClosable={false} visible={drawcreate} onClose={() => { setdrawcreate(false); /*closeClientsDrawer(); instanceForm.resetFields()*/ }} width={380} destroyOnClose={true}>
                 <div className="flex flex-col">
-                    <Form layout="vertical" initialValues={datacreate}>
-                        <Form.Item label="Nama Feature" name="nama" rules={[
+                    <Form layout="vertical" initialValues={datacreate} onFinish={handleCreate}>
+                        <Form.Item label="Nama Feature" name="name" rules={[
                             {
                                 required: true,
                                 message: 'Nama feature wajib diisi',
                             },
                         ]}>
-                            <Input defaultValue={datacreate.nama} />
+                            <Input defaultValue={datacreate.name} onChange={(e) => { setdatacreate({ ...datacreate, name: e.target.value }) }} />
                         </Form.Item>
-                        <Form.Item label="Deskripsi" name="deskripsi" rules={[
+                        <Form.Item label="Deskripsi" name="description" rules={[
                             {
                                 required: true,
                                 message: 'Deskripsi wajib diisi',
                             },
                         ]}>
-                            <Input.TextArea defaultValue={datacreate.deskripsi} />
+                            <Input.TextArea defaultValue={datacreate.description} onChange={(e) => { setdatacreate({ ...datacreate, description: e.target.value }) }} />
                         </Form.Item>
                         <div className="flex justify-end">
                             <Button type="default" onClick={() => { setdrawcreate(false) }} style={{ marginRight: `1rem` }}>Batalkan</Button>
@@ -200,22 +314,22 @@ const FeaturesIndex = ({ initProps, dataProfile, sidemenu }) => {
             </Drawer>
             <Drawer title={`Edit Feature`} maskClosable={false} visible={drawedit} onClose={() => { setdrawedit(false); /*closeClientsDrawer(); instanceForm.resetFields()*/ }} width={380} destroyOnClose={true}>
                 <div className="flex flex-col">
-                    <Form layout="vertical" initialValues={dataedit}>
+                    <Form layout="vertical" initialValues={dataedit} onFinish={handleEdit}>
                         <Form.Item label="Nama Feature" rules={[
                             {
                                 required: true,
                                 message: 'Nama feature wajib diisi',
                             },
-                        ]} name="nama">
-                            <Input defaultValue={dataedit.nama} />
+                        ]} name="name">
+                            <Input defaultValue={dataedit.name} onChange={(e) => { setdataedit({ ...dataedit, name: e.target.value }) }} />
                         </Form.Item>
-                        <Form.Item label="Deskripsi" name="deskripsi" rules={[
+                        <Form.Item label="Deskripsi" name="description" rules={[
                             {
                                 required: true,
                                 message: 'Deskripsi wajib diisi',
                             },
                         ]} style={{ marginBottom: `3rem` }}>
-                            <Input.TextArea defaultValue={dataedit.deskripsi} />
+                            <Input.TextArea defaultValue={dataedit.description} onChange={(e) => { setdataedit({ ...dataedit, description: e.target.value }) }} />
                         </Form.Item>
                         <div className="flex justify-end">
                             <Button type="default" onClick={() => { setdrawedit(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
@@ -224,6 +338,19 @@ const FeaturesIndex = ({ initProps, dataProfile, sidemenu }) => {
                     </Form>
                 </div>
             </Drawer>
+            <Modal
+                title={`Konfirmasi hapus feature`}
+                visible={modaldelete}
+                okButtonProps={{ disabled: loadingdelete }}
+                onCancel={() => { setmodaldelete(false) }}
+                onOk={handleDelete}
+                maskClosable={false}
+                style={{ top: `3rem` }}
+                width={500}
+                destroyOnClose={true}
+            >
+                Yakin ingin hapus feature {featureselected}?
+            </Modal>
         </Layout>
     )
 }
@@ -250,10 +377,20 @@ export async function getServerSideProps({ req, res }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
+    const resourcesGF = await fetch(`https://boiling-thicket-46501.herokuapp.com/getFeatures`, {
+        method: `POST`,
+        headers: {
+            'Authorization': JSON.parse(initProps)
+        }
+    })
+    const resjsonGF = await resourcesGF.json()
+    const dataListFeatures = resjsonGF
+
     return {
         props: {
             initProps,
             dataProfile,
+            dataListFeatures,
             sidemenu: "4"
         },
     }
