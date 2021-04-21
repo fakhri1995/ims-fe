@@ -2,10 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import Head from './head'
 import Styles from './styles'
-import { Layout, Menu, Image, Button } from 'antd';
-// import style from './styles.css'
-
-// import Logo from '../../public/mig.png'
+import { Layout, Button } from 'antd';
 
 function layout({ children }) {
     const { Header, Content, Footer } = Layout;
@@ -14,7 +11,7 @@ function layout({ children }) {
             <Head title="Home" />
             <Styles />
             <Layout className={'h-auto'}>
-                <Header className={'header border-b'} style={{padding:'', background:'white', position: 'fixed', zIndex: 1, width: '100%' }}>
+                <Header className={'header border-b'} style={{ background:'white', position: 'fixed', zIndex: 20, width: '100%' }}>
                     <div className="logo top-3 sm:top-2 absolute w-24 sm:w-32" >
                         <img width={'auto'} height={'auto'} src='/mig.png'/>
                     </div>
@@ -42,7 +39,7 @@ function layout({ children }) {
                         <div>
                             <div className=" bg-white h-full">
                                 <div className="px-0 relative" id="wrapper">
-                                    <main className="" style={{ padding: '24px 0px 0px 0px', height: `auto` }}>
+                                    <main className="" style={{ padding: '0px', height: `auto` }}>
                                         {children}
                                     </main>
                                 </div>
@@ -63,10 +60,10 @@ function layout({ children }) {
                                 </div>
                                 <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
                                     <p className={'font-bold py-1'}>Solutions</p>
-                                    <p className={' py-1'}>Advantages</p>
-                                    <p className={' py-1'}>Hardware</p>
-                                    <p className={' py-1'}>Software</p>
-                                    <p className={' py-1'}>People</p>
+                                    <Link href={{pathname: '/advantages'}}><p className={' py-1'}>Advantages</p></Link>
+                                    <Link href={{pathname: '/hardware'}}><p className={' py-1'}>Hardware</p></Link>
+                                    <Link href={{pathname: '/software'}}><p className={' py-1'}>Software</p></Link>
+                                    <Link href={{pathname: '/people'}}><p className={' py-1'}>People</p></Link>
                                 </div>
                                 <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
                                     <p className={'font-bold py-1'}>Help</p>

@@ -1,22 +1,16 @@
-// File pages/index.js
-
 import React from 'react'
 import Layout from '../../../components/migwebsite/layout.js'
-import { Typography } from 'antd'
 import Flickity from 'react-flickity-component'
 import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
+
 function LandingPage({ }) {
-    const { Title } = Typography;
     const flickityOptions = {
         initialIndex: 0,
         wrapAround: 'true',
     }
-    // const tok = initProps
-    // const cook = jscookie.get('token')
-    // console.log("cookie di dashboard: " + cook)
     return (
         <Layout>
-            <section className={'section1'}>
+            <section className={'section1landingpage'}>
                 <div className={'block md:flex'}>
                     <div className={'flex-col center'}>
                         <div className={''}>
@@ -33,7 +27,7 @@ function LandingPage({ }) {
                     </div>
                 </div>
             </section>
-            <section className={'section2 static md:relative'}>
+            <section className={'section2landingpage static md:relative'}>
                 <div className={'h-auto flex justify-between p-4 mt-0 md:-mt-8'} style={{backgroundColor:'#F4F4F4'}}>
                     <div className={'flex-col pl-4 lg:pl-24 '} style={{width:'auto'}}>
                         <img style={{height:'50px', width:'auto'}} src="/image1-section2.png"></img>
@@ -50,7 +44,7 @@ function LandingPage({ }) {
 
                 </div>
             </section>
-            <section className={'section3 static md:relative'}>
+            <section className={'section3landingpage static md:relative'}>
                 <div className={'h-auto flex justify-between px-10 md:px-30 pt-8 md:pt-16 pb-0: md:pb-4'} style={{backgroundColor:'#188E4D'}}>
                     <div className={'block md:flex'} style={{width:'100%',margin:'0 auto 0'}}>
                         <div className={'flex-col mx-16 md:mx-10 pb-8 md:pb-0'}>
@@ -78,7 +72,7 @@ function LandingPage({ }) {
                     </div>
                 </div>
             </section>
-            <section className={'section4'}>
+            <section className={'section4landingpage'}>
                 <div className={'text-center'}>
                     <Flickity
                         className={'carousel'} // default ''
@@ -123,7 +117,7 @@ function LandingPage({ }) {
                     </Flickity>
                 </div>
             </section>
-            <section className={'section5'}>
+            <section className={'section5landingpage'}>
                 <div className={' md:flex relative justify-between px-8 md:px-32 lg:px-64'}style={{top:'45%'}}>
                     <div className={'flex-col text-2xl md:text-3xl text-white font-bold -top-4 md:top-0 relative'} style={{}}>
                         <p>Let’s be better together</p>

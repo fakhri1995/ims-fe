@@ -6,57 +6,85 @@ import React from 'react'
 const Styles = (props) => (
   <div>
     <style jsx global>{`
-        .section5{
+        .item-hardware{
+          background:#E8E6EE;
+          flex: 0 1 calc(33.3333333333334% - 12vw);
+          margin: 6vw;
+          width: 15vw;
+          height: 15vw;
+        }
+        @media (max-width: 768px){
+          .item-hardware{
+            flex: 0 1 calc(50% - 4vw);
+            margin: 2vw;
+            width: 10vw;
+            height: 30vw;
+          }
+        }
+        .section5advantages{
           height:300px;
           background:#93D9B5;
         }
-        .section4 .flickity-page-dots{
+        .section3advantages{
+          background:#F4F4F4;
+        }
+        .section2advantages{
+
+        }
+        .section1advantages{
+          background:#F4F4F4;
+        }
+        .section5landingpage{
+          height:300px;
+          background:#93D9B5;
+        }
+        .section4landingpage .flickity-page-dots{
           display:none;
         }
-        .section4 .flickity-prev-next-button{
+        .section4landingpage .flickity-prev-next-button{
           background:#188E4D;
           border-radius:0%;
           display: block;
         }
-        .section4 .flickity-button{
+        .section4landingpage .flickity-button{
           color:white;
         }
         @media (max-width: 768px){
-          .section4 .flickity-page-dots{
+          .section4landingpage .flickity-page-dots{
             display:block;
             bottom:-70px;
           }
-          .section4 .flickity-page-dots .dot{
+          .section4landingpage .flickity-page-dots .dot{
             background:#93D9B5;
           }
-          .section4 .flickity-prev-next-button{
+          .section4landingpage .flickity-prev-next-button{
             display: none;
           }
         }
-        .section4{
+        .section4landingpage{
           height:auto;
           margin:120px auto;
         }
-        .section3{
+        .section3landingpage{
           top: -50px;
         }
-        .section2{
+        .section2landingpage{
           margin: 0 auto 0;
           width: 60%;
           z-index: 10;
         }
         @media (max-width: 768px) {
-          .section2{
+          .section2landingpage{
             margin: 0 auto 0;
             width: 100%;
           }
         }
-        .section1{
+        .section1landingpage{
           margin: 0 2rem 0;
           padding-bottom: 3rem;
         }
         @media (max-width: 768px) {
-          .section1{
+          .section1landingpage{
             padding-bottom: 1rem;
           }
         }
@@ -65,6 +93,7 @@ const Styles = (props) => (
         }
         .header{
           padding: 0 50px;
+          z-index: 50;
         }
         @media (max-width: 540px){
           .header{
