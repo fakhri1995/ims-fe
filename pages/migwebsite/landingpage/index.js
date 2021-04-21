@@ -1,19 +1,13 @@
-// File pages/index.js
-
 import React from 'react'
 import Layout from '../../../components/migwebsite/layout.js'
-// import { Typography } from 'antd'
 import Flickity from 'react-flickity-component'
 import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
+
 function LandingPage({ }) {
-    // const { Title } = Typography;
     const flickityOptions = {
         initialIndex: 0,
         wrapAround: 'true',
     }
-    // const tok = initProps
-    // const cook = jscookie.get('token')
-    // console.log("cookie di dashboard: " + cook)
     return (
         <Layout>
             <section className={'section1landingpage'}>

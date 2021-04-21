@@ -6,6 +6,21 @@ import React from 'react'
 const Styles = (props) => (
   <div>
     <style jsx global>{`
+        .item-hardware{
+          background:#E8E6EE;
+          flex: 0 1 calc(33.3333333333334% - 12vw);
+          margin: 6vw;
+          width: 15vw;
+          height: 15vw;
+        }
+        @media (max-width: 768px){
+          .item-hardware{
+            flex: 0 1 calc(50% - 4vw);
+            margin: 2vw;
+            width: 10vw;
+            height: 30vw;
+          }
+        }
         .section5advantages{
           height:300px;
           background:#93D9B5;
@@ -78,6 +93,7 @@ const Styles = (props) => (
         }
         .header{
           padding: 0 50px;
+          z-index: 50;
         }
         @media (max-width: 540px){
           .header{

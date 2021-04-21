@@ -1,32 +1,22 @@
-// File pages/index.js
-
 import React from 'react'
 import Layout from '../../../components/migwebsite/layout.js'
-// import { Typography } from 'antd'
-import Flickity from 'react-flickity-component'
+import Link from 'next/link'
 import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
+
 function Advantages({ }) {
-    // const { Title } = Typography;
-    const flickityOptions = {
-        initialIndex: 0,
-        wrapAround: 'true',
-    }
-    // const tok = initProps
-    // const cook = jscookie.get('token')
-    // console.log("cookie di dashboard: " + cook)
     return (
         <Layout>
             <section className={'section1advantages hidden md:block'}>
                 <div className={'block md:flex'}>
                     <div className={'flex center'}>
-                        <p className={'flex-col text-base font-semibold pr-4'} style={{}}>Advantages
-                            </p>
-                        <p className={'flex-col text-base font-semibold px-4'}>Hardware
-                            </p>
-                        <p className={'flex-col text-base font-semibold px-4'}>Software
-                            </p>
-                        <p className={'flex-col text-base font-semibold px-4'}>People
-                            </p>
+                        <Link href={{pathname: '/advantages'}}><p className={'flex-col text-base font-semibold pr-4'} style={{}}>Advantages
+                            </p></Link>
+                        <Link href={{pathname: '/hardware'}}><p className={'flex-col text-base font-semibold px-4'}>Hardware
+                            </p></Link>
+                        <Link href={{pathname: '/software'}}><p className={'flex-col text-base font-semibold px-4'}>Software
+                            </p></Link>
+                        <Link href={{pathname: '/people'}}><p className={'flex-col text-base font-semibold px-4'}>People
+                            </p></Link>
                     </div>
                 </div>
             </section>
@@ -36,7 +26,7 @@ function Advantages({ }) {
                     <p className={'text-2xl md:text-3xl font-bold'}>Support your business efficiently</p>
                 </div>
                 <div>
-                    <p className={'text-base font-bold w-full md:w-2/5'}>One stop  seamless technology solution to help you achieve business goals and optimize your cost </p>
+                    <p className={'text-base w-full md:w-2/5'}>One stop  seamless technology solution to help you achieve business goals and optimize your cost </p>
                 </div>
                 <div className={'grid md:flex my-4 justify-center md:justify-between'}>
                     <div className={'flex-col bg-white mr-0 md:mr-10 p-4 w-full md:w-96'}>
@@ -73,6 +63,24 @@ function Advantages({ }) {
                             Setup your team&nbsp; <ArrowRightOutlined className={'relative'} style={{top:'-2.5px'}}/>
                         </button>
                     </div>
+                </div>
+            </section>
+            <section className={'section4advantages flex justify-between'}>
+                <div className={'flex-col px-12 py-20 w-full border-r'}>
+                    <p>On demand service</p>
+                    <ArrowRightOutlined/>
+                </div>
+                <div className={'flex-col px-12 py-20 w-full border-r'}>
+                    <p>Realible partner</p>
+                    <ArrowRightOutlined/>
+                </div>
+                <div className={'flex-col px-12 py-20 w-full border-r'}>
+                    <p>Competitive rate</p>
+                    <ArrowRightOutlined/>
+                </div>
+                <div className={'flex-col px-12 py-20 w-full'}>
+                    <p>Cost efficient</p>
+                    <ArrowRightOutlined/>
                 </div>
             </section>
             <section className={'section5advantages'}>
