@@ -6,7 +6,7 @@ import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
 function Advantages({ }) {
     return (
         <Layout>
-            <section className={'section1advantages hidden md:block'}>
+            <section className={'section1advantages hidden md:block'} style={{background:'#F4F4F4'}}>
                 <div className={'block md:flex'}>
                     <div className={'flex center'}>
                         <Link href={{pathname: '/advantages'}}><p className={'flex-col text-base font-semibold pr-4'} style={{}}>Advantages
@@ -21,7 +21,7 @@ function Advantages({ }) {
                 </div>
             </section>
             <section className={'section2advantages h-8 hidden md:block'}></section>
-            <section className={'section3advantages px-4 md:px-20 py-8'}>
+            <section className={'section3advantages px-4 md:px-20 py-8'} style={{background:'#F4F4F4'}}>
                 <div className={'pb-4'}>
                     <p className={'text-2xl md:text-3xl font-bold'}>Support your business efficiently</p>
                 </div>

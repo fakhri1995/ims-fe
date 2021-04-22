@@ -21,15 +21,6 @@ const Styles = (props) => (
             height: 30vw;
           }
         }
-        .section3advantages{
-          background:#F4F4F4;
-        }
-        .section2advantages{
-
-        }
-        .section1advantages{
-          background:#F4F4F4;
-        }
         .section5landingpage{
           height:170px;
           background:#93D9B5;

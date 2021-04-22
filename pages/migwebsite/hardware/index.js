@@ -7,7 +7,7 @@ import {Button} from 'antd'
 function Hardware({ }) {
     return (
         <Layout>
-            <section className={'section1advantages hidden md:block'}>
+            <section className={'section1advantages hidden md:block'} style={{background:'#F4F4F4'}}>
                 <div className={'block md:flex'}>
                     <div className={'flex center'}>
                         <Link href={{pathname: '/advantages'}}><p className={'flex-col text-base font-semibold pr-4'} style={{}}>Advantages
