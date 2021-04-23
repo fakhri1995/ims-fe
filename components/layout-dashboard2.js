@@ -62,7 +62,7 @@ function LayoutDashboard2({ children, tok, dataProfile, pathArr, sidemenu, st })
     var pathBuilder = ""
     return (
         <Spin spinning={loadingspin}>
-            <div className="h-full flex">
+            <div className=" min-h-screen flex">
                 <LayoutMenu handleCollSmall={handleCollSmall} sidemenu={sidemenu} coll={coll} collsmall={collsmall} st={st}></LayoutMenu>
                 <div className="h-auto w-full">
                     <Header className="site-layout-background" style={{ padding: 0, backgroundColor: `white`, display: `flex`, alignItems: `center`, flexDirection: `row`, flexWrap: `wrap`, width: `100%`, justifyContent: `space-between`, height: `auto` }}>
