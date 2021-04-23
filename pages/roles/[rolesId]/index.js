@@ -121,7 +121,7 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                     })
                     setTimeout(() => {
                         setloadingupdate(false)
-                        rt.push(`/roles/update/${idrole}`)
+                        rt.push(`/roles/${idrole}`)
                     }, 300)
                 }
                 else if (!res2.success) {
