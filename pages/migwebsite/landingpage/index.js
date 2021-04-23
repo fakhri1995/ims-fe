@@ -53,21 +53,21 @@ function LandingPage({ }) {
                         <div className={'flex-col mx-10 w-auto md:w-120'} style={{margin:'auto'}}>
                             <p className={'text-2xl md:text-3xl pb-6 text-white'} style={{ fontWeight: 'bold' }}> Bringing you the advantages</p>
                             <p className={'text-sm md:text-sm font-medium text-white'}>With more than 15 years of experiences across archipelago, we strive to provide end-to-end IT solutions to help achieve your business goals and optimize your cost efficiencies</p>
-                            <button className={'text-white border-2 border-white px-4 mt-4 focus:outline-none'}>SEE HOW  IT WORKS </button>
+                            <button className={'text-white border-2 border-white px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none'}>SEE HOW  IT WORKS </button>
                         </div>
                     </div>
                 </div>
                 <div className={'h-auto block md:flex justify-between pb-12 pt-4 md:pt-0'} style={{backgroundColor:'#188E4D'}}>
                     <div className={'flex-col text-white p-4 md:py-2'} style={{margin:'0 auto 0', width:'200px'}}>
-                        <p className={'text-4xl text-center font-extrabold'}>20+</p>
+                        <p className={'text-5xl md:text-6xl text-center font-extrabold'}>20+</p>
                         <p className={'text-base text-center'} style={{margin:'0 auto 0'}}>cities</p>
                     </div>
                     <div className={'flex-col text-white p-4 md:py-2'} style={{margin:'0 auto 0', width:'200px'}}>
-                        <p className={'text-4xl text-center font-extrabold'}>9000+</p>
+                        <p className={'text-5xl md:text-6xl text-center font-extrabold'}>9000+</p>
                         <p className={'text-base text-center'} style={{margin:'0 auto 0'}}>managed and leased devices</p>
                     </div>
                     <div className={'flex-col text-white p-4 md:py-2'} style={{margin:'0 auto 0', width:'200px'}}>
-                        <p className={'text-4xl text-center font-extrabold'}>20+</p>
+                        <p className={'text-5xl md:text-6xl text-center font-extrabold'}>20+</p>
                         <p className={'text-base text-center'} style={{margin:'0 auto 0'}}>years experienced</p>
                     </div>
                 </div>
@@ -118,7 +118,7 @@ function LandingPage({ }) {
                 </div>
             </section>
             <section className={'section5landingpage'}>
-                <div className={' md:flex relative justify-between px-8 md:px-32 lg:px-64'}style={{top:'45%'}}>
+                <div className={' md:flex relative justify-between px-8 md:px-32 lg:px-64'}style={{top:'40%'}}>
                     <div className={'flex-col text-2xl md:text-3xl text-white font-bold -top-4 md:top-0 relative'} style={{}}>
                         <p>Let’s be better together</p>
                     </div>

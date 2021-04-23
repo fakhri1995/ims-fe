@@ -4,6 +4,8 @@ module.exports = {
     return [
       { source: '/advantages', destination: '/migwebsite/advantages' },
       { source: '/hardware', destination: '/migwebsite/hardware' },
+      { source: '/software', destination: '/migwebsite/software' },
+      { source: '/people', destination: '/migwebsite/people' },
     ]
   }
 }

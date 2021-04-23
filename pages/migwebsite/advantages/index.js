@@ -6,7 +6,7 @@ import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
 function Advantages({ }) {
     return (
         <Layout>
-            <section className={'section1advantages hidden md:block'}>
+            <section className={'section1advantages hidden md:block'} style={{background:'#F4F4F4'}}>
                 <div className={'block md:flex'}>
                     <div className={'flex center'}>
                         <Link href={{pathname: '/advantages'}}><p className={'flex-col text-base font-semibold pr-4'} style={{}}>Advantages
@@ -21,7 +21,7 @@ function Advantages({ }) {
                 </div>
             </section>
             <section className={'section2advantages h-8 hidden md:block'}></section>
-            <section className={'section3advantages px-4 md:px-20 py-8'}>
+            <section className={'section3advantages px-4 md:px-20 py-8'} style={{background:'#F4F4F4'}}>
                 <div className={'pb-4'}>
                     <p className={'text-2xl md:text-3xl font-bold'}>Support your business efficiently</p>
                 </div>
@@ -66,25 +66,25 @@ function Advantages({ }) {
                 </div>
             </section>
             <section className={'section4advantages flex justify-between'}>
-                <div className={'flex-col px-12 py-20 w-full border-r'}>
+                <div className={'flex-col text-2xl px-12 py-20 w-full border-r'}>
                     <p>On demand service</p>
                     <ArrowRightOutlined/>
                 </div>
-                <div className={'flex-col px-12 py-20 w-full border-r'}>
+                <div className={'flex-col text-2xl px-12 py-20 w-full border-r'}>
                     <p>Realible partner</p>
                     <ArrowRightOutlined/>
                 </div>
-                <div className={'flex-col px-12 py-20 w-full border-r'}>
+                <div className={'flex-col text-2xl px-12 py-20 w-full border-r'}>
                     <p>Competitive rate</p>
                     <ArrowRightOutlined/>
                 </div>
-                <div className={'flex-col px-12 py-20 w-full'}>
+                <div className={'flex-col text-2xl px-12 py-20 w-full'}>
                     <p>Cost efficient</p>
                     <ArrowRightOutlined/>
                 </div>
             </section>
-            <section className={'section5advantages'}>
-                <div className={' md:flex relative justify-between px-8 md:px-32 lg:px-64'}style={{top:'45%'}}>
+            <section className={'section5landingpage'}>
+                <div className={' md:flex relative justify-between px-8 md:px-32 lg:px-64'}style={{top:'40%'}}>
                     <div className={'flex-col text-2xl md:text-3xl text-white font-bold -top-4 md:top-0 relative'} style={{}}>
                         <p>Let’s be better together</p>
                     </div>
