@@ -12,16 +12,16 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, sidemen
     const rt = useRouter()
     const tok = initProps
     var pathArr = rt.pathname.split("/").slice(1)
-    pathArr[pathArr.length - 1] = dataDetailRequester.data.data.fullname
+    pathArr[pathArr.length - 1] = dataDetailRequester.data.fullname
     const [instanceForm] = Form.useForm()
 
     const [loadingfoto, setLoadingfoto] = useState(false)
     const [data1, setData1] = useState({
-        id: dataDetailRequester.data.data.user_id,
-        fullname: dataDetailRequester.data.data.fullname,
-        role: dataDetailRequester.data.data.role,
-        phone_number: dataDetailRequester.data.data.phone_number,
-        profile_image: dataDetailRequester.data.data.profile_image
+        id: dataDetailRequester.data.user_id,
+        fullname: dataDetailRequester.data.fullname,
+        role: dataDetailRequester.data.role,
+        phone_number: dataDetailRequester.data.phone_number,
+        profile_image: dataDetailRequester.data.profile_image
     })
     const [visible, setVisible] = useState(false)
     const [visiblenon, setVisiblenon] = useState(false)
@@ -32,7 +32,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, sidemen
     const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
 
     const [datapass, setDatapass] = useState({
-        user_id: dataDetailRequester.data.data.user_id,
+        user_id: dataDetailRequester.data.user_id,
         new_password: ''
     })
     const onChangeEditAgents = (e) => {
@@ -77,7 +77,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, sidemen
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/requesters/${dataDetailRequester.data.data.user_id}`)
+                        rt.push(`/admin/requesters/${dataDetailRequester.data.user_id}`)
                     }, 300)
                 }
                 else if (!res2.success) {
@@ -105,7 +105,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, sidemen
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                user_id: dataDetailRequester.data.data.user_id,
+                user_id: dataDetailRequester.data.user_id,
                 is_enabled: keaktifan
             })
         })
@@ -125,7 +125,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, sidemen
                         else if (status === "nonAktif") {
                             setloadingubahnonaktif(false)
                         }
-                        rt.push(`/admin/requesters/${dataDetailRequester.data.data.user_id}`)
+                        rt.push(`/admin/requesters/${dataDetailRequester.data.user_id}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -158,7 +158,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, sidemen
                     })
                     setTimeout(() => {
                         setloadingubahpass(false)
-                        rt.push(`/admin/requesters/${dataDetailRequester.data.data.user_id}`)
+                        rt.push(`/admin/requesters/${dataDetailRequester.data.user_id}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -201,7 +201,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, sidemen
                             <div className=" mr-3 md:mr-5 pt-1">Detail Akun Requesters</div>
                             <div className="pt-1">
                                 {
-                                    dataDetailRequester.data.data.attribute.is_enabled ?
+                                    dataDetailRequester.data.attribute.is_enabled ?
                                         <Switch checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
                                         :
                                         <Switch checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
@@ -298,7 +298,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, sidemen
                         onCancel={() => setVisible(false)}
                         okButtonProps={{ disabled: loadingubahaktif }}
                     >
-                        Apakah anda yakin ingin menon-aktifkan akun perusahaan <strong>{dataDetailRequester.data.data.fullname}</strong>?
+                        Apakah anda yakin ingin menon-aktifkan akun perusahaan <strong>{dataDetailRequester.data.fullname}</strong>?
                     </Modal>
                     <Modal
                         title="Konfirmasi untuk mengakaktifkan akun"
@@ -307,7 +307,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, sidemen
                         onCancel={() => setVisiblenon(false)}
                         okButtonProps={{ disabled: loadingubahnonaktif }}
                     >
-                        Apakah anda yakin ingin melakukan aktivasi akun perusahaan <strong>{dataDetailRequester.data.data.fullname}</strong>?`
+                        Apakah anda yakin ingin melakukan aktivasi akun perusahaan <strong>{dataDetailRequester.data.fullname}</strong>?`
                     </Modal>
                     <Modal
                         title="Ubah Password"

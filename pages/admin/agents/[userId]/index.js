@@ -13,7 +13,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     var pathArr = rt.pathname.split("/").slice(1)
-    pathArr[pathArr.length - 1] = dataDetailAgent.data.data.fullname
+    pathArr[pathArr.length - 1] = dataDetailAgent.data.fullname
     const [loadingfoto, setLoadingfoto] = useState(false)
     const [visible, setVisible] = useState(false)
     const [visiblenon, setVisiblenon] = useState(false)
@@ -24,15 +24,15 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, sidemenu }) {
     const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
     const [instanceForm] = Form.useForm();
     const [datapass, setDatapass] = useState({
-        user_id: dataDetailAgent.data.data.user_id,
+        user_id: dataDetailAgent.data.user_id,
         new_password: ''
     })
     const [data1, setData1] = useState({
-        id: dataDetailAgent.data.data.user_id,
-        fullname: dataDetailAgent.data.data.fullname,
-        role: dataDetailAgent.data.data.role,
-        phone_number: dataDetailAgent.data.data.phone_number,
-        profile_image: dataDetailAgent.data.data.profile_image
+        id: dataDetailAgent.data.user_id,
+        fullname: dataDetailAgent.data.fullname,
+        role: dataDetailAgent.data.role,
+        phone_number: dataDetailAgent.data.phone_number,
+        profile_image: dataDetailAgent.data.profile_image
     })
     const onChangeEditAgents = (e) => {
         setData1({
@@ -104,7 +104,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, sidemenu }) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                user_id: dataDetailAgent.data.data.user_id,
+                user_id: dataDetailAgent.data.user_id,
                 is_enabled: keaktifan
             })
         })
@@ -124,7 +124,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, sidemenu }) {
                         else if (status === "nonAktif") {
                             setloadingubahnonaktif(false)
                         }
-                        rt.push(`/admin/agents/${dataDetailAgent.data.data.user_id}`)
+                        rt.push(`/admin/agents/${dataDetailAgent.data.user_id}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -157,7 +157,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, sidemenu }) {
                     })
                     setTimeout(() => {
                         setloadingubahpass(false)
-                        rt.push(`/admin/agents/${dataDetailAgent.data.data.user_id}`)
+                        rt.push(`/admin/agents/${dataDetailAgent.data.user_id}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -200,7 +200,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, sidemenu }) {
                             } */}
                             <div className="pt-1">
                                 {
-                                    dataDetailAgent.data.data.attribute.is_enabled ?
+                                    dataDetailAgent.data.attribute.is_enabled ?
                                         <Switch checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
                                         :
                                         <Switch checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
@@ -223,7 +223,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, sidemenu }) {
                             </div>
                             <div className="p-3 col-span-1 md:col-span-3">
                                 <h1 className="text-xs text-gray-600 mb-1">Email:</h1>
-                                <h1 className="text-sm text-black mb-5">{dataDetailAgent.data.data.email}</h1>
+                                <h1 className="text-sm text-black mb-5">{dataDetailAgent.data.email}</h1>
                                 <div className="flex flex-col mb-5">
                                     <h1 className="text-sm">ID</h1>
                                     <h1 className="text-sm font-semibold">{data1.id}</h1>
@@ -258,7 +258,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, sidemenu }) {
                         onCancel={() => setVisible(false)}
                         okButtonProps={{ disabled: loadingubahaktif }}
                     >
-                        Apakah anda yakin ingin menon-aktifkan akun perusahaan <strong>{dataDetailAgent.data.data.fullname}</strong>?
+                        Apakah anda yakin ingin menon-aktifkan akun perusahaan <strong>{dataDetailAgent.data.fullname}</strong>?
                     </Modal>
                     <Modal
                         title="Konfirmasi untuk mengakaktifkan akun"
@@ -267,7 +267,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, sidemenu }) {
                         onCancel={() => setVisiblenon(false)}
                         okButtonProps={{ disabled: loadingubahnonaktif }}
                     >
-                        Apakah anda yakin ingin melakukan aktivasi akun perusahaan <strong>{dataDetailAgent.data.data.fullname}</strong>?`
+                        Apakah anda yakin ingin melakukan aktivasi akun perusahaan <strong>{dataDetailAgent.data.fullname}</strong>?`
                     </Modal>
                     <Modal
                         title="Ubah Password"

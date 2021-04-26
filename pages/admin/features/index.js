@@ -9,15 +9,6 @@ import st from '../../../components/layout-dashboard.module.css'
 
 const FeaturesIndex = ({ initProps, dataProfile, dataListFeatures, sidemenu }) => {
     //Definisi table
-    // const dataRaw = []
-    // for (var i = 0; i < 10; i++) {
-    //     dataRaw.push({
-    //         feature_id: i + 1,
-    //         nama: `feature local ${i + 1}`,
-    //         deskripsi: `ini deskripsi fari feature local ${i + 1}`,
-    //         key: `009090990-${i + 1}`
-    //     })
-    // }
     const columnsFeature = [
         {
             title: 'Feature ID',
@@ -93,8 +84,8 @@ const FeaturesIndex = ({ initProps, dataProfile, dataListFeatures, sidemenu }) =
         },
         {
             title: 'Key',
-            dataIndex: 'path_url',
-            key: 'path_url',
+            dataIndex: 'feature_key',
+            key: 'feature_key',
             render: (text, record, index) => {
                 return {
                     props: {
@@ -109,7 +100,7 @@ const FeaturesIndex = ({ initProps, dataProfile, dataListFeatures, sidemenu }) =
                                     description: record.description
                                 })
                             }}>
-                                <h1 className="hover:text-gray-500 text-xs">{record.path_url}</h1>
+                                <h1 className="hover:text-gray-500 text-xs">{record.feature_key}</h1>
                             </a>
                         </>
                 }
@@ -148,7 +139,7 @@ const FeaturesIndex = ({ initProps, dataProfile, dataListFeatures, sidemenu }) =
 
 
     //useState
-    const [datatable, setdatatable] = useState(dataListFeatures.data)
+    const [datatable, setdatatable] = useState(dataListFeatures)
 
     //create
     const [drawcreate, setdrawcreate] = useState(false)
@@ -181,17 +172,17 @@ const FeaturesIndex = ({ initProps, dataProfile, dataListFeatures, sidemenu }) =
         }
         setdatatable(prev => {
             return prev.filter(dataa => {
-                return dataa.nama.toLowerCase().includes(val.toLowerCase())
+                return dataa.name.toLowerCase().includes(val.toLowerCase())
             })
         })
     }
     const onCariFeature = (e) => {
         console.log("asa: " + e.target.value)
         if (e.target.value === "") {
-            setdatatable(dataListFeatures.data)
+            setdatatable(dataListFeatures)
         }
         else {
-            setdatatable(dataListFeatures.data)
+            setdatatable(dataListFeatures)
             setdatatable(prev => {
                 return prev.filter(dataa => {
                     return dataa.name.toLowerCase().includes(e.target.value.toLowerCase())
@@ -377,7 +368,7 @@ export async function getServerSideProps({ req, res }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    const resourcesGF = await fetch(`https://boiling-thicket-46501.herokuapp.com/getFeatures`, {
+    const resourcesGF = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAccessFeature`, {
         method: `POST`,
         headers: {
             'Authorization': JSON.parse(initProps)

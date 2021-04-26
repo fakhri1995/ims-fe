@@ -1,54 +1,66 @@
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import Layout from '../../components/layout-dashboard-roles'
+import Layout from '../../components/layout-dashboard2'
 import st from '../../components/layout-dashboard-roles.module.css'
 import httpcookie from 'cookie'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import CopyOutlined from '@ant-design/icons/CopyOutlined'
-import {Table, Tooltip, Button} from 'antd'
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { Table, Button, Modal, notification } from 'antd'
 
-function Roles({ initProps, dataProfile, sidemenu }) {
+function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
 
-    const [drawablecreate, setDrawablecreate] = useState(false)
 
+    const [loadingdelete, setloadingdelete] = useState(false)
+    const [modaldelete, setmodaldelete] = useState(false)
+
+    const [maindata, setmaindata] = useState(dataRoles.data)
     const columnsDD = [
         {
-            title: 'role',
+            title: 'Role Name',
             dataIndex: 'name',
-            key: 'role',
+            key: 'name',
             render(text, record) {
                 return {
                     props: {
-                    style: { background: record.key%2 == 1 ? '#f2f2f2' : '#fff' },
-                  },
-                    children: <div><Link href={{
-                        pathname: `/roles/update/${record.key}`,
-                        query: {
-                            originPath: 'Admin'
-                        }
-                    }}><a>{record.name}</a></Link>
-                     <p style={{fontSize:'13px'}}>{record.description}</p></div>,
-                    
+                        style: { background: record.key % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    },
+                    children:
+                        <div>
+                            <Link href={{
+                                pathname: `/roles/${record.id}`,
+                                query: {
+                                    originPath: 'Admin'
+                                }
+                            }}>
+                                <a>
+                                    {record.name}
+                                </a>
+                            </Link>
+                            <p style={{ fontSize: '13px' }}>
+                                {record.description}
+                            </p>
+                        </div>,
+
                 };
             },
             // sorter: (a, b) => a.user_id - b.user_id,
             // sortDirections: ['descend', 'ascend'],
         },
         {
-            title: 'nama',
-            dataIndex: 'agent',
-            key: 'nama',
+            title: 'Description',
+            dataIndex: 'description',
+            key: 'description',
             render(text, record) {
                 return {
                     props: {
-                        style: { background: record.key%2 == 1 ? '#f2f2f2' : '#fff' },
+                        style: { background: record.key % 2 == 1 ? '#f2f2f2' : '#fff' },
                     },
-                    children: <div>{text}</div>,
+                    children: <div>{record.description}</div>,
                 };
             },
             // render: agent => (
@@ -65,68 +77,77 @@ function Roles({ initProps, dataProfile, sidemenu }) {
             render: (text, record, index) => {
                 return {
                     props: {
-                        style: { background: record.key%2 == 1 ? '#f2f2f2' : '#fff' },
+                        style: { background: record.key % 2 == 1 ? '#f2f2f2' : '#fff' },
                     },
-                    children: <Tooltip placement="topLeft" title={"Clone"}>
-                    {/* {actions[index]} */}
-                    <Button>
-                        <Link href={{
-                            pathname: `/clone/${record.key}`,
-                            query: {
-                                originPath: 'Admin'
-                            }
-                        }}><a><CopyOutlined /></a></Link>
-                    </Button>
-                </Tooltip>
+                    children:
+                        <>
+                            <Button onClick={() => { rt.push(`/roles/${record.id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
+                                <EditOutlined />
+                            </Button>
+                            <Button danger onClick={() => { setmodaldelete(true); setdatadelete({ ...datadelete, id: record.id }); setcurrentdelete(record.name) }} loading={loadingdelete} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
+                                <DeleteOutlined />
+                            </Button>
+                        </>
                 }
             }
         }
     ];
+    const [datadelete, setdatadelete] = useState({
+        id: 0
+    })
+    const [currentdelete, setcurrentdelete] = useState('')
 
-    const data = [
-        {
-            key: 1,
-            name: 'Account Admin',
-            description: 'Admin Tamvan',
-            agent: '4 Agents',
-            actionss: 'clone'
-        },
-        {
-            key: 2,
-            name: 'Admin',
-            description: 'Saya Tamvan',
-            agent: 'No Agents',
-            actionss: 'clone'
-        },
-        {
-            key: 3,
-            name: 'SD Supervisor',
-            description: 'Saya Tamvan Sekali',
-            agent: 'No Agents',
-            actionss: 'clone'
-        },
-    ];
-
+    const handleDeleteRoles = () => {
+        setloadingdelete(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteRole`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datadelete)
+        })
+            .then((res) => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        setloadingdelete(false)
+                        rt.push(`/roles`)
+                    }, 300)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3,
+                    })
+                    setloadingdelete(false)
+                }
+            })
+    }
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
-                <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-                    <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
+                <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4" id="formAgentsWrapper">
+                    <div className=" col-span-1 md:col-span-4">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <h1 className="font-semibold text-base w-auto pt-2">Roles</h1>
                                 <div className="flex space-x-2">
                                     <Link href="/roles/create">
                                         <Button type="primary" size="large">Tambah Role</Button>
-                                        {/* <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center" >New Role</div> */}
                                     </Link>
                                 </div>
                             </div>
                         </Sticky>
-
+                    </div>
+                    <div className=" col-span-1 md:col-span-3 flex flex-col">
                         <div className="col-span-3 flex flex-col space-y-3">
 
-                            <Table showHeader={false} scroll={{ x: 400 }} dataSource={data} columns={columnsDD} onRow={(record, rowIndex) => {
+                            <Table showHeader={false} scroll={{ x: 400 }} pagination={{ pageSize: 5 }} dataSource={maindata} columns={columnsDD} onRow={(record, rowIndex) => {
                                 // return {
                                 //     onMouseOver: (event) => {
                                 //         var actionsCopy = actions
@@ -145,29 +166,22 @@ function Roles({ initProps, dataProfile, sidemenu }) {
                                 // }
                             }}></Table>
                         </div>
-
-
-                    </div>
-                    <div className="flex flex-col space-y-3 px-4">
-                        <div className="font-semibold text-sm">Understanding Roles</div>
-                        <p className="font-normal text-sm">
-                            Roles allow you to create and edit access permissions for agents. You can create new roles, specify what actions agents with these roles can perform within your help desk, and assign the role to agents.
-                    </p>
-                        <p className="font-normal text-sm">
-                            For example, you can create a role for your Support Co-ordinators, allowing them to update fields and assign tickets, and even add notes internally, but not reply to customers.
-                    </p>
-                        <p className="font-normal text-sm">
-                            Once you create and save a new Role you will be able to assign it to agents when you create or edit their profile by clicking on the Agents icon under the admin tab.
-                    </p>
-                        <br />
-                        <div className="font-semibold text-sm">Admin Privileges</div>
-                        <p className="font-normal text-sm">
-                            You can nominate whether you want an agent to have access to settings under the Admin tab. Agents with admin access can be Operation Agents with limited access, or Super Admins with the ability to edit all configurations. You can have as many Super Admins with the ability to view and modify your billing details, or as few as one.
-                    </p>
                     </div>
                 </div>
 
             </>
+            <Modal
+                title={`Konfirmasi Hapus Role`}
+                visible={modaldelete}
+                onCancel={() => { setmodaldelete(false) }}
+                onOk={handleDeleteRoles}
+                okButtonProps={{ disabled: loadingdelete }}
+                style={{ top: `3rem` }}
+                width={500}
+                destroyOnClose={true}
+            >
+                <h1>Yakin ingin hapus role {currentdelete.name} ini?</h1>
+            </Modal>
         </Layout>
     )
 }
@@ -194,10 +208,20 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
+    const resourcesGR = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+        method: `GET`,
+        headers: {
+            'Authorization': JSON.parse(initProps)
+        }
+    })
+    const resjsonGR = await resourcesGR.json()
+    const dataRoles = resjsonGR
+
     return {
         props: {
             initProps,
             dataProfile,
+            dataRoles,
             sidemenu: "4"
         },
     }
