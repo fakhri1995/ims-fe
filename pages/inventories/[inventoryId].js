@@ -4,9 +4,8 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import {Tabs, notification, Modal, Timeline} from 'antd'
+import { Tabs, notification, Modal, Timeline, Button } from 'antd'
 import st from '../../components/layout-dashboard-inventories.module.css'
-import { Row, Col, Divider } from 'antd';
 
 function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColumnAndVendor, dataInventoryActivityLog, sidemenu }) {
     // Router.events.on('routeChangeStart', () => {
@@ -25,7 +24,7 @@ function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColum
     // console.log(dataInventoryColumnAndVendor)
     // console.log(dataInventoryColumnAndVendor.data)
     // console.log(dataInventoryColumnAndVendor.data.assets)
-    var asset_type = dataInventoryColumnAndVendor.data.assets.filter((doc,index)=>{
+    var asset_type = dataInventoryColumnAndVendor.data.assets.filter((doc, index) => {
         return dataInventory.data.inventory.asset_id == doc.id
     })
     asset_type = asset_type[0]
@@ -79,54 +78,55 @@ function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColum
     }
 
     //--------------------------------------------------------
-    
+
     var timeConverter = (UNIX_timestamp) => {
         var a = new Date(UNIX_timestamp);
-        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         var year = a.getFullYear();
         var month = months[a.getMonth()];
         var date = a.getDate();
         var hour = a.getHours();
         var min = a.getMinutes();
         var sec = a.getSeconds();
-        var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+        var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
         return time;
-      }
-      
+    }
+
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
-                <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-                    <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
+                <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4" id="formAgentsWrapper">
+                    <div className=" col-span-1 md:col-span-4">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <h1 className="font-semibold text-base w-auto py-2">{inventory.asset_name}</h1>
-                                <div className="flex space-x-2">
-                                    <Link href={`/inventories/update/${inventory.id}?originPath=Assets`}>
-                                        <div className=" text-white text-sm bg-blue-500 hover:bg-blue-600 border-gray-600 border cursor-pointer h-10 py-2 w-20 text-center" >
+                                <div className="flex items-center space-x-2">
+                                    {/* <div className=" text-white text-sm bg-blue-500 hover:bg-blue-600 border-gray-600 border cursor-pointer h-10 py-2 w-20 text-center" >
                                             <p>
                                                 Edit
                                             </p>
-                                        </div>
-                                    </Link>
-                                    <button onClick={()=>{onClickModalDeleteInventory(true,inventory)}} className=" text-black text-sm bg-white border-gray-300 border hover:bg-gray-200 cursor-pointer h-10 py-2 w-20 text-center">
-                                            <p>
-                                                Delete
+                                        </div> */}
+                                    <Button type="primary" onClick={() => { rt.push(`/inventories/update/${inventory.id}?originPath=Assets`) }}>Edit</Button>
+                                    {/* <button onClick={() => { onClickModalDeleteInventory(true, inventory) }} className=" text-black text-sm bg-white border-gray-300 border hover:bg-gray-200 cursor-pointer h-10 py-2 w-20 text-center">
+                                        <p>
+                                            Delete
                                             </p>
-                                    </button>
+                                    </button> */}
+                                    <Button type="default" onClick={() => { onClickModalDeleteInventory(true, inventory) }}>Delete</Button>
                                 </div>
                             </div>
                         </Sticky>
-
+                    </div>
+                    <div className=" col-span-1 md:col-span-3 flex flex-col">
                         <div className="col-span-3 flex flex-col space-y-3">
                             <Tabs defaultActiveKey="1" tabPosition={"left"}>
                                 <TabPane tab={'Overview'} key={1}>
                                     <div>
                                         <div className={'py-2'}>
-                                        General
+                                            General
                                         </div>
                                         <div className={'text-black text-sm flex flex-col bg-white border-gray-300 border cursor-pointer p-3'}>
-                                        {/* <Row>
+                                            {/* <Row>
                                             <Col span={8}>Asset Type</Col>
                                             <Col span={16}>{asset_type.name}</Col>
                                         </Row>
@@ -166,47 +166,47 @@ function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColum
                                     </div>
                                 </TabPane>
                                 <TabPane tab={'Relationships'} key={2}>
-                                Content of tab Relationships
+                                    Content of tab Relationships
                                 </TabPane>
                                 <TabPane tab={'Associations'} key={3}>
-                                Content of tab Associations
+                                    Content of tab Associations
                                 </TabPane>
                                 <TabPane tab={'Purchase Orders'} key={4}>
-                                Content of tab Purchase Orders
+                                    Content of tab Purchase Orders
                                 </TabPane>
                                 <TabPane tab={'Contracts'} key={5}>
-                                Content of tab Contracts
+                                    Content of tab Contracts
                                 </TabPane>
                                 <TabPane tab={'Activity'} key={6}>
-                                <div className={'text-black text-sm flex flex-col bg-white border-gray-300 border cursor-pointer p-3 w-full'}>
-                                    <Timeline mode={'alternate'}> 
-                                    {activityLog.map((doc,index) => {
-                                        var text
-                                        var data_update = ""
-                                        // console.log(Object.keys(doc.properties.attributes).length)
-                                        // console.log(Object.keys(doc.properties.attributes))
-                                        // console.log(Object.values(doc.properties.attributes))
-                                        if (doc.description == "created inventory") {
-                                            text =  "Created Inventory Named " + doc.properties.attributes.asset_name +
-                                                    ", Own by " + (doc.properties.attributes.kepemilikan=="milikSendiri"?"Milik Sendiri":doc.properties.attributes.kepemilikan) +
-                                                    "with Asset Type as " +doc.properties.attributes.asset_id_name +
-                                                    ", Vendor as " +doc.properties.attributes.vendor_name +
-                                                    ", Status as " +doc.properties.attributes.status
-                                        } else {
-                                            for (let i = 0; i < Object.keys(doc.properties.attributes).length; i++) {
-                                                data_update = data_update + Object.keys(doc.properties.attributes)[i] + " changed to " + Object.values(doc.properties.attributes)[i] + ", "
-                                            }
-                                            text = data_update
-                                        }
-                                            return(
-                                                <Timeline.Item key={index} label={timeConverter(Date.parse(doc.date))}>
-                                                    {text}
-                                                </Timeline.Item>
+                                    <div className={'text-black text-sm flex flex-col bg-white border-gray-300 border cursor-pointer p-3 w-full'}>
+                                        <Timeline mode={'alternate'}>
+                                            {activityLog.map((doc, index) => {
+                                                var text
+                                                var data_update = ""
+                                                // console.log(Object.keys(doc.properties.attributes).length)
+                                                // console.log(Object.keys(doc.properties.attributes))
+                                                // console.log(Object.values(doc.properties.attributes))
+                                                if (doc.description == "created inventory") {
+                                                    text = "Created Inventory Named " + doc.properties.attributes.asset_name +
+                                                        ", Own by " + (doc.properties.attributes.kepemilikan == "milikSendiri" ? "Milik Sendiri" : doc.properties.attributes.kepemilikan) +
+                                                        "with Asset Type as " + doc.properties.attributes.asset_id_name +
+                                                        ", Vendor as " + doc.properties.attributes.vendor_name +
+                                                        ", Status as " + doc.properties.attributes.status
+                                                } else {
+                                                    for (let i = 0; i < Object.keys(doc.properties.attributes).length; i++) {
+                                                        data_update = data_update + Object.keys(doc.properties.attributes)[i] + " changed to " + Object.values(doc.properties.attributes)[i] + ", "
+                                                    }
+                                                    text = data_update
+                                                }
+                                                return (
+                                                    <Timeline.Item key={index} label={timeConverter(Date.parse(doc.date))}>
+                                                        {text}
+                                                    </Timeline.Item>
                                                 )
-                                        })
-                                    }
-                                    </Timeline>
-                                </div>
+                                            })
+                                            }
+                                        </Timeline>
+                                    </div>
                                 </TabPane>
                             </Tabs>
                         </div>
@@ -256,7 +256,7 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonGetInventory = await resourcesGetInventory.json()
     const dataInventory = resjsonGetInventory
     const assetId = dataInventory.data.inventory.asset_id
-    
+
     const resourcesGetInventoryColumnAndVendor = await fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryColumns?id=${assetId}`, {
         method: `GET`,
         headers: {
@@ -265,7 +265,7 @@ export async function getServerSideProps({ req, res, params }) {
     })
     const resjsonGetInventoryColumnAndVendor = await resourcesGetInventoryColumnAndVendor.json()
     const dataInventoryColumnAndVendor = resjsonGetInventoryColumnAndVendor
-    
+
     const resourcesGetInventoryActivityLog = await fetch(`https://boiling-thicket-46501.herokuapp.com/getActivityInventoryLogs?id=${inventoryid}`, {
         method: `GET`,
         headers: {

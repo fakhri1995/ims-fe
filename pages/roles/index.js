@@ -24,10 +24,10 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
             title: 'Role Name',
             dataIndex: 'name',
             key: 'name',
-            render(text, record) {
+            render(text, record, index) {
                 return {
                     props: {
-                        style: { background: record.key % 2 == 1 ? '#f2f2f2' : '#fff' },
+                        style: { background: index % 2 == 1 ? '#f2f2f2' : '#fff' },
                     },
                     children:
                         <div>
@@ -55,10 +55,10 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
             title: 'Description',
             dataIndex: 'description',
             key: 'description',
-            render(text, record) {
+            render(text, record, index) {
                 return {
                     props: {
-                        style: { background: record.key % 2 == 1 ? '#f2f2f2' : '#fff' },
+                        style: { background: index % 2 == 1 ? '#f2f2f2' : '#fff' },
                     },
                     children: <div>{record.description}</div>,
                 };
@@ -71,23 +71,23 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
             // responsive: ['lg'],
         },
         {
-            title: 'action', // Non-breakable space is char 0xa0 (160 dec)
+            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0', // Non-breakable space is char 0xa0 (160 dec)
             dataIndex: 'actionss',
             key: 'action',
             render: (text, record, index) => {
                 return {
                     props: {
-                        style: { background: record.key % 2 == 1 ? '#f2f2f2' : '#fff' },
+                        style: { background: index % 2 == 1 ? '#f2f2f2' : '#fff' },
                     },
                     children:
-                        <>
+                        <div className=" flex">
                             <Button onClick={() => { rt.push(`/roles/${record.id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
                                 <EditOutlined />
                             </Button>
                             <Button danger onClick={() => { setmodaldelete(true); setdatadelete({ ...datadelete, id: record.id }); setcurrentdelete(record.name) }} loading={loadingdelete} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
                                 <DeleteOutlined />
                             </Button>
-                        </>
+                        </div>
                 }
             }
         }
@@ -138,16 +138,16 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                                 <h1 className="font-semibold text-base w-auto pt-2">Roles</h1>
                                 <div className="flex space-x-2">
                                     <Link href="/roles/create">
-                                        <Button type="primary" size="large">Tambah Role</Button>
+                                        <Button type="primary" size="large">Add New</Button>
                                     </Link>
                                 </div>
                             </div>
                         </Sticky>
                     </div>
-                    <div className=" col-span-1 md:col-span-3 flex flex-col">
+                    <div className=" col-span-1 md:col-span-4 flex flex-col">
                         <div className="col-span-3 flex flex-col space-y-3">
 
-                            <Table showHeader={false} scroll={{ x: 400 }} pagination={{ pageSize: 5 }} dataSource={maindata} columns={columnsDD} onRow={(record, rowIndex) => {
+                            <Table scroll={{ x: 400 }} pagination={{ pageSize: 5 }} dataSource={maindata} columns={columnsDD} onRow={(record, rowIndex) => {
                                 // return {
                                 //     onMouseOver: (event) => {
                                 //         var actionsCopy = actions

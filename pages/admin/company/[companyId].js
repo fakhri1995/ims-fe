@@ -1011,26 +1011,26 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} dataDetailCompany={dataDetailCompany} st={st}>
             <div className="px-5 pt-5 pb-0 bg-white hidden md:block">
                 <Tabs tabPosition={`left`} defaultActiveKey={activeTab}>
-                    <TabPane tab="Profil" key={`profile`}>
+                    <TabPane tab="Profile" key={`profile`}>
                         <ClientsDetailProfile dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
                     </TabPane>
-                    <TabPane tab="Rekening Bank" key={`bankAccounts`}>
+                    <TabPane tab="Bank Account" key={`bankAccounts`}>
                         <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.data.company_id} />
                     </TabPane>
-                    <TabPane tab="Lokasi" key={`locations`}>
+                    <TabPane tab="Locations" key={`locations`}>
                         <ClientsDetailLocations dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailLocations>
                     </TabPane>
                 </Tabs>
             </div>
             <div className="px-5 pt-5 pb-0 bg-white block md:hidden" >
                 <Tabs tabPosition={`top`} defaultActiveKey={activeTab}>
-                    <TabPane tab="Profil" key={`profile`}>
+                    <TabPane tab="Profile" key={`profile`}>
                         <ClientsDetailProfile dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
                     </TabPane>
-                    <TabPane tab="Rekening Bank" key={`bankAccounts`}>
+                    <TabPane tab="Bank Account" key={`bankAccounts`}>
                         <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.data.company_id} />
                     </TabPane>
-                    <TabPane tab="Lokasi" key={`locations`}>
+                    <TabPane tab="Locations" key={`locations`}>
                         <ClientsDetailLocations dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailLocations>
                     </TabPane>
                 </Tabs>

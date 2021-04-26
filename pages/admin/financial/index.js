@@ -88,8 +88,23 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
                         style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
                     },
                     children:
-                        <div className="flex">
-                            <div className=" h-6 px-1 border hover:border-blue-500 hover:text-blue-500 rounded-sm cursor-pointer flex justify-center items-center mr-3" onClick={() => {
+                        // <div className="flex">
+                        //     <div className=" h-6 px-1 border hover:border-blue-500 hover:text-blue-500 rounded-sm cursor-pointer flex justify-center items-center mr-3" onClick={() => {
+                        //         setdataedit({
+                        //             id: record.id,
+                        //             nama: record.nama,
+                        //             jenis: record.jenis,
+                        //             tahun_penggunaan: record.tahun_penggunaan,
+                        //             deskripsi: record.deskripsi
+                        //         })
+                        //         setmodaledit(true)
+                        //     }}>
+                        //         <EditOutlined />
+                        //     </div>
+                        //     <div className=" h-6 px-1 border hover:border-blue-500 hover:text-blue-500 rounded-sm cursor-pointer flex justify-center items-center" onClick={() => { setmodaldelete(true); setiddelete(record.id) }}><DeleteOutlined /></div>
+                        // </div>
+                        <div className=" flex">
+                            <Button onClick={() => {
                                 setdataedit({
                                     id: record.id,
                                     nama: record.nama,
@@ -98,10 +113,15 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
                                     deskripsi: record.deskripsi
                                 })
                                 setmodaledit(true)
-                            }}>
+                            }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
                                 <EditOutlined />
-                            </div>
-                            <div className=" h-6 px-1 border hover:border-blue-500 hover:text-blue-500 rounded-sm cursor-pointer flex justify-center items-center" onClick={() => { setmodaldelete(true); setiddelete(record.id) }}><DeleteOutlined /></div>
+                            </Button>
+                            <Button danger onClick={() => {
+                                setmodaldelete(true); 
+                                setiddelete(record.id)
+                            }} loading={loadingdelete} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
+                                <DeleteOutlined />
+                            </Button>
                         </div>
                 }
             }
@@ -286,7 +306,7 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
     return (
         <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
             <div className="w-full grid grid-cols-5 border-t border-opacity-30 border-gray-500 bg-white">
-                <div className="col-span-5 lg:col-span-4 flex flex-col">
+                <div className="col-span-5 lg:col-span-5 flex flex-col">
                     <div className="border-b border-opacity-30 border-gray-400 flex items-center p-4 mb-5">
                         <h1 className="font-semibold">Financial</h1>
                     </div>
@@ -299,7 +319,7 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
                         {
                             !tambahbtn ?
                                 <div className="flex flex-col mb-4">
-                                    <div className="flex items-center font-bold mb-3">Tambah Depresiasi Baru</div>
+                                    <div className="flex items-center font-bold mb-6">Tambah Depresiasi Baru</div>
                                     <div className=" flex flex-col">
                                         <div className="w-full">
                                             <Form layout="vertical" onFinish={handleCreate} initialValues={datacreate} style={{ width: `100%` }}>

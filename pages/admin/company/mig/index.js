@@ -19,7 +19,7 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
     const onClickEdit = () => {
         setEditable(true)
     }
-    if(dataDetailCompany.data.data.tanggal_pkp === null){
+    if (dataDetailCompany.data.data.tanggal_pkp === null) {
         dataDetailCompany.data.data.tanggal_pkp = new Date()
     }
     const [data1, setData1] = useState({
@@ -763,7 +763,10 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                                 </Form.Item>
                             </div>
                             <Form.Item>
-                                <Button htmlType="submit" type="primary" size="middle" loading={loadingbtnedit}>Edit</Button>
+                                <div className="flex justify-end">
+                                    <Button type="default" onClick={() => { setDrawableedit(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
+                                    <Button htmlType="submit" type="primary" size="middle" loading={loadingbtnedit}>Save</Button>
+                                </div>
                                 {/* <button type="submit" className="bg-gray-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-gray-800">Save</button> */}
                             </Form.Item>
                         </Form>
@@ -818,7 +821,10 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                                 </Form.Item>
                             </div>
                             <Form.Item>
-                                <Button htmlType="submit" type="primary" size="middle" loading={loadingbtncreate}>Simpan</Button>
+                                <div className="flex justify-end">
+                                    <Button type="default" onClick={() => { setDrawablecreate(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
+                                    <Button htmlType="submit" type="primary" size="middle" loading={loadingbtncreate}>Save</Button>
+                                </div>
                                 {/* <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button> */}
                             </Form.Item>
                         </Form>
@@ -872,26 +878,26 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGet
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
             <div className="p-5 bg-white hidden md:block">
                 <Tabs tabPosition={`left`} defaultActiveKey={activeTab}>
-                    <TabPane tab="Profil" key={`profile`}>
+                    <TabPane tab="Profile" key={`profile`}>
                         <MigIndexProfile dataDetailCompany={dataDetailCompany} tok={tok}></MigIndexProfile>
                     </TabPane>
-                    <TabPane tab="Rekening Bank" key={`bankAccounts`}>
+                    <TabPane tab="Bank Account" key={`bankAccounts`}>
                         <MigIndexBankAccount dataGetBanks={dataGetBanks} tok={tok} />
                     </TabPane>
-                    <TabPane tab="Lokasi" key={`locations`}>
+                    <TabPane tab="Locations" key={`locations`}>
                         <MigIndexLocations dataLocations={dataLocations} dataDetailCompany={dataDetailCompany} tok={tok} />
                     </TabPane>
                 </Tabs>
             </div>
             <div className="p-5 bg-white block md:hidden">
                 <Tabs tabPosition={`top`} defaultActiveKey={activeTab}>
-                    <TabPane tab="Profil" key={`profile`}>
+                    <TabPane tab="Profile" key={`profile`}>
                         <MigIndexProfile dataDetailCompany={dataDetailCompany} tok={tok}></MigIndexProfile>
                     </TabPane>
-                    <TabPane tab="Rekening Bank" key={`bankAccounts`}>
+                    <TabPane tab="Bank Account" key={`bankAccounts`}>
                         <MigIndexBankAccount dataGetBanks={dataGetBanks} tok={tok} />
                     </TabPane>
-                    <TabPane tab="Lokasi" key={`locations`}>
+                    <TabPane tab="Locations" key={`locations`}>
                         <MigIndexLocations dataLocations={dataLocations} dataDetailCompany={dataDetailCompany} tok={tok} />
                     </TabPane>
                 </Tabs>

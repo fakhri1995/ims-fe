@@ -178,22 +178,24 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, 
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} dataDetailCompany={dataDetailCompany} st={st}>
             <div className="w-full h-auto border-t border-opacity-30 border-gray-500 bg-white">
                 <div className="grid grid-cols-1 md:grid-cols-4">
-                    <div className="col-span-1 md:col-span-3 flex flex-col">
+                    <div className=" col-span-1 md:col-span-4">
                         <div className="p-2 md:p-5 border-b flex mb-5 justify-between">
                             <div>
-                                <h1 className="mt-2 text-sm font-bold">Update Lokasi</h1>
+                                <h1 className="mt-2 text-sm font-bold">Update Location</h1>
                                 <h1 className="mt-2 text-xs font-medium">{dataDetailCompany.data.data.company_name}</h1>
                             </div>
                             <div className="flex mx-2">
                                 <Link href={`/admin/company/mig`}>
-                                    <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batalkan</Button>
+                                    <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Cancel</Button>
                                     {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md mx-2">Cancel</button> */}
                                 </Link>
                                 {/* <Button type="default" size="middle" style={{ marginRight: `1rem` }} onClick={handleUpdateLocationsMig}>cek</Button> */}
-                                <Button type="primary" size="middle" loading={loadingupdate} onClick={updateLocationForm.submit}>Perbarui</Button>
+                                <Button type="primary" size="middle" loading={loadingupdate} onClick={updateLocationForm.submit}>Update</Button>
                                 {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md">Save</button> */}
                             </div>
                         </div>
+                    </div>
+                    <div className="col-span-1 md:col-span-3 flex flex-col">
                         <div className="p-3 col-span-1 md:col-span-1">
                             <Upload
                                 name="profile_image"
@@ -286,14 +288,14 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, 
                             </Form>
                         </div>
                     </div>
-                    <div className="col-span-1 md:col-span-1 flex flex-col p-2 md:p-5">
+                    {/* <div className="col-span-1 md:col-span-1 flex flex-col p-2 md:p-5">
                         <h1 className="text-xs md:text-sm font-semibold mb-5">Locations</h1>
                         <p className="text-xs md:text-sm">
                             Freshservice lets you add location details into your service desk. You can create top level locations and add child locations under them. Like for example if your company operates out of multiple places, you could have the country name at the top level followed by the state, district and city.
                         <br /><br />
                         You can specify the location while creating a new asset and segregate them based on the location.
                         </p>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </Layout>
