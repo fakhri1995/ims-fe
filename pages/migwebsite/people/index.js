@@ -12,27 +12,27 @@ function People({ }) {
             <section className={'section1advantages hidden md:block'} style={{background:'#F4F4F4'}}>
                 <div className={'block md:flex'}>
                     <div className={'flex center'}>
-                        <Link href={{pathname: '/advantages'}}><p className={'flex-col text-base font-semibold pr-4'} style={{}}>Advantages
+                        <Link href={{pathname: '/advantages'}}><p className={'cursor-pointer flex-col text-base font-semibold pr-4'} style={{}}>Advantages
                             </p></Link>
-                        <Link href={{pathname: '/hardware'}}><p className={'flex-col text-base font-semibold px-4'}>Hardware
+                        <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer flex-col text-base font-semibold px-4'}>Hardware
                             </p></Link>
-                        <Link href={{pathname: '/software'}}><p className={'flex-col text-base font-semibold px-4'}>Software
+                        <Link href={{pathname: '/software'}}><p className={'cursor-pointer flex-col text-base font-semibold px-4'}>Software
                             </p></Link>
-                        <Link href={{pathname: '/people'}}><p className={'flex-col text-base font-semibold px-4'}>People
+                        <Link href={{pathname: '/people'}}><p className={'cursor-pointer flex-col text-base font-semibold px-4'}>People
                             </p></Link>
                     </div>
                 </div>
             </section>
-            <section className={'section2people px-4 md:px-20 py-8 text-center justify-center'}>
+            <section className={'section2people px-4 md:px-20 lg:md-px-28 xl:px-40 py-8 text-center justify-center'}>
                 <div className={'pb-8'}>
                     <p className={'text-2xl md:text-3xl font-bold'}>People</p>
                 </div>
                 <div className={'pb-12'}>
-                    <p className={'text-base w-full'}>We help you reduce complexity in talent sourcing and management through staff augmentation. In typical cases, our talents have but not limited to the following specifications and deliverable</p>
+                    <p className={'text-base w-full font-bold'}>We help you reduce complexity in talent sourcing and management through staff augmentation. In typical cases, our talents have but not limited to the following specifications and deliverable</p>
                 </div>
                 <Button type="text" className={'mx-2 px-4 border-green-800 text-white'} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Get a quote</p></Button>
             </section>
-            <section className={'section3people justify-center px-4 md:px-24'} >
+            <section className={'section3people justify-center px-4 md:px-24 lg:md-px-28 xl:px-40'} >
                 <div className={'border-2 rounded-sm py-8 px-8'}>
                     <p className={'font-bold text-lg'}>Software engineer</p>
                 </div>
