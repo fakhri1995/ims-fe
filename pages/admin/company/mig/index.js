@@ -8,7 +8,7 @@ import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import { useState } from 'react'
 import st from '../../../../components/layout-dashboard-mig.module.css'
 import Link from 'next/link'
-import { Tabs, Input, Form, Table, Tree, Drawer, notification, message, Modal, Select, Button, Popconfirm, DatePicker } from 'antd'
+import { Tabs, Input, Form, Table, Tree, Drawer, notification, message, Modal, Select, Button, Popconfirm, DatePicker, Upload } from 'antd'
 import moment from 'moment'
 
 function MigIndexProfile({ dataDetailCompany, tok }) {
@@ -19,23 +19,23 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
     const onClickEdit = () => {
         setEditable(true)
     }
-    if (dataDetailCompany.data.data.tanggal_pkp === null) {
-        dataDetailCompany.data.data.tanggal_pkp = new Date()
+    if (dataDetailCompany.data.tanggal_pkp === null) {
+        dataDetailCompany.data.tanggal_pkp = new Date()
     }
     const [data1, setData1] = useState({
         // id: dataDetailCompany.data.data.company_id,
-        company_name: dataDetailCompany.data.data.company_name,
+        company_name: dataDetailCompany.data.company_name,
         // role: dataDetailCompany.data.data.role,
-        address: dataDetailCompany.data.data.address,
-        phone_number: dataDetailCompany.data.data.phone_number,
-        image_logo: dataDetailCompany.data.data.image_logo,
-        singkatan: dataDetailCompany.data.data.singkatan,
-        tanggal_pkp: moment(dataDetailCompany.data.data.tanggal_pkp)/*moment(new Date())*/,
-        penanggung_jawab: dataDetailCompany.data.data.penanggung_jawab,
-        npwp: dataDetailCompany.data.data.npwp,
-        fax: dataDetailCompany.data.data.fax,
-        email: dataDetailCompany.data.data.email,
-        website: dataDetailCompany.data.data.website
+        address: dataDetailCompany.data.address,
+        phone_number: dataDetailCompany.data.phone_number,
+        image_logo: dataDetailCompany.data.image_logo,
+        singkatan: dataDetailCompany.data.singkatan,
+        tanggal_pkp: moment(dataDetailCompany.data.tanggal_pkp)/*moment(new Date())*/,
+        penanggung_jawab: dataDetailCompany.data.penanggung_jawab,
+        npwp: dataDetailCompany.data.npwp,
+        fax: dataDetailCompany.data.fax,
+        email: dataDetailCompany.data.email,
+        website: dataDetailCompany.data.website
     })
     const [loadingfoto, setLoadingfoto] = useState(false)
 
@@ -99,30 +99,25 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
     return (
         <div id="profileeDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-6">
-                {/* <Sticky containerSelectorFocus="#profileeDetailMigWrapper"> */}
                 <div className="flex space-x-2">
                     {editable ?
                         <Button type="default" onClick={() => { setEditable(false) }}>Cancel</Button>
-                        // <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md" onClick={() => { setEditable(false) }}>Cancel</button>
                         :
                         null
                     }
                     {editable ?
                         <Button type="primary" onClick={instanceForm.submit} loading={loadingbtn}>Save</Button>
-                        // <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md" onClick={handleEditProfile}>Save</button>
                         :
                         <Button type="primary" onClick={() => { setEditable(true) }}>Edit</Button>
-                        // <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md w-40" onClick={() => { setEditable(true) }}>Edit</button>
                     }
                 </div>
-                {/* </Sticky> */}
             </div>
             <div className=" mb-2 md:mb-4 flex md:flex-row flex-col">
-                <h1 className="font-semibold text-base mr-3 pt-1">{dataDetailCompany.data.data.company_name}</h1>
+                <h1 className="font-semibold text-base mr-3 pt-1">{dataDetailCompany.data.company_name}</h1>
                 <h1 className="mr-3 pt-1 hidden md:block">|</h1>
                 <div className="flex">
                     {
-                        dataDetailCompany.data.data.is_enabled ?
+                        dataDetailCompany.data.is_enabled ?
                             <div className=" bg-blue-100 text-blue-600 border-blue-600 border pt-2 px-3 rounded-md text-xs md:text-sm w-auto">AKTIF</div>
                             :
                             <div className=" bg-red-100 text-red-600 border-red-600 border pt-1 px-3 rounded-md text-xs md:text-sm w-auto">NON-AKTIF</div>
@@ -321,29 +316,111 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
     )
 }
 
-function MigIndexLocations({ dataLocations, dataDetailCompany, tok }) {
+function MigIndexLocations({ dataLocations, dataDetailCompany, dataBranchList, tok }) {
+    const rt = useRouter()
     const [expandedKeys, setExpandedKeys] = useState([dataLocations.data[0].key])
     const [autoExpandParent, setAutoExpandParent] = useState(true);
     const [datalocations, setdatalocations] = useState(dataLocations.data)
     const [loadingtambah, setloadingtambah] = useState(false)
+    const [loadingimage, setloadingimage] = useState(false)
+    const [instanceForm] = Form.useForm()
+    const [drawablecreate, setdrawablecreate] = useState(false)
     const onExpand = (expandedKeys) => {
         setExpandedKeys(expandedKeys);
         setAutoExpandParent(false);
     };
+    const [datanew, setdatanew] = useState({
+        name: '',
+        address: '',
+        phone_number: '',
+        image_logo: '',
+        parent_id: ''
+    })
+    const uploadButton = (
+        <div>
+            {loadingimage ? <LoadingOutlined /> : <PlusOutlined />}
+            <div style={{ marginTop: 8 }}>Unggah</div>
+        </div>
+    );
+    const beforeUploadProfileImage = (file) => {
+        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
+        if (!isJpgOrPng) {
+            message.error('You can only upload JPG/PNG file!');
+        }
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (!isLt2M) {
+            message.error('Image must smaller than 2MB!');
+        }
+        return isJpgOrPng && isLt2M;
+    }
+    const onChangeProfileImage = async (info) => {
+        if (info.file.status === 'uploading') {
+            setloadingimage(true)
+            return;
+        }
+        if (info.file.status === 'done') {
+            const formData = new FormData()
+            formData.append('file', info.file.originFileObj)
+            formData.append('upload_preset', 'migsys')
+            return fetch(`https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`, {
+                method: 'POST',
+                body: formData
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    setloadingimage(false)
+                    setdatanew({
+                        ...datanew,
+                        image_logo: res2.secure_url
+                    })
+                })
+        }
+    }
+    //Handler
+    const handleCreateLocationsMig = () => {
+        setloadingtambah(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyBranch`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datanew)
+        })
+            .then((res) => res.json())
+            .then(res2 => {
+                setloadingtambah(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/admin/company/mig`)
+                    }, 800)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3,
+                        style: {
+                            zIndex: `1000`
+                        }
+                    })
+                }
+            })
+    }
     return (
         <div id="locationssDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
                 <div className="flex space-x-2">
-                    <Link href={`/admin/company/locations/new?companyId=${dataDetailCompany.data.data.company_id}&parent=`}>
-                        <Button type="primary" size="middle" loading={loadingtambah} onClick={() => { setloadingtambah(true) }}>Tambah</Button>
-                        {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40"> Create</button> */}
-                    </Link>
+                    {/* <Link href={`/admin/company/locations/new?companyId=${dataDetailCompany.data.data.company_id}&parent=`}> */}
+                    <Button type="primary" size="middle" onClick={() => { setdrawablecreate(true) }}>Tambah</Button>
+                    {/* </Link> */}
                 </div>
             </div>
             <div className="p-5">
                 <h1 className="text-sm font-semibold">Pilih Parent terakhir</h1>
-                {/* <Tree treeData={treeData} autoExpandParent={autoExpandParent} selectable selectedKeys={selectedtree} checkable checkedKeys={checkedtree} onCheck={() => { setEditable(true) }}>
-                </Tree> */}
                 <Tree
                     onExpand={onExpand}
                     expandedKeys={expandedKeys}
@@ -367,13 +444,13 @@ function MigIndexLocations({ dataLocations, dataDetailCompany, tok }) {
                                     {nodeData.title}
                                 </div>
                                 <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
-                                    <Link href={`/admin/company/locations/new?parent=${nodeData.id}&companyId=${dataDetailCompany.data.data.company_id}`}>
+                                    <Link href={`/admin/company/locations/new?parent=${nodeData.id}&companyId=${dataDetailCompany.data.company_id}`}>
                                         <a className="mx-2 pb-1" alt="add"><PlusOutlined /></a>
                                     </Link>
                                     <Link href={`/admin/company/locations/update/${nodeData.id}?parent=${nodeData.title}`}>
                                         <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                     </Link>
-                                    <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("berhasil dihapus") }} onCancel={() => { message.error("Gagal dihapus") }}>
+                                    <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("API is not available") }} onCancel={() => { message.error("Gagal dihapus") }}>
                                         <a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a>
                                     </Popconfirm>
                                 </div>
@@ -384,6 +461,96 @@ function MigIndexLocations({ dataLocations, dataDetailCompany, tok }) {
                     blockNode={true}
                 />
             </div>
+            <Drawer title="Buat Branch" maskClosable={false} visible={drawablecreate} onClose={() => {
+                setdrawablecreate(false);
+                setnewclients({
+                    name: '',
+                    role: 3,
+                    address: '',
+                    phone_number: '',
+                    image_logo: '',
+                    parent_id: null
+                });
+                instanceForm.resetFields()
+            }} width={370} destroyOnClose={true}>
+                <div className="w-full h-auto grid grid-cols-1 md:grid-cols-1">
+                    <div className="px-3 pt-3 pb-0 col-span-1 md:col-span-1">
+                        <Form.Item name="profile_image">
+                            <Upload
+                                name="profile_image"
+                                listType="picture-card"
+                                className="profileImage"
+                                showUploadList={false}
+                                beforeUpload={beforeUploadProfileImage}
+                                onChange={onChangeProfileImage}
+                            >
+                                {datanew.image_logo ? <img src={datanew.image_logo} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                            </Upload>
+                        </Form.Item>
+                    </div>
+                    <Form layout="vertical" className="createClientsForm" onFinish={handleCreateLocationsMig} form={instanceForm}>
+                        <div className="md:m-4 mb-5 md:mb-0 ">
+                            <Form.Item name="name" label="Nama Perusahaan"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Nama perusahaan wajib diisi',
+                                    },
+                                ]}
+                            >
+                                <Input name="name" onChange={(e) => { setdatanew({ ...datanew, name: e.target.value }) }}></Input>
+                            </Form.Item>
+                        </div>
+                        <div className="md:m-4 mb-5 md:mb-0 ">
+                            <Form.Item name="address" label="Alamat"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Alamat wajib diisi',
+                                    },
+                                ]}
+                            >
+                                <Input name="address" onChange={(e) => { setdatanew({ ...datanew, address: e.target.value }) }}></Input>
+                            </Form.Item>
+                        </div>
+                        <div className="md:m-4 mb-5 md:mb-0 ">
+                            <Form.Item name="phone_number" label="Telepon"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Nomor telepon wajib diisi',
+                                    },
+                                ]}
+                            >
+                                <Input name="phone_number" onChange={(e) => { setdatanew({ ...datanew, phone_number: e.target.value }) }}></Input>
+                            </Form.Item>
+                        </div>
+                        <div className="mb:m-4 mb-5 md:mb-0">
+                            <Form.Item name="parent_id" label="Parent Perusahaan"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Parent Perusahaan wajib diisi',
+                                    },
+                                ]}>
+                                <Select onChange={(value) => { setdatanew({ ...datanew, parent_id: value }) }}>
+                                    {
+                                        dataBranchList.data.map((doc, idx) => {
+                                            return (
+                                                <Option key={idx} value={doc.company_id}>{doc.company_name}</Option>
+                                            )
+                                        })
+                                    }
+                                </Select>
+                            </Form.Item>
+                        </div>
+                        <div className="flex justify-end">
+                            <Button type='default' onClick={() => { setdrawablecreate(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
+                            <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingtambah} style={{ marginBottom: `1rem` }}>Save</Button>
+                        </div>
+                    </Form>
+                </div>
+            </Drawer>
         </div>
     )
 }
@@ -863,7 +1030,7 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
     )
 }
 
-function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGetBanks, dataLocations }) {
+function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGetBanks, dataLocations, dataBranchList }) {
     const rt = useRouter()
     const { TabPane } = Tabs;
     const tok = initProps
@@ -885,7 +1052,7 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGet
                         <MigIndexBankAccount dataGetBanks={dataGetBanks} tok={tok} />
                     </TabPane>
                     <TabPane tab="Locations" key={`locations`}>
-                        <MigIndexLocations dataLocations={dataLocations} dataDetailCompany={dataDetailCompany} tok={tok} />
+                        <MigIndexLocations dataLocations={dataLocations} dataDetailCompany={dataDetailCompany} dataBranchList={dataBranchList} tok={tok} />
                     </TabPane>
                 </Tabs>
             </div>
@@ -898,7 +1065,7 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGet
                         <MigIndexBankAccount dataGetBanks={dataGetBanks} tok={tok} />
                     </TabPane>
                     <TabPane tab="Locations" key={`locations`}>
-                        <MigIndexLocations dataLocations={dataLocations} dataDetailCompany={dataDetailCompany} tok={tok} />
+                        <MigIndexLocations dataLocations={dataLocations} dataDetailCompany={dataDetailCompany} dataBranchList={dataBranchList} tok={tok} />
                     </TabPane>
                 </Tabs>
             </div>
@@ -959,6 +1126,15 @@ export async function getServerSideProps({ req, res }) {
     })
     const resjsonGL = await resourcesGL.json()
     const dataLocations = resjsonGL
+
+    const resourcesBL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
+        method: `POST`,
+        headers: {
+            'Authorization': JSON.parse(initProps),
+        },
+    })
+    const resjsonBL = await resourcesBL.json()
+    const dataBranchList = resjsonBL
     return {
         props: {
             initProps,
@@ -966,6 +1142,7 @@ export async function getServerSideProps({ req, res }) {
             dataDetailCompany,
             dataGetBanks,
             dataLocations,
+            dataBranchList,
             sidemenu: "4"
         },
     }
