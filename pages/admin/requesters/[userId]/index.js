@@ -6,14 +6,15 @@ import httpcookie from 'cookie'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
 import EditOutlined from '@ant-design/icons/EditOutlined'
-import { Form, Input, Modal, Button, notification, Switch } from 'antd'
+import { Form, Input, Modal, Button, notification, Switch, Select } from 'antd'
 
-function RequestersDetail({ initProps, dataProfile, dataDetailRequester, sidemenu }) {
+function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRoles, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     var pathArr = rt.pathname.split("/").slice(1)
     pathArr[pathArr.length - 1] = dataDetailRequester.data.fullname
     const [instanceForm] = Form.useForm()
+    const { Option } = Select
 
     const [loadingfoto, setLoadingfoto] = useState(false)
     const [data1, setData1] = useState({
@@ -23,6 +24,18 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, sidemen
         phone_number: dataDetailRequester.data.phone_number,
         profile_image: dataDetailRequester.data.profile_image
     })
+    const [datarole, setdatarole] = useState({
+        account_id: dataDetailRequester.data.user_id,
+        role_ids: dataDetailRequester.data.feature_roles
+    })
+    const onChangeRole = (value) => {
+        const arr = datarole.role_ids
+        arr.push(value)
+        setdatarole({
+            ...datarole,
+            role_ids: arr
+        })
+    }
     const [visible, setVisible] = useState(false)
     const [visiblenon, setVisiblenon] = useState(false)
     const [visibleubahpass, setVisibleubahpass] = useState(false)
@@ -67,6 +80,30 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, sidemen
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data1)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setLoadingupdate(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                }
+            })
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateFeatureRequester`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datarole)
         })
             .then(res => res.json())
             .then(res2 => {
@@ -246,6 +283,16 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, sidemen
                                         ]}>
                                         <Input defaultValue={data1.phone_number} onChange={onChangeEditAgents} name="phone_number" />
                                     </Form.Item>
+                                    <h1 className="font-semibold">Role:</h1>
+                                    <Select onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }}>
+                                        {
+                                            dataRoles.data.map((doc, idx) => {
+                                                return (
+                                                    <Option value={doc.id}>{doc.name}</Option>
+                                                )
+                                            })
+                                        }
+                                    </Select>
                                     {/* <Form.Item label="Role" required tooltip="Wajib diisi" name="role" initialValue={data1.role}
                                         rules={[
                                             {
@@ -373,11 +420,21 @@ export async function getServerSideProps({ req, res, params }) {
     }
     const dataDetailRequester = resjsonDA
 
+    const resourcesRoles = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+        method: `GET`,
+        headers: {
+            'Authorization': JSON.parse(initProps)
+        }
+    })
+    const resjsonRoles = await resourcesRoles.json()
+    const dataRoles = resjsonRoles
+
     return {
         props: {
             initProps,
             dataDetailRequester,
             dataProfile,
+            dataRoles,
             sidemenu: "4"
         },
     }

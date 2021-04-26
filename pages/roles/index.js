@@ -52,15 +52,16 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
             // sortDirections: ['descend', 'ascend'],
         },
         {
-            title: 'Description',
-            dataIndex: 'description',
-            key: 'description',
+            title: 'Member',
+            dataIndex: 'member',
+            key: 'member',
+            align: `center`,
             render(text, record, index) {
                 return {
                     props: {
                         style: { background: index % 2 == 1 ? '#f2f2f2' : '#fff' },
                     },
-                    children: <div>{record.description}</div>,
+                    children: <div className="text-center">{record.member} agents</div>,
                 };
             },
             // render: agent => (

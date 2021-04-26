@@ -7,9 +7,9 @@ import Sticky from 'wil-react-sticky'
 import { useState } from 'react'
 import Link from 'next/link'
 import st from '../../../../components/layout-dashboard.module.css'
-import { Button, Form, Input, notification, Modal, Switch } from 'antd'
+import { Button, Form, Input, notification, Modal, Switch, Select } from 'antd'
 
-function AgentsDetail({ initProps, dataProfile, dataDetailAgent, sidemenu }) {
+function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     var pathArr = rt.pathname.split("/").slice(1)
@@ -23,6 +23,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, sidemenu }) {
     const [loadingubahaktif, setloadingubahaktif] = useState(false)
     const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
     const [instanceForm] = Form.useForm();
+    const { Option } = Select
     const [datapass, setDatapass] = useState({
         user_id: dataDetailAgent.data.user_id,
         new_password: ''
@@ -34,6 +35,18 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, sidemenu }) {
         phone_number: dataDetailAgent.data.phone_number,
         profile_image: dataDetailAgent.data.profile_image
     })
+    const [datarole, setdatarole] = useState({
+        account_id: dataDetailAgent.data.user_id,
+        role_ids: dataDetailAgent.data.feature_roles
+    })
+    const onChangeRole = (value) => {
+        const arr = datarole.role_ids
+        arr.push(value)
+        setdatarole({
+            ...datarole,
+            role_ids: arr
+        })
+    }
     const onChangeEditAgents = (e) => {
         setData1({
             ...data1,
@@ -75,8 +88,32 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, sidemenu }) {
                         message: res2.message,
                         duration: 3
                     })
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                }
+            })
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateFeatureAgent`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datarole)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setLoadingsave(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
                     setTimeout(() => {
-                        rt.push(`/admin/agents`)
+                        rt.push(`/admin/agents/${dataDetailAgent.data.user_id}`)
                     }, 1000)
                 }
                 else if (!res2.success) {
@@ -247,6 +284,16 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, sidemenu }) {
                                         ]}>
                                         <Input defaultValue={data1.phone_number} onChange={onChangeEditAgents} name="phone_number" />
                                     </Form.Item>
+                                    <h1 className="font-semibold">Role:</h1>
+                                    <Select onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }}>
+                                        {
+                                            dataRoles.data.map((doc, idx) => {
+                                                return (
+                                                    <Option value={doc.id}>{doc.name}</Option>
+                                                )
+                                            })
+                                        }
+                                    </Select>
                                 </Form>
                             </div>
                         </div>
@@ -322,11 +369,21 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonDA = await resourcesDA.json()
     const dataDetailAgent = resjsonDA
 
+    const resourcesRoles = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+        method: `GET`,
+        headers: {
+            'Authorization': JSON.parse(initProps),
+        },
+    })
+    const resjsonRoles = await resourcesRoles.json()
+    const dataRoles = resjsonRoles
+
     return {
         props: {
             initProps,
             dataDetailAgent,
             dataProfile,
+            dataRoles,
             sidemenu: "4"
         },
     }
