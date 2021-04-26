@@ -2,6 +2,7 @@ import React from 'react'
 import Layout from '../../../components/migwebsite/layout.js'
 import Flickity from 'react-flickity-component'
 import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
+import Link from 'next/link'
 
 function LandingPage({ }) {
     const flickityOptions = {
@@ -53,7 +54,9 @@ function LandingPage({ }) {
                         <div className={'flex-col mx-10 w-auto md:w-120'} style={{margin:'auto'}}>
                             <p className={'text-2xl md:text-3xl pb-6 text-white'} style={{ fontWeight: 'bold' }}> Bringing you the advantages</p>
                             <p className={'text-sm md:text-sm font-medium text-white'}>With more than 15 years of experiences across archipelago, we strive to provide end-to-end IT solutions to help achieve your business goals and optimize your cost efficiencies</p>
-                            <button className={'text-white border-2 border-white px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none'}>SEE HOW  IT WORKS </button>
+                            <Link href="/advantages"><button className={'text-white border-2 border-white px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none'}>
+                            SEE HOW  IT WORKS 
+                            </button></Link>
                         </div>
                     </div>
                 </div>

@@ -11,7 +11,7 @@ const Styles = (props) => (
           flex: 0 1 calc(33.3333333333334% - 18vw);
           margin: 0 9vw 9vw 9vw;
           width: 12vw;
-          height: 12vw;
+          height: 11vw;
         }
         @media (max-width: 768px){
           .item-hardware{
