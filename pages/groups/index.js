@@ -112,7 +112,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
             .then(res => res.json())
             .then(res2 => {
                 if (res2.success) {
-                    setWarningDelete(false, null)
+                    setWarningDeleteRequester(false, null)
                     notification['success']({
                         message: res2.message,
                         duration: 3
@@ -123,7 +123,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                     }, 500)
                 }
                 else if (!res2.success) {
-                    setWarningDelete(false, null)
+                    setWarningDeleteRequester(false, null)
                     notification['error']({
                         message: res2.message,
                         duration: 3

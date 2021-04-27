@@ -463,7 +463,7 @@ function MigIndexLocations({ dataLocations, dataDetailCompany, dataBranchList, t
             </div>
             <Drawer title="Buat Branch" maskClosable={false} visible={drawablecreate} onClose={() => {
                 setdrawablecreate(false);
-                setnewclients({
+                setdatanew({
                     name: '',
                     role: 3,
                     address: '',
