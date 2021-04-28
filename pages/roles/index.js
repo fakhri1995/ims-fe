@@ -15,9 +15,6 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
     const { originPath } = rt.query
 
 
-    const [loadingdelete, setloadingdelete] = useState(false)
-    const [modaldelete, setmodaldelete] = useState(false)
-
     const [maindata, setmaindata] = useState(dataRoles.data)
     const columnsDD = [
         {
@@ -61,7 +58,22 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                     props: {
                         style: { background: index % 2 == 1 ? '#f2f2f2' : '#fff' },
                     },
-                    children: <div className="text-center">{record.member} agents</div>,
+                    children:
+                        <>
+                            {
+                                loadingselectedrole[index] ?
+                                    <>Loading....</>
+                                    :
+                                    <div className="text-center text-blue-500 hover:text-blue-700 cursor-pointer" onClick={() => { setselectedrolename(record.name); getRoleUsers(record.id, index) }}>
+                                        {
+                                            record.member > 1 ?
+                                                <>{record.member} agents</>
+                                                :
+                                                <>{record.member} agent</>
+                                        }
+                                    </div>
+                            }
+                        </>
                 };
             },
             // render: agent => (
@@ -93,10 +105,45 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
             }
         }
     ];
+
+    const [modalviewagents, setmodalviewagents] = useState(false)
+    const [selectedrole, setselectedrole] = useState([])
+    const [selectedrolename, setselectedrolename] = useState()
+    var ln = []
+    for(var i=0; i<dataRoles.data.length; i++){
+        ln.push(false)
+    }
+    const [loadingselectedrole, setloadingselectedrole] = useState(ln)
+
     const [datadelete, setdatadelete] = useState({
         id: 0
     })
     const [currentdelete, setcurrentdelete] = useState('')
+    const [modaldelete, setmodaldelete] = useState(false)
+    const [loadingdelete, setloadingdelete] = useState(false)
+
+    const getRoleUsers = (id, index) => {
+        var temp = loadingselectedrole
+        temp[index] = true
+        setloadingselectedrole(temp)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getRoleUsers?id=${id}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': JSON.parse(initProps)
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setselectedrole(res2.data)
+                return res2
+            })
+            .then(res3 => {
+                var temp = loadingselectedrole
+                temp[index] = false
+                setloadingselectedrole(temp)
+                setmodalviewagents(true)
+            })
+    }
 
     const handleDeleteRoles = () => {
         setloadingdelete(true)
@@ -182,6 +229,24 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                 destroyOnClose={true}
             >
                 <h1>Yakin ingin hapus role {currentdelete.name} ini?</h1>
+            </Modal>
+            <Modal
+                title={`Agent (${selectedrole.length})`}
+                visible={modalviewagents}
+                onCancel={() => { setmodalviewagents(false) }}
+                style={{ top: `3rem` }}
+                width={500}
+                footer={null}
+                destroyOnClose={true}
+            >
+                <h1 className="font-semibold mb-2 md:mb-5">Role {selectedrolename}</h1>
+                {
+                    selectedrole.map((doc, idx) => {
+                        return (
+                            <p className="mb-0 text-xs">{doc}</p>
+                        )
+                    })
+                }
             </Modal>
         </Layout>
     )

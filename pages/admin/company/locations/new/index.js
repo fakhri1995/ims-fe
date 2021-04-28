@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons'
 import { Form, Input, Button, Upload, message, notification, Select } from 'antd'
 
-function NewLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, dataLocations, parentt }) {
+function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = ['admin', 'company', `mig`, 'New branch location']
@@ -17,22 +17,22 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, dat
     const { Option } = Select
 
     //flattening dataLocations
-    function flattenArr(dataassets) {
-        const result = []
-        dataassets.forEach((item, idx) => {
-            const { id, title, key, value, children } = item
-            result.push({
-                id: id,
-                title: title,
-                key: key,
-                value: value
-            })
-            if (children) {
-                result.push(...flattenArr(children))
-            }
-        })
-        return result
-    }
+    // function flattenArr(dataassets) {
+    //     const result = []
+    //     dataassets.forEach((item, idx) => {
+    //         const { id, title, key, value, children } = item
+    //         result.push({
+    //             id: id,
+    //             title: title,
+    //             key: key,
+    //             value: value
+    //         })
+    //         if (children) {
+    //             result.push(...flattenArr(children))
+    //         }
+    //     })
+    //     return result
+    // }
     // const flattenDataLocations = flattenArr(dataLocations.data)
     // var dataLocationsDetail = {}
     // flattenDataLocations.forEach(item => {
@@ -97,27 +97,6 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, dat
         </div>
     );
 
-    // const treeData = [
-    //     {
-    //         title: 'Node1',
-    //         value: '0-0',
-    //         children: [
-    //             {
-    //                 title: 'Child Node1',
-    //                 value: '0-0-1',
-    //             },
-    //             {
-    //                 title: 'Child Node2',
-    //                 value: '0-0-2',
-    //             },
-    //         ],
-    //     },
-    //     {
-    //         title: 'Node2',
-    //         value: '0-1',
-    //     },
-    // ];
-
     //onChange
     const onChangeParent = (value) => {
         setPar(value)
@@ -136,7 +115,7 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, dat
     //Handler
     const handleCreateLocationsMig = () => {
         setloadingcreate(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyMember`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyBranch`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -333,18 +312,18 @@ export async function getServerSideProps({ req, res, query }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyDetail`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(reqBodyCompanyDetail)
-    })
-    const resjsonGC = await resourcesGC.json()
-    const dataDetailCompany = resjsonGC
+    // const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify(reqBodyCompanyDetail)
+    // })
+    // const resjsonGC = await resourcesGC.json()
+    // const dataDetailCompany = resjsonGC
 
-    const resourcesGL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
+    const resourcesGL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
         method: `POST`,
         headers: {
             'Authorization': JSON.parse(initProps),
@@ -357,7 +336,7 @@ export async function getServerSideProps({ req, res, query }) {
         props: {
             initProps,
             dataProfile,
-            dataDetailCompany,
+            // dataDetailCompany,
             dataLocations,
             parentt,
             sidemenu: "4"

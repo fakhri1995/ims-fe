@@ -1,4 +1,4 @@
-import Layout from '../../../../components/layout-dashboard-groups'
+import Layout from '../../../../components/layout-dashboard2'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
@@ -10,7 +10,8 @@ import { Divider, Input, Select, Radio, Row, Col, Button, notification, Form } f
 function GroupsRequestersDetail({ initProps, dataProfile, dataListAccount, dataDetailGroup, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
-    const pathArr = rt.pathname.split("/").slice(1)
+    // const pathArr = rt.pathname.split("/").slice(1)
+    const pathArr = ['groups', 'edit requester groups']
     const { originPath } = rt.query
     const [instanceForm] = Form.useForm()
     const [loadingbtn, setLoadingbtn] = useState(false)
@@ -163,7 +164,7 @@ function GroupsRequestersDetail({ initProps, dataProfile, dataListAccount, dataD
                             {/* </div> */}
                             <Divider style={{ borderTop: '1px solid rgba(0, 0, 0, 0.2)' }} />
                             <h1 className="font-semibold text-base w-auto py-2">Agents</h1>
-                            <div className="border-gray-300 p-4 border bg-white w-full h-auto ">
+                            <div className="border-gray-300 md:px-4 px-0 py-4 mb-5 border bg-white w-full h-auto ">
                                 <Radio.Group className="flex flex-col md:flex-row" row onChange={onChange} value={value}>
                                     <Radio className="flex-initial font-bold " value={1}>Add as a Member
                                 <p className="pl-6 whitespace-normal font-normal" style={{ width: 'min-content', minWidth: '15rem' }}>Members can be assigned tickets, tasks and other items that belong to this group.</p>

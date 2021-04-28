@@ -118,7 +118,7 @@ function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColum
                         </Sticky>
                     </div>
                     <div className=" col-span-1 md:col-span-3 flex flex-col">
-                        <div className="col-span-3 flex flex-col space-y-3">
+                        <div className="col-span-3 flex-col space-y-3 hidden md:flex">
                             <Tabs defaultActiveKey="1" tabPosition={"left"}>
                                 <TabPane tab={'Overview'} key={1}>
                                     <div>
@@ -126,18 +126,86 @@ function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColum
                                             General
                                         </div>
                                         <div className={'text-black text-sm flex flex-col bg-white border-gray-300 border cursor-pointer p-3'}>
-                                            {/* <Row>
-                                            <Col span={8}>Asset Type</Col>
-                                            <Col span={16}>{asset_type.name}</Col>
-                                        </Row>
-                                        <Row>
-                                            <Col span={8}>Asset Tag</Col>
-                                            <Col span={16}>3 / 5</Col>
-                                        </Row>
-                                        <Row>
-                                            <Col span={8}>Impact</Col>
-                                            <Col span={16}>3 / 5</Col>
-                                        </Row> */}
+                                            <div className={'flex w-full'} >
+                                                <div className={' mr-20 w-32'}>
+                                                    Asset Type
+                                                </div>
+                                                <div className={' w-auto'}>
+                                                    {asset_type.name}
+                                                </div>
+                                            </div>
+                                            <div className={'flex w-full'} >
+                                                <div className={' mr-20 w-32'}>
+                                                    Asset Tag
+                                                </div>
+                                                <div className={' w-auto'}>
+                                                    Isi Apanih
+                                                </div>
+                                            </div>
+                                            <div className={'flex w-full'} >
+                                                <div className={' mr-20 w-32'}>
+                                                    Impact
+                                                </div>
+                                                <div className={' w-auto'}>
+                                                    Isi Apanih
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </TabPane>
+                                <TabPane tab={'Relationships'} key={2}>
+                                    Content of tab Relationships
+                                </TabPane>
+                                <TabPane tab={'Associations'} key={3}>
+                                    Content of tab Associations
+                                </TabPane>
+                                <TabPane tab={'Purchase Orders'} key={4}>
+                                    Content of tab Purchase Orders
+                                </TabPane>
+                                <TabPane tab={'Contracts'} key={5}>
+                                    Content of tab Contracts
+                                </TabPane>
+                                <TabPane tab={'Activity'} key={6}>
+                                    <div className={'text-black text-sm flex flex-col bg-white border-gray-300 border cursor-pointer p-3 w-full'}>
+                                        <Timeline mode={'alternate'}>
+                                            {activityLog.map((doc, index) => {
+                                                var text
+                                                var data_update = ""
+                                                // console.log(Object.keys(doc.properties.attributes).length)
+                                                // console.log(Object.keys(doc.properties.attributes))
+                                                // console.log(Object.values(doc.properties.attributes))
+                                                if (doc.description == "created inventory") {
+                                                    text = "Created Inventory Named " + doc.properties.attributes.asset_name +
+                                                        ", Own by " + (doc.properties.attributes.kepemilikan == "milikSendiri" ? "Milik Sendiri" : doc.properties.attributes.kepemilikan) +
+                                                        "with Asset Type as " + doc.properties.attributes.asset_id_name +
+                                                        ", Vendor as " + doc.properties.attributes.vendor_name +
+                                                        ", Status as " + doc.properties.attributes.status
+                                                } else {
+                                                    for (let i = 0; i < Object.keys(doc.properties.attributes).length; i++) {
+                                                        data_update = data_update + Object.keys(doc.properties.attributes)[i] + " changed to " + Object.values(doc.properties.attributes)[i] + ", "
+                                                    }
+                                                    text = data_update
+                                                }
+                                                return (
+                                                    <Timeline.Item key={index} label={timeConverter(Date.parse(doc.date))}>
+                                                        {text}
+                                                    </Timeline.Item>
+                                                )
+                                            })
+                                            }
+                                        </Timeline>
+                                    </div>
+                                </TabPane>
+                            </Tabs>
+                        </div>
+                        <div className="col-span-3 flex-col space-y-3 flex md:hidden">
+                            <Tabs defaultActiveKey="1" tabPosition={"top"}>
+                                <TabPane tab={'Overview'} key={1}>
+                                    <div>
+                                        <div className={'py-2'}>
+                                            General
+                                        </div>
+                                        <div className={'text-black text-sm flex flex-col bg-white border-gray-300 border cursor-pointer p-3'}>
                                             <div className={'flex w-full'} >
                                                 <div className={' mr-20 w-32'}>
                                                     Asset Type

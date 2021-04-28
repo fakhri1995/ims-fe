@@ -1,6 +1,5 @@
 import httpcookie from 'cookie'
 import Layout from '../../../../../components/layout-dashboard'
-import Link from 'next/link'
 import { useState } from 'react'
 import st from "../../../../../components/layout-dashboard.module.css"
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons'
@@ -8,38 +7,38 @@ import { Form, Input, notification, Button, message, Upload, DatePicker } from '
 import { useRouter } from 'next/router'
 import moment from 'moment'
 
-function UpdateLocations({ initProps, dataProfile, sidemenu, dataLocations, dataBranchDetail, companyid }) {
+function UpdateLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, companyid }) {
     const rt = useRouter()
     const tok = initProps
     const originPath = "Admin"
     const [updateLocationForm] = Form.useForm()
-    const pathArr = ['admin', 'company', /*`${dataDetailCompany.data.data.company_id}`*/ 'update location']
+    const pathArr = ['admin', 'company', `mig`, 'Update branch location']
     const [par, setPar] = useState()
 
     //flattening dataLocations
-    function flattenArr(dataassets) {
-        const result = []
-        dataassets.forEach((item, idx) => {
-            const { id, title, key, value, children } = item
-            result.push({
-                id: id,
-                title: title,
-                key: key,
-                value: value
-            })
-            if (children) {
-                result.push(...flattenArr(children))
-            }
-        })
-        return result
-    }
-    const flattenDataLocations = flattenArr(dataLocations.data)
-    var dataLocationsDetail = {}
-    flattenDataLocations.forEach(item => {
-        if (item.id == companyid) {
-            dataLocationsDetail = item
-        }
-    })
+    // function flattenArr(dataassets) {
+    //     const result = []
+    //     dataassets.forEach((item, idx) => {
+    //         const { id, title, key, value, children } = item
+    //         result.push({
+    //             id: id,
+    //             title: title,
+    //             key: key,
+    //             value: value
+    //         })
+    //         if (children) {
+    //             result.push(...flattenArr(children))
+    //         }
+    //     })
+    //     return result
+    // }
+    // const flattenDataLocations = flattenArr(dataLocations.data)
+    // var dataLocationsDetail = {}
+    // flattenDataLocations.forEach(item => {
+    //     if (item.id == companyid) {
+    //         dataLocationsDetail = item
+    //     }
+    // })
 
     //useState
     if (dataBranchDetail.data.tanggal_pkp === null) {
@@ -454,20 +453,20 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonBD = await resourcesBD.json()
     const dataBranchDetail = resjsonBD
 
-    const resourcesGL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-        },
-    })
-    const resjsonGL = await resourcesGL.json()
-    const dataLocations = resjsonGL
+    // const resourcesGL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //     },
+    // })
+    // const resjsonGL = await resourcesGL.json()
+    // const dataLocations = resjsonGL
 
     return {
         props: {
             initProps,
             dataProfile,
-            dataLocations,
+            // dataLocations,
             dataBranchDetail,
             sidemenu: "4",
             companyid

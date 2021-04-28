@@ -1022,7 +1022,7 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
                     </TabPane>
                 </Tabs>
             </div>
-            <div className="px-5 pt-5 pb-0 bg-white block md:hidden" >
+            <div className="pt-5 pb-0 bg-white block md:hidden" >
                 <Tabs tabPosition={`top`} defaultActiveKey={activeTab}>
                     <TabPane tab="Profile" key={`profile`}>
                         <ClientsDetailProfile dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>

@@ -345,7 +345,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                         onCancel={() => setVisible(false)}
                         okButtonProps={{ disabled: loadingubahaktif }}
                     >
-                        Apakah anda yakin ingin menon-aktifkan akun perusahaan <strong>{dataDetailRequester.data.fullname}</strong>?
+                        Apakah anda yakin ingin menon-aktifkan akun agent <strong>{dataDetailRequester.data.fullname}</strong>?
                     </Modal>
                     <Modal
                         title="Konfirmasi untuk mengakaktifkan akun"
@@ -354,7 +354,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                         onCancel={() => setVisiblenon(false)}
                         okButtonProps={{ disabled: loadingubahnonaktif }}
                     >
-                        Apakah anda yakin ingin melakukan aktivasi akun perusahaan <strong>{dataDetailRequester.data.fullname}</strong>?`
+                        Apakah anda yakin ingin melakukan aktivasi akun agent <strong>{dataDetailRequester.data.fullname}</strong>?`
                     </Modal>
                     <Modal
                         title="Ubah Password"

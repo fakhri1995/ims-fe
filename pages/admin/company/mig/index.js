@@ -334,7 +334,7 @@ function MigIndexLocations({ dataLocations, dataDetailCompany, dataBranchList, t
         address: '',
         phone_number: '',
         image_logo: '',
-        parent_id: ''
+        parent_id: 0
     })
     const uploadButton = (
         <div>
@@ -444,9 +444,9 @@ function MigIndexLocations({ dataLocations, dataDetailCompany, dataBranchList, t
                                     {nodeData.title}
                                 </div>
                                 <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
-                                    <Link href={`/admin/company/locations/new?parent=${nodeData.id}&companyId=${dataDetailCompany.data.company_id}`}>
-                                        <a className="mx-2 pb-1" alt="add"><PlusOutlined /></a>
-                                    </Link>
+                                    {/* <Link href={`/admin/company/locations/new?parent=${nodeData.id}&companyId=${dataDetailCompany.data.company_id}`}> */}
+                                    <a className="mx-2 pb-1" onClick={(e) => { setdrawablecreate(true) }} alt="add"><PlusOutlined /></a>
+                                    {/* </Link> */}
                                     <Link href={`/admin/company/locations/update/${nodeData.id}?parent=${nodeData.title}`}>
                                         <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                     </Link>
@@ -525,7 +525,7 @@ function MigIndexLocations({ dataLocations, dataDetailCompany, dataBranchList, t
                                 <Input name="phone_number" onChange={(e) => { setdatanew({ ...datanew, phone_number: e.target.value }) }}></Input>
                             </Form.Item>
                         </div>
-                        <div className="mb:m-4 mb-5 md:mb-0">
+                        <div className="md:m-4 mb-5 md:mb-0">
                             <Form.Item name="parent_id" label="Parent Perusahaan"
                                 rules={[
                                     {

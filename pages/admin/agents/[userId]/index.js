@@ -305,7 +305,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
                         onCancel={() => setVisible(false)}
                         okButtonProps={{ disabled: loadingubahaktif }}
                     >
-                        Apakah anda yakin ingin menon-aktifkan akun perusahaan <strong>{dataDetailAgent.data.fullname}</strong>?
+                        Apakah anda yakin ingin menon-aktifkan agent <strong>{dataDetailAgent.data.fullname}</strong>?
                     </Modal>
                     <Modal
                         title="Konfirmasi untuk mengakaktifkan akun"
@@ -314,7 +314,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
                         onCancel={() => setVisiblenon(false)}
                         okButtonProps={{ disabled: loadingubahnonaktif }}
                     >
-                        Apakah anda yakin ingin melakukan aktivasi akun perusahaan <strong>{dataDetailAgent.data.fullname}</strong>?`
+                        Apakah anda yakin ingin melakukan aktivasi akun agent <strong>{dataDetailAgent.data.fullname}</strong>?`
                     </Modal>
                     <Modal
                         title="Ubah Password"
