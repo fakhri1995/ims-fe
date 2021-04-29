@@ -173,7 +173,7 @@ function GroupsRequestersCreate({ initProps, dataProfile, dataListAccount, sidem
                                 </Radio.Group>
                                 <Row>
                                     <Col flex="auto">
-                                        <Select showSearch placeholder="Add an Agent" showArrow mode="multiple" options={dataDD} optionFilterProp="label" onChange={handleChangeAddRequester} style={{ width: '100%', padding: '0 5px', lineHeight: '2.4' }} />
+                                        <Select showSearch placeholder="Add an Requester" showArrow mode="multiple" options={dataDD} optionFilterProp="label" onChange={handleChangeAddRequester} style={{ width: '100%', padding: '0 5px', lineHeight: '2.4' }} />
                                     </Col>
                                 </Row>
                             </div>
@@ -215,7 +215,7 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList`, {
+    const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
         method: `POST`,
         headers: {
             'Authorization': JSON.parse(initProps),

@@ -73,30 +73,6 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
     }
     const handleSubmitEditAccount = () => {
         setLoadingupdate(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/updateRequesterDetail`, {
-            method: 'POST',
-            headers: {
-                'Authorization': JSON.parse(tok),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data1)
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setLoadingupdate(false)
-                if (res2.success) {
-                    notification['success']({
-                        message: res2.message,
-                        duration: 3
-                    })
-                }
-                else if (!res2.success) {
-                    notification['error']({
-                        message: res2.message.errorInfo.status_detail,
-                        duration: 3
-                    })
-                }
-            })
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateFeatureRequester`, {
             method: 'POST',
             headers: {
@@ -104,6 +80,18 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(datarole)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setLoadingupdate(false)
+            })
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateRequesterDetail`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data1)
         })
             .then(res => res.json())
             .then(res2 => {
@@ -260,6 +248,8 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                                 </div >
                             </div>
                             <div className="p-3 col-span-1 md:col-span-3">
+                                <h1 className="text-xs text-gray-600 mb-1">Email:</h1>
+                                <h1 className="text-sm text-black mb-5">{dataDetailRequester.data.email}</h1>
                                 <Form layout="vertical" initialValues={data1} form={instanceForm} onFinish={handleSubmitEditAccount}>
                                     <div className="flex flex-col mb-5">
                                         <h1 className="text-sm">ID</h1>
@@ -288,7 +278,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                                         {
                                             dataRoles.data.map((doc, idx) => {
                                                 return (
-                                                    <Option value={doc.id}>{doc.name}</Option>
+                                                    <Option key={idx} value={doc.id}>{doc.name}</Option>
                                                 )
                                             })
                                         }

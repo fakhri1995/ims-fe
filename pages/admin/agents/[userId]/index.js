@@ -72,30 +72,6 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
     }
     const handleSubmitEditAccount = () => {
         setLoadingsave(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/updateAgentDetail`, {
-            method: 'POST',
-            headers: {
-                'Authorization': JSON.parse(tok),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data1)
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setLoadingsave(false)
-                if (res2.success) {
-                    notification['success']({
-                        message: res2.message,
-                        duration: 3
-                    })
-                }
-                else if (!res2.success) {
-                    notification['error']({
-                        message: res2.message.errorInfo.status_detail,
-                        duration: 3
-                    })
-                }
-            })
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateFeatureAgent`, {
             method: 'POST',
             headers: {
@@ -103,6 +79,18 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(datarole)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setLoadingsave(false)
+            })
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateAgentDetail`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data1)
         })
             .then(res => res.json())
             .then(res2 => {
@@ -176,7 +164,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
     }
     const handleUbahPassword = () => {
         setloadingubahpass(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/changeAccountPassword`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/changeAgentPassword`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),

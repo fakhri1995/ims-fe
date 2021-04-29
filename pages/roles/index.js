@@ -67,9 +67,9 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                                     <div className="text-center text-blue-500 hover:text-blue-700 cursor-pointer" onClick={() => { setselectedrolename(record.name); getRoleUsers(record.id, index) }}>
                                         {
                                             record.member > 1 ?
-                                                <>{record.member} agents</>
+                                                <>{record.member} users</>
                                                 :
-                                                <>{record.member} agent</>
+                                                <>{record.member} user</>
                                         }
                                     </div>
                             }
@@ -231,7 +231,7 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                 <h1>Yakin ingin hapus role {currentdelete.name} ini?</h1>
             </Modal>
             <Modal
-                title={`Agent (${selectedrole.length})`}
+                title={`${selectedrolename} (${selectedrole.length})`}
                 visible={modalviewagents}
                 onCancel={() => { setmodalviewagents(false) }}
                 style={{ top: `3rem` }}
@@ -243,7 +243,7 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                 {
                     selectedrole.map((doc, idx) => {
                         return (
-                            <p className="mb-0 text-xs">{doc}</p>
+                            <h1 className="mb-3 text-xs">- {doc}</h1>
                         )
                     })
                 }
