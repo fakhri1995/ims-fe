@@ -103,7 +103,7 @@ function Software({ }) {
                             </div>
                         </div>
                         <div className={'w-full flex justify-center pb-8'}>
-                            <Button onClick={softwareForm.submit} type="text" className={'mx-2 px-4 border-green-800 text-white'} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Submit</p></Button>
+                            <Button onClick={softwareForm.submit} type="text" className={'button-hover mx-2 px-4 border-green-800 text-white'} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Submit</p></Button>
                         </div>
                     </div>
                 </Form>

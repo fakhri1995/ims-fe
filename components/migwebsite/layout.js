@@ -33,7 +33,7 @@ function layout({ children }) {
                         </Button>
                         <Button type="text" className={'mx-2 '} style={{fontWeight:'600', background:'white'}} key="1">Company</Button>
                         <Button type="text" className={'mx-2 mr-4 '} style={{fontWeight:'600', background:'white'}} key="2">Solution</Button>
-                        <Button type="text" className={'mx-2 px-4 border-green-800 text-white'} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Get Started</p></Button>
+                        <Button type="text" className={'button-hover mx-2 px-4 border-green-800 text-white '} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Get Started</p></Button>
                     </div>
                 </Header>
                 <Content className="site-layout" style={{ padding: '0px', marginTop: 64 }}>
@@ -57,7 +57,7 @@ function layout({ children }) {
                             <div className={'flex flex-col md:flex-row px-0 md:px-20'}>
                                 <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
                                     <p className={'font-bold py-1'}>Company</p>
-                                    <p className={' py-1'}>About Us</p>
+                                    <Link href={{pathname: '/aboutus'}}><p className={'cursor-pointer py-1'}>About Us</p></Link>
                                     <p className={' py-1'}>Careers</p>
                                 </div>
                                 <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
@@ -69,7 +69,7 @@ function layout({ children }) {
                                 </div>
                                 <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
                                     <p className={'font-bold py-1'}>Help</p>
-                                    <p className={' py-1'}>Contact Us</p>
+                                    <p className={'cursor-pointer py-1'}>Contact Us</p>
                                 </div>
                             </div>
                     </div>

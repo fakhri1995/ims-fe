@@ -28,16 +28,16 @@ function Hardware({ }) {
                 <div className={'pb-12'}>
                     <p className={'text-base w-full font-bold'}>We optimize your costs by leasing and maintaining a variety of electronic equipment nation-wide. We have up to 20+ cities points across Indonesia to ensure that the electronics you rent are well-managed.</p>
                 </div>
-                <Button type="text" className={'mx-2 px-4 border-green-800 text-white'} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Get a quote</p></Button>
+                <Button type="text" className={'button-hover mx-2 px-4 border-green-800 text-white'} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Get a quote</p></Button>
             </section>
             <section className={'section3hardware justify-center'} >
                 <div className={'flex relative justify-start pt-4 md:pt-16 pb-4 md:pb-0 px-4 md:px-20'} style={{flexFlow:'wrap'}}>
-                    <div style={{borderRadius:'10px'}} className={'relative item-hardware'}><p className={'text-center w-full absolute bottom-2'}>Tablet</p></div>
-                    <div style={{borderRadius:'10px'}} className={'relative item-hardware'}><p className={'text-center w-full absolute bottom-2'}>Tablet</p></div>
-                    <div style={{borderRadius:'10px'}} className={'relative item-hardware'}><p className={'text-center w-full absolute bottom-2'}>Tablet</p></div>
-                    <div style={{borderRadius:'10px'}} className={'relative item-hardware'}><p className={'text-center w-full absolute bottom-2'}>Tablet</p></div>
-                    <div style={{borderRadius:'10px'}} className={'relative item-hardware'}><p className={'text-center w-full absolute bottom-2'}>Tablet</p></div>
-                    <div style={{borderRadius:'10px'}} className={'relative item-hardware'}><p className={'text-center w-full absolute bottom-2'}>Tablet</p></div>
+                    <div style={{borderRadius:'10px'}} className={'relative item-hardware'}><p className={'text-center w-full absolute bottom-2'}>Tablet1</p></div>
+                    <div style={{borderRadius:'10px'}} className={'relative item-hardware'}><p className={'text-center w-full absolute bottom-2'}>Tablet2</p></div>
+                    <div style={{borderRadius:'10px'}} className={'relative item-hardware'}><p className={'text-center w-full absolute bottom-2'}>Tablet3</p></div>
+                    <div style={{borderRadius:'10px'}} className={'relative item-hardware'}><p className={'text-center w-full absolute bottom-2'}>Tablet4</p></div>
+                    <div style={{borderRadius:'10px'}} className={'relative item-hardware'}><p className={'text-center w-full absolute bottom-2'}>Tablet5</p></div>
+                    <div style={{borderRadius:'10px'}} className={'relative item-hardware'}><p className={'text-center w-full absolute bottom-2'}>Tablet6</p></div>
                 </div>
             </section>
             <section className={'section5landingpage'}>

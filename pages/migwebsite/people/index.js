@@ -30,7 +30,7 @@ function People({ }) {
                 <div className={'pb-12'}>
                     <p className={'text-base w-full font-bold'}>We help you reduce complexity in talent sourcing and management through staff augmentation. In typical cases, our talents have but not limited to the following specifications and deliverable</p>
                 </div>
-                <Button type="text" className={'mx-2 px-4 border-green-800 text-white'} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Get a quote</p></Button>
+                <Button type="text" className={'button-hover mx-2 px-4 border-green-800 text-white'} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Get a quote</p></Button>
             </section>
             <section className={'section3people justify-center px-4 md:px-24 lg:md-px-28 xl:px-40'} >
                 <div className={'border-2 rounded-sm py-8 px-8'}>

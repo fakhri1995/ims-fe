@@ -71,7 +71,7 @@ function Advantages({ }) {
                     <ArrowRightOutlined/>
                 </div>
                 <div className={'flex-col text-2xl px-12 py-20 w-full border-r'}>
-                    <p>Realible partner</p>
+                    <p>Reliable partner</p>
                     <ArrowRightOutlined/>
                 </div>
                 <div className={'flex-col text-2xl px-12 py-20 w-full border-r'}>

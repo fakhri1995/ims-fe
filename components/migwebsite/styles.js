@@ -6,6 +6,26 @@ import React from 'react'
 const Styles = (props) => (
   <div>
     <style jsx global>{`
+        .coverage-list {
+            height: auto; /*your fixed height*/
+            -webkit-column-count: 3;
+              -moz-column-count: 3;
+                    column-count: 3;
+        }
+        @media (max-width: 768px){
+          .coverage-list {
+              height: auto; /*your fixed height*/
+              -webkit-column-count: 2;
+                -moz-column-count: 2;
+                      column-count: 2;
+          }
+        }
+        // .coverage-list li {
+        //     display: inline-block; /*necessary*/
+        // }
+        .button-hover:hover {
+          background:#1cad5d!important;
+        }
         .item-hardware{
           background:#E8E6EE;
           flex: 0 1 calc(33.3333333333334% - 18vw);
