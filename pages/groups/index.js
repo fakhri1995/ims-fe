@@ -16,18 +16,34 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
     const { TabPane } = Tabs;
     // console.log(dataGroups)
     //--------hook modal delete group-------------
+    const [loadingdelete, setloadingdelete] = useState(false)
     const [warningDelete, setWarningDelete] = useState({
         istrue: false,
         key: null,
         name: ""
     })
-    const onClickModalDeleteGroup = (istrue, record) => {
-        setWarningDelete({
-            ...warningDelete,
-            ["istrue"]: istrue,
-            ["key"]: record.key,
-            ["name"]: record.name
-        })
+    const [warningDeleteRequester, setWarningDeleteRequester] = useState({
+        istrue: false,
+        key: null,
+        name: ""
+    })
+    const onClickModalDeleteGroup = (istrue, record, type) => {
+        if (type === 'agents') {
+            setWarningDelete({
+                ...warningDelete,
+                ["istrue"]: istrue,
+                ["key"]: record.key,
+                ["name"]: record.name
+            })
+        }
+        else if (type === 'requesters') {
+            setWarningDeleteRequester({
+                ...warningDeleteRequester,
+                ["istrue"]: istrue,
+                ["key"]: record.key,
+                ["name"]: record.name
+            })
+        }
     }
     //-------------------------------------------
 
@@ -54,8 +70,9 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
     //-----------------------------------------------------
 
     //------------------handle delete groups-------------------
-    const handleDeleteGroup = (key) => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteGroup?id=${key}`, {
+    const handleDeleteGroupAgent = (key) => {
+        setloadingdelete(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteAgentGroup?id=${key}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -69,6 +86,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                         message: res2.message,
                         duration: 3
                     })
+                    setloadingdelete(false)
                     setTimeout(() => {
                         rt.push(`/groups?originPath=Admin`)
                     }, 500)
@@ -79,6 +97,38 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                         message: res2.message,
                         duration: 3
                     })
+                    setloadingdelete(false)
+                }
+            })
+    }
+    const handleDeleteGroupRequester = (key) => {
+        setloadingdelete(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteRequesterGroup?id=${key}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': JSON.parse(tok),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    setWarningDeleteRequester(false, null)
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setloadingdelete(false)
+                    setTimeout(() => {
+                        rt.push(`/groups?originPath=Admin`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    setWarningDeleteRequester(false, null)
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setloadingdelete(false)
                 }
             })
     }
@@ -143,12 +193,17 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                             },
                             children:
                                 <>
-                                    {/* <Tooltip placement="topLeft" title={"Delete"}> */}
-                                    <Button onClick={() => { onClickModalDeleteGroup(true, record) }}>
-                                        <a><DeleteOutlined /></a>
-                                    </Button>
-
-                                    {/* </Tooltip> */}
+                                    {
+                                        variabel === "agents"
+                                            ?
+                                            <Button onClick={() => { onClickModalDeleteGroup(true, record, "agents") }}>
+                                                <a><DeleteOutlined /></a>
+                                            </Button>
+                                            :
+                                            <Button onClick={() => { onClickModalDeleteGroup(true, record, "requesters") }}>
+                                                <a><DeleteOutlined /></a>
+                                            </Button>
+                                    }
                                 </>
                         }
                     }
@@ -178,7 +233,6 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
             </Menu>
         )
     }
-    console.log
     return (
         <Layout tok={tok} dataDetailGroup={dataDetailGroup} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
@@ -192,7 +246,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                                         {/* <div className=" text-white text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-2 w-32 text-center" > */}
                                         {/* <p onClick={e => e.preventDefault()}> */}
                                         <Button type="primary" size="large">
-                                            Buat Groups&nbsp;<DownOutlined style={{ verticalAlign: '0.2em' }} />
+                                            Add New&nbsp;<DownOutlined style={{ verticalAlign: '0.2em' }} />
                                         </Button>
                                         {/* </p> */}
                                         {/* </div> */}
@@ -215,19 +269,25 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                         </div>
 
                         <Modal
-                            title="Konfirmasi untuk menghapus grup"
+                            title="Konfirmasi untuk menghapus grup agent"
                             visible={warningDelete.istrue}
-                            onOk={() => { handleDeleteGroup(warningDelete.key) }}
+                            okButtonProps={{ disabled: loadingdelete }}
+                            onOk={() => { handleDeleteGroupAgent(warningDelete.key) }}
                             onCancel={() => setWarningDelete(false, null)}
                         >
-                            Apakah anda yakin ingin menghapus grup <strong>{warningDelete.name}</strong>?
+                            Apakah anda yakin ingin menghapus grup agent <strong>{warningDelete.name}</strong>?
+                            </Modal>
+                        <Modal
+                            title="Konfirmasi untuk menghapus grup requester"
+                            visible={warningDeleteRequester.istrue}
+                            okButtonProps={{ disabled: loadingdelete }}
+                            onOk={() => { handleDeleteGroupRequester(warningDeleteRequester.key) }}
+                            onCancel={() => setWarningDeleteRequester(false, null)}
+                        >
+                            Apakah anda yakin ingin menghapus grup requester <strong>{warningDeleteRequester.name}</strong>?
                             </Modal>
                     </div>
                     <div className="flex flex-col space-y-3 px-4">
-                        {/* <div className="font-semibold text-sm">Groups</div>
-                        <p className="font-normal text-sm">
-                            You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that the same agent can be a member of multiple groups as well
-                        </p> */}
                     </div>
                 </div>
             </>
@@ -248,7 +308,7 @@ export async function getServerSideProps({ req, res }) {
             initProps = cookiesJSON.token
         }
     }
-    const resourcesGetGroupsAgents = await fetch(`https://boiling-thicket-46501.herokuapp.com/getGroups`, {
+    const resourcesGetGroupsAgents = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentGroups`, {
         method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
@@ -257,7 +317,7 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGetGroupsAgents = await resourcesGetGroupsAgents.json()
     const dataGroupsAgents = resjsonGetGroupsAgents
 
-    const resourcesGetGroupsRequesters = await fetch(`https://boiling-thicket-46501.herokuapp.com/getGroups?is_agent=false`, {
+    const resourcesGetGroupsRequesters = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterGroups`, {
         method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)

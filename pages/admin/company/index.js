@@ -289,10 +289,10 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
             <div className="flex justify-start md:justify-end p-3 md:border-t-2 md:border-b-2 bg-white mb-4 md:mb-8">
                 <div className=" w-full flex justify-between items-center px-2">
                     <h1 className="font-bold">Clients</h1>
-                    <Button type="primary" size="large" onClick={() => { setDrawablecreate(true) }}>Tambah Perusahaan</Button>
+                    <Button type="primary" size="large" onClick={() => { setDrawablecreate(true) }}>Add New</Button>
                 </div>
             </div>
-            <div className="p-5 mt-5 flex flex-col space-y-5 shadow-md rounded-md w-full h-auto bg-white">
+            <div className="p-5 mt-5 flex flex-col space-y-5 rounded-md w-full h-auto bg-white">
                 <Table
                     pagination={{ pageSize: 6 }}
                     scroll={{ x: 200 }}
@@ -429,7 +429,10 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
                                 </Select>
                             </Form.Item>
                         </div>
-                        <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn} style={{ marginBottom: `1rem` }}>Simpan</Button>
+                        <div className="flex justify-end">
+                        <Button type='default' onClick={()=>{setDrawablecreate(false)}} style={{marginRight:`1rem`}}>Cancel</Button>
+                        <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn} style={{ marginBottom: `1rem` }}>Save</Button>
+                        </div>
                     </Form>
                 </div>
             </Drawer>

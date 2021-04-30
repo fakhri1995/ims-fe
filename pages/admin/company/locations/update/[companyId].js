@@ -1,57 +1,66 @@
 import httpcookie from 'cookie'
 import Layout from '../../../../../components/layout-dashboard'
-import Link from 'next/link'
 import { useState } from 'react'
 import st from "../../../../../components/layout-dashboard.module.css"
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons'
-import { Form, Input, notification, Button, Upload, message } from 'antd'
+import { Form, Input, notification, Button, message, Upload, DatePicker } from 'antd'
 import { useRouter } from 'next/router'
+import moment from 'moment'
 
-function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, dataLocations, companyid }) {
+function UpdateLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, companyid }) {
     const rt = useRouter()
     const tok = initProps
     const originPath = "Admin"
     const [updateLocationForm] = Form.useForm()
-    const pathArr = ['admin', 'company', `${dataDetailCompany.data.data.company_id}`, 'update location']
+    const pathArr = ['admin', 'company', `mig`, 'Update branch location']
     const [par, setPar] = useState()
 
     //flattening dataLocations
-    function flattenArr(dataassets) {
-        const result = []
-        dataassets.forEach((item, idx) => {
-            const { id, title, key, value, children } = item
-            result.push({
-                id: id,
-                title: title,
-                key: key,
-                value: value
-            })
-            if (children) {
-                result.push(...flattenArr(children))
-            }
-        })
-        return result
-    }
-    const flattenDataLocations = flattenArr(dataLocations.data)
-    var dataLocationsDetail = {}
-    flattenDataLocations.forEach(item => {
-        if (item.id == companyid) {
-            dataLocationsDetail = item
-        }
-    })
+    // function flattenArr(dataassets) {
+    //     const result = []
+    //     dataassets.forEach((item, idx) => {
+    //         const { id, title, key, value, children } = item
+    //         result.push({
+    //             id: id,
+    //             title: title,
+    //             key: key,
+    //             value: value
+    //         })
+    //         if (children) {
+    //             result.push(...flattenArr(children))
+    //         }
+    //     })
+    //     return result
+    // }
+    // const flattenDataLocations = flattenArr(dataLocations.data)
+    // var dataLocationsDetail = {}
+    // flattenDataLocations.forEach(item => {
+    //     if (item.id == companyid) {
+    //         dataLocationsDetail = item
+    //     }
+    // })
 
     //useState
-    const [dataloc, setdataloc] = useState(dataLocations.data)
+    if (dataBranchDetail.data.tanggal_pkp === null) {
+        dataBranchDetail.data.tanggal_pkp = new Date()
+    }
     const [dataupdate, setdataupdate] = useState({
         id: parseInt(companyid),
-        company_name: dataDetailCompany.data.data.company_name,
-        role: 2,
-        address: dataDetailCompany.data.data.address,
-        phone_number: dataDetailCompany.data.data.phone_number,
-        image_logo: dataDetailCompany.data.data.image_logo,
+        company_name: dataBranchDetail.data.company_name,
+        address: dataBranchDetail.data.address,
+        phone_number: dataBranchDetail.data.phone_number,
+        image_logo: dataBranchDetail.data.image_logo,
+        singkatan: dataBranchDetail.data.singkatan,
+        tanggal_pkp: moment(dataBranchDetail.data.tanggal_pkp),
+        penanggung_jawab: dataBranchDetail.data.penanggung_jawab,
+        npwp: dataBranchDetail.data.npwp,
+        fax: dataBranchDetail.data.fax,
+        email: dataBranchDetail.data.email,
+        website: dataBranchDetail.data.website,
     })
     const [loadingupdate, setloadingupdate] = useState(false)
     const [loadingupload, setloadingupload] = useState(false)
+    const [editable, seteditable] = useState(false)
 
     //Upload Image
     const beforeUploadProfileImage = (file) => {
@@ -95,26 +104,7 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, 
             <div style={{ marginTop: 8 }}>Unggah</div>
         </div>
     );
-    // const treeData = [
-    //     {
-    //         title: 'Node1',
-    //         value: '0-0',
-    //         children: [
-    //             {
-    //                 title: 'Child Node1',
-    //                 value: '0-0-1',
-    //             },
-    //             {
-    //                 title: 'Child Node2',
-    //                 value: '0-0-2',
-    //             },
-    //         ],
-    //     },
-    //     {
-    //         title: 'Node2',
-    //         value: '0-1',
-    //     },
-    // ];
+
     //onChange
     const onChangeParent = (value) => {
         setPar(value)
@@ -133,7 +123,7 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, 
     //Handler
     const handleUpdateLocationsMig = () => {
         setloadingupdate(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/updateCompanyDetail`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateCompanyBranch`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -175,88 +165,202 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, 
     }
 
     return (
-        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} dataDetailCompany={dataDetailCompany} st={st}>
+        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} dataDetailCompany={dataBranchDetail} st={st}>
             <div className="w-full h-auto border-t border-opacity-30 border-gray-500 bg-white">
                 <div className="grid grid-cols-1 md:grid-cols-4">
-                    <div className="col-span-1 md:col-span-3 flex flex-col">
+                    <div className=" col-span-1 md:col-span-4">
                         <div className="p-2 md:p-5 border-b flex mb-5 justify-between">
                             <div>
-                                <h1 className="mt-2 text-sm font-bold">Update Lokasi</h1>
-                                <h1 className="mt-2 text-xs font-medium">{dataDetailCompany.data.data.company_name}</h1>
+                                <h1 className="mt-2 text-sm font-bold">Update Location</h1>
+                                <h1 className="mt-2 text-xs font-medium">{dataBranchDetail.data.company_name}</h1>
                             </div>
-                            <div className="flex mx-2">
-                                <Link href={`/admin/company/mig`}>
-                                    <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batalkan</Button>
-                                    {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md mx-2">Cancel</button> */}
-                                </Link>
-                                {/* <Button type="default" size="middle" style={{ marginRight: `1rem` }} onClick={handleUpdateLocationsMig}>cek</Button> */}
-                                <Button type="primary" size="middle" loading={loadingupdate} onClick={updateLocationForm.submit}>Perbarui</Button>
-                                {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md">Save</button> */}
+                            <div className="flex items-center mx-2">
+                                {
+                                    editable ?
+                                        <>
+                                            {/* <Link href={`/admin/company/mig`}> */}
+                                            <Button type="default" onClick={() => { seteditable(false) }} size="middle" style={{ marginRight: `1rem` }}>Cancel</Button>
+                                            {/* </Link> */}
+                                            <Button type="primary" size="middle" loading={loadingupdate} onClick={updateLocationForm.submit}>Update</Button>
+                                        </>
+                                        :
+                                        <Button type="primary" onClick={() => { seteditable(true) }}>Edit</Button>
+                                }
                             </div>
                         </div>
-                        <div className="p-3 col-span-1 md:col-span-1">
-                            <Upload
-                                name="profile_image"
-                                listType="picture-card"
-                                className="profileImage"
-                                showUploadList={false}
-                                beforeUpload={beforeUploadProfileImage}
-                                onChange={onChangeProfileImage}
-                            >
-                                {dataupdate.image_logo ? <img src={dataupdate.image_logo} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-                            </Upload>
+                    </div>
+                    <div className="col-span-1 md:col-span-5 grid grid-cols-1 md:grid-cols-5">
+                        <div className="p-3 col-span-1 md:col-span-1 flex justify-center">
+                            {
+                                editable ?
+                                    <Upload
+                                        name="profile_image"
+                                        listType="picture-card"
+                                        className="profileImage text-center"
+                                        showUploadList={false}
+                                        beforeUpload={beforeUploadProfileImage}
+                                        onChange={onChangeProfileImage}
+                                    >
+                                        {dataupdate.image_logo ? <img src={dataupdate.image_logo} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                                    </Upload>
+                                    :
+                                    <img src={dataupdate.image_logo} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
+                            }
                         </div>
-                        <div className="p-2 md:p-5 shadow-md">
+                        <div className="p-2 md:p-5 col-span-1 md:col-span-4">
                             <Form layout="vertical" form={updateLocationForm} onFinish={handleUpdateLocationsMig} initialValues={dataupdate}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 mb-5">
-                                    <Form.Item name="company_name" style={{ marginRight: `1rem` }} label="Nama Anak Perusahaan"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Nama Anak Perusahaan harus diisi',
-                                            },
-                                        ]}
-                                    >
-                                        <Input defaultValue={dataupdate.company_name} name="company_name" id="company_name" allowClear onChange={onChangeForm} />
-                                    </Form.Item>
-                                    {/* <Form.Item name="parent" style={{ marginRight: `1rem` }} label="Parent Perusahaan"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Parent Perusahaan harus diisi',
-                                            },
-                                        ]}
-                                    >
-                                        <TreeSelect
-                                            style={{ width: '100%' }}
-                                            defaultValue={dataupdate.parent_id}
-                                            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                            treeData={dataloc}
-                                            placeholder="Pilih parent"
-                                            treeDefaultExpandAll
-                                            onChange={(value) => { onChangeParent(value) }}
-                                        />
-                                    </Form.Item> */}
-                                    <Form.Item name="address" style={{ marginRight: `1rem` }} label="Alamat Lengkap"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'ALamat harus diisi',
-                                            },
-                                        ]}
-                                    >
-                                        <Input defaultValue={dataupdate.address} name="address" id="address" allowClear onChange={onChangeForm} />
-                                    </Form.Item>
-                                    <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="No. Telepeon"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'No. Telepon harus diisi',
-                                            },
-                                        ]}
-                                    >
-                                        <Input defaultValue={dataupdate.phone_number} name="phone_number" id="phone_number" allowClear onChange={onChangeForm} />
-                                    </Form.Item>
+                                    {
+                                        editable ?
+                                            <Form.Item name="company_name" style={{ marginRight: `1rem` }} label="Nama Anak Perusahaan"
+                                                rules={[
+                                                    {
+                                                        required: true,
+                                                        message: 'Nama Anak Perusahaan harus diisi',
+                                                    },
+                                                ]}
+                                            >
+                                                <Input defaultValue={dataupdate.company_name} name="company_name" id="company_name" allowClear onChange={onChangeForm} />
+                                            </Form.Item>
+                                            :
+                                            <>
+                                                <div className="col-span-1 flex flex-col mb-5">
+                                                    <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
+                                                    <h1 className="text-sm font-normal text-black">{dataupdate.company_name}</h1>
+                                                </div>
+                                            </>
+                                    }
+                                    {
+                                        editable ?
+                                            <Form.Item name="address" style={{ marginRight: `1rem` }} label="Alamat Lengkap"
+                                                rules={[
+                                                    {
+                                                        required: true,
+                                                        message: 'Alamat harus diisi',
+                                                    },
+                                                ]}
+                                            >
+                                                <Input defaultValue={dataupdate.address} name="address" id="address" allowClear onChange={onChangeForm} />
+                                            </Form.Item>
+                                            :
+                                            <>
+                                                <div className="col-span-1 flex flex-col mb-5">
+                                                    <h1 className="font-semibold text-sm">Alamat:</h1>
+                                                    <h1 className="text-sm font-normal text-black">{dataupdate.address}</h1>
+                                                </div>
+                                            </>
+                                    }
+                                    {
+                                        editable ?
+                                            <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="No. Telepeon"
+                                                rules={[
+                                                    {
+                                                        required: true,
+                                                        message: 'No. Telepon harus diisi',
+                                                    },
+                                                ]}
+                                            >
+                                                <Input defaultValue={dataupdate.phone_number} name="phone_number" id="phone_number" allowClear onChange={onChangeForm} />
+                                            </Form.Item>
+                                            :
+                                            <>
+                                                <div className="col-span-1 flex flex-col mb-5">
+                                                    <h1 className="font-semibold text-sm">No. Telepon:</h1>
+                                                    <h1 className="text-sm font-normal text-black">{dataupdate.phone_number}</h1>
+                                                </div>
+                                            </>
+                                    }
+                                    {
+                                        editable ?
+                                            <Form.Item name="singkatan" style={{ marginRight: `1rem` }} label="Singkatan">
+                                                <Input defaultValue={dataupdate.singkatan} name="singkatan" id="singkatan" allowClear onChange={onChangeForm} />
+                                            </Form.Item>
+                                            :
+                                            <>
+                                                <div className="col-span-1 flex flex-col mb-5">
+                                                    <h1 className="font-semibold text-sm">Singkatan:</h1>
+                                                    <h1 className="text-sm font-normal text-black">{dataupdate.singkatan}</h1>
+                                                </div>
+                                            </>
+                                    }
+                                    {
+                                        editable ?
+                                            <Form.Item name="tanggal_pkp" style={{ marginRight: `1rem` }} label="Tanggal PKP">
+                                                <DatePicker onChange={(date, dateString) => { setdataupdate({ ...dataupdate, tanggal_pkp: moment(date) }) }} style={{ width: `100%` }} defaultValue={dataupdate.tanggal_pkp}/>
+                                            </Form.Item>
+                                            :
+                                            <>
+                                                <div className="col-span-1 flex flex-col mb-5">
+                                                    <h1 className="font-semibold text-sm">Tanggal PKP:</h1>
+                                                    <h1 className="text-sm font-normal text-black">{moment(dataupdate.tanggal_pkp).locale('id').format('LL')}</h1>
+                                                </div>
+                                            </>
+                                    }
+                                    {
+                                        editable ?
+                                            <Form.Item name="penanggung_jawab" style={{ marginRight: `1rem` }} label="Penanggung Jawab">
+                                                <Input defaultValue={dataupdate.penanggung_jawab} name="penanggung_jawab" id="penanggung_jawab" allowClear onChange={onChangeForm} />
+                                            </Form.Item>
+                                            :
+                                            <>
+                                                <div className="col-span-1 flex flex-col mb-5">
+                                                    <h1 className="font-semibold text-sm">Penanggung Jawab:</h1>
+                                                    <h1 className="text-sm font-normal text-black">{dataupdate.penanggung_jawab}</h1>
+                                                </div>
+                                            </>
+                                    }
+                                    {
+                                        editable ?
+                                            <Form.Item name="npwp" style={{ marginRight: `1rem` }} label="NPWP">
+                                                <Input defaultValue={dataupdate.npwp} name="npwp" id="npwp" allowClear onChange={onChangeForm} />
+                                            </Form.Item>
+                                            :
+                                            <>
+                                                <div className="col-span-1 flex flex-col mb-5">
+                                                    <h1 className="font-semibold text-sm">NPWP:</h1>
+                                                    <h1 className="text-sm font-normal text-black">{dataupdate.npwp}</h1>
+                                                </div>
+                                            </>
+                                    }
+                                    {
+                                        editable ?
+                                            <Form.Item name="fax" style={{ marginRight: `1rem` }} label="Fax">
+                                                <Input defaultValue={dataupdate.fax} name="fax" id="fax" allowClear onChange={onChangeForm} />
+                                            </Form.Item>
+                                            :
+                                            <>
+                                                <div className="col-span-1 flex flex-col mb-5">
+                                                    <h1 className="font-semibold text-sm">Fax:</h1>
+                                                    <h1 className="text-sm font-normal text-black">{dataupdate.fax}</h1>
+                                                </div>
+                                            </>
+                                    }
+                                    {
+                                        editable ?
+                                            <Form.Item name="email" style={{ marginRight: `1rem` }} label="Email">
+                                                <Input defaultValue={dataupdate.email} name="email" id="email" allowClear onChange={onChangeForm} />
+                                            </Form.Item>
+                                            :
+                                            <>
+                                                <div className="col-span-1 flex flex-col mb-5">
+                                                    <h1 className="font-semibold text-sm">Email:</h1>
+                                                    <h1 className="text-sm font-normal text-black">{dataupdate.email}</h1>
+                                                </div>
+                                            </>
+                                    }
+                                    {
+                                        editable ?
+                                            <Form.Item name="website" style={{ marginRight: `1rem` }} label="Website">
+                                                <Input defaultValue={dataupdate.website} name="website" id="website" allowClear onChange={onChangeForm} />
+                                            </Form.Item>
+                                            :
+                                            <>
+                                                <div className="col-span-1 flex flex-col mb-5">
+                                                    <h1 className="font-semibold text-sm">Website:</h1>
+                                                    <h1 className="text-sm font-normal text-black">{dataupdate.website}</h1>
+                                                </div>
+                                            </>
+                                    }
                                 </div>
                                 <h1 className="text-sm font-semibold">Address</h1>
                                 <div className="grid grid-cols-1 md:grid-cols-2 mb-5">
@@ -283,16 +387,26 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataDetailCompany, 
                                         </Form.Item>
                                     </div>
                                 </div>
+                                {/* <Form.Item name="parent" style={{ marginRight: `1rem` }} label="Parent Perusahaan"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Parent Perusahaan harus diisi',
+                                            },
+                                        ]}
+                                    >
+                                        <TreeSelect
+                                            style={{ width: '100%' }}
+                                            defaultValue={dataupdate.parent_id}
+                                            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                            treeData={dataloc}
+                                            placeholder="Pilih parent"
+                                            treeDefaultExpandAll
+                                            onChange={(value) => { onChangeParent(value) }}
+                                        />
+                                    </Form.Item> */}
                             </Form>
                         </div>
-                    </div>
-                    <div className="col-span-1 md:col-span-1 flex flex-col p-2 md:p-5">
-                        <h1 className="text-xs md:text-sm font-semibold mb-5">Locations</h1>
-                        <p className="text-xs md:text-sm">
-                            Freshservice lets you add location details into your service desk. You can create top level locations and add child locations under them. Like for example if your company operates out of multiple places, you could have the country name at the top level followed by the state, district and city.
-                        <br /><br />
-                        You can specify the location while creating a new asset and segregate them based on the location.
-                        </p>
                     </div>
                 </div>
             </div>
@@ -328,7 +442,7 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyDetail`, {
+    const resourcesBD = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyBranchDetail`, {
         method: `POST`,
         headers: {
             'Authorization': JSON.parse(initProps),
@@ -336,24 +450,24 @@ export async function getServerSideProps({ req, res, params }) {
         },
         body: JSON.stringify(reqBodyCompanyDetail)
     })
-    const resjsonGC = await resourcesGC.json()
-    const dataDetailCompany = resjsonGC
+    const resjsonBD = await resourcesBD.json()
+    const dataBranchDetail = resjsonBD
 
-    const resourcesGL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-        },
-    })
-    const resjsonGL = await resourcesGL.json()
-    const dataLocations = resjsonGL
+    // const resourcesGL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //     },
+    // })
+    // const resjsonGL = await resourcesGL.json()
+    // const dataLocations = resjsonGL
 
     return {
         props: {
             initProps,
             dataProfile,
-            dataDetailCompany,
-            dataLocations,
+            // dataLocations,
+            dataBranchDetail,
             sidemenu: "4",
             companyid
         },

@@ -228,7 +228,7 @@ function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
                     <div className=" col-span-1 md:col-span-4 flex flex-col" id="formAgentsWrapper">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
-                                <h1 className="font-semibold text-base w-auto pt-2">Daftar Inventori</h1>
+                                <h1 className="font-semibold text-base w-auto pt-2">Inventories</h1>
                                 <div className="flex space-x-2">
                                     <Link href={`/inventories/create`}>
                                         <Button type="primary" size="large">Add New</Button>

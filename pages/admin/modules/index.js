@@ -32,7 +32,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
     const [tabnameArrVal, settabnameArrVal] = useState(loop)
     const [currentselectkateg, setcurrentselectkateg] = useState(dataListModules.data[0].name)
     const [currentdesctkateg, setcurrentdesckateg] = useState(dataListModules.data[0].description)
-    const [datafeature, setdatafeature] = useState([])
+    const [datafeature, setdatafeature] = useState(dataListModules.data[0].feature)
 
     //2. Create
     const [datatambahmodule, setdatatambahmodule] = useState({
@@ -198,7 +198,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                 }
             })
     }
-    const handleUpdate = ()=>{
+    const handleUpdate = () => {
         setloadingupdate(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateModuleFeature`, {
             method: 'POST',
@@ -288,9 +288,6 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                 <div>
                                     {
                                         dataListModules.data.map((doc, idx) => {
-                                            if (doc.feature === null || doc.feature === "null" || typeof (doc.feature) === undefined || typeof (doc.feature) === 'undefined') {
-                                                doc.feature = []
-                                            }
                                             return (
                                                 <>
                                                     {
@@ -415,7 +412,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                 message: 'Nama module wajib diisi',
                             },
                         ]} name="name">
-                            <Input name="name" defaultValue={currentselectkateg} disabled/>
+                            <Input name="name" defaultValue={currentselectkateg} disabled />
                         </Form.Item>
                         <Form.Item label="Deskripsi" rules={[
                             {
@@ -423,7 +420,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                 message: 'Deskripsi wajib diisi',
                             },
                         ]} style={{ marginBottom: `3rem` }} name="description">
-                            <Input name="name" defaultValue={currentdesctkateg} disabled/>
+                            <Input name="name" defaultValue={currentdesctkateg} disabled />
                         </Form.Item>
                         {/* <Input prefix={<SearchOutlined />} placeholder="Cari Fitur" style={{ borderRadius: `0.5rem`, marginBottom: `1rem` }} /> */}
                         <div className=" overflow-y-auto h-80 mb-5">
@@ -432,7 +429,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                     const checkedStatus = dataeditmodule.feature_ids.includes(doc.feature_id)
                                     return (
                                         <div key={idx} className="flex items-center hover:bg-gray-300 p-3">
-                                            <Checkbox style={{ marginRight: `1rem` }} onChange={(e) => { onChangeUpdateCheckbox(e, doc.feature_id) }} defaultChecked={checkedStatus}/> {doc.name}
+                                            <Checkbox style={{ marginRight: `1rem` }} onChange={(e) => { onChangeUpdateCheckbox(e, doc.feature_id) }} defaultChecked={checkedStatus} /> {doc.name}
                                         </div>
                                     )
                                 })

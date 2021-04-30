@@ -134,12 +134,12 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
                     <div className="col-span-1 md:col-span-4">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
-                                <h1 className="font-semibold text-base w-auto ">Roles Baru</h1>
+                                <h1 className="font-semibold text-base w-auto ">New Role</h1>
                                 <div className="flex space-x-2">
                                     <Link href="/roles?originPath=Admin" >
-                                        <Button type="default" size="middle">Batalkan</Button>
+                                        <Button type="default" size="middle">Cancel</Button>
                                     </Link>
-                                    <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingcreate}>Simpan</Button>
+                                    <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingcreate}>Save</Button>
                                 </div>
                             </div>
                         </Sticky>

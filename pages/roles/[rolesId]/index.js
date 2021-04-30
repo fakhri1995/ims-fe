@@ -175,11 +175,11 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <h1 className="font-semibold text-base w-auto ">Edit Roles</h1>
                                 <div className="flex space-x-2">
-                                    <Button type="default" size="middle" onClick={() => { setmodaldelete(true) }} loading={loadingdelete} danger>Hapus</Button>
+                                    <Button type="default" size="middle" onClick={() => { setmodaldelete(true) }} loading={loadingdelete} danger>Delete</Button>
                                     <Link href="/roles?originPath=Admin" >
-                                        <Button type="default" size="middle">Batalkan</Button>
+                                        <Button type="default" size="middle">Cancel</Button>
                                     </Link>
-                                    <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingupdate}>Perbarui</Button>
+                                    <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingupdate}>Save</Button>
                                 </div>
                             </div>
                         </Sticky>

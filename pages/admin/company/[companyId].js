@@ -19,23 +19,23 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
     const [loadingubahaktif, setloadingubahaktif] = useState(false)
     const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
     const [instanceForm] = Form.useForm()
-    if(dataDetailCompany.data.data.tanggal_pkp === null){
-        dataDetailCompany.data.data.tanggal_pkp = new Date()
+    if(dataDetailCompany.data.tanggal_pkp === null){
+        dataDetailCompany.data.tanggal_pkp = new Date()
     }
     const [data1, setData1] = useState({
-        id: dataDetailCompany.data.data.company_id,
-        company_name: dataDetailCompany.data.data.company_name,
+        id: dataDetailCompany.data.company_id,
+        company_name: dataDetailCompany.data.company_name,
         // role: dataDetailCompany.data.data.role,
-        address: dataDetailCompany.data.data.address,
-        phone_number: dataDetailCompany.data.data.phone_number,
-        image_logo: dataDetailCompany.data.data.image_logo,
-        singkatan: dataDetailCompany.data.data.singkatan,
-        tanggal_pkp: moment(dataDetailCompany.data.data.tanggal_pkp)/*moment(new Date())*/,
-        penanggung_jawab: dataDetailCompany.data.data.penanggung_jawab,
-        npwp: dataDetailCompany.data.data.npwp,
-        fax: dataDetailCompany.data.data.fax,
-        email: dataDetailCompany.data.data.email,
-        website: dataDetailCompany.data.data.website
+        address: dataDetailCompany.data.address,
+        phone_number: dataDetailCompany.data.phone_number,
+        image_logo: dataDetailCompany.data.image_logo,
+        singkatan: dataDetailCompany.data.singkatan,
+        tanggal_pkp: moment(dataDetailCompany.data.tanggal_pkp)/*moment(new Date())*/,
+        penanggung_jawab: dataDetailCompany.data.penanggung_jawab,
+        npwp: dataDetailCompany.data.npwp,
+        fax: dataDetailCompany.data.fax,
+        email: dataDetailCompany.data.email,
+        website: dataDetailCompany.data.website
     })
     const [loadingfoto, setLoadingfoto] = useState(false)
 
@@ -88,7 +88,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/${dataDetailCompany.data.data.company_id}`)
+                        rt.push(`/admin/company/${dataDetailCompany.data.company_id}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -116,7 +116,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                company_id: dataDetailCompany.data.data.company_id,
+                company_id: dataDetailCompany.data.company_id,
                 is_enabled: keaktifan
             })
         })
@@ -136,7 +136,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                         else if (status === "nonAktif") {
                             setloadingubahnonaktif(false)
                         }
-                        rt.push(`/admin/company/${dataDetailCompany.data.data.company_id}`)
+                        rt.push(`/admin/company/${dataDetailCompany.data.company_id}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -166,11 +166,11 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                 </div>
             </div>
             <div className=" mb-2 md:mb-4 flex md:flex-row flex-col">
-                <h1 className="font-semibold text-base mr-3 pt-1">{dataDetailCompany.data.data.company_name}</h1>
+                <h1 className="font-semibold text-base mr-3 pt-1">{dataDetailCompany.data.company_name}</h1>
                 <h1 className="mr-3 pt-1 hidden md:block">|</h1>
                 <div className="pt-1">
                     {
-                        dataDetailCompany.data.data.is_enabled ?
+                        dataDetailCompany.data.is_enabled ?
                             <Switch checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
                             :
                             <Switch checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
@@ -373,7 +373,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                 onCancel={() => setVisible(false)}
                 okButtonProps={{ disabled: loadingubahaktif }}
             >
-                Apakah anda yakin ingin menon-aktifkan akun perusahaan <strong>{dataDetailCompany.data.datacompany_name}</strong>?
+                Apakah anda yakin ingin menon-aktifkan akun perusahaan <strong>{dataDetailCompany.data.company_name}</strong>?
             </Modal>
             <Modal
                 title="Konfirmasi untuk mengakaktifkan akun"
@@ -382,7 +382,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                 onCancel={() => setVisiblenon(false)}
                 okButtonProps={{ disabled: loadingubahnonaktif }}
             >
-                Apakah anda yakin ingin melakukan aktivasi akun perusahaan <strong>{dataDetailCompany.data.data.company_name}</strong>?`
+                Apakah anda yakin ingin melakukan aktivasi akun perusahaan <strong>{dataDetailCompany.data.company_name}</strong>?`
             </Modal>
         </div >
     )
@@ -477,7 +477,7 @@ function ClientsDetailLocations({ dataDetailCompany, tok }) {
         <div id="locationsDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
                 <div className="flex space-x-2">
-                    <Link href={`/admin/company/locations/new?companyId=${dataDetailCompany.data.data.company_id}`}>
+                    <Link href={`/admin/company/locations/new?companyId=${dataDetailCompany.data.company_id}`}>
                         <Button type="primary">Tambah</Button>
                         {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40"> Create</button> */}
                     </Link>
@@ -508,10 +508,10 @@ function ClientsDetailLocations({ dataDetailCompany, tok }) {
                                     {nodeData.title}
                                 </div>
                                 <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
-                                    <Link href={`/admin/company/locations/new?parent=${nodeData.title}&companyId=${dataDetailCompany.data.data.company_id}`}>
+                                    <Link href={`/admin/company/locations/new?parent=${nodeData.title}&companyId=${dataDetailCompany.data.company_id}`}>
                                         <a className="mx-2 pb-1" alt="add"><PlusOutlined /></a>
                                     </Link>
-                                    <Link href={`/admin/company/locations/update/${dataDetailCompany.data.data.company_id}?parent=${nodeData.title}`}>
+                                    <Link href={`/admin/company/locations/update/${dataDetailCompany.data.company_id}?parent=${nodeData.title}`}>
                                         <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                     </Link>
                                     <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("berhasil dihapus") }} onCancel={() => { message.error("Gagal dihapus") }}>
@@ -1001,7 +1001,7 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
     const { TabPane } = Tabs;
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
-    pathArr[pathArr.length - 1] = dataDetailCompany.data.data.company_name
+    pathArr[pathArr.length - 1] = dataDetailCompany.data.company_name
     var activeTab = "profile"
     const { active } = rt.query
     if (active) {
@@ -1011,26 +1011,26 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} dataDetailCompany={dataDetailCompany} st={st}>
             <div className="px-5 pt-5 pb-0 bg-white hidden md:block">
                 <Tabs tabPosition={`left`} defaultActiveKey={activeTab}>
-                    <TabPane tab="Profil" key={`profile`}>
+                    <TabPane tab="Profile" key={`profile`}>
                         <ClientsDetailProfile dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
                     </TabPane>
-                    <TabPane tab="Rekening Bank" key={`bankAccounts`}>
-                        <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.data.company_id} />
+                    <TabPane tab="Bank Account" key={`bankAccounts`}>
+                        <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
                     </TabPane>
-                    <TabPane tab="Lokasi" key={`locations`}>
+                    <TabPane tab="Locations" key={`locations`}>
                         <ClientsDetailLocations dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailLocations>
                     </TabPane>
                 </Tabs>
             </div>
-            <div className="px-5 pt-5 pb-0 bg-white block md:hidden" >
+            <div className="pt-5 pb-0 bg-white block md:hidden" >
                 <Tabs tabPosition={`top`} defaultActiveKey={activeTab}>
-                    <TabPane tab="Profil" key={`profile`}>
+                    <TabPane tab="Profile" key={`profile`}>
                         <ClientsDetailProfile dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
                     </TabPane>
-                    <TabPane tab="Rekening Bank" key={`bankAccounts`}>
-                        <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.data.company_id} />
+                    <TabPane tab="Bank Account" key={`bankAccounts`}>
+                        <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
                     </TabPane>
-                    <TabPane tab="Lokasi" key={`locations`}>
+                    <TabPane tab="Locations" key={`locations`}>
                         <ClientsDetailLocations dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailLocations>
                     </TabPane>
                 </Tabs>
@@ -1078,7 +1078,7 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonGC = await resourcesGC.json()
     const dataDetailCompany = resjsonGC
 
-    const resourcesGB = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientBanks?id=${dataDetailCompany.data.data.company_id}`, {
+    const resourcesGB = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientBanks?id=${dataDetailCompany.data.company_id}`, {
         method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps),
