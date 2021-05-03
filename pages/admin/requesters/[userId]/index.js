@@ -26,10 +26,13 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
     })
     const [datarole, setdatarole] = useState({
         account_id: dataDetailRequester.data.user_id,
-        role_ids: dataDetailRequester.data.feature_roles
+        role_ids: dataDetailRequester.data.feature_roles[0]
     })
     const onChangeRole = (value) => {
-        const arr = datarole.role_ids
+        //multiple roles
+        // const arr = datarole.role_ids
+        //single roles
+        const arr = []
         arr.push(value)
         setdatarole({
             ...datarole,

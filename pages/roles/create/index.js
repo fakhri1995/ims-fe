@@ -189,7 +189,7 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
                                     dataListModules.data.map((doc, idx) => {
                                         return (
                                             <TabPane tab={doc.name} key={idx + 1}>
-                                                <div className=" overflow-y-auto h-80 mb-5">
+                                                <div className="mb-5">
                                                     {
                                                         doc.feature !== null ?
                                                             <>

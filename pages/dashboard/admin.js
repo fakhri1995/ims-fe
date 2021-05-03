@@ -14,50 +14,72 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
     // console.log("cookie di admin dashboard: " + cook)
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
+    console.log(__dirname)
     return (
         <Layout tok={tok} pathArr={pathArr} sidemenu={sidemenu} dataProfile={dataProfile} st={st}>
             <div className="w-full h-auto p-5 font-mont border-t border-opacity-30 border-gray-500 bg-white space-y-10">
-                <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
-                    <div className="border-b border-gray-300">
-                        <h3 className="font-semibold text-lg mb-0">User Management</h3>
-                        <h3 className="font-normal text-sm text-gray-700">
-                            Manage agents and end users of your service desk
+                {
+                    dataProfile.data.registered_feature.includes(108) || dataProfile.data.registered_feature.includes(119) || dataProfile.data.registered_feature.includes(134)
+                        ?
+                        <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
+                            <div className="border-b border-gray-300">
+                                <h3 className="font-semibold text-lg mb-0">User Management</h3>
+                                <h3 className="font-normal text-sm text-gray-700">
+                                    Manage agents and end users of your service desk
                         </h3>
-                    </div>
-                    <div className="grid md:grid-cols-5 sm:grid-cols-1">
-                        <Link href={{
-                            pathname: '/admin/agents',
-                        }}>
-                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                <div>
-                                    <TeamOutlined /> Agents
-                                </div>
                             </div>
-                        </Link>
-                        <Link href={{
-                            pathname: '/admin/requesters',
-                        }}>
-                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                <div>
-                                    <UserOutlined /> Requesters
-                                </div>
+                            <div className="grid md:grid-cols-5 sm:grid-cols-1">
+                                {
+                                    dataProfile.data.registered_feature.includes(108) ?
+                                        <Link href={{
+                                            pathname: '/admin/agents',
+                                        }}>
+                                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                                                <div>
+                                                    <TeamOutlined /> Agents
+                                    </div>
+                                            </div>
+                                        </Link>
+                                        :
+                                        null
+                                }
+                                {
+                                    dataProfile.data.registered_feature.includes(119) ?
+                                        <Link href={{
+                                            pathname: '/admin/requesters',
+                                        }}>
+                                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                                                <div>
+                                                    <UserOutlined /> Requesters
+                                    </div>
+                                            </div>
+                                        </Link>
+                                        :
+                                        null
+                                }
+                                {
+                                    dataProfile.data.registered_feature.includes(134) ?
+                                        <Link href={{
+                                            pathname: '/groups',
+                                            query: {
+                                                originPath: "Admin"
+                                            }
+                                        }}>
+                                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                                                <div>
+                                                    <UserOutlined /> Groups
+                                    </div>
+                                            </div>
+                                        </Link>
+                                        :
+                                        null
+                                }
                             </div>
-                        </Link>
-                        <Link href={{
-                            pathname: '/groups',
-                            query: {
-                                originPath: "Admin"
-                            }
-                        }}>
-                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                <div>
-                                    <UserOutlined /> Groups
-                                </div>
-                            </div>
-                        </Link>
-                    </div>
-                </div>
-
+                        </div>
+                        :
+                        null
+                }
+                
                 <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
                     <div className="border-b border-gray-300">
                         <h3 className="font-semibold text-lg mb-0">Features Management</h3>

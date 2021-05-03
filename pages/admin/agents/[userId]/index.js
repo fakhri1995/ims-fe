@@ -24,6 +24,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
     const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
     const [instanceForm] = Form.useForm();
     const { Option } = Select
+    console.log(dataDetailAgent.data.feature_roles)
     const [datapass, setDatapass] = useState({
         user_id: dataDetailAgent.data.user_id,
         new_password: ''
@@ -37,10 +38,13 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
     })
     const [datarole, setdatarole] = useState({
         account_id: dataDetailAgent.data.user_id,
-        role_ids: dataDetailAgent.data.feature_roles
+        role_ids: dataDetailAgent.data.feature_roles[0]
     })
     const onChangeRole = (value) => {
-        const arr = datarole.role_ids
+        //multiple roles
+        // const arr = datarole.role_ids
+        //single roles
+        const arr = []
         arr.push(value)
         setdatarole({
             ...datarole,
@@ -254,7 +258,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
                                     <h1 className="text-sm font-semibold">{data1.id}</h1>
                                 </div>
                                 <Form layout="vertical" form={instanceForm} onFinish={handleSubmitEditAccount} initialValues={data1}>
-                                    <Form.Item label="Nama Lengkap" name="fullname" required tooltip="Wajib diisi" initialValue={data1.fullname}
+                                    <Form.Item label="Nama Lengkap" name="fullname" required tooltip="Wajib diisi"
                                         rules={[
                                             {
                                                 required: true,
@@ -263,7 +267,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
                                         ]}>
                                         <Input defaultValue={data1.fullname} onChange={onChangeEditAgents} name="fullname" required />
                                     </Form.Item>
-                                    <Form.Item label="No. Handphone" name="phone_number" required tooltip="Wajib diisi" initialValue={data1.phone_number}
+                                    <Form.Item label="No. Handphone" name="phone_number" required tooltip="Wajib diisi"
                                         rules={[
                                             {
                                                 required: true,
@@ -277,7 +281,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
                                         {
                                             dataRoles.data.map((doc, idx) => {
                                                 return (
-                                                    <Option value={doc.id}>{doc.name}</Option>
+                                                    <Option key={idx} value={doc.id}>{doc.name}</Option>
                                                 )
                                             })
                                         }
