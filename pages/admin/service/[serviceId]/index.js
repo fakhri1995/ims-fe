@@ -242,27 +242,41 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
                 <div className="w-full flex flex-col md:flex-row justify-between p-3">
                     <div className="flex items-center">
                         <p className="font-semibold text-lg mr-3 my-0">{dataDetailServiceItem.data.service.nama_service_item}</p>
-                        {/* {
-                            dataDetailServiceItem.data.service.is_publish ?
-                                <div className="py-1 px-2 rounded-l-full rounded-r-full text-green-500 border border-green-500 bg-green-100 text-center text-xs mr-3">Published</div>
-                                :
-                                <div className="py-1 px-2 rounded-l-full rounded-r-full text-gray-500 border border-gray-500 bg-gray-100 text-center text-xs mr-3">Draft</div>
-                        } */}
-                        {
-                            dataDetailServiceItem.data.service.is_publish ?
-                                <Switch checked={true} onChange={() => { setmodalpublish(true) }} checkedChildren={"Published"}></Switch>
-                                :
-                                <Switch checked={false} onChange={() => { setmodalnonpublish(true) }} unCheckedChildren={"Draft"}></Switch>
-                        }
+                        <>
+                            {
+                                [192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                    <>
+                                        {
+                                            dataDetailServiceItem.data.service.is_publish ?
+                                                <Switch checked={true} onChange={() => { setmodalpublish(true) }} checkedChildren={"Published"}></Switch>
+                                                :
+                                                <Switch checked={false} onChange={() => { setmodalnonpublish(true) }} unCheckedChildren={"Draft"}></Switch>
+                                        }
+                                    </>
+                                    :
+                                    <>
+                                        {
+                                            dataDetailServiceItem.data.service.is_publish ?
+                                                <Switch disabled checked={true} onChange={() => { setmodalpublish(true) }} checkedChildren={"Published"}></Switch>
+                                                :
+                                                <Switch disabled checked={false} onChange={() => { setmodalnonpublish(true) }} unCheckedChildren={"Draft"}></Switch>
+                                        }
+                                    </>
+                            }
+                        </>
                     </div>
                     <div className="pt-3">
-                        <Button type="default" style={{ marginRight: `1rem` }} onClick={() => { rt.push('/admin/service') }}>Batalkan</Button>
-                        <Button type="ghost" style={{ marginRight: `1rem` }} onClick={() => { setmodalkonfhapuskateg(true) }}>Hapus</Button>
-                        {/* <Dropdown overlay={menu} trigger={['click']}> */}
-                        <Button style={{ backgroundColor: `rgb(24,144,255)`, color: `white` }} loading={loadingupdate} onClick={handleUpdateService}>
-                            Simpan {/*<DownOutlined />*/}
-                        </Button>
-                        {/* </Dropdown> */}
+                        <Button type="default" style={{ marginRight: `1rem` }} onClick={() => { rt.push('/admin/service') }}>Cancel</Button>
+                        {
+                            [191].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                            <Button type="ghost" style={{ marginRight: `1rem` }} onClick={() => { setmodalkonfhapuskateg(true) }}>Delete</Button>
+                        }
+                        {
+                            [190].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                            <Button style={{ backgroundColor: `rgb(24,144,255)`, color: `white` }} loading={loadingupdate} onClick={handleUpdateService}>
+                                Save {/*<DownOutlined />*/}
+                            </Button>
+                        }
                     </div>
                 </div>
                 <div className="w-full grid grid-cols-7">
@@ -306,7 +320,15 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
                                                     message: 'Nama Item wajib diisi',
                                                 },
                                             ]}>
-                                            <Input name="nama_service_item" onChange={(e) => { setdataupdate({ ...dataupdate, nama_service_item: e.target.value }) }} defaultValue={dataupdate.nama_service_item}></Input>
+                                            {
+                                                [190].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                    <Input name="nama_service_item" onChange={(e) => { setdataupdate({ ...dataupdate, nama_service_item: e.target.value }) }} defaultValue={dataupdate.nama_service_item}></Input>
+                                                    :
+                                                    <div className="col-span-1 flex flex-col mb-5">
+                                                        <h1 className="font-semibold text-sm">Item Name:</h1>
+                                                        <h1 className="text-sm font-normal text-black">{dataupdate.nama_service_item}</h1>
+                                                    </div>
+                                            }
                                         </Form.Item>
                                         <Form.Item label="Service Category" name="id_service_kategori"
                                             rules={[
@@ -315,21 +337,50 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
                                                     message: 'Service Category wajib diisi',
                                                 },
                                             ]}>
-                                            <Select placeholder="Pilih Service Category" onChange={(value) => { setdataupdate({ ...dataupdate, id_service_kategori: value }) }} name="id_service_kategori" defaultValue={dataupdate.id_service_kategori}>
-                                                {
-                                                    dataListServiceCategories.data.map((doc, idx) => {
-                                                        return (
-                                                            <Option key={idx} value={doc.id}>{doc.nama_kategori}</Option>
-                                                        )
-                                                    })
-                                                }
-                                            </Select>
+                                            {
+                                                [190].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                    <Select placeholder="Pilih Service Category" onChange={(value) => { setdataupdate({ ...dataupdate, id_service_kategori: value }) }} name="id_service_kategori" defaultValue={dataupdate.id_service_kategori}>
+                                                        {
+                                                            dataListServiceCategories.data.map((doc, idx) => {
+                                                                return (
+                                                                    <Option key={idx} value={doc.id}>{doc.nama_kategori}</Option>
+                                                                )
+                                                            })
+                                                        }
+                                                    </Select>
+                                                    :
+                                                    <Select disabled placeholder="Pilih Service Category" onChange={(value) => { setdataupdate({ ...dataupdate, id_service_kategori: value }) }} name="id_service_kategori" defaultValue={dataupdate.id_service_kategori}>
+                                                        {
+                                                            dataListServiceCategories.data.map((doc, idx) => {
+                                                                return (
+                                                                    <Option key={idx} value={doc.id}>{doc.nama_kategori}</Option>
+                                                                )
+                                                            })
+                                                        }
+                                                    </Select>
+                                            }
                                         </Form.Item>
-                                        <Form.Item label="Deskripsi Singkat" name="deskripsi_singkat">
-                                            <Input name="deskripsi_singkat" onChange={(e) => { setdataupdate({ ...dataupdate, deskripsi_singkat: e.target.value }) }} defaultValue={dataupdate.deskripsi_singkat}></Input>
+                                        <Form.Item label="Short Description" name="deskripsi_singkat">
+                                            {
+                                                [190].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                    <Input name="deskripsi_singkat" onChange={(e) => { setdataupdate({ ...dataupdate, deskripsi_singkat: e.target.value }) }} defaultValue={dataupdate.deskripsi_singkat}></Input>
+                                                    :
+                                                    <div className="col-span-1 flex flex-col mb-5">
+                                                        <h1 className="font-semibold text-sm">Short Description:</h1>
+                                                        <h1 className="text-sm font-normal text-black">{dataupdate.deskripsi_singkat}</h1>
+                                                    </div>
+                                            }
                                         </Form.Item>
-                                        <Form.Item label="Deskripsi" name="deskripsi_lengkap">
-                                            <Input.TextArea name="deskripsi_lengkap" onChange={(e) => { setdataupdate({ ...dataupdate, deskripsi_lengkap: e.target.value }) }} defaultValue={dataupdate.deskripsi_lengkap} />
+                                        <Form.Item label="Description" name="deskripsi_lengkap">
+                                            {
+                                                [190].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                    <Input.TextArea name="deskripsi_lengkap" onChange={(e) => { setdataupdate({ ...dataupdate, deskripsi_lengkap: e.target.value }) }} defaultValue={dataupdate.deskripsi_lengkap} />
+                                                    :
+                                                    <div className="col-span-1 flex flex-col mb-5">
+                                                        <h1 className="font-semibold text-sm">Description:</h1>
+                                                        <p className="text-sm font-normal text-black">{dataupdate.deskripsi_lengkap}</p>
+                                                    </div>
+                                            }
                                         </Form.Item>
                                     </Form>
                                 </div>
@@ -345,32 +396,38 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
                         <div id="additionalFields" className=" flex flex-col mb-5 p-3">
                             <h1 className="font-semibold text-base">Additional Items</h1>
                             <p className="text-xs text-gray-500">Add related service items that can be requested along with this item</p>
-                            <Select showSearch placeholder="Cari & Tambah Service Items" onChange={onChangeAddAdditionalItems} onSearch={(value) => { onSearchAdditionalItems(value) }} optionFilterProp="children"
-                                filterOption={(input, option) =>
-                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                }
-                                style={{ marginBottom: `0.7rem`, width: `20rem` }}
-                                allowClear
-                            >
-                                {
-                                    dataListServiceItemMap.map((doc, idx) => {
-                                        return (
-                                            <Option key={idx} value={doc.id}>{doc.itemName}</Option>
-                                        )
-                                    })
-                                }
-                            </Select>
+                            {
+                                [190].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                <Select showSearch placeholder="Cari & Tambah Service Items" onChange={onChangeAddAdditionalItems} onSearch={(value) => { onSearchAdditionalItems(value) }} optionFilterProp="children"
+                                    filterOption={(input, option) =>
+                                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                    }
+                                    style={{ marginBottom: `0.7rem`, width: `20rem` }}
+                                    allowClear
+                                >
+                                    {
+                                        dataListServiceItemMap.map((doc, idx) => {
+                                            return (
+                                                <Option key={idx} value={doc.id}>{doc.itemName}</Option>
+                                            )
+                                        })
+                                    }
+                                </Select>
+                            }
                             <div className="flex flex-col">
                                 {
                                     addfields.map((doc, idx) => {
                                         return (
                                             <div className=" w-6/12 flex justify-between border-2 border-blue-500 p-3 divide-x-2 mb-2">
                                                 <div className="flex items-center">
-                                                    <MinusCircleTwoTone style={{ marginRight: `0.5rem`, cursor: `pointer` }} onClick={() => { onDeleteAdditionalItems(doc.id) }} />
+                                                    {
+                                                        [190].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                                        <MinusCircleTwoTone style={{ marginRight: `0.5rem`, cursor: `pointer` }} onClick={() => { onDeleteAdditionalItems(doc.id) }} />
+                                                    }
                                                     {doc.nama_service_item}
                                                 </div>
                                                 <div className="flex pl-3">
-                                                    <Checkbox style={{ marginRight: `0.7rem` }} /> Tandai sebagai Wajib
+                                                    <Checkbox disabled style={{ marginRight: `0.7rem` }} /> Tandai sebagai Wajib
                                                 </div>
                                             </div>
                                         )
@@ -453,6 +510,11 @@ export async function getServerSideProps({ req, res, params }) {
     })
     const resjson = await resources.json()
     const dataProfile = resjson
+
+    if (!([188, 190, 191, 192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr)))) {
+        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.end()
+    }
 
     const resourcesGDI = await fetch(`https://boiling-thicket-46501.herokuapp.com/getServiceItem?id=${parseInt(serviceid)}`, {
         method: `GET`,

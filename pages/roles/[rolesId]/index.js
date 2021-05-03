@@ -175,11 +175,17 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <h1 className="font-semibold text-base w-auto ">Edit Roles</h1>
                                 <div className="flex space-x-2">
-                                    <Button type="default" size="middle" onClick={() => { setmodaldelete(true) }} loading={loadingdelete} danger>Delete</Button>
+                                    {
+                                        [178].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                        <Button type="default" size="middle" onClick={() => { setmodaldelete(true) }} loading={loadingdelete} danger>Delete</Button>
+                                    }
                                     <Link href="/roles?originPath=Admin" >
                                         <Button type="default" size="middle">Cancel</Button>
                                     </Link>
-                                    <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingupdate}>Save</Button>
+                                    {
+                                        [177].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                        <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingupdate}>Save</Button>
+                                    }
                                 </div>
                             </div>
                         </Sticky>
@@ -195,7 +201,15 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                                         },
                                     ]}
                                 >
-                                    <Input placeholder="Group Name" name={`name`} onChange={onChangeEditRoles} defaultValue={editroles.name}></Input>
+                                    {
+                                        [177].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                            <Input placeholder="Role Name" name={`name`} onChange={onChangeEditRoles} defaultValue={editroles.name}></Input>
+                                            :
+                                            <div className="col-span-1 flex flex-col mb-5">
+                                                <h1 className="font-semibold text-sm">Role Name:</h1>
+                                                <h1 className="text-sm font-normal text-black">{editroles.name}</h1>
+                                            </div>
+                                    }
                                 </Form.Item>
                             </div>
 
@@ -208,53 +222,92 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                                         },
                                     ]}
                                 >
-                                    <TextArea placeholder="Group Description" rows={2} name={`description`} defaultValue={editroles.description} onChange={onChangeEditRoles} />
+                                    {
+                                        [177].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                            <TextArea placeholder="Description" rows={2} name={`description`} defaultValue={editroles.description} onChange={onChangeEditRoles} />
+                                            :
+                                            <div className="col-span-1 flex flex-col mb-5">
+                                                <h1 className="font-semibold text-sm">Description:</h1>
+                                                <h1 className="text-sm font-normal text-black">{editroles.description}</h1>
+                                            </div>
+                                    }
                                 </Form.Item>
                             </div>
 
                             {/* </div> */}
                             <Divider style={{ borderTop: '1px solid rgba(0, 0, 0, 0.2)' }} />
-                            <h1 className="font-semibold text-base w-auto p-2">Permissions</h1>
-                            {/* <div className="border-gray-300 p-4 border bg-white w-full h-auto "> */}
-                            {/* <Tabs defaultActiveKey="1" tabPosition={'left'} style={{ }}>
-                                {[...Array.from({ length: 10 }, (v, i) => i)].map(i => (
-                                <TabPane tab={`Tab-${i}`} key={i} disabled={i === 5}>
-                                    Content of tab {i}
-                                </TabPane>
-                                ))}
-                            </Tabs> */}
-
-                            <Tabs defaultActiveKey="1" tabPosition="left">
-                                {
-                                    dataListModules.data.map((doc, idx) => {
-                                        return (
-                                            <TabPane tab={doc.name} key={idx + 1}>
-                                                <div className=" overflow-y-auto h-80 mb-5">
-                                                    {
-                                                        doc.feature !== null ?
-                                                            <>
+                            {
+                                [177].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                    <>
+                                        <h1 className="font-semibold text-base w-auto p-2">Permissions</h1>
+                                        <Tabs defaultActiveKey="1" tabPosition="left">
+                                            {
+                                                dataListModules.data.map((doc, idx) => {
+                                                    return (
+                                                        <TabPane tab={doc.name} key={idx + 1}>
+                                                            <div className=" overflow-y-auto h-80 mb-5">
                                                                 {
-                                                                    doc.feature.map((doc, idx) => {
-                                                                        const checkedStatus = editroles.feature_ids.includes(doc.id)
-                                                                        return (
-                                                                            <div key={idx} className="flex items-center hover:bg-gray-300 p-3">
-                                                                                <Checkbox style={{ marginRight: `1rem` }} onChange={(e) => { onChangeUpdateCheckbox(e, doc.id) }} defaultChecked={checkedStatus} /> {doc.name}
-                                                                            </div>
-                                                                        )
-                                                                    })
+                                                                    doc.feature !== null ?
+                                                                        <>
+                                                                            {
+                                                                                doc.feature.map((doc, idx) => {
+                                                                                    const checkedStatus = editroles.feature_ids.includes(doc.id)
+                                                                                    return (
+                                                                                        <div key={idx} className="flex items-center hover:bg-gray-300 p-3">
+                                                                                            <Checkbox style={{ marginRight: `1rem` }} onChange={(e) => { onChangeUpdateCheckbox(e, doc.id) }} defaultChecked={checkedStatus} /> {doc.name}
+                                                                                        </div>
+                                                                                    )
+                                                                                })
+                                                                            }
+                                                                        </>
+                                                                        :
+                                                                        <>
+                                                                            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
+                                                                        </>
                                                                 }
-                                                            </>
-                                                            :
-                                                            <>
-                                                                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
-                                                            </>
-                                                    }
-                                                </div>
-                                            </TabPane>
-                                        )
-                                    })
-                                }
-                            </Tabs>
+                                                            </div>
+                                                        </TabPane>
+                                                    )
+                                                })
+                                            }
+                                        </Tabs>
+                                    </>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-base w-auto p-2">Permissions</h1>
+                                        <Tabs defaultActiveKey="1" tabPosition="left">
+                                            {
+                                                dataListModules.data.map((doc, idx) => {
+                                                    return (
+                                                        <TabPane tab={doc.name} key={idx + 1}>
+                                                            <div className=" overflow-y-auto h-80 mb-5">
+                                                                {
+                                                                    doc.feature !== null ?
+                                                                        <>
+                                                                            {
+                                                                                doc.feature.map((doc, idx) => {
+                                                                                    const checkedStatus = editroles.feature_ids.includes(doc.id)
+                                                                                    return (
+                                                                                        <div key={idx} className="flex items-center hover:bg-gray-300 p-3">
+                                                                                            <Checkbox disabled style={{ marginRight: `1rem` }} onChange={(e) => { onChangeUpdateCheckbox(e, doc.id) }} defaultChecked={checkedStatus} /> {doc.name}
+                                                                                        </div>
+                                                                                    )
+                                                                                })
+                                                                            }
+                                                                        </>
+                                                                        :
+                                                                        <>
+                                                                            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
+                                                                        </>
+                                                                }
+                                                            </div>
+                                                        </TabPane>
+                                                    )
+                                                })
+                                            }
+                                        </Tabs>
+                                    </>
+                            }
 
                             {/* <Tabs defaultActiveKey="1" tabPosition={'left'} style={{}}>
                                 <TabPane tab={`Ticket`} key={1} >
@@ -291,23 +344,6 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                     >
                         <h1>Yakin ingin hapus module {editroles.name} ini?</h1>
                     </Modal>
-                    {/* <div className="flex flex-col space-y-3 px-4">
-                        <div className="font-semibold text-sm">Understanding Roles</div>
-                        <p className="font-normal text-sm">
-                            Roles allow you to create and edit access permissions for agents. You can create new roles, specify what actions agents with these roles can perform within your help desk, and assign the role to agents.
-                    </p>
-                        <p className="font-normal text-sm">
-                            For example, you can create a role for your Support Co-ordinators, allowing them to update fields and assign tickets, and even add notes internally, but not reply to customers.
-                    </p>
-                        <p className="font-normal text-sm">
-                            Once you create and save a new Role you will be able to assign it to agents when you create or edit their profile by clicking on the Agents icon under the admin tab.
-                    </p>
-                        <br />
-                        <div className="font-semibold text-sm">Admin Privileges</div>
-                        <p className="font-normal text-sm">
-                            You can nominate whether you want an agent to have access to settings under the Admin tab. Agents with admin access can be Operation Agents with limited access, or Super Admins with the ability to edit all configurations. You can have as many Super Admins with the ability to view and modify your billing details, or as few as one.
-                    </p>
-                    </div> */}
                 </div>
             </>
         </Layout>
@@ -370,6 +406,11 @@ export async function getServerSideProps({ req, res, params }) {
     })
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
+
+    if (![174, 177].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.end()
+    }
 
     const resourcesGR = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRole?id=${idrole}`, {
         method: `GET`,

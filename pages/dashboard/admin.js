@@ -19,14 +19,14 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
         <Layout tok={tok} pathArr={pathArr} sidemenu={sidemenu} dataProfile={dataProfile} st={st}>
             <div className="w-full h-auto p-5 font-mont border-t border-opacity-30 border-gray-500 bg-white space-y-10">
                 {
-                    dataProfile.data.registered_feature.includes(108) || dataProfile.data.registered_feature.includes(119) || dataProfile.data.registered_feature.includes(134)
+                    dataProfile.data.registered_feature.includes(108) && dataProfile.data.registered_feature.includes(119) && dataProfile.data.registered_feature.includes(134)
                         ?
                         <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
                             <div className="border-b border-gray-300">
                                 <h3 className="font-semibold text-lg mb-0">User Management</h3>
                                 <h3 className="font-normal text-sm text-gray-700">
                                     Manage agents and end users of your service desk
-                        </h3>
+                                </h3>
                             </div>
                             <div className="grid md:grid-cols-5 sm:grid-cols-1">
                                 {
@@ -37,7 +37,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                                 <div>
                                                     <TeamOutlined /> Agents
-                                    </div>
+                                                </div>
                                             </div>
                                         </Link>
                                         :
@@ -51,7 +51,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                                 <div>
                                                     <UserOutlined /> Requesters
-                                    </div>
+                                                </div>
                                             </div>
                                         </Link>
                                         :
@@ -68,7 +68,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                                 <div>
                                                     <UserOutlined /> Groups
-                                    </div>
+                                                </div>
                                             </div>
                                         </Link>
                                         :
@@ -79,7 +79,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                         :
                         null
                 }
-                
+
                 <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
                     <div className="border-b border-gray-300">
                         <h3 className="font-semibold text-lg mb-0">Features Management</h3>
@@ -88,25 +88,33 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                         </h3>
                     </div>
                     <div className="grid md:grid-cols-5 sm:grid-cols-1">
-                        <Link href={{
-                            pathname: '/roles',
-                            query: {
-                                originPath: "Admin"
-                            }
-                        }}>
-                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                <div>
-                                    <TeamOutlined /> Roles
+                        {dataProfile.data.registered_feature.includes(173) ?
+                            <Link href={{
+                                pathname: '/roles',
+                                query: {
+                                    originPath: "Admin"
+                                }
+                            }}>
+                                <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                                    <div>
+                                        <TeamOutlined /> Roles
+                                    </div>
                                 </div>
-                            </div>
-                        </Link>
-                        <Link href={'/admin/modules'}>
-                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                <div>
-                                    <InboxOutlined /> Modules
+                            </Link>
+                            :
+                            null
+                        }
+                        {dataProfile.data.registered_feature.includes(179) ?
+                            <Link href={'/admin/modules'}>
+                                <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                                    <div>
+                                        <InboxOutlined /> Modules
+                                    </div>
                                 </div>
-                            </div>
-                        </Link>
+                            </Link>
+                            :
+                            null
+                        }
                         <Link href={'/admin/features'}>
                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
@@ -117,34 +125,46 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                     </div>
                 </div>
 
-                <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
-                    <div className="border-b border-gray-300">
-                        <h3 className="font-semibold text-lg mb-0">Company</h3>
-                        <h3 className="font-normal text-sm text-gray-700">
-                            Configure the basic settings that are necessary for company information
+                {dataProfile.data.registered_feature.includes(144) && dataProfile.data.registered_feature.includes(155) && dataProfile.data.registered_feature.includes(150) ?
+                    <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
+                        <div className="border-b border-gray-300">
+                            <h3 className="font-semibold text-lg mb-0">Company</h3>
+                            <h3 className="font-normal text-sm text-gray-700">
+                                Configure the basic settings that are necessary for company information
                         </h3>
+                        </div>
+                        <div className="grid md:grid-cols-5 sm:grid-cols-1">
+                            {dataProfile.data.registered_feature.includes(144) ?
+                                <Link href={{
+                                    pathname: '/admin/company/mig/',
+                                }}>
+                                    <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                                        <div>
+                                            <TeamOutlined /> My Company
+                                        </div>
+                                    </div>
+                                </Link>
+                                :
+                                null
+                            }
+                            {dataProfile.data.registered_feature.includes(155) ?
+                                <Link href={{
+                                    pathname: '/admin/company/',
+                                }}>
+                                    <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                                        <div>
+                                            <UserOutlined /> Clients
+                                        </div>
+                                    </div>
+                                </Link>
+                                :
+                                null
+                            }
+                        </div>
                     </div>
-                    <div className="grid md:grid-cols-5 sm:grid-cols-1">
-                        <Link href={{
-                            pathname: '/admin/company/mig/',
-                        }}>
-                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                <div>
-                                    <TeamOutlined /> My Company
-                                </div>
-                            </div>
-                        </Link>
-                        <Link href={{
-                            pathname: '/admin/company/',
-                        }}>
-                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                <div>
-                                    <UserOutlined /> Clients
-                                </div>
-                            </div>
-                        </Link>
-                    </div>
-                </div>
+                    :
+                    null
+                }
 
                 <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
                     <div className="border-b border-gray-300">
@@ -176,48 +196,64 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                     </div>
                 </div>
 
-                <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
-                    <div className="border-b border-gray-300">
-                        <h3 className="font-semibold text-lg mb-0">Service Management</h3>
-                        <h3 className="font-normal text-sm text-gray-700">
-                            Keep track of your assets, vendors and contracts, all in one place
-                        </h3>
+                {dataProfile.data.registered_feature.includes(183) && dataProfile.data.registered_feature.includes(187) && dataProfile.data.registered_feature.includes(194) ?
+                    <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
+                        <div className="border-b border-gray-300">
+                            <h3 className="font-semibold text-lg mb-0">Service Management</h3>
+                            <h3 className="font-normal text-sm text-gray-700">
+                                Keep track of your assets, vendors and contracts, all in one place
+                            </h3>
+                        </div>
+                        <div className="grid md:grid-cols-5 sm:grid-cols-1">
+                            {dataProfile.data.registered_feature.includes(183) && dataProfile.data.registered_feature.includes(187) ?
+                                <Link href={'/admin/service'}>
+                                    <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                                        <div>
+                                            <InboxOutlined /> Service Catalog
+                                        </div>
+                                    </div>
+                                </Link>
+                                :
+                                null
+                            }
+                            {dataProfile.data.registered_feature.includes(194) ?
+                                <Link href={'/contracts'}>
+                                    <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                                        <div>
+                                            <InboxOutlined /> Contracts
+                                        </div>
+                                    </div>
+                                </Link>
+                                :
+                                null
+                            }
+                        </div>
                     </div>
-                    <div className="grid md:grid-cols-5 sm:grid-cols-1">
-                        <Link href={'/admin/service'}>
-                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                <div>
-                                    <InboxOutlined /> Service Catalog
-                                </div>
-                            </div>
-                        </Link>
-                        <Link href={'/contracts'}>
-                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                <div>
-                                    <InboxOutlined /> Contracts
-                                </div>
-                            </div>
-                        </Link>
-                    </div>
-                </div>
+                    :
+                    null
+                }
 
-                <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
-                    <div className="border-b border-gray-300">
-                        <h3 className="font-semibold text-lg mb-0">Financial Management</h3>
-                        <h3 className="font-normal text-sm text-gray-700">
-                            Keep track of your financial
-                        </h3>
-                    </div>
-                    <div className="grid md:grid-cols-5 sm:grid-cols-1">
-                        <Link href={'/admin/financial'}>
-                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                <div>
-                                    <InboxOutlined /> Financial
+                {dataProfile.data.registered_feature.includes(169) ?
+                    <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
+                        <div className="border-b border-gray-300">
+                            <h3 className="font-semibold text-lg mb-0">Financial Management</h3>
+                            <h3 className="font-normal text-sm text-gray-700">
+                                Keep track of your financial
+                            </h3>
+                        </div>
+                        <div className="grid md:grid-cols-5 sm:grid-cols-1">
+                            <Link href={'/admin/financial'}>
+                                <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                                    <div>
+                                        <InboxOutlined /> Financial
+                                    </div>
                                 </div>
-                            </div>
-                        </Link>
+                            </Link>
+                        </div>
                     </div>
-                </div>
+                    :
+                    null
+                }
             </div>
         </Layout>
     )

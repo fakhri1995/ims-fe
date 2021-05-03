@@ -64,14 +64,19 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                                 loadingselectedrole[index] ?
                                     <>Loading....</>
                                     :
-                                    <div className="text-center text-blue-500 hover:text-blue-700 cursor-pointer" onClick={() => { setselectedrolename(record.name); getRoleUsers(record.id, index) }}>
+                                    <>
                                         {
-                                            record.member > 1 ?
-                                                <>{record.member} users</>
-                                                :
-                                                <>{record.member} user</>
+                                            [175].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                            <div className="text-center text-blue-500 hover:text-blue-700 cursor-pointer" onClick={() => { setselectedrolename(record.name); getRoleUsers(record.id, index) }}>
+                                                {
+                                                    record.member > 1 ?
+                                                        <>{record.member} users</>
+                                                        :
+                                                        <>{record.member} user</>
+                                                }
+                                            </div>
                                         }
-                                    </div>
+                                    </>
                             }
                         </>
                 };
@@ -94,12 +99,18 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                     },
                     children:
                         <div className=" flex">
-                            <Button onClick={() => { rt.push(`/roles/${record.id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
-                                <EditOutlined />
-                            </Button>
-                            <Button danger onClick={() => { setmodaldelete(true); setdatadelete({ ...datadelete, id: record.id }); setcurrentdelete(record.name) }} loading={loadingdelete} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
-                                <DeleteOutlined />
-                            </Button>
+                            {
+                                [174, 177].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                <Button onClick={() => { rt.push(`/roles/${record.id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
+                                    <EditOutlined />
+                                </Button>
+                            }
+                            {
+                                [178].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                <Button danger onClick={() => { setmodaldelete(true); setdatadelete({ ...datadelete, id: record.id }); setcurrentdelete(record.name) }} loading={loadingdelete} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
+                                    <DeleteOutlined />
+                                </Button>
+                            }
                         </div>
                 }
             }
@@ -110,7 +121,7 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
     const [selectedrole, setselectedrole] = useState([])
     const [selectedrolename, setselectedrolename] = useState()
     var ln = []
-    for(var i=0; i<dataRoles.data.length; i++){
+    for (var i = 0; i < dataRoles.data.length; i++) {
         ln.push(false)
     }
     const [loadingselectedrole, setloadingselectedrole] = useState(ln)
@@ -184,37 +195,42 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <h1 className="font-semibold text-base w-auto pt-2">Roles</h1>
-                                <div className="flex space-x-2">
-                                    <Link href="/roles/create">
-                                        <Button type="primary" size="large">Add New</Button>
-                                    </Link>
-                                </div>
+                                {
+                                    [176].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                    <div className="flex space-x-2">
+                                        <Link href="/roles/create">
+                                            <Button type="primary" size="large">Add New</Button>
+                                        </Link>
+                                    </div>
+                                }
                             </div>
                         </Sticky>
                     </div>
-                    <div className=" col-span-1 md:col-span-4 flex flex-col">
-                        <div className="col-span-3 flex flex-col space-y-3">
-
-                            <Table scroll={{ x: 400 }} pagination={{ pageSize: 5 }} dataSource={maindata} columns={columnsDD} onRow={(record, rowIndex) => {
-                                // return {
-                                //     onMouseOver: (event) => {
-                                //         var actionsCopy = actions
-                                //         actionsCopy[rowIndex] = true
-                                //         setActions(actionsCopy)
-                                //         setAction("block")
-                                //         // console.log("row: " + actions[rowIndex] + " " + rowIndex)
-                                //     },
-                                //     onMouseLeave: (event) => {
-                                //         var actionsCopy = actions
-                                //         actionsCopy[rowIndex] = false
-                                //         setActions(actionsCopy)
-                                //         setAction("hidden")
-                                //         // console.log("row leave: " + actions[rowIndex] + " " + rowIndex)
-                                //     }
-                                // }
-                            }}></Table>
+                    {
+                        [173].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        <div className=" col-span-1 md:col-span-4 flex flex-col">
+                            <div className="col-span-3 flex flex-col space-y-3">
+                                <Table scroll={{ x: 400 }} pagination={{ pageSize: 5 }} dataSource={maindata} columns={columnsDD} onRow={(record, rowIndex) => {
+                                    // return {
+                                    //     onMouseOver: (event) => {
+                                    //         var actionsCopy = actions
+                                    //         actionsCopy[rowIndex] = true
+                                    //         setActions(actionsCopy)
+                                    //         setAction("block")
+                                    //         // console.log("row: " + actions[rowIndex] + " " + rowIndex)
+                                    //     },
+                                    //     onMouseLeave: (event) => {
+                                    //         var actionsCopy = actions
+                                    //         actionsCopy[rowIndex] = false
+                                    //         setActions(actionsCopy)
+                                    //         setAction("hidden")
+                                    //         // console.log("row leave: " + actions[rowIndex] + " " + rowIndex)
+                                    //     }
+                                    // }
+                                }}></Table>
+                            </div>
                         </div>
-                    </div>
+                    }
                 </div>
 
             </>
@@ -273,6 +289,11 @@ export async function getServerSideProps({ req, res }) {
     })
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
+
+    if (![173, 174, 175, 176, 177, 178].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.end()
+    }
 
     const resourcesGR = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
         method: `GET`,

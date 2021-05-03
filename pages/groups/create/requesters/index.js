@@ -215,6 +215,11 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
+    if(![140].every((curr) => dataProfile.data.registered_feature.includes(curr))){
+        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.end()
+    }
+
     const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
         method: `POST`,
         headers: {

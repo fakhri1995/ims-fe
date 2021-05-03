@@ -2,13 +2,15 @@ import Layout from 'antd/lib/layout'
 import Menu from 'antd/lib/menu'
 import { useState, useEffect } from 'react'
 import lm from '../components/layout-menu.module.css'
-import InboxOutlined from '@ant-design/icons/InboxOutlined'
-import SettingOutlined from '@ant-design/icons/SettingOutlined'
-import DashboardTwoTone from '@ant-design/icons/DashboardTwoTone'
+import { UserOutlined, SettingOutlined, InboxOutlined, DashboardTwoTone, TeamOutlined } from '@ant-design/icons'
 import Icon from '@ant-design/icons'
 import Link from 'next/link'
 
-const LayoutMenu = ({ sidemenu, coll, collsmall, st, handleCollSmall }) => {
+const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmall }) => {
+    const userFeat = [107, 108, 109, 110, 111, 112, 132, 119, 118, 117, 116, 115, 114, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143]
+    const featureFeat = [173, 174, 175, 176, 177, 178, 179, 180, 181, 182]
+    const serviceFeat = [183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206]
+    const isIncludesFeat = (curr) => dataProfile.data.registered_feature.includes(curr);
     const { SubMenu } = Menu;
     const { Sider } = Layout
     // const [collsmall, setCollsmall] = useState(true)
@@ -40,31 +42,140 @@ const LayoutMenu = ({ sidemenu, coll, collsmall, st, handleCollSmall }) => {
                         </Link>
                     </Menu.Item>
                     <SubMenu key="3" icon={<InboxOutlined />} title="Assets">
-                        {/* <Menu.Item key="sub31">
-                            <Link href="/vendors">
-                                Vendor
-                            </Link>
-                        </Menu.Item> */}
                         <Menu.Item key="sub32">
                             <Link href="/inventories">
                                 Inventory
                             </Link>
                         </Menu.Item>
-                        {/* <SubMenu key="sub3" title="Submenu">
-                            <Menu.Item key="7">Option 7</Menu.Item>
-                            <Menu.Item key="8">Option 8</Menu.Item>
-                        </SubMenu> */}
                     </SubMenu>
-                    {/* <Menu.Item key="3" icon={<InboxOutlined />}>
-                        <Link href="/dashboard/assets">
-                            Assets
-                        </Link>
-                    </Menu.Item> */}
-                    <Menu.Item key="4" icon={<SettingOutlined />}>
-                        <Link href="/dashboard/admin">
-                            Admin
-                        </Link>
-                    </Menu.Item>
+                    <SubMenu key="4" icon={<SettingOutlined />} title="Assets">
+                        <Menu.Item key="4" icon={<SettingOutlined />}>
+                            <Link href="/dashboard/admin">
+                                Admin
+                            </Link>
+                        </Menu.Item>
+                        {
+                            userFeat.every(isIncludesFeat) ?
+                                <SubMenu title="Users Management">
+                                    {[107, 108, 109, 110, 111, 112, 132].every(isIncludesFeat) &&
+                                        <Menu.Item key="411" icon={<UserOutlined />}>
+                                            <Link href="/admin/agents">
+                                                Agents
+                                        </Link>
+                                        </Menu.Item>
+                                    }
+                                    {[119, 118, 117, 116, 115, 114, 133].every(isIncludesFeat) &&
+                                        <Menu.Item key="412" icon={<UserOutlined />}>
+                                            <Link href="/admin/requesters">
+                                                Requesters
+                                        </Link>
+                                        </Menu.Item>
+                                    }
+                                    {[134, 135, 136, 137, 138, 139, 140, 141, 142, 143].every(isIncludesFeat) &&
+                                        <Menu.Item key="413" icon={<UserOutlined />}>
+                                            <Link href="/groups">
+                                                Groups
+                                        </Link>
+                                        </Menu.Item>
+                                    }
+                                </SubMenu>
+                                :
+                                null
+                        }
+                        <SubMenu title="Features Management">
+                            {
+                                [173, 174, 175, 176, 177, 178].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                <Menu.Item key="411" icon={<InboxOutlined />}>
+                                    <Link href="/roles">
+                                        Roles
+                                    </Link>
+                                </Menu.Item>
+                            }
+                            {
+                                [179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                <Menu.Item key="412" icon={<InboxOutlined />}>
+                                    <Link href="/admin/modules">
+                                        Modules
+                                    </Link>
+                                </Menu.Item>
+                            }
+                            <Menu.Item key="412" icon={<InboxOutlined />}>
+                                <Link href="/admin/features">
+                                    Features
+                                </Link>
+                            </Menu.Item>
+                        </SubMenu>
+                        {
+                            dataProfile.data.registered_feature.includes(144) && dataProfile.data.registered_feature.includes(155) && dataProfile.data.registered_feature.includes(150) ?
+                                <SubMenu title="Company Management">
+                                    {
+                                        dataProfile.data.registered_feature.includes(144) &&
+                                        <Menu.Item key="411" icon={<TeamOutlined />}>
+                                            <Link href="/admin/company/mig">
+                                                My Company
+                                        </Link>
+                                        </Menu.Item>
+                                    }
+                                    {
+                                        dataProfile.data.registered_feature.includes(155) &&
+                                        <Menu.Item key="412" icon={<TeamOutlined />}>
+                                            <Link href="/admin/company">
+                                                Clients
+                                        </Link>
+                                        </Menu.Item>
+                                    }
+                                </SubMenu>
+                                :
+                                null
+                        }
+                        <SubMenu title="Assets">
+                            <Menu.Item key="411" icon={<InboxOutlined />}>
+                                <Link href="/admin/assets">
+                                    Assets Type & Field
+                                </Link>
+                            </Menu.Item>
+                            <Menu.Item key="412" icon={<InboxOutlined />}>
+                                <Link href="/vendors">
+                                    Vendors
+                                </Link>
+                            </Menu.Item>
+                        </SubMenu>
+                        {
+                            serviceFeat.every(isIncludesFeat) ?
+                                <SubMenu title="Service Management">
+                                    {
+                                        [183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193].every(isIncludesFeat) &&
+                                        <Menu.Item key="411" icon={<InboxOutlined />}>
+                                            <Link href="/admin/service">
+                                                Service Catalog
+                                        </Link>
+                                        </Menu.Item>
+                                    }
+                                    {
+                                        [194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206].every(isIncludesFeat) &&
+                                        <Menu.Item key="412" icon={<InboxOutlined />}>
+                                            <Link href="/contracts">
+                                                Contracts
+                                            </Link>
+                                        </Menu.Item>
+                                    }
+                                </SubMenu>
+                                :
+                                null
+                        }
+                        {
+                            dataProfile.data.registered_feature.includes(169) ?
+                                <SubMenu title="Financial Management">
+                                    <Menu.Item key="411" icon={<InboxOutlined />}>
+                                        <Link href="/admin/financial">
+                                            Financial
+                                        </Link>
+                                    </Menu.Item>
+                                </SubMenu>
+                                :
+                                null
+                        }
+                    </SubMenu>
                 </Menu>
             </Sider>
             <Sider collapsible collapsed={collsmall} trigger={null} collapsedWidth={0} width={200} theme="light" className={st.siderLayoutSmall} style={{ borderRight: `1px solid #f0f0f0`, position: 'absolute', height: `100%`, backgroundColor: 'white', zIndex: '40' }}>
@@ -91,21 +202,135 @@ const LayoutMenu = ({ sidemenu, coll, collsmall, st, handleCollSmall }) => {
                                 Inventory
                             </Link>
                         </Menu.Item>
-                        {/* <SubMenu key="sub3" title="Submenu">
-                            <Menu.Item key="7">Option 7</Menu.Item>
-                            <Menu.Item key="8">Option 8</Menu.Item>
-                        </SubMenu> */}
                     </SubMenu>
-                    {/* <Menu.Item key="3" icon={<InboxOutlined />}>
-                        <Link href="/dashboard/assets">
-                            Assets
-                        </Link>
-                    </Menu.Item> */}
-                    <Menu.Item key="4" icon={<SettingOutlined />}>
-                        <Link href="/dashboard/admin">
-                            Admin
-                        </Link>
-                    </Menu.Item>
+                    <SubMenu key="4" icon={<SettingOutlined />} title="Assets">
+                        <Menu.Item key="4" icon={<SettingOutlined />}>
+                            <Link href="/dashboard/admin">
+                                Admin
+                            </Link>
+                        </Menu.Item>
+                        {
+                            userFeat.every(isIncludesFeat) ?
+                                <SubMenu title="Users Management">
+                                    {dataProfile.data.registered_feature.includes(108) &&
+                                        <Menu.Item key="411" icon={<UserOutlined />}>
+                                            <Link href="/admin/agents">
+                                                Agents
+                                        </Link>
+                                        </Menu.Item>
+                                    }
+                                    {dataProfile.data.registered_feature.includes(119) &&
+                                        <Menu.Item key="412" icon={<UserOutlined />}>
+                                            <Link href="/admin/requesters">
+                                                Requesters
+                                        </Link>
+                                        </Menu.Item>
+                                    }
+                                    {dataProfile.data.registered_feature.includes(134) &&
+                                        <Menu.Item key="413" icon={<UserOutlined />}>
+                                            <Link href="/groups">
+                                                Groups
+                                        </Link>
+                                        </Menu.Item>
+                                    }
+                                </SubMenu>
+                                :
+                                null
+                        }
+                        <SubMenu title="Features Management">
+                            {
+                                [173, 174, 175, 176, 177, 178].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                <Menu.Item key="411" icon={<InboxOutlined />}>
+                                    <Link href="/roles">
+                                        Roles
+                                    </Link>
+                                </Menu.Item>
+                            }
+                            {
+                                [179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                <Menu.Item key="412" icon={<InboxOutlined />}>
+                                    <Link href="/admin/modules">
+                                        Modules
+                                    </Link>
+                                </Menu.Item>
+                            }
+                            <Menu.Item key="412" icon={<InboxOutlined />}>
+                                <Link href="/admin/features">
+                                    Features
+                                </Link>
+                            </Menu.Item>
+                        </SubMenu>
+                        {
+                            dataProfile.data.registered_feature.includes(144) && dataProfile.data.registered_feature.includes(155) && dataProfile.data.registered_feature.includes(150) ?
+                                <SubMenu title="Company Management">
+                                    {
+                                        dataProfile.data.registered_feature.includes(144) &&
+                                        <Menu.Item key="411" icon={<TeamOutlined />}>
+                                            <Link href="/admin/company/mig">
+                                                My Company
+                                        </Link>
+                                        </Menu.Item>
+                                    }
+                                    {
+                                        dataProfile.data.registered_feature.includes(155) &&
+                                        <Menu.Item key="412" icon={<TeamOutlined />}>
+                                            <Link href="/admin/company">
+                                                Clients
+                                        </Link>
+                                        </Menu.Item>
+                                    }
+                                </SubMenu>
+                                :
+                                null
+                        }
+                        <SubMenu title="Assets">
+                            <Menu.Item key="411" icon={<InboxOutlined />}>
+                                <Link href="/admin/assets">
+                                    Assets Type & Field
+                                </Link>
+                            </Menu.Item>
+                            <Menu.Item key="412" icon={<InboxOutlined />}>
+                                <Link href="/vendors">
+                                    Vendors
+                                </Link>
+                            </Menu.Item>
+                        </SubMenu>
+                        {
+                            serviceFeat.every(isIncludesFeat) ?
+                                <SubMenu title="Service Management">
+                                    {
+                                        [183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193].every(isIncludesFeat) &&
+                                        <Menu.Item key="411" icon={<InboxOutlined />}>
+                                            <Link href="/admin/service">
+                                                Service Catalog
+                                        </Link>
+                                        </Menu.Item>
+                                    }
+                                    {
+                                        [194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206].every(isIncludesFeat) &&
+                                        <Menu.Item key="412" icon={<InboxOutlined />}>
+                                            <Link href="/contracts">
+                                                Contracts
+                                            </Link>
+                                        </Menu.Item>
+                                    }
+                                </SubMenu>
+                                :
+                                null
+                        }
+                        {
+                            dataProfile.data.registered_feature.includes(169) ?
+                                <SubMenu title="Financial Management">
+                                    <Menu.Item key="411" icon={<InboxOutlined />}>
+                                        <Link href="/admin/financial">
+                                            Financial
+                                        </Link>
+                                    </Menu.Item>
+                                </SubMenu>
+                                :
+                                null
+                        }
+                    </SubMenu>
                 </Menu>
             </Sider>
         </div>

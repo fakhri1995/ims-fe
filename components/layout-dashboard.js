@@ -57,7 +57,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, st }) 
                 if (res2.data.is_success) {
                     jscookie.remove('token')
                     console.log("token abis logout: " + jscookie.get('token'))
-                    rt.push('/')
+                    rt.push('/login')
                 }
             })
             .catch(err => {
@@ -73,7 +73,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, st }) 
     return (
         <Spin spinning={loadingspin}>
             <div className=" min-h-screen flex">
-                <LayoutMenu handleCollSmall={handleCollSmall} sidemenu={sidemenu} coll={coll} collsmall={collsmall} st={st}></LayoutMenu>
+                <LayoutMenu dataProfile={dataProfile} handleCollSmall={handleCollSmall} sidemenu={sidemenu} coll={coll} collsmall={collsmall} st={st}></LayoutMenu>
                 <div className="h-auto w-full">
                     <Header className="site-layout-background" style={{ padding: 0, backgroundColor: `white`, display: `flex`, alignItems: `center`, flexDirection: `row`, flexWrap: `wrap`, width: `100%`, justifyContent: `space-between`, height: `auto` }}>
                         <div className="flex z-50">

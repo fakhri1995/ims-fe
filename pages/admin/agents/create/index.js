@@ -267,16 +267,10 @@ export async function getServerSideProps({ req, res }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    // const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyList`, {
-    //     method: `POST`,
-    //     headers: {
-    //         'Authorization': JSON.parse(initProps),
-    //         'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify(reqBody)
-    // })
-    // const resjsonGCL = await resourcesGCL.json()
-    // const dataCompanyList = resjsonGCL
+    if(![109].every((curr) => dataProfile.data.registered_feature.includes(curr))){
+        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.end()
+    }
 
     return {
         props: {
