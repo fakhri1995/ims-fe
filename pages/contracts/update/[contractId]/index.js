@@ -362,9 +362,9 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
                                     <h1 className="font-semibold text-base w-auto">Ubah Kontrak</h1>
                                     <div className="flex space-x-2">
                                         <Link href="/contracts?originPath=Admin" >
-                                            <Button type="default" size="middle">Batalkan</Button>
+                                            <Button type="default" size="middle">Cancel</Button>
                                         </Link>
-                                        <Button disabled={!(validation.harga && validation.id_terms_of_payment) } type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn}>Simpan</Button>
+                                        <Button disabled={!(validation.harga && validation.id_terms_of_payment) } type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn}>Save</Button>
                                     </div>
                                 </div>
                             </Sticky>
@@ -559,6 +559,11 @@ export async function getServerSideProps({ req, res, params }) {
     })
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
+
+    if (![197].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.end()
+    }
     
     const getContractInputData = await fetch(`https://boiling-thicket-46501.herokuapp.com/getContractInputData`, {
         method: `GET`,

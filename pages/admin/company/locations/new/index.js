@@ -312,6 +312,11 @@ export async function getServerSideProps({ req, res, query }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
+    if (![152].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.end()
+    }
+
     // const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
     //     method: `POST`,
     //     headers: {

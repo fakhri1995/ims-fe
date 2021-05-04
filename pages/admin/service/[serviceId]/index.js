@@ -5,7 +5,6 @@ import { DownOutlined, MinusCircleTwoTone } from '@ant-design/icons'
 import { Button, Anchor, Dropdown, Menu, Form, Input, notification, Select, Checkbox, Modal, Switch } from 'antd'
 import Layout from '../../../../components/layout-dashboard'
 import st from '../../../../components/layout-dashboard.module.css'
-import { data } from 'autoprefixer'
 
 function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataListServiceItem, dataListServiceCategories, serviceid, sidemenu }) {
     const rt = useRouter()

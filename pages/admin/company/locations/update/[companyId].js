@@ -286,7 +286,7 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, c
                                     {
                                         editable ?
                                             <Form.Item name="tanggal_pkp" style={{ marginRight: `1rem` }} label="Tanggal PKP">
-                                                <DatePicker onChange={(date, dateString) => { setdataupdate({ ...dataupdate, tanggal_pkp: moment(date) }) }} style={{ width: `100%` }} defaultValue={dataupdate.tanggal_pkp}/>
+                                                <DatePicker onChange={(date, dateString) => { setdataupdate({ ...dataupdate, tanggal_pkp: moment(date) }) }} style={{ width: `100%` }} defaultValue={dataupdate.tanggal_pkp} />
                                             </Form.Item>
                                             :
                                             <>
@@ -441,6 +441,11 @@ export async function getServerSideProps({ req, res, params }) {
     })
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
+
+    if (![151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.end()
+    }
 
     const resourcesBD = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyBranchDetail`, {
         method: `POST`,

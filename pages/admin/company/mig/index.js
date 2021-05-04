@@ -11,7 +11,7 @@ import Link from 'next/link'
 import { Tabs, Input, Form, Table, Tree, Drawer, notification, message, Modal, Select, Button, Popconfirm, DatePicker, Upload } from 'antd'
 import moment from 'moment'
 
-function MigIndexProfile({ dataDetailCompany, tok }) {
+function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
     const rt = useRouter()
     const [editable, setEditable] = useState(false)
     const [loadingbtn, setloadingbtn] = useState(false)
@@ -108,7 +108,12 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
                     {editable ?
                         <Button type="primary" onClick={instanceForm.submit} loading={loadingbtn}>Save</Button>
                         :
-                        <Button type="primary" onClick={() => { setEditable(true) }}>Edit</Button>
+                        <>
+                            {
+                                [145].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                <Button type="primary" onClick={() => { setEditable(true) }}>Edit</Button>
+                            }
+                        </>
                     }
                 </div>
             </div>
@@ -316,7 +321,7 @@ function MigIndexProfile({ dataDetailCompany, tok }) {
     )
 }
 
-function MigIndexLocations({ dataLocations, dataDetailCompany, dataBranchList, tok }) {
+function MigIndexLocations({ dataProfile, dataLocations, dataBranchList, tok }) {
     const rt = useRouter()
     const [expandedKeys, setExpandedKeys] = useState([dataLocations.data[0].key])
     const [autoExpandParent, setAutoExpandParent] = useState(true);
@@ -415,7 +420,10 @@ function MigIndexLocations({ dataLocations, dataDetailCompany, dataBranchList, t
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
                 <div className="flex space-x-2">
                     {/* <Link href={`/admin/company/locations/new?companyId=${dataDetailCompany.data.data.company_id}&parent=`}> */}
-                    <Button type="primary" size="middle" onClick={() => { setdrawablecreate(true) }}>Tambah</Button>
+                    {
+                        [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        <Button type="primary" size="middle" onClick={() => { setdrawablecreate(true) }}>Tambah</Button>
+                    }
                     {/* </Link> */}
                 </div>
             </div>
@@ -445,11 +453,17 @@ function MigIndexLocations({ dataLocations, dataDetailCompany, dataBranchList, t
                                 </div>
                                 <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
                                     {/* <Link href={`/admin/company/locations/new?parent=${nodeData.id}&companyId=${dataDetailCompany.data.company_id}`}> */}
-                                    <a className="mx-2 pb-1" onClick={(e) => { setdrawablecreate(true) }} alt="add"><PlusOutlined /></a>
+                                    {
+                                        [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                        <a className="mx-2 pb-1" onClick={(e) => { setdrawablecreate(true) }} alt="add"><PlusOutlined /></a>
+                                    }
                                     {/* </Link> */}
-                                    <Link href={`/admin/company/locations/update/${nodeData.id}?parent=${nodeData.title}`}>
-                                        <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
-                                    </Link>
+                                    {
+                                        [151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                        <Link href={`/admin/company/locations/update/${nodeData.id}?parent=${nodeData.title}`}>
+                                            <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
+                                        </Link>
+                                    }
                                     <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("API is not available") }} onCancel={() => { message.error("Gagal dihapus") }}>
                                         <a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a>
                                     </Popconfirm>
@@ -555,7 +569,7 @@ function MigIndexLocations({ dataLocations, dataDetailCompany, dataBranchList, t
     )
 }
 
-function MigIndexBankAccount({ dataGetBanks, tok }) {
+function MigIndexBankAccount({ dataProfile, dataGetBanks, tok }) {
     if (!dataGetBanks.data) {
         dataGetBanks.data = []
     }
@@ -836,12 +850,18 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                             {
                                 actions[index] ?
                                     <>{actions[index]}
-                                        <Button onClick={() => { setModaldel(true); setModaldeldata(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
-                                            <DeleteOutlined />
-                                        </Button>
-                                        <Button onClick={() => { setDrawableedit(true); setRecordrow(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
-                                            <EditOutlined />
-                                        </Button>
+                                        {
+                                            [149].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                            <Button onClick={() => { setModaldel(true); setModaldeldata(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
+                                                <DeleteOutlined />
+                                            </Button>
+                                        }
+                                        {
+                                            [148].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                            <Button onClick={() => { setDrawableedit(true); setRecordrow(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
+                                                <EditOutlined />
+                                            </Button>
+                                        }
                                         {/* <a onClick={() => { setModaldel(true); setModaldeldata(record) }}><DeleteOutlined /></a>
                                         <a className="inline" onClick={() => { setDrawableedit(true); setRecordrow(record) }}><EditOutlined /></a> */}
                                     </>
@@ -880,7 +900,10 @@ function MigIndexBankAccount({ dataGetBanks, tok }) {
                             :
                             null
                     }
-                    <Button type="primary" onClick={() => { setDrawablecreate(true) }}>Add New</Button>
+                    {
+                        [147].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        <Button type="primary" onClick={() => { setDrawablecreate(true) }}>Add New</Button>
+                    }
                     {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40" onClick={() => { setDrawablecreate(true) }}> Create</button> */}
                     <Drawer title="Edit data Rekening Bank Perusahan MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false); }} width={370} destroyOnClose={true}>
                         <Form layout="vertical" onFinish={handleSubmitEditBA} initialValues={recordrow}>
@@ -1045,28 +1068,46 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGet
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
             <div className="p-5 bg-white hidden md:block">
                 <Tabs tabPosition={`left`} defaultActiveKey={activeTab}>
-                    <TabPane tab="Profile" key={`profile`}>
-                        <MigIndexProfile dataDetailCompany={dataDetailCompany} tok={tok}></MigIndexProfile>
-                    </TabPane>
-                    <TabPane tab="Bank Account" key={`bankAccounts`}>
-                        <MigIndexBankAccount dataGetBanks={dataGetBanks} tok={tok} />
-                    </TabPane>
-                    <TabPane tab="Locations" key={`locations`}>
-                        <MigIndexLocations dataLocations={dataLocations} dataDetailCompany={dataDetailCompany} dataBranchList={dataBranchList} tok={tok} />
-                    </TabPane>
+                    {
+                        [144, 145].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        <TabPane tab="Profile" key={`profile`}>
+                            <MigIndexProfile dataProfile={dataProfile} dataDetailCompany={dataDetailCompany} tok={tok}></MigIndexProfile>
+                        </TabPane>
+                    }
+                    {
+                        [146, 147, 148, 149].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        <TabPane tab="Bank Account" key={`bankAccounts`}>
+                            <MigIndexBankAccount dataProfile={dataProfile} dataGetBanks={dataGetBanks} tok={tok} />
+                        </TabPane>
+                    }
+                    {
+                        [150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        <TabPane tab="Locations" key={`locations`}>
+                            <MigIndexLocations dataProfile={dataProfile} dataLocations={dataLocations} dataDetailCompany={dataDetailCompany} dataBranchList={dataBranchList} tok={tok} />
+                        </TabPane>
+                    }
                 </Tabs>
             </div>
             <div className="p-5 bg-white block md:hidden">
                 <Tabs tabPosition={`top`} defaultActiveKey={activeTab}>
-                    <TabPane tab="Profile" key={`profile`}>
-                        <MigIndexProfile dataDetailCompany={dataDetailCompany} tok={tok}></MigIndexProfile>
-                    </TabPane>
-                    <TabPane tab="Bank Account" key={`bankAccounts`}>
-                        <MigIndexBankAccount dataGetBanks={dataGetBanks} tok={tok} />
-                    </TabPane>
-                    <TabPane tab="Locations" key={`locations`}>
-                        <MigIndexLocations dataLocations={dataLocations} dataDetailCompany={dataDetailCompany} dataBranchList={dataBranchList} tok={tok} />
-                    </TabPane>
+                    {
+                        [144, 145].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        <TabPane tab="Profile" key={`profile`}>
+                            <MigIndexProfile dataProfile={dataProfile} dataDetailCompany={dataDetailCompany} tok={tok}></MigIndexProfile>
+                        </TabPane>
+                    }
+                    {
+                        [146, 147, 148, 149].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        <TabPane tab="Bank Account" key={`bankAccounts`}>
+                            <MigIndexBankAccount dataProfile={dataProfile} dataGetBanks={dataGetBanks} tok={tok} />
+                        </TabPane>
+                    }
+                    {
+                        [150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        <TabPane tab="Locations" key={`locations`}>
+                            <MigIndexLocations dataProfile={dataProfile} dataLocations={dataLocations} dataDetailCompany={dataDetailCompany} dataBranchList={dataBranchList} tok={tok} />
+                        </TabPane>
+                    }
                 </Tabs>
             </div>
         </Layout>
@@ -1097,6 +1138,11 @@ export async function getServerSideProps({ req, res }) {
     })
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
+
+    if (![144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.end()
+    }
 
     const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getMainCompanyDetail`, {
         method: `POST`,

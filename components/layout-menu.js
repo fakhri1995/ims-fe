@@ -10,6 +10,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
     const userFeat = [107, 108, 109, 110, 111, 112, 132, 119, 118, 117, 116, 115, 114, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143]
     const featureFeat = [173, 174, 175, 176, 177, 178, 179, 180, 181, 182]
     const serviceFeat = [183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206]
+    const companyFeat = [144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163]
     const isIncludesFeat = (curr) => dataProfile.data.registered_feature.includes(curr);
     const { SubMenu } = Menu;
     const { Sider } = Layout
@@ -106,22 +107,22 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             </Menu.Item>
                         </SubMenu>
                         {
-                            dataProfile.data.registered_feature.includes(144) && dataProfile.data.registered_feature.includes(155) && dataProfile.data.registered_feature.includes(150) ?
+                            companyFeat.every(isIncludesFeat) ?
                                 <SubMenu title="Company Management">
                                     {
-                                        dataProfile.data.registered_feature.includes(144) &&
+                                        [144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                         <Menu.Item key="411" icon={<TeamOutlined />}>
                                             <Link href="/admin/company/mig">
                                                 My Company
-                                        </Link>
+                                            </Link>
                                         </Menu.Item>
                                     }
                                     {
-                                        dataProfile.data.registered_feature.includes(155) &&
+                                        [155, 156, 157, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                         <Menu.Item key="412" icon={<TeamOutlined />}>
                                             <Link href="/admin/company">
                                                 Clients
-                                        </Link>
+                                            </Link>
                                         </Menu.Item>
                                     }
                                 </SubMenu>

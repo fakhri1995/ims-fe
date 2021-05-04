@@ -156,16 +156,19 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
                             {/* {
                                 events[index] ?
                                     <> */}
-                                        <Button onClick={() => { rt.push(`/admin/company/${record.company_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
-                                            <EditOutlined />
-                                        </Button>
-                                        {/* <Link href={`/admin/company/${record.company_id}`}> */}
-                                        {/* {events[index]} */}
-                                        {/* <Link href={`/company/${record.company_id}?originPath=Admin`}> */}
-                                        {/* <a><EditOutlined /></a> */}
-                                        {/* </Link> */}
-                                        {/* </Link> */}
-                                    {/* </>
+                            {
+                                [156, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                <Button onClick={() => { rt.push(`/admin/company/${record.company_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
+                                    <EditOutlined />
+                                </Button>
+                            }
+                            {/* <Link href={`/admin/company/${record.company_id}`}> */}
+                            {/* {events[index]} */}
+                            {/* <Link href={`/company/${record.company_id}?originPath=Admin`}> */}
+                            {/* <a><EditOutlined /></a> */}
+                            {/* </Link> */}
+                            {/* </Link> */}
+                            {/* </>
                                     :
                                     null
                             } */}
@@ -289,7 +292,10 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
             <div className="flex justify-start md:justify-end p-3 md:border-t-2 md:border-b-2 bg-white mb-4 md:mb-8">
                 <div className=" w-full flex justify-between items-center px-2">
                     <h1 className="font-bold">Clients</h1>
-                    <Button type="primary" size="large" onClick={() => { setDrawablecreate(true) }}>Add New</Button>
+                    {
+                        [157].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        <Button type="primary" size="large" onClick={() => { setDrawablecreate(true) }}>Add New</Button>
+                    }
                 </div>
             </div>
             <div className="p-5 mt-5 flex flex-col space-y-5 rounded-md w-full h-auto bg-white">
@@ -430,8 +436,8 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
                             </Form.Item>
                         </div>
                         <div className="flex justify-end">
-                        <Button type='default' onClick={()=>{setDrawablecreate(false)}} style={{marginRight:`1rem`}}>Cancel</Button>
-                        <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn} style={{ marginBottom: `1rem` }}>Save</Button>
+                            <Button type='default' onClick={() => { setDrawablecreate(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
+                            <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn} style={{ marginBottom: `1rem` }}>Save</Button>
                         </div>
                     </Form>
                 </div>
@@ -467,6 +473,11 @@ export async function getServerSideProps({ req, res }) {
     })
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
+
+    if (![155, 156, 157, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.end()
+    }
 
     const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
         method: `POST`,
