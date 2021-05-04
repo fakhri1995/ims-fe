@@ -443,7 +443,7 @@ export async function getServerSideProps({ req, res, params }) {
     const dataProfile = resjsonGP
 
     if (![151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.writeHead(302, { Location: '/admin/company/mig' })
         res.end()
     }
 
@@ -457,6 +457,14 @@ export async function getServerSideProps({ req, res, params }) {
     })
     const resjsonBD = await resourcesBD.json()
     const dataBranchDetail = resjsonBD
+    if(!dataBranchDetail.success){
+        return{
+            redirect:{
+                permanent: false,
+                destination: '/admin/company/mig'
+            }
+        }
+    }
 
     // const resourcesGL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
     //     method: `POST`,

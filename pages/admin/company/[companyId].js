@@ -10,7 +10,7 @@ import st from '../../../components/layout-dashboard-clients.module.css'
 import { Tabs, Input, Table, Tree, Drawer, Modal, message, Select, notification, Form, Button, Popconfirm, Switch, DatePicker } from 'antd'
 import moment from 'moment'
 
-function ClientsDetailProfile({ dataDetailCompany, tok }) {
+function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok }) {
     const rt = useRouter()
     const [editable, setEditable] = useState(false)
     const [visible, setVisible] = useState(false)
@@ -405,7 +405,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
     )
 }
 
-function ClientsDetailLocations({ dataDetailCompany, tok }) {
+function ClientsDetailLocations({ dataProfile, dataDetailCompany, tok }) {
     const [expandedKeys, setExpandedKeys] = useState([])
     const [autoExpandParent, setAutoExpandParent] = useState(true);
     const onExpand = (expandedKeys) => {
@@ -494,9 +494,8 @@ function ClientsDetailLocations({ dataDetailCompany, tok }) {
         <div id="locationsDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
                 <div className="flex space-x-2">
-                    <Link href={`/admin/company/locations/new?companyId=${dataDetailCompany.data.company_id}`}>
-                        <Button type="primary">Tambah</Button>
-                        {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40"> Create</button> */}
+                    <Link href={`/admin/company/locations/new?parent=&companyId=${dataDetailCompany.data.company_id}`}>
+                        <Button disabled type="primary">Tambah</Button>
                     </Link>
                 </div>
             </div>
@@ -525,15 +524,15 @@ function ClientsDetailLocations({ dataDetailCompany, tok }) {
                                     {nodeData.title}
                                 </div>
                                 <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
-                                    <Link href={`/admin/company/locations/new?parent=${nodeData.title}&companyId=${dataDetailCompany.data.company_id}`}>
+                                    {/* <Link href={`/admin/company/locations/new?parent=${nodeData.title}&companyId=${dataDetailCompany.data.company_id}`}>
                                         <a className="mx-2 pb-1" alt="add"><PlusOutlined /></a>
                                     </Link>
                                     <Link href={`/admin/company/locations/update/${dataDetailCompany.data.company_id}?parent=${nodeData.title}`}>
                                         <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                     </Link>
-                                    <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("berhasil dihapus") }} onCancel={() => { message.error("Gagal dihapus") }}>
+                                    <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("API is not available") }} onCancel={() => { message.error("Gagal dihapus") }}>
                                         <a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a>
-                                    </Popconfirm>
+                                    </Popconfirm> */}
                                 </div>
                             </div>
                         </>
@@ -546,7 +545,7 @@ function ClientsDetailLocations({ dataDetailCompany, tok }) {
     )
 }
 
-function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
+function ClientsDetailBankAccount({ dataProfile, dataGetBanks, tok, companyId }) {
     if (!dataGetBanks.data) {
         dataGetBanks.data = []
     }
@@ -1040,17 +1039,17 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
                     {
                         [156, 158, 159].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Profile" key={`profile`}>
-                            <ClientsDetailProfile dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
+                            <ClientsDetailProfile dataProfile={dataProfile} dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
                         </TabPane>
                     }
                     {
                         [160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Bank Account" key={`bankAccounts`}>
-                            <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
+                            <ClientsDetailBankAccount dataProfile={dataProfile} dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
                         </TabPane>
                     }
                     <TabPane tab="Locations" key={`locations`}>
-                        <ClientsDetailLocations dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailLocations>
+                        <ClientsDetailLocations dataProfile={dataProfile} dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailLocations>
                     </TabPane>
                 </Tabs>
             </div>
@@ -1059,17 +1058,17 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
                     {
                         [156, 158, 159].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Profile" key={`profile`}>
-                            <ClientsDetailProfile dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
+                            <ClientsDetailProfile dataProfile={dataProfile} dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
                         </TabPane>
                     }
                     {
                         [160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Bank Account" key={`bankAccounts`}>
-                            <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
+                            <ClientsDetailBankAccount dataProfile={dataProfile} dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
                         </TabPane>
                     }
                     <TabPane tab="Locations" key={`locations`}>
-                        <ClientsDetailLocations dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailLocations>
+                        <ClientsDetailLocations dataProfile={dataProfile} dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailLocations>
                     </TabPane>
                 </Tabs>
             </div>
@@ -1106,7 +1105,7 @@ export async function getServerSideProps({ req, res, params }) {
     const dataProfile = resjsonGP
 
     if (![156, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.writeHead(302, { Location: '/admin/company' })
         res.end()
     }
 

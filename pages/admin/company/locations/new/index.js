@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons'
 import { Form, Input, Button, Upload, message, notification, Select } from 'antd'
 
-function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt }) {
+function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt, companyid }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = ['admin', 'company', `mig`, 'New branch location']
@@ -313,7 +313,7 @@ export async function getServerSideProps({ req, res, query }) {
     const dataProfile = resjsonGP
 
     if (![152].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.writeHead(302, { Location: '/admin/company/mig' })
         res.end()
     }
 
@@ -344,6 +344,7 @@ export async function getServerSideProps({ req, res, query }) {
             // dataDetailCompany,
             dataLocations,
             parentt,
+            companyid,
             sidemenu: "4"
         },
     }
