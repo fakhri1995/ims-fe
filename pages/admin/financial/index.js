@@ -104,24 +104,30 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
                         //     <div className=" h-6 px-1 border hover:border-blue-500 hover:text-blue-500 rounded-sm cursor-pointer flex justify-center items-center" onClick={() => { setmodaldelete(true); setiddelete(record.id) }}><DeleteOutlined /></div>
                         // </div>
                         <div className=" flex">
-                            <Button onClick={() => {
-                                setdataedit({
-                                    id: record.id,
-                                    nama: record.nama,
-                                    jenis: record.jenis,
-                                    tahun_penggunaan: record.tahun_penggunaan,
-                                    deskripsi: record.deskripsi
-                                })
-                                setmodaledit(true)
-                            }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
-                                <EditOutlined />
-                            </Button>
-                            <Button danger onClick={() => {
-                                setmodaldelete(true); 
-                                setiddelete(record.id)
-                            }} loading={loadingdelete} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
-                                <DeleteOutlined />
-                            </Button>
+                            {
+                                [171].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                <Button onClick={() => {
+                                    setdataedit({
+                                        id: record.id,
+                                        nama: record.nama,
+                                        jenis: record.jenis,
+                                        tahun_penggunaan: record.tahun_penggunaan,
+                                        deskripsi: record.deskripsi
+                                    })
+                                    setmodaledit(true)
+                                }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
+                                    <EditOutlined />
+                                </Button>
+                            }
+                            {
+                                [172].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                <Button danger onClick={() => {
+                                    setmodaldelete(true);
+                                    setiddelete(record.id)
+                                }} loading={loadingdelete} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
+                                    <DeleteOutlined />
+                                </Button>
+                            }
                         </div>
                 }
             }
@@ -313,7 +319,7 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
                     <div className="flex flex-col">
                         <div className="border-b w-full mb-3">
                             <div className=" border-b-4 border-gray-400 p-1 w-24">
-                                Depresiasi
+                                Depreciation
                             </div>
                         </div>
                         {
@@ -378,7 +384,13 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
                                     // <button className={`${tambahbtn} text-blue-500 hover:text-blue-700 text-sm flex items-center`} onClick={() => { settambahbtn(false) }}>
                                     //     <PlusCircleTwoTone style={{ marginRight: `0.2rem`, marginTop: `0.1rem` }} /> Tambah Baru
                                     // </button>
-                                    <Button type="primary" onClick={() => { settambahbtn(false) }}>Add New</Button>
+                                    <>
+                                        {
+                                            [170].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                            <Button type="primary" onClick={() => { settambahbtn(false) }}>Add New</Button>
+
+                                        }
+                                    </>
                                     :
                                     null
                             }
@@ -535,6 +547,11 @@ export async function getServerSideProps({ req, res }) {
     })
     const resjson = await resources.json()
     const dataProfile = resjson
+
+    if (![169, 170, 171, 172].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.end()
+    }
 
     const resourcesGD = await fetch(`https://boiling-thicket-46501.herokuapp.com/getDepreciations`, {
         method: `GET`,

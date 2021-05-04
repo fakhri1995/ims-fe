@@ -11,6 +11,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
     const featureFeat = [173, 174, 175, 176, 177, 178, 179, 180, 181, 182]
     const serviceFeat = [183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206]
     const companyFeat = [144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163]
+    const depreFeat = [169, 170, 171, 172]
     const isIncludesFeat = (curr) => dataProfile.data.registered_feature.includes(curr);
     const { SubMenu } = Menu;
     const { Sider } = Layout
@@ -165,11 +166,11 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                 null
                         }
                         {
-                            dataProfile.data.registered_feature.includes(169) ?
+                            depreFeat.every(isIncludesFeat) ?
                                 <SubMenu title="Financial Management">
                                     <Menu.Item key="411" icon={<InboxOutlined />}>
                                         <Link href="/admin/financial">
-                                            Financial
+                                            Depreciation
                                         </Link>
                                     </Menu.Item>
                                 </SubMenu>
@@ -320,11 +321,11 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                 null
                         }
                         {
-                            dataProfile.data.registered_feature.includes(169) ?
+                            depreFeat.every(isIncludesFeat) ?
                                 <SubMenu title="Financial Management">
                                     <Menu.Item key="411" icon={<InboxOutlined />}>
                                         <Link href="/admin/financial">
-                                            Financial
+                                            Depreciation
                                         </Link>
                                     </Menu.Item>
                                 </SubMenu>
