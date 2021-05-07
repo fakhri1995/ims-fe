@@ -58,7 +58,7 @@ function layout({ children }) {
                                 <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
                                     <p className={'font-bold py-1'}>Company</p>
                                     <Link href={{pathname: '/aboutus'}}><p className={'cursor-pointer py-1'}>About Us</p></Link>
-                                    <p className={' py-1'}>Careers</p>
+                                    <Link href={{pathname: '/careers'}}><p className={'cursor-pointer py-1'}>Careers</p></Link>
                                 </div>
                                 <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
                                     <p className={'font-bold py-1'}>Solutions</p>

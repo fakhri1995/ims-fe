@@ -52,13 +52,13 @@ function AboutUs({ }) {
                     <div className={'block md:hidden flex-col w-1/2 py-4 md:py-4 m-auto'}>
                         <img src="/image-aboutus.png" className={'block'} style={{width:'400px',height:'auto',margin:'0 auto'}}></img>
                     </div>
-                    <p className={'pb-8'}>
+                    <p className={'pb-8 font-bold'}>
                     Founded in 2003, Mitramas Infosys Global (MIG)  directly partner with global  providers and collaborate with local IT talents to offer you a seamless technology experience. Experienced  across archipelago for more than decade we have a plethora of experience in the business. With integrity as our core principle, we collaborate with our clients to increase their efficiency and reach long-term business goals.
                     </p>
-                    <p className={'pb-8'}>
+                    <p className={'pb-8 font-bold'}>
                     Our services help you operate your business agile and cost efficient
                     </p>
-                    <p className={'pb-8'}>
+                    <p className={'pb-8 font-bold'}>
                     Careers at MIG offer bla bla bla to be better together 
                     </p>
                 </div>
@@ -70,11 +70,11 @@ function AboutUs({ }) {
                 <div>
                     <p className={'font-bold text-2xl md:text-3xl pb-4'}>MIG Locations</p>
                     <p className={'font-bold pb-4'}>Headquarters</p>
-                    <p>Tebet raya  no. 42</p>
-                    <p className={'pb-4'}>South Jakarta, DKI Jakarta,12820</p>
+                    <p className={'font-bold'}>Tebet raya  no. 42</p>
+                    <p className={'pb-4 font-bold'}>South Jakarta, DKI Jakarta,12820</p>
                     <Button className={''} style={{backgroundColor:'#F8F8F8',paddingLeft:'2rem',paddingRight:'2rem'}}>Contact Us</Button>
                     <p className={'font-bold py-4'}>Coverages</p>
-                    <div className={'bg-white p-4'} style={{boxShadow:'0 30px 20px rgb(0 0 0 / 20%)'}}>
+                    <div className={'bg-white p-4'} style={{boxShadow:'0 10px 20px rgb(0 0 0 / 20%)'}}>
                         <ul className={'coverage-list'}>
                             <li><p href="">Banda Aceh</p></li>
                             <li><p href="">Medan</p></li>

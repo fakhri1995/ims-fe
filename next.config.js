@@ -7,6 +7,7 @@ module.exports = {
       { source: '/software', destination: '/migwebsite/software' },
       { source: '/people', destination: '/migwebsite/people' },
       { source: '/aboutus', destination: '/migwebsite/aboutus' },
+      { source: '/careers', destination: '/migwebsite/careers' },
     ]
   }
 }
