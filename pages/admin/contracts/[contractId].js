@@ -1,23 +1,22 @@
-import Layout from '../../components/layout-dashboard2'
+import Layout from '../../../components/layout-dashboard2'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import {Tabs, notification, Modal, Timeline,InputNumber } from 'antd'
-import st from '../../components/layout-dashboard-inventories.module.css'
-import { Row, Col, Divider } from 'antd';
+import { Tabs, notification, Modal, Timeline, InputNumber } from 'antd'
+import st from '../../../components/layout-dashboard-inventories.module.css'
 import moment from 'moment'
 
 function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     // const pathArr = rt.pathname.split("/").slice(1)
-    const pathArr = ['admin','contracts', dataContract.data.contract.nomor_kontrak]
+    const pathArr = ['admin', 'contracts', dataContract.data.contract.nomor_kontrak]
     const { originPath } = rt.query
     const { TabPane } = Tabs;
-    
-    const contractTypes = dataContractTypes.data.filter((item,idx)=>{return dataContract.data.contract.id_tipe_kontrak == item.id})[0]
+
+    const contractTypes = dataContractTypes.data.filter((item, idx) => { return dataContract.data.contract.id_tipe_kontrak == item.id })[0]
     // console.log(contractTypes)
     const contract = dataContract.data.contract
     const serviceItems = dataContract.data.service_item_kontraks
@@ -72,26 +71,26 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                 'Content-Type': 'application/json'
             },
         })
-        .then(res => res.json())
-        .then(res2 => {
-            if (res2.success) {
-                setWarningDelete(false, null)
-                notification['success']({
-                    message: res2.message,
-                    duration: 3
-                })
-                setTimeout(() => {
-                    rt.push(`/contracts?originPath=Admin`)
-                }, 500)
-            }
-            else if (!res2.success) {
-                setWarningDelete(false, null)
-                notification['error']({
-                    message: res2.message,
-                    duration: 3
-                })
-            }
-        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    setWarningDelete(false, null)
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/admin/contracts`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    setWarningDelete(false, null)
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
     }
     //-------------------activate contract------------------------
     const handleActivateContract = (id) => {
@@ -102,26 +101,26 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                 'Content-Type': 'application/json'
             },
         })
-        .then(res => res.json())
-        .then(res2 => {
-            if (res2.success) {
-                setWarningDelete(false, null)
-                notification['success']({
-                    message: res2.message,
-                    duration: 3
-                })
-                setTimeout(() => {
-                    rt.push(`/contracts?originPath=Admin`)
-                }, 500)
-            }
-            else if (!res2.success) {
-                setWarningDelete(false, null)
-                notification['error']({
-                    message: res2.message,
-                    duration: 3
-                })
-            }
-        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    setWarningDelete(false, null)
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/admin/contracts`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    setWarningDelete(false, null)
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
     }
     //------------------handle delete contract-------------------
     const handleDeleteContract = (key) => {
@@ -144,7 +143,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/contracts?originPath=Admin`)
+                        rt.push(`/admin/contracts`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -162,21 +161,21 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
     // const future = moment('2022-03-02 10:03:02');
     const future = moment(contract.tanggal_selesai);
     // const timeLeft = moment(future.diff(currentDate)).format("YYYY-MM-DD HH:mm:ss");
-    const timeLeft = moment(future).diff(currentDate, 'months')>2?moment(future).diff(currentDate, 'months')+" Bulan":moment(future).diff(currentDate, 'days')+" Hari"
+    const timeLeft = moment(future).diff(currentDate, 'months') > 2 ? moment(future).diff(currentDate, 'months') + " Bulan" : moment(future).diff(currentDate, 'days') + " Hari"
 
     var timeConverter = (UNIX_timestamp) => {
         var a = new Date(UNIX_timestamp);
-        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         var year = a.getFullYear();
         var month = months[a.getMonth()];
         var date = a.getDate();
         var hour = a.getHours();
         var min = a.getMinutes();
         var sec = a.getSeconds();
-        var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+        var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
         return time;
-      }
-      
+    }
+
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
@@ -185,38 +184,50 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <div className={'flex'}>
-                                <h1 className="font-semibold text-base w-auto py-2 pr-4">{contract.nomor_kontrak}</h1>
-                                {
-                                    contract.is_active 
-                                    ?
-                                    <div className=" relative top-1 h-9 bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md w-auto md:mr-5">AKTIF</div>
-                                    :
-                                    <div className=" relative top-1 h-9 bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md w-auto md:mr-5">NON-AKTIF</div>
-                                }
+                                    <h1 className="font-semibold text-base w-auto py-2 pr-4">{contract.nomor_kontrak}</h1>
+                                    {
+                                        contract.is_active
+                                            ?
+                                            <div className=" relative top-1 h-9 bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md w-auto md:mr-5">AKTIF</div>
+                                            :
+                                            <div className=" relative top-1 h-9 bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md w-auto md:mr-5">NON-AKTIF</div>
+                                    }
                                 </div>
                                 <div className="flex space-x-2 pt-1">
-                                    <button onClick={()=>{onClickModalTerminateActivate(true,contract)}} className=" text-white text-sm bg-green-600 border-gray-900  hover:bg-green-700 cursor-pointer h-10 py-2.5 w-20 text-center">
+                                    {
+                                        [199].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                        <button onClick={() => { onClickModalTerminateActivate(true, contract) }} className=" text-white text-sm bg-green-600 border-gray-900  hover:bg-green-700 cursor-pointer h-10 py-2.5 w-20 text-center">
                                             <p>
                                                 Activate
                                             </p>
-                                    </button>
-                                    <button onClick={()=>{onClickModalTerminateContract(true,contract)}} className=" text-white text-sm bg-red-600 border-gray-900  hover:bg-red-700 cursor-pointer h-10 py-2.5 w-20 text-center">
+                                        </button>
+                                    }
+                                    {
+                                        [200].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                        <button onClick={() => { onClickModalTerminateContract(true, contract) }} className=" text-white text-sm bg-red-600 border-gray-900  hover:bg-red-700 cursor-pointer h-10 py-2.5 w-20 text-center">
                                             <p>
                                                 Terminate
                                             </p>
-                                    </button>
-                                    <Link href={`/contracts/update/${contract.id}?originPath=Admin`}>
-                                        <div className=" text-white text-sm bg-blue-500 hover:bg-blue-600 border-gray-900 cursor-pointer h-10 py-2.5 w-20 text-center" >
-                                            <p>
-                                                Edit
-                                            </p>
-                                        </div>
-                                    </Link>
-                                    <button onClick={()=>{onClickModalDeleteContract(true,contract)}} className=" text-black text-sm bg-white border-gray-300 border hover:bg-gray-200 cursor-pointer h-10 py-2 w-20 text-center">
+                                        </button>
+                                    }
+                                    {
+                                        [197].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                        <Link href={`/admin/contracts/update/${contract.id}`}>
+                                            <div className=" text-white text-sm bg-blue-500 hover:bg-blue-600 border-gray-900 cursor-pointer h-10 py-2.5 w-20 text-center" >
+                                                <p>
+                                                    Edit
+                                                </p>
+                                            </div>
+                                        </Link>
+                                    }
+                                    {
+                                        [198].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                        <button onClick={() => { onClickModalDeleteContract(true, contract) }} className=" text-black text-sm bg-white border-gray-300 border hover:bg-gray-200 cursor-pointer h-10 py-2 w-20 text-center">
                                             <p>
                                                 Delete
                                             </p>
-                                    </button>
+                                        </button>
+                                    }
                                 </div>
                             </div>
                         </Sticky>
@@ -226,7 +237,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                                 <TabPane tab={'Overview'} key={1}>
                                     <div>
                                         <div className={'py-2'}>
-                                        General Details
+                                            General Details
                                         </div>
                                         <div className={'text-black text-sm overflow-auto flex flex-col bg-white border-gray-300 border cursor-pointer p-1'}>
                                             <div className={'grid grid-cols-1 md:grid-cols-3 p-2'} >
@@ -289,12 +300,12 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                                     </div>
                                     <div>
                                         <div className={'py-2'}>
-                                        Service Items Detail
+                                            Service Items Detail
                                         </div>
-                                            {
-                                                serviceItems.map((item,idx)=>{
-                                                    return(
-                                                        <>
+                                        {
+                                            serviceItems.map((item, idx) => {
+                                                return (
+                                                    <>
                                                         <div className={'text-black text-sm overflow-auto flex flex-col bg-white border-gray-300 border cursor-pointer p-1'}>
                                                             <div className={'grid grid-cols-1 md:grid-cols-3 p-2'} >
                                                                 <div className={'col-span-1'}>
@@ -310,12 +321,12 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                                                                 </div>
                                                                 <div className={'col-span-2'} >
                                                                     <InputNumber
-                                                                    defaultValue={item.harga}
-                                                                    formatter={value => `IDR ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')+' Rupiah'}
-                                                                    parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                                                                    readOnly
-                                                                    bordered={false}
-                                                                    style={{width:'220px',marginLeft:'-12px'}}
+                                                                        defaultValue={item.harga}
+                                                                        formatter={value => `IDR ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' Rupiah'}
+                                                                        parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                                                                        readOnly
+                                                                        bordered={false}
+                                                                        style={{ width: '220px', marginLeft: '-12px' }}
                                                                     />
                                                                 </div>
                                                             </div>
@@ -328,16 +339,16 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <br/>
-                                                        </>
-                                                    )
-                                                })
-                                            }
+                                                        <br />
+                                                    </>
+                                                )
+                                            })
+                                        }
                                     </div>
                                 </TabPane>
                                 <TabPane tab={'Activity'} key={2}>
-                                <div className={'text-black text-sm flex flex-col bg-white border-gray-300 border cursor-pointer p-3 w-full'}>
-                                    {/* <Timeline mode={'alternate'}> 
+                                    <div className={'text-black text-sm flex flex-col bg-white border-gray-300 border cursor-pointer p-3 w-full'}>
+                                        {/* <Timeline mode={'alternate'}> 
                                     {activityLog.map((doc,index) => {
                                         var text
                                         var data_update = ""
@@ -364,7 +375,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                                         })
                                     }
                                     </Timeline> */}
-                                </div>
+                                    </div>
                                 </TabPane>
                             </Tabs>
                         </div>
@@ -420,43 +431,6 @@ export async function getServerSideProps({ req, res, params }) {
             initProps = cookiesJSON.token
         }
     }
-    const resourcesGetContract = await fetch(`https://boiling-thicket-46501.herokuapp.com/getContract?id=${contractid}`, {
-        method: `GET`,
-        headers: {
-            'Authorization': JSON.parse(initProps)
-        }
-    })
-    const resjsonGetContract = await resourcesGetContract.json()
-    const dataContract = resjsonGetContract
-    
-    const resourcesGetContractTypes = await fetch(`https://boiling-thicket-46501.herokuapp.com/getContractTypes`, {
-        method: `GET`,
-        headers: {
-            'Authorization': JSON.parse(initProps)
-        }
-    })
-    const resjsonGetContractTypes = await resourcesGetContractTypes.json()
-    const dataContractTypes = resjsonGetContractTypes
-    
-    // const assetId = dataContract.data.contract.asset_id
-    
-    // const resourcesGetInventoryColumnAndVendor = await fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryColumns?id=${assetId}`, {
-    //     method: `GET`,
-    //     headers: {
-    //         'Authorization': JSON.parse(initProps)
-    //     }
-    // })
-    // const resjsonGetInventoryColumnAndVendor = await resourcesGetInventoryColumnAndVendor.json()
-    // const dataInventoryColumnAndVendor = resjsonGetInventoryColumnAndVendor
-    
-    // const resourcesGetInventoryActivityLog = await fetch(`https://boiling-thicket-46501.herokuapp.com/getActivityInventoryLogs?id=${inventoryid}`, {
-    //     method: `GET`,
-    //     headers: {
-    //         'Authorization': JSON.parse(initProps)
-    //     }
-    // })
-    // const resjsonGetInventoryActivityLog = await resourcesGetInventoryActivityLog.json()
-    // const dataInventoryActivityLog = resjsonGetInventoryActivityLog
 
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,
@@ -466,6 +440,49 @@ export async function getServerSideProps({ req, res, params }) {
     })
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
+
+    if (![195, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.end()
+    }
+
+    const resourcesGetContract = await fetch(`https://boiling-thicket-46501.herokuapp.com/getContract?id=${contractid}`, {
+        method: `GET`,
+        headers: {
+            'Authorization': JSON.parse(initProps)
+        }
+    })
+    const resjsonGetContract = await resourcesGetContract.json()
+    const dataContract = resjsonGetContract
+
+    const resourcesGetContractTypes = await fetch(`https://boiling-thicket-46501.herokuapp.com/getContractTypes`, {
+        method: `GET`,
+        headers: {
+            'Authorization': JSON.parse(initProps)
+        }
+    })
+    const resjsonGetContractTypes = await resourcesGetContractTypes.json()
+    const dataContractTypes = resjsonGetContractTypes
+
+    // const assetId = dataContract.data.contract.asset_id
+
+    // const resourcesGetInventoryColumnAndVendor = await fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryColumns?id=${assetId}`, {
+    //     method: `GET`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps)
+    //     }
+    // })
+    // const resjsonGetInventoryColumnAndVendor = await resourcesGetInventoryColumnAndVendor.json()
+    // const dataInventoryColumnAndVendor = resjsonGetInventoryColumnAndVendor
+
+    // const resourcesGetInventoryActivityLog = await fetch(`https://boiling-thicket-46501.herokuapp.com/getActivityInventoryLogs?id=${inventoryid}`, {
+    //     method: `GET`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps)
+    //     }
+    // })
+    // const resjsonGetInventoryActivityLog = await resourcesGetInventoryActivityLog.json()
+    // const dataInventoryActivityLog = resjsonGetInventoryActivityLog
 
     return {
         props: {

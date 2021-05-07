@@ -3,14 +3,12 @@ import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
 import { useState } from 'react'
 import Link from 'next/link'
-import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
-import EditOutlined from '@ant-design/icons/EditOutlined'
-import PlusOutlined from '@ant-design/icons/PlusOutlined'
+import {DeleteOutlined, EditOutlined} from '@ant-design/icons'
 import st from '../../../components/layout-dashboard-clients.module.css'
-import { Tabs, Input, Table, Tree, Drawer, Modal, message, Select, notification, Form, Button, Popconfirm, Switch, DatePicker } from 'antd'
+import { Tabs, Input, Table, Tree, Drawer, Modal, Select, notification, Form, Button, Switch, DatePicker } from 'antd'
 import moment from 'moment'
 
-function ClientsDetailProfile({ dataDetailCompany, tok }) {
+function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok }) {
     const rt = useRouter()
     const [editable, setEditable] = useState(false)
     const [visible, setVisible] = useState(false)
@@ -19,7 +17,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
     const [loadingubahaktif, setloadingubahaktif] = useState(false)
     const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
     const [instanceForm] = Form.useForm()
-    if(dataDetailCompany.data.tanggal_pkp === null){
+    if (dataDetailCompany.data.tanggal_pkp === null) {
         dataDetailCompany.data.tanggal_pkp = new Date()
     }
     const [data1, setData1] = useState({
@@ -161,21 +159,38 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
                     {editable ?
                         <Button type="primary" onClick={instanceForm.submit} loading={loadingbtn}>Save</Button>
                         :
-                        <Button type="primary" onClick={() => { setEditable(true) }}>Edit</Button>
+                        <>
+                            {
+                                [158].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                <Button type="primary" onClick={() => { setEditable(true) }}>Edit</Button>
+                            }
+                        </>
                     }
                 </div>
             </div>
             <div className=" mb-2 md:mb-4 flex md:flex-row flex-col">
                 <h1 className="font-semibold text-base mr-3 pt-1">{dataDetailCompany.data.company_name}</h1>
                 <h1 className="mr-3 pt-1 hidden md:block">|</h1>
-                <div className="pt-1">
-                    {
-                        dataDetailCompany.data.is_enabled ?
-                            <Switch checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
-                            :
-                            <Switch checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
-                    }
-                </div>
+                {
+                    [159].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                        <div className="pt-1">
+                            {
+                                dataDetailCompany.data.is_enabled ?
+                                    <Switch checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
+                                    :
+                                    <Switch checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
+                            }
+                        </div>
+                        :
+                        <div className="pt-1">
+                            {
+                                dataDetailCompany.data.is_enabled ?
+                                    <Switch disabled checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
+                                    :
+                                    <Switch disabled checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
+                            }
+                        </div>
+                }
             </div>
             <div className="grid grid-cols-1 sm:grid-col-3 md:grid-cols-5 mb-4">
                 <div className="p-3 relative col-span-1 sm:col-span-1 md:col-span-1 flex flex-col items-center">
@@ -388,7 +403,7 @@ function ClientsDetailProfile({ dataDetailCompany, tok }) {
     )
 }
 
-function ClientsDetailLocations({ dataDetailCompany, tok }) {
+function ClientsDetailLocations({ dataProfile, dataDetailCompany, tok }) {
     const [expandedKeys, setExpandedKeys] = useState([])
     const [autoExpandParent, setAutoExpandParent] = useState(true);
     const onExpand = (expandedKeys) => {
@@ -477,9 +492,8 @@ function ClientsDetailLocations({ dataDetailCompany, tok }) {
         <div id="locationsDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
                 <div className="flex space-x-2">
-                    <Link href={`/admin/company/locations/new?companyId=${dataDetailCompany.data.company_id}`}>
-                        <Button type="primary">Tambah</Button>
-                        {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40"> Create</button> */}
+                    <Link href={`/admin/company/locations/new?parent=&companyId=${dataDetailCompany.data.company_id}`}>
+                        <Button disabled type="primary">Tambah</Button>
                     </Link>
                 </div>
             </div>
@@ -508,15 +522,15 @@ function ClientsDetailLocations({ dataDetailCompany, tok }) {
                                     {nodeData.title}
                                 </div>
                                 <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
-                                    <Link href={`/admin/company/locations/new?parent=${nodeData.title}&companyId=${dataDetailCompany.data.company_id}`}>
+                                    {/* <Link href={`/admin/company/locations/new?parent=${nodeData.title}&companyId=${dataDetailCompany.data.company_id}`}>
                                         <a className="mx-2 pb-1" alt="add"><PlusOutlined /></a>
                                     </Link>
                                     <Link href={`/admin/company/locations/update/${dataDetailCompany.data.company_id}?parent=${nodeData.title}`}>
                                         <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                     </Link>
-                                    <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("berhasil dihapus") }} onCancel={() => { message.error("Gagal dihapus") }}>
+                                    <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("API is not available") }} onCancel={() => { message.error("Gagal dihapus") }}>
                                         <a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a>
-                                    </Popconfirm>
+                                    </Popconfirm> */}
                                 </div>
                             </div>
                         </>
@@ -529,7 +543,7 @@ function ClientsDetailLocations({ dataDetailCompany, tok }) {
     )
 }
 
-function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
+function ClientsDetailBankAccount({ dataProfile, dataGetBanks, tok, companyId }) {
     if (!dataGetBanks.data) {
         dataGetBanks.data = []
     }
@@ -684,12 +698,18 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                             {
                                 actions[index] ?
                                     <>{actions[index]}
-                                        <Button onClick={() => { setDrawableedit(true); setRecordrow(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
-                                            <EditOutlined />
-                                        </Button>
-                                        <Button onClick={() => { setModaldel(true); setModaldeldata(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
-                                            <DeleteOutlined />
-                                        </Button>
+                                        {
+                                            [162].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                            <Button onClick={() => { setDrawableedit(true); setRecordrow(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
+                                                <EditOutlined />
+                                            </Button>
+                                        }
+                                        {
+                                            [163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                            <Button onClick={() => { setModaldel(true); setModaldeldata(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
+                                                <DeleteOutlined />
+                                            </Button>
+                                        }
                                         {/* <a onClick={() => { setModaldel(true); setModaldeldata(record) }}><DeleteOutlined /></a>
                                         <a className="inline" onClick={() => { setDrawableedit(true); setRecordrow(record) }}><EditOutlined /></a> */}
                                     </>
@@ -851,7 +871,10 @@ function ClientsDetailBankAccount({ dataGetBanks, tok, companyId }) {
                             :
                             null
                     }
-                    <Button type="primary" onClick={() => { setDrawablecreate(true) }}>Add New</Button>
+                    {
+                        [161].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        <Button type="primary" onClick={() => { setDrawablecreate(true) }}>Add New</Button>
+                    }
                     {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40 hidden md:block" onClick={() => { setDrawablecreate(true) }}> Create</button>
                     <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40 block md:hidden" onClick={() => { setDrawablecreatesmall(true) }}> Create</button> */}
                     <Drawer title="Edit data Rekening Bank" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false) }} width={370} destroyOnClose={true}>
@@ -1011,27 +1034,39 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} dataDetailCompany={dataDetailCompany} st={st}>
             <div className="px-5 pt-5 pb-0 bg-white hidden md:block">
                 <Tabs tabPosition={`left`} defaultActiveKey={activeTab}>
-                    <TabPane tab="Profile" key={`profile`}>
-                        <ClientsDetailProfile dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
-                    </TabPane>
-                    <TabPane tab="Bank Account" key={`bankAccounts`}>
-                        <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
-                    </TabPane>
+                    {
+                        [156, 158, 159].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        <TabPane tab="Profile" key={`profile`}>
+                            <ClientsDetailProfile dataProfile={dataProfile} dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
+                        </TabPane>
+                    }
+                    {
+                        [160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        <TabPane tab="Bank Account" key={`bankAccounts`}>
+                            <ClientsDetailBankAccount dataProfile={dataProfile} dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
+                        </TabPane>
+                    }
                     <TabPane tab="Locations" key={`locations`}>
-                        <ClientsDetailLocations dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailLocations>
+                        <ClientsDetailLocations dataProfile={dataProfile} dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailLocations>
                     </TabPane>
                 </Tabs>
             </div>
             <div className="pt-5 pb-0 bg-white block md:hidden" >
                 <Tabs tabPosition={`top`} defaultActiveKey={activeTab}>
-                    <TabPane tab="Profile" key={`profile`}>
-                        <ClientsDetailProfile dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
-                    </TabPane>
-                    <TabPane tab="Bank Account" key={`bankAccounts`}>
-                        <ClientsDetailBankAccount dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
-                    </TabPane>
+                    {
+                        [156, 158, 159].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        <TabPane tab="Profile" key={`profile`}>
+                            <ClientsDetailProfile dataProfile={dataProfile} dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailProfile>
+                        </TabPane>
+                    }
+                    {
+                        [160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        <TabPane tab="Bank Account" key={`bankAccounts`}>
+                            <ClientsDetailBankAccount dataProfile={dataProfile} dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
+                        </TabPane>
+                    }
                     <TabPane tab="Locations" key={`locations`}>
-                        <ClientsDetailLocations dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailLocations>
+                        <ClientsDetailLocations dataProfile={dataProfile} dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailLocations>
                     </TabPane>
                 </Tabs>
             </div>
@@ -1066,6 +1101,11 @@ export async function getServerSideProps({ req, res, params }) {
     })
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
+
+    if (![156, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+        res.writeHead(302, { Location: '/admin/company' })
+        res.end()
+    }
 
     const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientDetail`, {
         method: `POST`,

@@ -112,8 +112,12 @@ export async function getServerSideProps({ req, res }) {
   if (req && req.headers) {
     const cookies = req.headers.cookie;
     if (cookies) {
-      res.writeHead(302, { Location: '/dashboard/home' })
-      res.end()
+      return {
+        redirect: {
+          permanent: false,
+          destination: '/dashboard/home'
+        }
+      }
     }
     if (typeof cookies === 'string') {
       const cookiesJSON = httpcookie.parse(cookies);

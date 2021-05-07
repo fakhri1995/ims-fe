@@ -1,39 +1,33 @@
-import { useState } from 'react'
 import { useRouter } from 'next/router'
-import Layout from '../../../components/layout-dashboard'
-import st from '../../../components/layout-dashboard.module.css'
+import { useState } from 'react'
+import Layout from '../../../../components/layout-dashboard'
+import st from '../../../../components/layout-dashboard.module.css'
 import httpcookie from 'cookie'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import { Input, Tabs, Button, notification, Form, Divider, Checkbox, Empty, Modal } from 'antd'
+import { Input, Tabs, Empty, Button, notification, Form, Divider, Checkbox } from 'antd'
 
-function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataListModules, idrole }) {
+function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
-    pathArr[pathArr.length - 1] = dataRolesDetail.data.role_detail.name
+    pathArr[pathArr.length - 1] = "Create"
     const { originPath } = rt.query
     const { TextArea } = Input;
     const { TabPane } = Tabs;
     const [instanceForm] = Form.useForm()
-    const [loadingupdate, setloadingupdate] = useState(false)
-    const [loadingdelete, setloadingdelete] = useState(false)
-    const [modaldelete, setmodaldelete] = useState(false)
-    const featureMap = dataRolesDetail.data.role_features.map((doc, idx) => {
-        return (doc.feature_id)
-    })
+    const [loadingcreate, setloadingcreate] = useState(false)
 
     //----------CreateGroup-------------
-    const [editroles, setEditroles] = useState({
-        id: dataRolesDetail.data.role_detail.id,
-        name: dataRolesDetail.data.role_detail.name,
-        description: dataRolesDetail.data.role_detail.description,
-        feature_ids: featureMap
+    const [newroles, setNewroles] = useState({
+        name: '',
+        description: '',
+        feature_ids: []
     })
-    const onChangeEditRoles = (e) => {
+    const onChangeCreateRoles = (e) => {
         var val = e.target.value
-        setEditroles({
-            ...editroles,
+        setNewroles({
+            ...newroles,
             [e.target.name]: val
         })
     }
@@ -45,10 +39,12 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                 {
                     title: 'parent 1-0',
                     key: '0-0-0',
+                    // disabled: true,
                     children: [
                         {
                             title: 'leaf',
                             key: '0-0-0-0',
+                            // disableCheckbox: true,
                         },
                         {
                             title: 'leaf',
@@ -77,34 +73,34 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
             ],
         },
     ];
-    const onChangeUpdateCheckbox = (e, id) => {
+    const onChangeCreateCheckbox = (e, id) => {
         if (e.target.checked) {
-            const temp = editroles.feature_ids
+            const temp = newroles.feature_ids
             temp.push(id)
-            setEditroles({
-                ...editroles,
+            setNewroles({
+                ...newroles,
                 feature_ids: temp
             })
         }
         else {
-            var temp = editroles.feature_ids
+            var temp = newroles.feature_ids
             var idx = temp.indexOf(id)
             temp.splice(idx, 1)
-            setEditroles({
-                ...editroles,
+            setNewroles({
+                ...newroles,
                 feature_ids: temp
             })
         }
     }
-    const handleUpdateRoles = () => {
-        setloadingupdate(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/updateRole`, {
-            method: 'PUT',
+    const handleCreateRoles = () => {
+        setloadingcreate(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addRole`, {
+            method: 'POST',
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(editroles)
+            body: JSON.stringify(newroles)
         })
             .then((res) => res.json())
             .then(res2 => {
@@ -113,15 +109,14 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                         message: res2.message,
                         duration: 3
                     })
-                    setEditroles({
-                        id: 0,
+                    setNewroles({
                         name: '',
                         description: '',
                         feature_ids: []
                     })
                     setTimeout(() => {
-                        setloadingupdate(false)
-                        rt.push(`/roles/${idrole}`)
+                        setloadingcreate(false)
+                        rt.push(`/admin/roles`)
                     }, 300)
                 }
                 else if (!res2.success) {
@@ -129,40 +124,7 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                         message: res2.message.errorInfo.status_detail,
                         duration: 3,
                     })
-                    setloadingupdate(false)
-                }
-            })
-    }
-    const handleDeleteRoles = () => {
-        setloadingdelete(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteRole`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': JSON.parse(initProps),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                id: editroles.id
-            })
-        })
-            .then((res) => res.json())
-            .then(res2 => {
-                if (res2.success) {
-                    notification['success']({
-                        message: res2.message,
-                        duration: 3
-                    })
-                    setTimeout(() => {
-                        setloadingdelete(false)
-                        rt.push(`/roles`)
-                    }, 300)
-                }
-                else if (!res2.success) {
-                    notification['error']({
-                        message: res2.message.errorInfo.status_detail,
-                        duration: 3,
-                    })
-                    setloadingdelete(false)
+                    setloadingcreate(false)
                 }
             })
     }
@@ -173,18 +135,17 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                     <div className="col-span-1 md:col-span-4">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
-                                <h1 className="font-semibold text-base w-auto ">Edit Roles</h1>
+                                <h1 className="font-semibold text-base w-auto ">New Role</h1>
                                 <div className="flex space-x-2">
-                                    <Button type="default" size="middle" onClick={() => { setmodaldelete(true) }} loading={loadingdelete} danger>Delete</Button>
-                                    <Link href="/roles?originPath=Admin" >
+                                    <Link href="/admin/roles" >
                                         <Button type="default" size="middle">Cancel</Button>
                                     </Link>
-                                    <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingupdate}>Save</Button>
+                                    <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingcreate}>Save</Button>
                                 </div>
                             </div>
                         </Sticky>
                     </div>
-                    <Form layout="vertical" style={{ display: 'contents' }} form={instanceForm} onFinish={handleUpdateRoles} initialValues={editroles}>
+                    <Form layout="vertical" style={{ display: 'contents' }} form={instanceForm} onFinish={handleCreateRoles} initialValues={newroles}>
                         <div className=" col-span-1 md:col-span-3 flex flex-col">
                             <div className="pb-4 md:mb-0 ">
                                 <Form.Item name="name" style={{ marginRight: `1rem` }} label="Name"
@@ -195,7 +156,7 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                                         },
                                     ]}
                                 >
-                                    <Input placeholder="Group Name" name={`name`} onChange={onChangeEditRoles} defaultValue={editroles.name}></Input>
+                                    <Input placeholder="Group Name" name={`name`} onChange={onChangeCreateRoles}></Input>
                                 </Form.Item>
                             </div>
 
@@ -208,7 +169,7 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                                         },
                                     ]}
                                 >
-                                    <TextArea placeholder="Group Description" rows={2} name={`description`} defaultValue={editroles.description} onChange={onChangeEditRoles} />
+                                    <TextArea placeholder="Group Description" rows={2} name={`description`} onChange={onChangeCreateRoles} />
                                 </Form.Item>
                             </div>
 
@@ -229,16 +190,15 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                                     dataListModules.data.map((doc, idx) => {
                                         return (
                                             <TabPane tab={doc.name} key={idx + 1}>
-                                                <div className=" overflow-y-auto h-80 mb-5">
+                                                <div className="mb-5">
                                                     {
                                                         doc.feature !== null ?
                                                             <>
                                                                 {
                                                                     doc.feature.map((doc, idx) => {
-                                                                        const checkedStatus = editroles.feature_ids.includes(doc.id)
                                                                         return (
                                                                             <div key={idx} className="flex items-center hover:bg-gray-300 p-3">
-                                                                                <Checkbox style={{ marginRight: `1rem` }} onChange={(e) => { onChangeUpdateCheckbox(e, doc.id) }} defaultChecked={checkedStatus} /> {doc.name}
+                                                                                <Checkbox style={{ marginRight: `1rem` }} onChange={(e) => { onChangeCreateCheckbox(e, doc.id) }} /> {doc.name}
                                                                             </div>
                                                                         )
                                                                     })
@@ -276,81 +236,19 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                                     Content of tab 3
                                 </TabPane>
                             </Tabs> */}
+
+
                             {/* </div> */}
                         </div>
                     </Form>
-                    <Modal
-                        title={`Konfirmasi Hapus Role`}
-                        visible={modaldelete}
-                        onCancel={() => { setmodaldelete(false) }}
-                        onOk={handleDeleteRoles}
-                        okButtonProps={{ disabled: loadingdelete }}
-                        style={{ top: `3rem` }}
-                        width={500}
-                        destroyOnClose={true}
-                    >
-                        <h1>Yakin ingin hapus module {editroles.name} ini?</h1>
-                    </Modal>
-                    {/* <div className="flex flex-col space-y-3 px-4">
-                        <div className="font-semibold text-sm">Understanding Roles</div>
-                        <p className="font-normal text-sm">
-                            Roles allow you to create and edit access permissions for agents. You can create new roles, specify what actions agents with these roles can perform within your help desk, and assign the role to agents.
-                    </p>
-                        <p className="font-normal text-sm">
-                            For example, you can create a role for your Support Co-ordinators, allowing them to update fields and assign tickets, and even add notes internally, but not reply to customers.
-                    </p>
-                        <p className="font-normal text-sm">
-                            Once you create and save a new Role you will be able to assign it to agents when you create or edit their profile by clicking on the Agents icon under the admin tab.
-                    </p>
-                        <br />
-                        <div className="font-semibold text-sm">Admin Privileges</div>
-                        <p className="font-normal text-sm">
-                            You can nominate whether you want an agent to have access to settings under the Admin tab. Agents with admin access can be Operation Agents with limited access, or Super Admins with the ability to edit all configurations. You can have as many Super Admins with the ability to view and modify your billing details, or as few as one.
-                    </p>
-                    </div> */}
                 </div>
             </>
         </Layout>
     )
 }
 
-export async function getServerSideProps({ req, res, params }) {
+export async function getServerSideProps({ req, res }) {
     var initProps = {};
-    const idrole = params.rolesId
-    const data = [
-        {
-            key: 1,
-            name: 'Account Admin',
-            description: 'Admin Tamvan',
-            agent: '4 Agents',
-            actionss: 'clone'
-        },
-        {
-            key: 2,
-            name: 'Admin',
-            description: 'Saya Tamvan',
-            agent: 'No Agents',
-            actionss: 'clone'
-        },
-        {
-            key: 3,
-            name: 'SD Supervisor',
-            description: 'Saya Tamvan Sekali',
-            agent: 'No Agents',
-            actionss: 'clone'
-        },
-    ];
-    var dataDetailRole
-    for (let index = 0; index < data.length; index++) {
-
-        if (data[index].key == idrole) {
-            dataDetailRole = data[index]
-            break
-        } else {
-            dataDetailRole = "gagal"
-        }
-    }
-
     if (req && req.headers) {
         const cookies = req.headers.cookie;
         if (!cookies) {
@@ -371,14 +269,10 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    const resourcesGR = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRole?id=${idrole}`, {
-        method: `GET`,
-        headers: {
-            'Authorization': JSON.parse(initProps)
-        }
-    })
-    const resjsonGR = await resourcesGR.json()
-    const dataRolesDetail = resjsonGR
+    if (![176].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.end()
+    }
 
     const resourcesGM = await fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
         method: `POST`,
@@ -393,12 +287,10 @@ export async function getServerSideProps({ req, res, params }) {
         props: {
             initProps,
             dataProfile,
-            dataRolesDetail,
             dataListModules,
-            idrole,
             sidemenu: "4"
         },
     }
 }
 
-export default RolesUpdate
+export default RolesCreate

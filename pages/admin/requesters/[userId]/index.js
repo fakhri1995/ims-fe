@@ -26,10 +26,13 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
     })
     const [datarole, setdatarole] = useState({
         account_id: dataDetailRequester.data.user_id,
-        role_ids: dataDetailRequester.data.feature_roles
+        role_ids: [dataDetailRequester.data.feature_roles[0]]
     })
     const onChangeRole = (value) => {
-        const arr = datarole.role_ids
+        //multiple roles
+        // const arr = datarole.role_ids
+        //single roles
+        const arr = []
         arr.push(value)
         setdatarole({
             ...datarole,
@@ -73,45 +76,49 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
     }
     const handleSubmitEditAccount = () => {
         setLoadingupdate(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/updateFeatureRequester`, {
-            method: 'POST',
-            headers: {
-                'Authorization': JSON.parse(tok),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(datarole)
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setLoadingupdate(false)
+        if ([133].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/updateFeatureRequester`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': JSON.parse(tok),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(datarole)
             })
-        fetch(`https://boiling-thicket-46501.herokuapp.com/updateRequesterDetail`, {
-            method: 'POST',
-            headers: {
-                'Authorization': JSON.parse(tok),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data1)
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setLoadingupdate(false)
-                if (res2.success) {
-                    notification['success']({
-                        message: res2.message,
-                        duration: 3
-                    })
-                    setTimeout(() => {
-                        rt.push(`/admin/requesters/${dataDetailRequester.data.user_id}`)
-                    }, 300)
-                }
-                else if (!res2.success) {
-                    notification['error']({
-                        message: res2.message.errorInfo.status_detail,
-                        duration: 3
-                    })
-                }
+                .then(res => res.json())
+                .then(res2 => {
+                    setLoadingupdate(false)
+                })
+        }
+        if ([116].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/updateRequesterDetail`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': JSON.parse(tok),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data1)
             })
+                .then(res => res.json())
+                .then(res2 => {
+                    setLoadingupdate(false)
+                    if (res2.success) {
+                        notification['success']({
+                            message: res2.message,
+                            duration: 3
+                        })
+                        setTimeout(() => {
+                            rt.push(`/admin/requesters/${dataDetailRequester.data.user_id}`)
+                        }, 300)
+                    }
+                    else if (!res2.success) {
+                        notification['error']({
+                            message: res2.message.errorInfo.status_detail,
+                            duration: 3
+                        })
+                    }
+                })
+        }
     }
     const handleActivationRequesters = (status) => {
         var keaktifan = false
@@ -212,10 +219,11 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                             <div className="flex space-x-2">
                                 <Link href={`/admin/requesters`}>
                                     <Button type="default">Cancel</Button>
-                                    {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button> */}
                                 </Link>
-                                <Button type="primary" loading={loadingupdate} onClick={instanceForm.submit}>Save</Button>
-                                {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={handleSubmitEditAccount}>Update</button> */}
+                                {
+                                    [116, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                    <Button type="primary" loading={loadingupdate} onClick={instanceForm.submit}>Save</Button>
+                                }
                             </div>
                         </div>
                     </Sticky>
@@ -224,28 +232,46 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                     <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-5">
                         <div className="border-b border-black p-4 font-semibold mb-5 flex">
                             <div className=" mr-3 md:mr-5 pt-1">Detail Akun Requesters</div>
-                            <div className="pt-1">
-                                {
-                                    dataDetailRequester.data.attribute.is_enabled ?
-                                        <Switch checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
-                                        :
-                                        <Switch checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
-                                }
-                            </div>
+                            {
+                                [114].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                    <div className="pt-1">
+                                        {
+                                            dataDetailRequester.data.attribute.is_enabled ?
+                                                <Switch checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
+                                                :
+                                                <Switch checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
+                                        }
+                                    </div>
+                                    :
+                                    <div className="pt-1">
+                                        {
+                                            dataDetailRequester.data.attribute.is_enabled ?
+                                                <Switch disabled checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
+                                                :
+                                                <Switch disabled checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
+                                        }
+                                    </div>
+                            }
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4">
                             <div className="p-3 col-span-1 md:col-span-1 flex flex-col items-center">
                                 <img src={data1.profile_image} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
-                                <label className="custom-file-upload py-2 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3">
-                                    <input type="file" style={{ display: `none` }} name="profile_image" onChange={onChangeEditFoto} />
-                                    {loadingfoto ? <LoadingOutlined /> : <EditOutlined style={{ fontSize: `1.2rem` }} />}
-                                    Ganti Foto
+                                {
+                                    [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                    <label className="custom-file-upload py-2 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3">
+                                        <input type="file" style={{ display: `none` }} name="profile_image" onChange={onChangeEditFoto} />
+                                        {loadingfoto ? <LoadingOutlined /> : <EditOutlined style={{ fontSize: `1.2rem` }} />}
+                                        Ganti Foto
                                 </label>
-                                <div className="w-full h-auto">
-                                    <button className="w-full h-auto py-2 text-center bg-primary hover:bg-secondary text-white rounded-sm" onClick={() => { setVisibleubahpass(true) }}>
-                                        Ubah Password
-                                    </button>
-                                </div >
+                                }
+                                {
+                                    [115].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                    <div className="w-full h-auto">
+                                        <button className="w-full h-auto py-2 text-center bg-primary hover:bg-secondary text-white rounded-sm" onClick={() => { setVisibleubahpass(true) }}>
+                                            Ubah Password
+                                        </button>
+                                    </div >
+                                }
                             </div>
                             <div className="p-3 col-span-1 md:col-span-3">
                                 <h1 className="text-xs text-gray-600 mb-1">Email:</h1>
@@ -262,7 +288,15 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                                                 message: 'Nama Lengkap harus diisi',
                                             },
                                         ]}>
-                                        <Input defaultValue={data1.fullname} onChange={onChangeEditAgents} name="fullname" />
+                                        {
+                                            [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                <Input defaultValue={data1.fullname} onChange={onChangeEditAgents} name="fullname" />
+                                                :
+                                                <div className="col-span-1 flex flex-col mb-5">
+                                                    <h1 className="font-semibold text-sm">Nama Lengkap:</h1>
+                                                    <h1 className="text-sm font-normal text-black">{data1.fullname}</h1>
+                                                </div>
+                                        }
                                     </Form.Item>
                                     <Form.Item label="No. Handphone" required tooltip="Wajib diisi" name="phone_number" initialValue={data1.phone_number}
                                         rules={[
@@ -271,18 +305,39 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                                                 message: 'No. Handphone harus diisi',
                                             },
                                         ]}>
-                                        <Input defaultValue={data1.phone_number} onChange={onChangeEditAgents} name="phone_number" />
+                                        {
+                                            [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                <Input defaultValue={data1.phone_number} onChange={onChangeEditAgents} name="phone_number" />
+                                                :
+                                                <div className="col-span-1 flex flex-col mb-5">
+                                                    <h1 className="font-semibold text-sm">Nomor Telepon:</h1>
+                                                    <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
+                                                </div>
+                                        }
                                     </Form.Item>
                                     <h1 className="font-semibold">Role:</h1>
-                                    <Select onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }}>
-                                        {
-                                            dataRoles.data.map((doc, idx) => {
-                                                return (
-                                                    <Option key={idx} value={doc.id}>{doc.name}</Option>
-                                                )
-                                            })
-                                        }
-                                    </Select>
+                                    {
+                                        [133].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                            <Select onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }}>
+                                                {
+                                                    dataRoles.data.map((doc, idx) => {
+                                                        return (
+                                                            <Option key={idx} value={doc.id}>{doc.name}</Option>
+                                                        )
+                                                    })
+                                                }
+                                            </Select>
+                                            :
+                                            <Select disabled onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }}>
+                                                {
+                                                    dataRoles.data.map((doc, idx) => {
+                                                        return (
+                                                            <Option key={idx} value={doc.id}>{doc.name}</Option>
+                                                        )
+                                                    })
+                                                }
+                                            </Select>
+                                    }
                                     {/* <Form.Item label="Role" required tooltip="Wajib diisi" name="role" initialValue={data1.role}
                                         rules={[
                                             {
@@ -392,6 +447,11 @@ export async function getServerSideProps({ req, res, params }) {
     })
     const resjson = await resources.json()
     const dataProfile = resjson
+
+    if (!([114, 115, 116, 118, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)))) {
+        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.end()
+    }
 
     const resourcesDA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterDetail`, {
         method: `POST`,

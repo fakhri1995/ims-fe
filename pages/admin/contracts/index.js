@@ -1,19 +1,19 @@
-import Layout from '../../components/layout-dashboard2'
+import Layout from '../../../components/layout-dashboard2'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
-import {Table, Button, Tabs, notification, Modal} from 'antd'
+import { Table, Button, Tabs, notification, Modal } from 'antd'
 import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import st from '../../components/layout-dashboard.module.css'
+import st from '../../../components/layout-dashboard.module.css'
 
 function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
-    // const pathArr = rt.pathname.split("/").slice(1)
-    const pathArr = ['admin', 'contracts']
+    const pathArr = rt.pathname.split("/").slice(1)
+    // const pathArr = ['admin', 'contracts']
     // const { originPath } = rt.query
     const { TabPane } = Tabs;
     // console.log(dataContracts)
@@ -43,19 +43,19 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
     }
     else {
         contracts = dataContracts
-        .data.map((doc, idx) => {
-            return ({
-                idx: idx,
-                key: doc.id,
-                id: doc.id,
-                id_client_company: doc.id_client_company,
-                id_tipe_kontrak: doc.id_tipe_kontrak,
-                nomor_kontrak: doc.nomor_kontrak,
-                tanggal_mulai: doc.tanggal_mulai,
-                tanggal_selesai: doc.tanggal_selesai,
-                is_active: doc.is_active
+            .data.map((doc, idx) => {
+                return ({
+                    idx: idx,
+                    key: doc.id,
+                    id: doc.id,
+                    id_client_company: doc.id_client_company,
+                    id_tipe_kontrak: doc.id_tipe_kontrak,
+                    nomor_kontrak: doc.nomor_kontrak,
+                    tanggal_mulai: doc.tanggal_mulai,
+                    tanggal_selesai: doc.tanggal_selesai,
+                    is_active: doc.is_active
+                })
             })
-        })
     }
     //------------------------------------------------
 
@@ -82,7 +82,7 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/contracts?originPath=Admin`)
+                        rt.push(`/admin/contracts`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -108,7 +108,7 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                     props: {
                         style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
                     },
-                    children: <div>{record.idx+1}
+                    children: <div>{record.idx + 1}
                     </div>,
                 };
             },
@@ -158,14 +158,21 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                     props: {
                         style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
                     },
-                    children: 
-                    <div><Link href={{
-                        pathname: `/contracts/${record.key}`,
-                        query: {
-                            originPath: 'Admin'
-                        }
-                    }}><a>{record.nomor_kontrak}</a></Link>
-                    </div>
+                    children:
+                        <>
+                            {
+                                [195, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                    <div><Link href={{
+                                        pathname: `/admin/contracts/${record.key}`,
+                                    }}><a>{record.nomor_kontrak}</a></Link>
+                                    </div>
+                                    :
+                                    <>
+                                        {record.nomor_kontrak}
+                                    </>
+
+                            }
+                        </>
                 };
             },
         },
@@ -179,7 +186,7 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                     props: {
                         style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
                     },
-                    children: <div>{record.is_active?"Aktif":"Non-Aktif"}
+                    children: <div>{record.is_active ? "Aktif" : "Non-Aktif"}
                     </div>,
                 };
             },
@@ -225,11 +232,16 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                         style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
                     },
                     children:
-                        <Button>
-                            <Link href={{
-                                pathname: `/contracts/update/${record.key}`,
-                            }}><EditOutlined/></Link>
-                        </Button>
+                        <>
+                            {
+                                [197].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                <Button>
+                                    <Link href={{
+                                        pathname: `/admin/contracts/update/${record.key}`,
+                                    }}><EditOutlined /></Link>
+                                </Button>
+                            }
+                        </>
                 }
             }
         },
@@ -247,12 +259,12 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                     },
                     children:
                         <>
-                            {/* <Tooltip placement="topLeft" title={"Delete"}> */}
-                            <Button onClick={() => { onClickModalDeleteContract(true, record) }}>
-                                <a><DeleteOutlined /></a>
-                            </Button>
-
-                            {/* </Tooltip> */}
+                            {
+                                [198].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                <Button onClick={() => { onClickModalDeleteContract(true, record) }}>
+                                    <a><DeleteOutlined /></a>
+                                </Button>
+                            }
                         </>
                 }
             }
@@ -267,12 +279,15 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                     <div className=" col-span-1 md:col-span-4 flex flex-col" id="formAgentsWrapper">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
-                                <h1 className="font-semibold text-base w-auto pt-2">Daftar Kontrak</h1>
-                                <div className="flex space-x-2">
-                                    <Link href={`/contracts/create`}>
-                                        <Button type="primary" size="large">Tambah Kontrak</Button>
-                                    </Link>
-                                </div>
+                                <h1 className="font-semibold text-base w-auto pt-2">Contracts</h1>
+                                {
+                                    [196].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                    <div className="flex space-x-2">
+                                        <Link href={`/admin/contracts/create`}>
+                                            <Button type="primary" size="large">Add New</Button>
+                                        </Link>
+                                    </div>
+                                }
                             </div>
                         </Sticky>
 
@@ -319,14 +334,6 @@ export async function getServerSideProps({ req, res }) {
             initProps = cookiesJSON.token
         }
     }
-    const resourcesGetContracts = await fetch(`https://boiling-thicket-46501.herokuapp.com/getContracts`, {
-        method: `GET`,
-        headers: {
-            'Authorization': JSON.parse(initProps)
-        }
-    })
-    const resjsonGetContracts = await resourcesGetContracts.json()
-    const dataContracts = resjsonGetContracts
 
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,
@@ -336,6 +343,20 @@ export async function getServerSideProps({ req, res }) {
     })
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
+
+    if (![194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.end()
+    }
+
+    const resourcesGetContracts = await fetch(`https://boiling-thicket-46501.herokuapp.com/getContracts`, {
+        method: `GET`,
+        headers: {
+            'Authorization': JSON.parse(initProps)
+        }
+    })
+    const resjsonGetContracts = await resourcesGetContracts.json()
+    const dataContracts = resjsonGetContracts
 
     return {
         props: {

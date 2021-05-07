@@ -1,62 +1,58 @@
-import Layout from '../../../components/layout-dashboard2'
-import st from '../../../components/layout-dashboard.module.css'
+import Layout from '../../../../../components/layout-dashboard2'
+import st from '../../../../../components/layout-dashboard.module.css'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
-import { useState, useEffect } from 'react'
+import { useState,useEffect } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
 import PlusSquareOutlined from '@ant-design/icons/PlusSquareOutlined'
 import SearchOutlined from '@ant-design/icons/SearchOutlined'
 import {DatePicker,Table,Drawer,Input,Select,Button,notification,Form} from 'antd'
+import moment from 'moment'
 
-function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu }) {
+function UpdateContract({ initProps, dataProfile, contractData, contractInputData, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
-    // const pathArr = rt.pathname.split("/").slice(1)
-    const pathArr = ['admin', 'contracts', 'new Contract']
+    const pathArr = rt.pathname.split("/").slice(1)
+    pathArr.splice(2,1)
+    pathArr[pathArr.length - 1] = contractData.data.contract.nomor_kontrak
+    // const pathArr = ['admin','contracts', "update "+contractData.data.contract.nomor_kontrak]
     const { originPath } = rt.query
     const { TextArea } = Input;
     const { Option } = Select;
     const [instanceForm] = Form.useForm()
     const [loadingbtn, setLoadingbtn] = useState(false)
     const [opendrawer, setOpendrawer] = useState(false)
+    const contract = contractData.data.contract
     const [dataServiceItems, setDataServiceItems] = useState([])
     const [validation,setValidation] = useState({
         harga: true,
         id_terms_of_payment: true
     })
-    // console.log(contractInputData)
-    //----------Create Incident Parameter-------------
-    const [newcontract, setNewcontract] = useState({
-        id_client_company: "",
-        id_tipe_kontrak: "",
-        nomor_kontrak: '',
-        deskripsi: '',
-        tanggal_mulai: "",
-        tanggal_selesai: "",
+    //----------Create Contract Parameter-------------
+    const [updatecontract, setUpdatecontract] = useState({
+        id: contract.id,
+        id_client_company: contract.id_client_company,
+        id_tipe_kontrak: contract.id_tipe_kontrak,
+        nomor_kontrak: contract.nomor_kontrak,
+        deskripsi: contract.deskripsi,
+        tanggal_mulai: moment(contract.tanggal_mulai,'YYYY-MM-DD'),
+        tanggal_selesai: moment(contract.tanggal_selesai,'YYYY-MM-DD'),
         service_items: dataServiceItems
     })
     const onChangeCreateContract = (e) => {
         var val = e.target.value
-        setNewcontract({
-            ...newcontract,
+        setUpdatecontract({
+            ...updatecontract,
             [e.target.name]: val
         })
     }
     const onAddService = () => {
         setSelectedServiceItemTemp(serviceItemTemp.serviceItemValues)
         var items = serviceItemTemp.serviceItemValues
-        // var items = [...dataServiceItems]
-        // var items = serviceItemTemp.serviceItemValues.map((item,index)=>{
-        //     return ({
-        //         id_service_item: item.key,
-        //         harga: "",
-        //         id_terms_of_payment: ""
-        //     })
-        // })
         setDataServiceItems(items)
-        setNewcontract({
-            ...newcontract,
+        setUpdatecontract({
+            ...updatecontract,
             service_items: items
         })
         const validationHarga = items.every(item => item.harga);
@@ -66,12 +62,13 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
     const onChangeServicePriceItems = (e,id) => {
         var val = e.target.value
         const idx = serviceItemTemp.serviceItemValues.map(item=>item.id_service_item).indexOf(id)
+        // console.log(idx,id)
         var items = [...dataServiceItems]
         items[idx].id_service_item = id
         items[idx].harga = val
         setDataServiceItems(items)
-        setNewcontract({
-            ...newcontract,
+        setUpdatecontract({
+            ...updatecontract,
             service_items: items
         })
         const validationHarga = items.every(item => item.harga);
@@ -80,11 +77,12 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
 
     const onChangeServiceTermsofPaymentItems = (val,id) => {
         const idx = serviceItemTemp.serviceItemValues.map(item=>item.id_service_item).indexOf(id)
+        // console.log(idx)
         var items = [...dataServiceItems]
         items[idx].id_terms_of_payment = val
         setDataServiceItems(items)
-        setNewcontract({
-            ...newcontract,
+        setUpdatecontract({
+            ...updatecontract,
             service_items: items
         })
         const validationTerms = items.every(item => item.id_terms_of_payment);
@@ -116,7 +114,7 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                 <Input className={''} defaultValue={item.nama} readOnly></Input>
                             </div>
                             <div className="col-span-1 md:col-span-1 flex flex-col md:px-2 py-2">
-                                <Input name={"harga"+item.key} required key={"harga"+item.key} type="number" defaultValue={dataServiceItems[idx].harga} onBlur={(e)=>{ onChangeServicePriceItems(e,item.id_service_item)}} prefix="IDR" suffix="Rupiah" allowClear ></Input>
+                                <Input name={"harga"+item.key} key={"harga"+item.key} type="number" defaultValue={dataServiceItems[idx].harga} onBlur={(e)=>{ onChangeServicePriceItems(e,item.id_service_item)}} prefix="IDR" suffix="Rupiah" allowClear ></Input>
                             </div>
                             <div className="col-span-1 md:col-span-1 flex flex-col md:pl-2 py-2">
                                 <Select name={"terms"+item.key} key={"terms"+item.key} className={''} defaultValue={dataServiceItems[idx].id_terms_of_payment} allowClear onChange={(val)=>{onChangeServiceTermsofPaymentItems(val,item.id_service_item)}}>
@@ -141,11 +139,15 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
     }
     //----------state untuk selected row dan temp row-------------
     const[selectedServiceItemTemp, setSelectedServiceItemTemp] = useState([])
+    
+    // console.log(selectedServiceItemTemp)
+    //-----------------ketika memilih sementara----------------
     const [serviceItemTemp, setServiceItemTemp] = useState({
         serviceItemValues: []
     })
     const [selectedRowKeys, setSelectedRowKeys] = useState([]) //untuk menyimpan data yang di cheklist atau dipilih
-    const onSelectChange = (selectedRowKeys,selectedRows) => {
+    const onChangeRowSelection = (selectedRowKeys,selectedRows) => {
+        // var lah = dataServiceItems.map((item,idx)=>{return item.id_service_item})
         const a3 = selectedRows.map(t1 => ({...t1, ...dataServiceItems.find(t2 => t2.id_service_item === t1.key)}))
         a3.map((obj)=>{
             if(obj.harga == null){
@@ -156,13 +158,13 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
             }
             obj.id_service_item = obj.key
         })
-        console.log(a3)
         setSelectedRowKeys(selectedRowKeys)
         setServiceItemTemp({
             ...serviceItemTemp,
             serviceItemValues: a3
         })
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        // console.log(a3)
+        // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     }
     //---------------- table list service--------------
     const columnsTableListService = [
@@ -178,7 +180,7 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
       ];
     const rowSelection = {
         selectedRowKeys,
-        onChange: onSelectChange,
+        onChange: onChangeRowSelection,
         getCheckboxProps: (record) => ({
             // disabled: record.nama === 'Adobe Illustrator', // Column configuration not to be checked
             // nama: record.nama,
@@ -257,15 +259,15 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
         })
     })
     //-----------------Handle create contract-----------------------------
-    const handleCreateContract = () => {
+    const handleUpdateContract = () => {
         setLoadingbtn(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/addContract`, {
-            method: 'POST',
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateContract`, {
+            method: 'PUT',
             headers: {
                 'Authorization': JSON.parse(tok),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(newcontract)
+            body: JSON.stringify(updatecontract)
         })
             .then(res => res.json())
             .then(res2 => {
@@ -276,7 +278,7 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/contracts?originPath=Admin`)
+                        rt.push(`/admin/contracts/${contractData.data.contract.id}`)
                     }, 100)
                 }
                 else if (!res2.success) {
@@ -290,17 +292,45 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
             })
     }
     //------------------------------------------
-    
+    useEffect(() => {
+        setDataServiceItems(contractData.data.service_item_kontraks)
+        setSelectedServiceItemTemp(contractData.data.service_item_kontraks)
+        setSelectedRowKeys(contractData.data.service_item_kontraks.map((item,idx)=>{return item.id_service_item}))
+        setServiceItemTemp({
+            ...serviceItemTemp,
+            serviceItemValues: contractData.data.service_item_kontraks
+        })
+        setUpdatecontract({
+            ...updatecontract,
+            service_items: contractData.data.service_item_kontraks
+        })
+    }, [])
     //----------------------------------------------
-    
+    const[flag,setFlag] = useState({
+        ket1: false,
+        ket2: false
+    })
     const checkFile = () => {
-        // console.log (selectedServiceItemTemp)
+        // var abc = dataServiceItems.map((item,idx)=>{return item.id})
+        // setSelectedRowKeys(abc) 
+        // updatecontract.service_items.map((obj,idx)=>{
+        //     if(obj.harga == "" || obj.harga == null || obj.harga == undefined){
+        //        setFlag({...flag,ket1:true})
+        //     }
+        //     if(obj.id_terms_of_payment == null || obj.id_terms_of_payment == "" || obj.id_terms_of_payment == undefined){
+        //         setFlag({...flag,ket2:true})
+        //     }
+        // })      
+        console.log(validation)
+        // console.log(validation.every(item=>item.harga && item.id_terms_of_payment))
+        // updatecontract.service_items.values
         // console.log (serviceItemTemp)
+        // console.log(selectedRowKeys)
         // console.log (dataServiceItems)
-        console.log (validation)
+        // console.log (updatecontract)
         // var satu = selectedServiceItemTemp.map(item=>item.key)
         // var dua = dataServiceItems.map(item=>item.id_service_item)
-        // // console.log (newcontract,selectedServiceItemTemp,dataServiceItems)
+        // // console.log (updatecontract,selectedServiceItemTemp,dataServiceItems)
         // var tiga = selectedServiceItemTemp.map(item=>item.key).filter(value => (dataServiceItems.map(item=>item.id_service_item).includes(value)))
         // // var empat = dataServiceItems.map(item=>item.id_service_item).filter(value => (selectedServiceItemTemp.map(item=>item.key).includes(value)))
         // console.log ("selected item: ",satu,"data service item: ",dua,"array intersect :",tiga)
@@ -309,7 +339,7 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
         // console.log (dataServiceItems)
     }
     const check = () => {
-        console.log(newcontract.service_items)
+        console.log(updatecontract.service_items)
     }
     const [widthDrawer, setWidthDrawer] = useState(600)
     useEffect(() => {
@@ -322,20 +352,21 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
         }
         // console.log(w)
     }, [])
+    
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
                 <div className="w-full h-auto">
-                    <Form layout="vertical" onFinish={handleCreateContract} style={{ display: 'contents' }} form={instanceForm}>
+                    <Form layout="vertical" onFinish={handleUpdateContract} style={{ display: 'contents' }} form={instanceForm}>
                         <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
                             <Sticky containerSelectorFocus="#formAgentsWrapper">
                                 <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
-                                    <h1 className="font-semibold text-base w-auto">Kontrak Baru</h1>
+                                    <h1 className="font-semibold text-base w-auto">Update Contracts</h1>
                                     <div className="flex space-x-2">
-                                        <Link href="/contracts?originPath=Admin" >
-                                            <Button type="default" size="middle">Batalkan</Button>
+                                        <Link href="/admin/contracts" >
+                                            <Button type="default" size="middle">Cancel</Button>
                                         </Link>
-                                        <Button disabled={!(validation.harga && validation.id_terms_of_payment) } type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn}>Simpan</Button>
+                                        <Button disabled={!(validation.harga && validation.id_terms_of_payment) } type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn}>Save</Button>
                                     </div>
                                 </div>
                             </Sticky>
@@ -359,7 +390,7 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                                     message: 'Nomor harus diisi',
                                                 },
                                             ]}
-                                            initialValue={newcontract.nomor_kontrak}
+                                            initialValue={updatecontract.nomor_kontrak}
                                         >
                                             <Input placeholder="Nomor" name={`nomor_kontrak`} onChange={onChangeCreateContract} allowClear></Input>
                                         </Form.Item>
@@ -373,9 +404,9 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                                     message: 'Tanggal Mulai harus diisi',
                                                 },
                                             ]}
-                                            initialValue={newcontract.tanggal_mulai}
+                                            initialValue={updatecontract.tanggal_mulai}
                                         >
-                                            <DatePicker style={{width:"100%"}} placeholder="Tanggal Mulai" name={`tanggal_mulai`} onChange={(date, dateString) => {setNewcontract({...newcontract,tanggal_mulai: dateString})}} allowClear></DatePicker>
+                                            <DatePicker defaultValue={updatecontract.tanggal_mulai} style={{width:"100%"}} placeholder="Tanggal Mulai" name={`tanggal_mulai`} onChange={(date, dateString) => {setUpdatecontract({...updatecontract,tanggal_mulai: dateString})}} allowClear></DatePicker>
                                         </Form.Item>
                                     </div>
 
@@ -387,7 +418,7 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                                     // message: 'Deskripsi harus diisi',
                                                 },
                                             ]}
-                                            initialValue={newcontract.deskripsi}
+                                            initialValue={updatecontract.deskripsi}
                                         >
                                             <TextArea placeholder="Description" rows={2} name={`deskripsi`} onChange={onChangeCreateContract} allowClear />
                                         </Form.Item>
@@ -402,9 +433,9 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                                     message: 'Klien harus diisi',
                                                 },
                                             ]}
-                                            initialValue={newcontract.id_client_company}
+                                            initialValue={updatecontract.id_client_company}
                                         >
-                                            <Select showSearch optionFilterProp="label" placeholder="Klien" name={`id_client_company`} onChange={(value) => {setNewcontract({...newcontract,id_client_company: value})}} options={populateListCompany} allowClear/>
+                                            <Select showSearch optionFilterProp="label" placeholder="Klien" name={`id_client_company`} onChange={(value) => {setUpdatecontract({...updatecontract,id_client_company: value})}} options={populateListCompany} allowClear/>
                                         </Form.Item>
                                     </div>
 
@@ -416,9 +447,9 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                                     message: 'Tanggal Selesai harus diisi',
                                                 },
                                             ]}
-                                            initialValue={newcontract.tanggal_selesai}
+                                            initialValue={updatecontract.tanggal_selesai}
                                         >
-                                            <DatePicker style={{width:"100%"}} placeholder="Tanggal Selesai" name={`tanggal_selesai`} onChange={(date, dateString) => {setNewcontract({...newcontract,tanggal_selesai: dateString})}} allowClear></DatePicker>
+                                            <DatePicker defaultValue={updatecontract.tanggal_selesai} style={{width:"100%"}} placeholder="Tanggal Selesai" name={`tanggal_selesai`} onChange={(date, dateString) => {setUpdatecontract({...updatecontract,tanggal_selesai: dateString})}} allowClear></DatePicker>
                                         </Form.Item>
                                     </div>
 
@@ -430,9 +461,9 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                                     message: 'Tipe harus diisi',
                                                 },
                                             ]}
-                                            initialValue={newcontract.id_tipe_kontrak}
+                                            initialValue={updatecontract.id_tipe_kontrak}
                                         >
-                                            <Select placeholder="Tipe" name={`id_tipe_kontrak`} onChange={(value) => {setNewcontract({...newcontract,id_tipe_kontrak: value})}} allowClear>
+                                            <Select placeholder="Tipe" name={`id_tipe_kontrak`} onChange={(value) => {setUpdatecontract({...updatecontract,id_tipe_kontrak: value})}} allowClear>
                                                 {
                                                     contractInputData.data.contract_types.map((doc,index)=>{
                                                         return(
@@ -454,7 +485,7 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                 <DynamicComponent></DynamicComponent>
                             </div>
                             
-                            <Drawer title="Add Service Item" maskClosable={false} visible={opendrawer} onClose={() => { setOpendrawer(false),setServiceItemTemp({...serviceItemTemp,serviceItemValues:selectedServiceItemTemp}),setSelectedRowKeys(selectedServiceItemTemp.map(item=>item.id_service_item))}} destroyOnClose={true} 
+                            <Drawer title="Add Service Item" maskClosable={false} visible={opendrawer} onClose={() => { setOpendrawer(false),setServiceItemTemp({...serviceItemTemp,serviceItemValues:selectedServiceItemTemp}),setSelectedRowKeys(selectedServiceItemTemp.map(item=>item.id_service_item))}} destroyOnClose={true}
                                 width={widthDrawer}
                                 footer={
                                 <div style={{ textAlign: 'right' }}>
@@ -468,8 +499,8 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                 }
                                 >
                                     <div className={'flex flex-row justify-between'}>
-                                        <div className={'pb-2 flex'}>
-                                            <Select value={defaultCategory} placeholder="Service Category" className={'w-36 md:w-48'} onChange={(value)=>{onChangeCategory(value),setDefaultCategory(value)}} name={`service_categories`}>
+                                        <div className={'pb-6 flex'}>
+                                            <Select value={defaultCategory} placeholder="Service Category" className={'w-48'} onChange={(value)=>{onChangeCategory(value),setDefaultCategory(value)}} name={`service_categories`}>
                                                         {
                                                             contractInputData.data.service_categories.map((doc,index)=>{
                                                                 return(
@@ -486,16 +517,16 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                             <div className={'pl-2 hidden sm:block'}>
                                                 <Input allowClear onChange={(e)=>(searchServiceItem(e))} prefix={<SearchOutlined />} placeholder="Search"></Input>
                                             </div>
-
+                                                            
                                     </div>
                                     <div className={'py-2 block sm:hidden'}>
                                         <Input allowClear onChange={(e)=>(searchServiceItem(e))} prefix={<SearchOutlined />} placeholder="Search"></Input>
                                     </div>
-                                <Table
-                                    rowSelection={rowSelection}
-                                    columns={columnsTableListService}
-                                    dataSource={populateListService}
-                                />
+                                    <Table
+                                        rowSelection={rowSelection}
+                                        columns={columnsTableListService}
+                                        dataSource={populateListService}
+                                    />
                             </Drawer>
                                 {/* <Button onClick={checkFile}>Check Data</Button>
                                 <Button onClick={check}>Check Data 2</Button> */}
@@ -507,14 +538,9 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
     )
 }
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req, res, params }) {
     var initProps = {};
-    const reqBodyListCompany = {
-        page: 1,
-        rows: 50,
-        order_by: "desc",
-        is_enabled : 1
-    }
+    var contractId = params.contractId
     if (req && req.headers) {
         const cookies = req.headers.cookie;
         if (!cookies) {
@@ -535,6 +561,11 @@ export async function getServerSideProps({ req, res }) {
     })
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
+
+    if (![197].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.end()
+    }
     
     const getContractInputData = await fetch(`https://boiling-thicket-46501.herokuapp.com/getContractInputData`, {
         method: `GET`,
@@ -546,14 +577,25 @@ export async function getServerSideProps({ req, res }) {
     const responseContractInputData = await getContractInputData.json()
     const contractInputData = responseContractInputData
     
+    const getContractData = await fetch(`https://boiling-thicket-46501.herokuapp.com/getContract?id=${contractId}`, {
+        method: `GET`,
+        headers: {
+            'Authorization': JSON.parse(initProps),
+            'Content-Type': 'application/json'
+        },
+    })
+    const responseContractData = await getContractData.json()
+    const contractData = responseContractData
+    
     return {
         props: {
             initProps,
             dataProfile,
             contractInputData,
+            contractData,
             sidemenu: "4"
         },
     }
 }
 
-export default ContractCreate
+export default UpdateContract

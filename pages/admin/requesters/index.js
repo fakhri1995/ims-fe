@@ -153,9 +153,14 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                             {/* {
                                 actions[index] ?
                                     <>{actions[index]} */}
-                            <Button onClick={() => { rt.push(`/admin/requesters/${record.user_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
-                                <EditOutlined />
-                            </Button>
+                            {
+                                [114, 115, 116, 118, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                    <Button onClick={() => { rt.push(`/admin/requesters/${record.user_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
+                                        <EditOutlined />
+                                    </Button>
+                                    :
+                                    null
+                            }
                             {/* </>
                                     :
                                     null
@@ -202,145 +207,139 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                     <div className="col-span-1 md:col-span-2 flex items-center mb-2 md:mb-0">
                         <div className="font-semibold text-base w-auto">Requesters</div>
                     </div>
-                    <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
-                        {/* <a className=" text-sm text-center w-auto mr-5">Import</a>
-                        <a className=" text-sm text-center w-auto mr-5">Export</a> */}
-                        {/* <div className=" text-white text-xs md:text-sm bg-gray-700 hover:bg-gray-900 cursor-pointer rounded-md h-10 py-3 md:py-2 w-28 md:w-52 text-center"> */}
-                        <Link href={{
-                            pathname: '/admin/requesters/create/',
-                        }}>
-                            <Button type="primary" size="large">
-                                Add New
+                    {
+                        [117].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
+                            <Link href={{
+                                pathname: '/admin/requesters/create/',
+                            }}>
+                                <Button size="large" type="primary">
+                                    Add New
                                 </Button>
-                        </Link>
-                        {/* </div> */}
-                    </div>
-                </div>
-                <div className="h-auto w-full grid grid-cols-1 md:grid-cols-5 mb-5 bg-white">
-                    <div className="md:col-span-5 col-span-1 flex flex-col py-3">
-                        <div className="flex flex-wrap mb-2">
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={FilterAll}>
-                                All
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("a")}>
-                                A
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("b")}>
-                                B
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("c")}>
-                                C
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("d")}>
-                                D
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("e")}>
-                                E
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("f")}>
-                                F
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("g")}>
-                                G
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("h")}>
-                                H
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("i")}>
-                                I
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("j")}>
-                                J
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("k")}>
-                                K
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("l")}>
-                                L
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("m")}>
-                                M
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("n")}>
-                                N
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("o")}>
-                                O
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("p")}>
-                                P
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("q")}>
-                                Q
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("r")}>
-                                R
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("s")}>
-                                S
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("t")}>
-                                T
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("u")}>
-                                U
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("v")}>
-                                V
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("w")}>
-                                W
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("x")}>
-                                X
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("y")}>
-                                Y
-                            </button>
-                            <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("z")}>
-                                Z
-                            </button>
+                            </Link>
                         </div>
-                        <div className="flex mb-2">
-                            <Select placeholder="Filter by companies" defaultValue={"all"} onChange={(value) => { onFilterByCompany(value) }} style={{ width: `40%` }}>
-                                <Option value={"all"}>Semua</Option>
-                                {
-                                    dataCompanyList.data.filter(dataa => dataa.company_id !== 66).map((doc, idx) => {
-                                        return (
-                                            <Option key={idx} value={doc.company_id}>{doc.company_id}: {doc.company_name}</Option>
-                                        )
-                                    })
-                                }
-                            </Select>
-                        </div>
-                        <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD}
-                        // onRow={(record, rowIndex) => {
-                        //     return {
-                        //         onMouseOver: (event) => {
-                        //             var actionsCopy = actions
-                        //             actionsCopy[rowIndex] = true
-                        //             setActions(actionsCopy)
-                        //             setAction("block")
-                        //         },
-                        //         onMouseLeave: (event) => {
-                        //             var actionsCopy = actions
-                        //             actionsCopy[rowIndex] = false
-                        //             setActions(actionsCopy)
-                        //             setAction("hidden")
-                        //         }
-                        //     }
-                        // }}
-                        ></Table>
-                    </div>
-                    {/* <div className="hidden md:flex flex-col space-y-3 p-4 md:col-span-1 col-span-1">
-                        <div className="font-semibold text-sm">Requesters</div>
-                        <p className="font-normal text-sm">
-                            This page lets you handpick a set of requesters and add them to your help desk. These requesters will have selective privileges to submit requests to your helpdesk. You can restrict access such that only people who have been added here are allowed to login to your self-service portal and access your knowledge base.
-                        <br /> <br />
-                        You can fill in the details of each of your new requesters manually or import a list of users from a CSV file. Once you have populated your list, your agents can open up each of your requesters and view their ticket history and contact information.
-                        </p>
-                    </div> */}
+                    }
                 </div>
+                {
+                    [119].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                    <div className="h-auto w-full grid grid-cols-1 md:grid-cols-5 mb-5 bg-white">
+                        <div className="md:col-span-5 col-span-1 flex flex-col py-3">
+                            <div className="flex flex-wrap mb-2">
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={FilterAll}>
+                                    All
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("a")}>
+                                    A
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("b")}>
+                                    B
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("c")}>
+                                    C
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("d")}>
+                                    D
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("e")}>
+                                    E
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("f")}>
+                                    F
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("g")}>
+                                    G
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("h")}>
+                                    H
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("i")}>
+                                    I
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("j")}>
+                                    J
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("k")}>
+                                    K
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("l")}>
+                                    L
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("m")}>
+                                    M
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("n")}>
+                                    N
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("o")}>
+                                    O
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("p")}>
+                                    P
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("q")}>
+                                    Q
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("r")}>
+                                    R
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("s")}>
+                                    S
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("t")}>
+                                    T
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("u")}>
+                                    U
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("v")}>
+                                    V
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("w")}>
+                                    W
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("x")}>
+                                    X
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("y")}>
+                                    Y
+                            </button>
+                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("z")}>
+                                    Z
+                            </button>
+                            </div>
+                            <div className="flex mb-2">
+                                <Select placeholder="Filter by companies" defaultValue={"all"} onChange={(value) => { onFilterByCompany(value) }} style={{ width: `40%` }}>
+                                    <Option value={"all"}>Semua</Option>
+                                    {
+                                        dataCompanyList.data.filter(dataa => dataa.company_id !== 66).map((doc, idx) => {
+                                            return (
+                                                <Option key={idx} value={doc.company_id}>{doc.company_id}: {doc.company_name}</Option>
+                                            )
+                                        })
+                                    }
+                                </Select>
+                            </div>
+                            <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD}
+                            // onRow={(record, rowIndex) => {
+                            //     return {
+                            //         onMouseOver: (event) => {
+                            //             var actionsCopy = actions
+                            //             actionsCopy[rowIndex] = true
+                            //             setActions(actionsCopy)
+                            //             setAction("block")
+                            //         },
+                            //         onMouseLeave: (event) => {
+                            //             var actionsCopy = actions
+                            //             actionsCopy[rowIndex] = false
+                            //             setActions(actionsCopy)
+                            //             setAction("hidden")
+                            //         }
+                            //     }
+                            // }}
+                            ></Table>
+                        </div>
+                    </div>
+                }
             </>
         </Layout>
     )
@@ -377,6 +376,11 @@ export async function getServerSideProps({ req, res }) {
     })
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
+
+    if (![119, 118, 117, 116, 115, 114, 133].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.end()
+    }
 
     const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
         method: `POST`,

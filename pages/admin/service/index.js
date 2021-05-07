@@ -45,9 +45,14 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                     },
                     children:
                         <>
-                            <Link href={`/admin/service/${record.id}`}>
-                                <a href="#"><h1 className="font-semibold hover:text-gray-500">{record.itemName}</h1></a>
-                            </Link>
+                            {
+                                [188, 190, 191, 192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                    <Link href={`/admin/service/${record.id}`}>
+                                        <a href="#"><h1 className="font-semibold hover:text-gray-500">{record.itemName}</h1></a>
+                                    </Link>
+                                    :
+                                    <h1 className="font-semibold hover:text-gray-500">{record.itemName}</h1>
+                            }
                         </>
                 }
             }
@@ -63,9 +68,14 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                     },
                     children:
                         <>
-                            <Link href={`/admin/service/${record.id}`}>
-                                <a href="#"><h1 className="hover:text-gray-500 text-xs">{record.shortDesc}</h1></a>
-                            </Link>
+                            {
+                                [188, 190, 191, 192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                    <Link href={`/admin/service/${record.id}`}>
+                                        <a href="#"><h1 className="hover:text-gray-500 text-xs">{record.shortDesc}</h1></a>
+                                    </Link>
+                                    :
+                                    <h1 className="hover:text-gray-500 text-xs">{record.shortDesc}</h1>
+                            }
                         </>
                 }
             }
@@ -81,9 +91,14 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                     },
                     children:
                         <>
-                            <Link href={`/admin/service/${record.id}`}>
-                                <a href="#"><h1 className="hover:text-gray-500 text-sm">{record.categoryName}</h1></a>
-                            </Link>
+                            {
+                                [188, 190, 191, 192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                    <Link href={`/admin/service/${record.id}`}>
+                                        <a href="#"><h1 className="hover:text-gray-500 text-sm">{record.categoryName}</h1></a>
+                                    </Link>
+                                    :
+                                    <h1 className="hover:text-gray-500 text-sm">{record.categoryName}</h1>
+                            }
                         </>
                 }
             }
@@ -99,16 +114,28 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                     },
                     children:
                         <>
-                            <Link href={`/admin/service/${record.id}`}>
-                                <a href="#">
-                                    {
-                                        record.status ?
-                                            <div className="py-1 px-2 rounded-l-full rounded-r-full text-green-500 border border-green-500 bg-green-100 text-center text-xs">Published</div>
-                                            :
-                                            <div className="py-1 px-2 rounded-l-full rounded-r-full text-gray-500 border border-gray-500 bg-gray-100 text-center text-xs">Draft</div>
-                                    }
-                                </a>
-                            </Link>
+                            {
+                                [188, 190, 191, 192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                    <Link href={`/admin/service/${record.id}`}>
+                                        <a href="#">
+                                            {
+                                                record.status ?
+                                                    <div className="py-1 px-2 rounded-l-full rounded-r-full text-green-500 border border-green-500 bg-green-100 text-center text-xs">Published</div>
+                                                    :
+                                                    <div className="py-1 px-2 rounded-l-full rounded-r-full text-gray-500 border border-gray-500 bg-gray-100 text-center text-xs">Draft</div>
+                                            }
+                                        </a>
+                                    </Link>
+                                    :
+                                    <>
+                                        {
+                                            record.status ?
+                                                <div className="py-1 px-2 rounded-l-full rounded-r-full text-green-500 border border-green-500 bg-green-100 text-center text-xs">Published</div>
+                                                :
+                                                <div className="py-1 px-2 rounded-l-full rounded-r-full text-gray-500 border border-gray-500 bg-gray-100 text-center text-xs">Draft</div>
+                                        }
+                                    </>
+                            }
                         </>
                 }
             }
@@ -141,12 +168,18 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
     //Menu
     const menu = (
         <Menu>
-            <Menu.Item key="1" onClick={() => setmodaltambahkateg(true)}>
-                Service Category
-          </Menu.Item>
-            <Menu.Item key="2" onClick={() => rt.push(`/admin/service/create`)}>
-                Service Item
-          </Menu.Item>
+            {
+                [184].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                <Menu.Item key="1" onClick={() => setmodaltambahkateg(true)}>
+                    Service Category
+                </Menu.Item>
+            }
+            {
+                [189].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                <Menu.Item key="2" onClick={() => rt.push(`/admin/service/create`)}>
+                    Service Item
+                </Menu.Item>
+            }
         </Menu>
     );
 
@@ -420,13 +453,16 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                         <div>
                             <p className="font-semibold text-lg">Service Catalog</p>
                         </div>
-                        <div>
-                            <Dropdown overlay={menu} trigger={['click']}>
-                                <Button size="large" style={{ backgroundColor: `rgb(24,144,255)`, color: `white` }}>
-                                    Add New <DownOutlined />
-                                </Button>
-                            </Dropdown>
-                        </div>
+                        {
+                            [184, 189].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                            <div>
+                                <Dropdown overlay={menu} trigger={['click']}>
+                                    <Button size="large" style={{ backgroundColor: `rgb(24,144,255)`, color: `white` }}>
+                                        Add New <DownOutlined />
+                                    </Button>
+                                </Dropdown>
+                            </div>
+                        }
                     </div>
                 </Sticky>
                 <div className="w-full grid grid-cols-8">
@@ -513,7 +549,10 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                                                 <div className="flex items-center mr-3">
                                                     {tabnameArrVal[idx + 1] === "block" && <p className="font-semibold m-0">{doc.nama_kategori}</p>}
                                                 </div>
-                                                <div className="w-auto h-6 px-1 border rounded-sm cursor-pointer hover:border-blue-500 hover:text-blue-500 flex justify-center items-center" onClick={() => setmodaleditkateg(true)}><EditOutlined /></div>
+                                                {
+                                                    [185].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                                    <div className="w-auto h-6 px-1 border rounded-sm cursor-pointer hover:border-blue-500 hover:text-blue-500 flex justify-center items-center" onClick={() => setmodaleditkateg(true)}><EditOutlined /></div>
+                                                }
                                             </div>
                                             <p className="text-xs text-gray-500">{doc.deskripsi}</p>
                                         </div>
@@ -569,7 +608,10 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                                     </Form.Item>
                                 </div>
                                 <div className="flex justify-between">
-                                    <Button onClick={() => { setmodaleditkateg(false); setmodalkonfhapuskateg(true) }} type="default">Delete</Button>
+                                    {
+                                        [186].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                        <Button onClick={() => { setmodaleditkateg(false); setmodalkonfhapuskateg(true) }} type="default">Delete</Button>
+                                    }
                                     <div className="flex">
                                         <Button type="default" onClick={() => { setmodaleditkateg(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
                                         <Button htmlType="submit" loading={loadingbtneditkateg} type="primary">Save</Button>
@@ -650,6 +692,11 @@ export async function getServerSideProps({ req, res }) {
     })
     const resjson = await resources.json()
     const dataProfile = resjson
+
+    if (![183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.end()
+    }
 
     const resourcesGSI = await fetch(`https://boiling-thicket-46501.herokuapp.com/getServiceItems`, {
         method: `GET`,

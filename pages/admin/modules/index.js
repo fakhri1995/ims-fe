@@ -278,7 +278,10 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                 <Sticky containerSelectorFocus="#containerListModules">
                     <div className="w-full border-b border-opacity-30 border-gray-400 flex items-center justify-between p-4 mb-5 bg-white">
                         <h1 className="font-bold">Modules</h1>
-                        <Button type="primary" size="large" onClick={() => { setdrawablecreate(true) }}>Add New</Button>
+                        {
+                            [180].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                            <Button type="primary" size="large" onClick={() => { setdrawablecreate(true) }}>Add New</Button>
+                        }
                     </div>
                 </Sticky>
                 <div className="w-full grid grid-cols-5 bg-white">
@@ -330,12 +333,18 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                                     <p className="text-xs text-gray-500">{currentdesctkateg}</p>
                                                 </div>
                                                 <div className="flex items-center">
-                                                    <Button onClick={() => { setdrawableedit(true) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
-                                                        <EditOutlined />
-                                                    </Button>
-                                                    <Button onClick={() => { setmodaldelete(true) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
-                                                        <DeleteOutlined />
-                                                    </Button>
+                                                    {
+                                                        [181].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                                        <Button onClick={() => { setdrawableedit(true) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
+                                                            <EditOutlined />
+                                                        </Button>
+                                                    }
+                                                    {
+                                                        [182].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                                        <Button onClick={() => { setmodaldelete(true) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
+                                                            <DeleteOutlined />
+                                                        </Button>
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
@@ -348,7 +357,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                                         datafeature.map((doc, idx) => {
                                                             return (
                                                                 <div key={idx} className="border-b mb-3 p-3">
-                                                                    <p className="mb-0 text-sm">{doc.name}</p>
+                                                                    <p className="mb-0 text-sm">{doc.name} : {doc.id}</p>
                                                                 </div>
                                                             )
                                                         })
@@ -479,6 +488,11 @@ export async function getServerSideProps({ req, res }) {
     })
     const resjson = await resources.json()
     const dataProfile = resjson
+
+    if (![179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.end()
+    }
 
     const resourcesGM = await fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
         method: `POST`,
