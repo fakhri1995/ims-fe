@@ -83,7 +83,7 @@ const Styles = (props) => (
     @media (max-width: 768px){
       .section4landingpage .flickity-page-dots{
         display:block;
-        bottom:-70px;
+        bottom:-20px;
       }
       .section4landingpage .flickity-page-dots .dot{
         background:#93D9B5;
@@ -92,10 +92,10 @@ const Styles = (props) => (
         display: none;
       }
     }
-    .section4landingpage{
-      height:auto;
-      margin:120px auto;
-    }
+    // .section4landingpage{
+    //   height:auto;
+    //   margin:120px auto;
+    // }
     .section3landingpage{
       top: -50px;
     }
@@ -110,28 +110,38 @@ const Styles = (props) => (
         width: 100%;
       }
     }
-    .section1landingpage{
-      margin: 0 5rem 0;
-      padding-top: 1rem;
-      padding-bottom: 3rem;
-    }
-    @media (max-width: 768px) {
-      .section1landingpage{
-        margin: 0 1rem 0;
-        padding-top: 1rem;
-        padding-bottom: 1rem;
-      }
-    }
+    // .section1landingpage{
+    //   margin: 0 5rem 0;
+    //   padding-top: 1rem;
+    //   padding-bottom: 3rem;
+    // }
+    // @media (max-width: 768px) {
+    //   .section1landingpage{
+    //     margin: 0 1rem 0;
+    //     padding-top: 1rem;
+    //     padding-bottom: 1rem;
+    //   }
+    // }
     p {
       margin: 0rem;
     }
     .header{
-      padding: 0 50px;
+      padding: 0 10rem;
       z-index: 50;
     }
-    @media (max-width: 540px){
+    @media (max-width: 1280px){
       .header{
-        padding: 0 25px;
+        padding: 0 7rem;
+      }
+    }
+    @media (max-width: 1024px){
+      .header{
+        padding: 0 5rem;
+      }
+    }
+    @media (max-width: 768px){
+      .header{
+        padding: 0 1rem;
       }
     }
     .center {
@@ -204,6 +214,32 @@ const Styles = (props) => (
     }
     .site-layout .site-layout-background {
       background: #fff;
+    }
+    // .footer-custom{
+    //   padding: 5rem !important;
+    // }
+    // @media (max-width: 768px) {
+    //   .footer-custom{
+    //     padding: 1rem !important;
+    //   }
+    // }
+    .footer-custom{
+      padding: 2rem 10rem;
+    }
+    @media (max-width: 1280px){
+      .footer-custom{
+        padding: 2rem 7rem;
+      }
+    }
+    @media (max-width: 1024px){
+      .footer-custom{
+        padding: 2rem 5rem;
+      }
+    }
+    @media (max-width: 768px){
+      .footer-custom{
+        padding: 2rem 1rem;
+      }
     }
     `}</style>
   </div>

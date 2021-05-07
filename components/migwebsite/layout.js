@@ -13,7 +13,7 @@ function layout({ children }) {
             <Layout className={'h-auto'}>
                 <Header className={'header border-b'} style={{ background:'white', position: 'fixed', zIndex: 20, width: '100%' }}>
                     <Link href="/">
-                        <div className="logo top-3 sm:top-2 absolute w-24 sm:w-32" >
+                        <div className="logo top-3 md:top-2 absolute w-24 md:w-32" >
                             <img width={'auto'} height={'auto'} src='/mig.png'/>
                         </div>
                     </Link>
@@ -49,12 +49,12 @@ function layout({ children }) {
                         </div>
                     </div>
                 </Content>
-                <Footer className={''} style={{ textAlign: 'left', backgroundColor:'white' }}>
+                <Footer className={'footer-custom'} style={{ textAlign: 'left', backgroundColor:'white' }}>
                     <div className={' flex flex-col md:flex-row'}>
-                            <div className="" style={{minWidth:'150px',width:'150px'}} >
+                            <div className="pb-4" style={{minWidth:'150px',width:'150px'}} >
                                 <img src='/mig.png'/>
                             </div>  
-                            <div className={'flex flex-col md:flex-row px-0 md:px-20'}>
+                            <div className={'flex justify-between flex-row px-0'}>
                                 <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
                                     <p className={'font-bold py-1'}>Company</p>
                                     <Link href={{pathname: '/aboutus'}}><p className={'cursor-pointer py-1'}>About Us</p></Link>

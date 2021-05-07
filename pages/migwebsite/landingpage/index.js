@@ -11,7 +11,7 @@ function LandingPage({ }) {
     }
     return (
         <Layout>
-            <section className={'section1landingpage'}>
+            <section className={'section1landingpage py-8 px-4 md:px-20 lg:px-28 xl:px-40'}>
                 <div className={'block md:flex'}>
                     <div className={'flex-col center'}>
                         <div className={''}>
@@ -45,10 +45,10 @@ function LandingPage({ }) {
 
                 </div>
             </section>
-            <section className={'section3landingpage static md:relative'}>
-                <div className={'h-auto flex justify-between px-10 md:px-30 pt-8 md:pt-16 pb-0: md:pb-4'} style={{backgroundColor:'#188E4D'}}>
-                    <div className={'block md:flex'} style={{width:'100%',margin:'0 auto 0'}}>
-                        <div className={'flex-col mx-16 md:mx-10 pb-8 md:pb-0'}>
+            <section className={'section3landingpage static md:relative px-4 md:px-20 lg:px-28 xl:px-40'} style={{backgroundColor:'#188E4D'}}>
+                <div className={'h-auto flex justify-between md:px-30 pt-8 md:pt-16 pb-0: md:pb-4'} >
+                    <div className={'block md:flex py-0 md:py-8'} style={{width:'100%',margin:'0 auto 0'}}>
+                        <div className={'flex-col mx-auto md:mr-10 pb-8 md:pb-0'}>
                             <img style={{ width: '600px', height: 'auto' }} src='/image-section3.png' />
                         </div>
                         <div className={'flex-col mx-10 w-auto md:w-120'} style={{margin:'auto'}}>
@@ -75,7 +75,7 @@ function LandingPage({ }) {
                     </div>
                 </div>
             </section>
-            <section className={'section4landingpage'}>
+            <section className={'section4landingpage pt-8 pb-16'}>
                 <div className={'text-center'}>
                     <Flickity
                         className={'carousel'} // default ''
@@ -120,8 +120,8 @@ function LandingPage({ }) {
                     </Flickity>
                 </div>
             </section>
-            <section className={'section5landingpage'}>
-                <div className={' md:flex relative justify-between px-8 md:px-32 lg:px-64'}style={{top:'40%'}}>
+            <section className={'section5landingpage px-4 md:px-20 lg:px-28 xl:px-40'}>
+                <div className={' md:flex relative justify-between '}style={{top:'40%'}}>
                     <div className={'flex-col text-2xl md:text-3xl text-white font-bold -top-4 md:top-0 relative'} style={{}}>
                         <p>Let’s be better together</p>
                     </div>

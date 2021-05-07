@@ -24,7 +24,7 @@ function Careers({ }) {
     const { Panel } = Collapse;
     return (
         <Layout>
-            <section className={'section1careers p-4 md:p-20'}>
+            <section className={'section1careers py-4 md:py-20 px-4 md:px-20 lg:px-28 xl:px-40'}>
                 <div className={'block md:flex'}>
                     <div className={'flex-col m-auto'}>
                         <div className={''}>
@@ -43,9 +43,9 @@ function Careers({ }) {
                     </div>
                 </div>
             </section>
-            <section className={'section2careers hidden md:block'} style={{background:'#F4F4F4'}}>
+            <section className={'section2careers hidden md:block px-4 md:px-20 lg:px-28 xl:px-40'} style={{background:'#F4F4F4'}}>
                 <div className={'block md:flex'}>
-                    <div className={'flex px-4 py-4 md:px-20'}>
+                    <div className={'flex py-4'}>
                         <a href='/careers/#ourvalues'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Our Values
                             </p></a>
                         <a href='/careers/#lifeatmig'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Life at MIG
@@ -60,7 +60,7 @@ function Careers({ }) {
                 </div>
             </section>
             <section className={'section3careers h-8 hidden md:block'}></section>
-            <section className={'section4careers px-4 py-10 md:p-20'} style={{background:'#F4F4F4'}} id='ourvalues'>
+            <section className={'section4careers py-10 px-4 md:px-20 lg:px-28 xl:px-40'} style={{background:'#F4F4F4'}} id='ourvalues'>
                 <div>
                     <p className={'text-2xl font-bold'}>Our Values</p>
                 </div>
@@ -130,7 +130,7 @@ function Careers({ }) {
                     </div>
                 </Flickity>
             </section>
-            <section className={'section4careers px-4 py-10 md:p-20 h-auto'}>
+            <section className={'section4careers py-10 px-4 md:px-20 lg:px-28 xl:px-40 h-auto'}>
                 <div>
                     <p className={'text-2xl font-bold text-center pb-8'}>What is it like to work at Mitramas Solusi?</p>
                     <Flickity
@@ -163,7 +163,7 @@ function Careers({ }) {
                     </Flickity>
                 </div>
             </section>
-            <section className={'section5careers px-2 py-10 md:p-20 h-auto'} style={{background:'#188E4D'}}>
+            <section className={'section5careers py-10 md:p-20 h-auto'} style={{background:'#188E4D'}}>
                 <Flickity
                 className={'carousel'}
                 options={flickityOption3}
@@ -194,7 +194,7 @@ function Careers({ }) {
                     </div>
                 </Flickity>
             </section>
-            <section className={'section6careers px-4 py-10 md:p-20 h-auto'}>
+            <section className={'section6careers py-10 px-4 md:px-20 lg:px-28 xl:px-40 h-auto'}>
                 <div>
                     <p className={'text-center font-bold text-3xl pb-8'}>Benefits</p>
                     <p className={'pb-8'}>
@@ -244,7 +244,7 @@ function Careers({ }) {
                     </div>
                 </div>
             </section>
-            <section className={'section7careers px-4 pb-10 md:pb-20 md:px-20 h-auto'}>
+            <section className={'section7careers pb-10 md:pb-20 px-4 md:px-20 lg:px-28 xl:px-40 h-auto'}>
                 <div className={'block md:flex justify-between'}>
                     <div className={'flex-row left-column-section7careers pr-0 md:pr-8'}>
                         <p className={'text-3xl font-bold pb-8'}>Careers at MIG</p>
@@ -310,7 +310,7 @@ function Careers({ }) {
                 </div>
             </section>
             <section className={'section5landingpage'}>
-                <div className={' md:flex relative justify-between px-8 md:px-32 lg:px-64'}style={{top:'40%'}}>
+                <div className={' md:flex relative justify-between px-4 md:px-20 lg:px-28 xl:px-40'}style={{top:'40%'}}>
                     <div className={'flex-col text-2xl md:text-3xl text-white font-bold -top-4 md:top-0 relative'} style={{}}>
                         <p>Let’s be better together</p>
                     </div>
