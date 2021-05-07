@@ -75,7 +75,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                     }
                                     {[134, 135, 136, 137, 138, 139, 140, 141, 142, 143].every(isIncludesFeat) &&
                                         <Menu.Item key="413" icon={<UserOutlined />}>
-                                            <Link href="/groups">
+                                            <Link href="/admin/groups">
                                                 Groups
                                         </Link>
                                         </Menu.Item>
@@ -88,7 +88,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             {
                                 [173, 174, 175, 176, 177, 178].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                 <Menu.Item key="411" icon={<InboxOutlined />}>
-                                    <Link href="/roles">
+                                    <Link href="/admin/roles">
                                         Roles
                                     </Link>
                                 </Menu.Item>
@@ -137,7 +137,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                 </Link>
                             </Menu.Item>
                             <Menu.Item key="412" icon={<InboxOutlined />}>
-                                <Link href="/vendors">
+                                <Link href="/admin/vendors">
                                     Vendors
                                 </Link>
                             </Menu.Item>
@@ -156,7 +156,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                     {
                                         [194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206].every(isIncludesFeat) &&
                                         <Menu.Item key="412" icon={<InboxOutlined />}>
-                                            <Link href="/contracts">
+                                            <Link href="/admin/contracts">
                                                 Contracts
                                             </Link>
                                         </Menu.Item>
@@ -230,7 +230,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                     }
                                     {dataProfile.data.registered_feature.includes(134) &&
                                         <Menu.Item key="413" icon={<UserOutlined />}>
-                                            <Link href="/groups">
+                                            <Link href="/admin/groups">
                                                 Groups
                                         </Link>
                                         </Menu.Item>
@@ -243,7 +243,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             {
                                 [173, 174, 175, 176, 177, 178].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                 <Menu.Item key="411" icon={<InboxOutlined />}>
-                                    <Link href="/roles">
+                                    <Link href="/admin/roles">
                                         Roles
                                     </Link>
                                 </Menu.Item>
@@ -292,7 +292,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                 </Link>
                             </Menu.Item>
                             <Menu.Item key="412" icon={<InboxOutlined />}>
-                                <Link href="/vendors">
+                                <Link href="/admin/vendors">
                                     Vendors
                                 </Link>
                             </Menu.Item>
@@ -311,7 +311,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                     {
                                         [194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206].every(isIncludesFeat) &&
                                         <Menu.Item key="412" icon={<InboxOutlined />}>
-                                            <Link href="/contracts">
+                                            <Link href="/admin/contracts">
                                                 Contracts
                                             </Link>
                                         </Menu.Item>

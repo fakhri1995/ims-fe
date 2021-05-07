@@ -1,12 +1,11 @@
-import Layout from '../../components/layout-dashboard2'
+import Layout from '../../../components/layout-dashboard2'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
 import { Tabs, notification, Modal, Timeline, InputNumber } from 'antd'
-import st from '../../components/layout-dashboard-inventories.module.css'
-import { Row, Col, Divider } from 'antd';
+import st from '../../../components/layout-dashboard-inventories.module.css'
 import moment from 'moment'
 
 function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes, sidemenu }) {
@@ -81,7 +80,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/contracts?originPath=Admin`)
+                        rt.push(`/admin/contracts`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -111,7 +110,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/contracts?originPath=Admin`)
+                        rt.push(`/admin/contracts`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -144,7 +143,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/contracts?originPath=Admin`)
+                        rt.push(`/admin/contracts`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -213,7 +212,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                                     }
                                     {
                                         [197].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                        <Link href={`/contracts/update/${contract.id}?originPath=Admin`}>
+                                        <Link href={`/admin/contracts/update/${contract.id}`}>
                                             <div className=" text-white text-sm bg-blue-500 hover:bg-blue-600 border-gray-900 cursor-pointer h-10 py-2.5 w-20 text-center" >
                                                 <p>
                                                     Edit

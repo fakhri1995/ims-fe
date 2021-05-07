@@ -1,5 +1,5 @@
-import Layout from '../../../../components/layout-dashboard2'
-import st from '../../../../components/layout-dashboard.module.css'
+import Layout from '../../../../../components/layout-dashboard2'
+import st from '../../../../../components/layout-dashboard.module.css'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useState,useEffect } from 'react'
@@ -13,8 +13,10 @@ import moment from 'moment'
 function UpdateContract({ initProps, dataProfile, contractData, contractInputData, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
-    // const pathArr = rt.pathname.split("/").slice(1)
-    const pathArr = ['admin','contracts', "update "+contractData.data.contract.nomor_kontrak]
+    const pathArr = rt.pathname.split("/").slice(1)
+    pathArr.splice(2,1)
+    pathArr[pathArr.length - 1] = contractData.data.contract.nomor_kontrak
+    // const pathArr = ['admin','contracts', "update "+contractData.data.contract.nomor_kontrak]
     const { originPath } = rt.query
     const { TextArea } = Input;
     const { Option } = Select;
@@ -257,7 +259,7 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
         })
     })
     //-----------------Handle create contract-----------------------------
-    const handleCreateContract = () => {
+    const handleUpdateContract = () => {
         setLoadingbtn(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateContract`, {
             method: 'PUT',
@@ -276,7 +278,7 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/contracts?originPath=Admin`)
+                        rt.push(`/admin/contracts/${contractData.data.contract.id}`)
                     }, 100)
                 }
                 else if (!res2.success) {
@@ -355,13 +357,13 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
                 <div className="w-full h-auto">
-                    <Form layout="vertical" onFinish={handleCreateContract} style={{ display: 'contents' }} form={instanceForm}>
+                    <Form layout="vertical" onFinish={handleUpdateContract} style={{ display: 'contents' }} form={instanceForm}>
                         <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
                             <Sticky containerSelectorFocus="#formAgentsWrapper">
                                 <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
-                                    <h1 className="font-semibold text-base w-auto">Ubah Kontrak</h1>
+                                    <h1 className="font-semibold text-base w-auto">Update Contracts</h1>
                                     <div className="flex space-x-2">
-                                        <Link href="/contracts?originPath=Admin" >
+                                        <Link href="/admin/contracts" >
                                             <Button type="default" size="middle">Cancel</Button>
                                         </Link>
                                         <Button disabled={!(validation.harga && validation.id_terms_of_payment) } type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn}>Save</Button>

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
-import Layout from '../../../components/layout-dashboard'
-import st from '../../../components/layout-dashboard.module.css'
+import Layout from '../../../../components/layout-dashboard'
+import st from '../../../../components/layout-dashboard.module.css'
 import httpcookie from 'cookie'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
@@ -121,7 +121,7 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                     })
                     setTimeout(() => {
                         setloadingupdate(false)
-                        rt.push(`/roles/${idrole}`)
+                        rt.push(`/admin/roles/${idrole}`)
                     }, 300)
                 }
                 else if (!res2.success) {
@@ -154,7 +154,7 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                     })
                     setTimeout(() => {
                         setloadingdelete(false)
-                        rt.push(`/roles`)
+                        rt.push(`/admin/roles`)
                     }, 300)
                 }
                 else if (!res2.success) {
@@ -179,7 +179,7 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                                         [178].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                         <Button type="default" size="middle" onClick={() => { setmodaldelete(true) }} loading={loadingdelete} danger>Delete</Button>
                                     }
-                                    <Link href="/roles?originPath=Admin" >
+                                    <Link href="/admin/roles" >
                                         <Button type="default" size="middle">Cancel</Button>
                                     </Link>
                                     {

@@ -1,17 +1,18 @@
-import Layout from '../../../../components/layout-dashboard2'
+import Layout from '../../../../../components/layout-dashboard'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import st from '../../../../components/layout-dashboard-groups.module.css'
+import st from '../../../../../components/layout-dashboard-groups.module.css'
 import { Divider, Input, Select, Radio, Row, Col, Button, notification, Form } from 'antd'
 
 function GroupsAgentsCreate({ initProps, dataProfile, dataListAccount, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
-    // const pathArr = rt.pathname.split("/").slice(1)
-    const pathArr = ['groups', 'create agent groups']
+    const pathArr = rt.pathname.split("/").slice(1)
+    pathArr.splice(2,1)
+    pathArr[pathArr.length - 1] = 'Create Agents Group'
     const { originPath } = rt.query
     const dataDetailGroup = []
     const [instanceForm] = Form.useForm()
@@ -69,7 +70,7 @@ function GroupsAgentsCreate({ initProps, dataProfile, dataListAccount, sidemenu 
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/groups?originPath=Admin`)
+                        rt.push(`/admin/groups`)
                     }, 100)
                 }
                 else if (!res2.success) {
@@ -108,12 +109,12 @@ function GroupsAgentsCreate({ initProps, dataProfile, dataListAccount, sidemenu 
                     <div className="col-span-1 md:col-span-4">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
-                                <h1 className="font-semibold text-base w-auto">Group Agents Baru</h1>
+                                <h1 className="font-semibold text-base w-auto">New Agents Group</h1>
                                 <div className="flex space-x-2">
-                                    <Link href="/groups?originPath=Admin" >
-                                        <Button type="default" size="middle">Batalkan</Button>
+                                    <Link href="/admin/groups" >
+                                        <Button type="default" size="middle">Cancel</Button>
                                     </Link>
-                                    <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn}>Simpan</Button>
+                                    <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn}>Save</Button>
                                 </div>
                             </div>
                         </Sticky>

@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import Layout from '../../components/layout-dashboard2'
-import st from '../../components/layout-dashboard-roles.module.css'
+import Layout from '../../../components/layout-dashboard2'
+import st from '../../../components/layout-dashboard-roles.module.css'
 import httpcookie from 'cookie'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
@@ -29,7 +29,7 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                     children:
                         <div>
                             <Link href={{
-                                pathname: `/roles/${record.id}`,
+                                pathname: `/admin/roles/${record.id}`,
                                 query: {
                                     originPath: 'Admin'
                                 }
@@ -101,7 +101,7 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                         <div className=" flex">
                             {
                                 [174, 177].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <Button onClick={() => { rt.push(`/roles/${record.id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
+                                <Button onClick={() => { rt.push(`/admin/roles/${record.id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
                                     <EditOutlined />
                                 </Button>
                             }
@@ -175,7 +175,7 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                     })
                     setTimeout(() => {
                         setloadingdelete(false)
-                        rt.push(`/roles`)
+                        rt.push(`/admin/roles`)
                     }, 300)
                 }
                 else if (!res2.success) {
@@ -198,7 +198,7 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                                 {
                                     [176].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <div className="flex space-x-2">
-                                        <Link href="/roles/create">
+                                        <Link href="/admin/roles/create">
                                             <Button type="primary" size="large">Add New</Button>
                                         </Link>
                                     </div>

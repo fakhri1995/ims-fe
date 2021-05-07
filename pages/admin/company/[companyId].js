@@ -3,11 +3,9 @@ import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
 import { useState } from 'react'
 import Link from 'next/link'
-import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
-import EditOutlined from '@ant-design/icons/EditOutlined'
-import PlusOutlined from '@ant-design/icons/PlusOutlined'
+import {DeleteOutlined, EditOutlined} from '@ant-design/icons'
 import st from '../../../components/layout-dashboard-clients.module.css'
-import { Tabs, Input, Table, Tree, Drawer, Modal, message, Select, notification, Form, Button, Popconfirm, Switch, DatePicker } from 'antd'
+import { Tabs, Input, Table, Tree, Drawer, Modal, Select, notification, Form, Button, Switch, DatePicker } from 'antd'
 import moment from 'moment'
 
 function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok }) {

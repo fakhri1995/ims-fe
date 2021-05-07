@@ -1,4 +1,4 @@
-import Layout from '../../components/layout-dashboard2'
+import Layout from '../../../components/layout-dashboard2'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { Table, Button, Tabs, notification, Modal } from 'antd'
@@ -7,13 +7,13 @@ import EditOutlined from '@ant-design/icons/EditOutlined'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import st from '../../components/layout-dashboard.module.css'
+import st from '../../../components/layout-dashboard.module.css'
 
 function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
-    // const pathArr = rt.pathname.split("/").slice(1)
-    const pathArr = ['admin', 'contracts']
+    const pathArr = rt.pathname.split("/").slice(1)
+    // const pathArr = ['admin', 'contracts']
     // const { originPath } = rt.query
     const { TabPane } = Tabs;
     // console.log(dataContracts)
@@ -82,7 +82,7 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/contracts?originPath=Admin`)
+                        rt.push(`/admin/contracts`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -163,10 +163,7 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                             {
                                 [195, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                     <div><Link href={{
-                                        pathname: `/contracts/${record.key}`,
-                                        query: {
-                                            originPath: 'Admin'
-                                        }
+                                        pathname: `/admin/contracts/${record.key}`,
                                     }}><a>{record.nomor_kontrak}</a></Link>
                                     </div>
                                     :
@@ -240,7 +237,7 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                                 [197].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                 <Button>
                                     <Link href={{
-                                        pathname: `/contracts/update/${record.key}`,
+                                        pathname: `/admin/contracts/update/${record.key}`,
                                     }}><EditOutlined /></Link>
                                 </Button>
                             }
@@ -286,7 +283,7 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                                 {
                                     [196].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <div className="flex space-x-2">
-                                        <Link href={`/contracts/create`}>
+                                        <Link href={`/admin/contracts/create`}>
                                             <Button type="primary" size="large">Add New</Button>
                                         </Link>
                                     </div>

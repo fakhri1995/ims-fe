@@ -1,4 +1,4 @@
-import Layout from '../../components/layout-dashboard-groups'
+import Layout from '../../../components/layout-dashboard'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { DeleteOutlined, DownOutlined, EditOutlined } from '@ant-design/icons'
@@ -6,13 +6,13 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
 import { Tabs, Dropdown, Menu, notification, Modal, Button, Table } from 'antd'
-import st from '../../components/layout-dashboard-groups.module.css'
+import st from '../../../components/layout-dashboard-groups.module.css'
 
 function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters, sidemenu, dataDetailGroup }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
-    const { originPath } = rt.query
+    // const { originPath } = rt.query
     const { TabPane } = Tabs;
     // console.log(dataGroups)
     //--------hook modal delete group-------------
@@ -88,7 +88,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                     })
                     setloadingdelete(false)
                     setTimeout(() => {
-                        rt.push(`/groups?originPath=Admin`)
+                        rt.push(`/admin/groups`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -119,7 +119,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                     })
                     setloadingdelete(false)
                     setTimeout(() => {
-                        rt.push(`/groups?originPath=Admin`)
+                        rt.push(`/admin/groups`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -148,7 +148,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                                 style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
                             },
                             children: <div><Link href={{
-                                pathname: `/groups/update/` + variabel + `/${record.key}`,
+                                pathname: `/admin/groups/update/` + variabel + `/${record.key}`,
                                 query: {
                                     originPath: 'Admin'
                                 }
@@ -176,7 +176,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                                                     [136, 137].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                                     <Button>
                                                         <Link href={{
-                                                            pathname: `/groups/update/` + "agents" + `/${record.key}`,
+                                                            pathname: `/admin/groups/update/` + "agents" + `/${record.key}`,
                                                             query: {
                                                                 originPath: 'Admin'
                                                             }
@@ -190,7 +190,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                                                     [141, 142].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                                     <Button>
                                                         <Link href={{
-                                                            pathname: `/groups/update/` + "requesters" + `/${record.key}`,
+                                                            pathname: `/admin/groups/update/` + "requesters" + `/${record.key}`,
                                                             query: {
                                                                 originPath: 'Admin'
                                                             }
@@ -252,10 +252,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                     [135].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                     <Menu.Item key="0">
                         <Link href={{
-                            pathname: '/groups/create/agents',
-                            query: {
-                                originPath: "Admin"
-                            }
+                            pathname: '/admin/groups/create/agents',
                         }}>Agent Group</Link>
                     </Menu.Item>
                 }
@@ -263,10 +260,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                     [140].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                     <Menu.Item key="1">
                         <Link href={{
-                            pathname: '/groups/create/requesters',
-                            query: {
-                                originPath: "Admin"
-                            }
+                            pathname: '/admin/groups/create/requesters',
                         }}>Requester Group</Link>
                     </Menu.Item>
                 }
@@ -274,7 +268,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
         )
     }
     return (
-        <Layout tok={tok} dataDetailGroup={dataDetailGroup} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
+        <Layout tok={tok} dataDetailGroup={dataDetailGroup} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} st={st}>
             <>
                 <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
                     <div className=" col-span-1 md:col-span-4 flex flex-col" id="formAgentsWrapper">

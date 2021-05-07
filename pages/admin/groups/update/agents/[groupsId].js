@@ -1,17 +1,18 @@
-import Layout from '../../../../components/layout-dashboard2'
+import Layout from '../../../../../components/layout-dashboard'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import st from '../../../../components/layout-dashboard-groups.module.css'
+import st from '../../../../../components/layout-dashboard-groups.module.css'
 import { Divider, Input, Select, Radio, Row, Col, Button, notification, Form } from 'antd'
 
 function GroupsAgentsDetail({ initProps, dataProfile, dataListAccount, dataDetailGroup, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
-    // const pathArr = rt.pathname.split("/").slice(1)
-    const pathArr = ['groups', 'edit agent groups']
+    const pathArr = rt.pathname.split("/").slice(1)
+    pathArr.splice(2, 2)
+    pathArr[pathArr.length - 1] = 'Edit Agents Group'
     const { originPath } = rt.query
     const [instanceForm] = Form.useForm()
     const [loadingbtn, setLoadingbtn] = useState(false)
@@ -64,7 +65,7 @@ function GroupsAgentsDetail({ initProps, dataProfile, dataListAccount, dataDetai
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/groups?originPath=Admin`)
+                        rt.push(`/admin/groups/update/agents/${dataDetailGroup.data.group_detail.id}`)
                     }, 100)
                 }
                 else if (!res2.success) {
@@ -109,7 +110,7 @@ function GroupsAgentsDetail({ initProps, dataProfile, dataListAccount, dataDetai
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <h1 className="font-semibold text-base w-auto">Edit Group Agents</h1>
                                 <div className="flex space-x-2">
-                                    <Link href="/groups?originPath=Admin" >
+                                    <Link href="/admin/groups" >
                                         <Button type="default" size="middle">Cancel</Button>
                                     </Link>
                                     {

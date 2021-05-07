@@ -1,5 +1,5 @@
-import Layout from '../../../components/layout-dashboard2'
-import st from '../../../components/layout-dashboard.module.css'
+import Layout from '../../../../components/layout-dashboard2'
+import st from '../../../../components/layout-dashboard.module.css'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
@@ -12,8 +12,9 @@ import {DatePicker,Table,Drawer,Input,Select,Button,notification,Form} from 'ant
 function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
-    // const pathArr = rt.pathname.split("/").slice(1)
-    const pathArr = ['admin', 'contracts', 'new Contract']
+    const pathArr = rt.pathname.split("/").slice(1)
+    pathArr[pathArr.length - 1] = "Create"
+    // const pathArr = ['admin', 'contracts', 'new Contract']
     const { originPath } = rt.query
     const { TextArea } = Input;
     const { Option } = Select;
@@ -276,7 +277,7 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/contracts?originPath=Admin`)
+                        rt.push(`/admin/contracts`)
                     }, 100)
                 }
                 else if (!res2.success) {
@@ -332,10 +333,10 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                 <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                     <h1 className="font-semibold text-base w-auto">Kontrak Baru</h1>
                                     <div className="flex space-x-2">
-                                        <Link href="/contracts?originPath=Admin" >
-                                            <Button type="default" size="middle">Batalkan</Button>
+                                        <Link href="/admin/contracts" >
+                                            <Button type="default" size="middle">Cancel</Button>
                                         </Link>
-                                        <Button disabled={!(validation.harga && validation.id_terms_of_payment) } type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn}>Simpan</Button>
+                                        <Button disabled={!(validation.harga && validation.id_terms_of_payment) } type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn}>Save</Button>
                                     </div>
                                 </div>
                             </Sticky>

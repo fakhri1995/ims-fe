@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import Layout from '../../../components/layout-dashboard'
-import st from '../../../components/layout-dashboard.module.css'
+import Layout from '../../../../components/layout-dashboard'
+import st from '../../../../components/layout-dashboard.module.css'
 import httpcookie from 'cookie'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
@@ -11,6 +11,7 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
+    pathArr[pathArr.length - 1] = "Create"
     const { originPath } = rt.query
     const { TextArea } = Input;
     const { TabPane } = Tabs;
@@ -115,7 +116,7 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
                     })
                     setTimeout(() => {
                         setloadingcreate(false)
-                        rt.push(`/roles`)
+                        rt.push(`/admin/roles`)
                     }, 300)
                 }
                 else if (!res2.success) {
@@ -136,7 +137,7 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <h1 className="font-semibold text-base w-auto ">New Role</h1>
                                 <div className="flex space-x-2">
-                                    <Link href="/roles?originPath=Admin" >
+                                    <Link href="/admin/roles" >
                                         <Button type="default" size="middle">Cancel</Button>
                                     </Link>
                                     <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingcreate}>Save</Button>
