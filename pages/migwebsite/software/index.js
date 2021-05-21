@@ -9,9 +9,9 @@ function Software({ }) {
     const { TextArea } = Input;
     return (
         <Layout>
-            <section className={'section1advantages hidden md:block'} style={{background:'#F4F4F4'}}>
+            <section className={'section1advantages hidden md:block fixed w-full z-50 px-4 md:px-20 lg:px-28 xl:px-40'} style={{background:'#F4F4F4'}}>
                 <div className={'block md:flex'}>
-                    <div className={'flex center'}>
+                    <div className={'flex py-4'}>
                         <Link href={{pathname: '/advantages'}}><p className={'cursor-pointer flex-col text-base font-semibold pr-4'} style={{}}>Advantages
                             </p></Link>
                         <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer flex-col text-base font-semibold px-4'}>Hardware
@@ -23,7 +23,8 @@ function Software({ }) {
                     </div>
                 </div>
             </section>
-            <section className={'section2software px-4 md:px-20 lg:md-px-28 xl:px-40  py-8 text-center justify-center'}>
+            <section className={'section2advantages h-12 hidden md:block'}></section>
+            <section className={'section2software px-4 md:px-20 lg:px-28 xl:px-40  py-8 text-center justify-center'}>
                 <div className={'pb-8'}>
                     <p className={'text-2xl md:text-3xl font-bold'}>Software</p>
                 </div>
@@ -32,7 +33,7 @@ function Software({ }) {
                 </div>
                 <img className={'m-auto px-2 md:px-2'} src='/image-software.png'></img>
             </section>
-            <section className={'section3software justify-center px-2 md:px-20 lg:md-px-28 xl:px-40 '} >
+            <section className={'section3software justify-center px-2 md:px-20 lg:px-28 xl:px-40 '} >
                 <Form layout={'vertical'} form={softwareForm}>
                     <div className={''}>
                         <div className={'w-full h-auto grid grid-cols-1 md:grid-cols-2'}>
@@ -109,7 +110,7 @@ function Software({ }) {
                 </Form>
             </section>
             <section className={'section5landingpage'}>
-                <div className={' md:flex relative justify-between px-8 md:px-32 lg:px-64'}style={{top:'40%'}}>
+                <div className={' md:flex relative justify-between px-4 md:px-20 lg:px-28 xl:px-40'}style={{top:'40%'}}>
                     <div className={'flex-col text-2xl md:text-3xl text-white font-bold -top-4 md:top-0 relative'} style={{}}>
                         <p>Let’s be better together</p>
                     </div>
