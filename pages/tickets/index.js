@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { TableOutlined, BarsOutlined } from '@ant-design/icons'
 import { Select, Checkbox, Pagination, Empty } from 'antd'
-import Layout from '../../components/layout-dashboard-tickets'
+import Layout from '../../components/layout-dashboard2'
 import st from '../../components/layout-dashboard.module.css'
 
 function TicketsIndex({ initProps, dataProfile, dataTicketList, sidemenu }) {

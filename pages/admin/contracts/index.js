@@ -181,13 +181,23 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
             dataIndex: 'is_active',
             key: 'is_active',
             width: 50,
+            align: 'center',
             render(text, record) {
                 return {
                     props: {
                         style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
                     },
-                    children: <div>{record.is_active ? "Aktif" : "Non-Aktif"}
-                    </div>,
+                    children:
+                        <>
+                            {
+                                record.is_active ?
+                                    <div className="p-1 rounded-md text-white border border-green-500 bg-green-500 text-center text-xs">Active</div>
+                                    :
+                                    <div className="p-1 rounded-md text-white border border-gray-500 bg-gray-500 text-center text-xs">Terminated</div>
+                            }
+                            {/* <div>{record.is_active ? "Aktif" : "Non-Aktif"}
+                            </div> */}
+                        </>
                 };
             },
         },

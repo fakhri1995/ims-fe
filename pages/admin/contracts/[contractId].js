@@ -26,17 +26,20 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
     const [warningDelete, setWarningDelete] = useState({
         istrue: false,
         key: null,
-        nomor_kontrak: ""
+        nomor_kontrak: "",
+        loadingBtn: false
     })
     const [warningTerminate, setWarningTerminate] = useState({
         istrue: false,
         key: null,
-        nomor_kontrak: ""
+        nomor_kontrak: "",
+        loadingBtn: false
     })
     const [warningActivate, setWarningActivate] = useState({
         istrue: false,
         key: null,
-        nomor_kontrak: ""
+        nomor_kontrak: "",
+        loadingBtn: false
     })
     const onClickModalDeleteContract = (istrue, record) => {
         setWarningDelete({
@@ -64,6 +67,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
     }
     //-------------------terminate contract------------------------
     const handleTerminateContract = (id) => {
+        setWarningTerminate({ ...warningTerminate, loadingBtn: true })
         fetch(`https://boiling-thicket-46501.herokuapp.com/deactivatingContract?id=${id}`, {
             method: 'PUT',
             headers: {
@@ -74,7 +78,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
             .then(res => res.json())
             .then(res2 => {
                 if (res2.success) {
-                    setWarningDelete(false, null)
+                    setWarningTerminate(false, null)
                     notification['success']({
                         message: res2.message,
                         duration: 3
@@ -84,7 +88,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                     }, 500)
                 }
                 else if (!res2.success) {
-                    setWarningDelete(false, null)
+                    setWarningTerminate(false, null)
                     notification['error']({
                         message: res2.message,
                         duration: 3
@@ -94,6 +98,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
     }
     //-------------------activate contract------------------------
     const handleActivateContract = (id) => {
+        setWarningActivate({ ...warningActivate, loadingBtn: true })
         fetch(`https://boiling-thicket-46501.herokuapp.com/activatingContract?id=${id}`, {
             method: 'PUT',
             headers: {
@@ -104,7 +109,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
             .then(res => res.json())
             .then(res2 => {
                 if (res2.success) {
-                    setWarningDelete(false, null)
+                    setWarningActivate(false, null)
                     notification['success']({
                         message: res2.message,
                         duration: 3
@@ -114,7 +119,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                     }, 500)
                 }
                 else if (!res2.success) {
-                    setWarningDelete(false, null)
+                    setWarningActivate(false, null)
                     notification['error']({
                         message: res2.message,
                         duration: 3
@@ -124,6 +129,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
     }
     //------------------handle delete contract-------------------
     const handleDeleteContract = (key) => {
+        setWarningDelete({ ...warningDelete, loadingBtn: true })
         fetch(`https://boiling-thicket-46501.herokuapp.com/deleteContract?id=${key}`, {
             method: 'DELETE',
             headers: {
@@ -190,25 +196,35 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                                             ?
                                             <div className=" relative top-1 h-9 bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md w-auto md:mr-5">AKTIF</div>
                                             :
-                                            <div className=" relative top-1 h-9 bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md w-auto md:mr-5">NON-AKTIF</div>
+                                            <div className=" relative top-1 h-9 bg-gray-100 text-gray-600 border-gray-600 border py-1 px-3 rounded-md w-auto md:mr-5">NON-AKTIF</div>
                                     }
                                 </div>
                                 <div className="flex space-x-2 pt-1">
                                     {
                                         [199].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                        <button onClick={() => { onClickModalTerminateActivate(true, contract) }} className=" text-white text-sm bg-green-600 border-gray-900  hover:bg-green-700 cursor-pointer h-10 py-2.5 w-20 text-center">
-                                            <p>
-                                                Activate
-                                            </p>
-                                        </button>
+                                        <>
+                                            {
+                                                !contract.is_active &&
+                                                <button onClick={() => { onClickModalTerminateActivate(true, contract) }} className=" text-white text-sm bg-green-600 border-gray-900  hover:bg-green-700 cursor-pointer h-10 py-2.5 w-20 text-center">
+                                                    <p>
+                                                        Activate
+                                                    </p>
+                                                </button>
+                                            }
+                                        </>
                                     }
                                     {
                                         [200].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                        <button onClick={() => { onClickModalTerminateContract(true, contract) }} className=" text-white text-sm bg-red-600 border-gray-900  hover:bg-red-700 cursor-pointer h-10 py-2.5 w-20 text-center">
-                                            <p>
-                                                Terminate
-                                            </p>
-                                        </button>
+                                        <>
+                                            {
+                                                contract.is_active &&
+                                                <button onClick={() => { onClickModalTerminateContract(true, contract) }} className=" text-white text-sm bg-red-600 border-gray-900  hover:bg-red-700 cursor-pointer h-10 py-2.5 w-20 text-center">
+                                                    <p>
+                                                        Terminate
+                                                    </p>
+                                                </button>
+                                            }
+                                        </>
                                     }
                                     {
                                         [197].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
@@ -383,6 +399,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                             title="Konfirmasi untuk menghapus kontrak"
                             visible={warningDelete.istrue}
                             onOk={() => { handleDeleteContract(warningDelete.key) }}
+                            okButtonProps={{ disabled: warningDelete.loadingBtn }}
                             onCancel={() => setWarningDelete(false, null)}
                         >
                             Apakah anda yakin ingin menghapus kontrak <strong>{warningDelete.nomor_kontrak}</strong>?
@@ -391,6 +408,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                             title="Konfirmasi untuk terminate kontrak"
                             visible={warningTerminate.istrue}
                             onOk={() => { handleTerminateContract(warningTerminate.key) }}
+                            okButtonProps={{ disabled: warningTerminate.loadingBtn }}
                             onCancel={() => setWarningTerminate(false, null)}
                         >
                             Apakah anda yakin ingin mengakhiri kontrak <strong>{warningTerminate.nomor_kontrak}</strong>?
@@ -399,6 +417,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                             title="Konfirmasi untuk mengaktifkan kontrak"
                             visible={warningActivate.istrue}
                             onOk={() => { handleActivateContract(warningActivate.key) }}
+                            okButtonProps={{ disabled: warningActivate.loadingBtn }}
                             onCancel={() => setWarningActivate(false, null)}
                         >
                             Apakah anda yakin ingin mengaktifkan kontrak <strong>{warningActivate.nomor_kontrak}</strong>?

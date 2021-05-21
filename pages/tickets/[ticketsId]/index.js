@@ -3,20 +3,15 @@ import httpcookie from 'cookie'
 import { useState } from 'react'
 import { EditOutlined, PlusCircleTwoTone } from '@ant-design/icons'
 import { Select, Collapse, Button, Form, Empty, Timeline, DatePicker, notification } from 'antd'
-import Layout from '../../../components/layout-dashboard-tickets'
+import Layout from '../../../components/layout-dashboard2'
 import st from '../../../components/layout-dashboard.module.css'
 import moment from 'moment'
 
 function TicketsDetail({ initProps, dataProfile, dataIncidentList, dataTicketsList, dataSRList, type, subject_type_id, sidemenu }) {
     //Initialization
-    // 0.Destrukturisasi library
+    // 0.Inisialisasi data
     const rt = useRouter()
     const { ticketsId } = rt.query
-    const { Option, OptGroup } = Select;
-    const { Panel } = Collapse
-    const [updateTicketsForm] = Form.useForm()
-    const pathArr = ['tickets', ticketsId]
-    // 1.Inisialisasi data
     var incidentDetail = {}
     incidentDetail = dataIncidentList.data.filter(dataa => {
         return dataa.id == subject_type_id
@@ -25,6 +20,11 @@ function TicketsDetail({ initProps, dataProfile, dataIncidentList, dataTicketsLi
     ticketsDetail = dataTicketsList.data.tickets.filter(dataa => {
         return dataa.id == ticketsId
     })[0]
+    // 1.Destrukturisasi library
+    const { Option, OptGroup } = Select;
+    const { Panel } = Collapse
+    const [updateTicketsForm] = Form.useForm()
+    const pathArr = ['tickets', incidentDetail.subject]
     // 2.Pendefinisian tanggal
     var defaultduetime = ""
     var defaultdateduetime = ""
