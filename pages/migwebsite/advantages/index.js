@@ -88,9 +88,9 @@ function Advantages({ }) {
                     </div>
                 </div>
             </section>
-           
+            <div className={'hidden md:block'}>
             <Fade ssrFadeout left opposite  collapse when={isHiddenAnimation}>
-            <section onClick={()=>{onClickHiddenAnimation()}} className={`hidden md:block md:px-auto py-8 md:px-auto lg:px-28 xl:px-40`}>
+            <section onClick={()=>{onClickHiddenAnimation()}} className={` md:px-auto py-8 md:px-auto lg:px-28 xl:px-40`}>
                 <Slider
                 slidesToShow={4}
                 asNavFor={nav1}
@@ -117,9 +117,10 @@ function Advantages({ }) {
                 </Slider>
             </section>
             </Fade>
-            
+            </div>
+            <div className={'hidden md:block'}>
             <Fade ssrFadeout bottom collapse when={!isHiddenAnimation}>
-            <section className={'bg-green-600  py-8 md:px-auto lg:px-28 xl:px-40'}>
+            <section className={'bg-green-600 py-8 md:px-auto lg:px-28 xl:px-40'}>
                 <div className={'text-center relative -top-4'}>
                     <button type='text' className={'border px-4 py-2 rounded-full border-white'} style={{zIndex:51}} onClick={onClickHiddenAnimation}><p className={'text-white'}>X</p></button>
                 </div>
@@ -174,6 +175,7 @@ function Advantages({ }) {
                 </Slider>
             </section>
             </Fade>
+            </div>
             <section className={'section4advantages py-10 px-4 block md:hidden'}>
                 <Flickity
                 className={'carousel'} // default ''
