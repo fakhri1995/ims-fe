@@ -51,27 +51,29 @@ function layout({ children }) {
                 </Content>
                 <Footer className={'footer-custom'} style={{ textAlign: 'left', backgroundColor:'white' }}>
                     <div className={' flex flex-col md:flex-row'}>
-                            <div className="pb-4" style={{minWidth:'150px',width:'150px'}} >
-                                <img src='/mig.png'/>
-                            </div>  
-                            <div className={'flex justify-between flex-row px-0'}>
-                                <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
-                                    <p className={'font-bold py-1'}>Company</p>
-                                    <Link href={{pathname: '/aboutus'}}><p className={'cursor-pointer py-1'}>About Us</p></Link>
-                                    <Link href={{pathname: '/careers'}}><p className={'cursor-pointer py-1'}>Careers</p></Link>
-                                </div>
-                                <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
-                                    <p className={'font-bold py-1'}>Solutions</p>
-                                    <Link href={{pathname: '/advantages'}}><p className={'cursor-pointer py-1'}>Advantages</p></Link>
-                                    <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer py-1'}>Hardware</p></Link>
-                                    <Link href={{pathname: '/software'}}><p className={'cursor-pointer py-1'}>Software</p></Link>
-                                    <Link href={{pathname: '/people'}}><p className={'cursor-pointer py-1'}>People</p></Link>
-                                </div>
-                                <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
-                                    <p className={'font-bold py-1'}>Help</p>
-                                    <p className={'cursor-pointer py-1'}>Contact Us</p>
-                                </div>
+                        <Link href="/">
+                        <div className="pb-4" style={{minWidth:'150px',width:'150px'}} >
+                            <img src='/mig.png'/>
+                        </div>  
+                        </Link>
+                        <div className={'flex justify-between flex-row px-0'}>
+                            <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
+                                <p className={'font-bold py-1'}>Company</p>
+                                <Link href={{pathname: '/aboutus'}}><p className={'cursor-pointer py-1'}>About Us</p></Link>
+                                <Link href={{pathname: '/careers'}}><p className={'cursor-pointer py-1'}>Careers</p></Link>
                             </div>
+                            <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
+                                <p className={'font-bold py-1'}>Solutions</p>
+                                <Link href={{pathname: '/advantages'}}><p className={'cursor-pointer py-1'}>Advantages</p></Link>
+                                <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer py-1'}>Hardware</p></Link>
+                                <Link href={{pathname: '/software'}}><p className={'cursor-pointer py-1'}>Software</p></Link>
+                                <Link href={{pathname: '/people'}}><p className={'cursor-pointer py-1'}>People</p></Link>
+                            </div>
+                            <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
+                                <p className={'font-bold py-1'}>Help</p>
+                                <p className={'cursor-pointer py-1'}>Contact Us</p>
+                            </div>
+                        </div>
                     </div>
                 </Footer>
             </Layout>

@@ -7,16 +7,16 @@ const Styles = (props) => (
   <div>
     <style jsx global>
     {`
-    .left-column-section7careers{
-      max-width:50%
+    .flex-important{
+      display: flex !important;
     }
-    @media (max-width: 768px){
-      .left-column-section7careers{
-        max-width:100%
-      }
+    .section2careers{
+      position: -webkit-sticky; /* Safari & IE */
+      position: sticky;
+      top: 64px;
     }
-    .section5careers .flickity-page-dots .dot{
-      background:white;
+    .section3careers .flickity-page-dots .dot{
+      background:#93D9B5;
     }
     .section4careersflickity .flickity-viewport{
       height:320px;
@@ -26,9 +26,32 @@ const Styles = (props) => (
         height: 490px !important;
       }
     }
-    .section4careers .flickity-page-dots .dot{
-      background:#93D9B5;
+    .section5careers .flickity-page-dots .dot{
+      background:white;
     }
+
+    .section4advantages .flickity-page-dots{
+      display:none;
+    }
+    @media (max-width: 768px){
+      .section4advantages .flickity-page-dots{
+        display:block;
+        bottom:-25px;
+      }
+      .section4advantages .flickity-page-dots .dot{
+        background:#93D9B5;
+      }
+    }
+    .left-column-section7careers{
+      max-width:50%
+    }
+    @media (max-width: 768px){
+      .left-column-section7careers{
+        max-width:100%
+      }
+    }
+    
+    
     .coverage-list {
         height: auto; /*your fixed height*/
         -webkit-column-count: 3;
@@ -161,7 +184,6 @@ const Styles = (props) => (
     
     body {
       margin: 0;
-      
       font-family: Raleway;
     }
     .hero {
