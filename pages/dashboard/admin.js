@@ -182,10 +182,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             </div>
                         </Link>
                         <Link href={{
-                            pathname: '/vendors',
-                            query: {
-                                originPath: "Admin"
-                            }
+                            pathname: '/admin/vendors',
                         }}>
                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
@@ -217,7 +214,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                 null
                             }
                             {dataProfile.data.registered_feature.includes(194) ?
-                                <Link href={'/contracts'}>
+                                <Link href={'/admin/contracts'}>
                                     <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                         <div>
                                             <InboxOutlined /> Contracts

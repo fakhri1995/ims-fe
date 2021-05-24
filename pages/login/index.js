@@ -65,7 +65,7 @@ export default function Home({ initProps }) {
           <Spin size="large"> */}
       <div className="container-xl bg-blue-600 h-screen" /*style={{background:`linear-gradient(#035ea3, #198e07)`}}*/>
         <div className="pt-20 relative" id="wrapper">
-          <div className="mx-auto bg-white rounded-lg w-10/12 md:w-5/12 h-80 md:h-80 text-black shadow-lg px-3 md:px-5 py-10 text-center">
+          <div className="mx-auto bg-white rounded-lg w-10/12 md:w-5/12 max-h-80 md:max-h-80 text-black shadow-lg px-3 md:px-5 pt-10 pb-1 text-center">
             <h1 className="mb-5 font-mont text-xl font-semibold">Log In MIGSYS v3</h1>
             <Form name="email" className="loginForm" initialValues={{ remember: true }} onFinish={handleLogin}>
               <Form.Item name="email" rules={[
@@ -81,17 +81,14 @@ export default function Home({ initProps }) {
                   required: true,
                   message: 'Password!',
                 },
-              ]}>
+              ]} style={{ marginBottom: `3rem` }}>
                 <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} name="password" value={formdata} placeholder="Password" type="password" onChange={onChangeLogin} />
               </Form.Item>
-              <Form.Item>
+              {/* <Form.Item>
                 <Form.Item name="remember" valuePropName="checked" noStyle>
                   <Checkbox>Remember me</Checkbox>
                 </Form.Item>
-                {/* <a className="login-form-forgot ml-60" href="">
-                  Forgot password
-                    </a> */}
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item style={{ justifyContent: `center` }}>
                 <Button type="primary" htmlType="submit" loading={loadinglogin} className="login-form-button mb-5" style={{ width: `100%` }}>
                   Log in

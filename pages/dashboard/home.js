@@ -9,7 +9,50 @@ function DashboardIndex({ initProps, dataProfile, sidemenu }) {
     // console.log("cookie di dashboard: " + cook)
     return (
         <Layout tok={tok} sidemenu={sidemenu} dataProfile={dataProfile} st={st}>
-            <h1>Selamat datang di Dashboard</h1>
+            <div className="grid grid-cols-3 h-full justify-center items-center">
+                <div className="w-auto h-auto border rounded-xl flex flex-col mx-3">
+                    <div className="p-3 flex flex-col border-b">
+                        <h1 className="font-bold text-xl mb-0">Total Inventories</h1>
+                        <p className="text-sm text-gray-500 mb-0">Total inventories specifically:</p>
+                    </div>
+                    <div className="flex-col flex">
+                        <div className="text-2xl px-5 py-2">
+                            Total: 100 units
+                        </div>
+                        <div className="text-2xl px-5 py-2">
+                            Rented: 20 units
+                        </div>
+                    </div>
+                </div>
+                <div className="w-auto h-auto border rounded-xl flex flex-col mx-3">
+                    <div className="p-3 flex flex-col border-b">
+                        <h1 className="font-bold text-xl mb-0">Total Inventories</h1>
+                        <p className="text-sm text-gray-500 mb-0">Total inventories specifically:</p>
+                    </div>
+                    <div className="flex-col flex">
+                        <div className="text-2xl px-5 py-2">
+                            Total: 100 units
+                        </div>
+                        <div className="text-2xl px-5 py-2">
+                            Rented: 20 units
+                        </div>
+                    </div>
+                </div>
+                <div className="w-auto h-auto border rounded-xl flex flex-col mx-3">
+                    <div className="p-3 flex flex-col border-b">
+                        <h1 className="font-bold text-xl mb-0">Total Inventories</h1>
+                        <p className="text-sm text-gray-500 mb-0">Total inventories specifically:</p>
+                    </div>
+                    <div className="flex-col flex">
+                        <div className="text-2xl px-5 py-2">
+                            Total: 100 units
+                        </div>
+                        <div className="text-2xl px-5 py-2">
+                            Rented: 20 units
+                        </div>
+                    </div>
+                </div>
+            </div>
         </Layout>
     )
 }
