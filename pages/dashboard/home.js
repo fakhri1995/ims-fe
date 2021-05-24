@@ -9,7 +9,7 @@ function DashboardIndex({ initProps, dataProfile, sidemenu }) {
     // console.log("cookie di dashboard: " + cook)
     return (
         <Layout tok={tok} sidemenu={sidemenu} dataProfile={dataProfile} st={st}>
-            <div className="grid grid-cols-3 h-full justify-center items-center">
+            {/* <div className="grid grid-cols-3">
                 <div className="w-auto h-auto border rounded-xl flex flex-col mx-3">
                     <div className="p-3 flex flex-col border-b">
                         <h1 className="font-bold text-xl mb-0">Total Inventories</h1>
@@ -52,7 +52,8 @@ function DashboardIndex({ initProps, dataProfile, sidemenu }) {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
+            <h1>Selamat datang di dashboard</h1>
         </Layout>
     )
 }
