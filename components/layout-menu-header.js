@@ -42,7 +42,7 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
                             <TicketIconSvg className={"pt-1"}/> &nbsp; &nbsp; <p className="p-1">Incident</p>
                         </div>
                     </Link>
-                    <Link href={`/contracts/create?originPath=Tickets`}>
+                    <Link href={`/admin/contracts/create`}>
                         <div className="flex justify-start pt-2 cursor-pointer hover:bg-gray-200" >
                             <ContractIconSvg className={"pt-1"}/> &nbsp; &nbsp; <p className="p-1">Contract</p>
                         </div>
