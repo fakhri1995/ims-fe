@@ -50,8 +50,6 @@ const Styles = (props) => (
         max-width:100%
       }
     }
-    
-    
     .coverage-list {
         height: auto; /*your fixed height*/
         -webkit-column-count: 3;
@@ -66,9 +64,6 @@ const Styles = (props) => (
                   column-count: 2;
       }
     }
-    // .coverage-list li {
-    //     display: inline-block; /*necessary*/
-    // }
     .button-hover:hover {
       background:#1cad5d!important;
     }
@@ -115,10 +110,6 @@ const Styles = (props) => (
         display: none;
       }
     }
-    // .section4landingpage{
-    //   height:auto;
-    //   margin:120px auto;
-    // }
     .section3landingpage{
       top: -50px;
     }
@@ -133,18 +124,6 @@ const Styles = (props) => (
         width: 100%;
       }
     }
-    // .section1landingpage{
-    //   margin: 0 5rem 0;
-    //   padding-top: 1rem;
-    //   padding-bottom: 3rem;
-    // }
-    // @media (max-width: 768px) {
-    //   .section1landingpage{
-    //     margin: 0 1rem 0;
-    //     padding-top: 1rem;
-    //     padding-bottom: 1rem;
-    //   }
-    // }
     p {
       margin: 0rem;
     }
@@ -172,16 +151,21 @@ const Styles = (props) => (
       width: 90%;
       padding: 10px;
     }
-    .menuToggle:checked + .menu {
+    .menu2{
       display: grid;
       margin: 1.5rem 0rem;
-      padding: 1rem 0rem;
+      // padding: 1rem 0rem;
       background: white;
       border: 1px;
       width: inherit;
       place-items: flex-start;
+      height: 0;
+      transition: height 1s;
+      overflow: hidden;
     }
-    
+    .menuToggle:checked ~ section .menu2 {
+      height: 160px;
+    }
     body {
       margin: 0;
       font-family: Raleway;
@@ -237,14 +221,6 @@ const Styles = (props) => (
     .site-layout .site-layout-background {
       background: #fff;
     }
-    // .footer-custom{
-    //   padding: 5rem !important;
-    // }
-    // @media (max-width: 768px) {
-    //   .footer-custom{
-    //     padding: 1rem !important;
-    //   }
-    // }
     .footer-custom{
       padding: 2rem 10rem;
     }

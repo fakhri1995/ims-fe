@@ -24,11 +24,22 @@ function layout({ children }) {
                             </svg>
                         </label>
                     <input className={`hidden menuToggle`} type="checkbox" id={`menutoggle`} />
+                    <section className={'md:hidden w-full'}>
+                    <div theme="light" mode="horizontal" style={{lineHeight:'3.9rem',}} className={'float-right menu2'}>
+                        <Button type="text" className={'ml-4 mt-4 '} style={{fontWeight:'600', background:'white'}} key="0">
+                            <Link href="/login">
+                                    Admin Panel
+                            </Link>
+                        </Button>
+                        <Button type="text" className={'ml-4 '} style={{fontWeight:'600', background:'white'}} key="1">Company</Button>
+                        <Button type="text" className={'ml-4 mr-4 '} style={{fontWeight:'600', background:'white'}} key="2">Solution</Button>
+                        <Button type="text" className={'button-hover ml-4 px-4 mb-4 border-green-800 text-white '} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Get Started</p></Button>
+                    </div>
+                    </section>
                     <div theme="light" mode="horizontal" style={{lineHeight:'3.9rem',}} className={'hidden md:block float-right menu'}>
-                        
                         <Button type="text" className={'mx-2 '} style={{fontWeight:'600', background:'white'}} key="0">
                             <Link href="/login">
-                                    Login Ke Admin
+                                    Admin Panel
                             </Link>
                         </Button>
                         <Button type="text" className={'mx-2 '} style={{fontWeight:'600', background:'white'}} key="1">Company</Button>
