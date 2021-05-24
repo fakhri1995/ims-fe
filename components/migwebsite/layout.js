@@ -24,11 +24,22 @@ function layout({ children }) {
                             </svg>
                         </label>
                     <input className={`hidden menuToggle`} type="checkbox" id={`menutoggle`} />
+                    <section className={'md:hidden w-full'}>
+                    <div theme="light" mode="horizontal" style={{lineHeight:'3.9rem',}} className={'float-right menu2'}>
+                        <Button type="text" className={'ml-4 mt-4 '} style={{fontWeight:'600', background:'white'}} key="0">
+                            <Link href="/login">
+                                    Admin Panel
+                            </Link>
+                        </Button>
+                        <Button type="text" className={'ml-4 '} style={{fontWeight:'600', background:'white'}} key="1">Company</Button>
+                        <Button type="text" className={'ml-4 mr-4 '} style={{fontWeight:'600', background:'white'}} key="2">Solution</Button>
+                        <Button type="text" className={'button-hover ml-4 px-4 mb-4 border-green-800 text-white '} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Get Started</p></Button>
+                    </div>
+                    </section>
                     <div theme="light" mode="horizontal" style={{lineHeight:'3.9rem',}} className={'hidden md:block float-right menu'}>
-                        
                         <Button type="text" className={'mx-2 '} style={{fontWeight:'600', background:'white'}} key="0">
                             <Link href="/login">
-                                    Login Ke Admin
+                                    Admin Panel
                             </Link>
                         </Button>
                         <Button type="text" className={'mx-2 '} style={{fontWeight:'600', background:'white'}} key="1">Company</Button>
@@ -51,27 +62,29 @@ function layout({ children }) {
                 </Content>
                 <Footer className={'footer-custom'} style={{ textAlign: 'left', backgroundColor:'white' }}>
                     <div className={' flex flex-col md:flex-row'}>
-                            <div className="pb-4" style={{minWidth:'150px',width:'150px'}} >
-                                <img src='/mig.png'/>
-                            </div>  
-                            <div className={'flex justify-between flex-row px-0'}>
-                                <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
-                                    <p className={'font-bold py-1'}>Company</p>
-                                    <Link href={{pathname: '/aboutus'}}><p className={'cursor-pointer py-1'}>About Us</p></Link>
-                                    <Link href={{pathname: '/careers'}}><p className={'cursor-pointer py-1'}>Careers</p></Link>
-                                </div>
-                                <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
-                                    <p className={'font-bold py-1'}>Solutions</p>
-                                    <Link href={{pathname: '/advantages'}}><p className={'cursor-pointer py-1'}>Advantages</p></Link>
-                                    <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer py-1'}>Hardware</p></Link>
-                                    <Link href={{pathname: '/software'}}><p className={'cursor-pointer py-1'}>Software</p></Link>
-                                    <Link href={{pathname: '/people'}}><p className={'cursor-pointer py-1'}>People</p></Link>
-                                </div>
-                                <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
-                                    <p className={'font-bold py-1'}>Help</p>
-                                    <p className={'cursor-pointer py-1'}>Contact Us</p>
-                                </div>
+                        <Link href="/">
+                        <div className="pb-4" style={{minWidth:'150px',width:'150px'}} >
+                            <img src='/mig.png'/>
+                        </div>  
+                        </Link>
+                        <div className={'flex justify-between flex-row px-0'}>
+                            <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
+                                <p className={'font-bold py-1'}>Company</p>
+                                <Link href={{pathname: '/aboutus'}}><p className={'cursor-pointer py-1'}>About Us</p></Link>
+                                <Link href={{pathname: '/careers'}}><p className={'cursor-pointer py-1'}>Careers</p></Link>
                             </div>
+                            <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
+                                <p className={'font-bold py-1'}>Solutions</p>
+                                <Link href={{pathname: '/advantages'}}><p className={'cursor-pointer py-1'}>Advantages</p></Link>
+                                <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer py-1'}>Hardware</p></Link>
+                                <Link href={{pathname: '/software'}}><p className={'cursor-pointer py-1'}>Software</p></Link>
+                                <Link href={{pathname: '/people'}}><p className={'cursor-pointer py-1'}>People</p></Link>
+                            </div>
+                            <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
+                                <p className={'font-bold py-1'}>Help</p>
+                                <p className={'cursor-pointer py-1'}>Contact Us</p>
+                            </div>
+                        </div>
                     </div>
                 </Footer>
             </Layout>

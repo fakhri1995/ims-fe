@@ -43,24 +43,25 @@ function Careers({ }) {
                     </div>
                 </div>
             </section>
-            <section className={'section2careers hidden md:block px-4 md:px-20 lg:px-28 xl:px-40'} style={{background:'#F4F4F4'}}>
+            <section className={'section2careers hidden md:block px-4 md:px-20 lg:px-28 xl:px-40 z-50'} style={{background:'#F4F4F4'}}>
                 <div className={'block md:flex'}>
                     <div className={'flex py-4'}>
-                        <a href='/careers/#ourvalues'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Our Values
-                            </p></a>
-                        <a href='/careers/#lifeatmig'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Life at MIG
-                            </p></a>
-                        <a href='/careers/#employeestories'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Employee Stories
-                            </p></a>
-                        <a href='/careers/#benefits'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Benefits
-                            </p></a>
-                        <a href='/careers/#vacancies'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Vacancies
-                            </p></a>
+                        <Link href='/careers/#ourvalues'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Our Values
+                            </p></Link>
+                        <Link href='/careers/#lifeatmig'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Life at MIG
+                            </p></Link>
+                        <Link href='/careers/#employeestories'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Employee Stories
+                            </p></Link>
+                        <Link href='/careers/#benefits'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Benefits
+                            </p></Link>
+                        <Link href='/careers/#vacancies'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Vacancies
+                            </p></Link>
                     </div>
                 </div>
             </section>
-            <section className={'section3careers h-8 hidden md:block'}></section>
-            <section className={'section4careers py-10 px-4 md:px-20 lg:px-28 xl:px-40'} style={{background:'#F4F4F4'}} id='ourvalues'>
+            <section className={'h-8 hidden md:block'}></section>
+            <section className={'section3careers py-10 px-4 md:px-20 lg:px-28 xl:px-40'} style={{background:'#F4F4F4'}}>
+                <span className={'relative'} style={{top:'-140px'}} id='ourvalues'></span>
                 <div>
                     <p className={'text-2xl font-bold'}>Our Values</p>
                 </div>
@@ -130,7 +131,8 @@ function Careers({ }) {
                     </div>
                 </Flickity>
             </section>
-            <section className={'section4careers py-10 px-4 md:px-20 lg:px-28 xl:px-40 h-auto'}>
+            <section className={'section4careers py-10 px-4 md:px-20 lg:px-28 xl:px-40 h-auto'} style={{scrollPaddingTop:'80px'}} >
+                <span className={'relative'} style={{top:'-140px'}} id="lifeatmig"></span>
                 <div>
                     <p className={'text-2xl font-bold text-center pb-8'}>What is it like to work at Mitramas Solusi?</p>
                     <Flickity
@@ -164,6 +166,7 @@ function Careers({ }) {
                 </div>
             </section>
             <section className={'section5careers py-10 md:p-20 h-auto'} style={{background:'#188E4D'}}>
+                <span className={'relative'} style={{top:'-180px'}} id='employeestories'></span>
                 <Flickity
                 className={'carousel'}
                 options={flickityOption3}
@@ -195,13 +198,14 @@ function Careers({ }) {
                 </Flickity>
             </section>
             <section className={'section6careers py-10 px-4 md:px-20 lg:px-28 xl:px-40 h-auto'}>
+                <span className={'relative'} style={{top:'-140px'}} id='benefits'></span>
                 <div>
                     <p className={'text-center font-bold text-3xl pb-8'}>Benefits</p>
-                    <p className={'pb-8'}>
+                    <p className={'pb-8 text-justify'}>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras convallis sapien ac dapibus aliquet. Cras tempus mauris nibh, in feugiat ipsum tristique quis. In neque velit, fermentum eget auctor nec, ultricies nec nulla. Sed ut odio sapien. Vestibulum at eros dignissim.
                     </p>
-                    <div className={'block md:flex justify-between'}>
-                        <div className={'pb-6 flex-row flex justify-center'}>
+                    <div className={'block md:flex justify-center'}>
+                        <div className={'pb-6 flex-row flex justify-center md:pr-20 lg:pr-40'}>
                             <img className={'flex-row'} src='/avatar.png'></img>
                             <p className={' text-base flex-row my-auto pl-4'}>
                             Lorem ipsum dolor sit amet 1
@@ -214,8 +218,8 @@ function Careers({ }) {
                             </p>
                         </div>
                     </div>
-                    <div className={'block md:flex justify-between'}>
-                        <div className={'pb-6 flex-row flex justify-center'}>
+                    <div className={'block md:flex justify-center'}>
+                        <div className={'pb-6 flex-row flex justify-center md:pr-20 lg:pr-40'}>
                             <img className={'flex-row'} src='/avatar.png'></img>
                             <p className={' text-base flex-row my-auto pl-4'}>
                             Lorem ipsum dolor sit amet 2
@@ -228,8 +232,8 @@ function Careers({ }) {
                             </p>
                         </div>
                     </div>
-                    <div className={'block md:flex justify-between'}>
-                        <div className={'pb-6 flex-row flex justify-center'}>
+                    <div className={'block md:flex justify-center'}>
+                        <div className={'pb-6 flex-row flex justify-center md:pr-20 lg:pr-40'}>
                             <img className={'flex-row'} src='/avatar.png'></img>
                             <p className={' text-base flex-row my-auto pl-4'}>
                             Lorem ipsum dolor sit amet 3
@@ -245,6 +249,7 @@ function Careers({ }) {
                 </div>
             </section>
             <section className={'section7careers pb-10 md:pb-20 px-4 md:px-20 lg:px-28 xl:px-40 h-auto'}>
+                <span className={'relative'} style={{top:'-150px'}} id='vacancies'></span>
                 <div className={'block md:flex justify-between'}>
                     <div className={'flex-row left-column-section7careers pr-0 md:pr-8'}>
                         <p className={'text-3xl font-bold pb-8'}>Careers at MIG</p>

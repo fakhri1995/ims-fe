@@ -7,16 +7,16 @@ const Styles = (props) => (
   <div>
     <style jsx global>
     {`
-    .left-column-section7careers{
-      max-width:50%
+    .flex-important{
+      display: flex !important;
     }
-    @media (max-width: 768px){
-      .left-column-section7careers{
-        max-width:100%
-      }
+    .section2careers{
+      position: -webkit-sticky; /* Safari & IE */
+      position: sticky;
+      top: 64px;
     }
-    .section5careers .flickity-page-dots .dot{
-      background:white;
+    .section3careers .flickity-page-dots .dot{
+      background:#93D9B5;
     }
     .section4careersflickity .flickity-viewport{
       height:320px;
@@ -26,8 +26,29 @@ const Styles = (props) => (
         height: 490px !important;
       }
     }
-    .section4careers .flickity-page-dots .dot{
-      background:#93D9B5;
+    .section5careers .flickity-page-dots .dot{
+      background:white;
+    }
+
+    .section4advantages .flickity-page-dots{
+      display:none;
+    }
+    @media (max-width: 768px){
+      .section4advantages .flickity-page-dots{
+        display:block;
+        bottom:-25px;
+      }
+      .section4advantages .flickity-page-dots .dot{
+        background:#93D9B5;
+      }
+    }
+    .left-column-section7careers{
+      max-width:50%
+    }
+    @media (max-width: 768px){
+      .left-column-section7careers{
+        max-width:100%
+      }
     }
     .coverage-list {
         height: auto; /*your fixed height*/
@@ -43,9 +64,6 @@ const Styles = (props) => (
                   column-count: 2;
       }
     }
-    // .coverage-list li {
-    //     display: inline-block; /*necessary*/
-    // }
     .button-hover:hover {
       background:#1cad5d!important;
     }
@@ -92,10 +110,6 @@ const Styles = (props) => (
         display: none;
       }
     }
-    // .section4landingpage{
-    //   height:auto;
-    //   margin:120px auto;
-    // }
     .section3landingpage{
       top: -50px;
     }
@@ -110,18 +124,6 @@ const Styles = (props) => (
         width: 100%;
       }
     }
-    // .section1landingpage{
-    //   margin: 0 5rem 0;
-    //   padding-top: 1rem;
-    //   padding-bottom: 3rem;
-    // }
-    // @media (max-width: 768px) {
-    //   .section1landingpage{
-    //     margin: 0 1rem 0;
-    //     padding-top: 1rem;
-    //     padding-bottom: 1rem;
-    //   }
-    // }
     p {
       margin: 0rem;
     }
@@ -149,19 +151,23 @@ const Styles = (props) => (
       width: 90%;
       padding: 10px;
     }
-    .menuToggle:checked + .menu {
+    .menu2{
       display: grid;
       margin: 1.5rem 0rem;
-      padding: 1rem 0rem;
+      // padding: 1rem 0rem;
       background: white;
       border: 1px;
       width: inherit;
       place-items: flex-start;
+      height: 0;
+      transition: height 1s;
+      overflow: hidden;
     }
-    
+    .menuToggle:checked ~ section .menu2 {
+      height: 160px;
+    }
     body {
       margin: 0;
-      
       font-family: Raleway;
     }
     .hero {
@@ -215,14 +221,6 @@ const Styles = (props) => (
     .site-layout .site-layout-background {
       background: #fff;
     }
-    // .footer-custom{
-    //   padding: 5rem !important;
-    // }
-    // @media (max-width: 768px) {
-    //   .footer-custom{
-    //     padding: 1rem !important;
-    //   }
-    // }
     .footer-custom{
       padding: 2rem 10rem;
     }
