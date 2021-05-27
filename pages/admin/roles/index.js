@@ -6,7 +6,7 @@ import httpcookie from 'cookie'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
-import { Table, Button, Modal, notification } from 'antd'
+import { Table, Button, Modal, notification, Spin } from 'antd'
 
 function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
     const rt = useRouter()
@@ -62,7 +62,9 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                         <>
                             {
                                 loadingselectedrole[index] ?
-                                    <>Loading....</>
+                                    <>
+                                        <Spin />
+                                    </>
                                     :
                                     <>
                                         {
