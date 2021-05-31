@@ -177,6 +177,18 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                 :
                                 null
                         }
+                        <SubMenu title="MIG CMS">
+                            <Menu.Item key="411" icon={<InboxOutlined />}>
+                                <Link href="/admin/careers">
+                                    Careers
+                                </Link>
+                            </Menu.Item>
+                            <Menu.Item key="412" icon={<InboxOutlined />}>
+                                <Link href="/admin/messages">
+                                    Messages
+                                </Link>
+                            </Menu.Item>
+                        </SubMenu>
                     </SubMenu>
                 </Menu>
             </Sider>
@@ -332,6 +344,18 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                 :
                                 null
                         }
+                        <SubMenu title="MIG CMS">
+                            <Menu.Item key="411" icon={<InboxOutlined />}>
+                                <Link href="/admin/careers">
+                                    Careers
+                                </Link>
+                            </Menu.Item>
+                            <Menu.Item key="412" icon={<InboxOutlined />}>
+                                <Link href="/admin/messages">
+                                    Messages
+                                </Link>
+                            </Menu.Item>
+                        </SubMenu>
                     </SubMenu>
                 </Menu>
             </Sider>

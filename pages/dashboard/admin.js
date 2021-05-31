@@ -60,7 +60,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                 {
                                     dataProfile.data.registered_feature.includes(134) ?
                                         <Link href={{
-                                            pathname: '/groups',
+                                            pathname: '/admin/groups',
                                             query: {
                                                 originPath: "Admin"
                                             }
@@ -90,7 +90,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                     <div className="grid md:grid-cols-5 sm:grid-cols-1">
                         {dataProfile.data.registered_feature.includes(173) ?
                             <Link href={{
-                                pathname: '/roles',
+                                pathname: '/admin/roles',
                                 query: {
                                     originPath: "Admin"
                                 }
@@ -182,10 +182,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             </div>
                         </Link>
                         <Link href={{
-                            pathname: '/vendors',
-                            query: {
-                                originPath: "Admin"
-                            }
+                            pathname: '/admin/vendors',
                         }}>
                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div>
@@ -217,7 +214,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                 null
                             }
                             {dataProfile.data.registered_feature.includes(194) ?
-                                <Link href={'/contracts'}>
+                                <Link href={'/admin/contracts'}>
                                     <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                         <div>
                                             <InboxOutlined /> Contracts
@@ -254,6 +251,31 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                     :
                     null
                 }
+
+                <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
+                    <div className="border-b border-gray-300">
+                        <h3 className="font-semibold text-lg mb-0">MIG Content Management System</h3>
+                        <h3 className="font-normal text-sm text-gray-700">
+                            Supply data into MIG Website
+                            </h3>
+                    </div>
+                    <div className="grid md:grid-cols-5 sm:grid-cols-1">
+                        <Link href={'/admin/careers'}>
+                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                                <div>
+                                    <InboxOutlined /> Careers
+                                    </div>
+                            </div>
+                        </Link>
+                        <Link href={'/admin/messages'}>
+                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                                <div>
+                                    <InboxOutlined /> Messages
+                                    </div>
+                            </div>
+                        </Link>
+                    </div>
+                </div>
             </div>
         </Layout>
     )
