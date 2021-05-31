@@ -5,7 +5,9 @@ import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
 import { Button, Collapse } from 'antd'
 import Flickity from 'react-flickity-component'
 
-function Careers({ }) {
+function Careers({dataCareers}) {
+    console.log(dataCareers)
+    const careers = dataCareers.data ?? []
     const flickityOption1={
         prevNextButtons: false,
         pageDots: true,
@@ -260,10 +262,27 @@ function Careers({ }) {
                     <div className={'flex-row w-full'}>
                     <Collapse
                     accordion
-                    defaultActiveKey={['1']}
+                    defaultActiveKey={['0']}
                     expandIconPosition={'right'}
                     >
-                        <Panel header="Account Executive" key="1">
+                        {
+                            careers.map((item,idx)=>{
+                                return (
+                                    <>
+                                    <Panel header={item.position_name} key={idx}>
+                                    <div>
+                                <div className={'pb-4'}>
+                                    <p className={'font-bold'}>Job Description:</p>
+                                    <p>{item.job_description}</p>
+                                </div>
+                                <a className={'text-base'} href={item.register_link}>Apply Now<ArrowRightOutlined className={'pl-2 relative -top-0.5'}/></a>
+                            </div>
+                                    </Panel>
+                                    </>
+                                )
+                            })
+                        }
+                        {/* <Panel header="Account Executive" key="1">
                             <div>
                                 <div className={'pb-4'}>
                                     <p className={'font-bold'}>Location:</p>
@@ -309,7 +328,7 @@ function Careers({ }) {
                         </Panel>
                         <Panel header="Senior Product Manager" key="7">
                             isi apanih
-                        </Panel>
+                        </Panel> */}
                     </Collapse>
                     </div>
                 </div>
@@ -331,5 +350,16 @@ function Careers({ }) {
         </Layout>
     )
 }
-
+export async function getServerSideProps(){
+    const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCareers`, {
+        method: `GET`
+    })
+    const resjson = await resources.json()
+    const dataCareers = resjson
+    return {
+        props: {
+            dataCareers
+        },
+    }
+}
 export default Careers
