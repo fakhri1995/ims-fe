@@ -5,7 +5,8 @@ import UserOutlined from '@ant-design/icons/UserOutlined'
 import NotificationOutlined from '@ant-design/icons/NotificationOutlined'
 import QuestionCircleOutlined from '@ant-design/icons/QuestionCircleOutlined'
 import PlusCircleTwoTone from '@ant-design/icons/PlusCircleTwoTone'
-import { TicketIconSvg, ContractIconSvg} from './icon'
+import SelectOutlined from '@ant-design/icons/SelectOutlined'
+import { TicketIconSvg, ContractIconSvg } from './icon'
 
 function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
 
@@ -34,17 +35,17 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
     const addMenu = () => {
         return (
             <div style={{ fontSize: '14px' }} className="w-48 h-auto grid grid-cols-1 md:grid-cols-1 shadow-md rounded bg-white">
-            {/* yang awal*/}
-            {/* <div style={{ fontSize: '14px' }} className="w-auto h-auto grid grid-cols-1 md:grid-cols-3 shadow-md rounded bg-white"> */} 
+                {/* yang awal*/}
+                {/* <div style={{ fontSize: '14px' }} className="w-auto h-auto grid grid-cols-1 md:grid-cols-3 shadow-md rounded bg-white"> */}
                 <div className=" col-span-1 md:col-span-1 text-xs md:text-sm m-3 md:m-2 h-auto">
                     <Link href={`/incidents/create?originPath=Tickets`}>
                         <div className="flex justify-start pt-2 cursor-pointer hover:bg-gray-200" >
-                            <TicketIconSvg className={"pt-1"}/> &nbsp; &nbsp; <p className="p-1">Incident</p>
+                            <TicketIconSvg className={"pt-1"} /> &nbsp; &nbsp; <p className="p-1">Incident</p>
                         </div>
                     </Link>
                     <Link href={`/admin/contracts/create`}>
                         <div className="flex justify-start pt-2 cursor-pointer hover:bg-gray-200" >
-                            <ContractIconSvg className={"pt-1"}/> &nbsp; &nbsp; <p className="p-1">Contract</p>
+                            <ContractIconSvg className={"pt-1"} /> &nbsp; &nbsp; <p className="p-1">Contract</p>
                         </div>
                     </Link>
                     {/* <div className="flex justify-center">
@@ -81,6 +82,11 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
     }
     return (
         <div className={`hidden md:flex md:w-auto w-full ${st.menu}`}>
+            <div className="md:mr-12 mr-8 flex items-center">
+                <a target="_blank" href="/" >
+                    <button className="text-blue-500 hover:text-blue-700 text-xs mt-1 md:text-base flex items-center"><SelectOutlined style={{ marginRight: `0.2rem`, marginTop: `0.1rem` }} /> Go To Website</button>
+                </a>
+            </div>
             <div style={{ marginRight: `3rem` }}>
                 <Dropdown overlay={addMenu} placement="bottomCenter" trigger={['click']}>
                     <PlusCircleTwoTone className="" style={{ fontSize: '20px', cursor: `pointer` }} />
