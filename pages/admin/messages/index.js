@@ -224,7 +224,7 @@ const Messages = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
     })
 
     return (
-        <Layout initProps={initProps} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} st={st}>
+        <Layout tok={initProps} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} st={st}>
             <div className="w-full grid grid-cols-5 border-t border-opacity-30 border-gray-500 bg-white">
                 <div className="col-span-5 border-b border-opacity-30 border-gray-400 flex items-center justify-between px-0 py-4 md:p-4 mb-5">
                     <h1 className="font-bold">Messages</h1>
