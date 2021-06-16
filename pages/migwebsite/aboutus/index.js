@@ -10,10 +10,10 @@ function AboutUs({ }) {
         <Layout>
             <section className={'section2people px-4 md:px-20 lg:px-28 xl:px-40 py-8 md:py-32 text-center justify-center '}>
                 <div className={'pb-8'}>
-                    <p className={'text-2xl md:text-3xl font-bold'}>Operate your business , more efficient and more agile</p>
+                    <p className={'text-2xl md:text-3xl font-bold'} style={{letterSpacing:'1.5px'}}>Operate your business , more efficient and more agile</p>
                 </div>
                 <div className={'pb-12'}>
-                    <p className={'text-base w-full font-bold'}>Mitramas Infosys global is supporting you staff augmentation &  delivering software and hardware managed services. We have served multiple industries, bringing the best solutions to financial service companies, start ups, as well as government agencies.</p>
+                    <p className={'text-base w-full font-bold'} style={{letterSpacing:'1.5px'}}>Mitramas Infosys global is supporting you staff augmentation &  delivering software and hardware managed services. We have served multiple industries, bringing the best solutions to financial service companies, start ups, as well as government agencies.</p>
                 </div>
             </section>
             <section className={'section3landingpage static md:relative'}>
@@ -41,12 +41,16 @@ function AboutUs({ }) {
                     <p className={'pb-8 font-bold'}>
                     Founded in 2003, Mitramas Infosys Global (MIG)  directly partner with global  providers and collaborate with local IT talents to offer you a seamless technology experience. Experienced  across archipelago for more than decade we have a plethora of experience in the business. With integrity as our core principle, we collaborate with our clients to increase their efficiency and reach long-term business goals.
                     </p>
-                    <p className={'pb-8 font-bold'}>
+                    <Link href="/advantages">
+                    <p className={'pb-8 cursor-pointer font-bold text-green-500 underline'}>
                     Our services help you operate your business agile and cost efficient
                     </p>
-                    <p className={'pb-8 font-bold'}>
+                    </Link>
+                    <Link href="careers">
+                    <p className={'pb-8 cursor-pointer font-bold text-green-500 underline'}>
                     Careers at MIG offer bla bla bla to be better together 
                     </p>
+                    </Link>
                 </div>
                 <div className={'hidden md:flex flex-col w-1/4 py-4 md:py-4'}>
                     <img src="/image-aboutus.png" className={''} style={{width:'300px', height:'auto'}}></img>

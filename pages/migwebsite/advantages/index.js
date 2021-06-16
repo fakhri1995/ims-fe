@@ -46,45 +46,58 @@ function Advantages({ }) {
             <section className={'section2advantages h-20 hidden md:block'}></section>
             <section className={'section3advantages py-8 px-4 md:px-20 lg:px-28 xl:px-40'} style={{background:'#F4F4F4'}}>
                 <div className={'pb-4'}>
-                    <p className={'text-2xl md:text-3xl font-bold'}>Support your business efficiently</p>
+                    <p className={'text-2xl md:text-3xl font-bold'} style={{letterSpacing:'1.5px'}}>Support your business efficiently</p>
                 </div>
                 <div>
                     <p className={'text-base w-full md:w-2/5'}>One stop  seamless technology solution to help you achieve business goals and optimize your cost </p>
                 </div>
                 <div className={'grid md:flex my-4 justify-center md:justify-between'}>
-                    <div className={'flex-col bg-white mr-0 md:mr-10 p-4 w-full md:w-96'}>
-                        <img style={{height:'50px', width:'auto'}} src="/image1-section2.png"></img>
-                        <p className={'text-left py-3 font-bold '}>
-                            Hardware
-                        </p>
-                        <p>
-                            Optimize your cost by leasing and maintenances variety of electronic equipments   
-                        </p>
-                        <Link href={{pathname: '/hardware'}}><button className={'pt-4 font-bold text-purple-800'}>
-                            Get yours&nbsp; <ArrowRightOutlined className={'relative'} style={{top:'-2.5px'}}/>
-                        </button></Link>
+                    <div className={'flex-col flex bg-white mr-0 md:mr-10 p-4 w-full md:w-96'}>
+                        <div className={'min-h-full relative pb-8'} style={{}}>
+                            <img style={{height:'50px', width:'auto'}} src="/image1-section2.png"></img>
+                            <p className={'text-left py-3 font-bold '}>
+                                Hardware
+                            </p>
+                            <p>
+                                Optimize your cost by leasing and maintenances variety of electronic equipments   
+                            </p>
+                            <div className={'absolute bottom-0'}>
+                                <Link href={{pathname: '/hardware'}}><button className={'pt-4 font-bold text-purple-800'}>
+                                    Get yours&nbsp; <ArrowRightOutlined className={'relative'} style={{top:'-2.5px'}}/>
+                                </button></Link> 
+                            </div>
+                            
+                        </div>
                     </div>
                     <div className={'flex-col bg-white my-5 md:my-0 mx-0 md:mx-10 p-4 w-full md:w-96'}>
-                        <img style={{height:'50px', width:'auto', position:'relative', left:'-25px'}} src="/image3-section2.png"></img>
-                        <p className={'text-left py-3 font-bold '}>Software
-                        </p>
-                        <p>
-                            We support your companies to simplify and automate the process through digitalization
-                        </p>
-                        <Link href={{pathname: '/software'}}><button className={'pt-4 font-bold text-purple-800'}>
-                            Build now&nbsp; <ArrowRightOutlined className={'relative'} style={{top:'-2.5px'}}/>
-                        </button></Link>
+                        <div className={'min-h-full relative pb-8'} style={{}}>
+                            <img style={{height:'50px', width:'auto', position:'relative', left:'-25px'}} src="/image3-section2.png"></img>
+                            <p className={'text-left py-3 font-bold '}>Software
+                            </p>
+                            <p>
+                                We support your companies to simplify and automate the process through digitalization
+                            </p>
+                            <div className={'absolute bottom-0'}>
+                                <Link href={{pathname: '/software'}}><button className={'pt-4 font-bold text-purple-800'}>
+                                    Build now&nbsp; <ArrowRightOutlined className={'relative'} style={{top:'-2.5px'}}/>
+                                </button></Link>
+                            </div>
+                        </div>
                     </div>
                     <div className={'flex-col bg-white mdl-0 md:ml-10 p-4 w-full md:w-96'}>
-                        <img style={{height:'50px', width:'auto', position:'relative', left:'-10px'}} src="/image2-section2.png"></img>
-                        <p className={'text-left py-3 font-bold '}>People
-                        </p>
-                        <p>
-                            We help you reduce complexity in talent sourcing and management
-                        </p>
-                        <Link href={{pathname: '/people'}}><button className={'pt-4 font-bold text-purple-800'}>
-                            Setup your team&nbsp; <ArrowRightOutlined className={'relative'} style={{top:'-2.5px'}}/>
-                        </button></Link>
+                        <div className={'min-h-full relative pb-8'} style={{}}>
+                            <img style={{height:'50px', width:'auto', position:'relative', left:'-10px'}} src="/image2-section2.png"></img>
+                            <p className={'text-left py-3 font-bold '}>People
+                            </p>
+                            <p>
+                                We help you reduce complexity in talent sourcing and management
+                            </p>
+                            <div className={'absolute bottom-0'}>
+                                <Link href={{pathname: '/people'}}><button className={'pt-4 font-bold text-purple-800'}>
+                                    Setup your team&nbsp; <ArrowRightOutlined className={'relative'} style={{top:'-2.5px'}}/>
+                                </button></Link>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>

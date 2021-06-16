@@ -15,10 +15,10 @@ function LandingPage({ }) {
                 <div className={'block md:flex'}>
                     <div className={'flex-col center'}>
                         <div className={''}>
-                            <p className={'text-3xl md:text-4xl pb-6'} style={{ fontWeight: 'bold' }}>Your One Stop,
+                            <p className={'text-3xl md:text-4xl pb-6 font-bold'} style={{ fontWeight: 'bold', letterSpacing:'1.5px' }}>Your One Stop,
                             Cost Efficient IT Solutions
                                 </p>
-                            <p className={' text-sm md:text-base font-bold'}>Improving efficiencies by supporting you with staff
+                            <p className={' text-sm md:text-base font-bold'} style={{letterSpacing:'1.5px'}}>Improving efficiencies by supporting you with staff
                             augmentation, software and hardware managed services.
                                 </p>
                         </div>
@@ -30,18 +30,18 @@ function LandingPage({ }) {
             </section>
             <section className={'section2landingpage static md:relative'}>
                 <div className={'h-auto flex justify-between p-4 mt-0 md:-mt-8'} style={{backgroundColor:'#F4F4F4'}}>
-                    <div className={'flex-col pl-4 lg:pl-24 '} style={{width:'auto'}}>
+                    <Link href="/hardware"><div className={'flex-col cursor-pointer pl-4 lg:pl-24 '} style={{width:'auto'}}>
                         <img style={{height:'50px', width:'auto'}} src="/image1-section2.png"></img>
-                        <p className={'text-center pt-2'}>Hardware</p>
-                    </div>
-                    <div className={'flex-col '} style={{width:'auto'}}>
+                        <p className={'text-center pt-2'} style={{letterSpacing:'1px'}}>Hardware</p>
+                    </div></Link>
+                    <Link href="/people"><div className={'flex-col cursor-pointer '} style={{width:'auto'}}>
                         <img style={{height:'50px', width:'auto'}} src="/image2-section2.png"></img>
-                        <p className={'text-center pt-2'}>People</p>
-                    </div>
-                    <div className={'flex-col pr-4 lg:pr-24'} style={{width:'auto'}}>
+                        <p className={'text-center pt-2'} style={{letterSpacing:'1px'}}>People</p>
+                    </div></Link>
+                    <Link href="/software"><div className={'flex-col cursor-pointer pr-4 lg:pr-24'} style={{width:'auto'}}>
                         <img style={{height:'50px', width:'auto'}} src="/image3-section2.png"></img>
-                        <p className={'text-center pt-2'}>Software</p>
-                    </div>
+                        <p className={'text-center pt-2'} style={{letterSpacing:'1px'}}>Software</p>
+                    </div></Link>
 
                 </div>
             </section>
@@ -52,8 +52,8 @@ function LandingPage({ }) {
                             <img style={{ width: '600px', height: 'auto' }} src='/image-section3.png' />
                         </div>
                         <div className={'flex-col mx-10 w-auto md:w-120'} style={{margin:'auto'}}>
-                            <p className={'text-2xl md:text-3xl pb-6 text-white'} style={{ fontWeight: 'bold' }}> Bringing you the advantages</p>
-                            <p className={'text-sm md:text-sm font-medium text-white'}>With more than 15 years of experiences across archipelago, we strive to provide end-to-end IT solutions to help achieve your business goals and optimize your cost efficiencies</p>
+                            <p className={'text-2xl md:text-3xl pb-6 text-white'} style={{ fontWeight: 'bold', letterSpacing:'1.5px' }}> Bringing you the advantages</p>
+                            <p className={'text-sm md:text-sm font-medium text-white'} style={{letterSpacing:'1.5px'}}>With more than 15 years of experiences across archipelago, we strive to provide end-to-end IT solutions to help achieve your business goals and optimize your cost efficiencies</p>
                             <Link href="/advantages"><button className={'text-white border-2 border-white px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none'}>
                             SEE HOW  IT WORKS 
                             </button></Link>
