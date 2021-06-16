@@ -3,9 +3,8 @@ import { useState } from 'react'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard.module.css'
 import httpcookie from 'cookie'
-import Link from 'next/link'
 import { SelectOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
-import { Button, Form, Input, Drawer, Table, notification, Modal, message } from 'antd'
+import { Button, Form, Input, Drawer, Table, notification, Modal } from 'antd'
 
 
 export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
