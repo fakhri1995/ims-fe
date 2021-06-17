@@ -6,10 +6,11 @@ import Flickity from 'react-flickity-component'
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-import { Button } from 'antd'
+import { Tabs } from 'antd'
 import Fade from 'react-reveal/Fade';
 
 function Advantages({ }) {
+    const { TabPane } = Tabs;
     const flickityOptions = {
         initialIndex: 0,
         wrapAround: 'true',
@@ -101,93 +102,145 @@ function Advantages({ }) {
                     </div>
                 </div>
             </section>
-            <div className={'hidden md:block'}>
-            <Fade ssrFadeout left opposite  collapse when={isHiddenAnimation}>
-            <section onClick={()=>{onClickHiddenAnimation()}} className={` md:px-auto py-8 md:px-auto lg:px-28 xl:px-40`}>
-                <Slider
-                slidesToShow={4}
-                asNavFor={nav1}
-                ref={slider => (slider2 = slider) }
-                focusOnSelect={true}
-                // beforeChange={(current) => {setInitialAnimation(current)}}
-                >
-                    <div className={' cursor-pointer text-2xl px-10 py-20 w-full border-l border-r'}>
-                        <p>On demand service</p>
-                        <ArrowRightOutlined/>
-                    </div>
-                    <div className={' cursor-pointer text-2xl px-10 py-20 w-full border-r'}>
-                        <p>Reliable partner</p>
-                        <ArrowRightOutlined/>
-                    </div>
-                    <div className={' cursor-pointer text-2xl px-10 py-20 w-full border-r'}>
-                        <p>Competitive rate</p>
-                        <ArrowRightOutlined/>
-                    </div>
-                    <div className={' cursor-pointer text-2xl px-10 py-20 w-full border-r'}>
-                        <p>Cost efficient</p>
-                        <ArrowRightOutlined/>
-                    </div>
-                </Slider>
-            </section>
-            </Fade>
-            </div>
-            <div className={'hidden md:block'}>
-            <Fade ssrFadeout bottom collapse when={!isHiddenAnimation}>
-            <section className={'bg-green-600 py-8 md:px-auto lg:px-28 xl:px-40'}>
-                <div className={'text-center relative -top-4'}>
-                    <button type='text' className={'border px-4 py-2 rounded-full border-white'} style={{zIndex:51}} onClick={onClickHiddenAnimation}><p className={'text-white'}>X</p></button>
+            <section className={'hidden md:block md:px-auto py-8 lg:px-28 xl:px-40'}>
+                <div className={'pb-8'}>
+                    <p className={'text-2xl md:text-3xl font-bold'} style={{letterSpacing:'1.5px'}}>Our Advantages</p>
                 </div>
-                <Slider 
-                    dots={false}
-                    infinite= {true}
-                    speed= {500}
-                    slidesToShow= {1}
-                    slidesToScroll= {1}
-                    ref={slider => (slider1 = slider)}
-                    arrows={true}
-                    asNavFor={nav2}
-                    fade={isHiddenAnimation}
-                >           
-                    <div className={'flex-important'}>
-                        <div className={'m-auto flex'}>
-                            <img className={'w-40 h-56'} src='/advantage-animation1.png'></img>
-                            <div className={'my-auto'}>
-                                <p className={'font-bold text-2xl pb-4 text-white'}>On demand services</p>
-                                <p className={'text-white'}>Transform your business with our custom solutions to optimize your cost and productivity.</p>
+                <div className={'border-l border-r pr-4'}>
+                <Tabs tabPosition={'left'} size={'large'}>
+                    <TabPane tab="On demand service" key="1">
+                        <div className={'flex-important'}>
+                            <div className={'m-auto flex'}>
+                                <img className={'w-40 h-56'} src='/advantage-animation1.png'></img>
+                                <div className={'my-auto'}>
+                                    <p className={'font-bold text-2xl pb-4'}>On demand services</p>
+                                    <p className={''}>Transform your business with our custom solutions to optimize your cost and productivity.</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className={'flex-important'}>
-                        <div className={'m-auto flex'}>
-                            <div className={'my-auto'}>
-                                <p className={'font-bold text-2xl pb-4 text-white'}>Realiable partner</p>
-                                <p className={'text-white'}>A partner you can trust, with more than 15 years of experiences-we’re here for the long run. </p>
-                            </div>
-                            <img className={'w-40 h-56'} src='/advantage-animation2.png'></img>
-                        </div>
-                    </div>
-                    <div className={'flex-important'}>
-                        <div className={'m-auto flex'}>
-                            <img className={'w-40 h-56'} src='/advantage-animation3.png'></img>
-                            <div className={'my-auto'}>
-                                <p className={'font-bold text-2xl pb-4 text-white'}>Competitive rates</p>
-                                <p className={'text-white'}>We offer the best services with the best price tailored to your needs.</p>
+                    </TabPane>
+                    <TabPane tab="Reliable partner" key="2">
+                        <div className={'flex-important'}>
+                            <div className={'m-auto flex'}>
+                                <div className={'my-auto'}>
+                                    <p className={'font-bold text-2xl pb-4'}>Realiable partner</p>
+                                    <p className={''}>A partner you can trust, with more than 15 years of experiences-we’re here for the long run. </p>
+                                </div>
+                                <img className={'w-40 h-56'} src='/advantage-animation2.png'></img>
                             </div>
                         </div>
-                    </div>
-                    <div className={'flex-important'}>
-                        <div className={'m-auto flex'}>
-                            <div className={'my-auto'}>
-                                <p className={'font-bold text-2xl pb-4 text-white'}>Cost efficient</p>
-                                <p className={'text-white'}>Customer driven, we help you grow and offer solutions to help optimized your bussiness. </p>
+                    </TabPane>
+                    <TabPane tab="Competitive rate" key="3">
+                        <div className={'flex-important'}>
+                            <div className={'m-auto flex'}>
+                                <img className={'w-40 h-56'} src='/advantage-animation3.png'></img>
+                                <div className={'my-auto'}>
+                                    <p className={'font-bold text-2xl pb-4 '}>Competitive rates</p>
+                                    <p className={''}>We offer the best services with the best price tailored to your needs.</p>
+                                </div>
                             </div>
-                            <img className={'w-40 h-56'} src='/advantage-animation4.png'></img>
                         </div>
-                    </div>
-                   
-                </Slider>
+                    </TabPane>
+                    <TabPane tab="Cost efficient" key="4">
+                        <div className={'flex-important'}>
+                            <div className={'m-auto flex'}>
+                                <div className={'my-auto'}>
+                                    <p className={'font-bold text-2xl pb-4 '}>Cost efficient</p>
+                                    <p className={''}>Customer driven, we help you grow and offer solutions to help optimized your bussiness. </p>
+                                </div>
+                                <img className={'w-40 h-56'} src='/advantage-animation4.png'></img>
+                            </div>
+                        </div>
+                    </TabPane>
+                </Tabs>
+                </div>
             </section>
-            </Fade>
+            <div className={'hidden md:hidden'}>
+                <Fade ssrFadeout left opposite  collapse when={isHiddenAnimation}>
+                    <section onClick={()=>{onClickHiddenAnimation()}} className={` md:px-auto py-8 md:px-auto lg:px-28 xl:px-40`}>
+                        <Slider
+                        slidesToShow={4}
+                        asNavFor={nav1}
+                        ref={slider => (slider2 = slider) }
+                        focusOnSelect={true}
+                        >
+                            <div className={' cursor-pointer text-2xl px-10 py-20 w-full border-l border-r'}>
+                                <p>On demand service</p>
+                                <ArrowRightOutlined/>
+                            </div>
+                            <div className={' cursor-pointer text-2xl px-10 py-20 w-full border-r'}>
+                                <p>Reliable partner</p>
+                                <ArrowRightOutlined/>
+                            </div>
+                            <div className={' cursor-pointer text-2xl px-10 py-20 w-full border-r'}>
+                                <p>Competitive rate</p>
+                                <ArrowRightOutlined/>
+                            </div>
+                            <div className={' cursor-pointer text-2xl px-10 py-20 w-full border-r'}>
+                                <p>Cost efficient</p>
+                                <ArrowRightOutlined/>
+                            </div>
+                        </Slider>
+                    </section>
+                </Fade>
+            </div>
+            <div className={'hidden md:hidden'}>
+                <Fade ssrFadeout bottom collapse when={!isHiddenAnimation}>
+                    <section className={'bg-green-600 py-8 md:px-auto lg:px-28 xl:px-40'}>
+                        <div className={'text-center relative -top-4'}>
+                            <button type='text' className={'border px-4 py-2 rounded-full border-white'} style={{zIndex:51}} onClick={onClickHiddenAnimation}><p className={'text-white'}>X</p></button>
+                        </div>
+                        <Slider 
+                            dots={false}
+                            infinite= {true}
+                            speed= {500}
+                            slidesToShow= {1}
+                            slidesToScroll= {1}
+                            ref={slider => (slider1 = slider)}
+                            arrows={true}
+                            asNavFor={nav2}
+                            fade={isHiddenAnimation}
+                        >           
+                            <div className={'flex-important'}>
+                                <div className={'m-auto flex'}>
+                                    <img className={'w-40 h-56'} src='/advantage-animation1.png'></img>
+                                    <div className={'my-auto'}>
+                                        <p className={'font-bold text-2xl pb-4 text-white'}>On demand services</p>
+                                        <p className={'text-white'}>Transform your business with our custom solutions to optimize your cost and productivity.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={'flex-important'}>
+                                <div className={'m-auto flex'}>
+                                    <div className={'my-auto'}>
+                                        <p className={'font-bold text-2xl pb-4 text-white'}>Realiable partner</p>
+                                        <p className={'text-white'}>A partner you can trust, with more than 15 years of experiences-we’re here for the long run. </p>
+                                    </div>
+                                    <img className={'w-40 h-56'} src='/advantage-animation2.png'></img>
+                                </div>
+                            </div>
+                            <div className={'flex-important'}>
+                                <div className={'m-auto flex'}>
+                                    <img className={'w-40 h-56'} src='/advantage-animation3.png'></img>
+                                    <div className={'my-auto'}>
+                                        <p className={'font-bold text-2xl pb-4 text-white'}>Competitive rates</p>
+                                        <p className={'text-white'}>We offer the best services with the best price tailored to your needs.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={'flex-important'}>
+                                <div className={'m-auto flex'}>
+                                    <div className={'my-auto'}>
+                                        <p className={'font-bold text-2xl pb-4 text-white'}>Cost efficient</p>
+                                        <p className={'text-white'}>Customer driven, we help you grow and offer solutions to help optimized your bussiness. </p>
+                                    </div>
+                                    <img className={'w-40 h-56'} src='/advantage-animation4.png'></img>
+                                </div>
+                            </div>
+                        
+                        </Slider>
+                    </section>
+                </Fade>
             </div>
             <section className={'section4advantages py-10 px-4 block md:hidden'}>
                 <Flickity
