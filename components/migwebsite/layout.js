@@ -43,7 +43,7 @@ function layout({ children }) {
         <div className={'relative top-5 w-screen flex'}>
           <div className='w-1/2 flex-row' >
             <div className={'h-36'} style={{backgroundColor:'#F4EFEE', padding:'1rem 10rem'}}>
-                <Link href="/careers"><p className={' font-bold text-base menu-underlined'}>Careers</p></Link>
+                <Link href="/careers"><p className={' font-bold text-base'}>Careers</p></Link>
                 <p className={''}>asdasdasd</p>
                 <Link href="/careers"><button className={' border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none'}>
                 EXPLORE CAREERS
