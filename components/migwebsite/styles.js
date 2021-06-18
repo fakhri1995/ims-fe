@@ -7,6 +7,10 @@ const Styles = (props) => (
   <div>
     <style jsx global>
     {`
+    .menu-underlined :hover{
+      border-bottom: 2px solid #93D9B5;
+      color: black !important;
+    }
     .flex-important{
       display: flex !important;
     }
@@ -164,7 +168,7 @@ const Styles = (props) => (
       overflow: hidden;
     }
     .menuToggle:checked ~ section .menu2 {
-      height: 160px;
+      height: 110px;
     }
     body {
       margin: 0;

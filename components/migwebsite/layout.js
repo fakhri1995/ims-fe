@@ -2,10 +2,65 @@ import React from 'react'
 import Link from 'next/link'
 import Head from './head'
 import Styles from './styles'
-import { Layout, Button } from 'antd';
+import { Menu, Layout, Button, Dropdown  } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 
 function layout({ children }) {
     const { Header, Content, Footer } = Layout;
+    const menu1 = (
+        <div className={'relative top-5 w-screen flex'}>
+          <div className='w-1/2 flex-row' >
+            <Menu className={'py-4 h-36'} style={{backgroundColor:'#F4EFEE', padding:'1rem 10rem'}}>
+                <Menu.Item className='relative -left-4 -top-2'>
+                <a className={'font-bold text-base menu-underlined'} href="/hardware">
+                    Hardware
+                </a>
+                </Menu.Item>
+                <Menu.Item className='relative -left-4 -top-4'>
+                <a className={'font-bold text-base menu-underlined'} href="/people">
+                    People
+                </a>
+                </Menu.Item>
+                <Menu.Item className='relative -left-4 -top-6'>
+                <a className={'font-bold text-base menu-underlined'} href="/software">
+                    Software
+                </a>
+                </Menu.Item>
+            </Menu>
+          </div>
+          <div className='w-1/2 flex-row' style={{backgroundColor:'#E7EDEF'}}>
+            <div className={'py-4 px-6 h-36'}>
+                <p className={'font-bold text-base'}>Advantages</p>
+                <p>Operate your business , more efficient and more agile</p>
+                <Link href="/advantages"><button className={' border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none'}>
+                SEE HOW  IT WORKS 
+                </button></Link>
+            </div>
+          </div>
+        </div>
+      );
+    const menu2 = (
+        <div className={'relative top-5 w-screen flex'}>
+          <div className='w-1/2 flex-row' >
+            <div className={'h-36'} style={{backgroundColor:'#F4EFEE', padding:'1rem 10rem'}}>
+                <Link href="/careers"><p className={' font-bold text-base menu-underlined'}>Careers</p></Link>
+                <p className={''}>asdasdasd</p>
+                <Link href="/careers"><button className={' border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none'}>
+                EXPLORE CAREERS
+                </button></Link>
+            </div>
+          </div>
+          <div className='w-1/2 flex-row' style={{backgroundColor:'#E7EDEF'}}>
+            <div className={'py-4 px-6 h-36'}>
+                <p className={'font-bold text-base'}>About</p>
+                <p>We bringing hardware, software, and people advantages to support your business efficiently</p>
+                <Link href="/aboutus"><button className={' border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none'}>
+                LEARN MORE
+                </button></Link>
+            </div>
+          </div>
+        </div>
+      );
     return (
         <>
             <Head title="Home" />
@@ -26,25 +81,36 @@ function layout({ children }) {
                     <input className={`hidden menuToggle`} type="checkbox" id={`menutoggle`} />
                     <section className={'md:hidden w-full'}>
                     <div theme="light" mode="horizontal" style={{lineHeight:'3.9rem',}} className={'float-right menu2'}>
+                        {/* <Dropdown overlay={menu1}>
+                            <a className="" onClick={e => e.preventDefault()}>
+                            Solutions <DownOutlined className={'fixed top-10'} />
+                            </a>
+                        </Dropdown> */}
                         <Button type="text" className={'ml-4 mt-4 '} style={{fontWeight:'600', background:'white'}} key="0">
-                            <Link href="/login">
-                                    Admin Panel
-                            </Link>
+                            Solutions
                         </Button>
                         <Button type="text" className={'ml-4 '} style={{fontWeight:'600', background:'white'}} key="1">Company</Button>
-                        <Button type="text" className={'ml-4 mr-4 '} style={{fontWeight:'600', background:'white'}} key="2">Solution</Button>
-                        <Button type="text" className={'button-hover ml-4 px-4 mb-4 border-green-800 text-white '} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Get Started</p></Button>
+                        <Button type="text" className={'ml-4 mr-4 '} style={{fontWeight:'600', background:'white'}} key="2">Support</Button>
+                        {/* <Button type="text" className={'button-hover ml-4 px-4 mb-4 border-green-800 text-white '} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Get Started</p></Button> */}
                     </div>
                     </section>
                     <div theme="light" mode="horizontal" style={{lineHeight:'3.9rem',}} className={'hidden md:block float-right menu'}>
-                        <Button type="text" className={'mx-2 '} style={{fontWeight:'600', background:'white'}} key="0">
-                            <Link href="/login">
-                                    Admin Panel
-                            </Link>
-                        </Button>
-                        <Button type="text" className={'mx-2 '} style={{fontWeight:'600', background:'white'}} key="1">Company</Button>
-                        <Button type="text" className={'mx-2 mr-4 '} style={{fontWeight:'600', background:'white'}} key="2">Solution</Button>
-                        <Button type="text" className={'button-hover mx-2 px-4 border-green-800 text-white '} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Get Started</p></Button>
+                        <Dropdown overlay={menu1}>
+                            <a style={{fontWeight:'600'}} className="ant-dropdown-link text-black" onClick={e => e.preventDefault()}>
+                            Solution <DownOutlined className={'relative top-3 right-9'} />
+                            </a>
+                        </Dropdown>
+                        <Dropdown className={'ml-6 mr-4'} overlay={menu2}>
+                            <a style={{fontWeight:'600'}} className="ant-dropdown-link text-black" onClick={e => e.preventDefault()}>
+                            Company <DownOutlined className={'relative top-3 right-10'} />
+                            </a>
+                        </Dropdown>
+                        {/* <Button type="text" className={'mx-2 '} style={{fontWeight:'600', background:'white'}} key="0">
+                            Solution
+                        </Button> */}
+                        {/* <Button type="text" className={'mx-2 '} style={{fontWeight:'600', background:'white'}} key="1">Company</Button> */}
+                        <Button type="text" className={' mr-4 '} style={{fontWeight:'600', background:'white'}} key="2">Support</Button>
+                        {/* <Button type="text" className={'button-hover mx-2 px-4 border-green-800 text-white '} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Get Started</p></Button> */}
                     </div>
                 </Header>
                 <Content className="site-layout" style={{ padding: '0px', marginTop: 64 }}>
