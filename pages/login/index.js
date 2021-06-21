@@ -66,7 +66,7 @@ export default function Home({ initProps }) {
       <div className="container-xl bg-blue-600 h-screen" /*style={{background:`linear-gradient(#035ea3, #198e07)`}}*/>
         <div className="pt-20 relative" id="wrapper">
           <div className="mx-auto bg-white rounded-lg w-10/12 md:w-5/12 max-h-80 md:max-h-80 text-black shadow-lg px-3 md:px-5 pt-10 pb-1 text-center">
-            <h1 className="mb-5 font-mont text-xl font-semibold">Log In MIGSYS v3</h1>
+            <h1 className="mb-5 font-mont text-xl font-semibold">LogIn MIGSYS v3</h1>
             <Form name="email" className="loginForm" initialValues={{ remember: true }} onFinish={handleLogin}>
               <Form.Item name="email" rules={[
                 {
