@@ -22,7 +22,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
         fullname: dataDetailRequester.data.fullname,
         role: dataDetailRequester.data.role,
         phone_number: dataDetailRequester.data.phone_number,
-        profile_image: dataDetailRequester.data.profile_image
+        profile_image: dataDetailRequester.data.profile_image === "" ? `/default-users.jpeg` : dataDetailRequester.data.profile_image
     })
     const [datarole, setdatarole] = useState({
         account_id: dataDetailRequester.data.user_id,

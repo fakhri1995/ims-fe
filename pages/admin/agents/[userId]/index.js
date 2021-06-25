@@ -6,6 +6,7 @@ import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import Sticky from 'wil-react-sticky'
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import st from '../../../../components/layout-dashboard.module.css'
 import { Button, Form, Input, notification, Modal, Switch, Select } from 'antd'
 
@@ -34,7 +35,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
         fullname: dataDetailAgent.data.fullname,
         role: dataDetailAgent.data.role,
         phone_number: dataDetailAgent.data.phone_number,
-        profile_image: dataDetailAgent.data.profile_image
+        profile_image: dataDetailAgent.data.profile_image === "" ? `/default-users.jpeg` : dataDetailAgent.data.profile_image
     })
     const [datarole, setdatarole] = useState({
         account_id: dataDetailAgent.data.user_id,

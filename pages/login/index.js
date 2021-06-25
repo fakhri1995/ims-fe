@@ -107,19 +107,22 @@ export default function Home({ initProps }) {
 export async function getServerSideProps({ req, res }) {
   const initProps = {};
   if (req && req.headers) {
-    const cookies = req.headers.cookie;
-    if (cookies) {
-      return {
-        redirect: {
-          permanent: false,
-          destination: '/dashboard/home'
+    if (req.headers.cookie) {
+      const cookies = req.headers.cookie;
+      const cookiesJSON1 = httpcookie.parse(cookies);
+      if(cookiesJSON1.token){
+        return {
+          redirect: {
+            permanent: false,
+            destination: '/dashboard/home'
+          }
         }
       }
     }
-    if (typeof cookies === 'string') {
-      const cookiesJSON = httpcookie.parse(cookies);
-      initProps.token = cookiesJSON.token;
-    }
+    // if (typeof cookies === 'string') {
+    //   const cookiesJSON = httpcookie.parse(cookies);
+    //   initProps.token = cookiesJSON.token;
+    // }
   }
   return {
     props: {

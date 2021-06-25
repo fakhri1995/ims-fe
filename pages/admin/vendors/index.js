@@ -3,11 +3,10 @@ import { useState, useEffect } from 'react'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard-vendors.module.css'
 import httpcookie from 'cookie'
-import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
-import { Input, Table, Tooltip, Button, Drawer, Form, notification, Modal } from 'antd'
+import { Input, Table, Tooltip, Button, Drawer, Form, notification, Modal, InputNumber } from 'antd'
 
 function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
 
@@ -191,6 +190,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
     }
     const handleEditVendor = () => {
         // console.log("isidata2: " + editvendor)
+        setLoadingbtn(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateVendor`, {
             method: 'PUT',
             headers: {
@@ -201,6 +201,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
         })
             .then((res) => res.json())
             .then(res2 => {
+                setLoadingbtn(false)
                 if (res2.success) {
                     notification['success']({
                         message: res2.message,
@@ -271,8 +272,8 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                         //         originPath: 'Admin'
                         //     }
                         // }}>
-                            <a>{text}</a>
-                        // </Link>
+                        <a>{text}</a>
+                    // </Link>
                 };
             },
         },
@@ -329,15 +330,9 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                     },
                     children:
                         <>
-                            {actions[index] ?
-                                <>
-                                    <Tooltip placement="topLeft" title={"Edit"}>
-                                        <Button size="medium" shape="square" onClick={() => { editVendorForm.resetFields(); setDrawableedit(true); setEditvendor(record) }}><EditOutlined /></Button>
-                                    </Tooltip>
-                                </>
-                                :
-                                null
-                            }
+                            <Tooltip placement="topLeft" title={"Edit"}>
+                                <Button size="medium" shape="square" onClick={() => { editVendorForm.resetFields(); setDrawableedit(true); setEditvendor(record) }}><EditOutlined /></Button>
+                            </Tooltip>
                         </>
                 }
             }
@@ -353,17 +348,11 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                     },
                     children:
                         <>
-                            {actions[index] ?
-                                <>
-                                    <Tooltip placement="topLeft" title={"Delete"}>
-                                        <Button size="medium" shape="square" onClick={() => { onClickModalDeleteVendor(true, record) }}>
-                                            <a><DeleteOutlined /></a>
-                                        </Button>
-                                    </Tooltip>
-                                </>
-                                :
-                                null
-                            }
+                            <Tooltip placement="topLeft" title={"Delete"}>
+                                <Button size="medium" shape="square" onClick={() => { onClickModalDeleteVendor(true, record) }}>
+                                    <a><DeleteOutlined /></a>
+                                </Button>
+                            </Tooltip>
                         </>
                 }
             }
@@ -428,6 +417,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                             visible={warningDelete.istrue}
                             onOk={() => { handleDeleteVendor(warningDelete.key) }}
                             onCancel={() => setWarningDelete(false, null)}
+                            okButtonProps={{ disabled: loadingbtn }}
                         >
                             Apakah anda yakin ingin menghapus vendor <strong>{warningDelete.name}</strong>?
                         </Modal>
@@ -451,7 +441,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                             <button onClick={() => { setDrawablecreate(false), closeDrawer(), createVendorForm.resetFields() }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
                                 Cancel
                                 </button>
-                            <Button loading={loadingbtn} type="primary" onClick={createVendorForm.submit} className=" bg-blue-500 hover:bg-blue-700 border text-white py-1 px-2 rounded-md w-20">
+                            <Button loading={loadingbtn} type="primary" onClick={createVendorForm.submit} className=" bg-blue-500 hover:bg-blue-700 border text-white py-1 px-2 rounded-md">
                                 Submit
                                 </Button>
                         </div>
@@ -561,9 +551,13 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                                         required: false,
                                         // message: 'Alamat penanggung jawab harus diisi',
                                     },
+                                    {
+                                        type: `number`,
+                                        message: 'Kode Pos harus berupa angka'
+                                    }
                                 ]}
                             >
-                                <Input placeholder="Kode Pos" name={`kode_pos`} onChange={onChangeCreateVendor}></Input>
+                                <InputNumber placeholder="Kode Pos" name={`kode_pos`} style={{ width: `100%` }} onChange={(val) => { setNewvendor({ ...newvendor, kode_pos: `${val}` }) }} />
                             </Form.Item>
                         </div>
                         <div className="pb-0 md:mb-0 ">
@@ -573,9 +567,13 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                                         required: true,
                                         message: 'No Telepon harus diisi',
                                     },
+                                    {
+                                        type: `number`,
+                                        message: 'Nomor Telepon harus berupa angka'
+                                    }
                                 ]}
                             >
-                                <Input placeholder="Telepon" name={`telepon`} onChange={onChangeCreateVendor}></Input>
+                                <InputNumber placeholder="Telepon" name={`telepon`} style={{ width: `100%` }} onChange={(val) => { setNewvendor({ ...newvendor, telepon: `0${val}` }) }} />
                             </Form.Item>
                         </div>
                         <div className="pb-0 md:mb-0 ">
@@ -585,9 +583,13 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                                         required: false,
                                         // message: 'No Fax harus diisi',
                                     },
+                                    {
+                                        type: `number`,
+                                        message: 'Fax harus berupa angka'
+                                    }
                                 ]}
                             >
-                                <Input placeholder="Fax" name={`fax`} onChange={onChangeCreateVendor}></Input>
+                                <InputNumber placeholder="Fax" name={`fax`} style={{ width: `100%` }} onChange={(val) => { setNewvendor({ ...newvendor, fax: `0${val}` }) }} />
                             </Form.Item>
                         </div>
                         <div className="pb-0 md:mb-0 ">
@@ -623,7 +625,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                             <button onClick={() => { setDrawableedit(false), editVendorForm.resetFields() }} className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4">
                                 Cancel
                                 </button>
-                            <Button loading={loadingbtn} type="primary" onClick={editVendorForm.submit} className="bg-blue-500 hover:bg-blue-700 border text-white py-1 px-2 rounded-md w-20">
+                            <Button loading={loadingbtn} type="primary" onClick={editVendorForm.submit} className="bg-blue-500 hover:bg-blue-700 border text-white py-1 px-2 rounded-md">
                                 Submit
                                 </Button>
                         </div>
@@ -741,10 +743,14 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                                         required: false,
                                         // message: 'Alamat penanggung jawab harus diisi',
                                     },
+                                    {
+                                        type: `number`,
+                                        message: 'Kode Pos harus berupa angka'
+                                    }
                                 ]}
                                 initialValue={editvendor.kode_pos}
                             >
-                                <Input placeholder="Kode Pos" name={`kode_pos`} onChange={onChangeEditVendor}></Input>
+                                <InputNumber placeholder="Kode Pos" name={`kode_pos`} style={{ width: `100%` }} onChange={(val) => { setEditvendor({ ...editvendor, kode_pos: `${val}` }) }} />
                             </Form.Item>
                         </div>
                         <div className="pb-0 md:mb-0 ">
@@ -754,10 +760,14 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                                         required: true,
                                         message: 'No Telepon harus diisi',
                                     },
+                                    {
+                                        type: `number`,
+                                        message: 'Telepon harus berupa angka'
+                                    }
                                 ]}
                                 initialValue={editvendor.telepon}
                             >
-                                <Input placeholder="Telepon" name={`telepon`} onChange={onChangeEditVendor}></Input>
+                                <InputNumber placeholder="Telepon" name={`telepon`} style={{ width: `100%` }} onChange={(val) => { setEditvendor({ ...editvendor, telepon: `0${val}` }) }} />
                             </Form.Item>
                         </div>
                         <div className="pb-0 md:mb-0 ">
@@ -767,10 +777,14 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                                         required: false,
                                         // message: 'No Fax harus diisi',
                                     },
+                                    {
+                                        type: `number`,
+                                        message: 'Fax harus berupa angka'
+                                    }
                                 ]}
                                 initialValue={editvendor.fax}
                             >
-                                <Input placeholder="Fax" name={`fax`} onChange={onChangeEditVendor}></Input>
+                                <InputNumber placeholder="Fax" name={`fax`} style={{ width: `100%` }} onChange={(val) => { setEditvendor({ ...editvendor, fax: `0${val}` }) }} />
                             </Form.Item>
                         </div>
                         <div className="pb-0 md:mb-0 ">
@@ -808,17 +822,24 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
 
 export async function getServerSideProps({ req, res }) {
     var initProps = {};
-    if (req && req.headers) {
-        const cookies = req.headers.cookie;
-        if (!cookies) {
-            res.writeHead(302, { Location: '/' })
-            res.end()
-        }
-        if (typeof cookies === 'string') {
-            const cookiesJSON = httpcookie.parse(cookies);
-            initProps = cookiesJSON.token
+    if (!req.headers.cookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
         }
     }
+    const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+    if (!cookiesJSON1.token) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
+        }
+    }
+    initProps = cookiesJSON1.token
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,
         headers: {

@@ -439,7 +439,8 @@ function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTit
                         // else if (process.env.NODE_ENV == "production") {
                         //     window.location.href = `https://migsys.herokuapp.com/admin/assets/${assetsTitle}?parent=${assetsParent}`
                         // }
-                        rt.push(`/admin/assets/${assetsTitle}?parent=${assetsParent}`)
+                        // rt.push(`/admin/assets/${assetsTitle}?parent=${assetsParent}`)
+                        rt.push(`/admin/assets`)
                     }, 500)
                 }
                 else if (!res2.success) {

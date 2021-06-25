@@ -106,7 +106,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
             .then(res2 => {
                 if (res2.success) {
                     setlaodingdelete(false)
-                    setNewmodal(false)
+                    setmodaldelete(false)
                     notification['success']({
                         message: res2.message,
                         duration: 3
@@ -117,7 +117,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                 }
                 else if (!res2.success) {
                     setlaodingdelete(false)
-                    setNewmodal(false)
+                    setmodaldelete(false)
                     notification['error']({
                         message: res2.message.errorInfo.status_detail,
                         duration: 3

@@ -167,8 +167,9 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
     // const future = moment('2022-03-02 10:03:02');
     const future = moment(contract.tanggal_selesai);
     // const timeLeft = moment(future.diff(currentDate)).format("YYYY-MM-DD HH:mm:ss");
-    const timeLeft = moment(future).diff(currentDate, 'months') > 2 ? moment(future).diff(currentDate, 'months') + " Bulan" : moment(future).diff(currentDate, 'days') + " Hari"
-
+    var timeLeft = moment(future).diff(currentDate, 'months') > 2 ? moment(future).diff(currentDate, 'months') + " Bulan" : moment(future).diff(currentDate, 'days') + " Hari"
+    var numtimeleft = Number(timeLeft.split(" ")[0]) 
+    numtimeleft <= 0 ? timeLeft = "Habis" : timeLeft
     var timeConverter = (UNIX_timestamp) => {
         var a = new Date(UNIX_timestamp);
         var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -186,7 +187,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
                 <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-                    <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
+                    <div className="col-span-1 md:col-span-4" id="formAgentsWrapper">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <div className={'flex'}>
@@ -247,7 +248,8 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
                                 </div>
                             </div>
                         </Sticky>
-
+                    </div>
+                    <div className=" col-span-1 md:col-span-3 flex flex-col">
                         <div className="col-span-3 flex flex-col space-y-3">
                             <Tabs defaultActiveKey="1" tabPosition={"left"}>
                                 <TabPane tab={'Overview'} key={1}>

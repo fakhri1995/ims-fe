@@ -8,6 +8,7 @@ import Sticky from 'wil-react-sticky'
 import PlusSquareOutlined from '@ant-design/icons/PlusSquareOutlined'
 import SearchOutlined from '@ant-design/icons/SearchOutlined'
 import {DatePicker,Table,Drawer,Input,Select,Button,notification,Form} from 'antd'
+import moment from 'moment'
 
 function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu }) {
     const rt = useRouter()
@@ -419,7 +420,7 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
                                             ]}
                                             initialValue={newcontract.tanggal_selesai}
                                         >
-                                            <DatePicker style={{width:"100%"}} placeholder="Tanggal Selesai" name={`tanggal_selesai`} onChange={(date, dateString) => {setNewcontract({...newcontract,tanggal_selesai: dateString})}} allowClear></DatePicker>
+                                            <DatePicker disabledDate={(curr)=>{return curr < moment(newcontract.tanggal_mulai)}} style={{width:"100%"}} placeholder="Tanggal Selesai" name={`tanggal_selesai`} onChange={(date, dateString) => {setNewcontract({...newcontract,tanggal_selesai: dateString})}} allowClear></DatePicker>
                                         </Form.Item>
                                     </div>
 

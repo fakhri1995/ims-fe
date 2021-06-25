@@ -100,7 +100,8 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
                     })
                     setTimeout(() => {
                         setloadingupdate(false)
-                        rt.push(`/admin/service/${serviceid}`)
+                        // rt.push(`/admin/service/${serviceid}`)
+                        rt.push(`/admin/service`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -167,7 +168,8 @@ function ServiceUpdate({ initProps, dataProfile, dataDetailServiceItem, dataList
                     setTimeout(() => {
                         setloadinghapus(false)
                         setmodalpublish(false)
-                        rt.push(`/admin/service/${serviceid}`)
+                        // rt.push(`/admin/service/${serviceid}`)
+                        rt.push(`/admin/service`)
                     }, 500)
                 }
                 else if (!res2.success) {

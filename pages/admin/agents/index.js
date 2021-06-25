@@ -25,7 +25,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         dataDD = dataListAgent.data.map((doc, idx) => {
             return ({
                 user_id: doc.user_id,
-                profile_image: doc.profile_image,
+                profile_image: doc.profile_image === "" ? `/default-users.jpeg` : doc.profile_image,
                 fullname: doc.fullname,
                 email: doc.email,
                 phone_number: doc.phone_number

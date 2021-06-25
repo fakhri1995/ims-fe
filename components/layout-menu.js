@@ -30,7 +30,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
     return (
         <div>
             <div className={`${lm.modal}`} hidden={collsmall} onClick={handleCollSmall}></div>
-            <Sider collapsible collapsed={coll} trigger={null} theme="light" className={`${st.siderLayout} sider`} style={{ borderRight: `1px solid #f0f0f0`, height: '100%' }}>
+            <Sider collapsible collapsed={coll} trigger={null} width={250} theme="light" className={`${st.siderLayout} sider`} style={{ borderRight: `1px solid #f0f0f0`, height: '100%' }}>
                 <div className="logo" style={{ height: `32px`, margin: `16px`, background: `gray` }}></div>
                 <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]}>
                     <Menu.Item key="1" icon={<DashboardTwoTone />}>
@@ -50,7 +50,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             </Link>
                         </Menu.Item>
                     </SubMenu>
-                    <SubMenu key="4" icon={<SettingOutlined />} title="Assets">
+                    <SubMenu key="4" icon={<SettingOutlined />} title="Admin">
                         <Menu.Item key="4" icon={<SettingOutlined />}>
                             <Link href="/dashboard/admin">
                                 Admin

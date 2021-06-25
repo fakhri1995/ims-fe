@@ -449,7 +449,7 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
                                             ]}
                                             initialValue={updatecontract.tanggal_selesai}
                                         >
-                                            <DatePicker defaultValue={updatecontract.tanggal_selesai} style={{width:"100%"}} placeholder="Tanggal Selesai" name={`tanggal_selesai`} onChange={(date, dateString) => {setUpdatecontract({...updatecontract,tanggal_selesai: dateString})}} allowClear></DatePicker>
+                                            <DatePicker disabledDate={(curr)=>{return curr < moment(updatecontract.tanggal_mulai)}} defaultValue={updatecontract.tanggal_selesai} style={{width:"100%"}} placeholder="Tanggal Selesai" name={`tanggal_selesai`} onChange={(date, dateString) => {setUpdatecontract({...updatecontract,tanggal_selesai: dateString})}} allowClear></DatePicker>
                                         </Form.Item>
                                     </div>
 
