@@ -6,6 +6,7 @@ import UserOutlined from '@ant-design/icons/UserOutlined'
 import InboxOutlined from '@ant-design/icons/InboxOutlined'
 import Link from 'next/link'
 import st from "../../components/layout-dashboard.module.css"
+import { IconRoles, IconModules, IconFeatures, IconAgents, IconRequesters, Icongroups, IconMIGCompany, IconClientsCompany, IconAssets, IconVendors, IconCatalog, IconContract, IconDepreciation, IconCareer, IconMessages } from '../../components/icon-admin'
 
 function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
     // jscookie.remove('token')
@@ -35,8 +36,9 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                             pathname: '/admin/agents',
                                         }}>
                                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                                <div>
-                                                    <TeamOutlined /> Agents
+                                                <div className="flex">
+                                                    <IconAgents />
+                                                    <div className=" flex items-center">Agents</div>
                                                 </div>
                                             </div>
                                         </Link>
@@ -49,8 +51,9 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                             pathname: '/admin/requesters',
                                         }}>
                                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                                <div>
-                                                    <UserOutlined /> Requesters
+                                                <div className="flex">
+                                                    <IconRequesters />
+                                                    <div className=" flex items-center">Requesters</div>
                                                 </div>
                                             </div>
                                         </Link>
@@ -66,8 +69,9 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                             }
                                         }}>
                                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                                <div>
-                                                    <UserOutlined /> Groups
+                                                <div className="flex">
+                                                    <Icongroups />
+                                                    <div className=" flex items-center">Groups</div>
                                                 </div>
                                             </div>
                                         </Link>
@@ -96,8 +100,9 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                 }
                             }}>
                                 <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                    <div>
-                                        <TeamOutlined /> Roles
+                                    <div className="flex">
+                                        <IconRoles />
+                                        <div className=" flex items-center">Roles</div>
                                     </div>
                                 </div>
                             </Link>
@@ -107,8 +112,9 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                         {dataProfile.data.registered_feature.includes(179) ?
                             <Link href={'/admin/modules'}>
                                 <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                    <div>
-                                        <InboxOutlined /> Modules
+                                    <div className="flex">
+                                        <IconModules />
+                                        <div className=" flex items-center">Modules</div>
                                     </div>
                                 </div>
                             </Link>
@@ -117,8 +123,9 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                         }
                         <Link href={'/admin/features'}>
                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                <div>
-                                    <InboxOutlined /> Features
+                                <div className="flex">
+                                    <IconFeatures />
+                                    <div className=" flex items-center">Features</div>
                                 </div>
                             </div>
                         </Link>
@@ -139,8 +146,9 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                     pathname: '/admin/company/mig/',
                                 }}>
                                     <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                        <div>
-                                            <TeamOutlined /> My Company
+                                        <div className="flex">
+                                            <IconMIGCompany />
+                                            <div className=" flex items-center">My Company</div>
                                         </div>
                                     </div>
                                 </Link>
@@ -152,8 +160,9 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                     pathname: '/admin/company/',
                                 }}>
                                     <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                        <div>
-                                            <UserOutlined /> Clients
+                                        <div className="flex">
+                                            <IconClientsCompany />
+                                            <div className=" flex items-center">Clients</div>
                                         </div>
                                     </div>
                                 </Link>
@@ -176,8 +185,9 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                     <div className="grid md:grid-cols-5 sm:grid-cols-1">
                         <Link href={'/admin/assets'}>
                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                <div>
-                                    <InboxOutlined /> Assets Types & Field
+                                <div className="flex">
+                                    <IconAssets />
+                                    <div className=" flex items-center">Asset Types & Fields</div>
                                 </div>
                             </div>
                         </Link>
@@ -185,8 +195,9 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             pathname: '/admin/vendors',
                         }}>
                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                <div>
-                                    <InboxOutlined /> Vendors
+                                <div className="flex">
+                                    <IconVendors />
+                                    <div className=" flex items-center">Vendors</div>
                                 </div>
                             </div>
                         </Link>
@@ -205,8 +216,9 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             {dataProfile.data.registered_feature.includes(183) && dataProfile.data.registered_feature.includes(187) ?
                                 <Link href={'/admin/service'}>
                                     <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                        <div>
-                                            <InboxOutlined /> Service Catalog
+                                        <div className="flex">
+                                            <IconCatalog />
+                                            <div className=" flex items-center">Service Catalog</div>
                                         </div>
                                     </div>
                                 </Link>
@@ -216,8 +228,9 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             {dataProfile.data.registered_feature.includes(194) ?
                                 <Link href={'/admin/contracts'}>
                                     <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                        <div>
-                                            <InboxOutlined /> Contracts
+                                        <div className="flex">
+                                            <IconContract />
+                                            <div className=" flex items-center">Contracts</div>
                                         </div>
                                     </div>
                                 </Link>
@@ -241,8 +254,9 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                         <div className="grid md:grid-cols-5 sm:grid-cols-1">
                             <Link href={'/admin/financial'}>
                                 <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                    <div>
-                                        <InboxOutlined /> Financial
+                                    <div className="flex">
+                                        <IconDepreciation />
+                                        <div className=" flex items-center">Depreciation</div>
                                     </div>
                                 </div>
                             </Link>
@@ -262,16 +276,18 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                     <div className="grid md:grid-cols-5 sm:grid-cols-1">
                         <Link href={'/admin/careers'}>
                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                <div>
-                                    <InboxOutlined /> Careers
-                                    </div>
+                                <div className="flex">
+                                    <IconCareer />
+                                    <div className=" flex items-center">Careers</div>
+                                </div>
                             </div>
                         </Link>
                         <Link href={'/admin/messages'}>
                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
-                                <div>
-                                    <InboxOutlined /> Messages
-                                    </div>
+                                <div className="flex">
+                                    <IconMessages />
+                                    <div className=" flex items-center">Messages</div>
+                                </div>
                             </div>
                         </Link>
                     </div>
@@ -283,18 +299,24 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
 
 export async function getServerSideProps({ req, res }) {
     var initProps = {};
-    if (req && req.headers) {
-        const cookies = req.headers.cookie;
-        if (!cookies) {
-            res.writeHead(302, { Location: '/' })
-            res.end()
-        }
-        if (typeof cookies === 'string') {
-            const cookiesJSON = httpcookie.parse(cookies);
-            initProps = cookiesJSON.token
-            // console.log("cookie di admin dashboard ssr: " + initProps)
+    if (!req.headers.cookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
         }
     }
+    const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+    if (!cookiesJSON1.token) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
+        }
+    }
+    initProps = cookiesJSON1.token
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,
         headers: {

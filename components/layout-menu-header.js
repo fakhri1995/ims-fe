@@ -1,15 +1,14 @@
 import ExportOutlined from '@ant-design/icons/ExportOutlined'
-import { Avatar, Dropdown } from 'antd'
+import { Avatar, Button, Dropdown } from 'antd'
 import Link from 'next/link'
 import UserOutlined from '@ant-design/icons/UserOutlined'
-import NotificationOutlined from '@ant-design/icons/NotificationOutlined'
-import QuestionCircleOutlined from '@ant-design/icons/QuestionCircleOutlined'
 import PlusCircleTwoTone from '@ant-design/icons/PlusCircleTwoTone'
 import SelectOutlined from '@ant-design/icons/SelectOutlined'
-import { TicketIconSvg, ContractIconSvg } from './icon'
+import { TicketIconSvg, ContractIconSvg, IconBroadcast, Iconquestion } from './icon'
+import { useRouter } from 'next/router'
 
 function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
-
+    const rt = useRouter()
     const menuProfile2 = () => {
         return (
             <div className="w-auto h-auto flex flex-col shadow-md rounded bg-white space-y-4 px-10 py-5">
@@ -81,24 +80,26 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
         )
     }
     return (
-        <div className={`hidden md:flex md:w-auto w-full ${st.menu}`}>
-            <div className="md:mr-12 mr-8 flex items-center">
+        <div className={`hidden md:flex md:w-auto w-full ${st.menu} md:justify-end`}>
+            <div className="md:mr-12 mr-4 flex items-center">
                 <a target="_blank" href="/" >
-                    <button className="text-blue-500 hover:text-blue-700 text-xs mt-1 md:text-base flex items-center"><SelectOutlined style={{ marginRight: `0.2rem`, marginTop: `0.1rem` }} /> Go To Website</button>
+                    <Button type="primary">
+                        <SelectOutlined style={{ marginRight: `0.2rem`, marginTop: `0.1rem` }} /> Go To Website
+                    </Button>
                 </a>
             </div>
-            <div style={{ marginRight: `3rem` }}>
+            <div className="md:mr-12 mr-5">
                 <Dropdown overlay={addMenu} placement="bottomCenter" trigger={['click']}>
                     <PlusCircleTwoTone className="" style={{ fontSize: '20px', cursor: `pointer` }} />
                 </Dropdown>
             </div>
-            <div style={{ marginRight: `3rem`, cursor: `pointer` }}>
-                <QuestionCircleOutlined />
+            <div className="md:mr-12 mr-4 cursor-pointer">
+                <Iconquestion width={20} height={20} />
             </div>
-            <div style={{ marginRight: `3rem`, cursor: `pointer` }}>
-                <NotificationOutlined />
+            <div className="md:mr-12 mr-4 cursor-pointer">
+                <IconBroadcast width={20} height={20} />
             </div>
-            <div style={{ marginRight: `3rem`, marginTop: `1rem` }}>
+            <div className="md:mr-12 mr-4 mt-4">
                 <Dropdown overlay={menuProfile2} trigger={['click']}>
                     {
                         dataProfile.data.image_profile ?
