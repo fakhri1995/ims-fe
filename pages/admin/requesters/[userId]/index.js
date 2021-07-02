@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Layout from '../../../../components/layout-dashboard'
 import st from '../../../../components/layout-dashboard.module.css'
 import httpcookie from 'cookie'
@@ -28,6 +28,19 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
         account_id: dataDetailRequester.data.user_id,
         role_ids: [dataDetailRequester.data.feature_roles[0]]
     })
+    const [datapass, setDatapass] = useState({
+        user_id: dataDetailRequester.data.user_id,
+        new_password: ''
+    })
+    const [visible, setVisible] = useState(false)
+    const [visiblenon, setVisiblenon] = useState(false)
+    const [visibleubahpass, setVisibleubahpass] = useState(false)
+    const [loadingupdate, setLoadingupdate] = useState(false)
+    const [loadingubahpass, setloadingubahpass] = useState(false)
+    const [loadingubahaktif, setloadingubahaktif] = useState(false)
+    const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
+    const [dataraw1, setdataraw1] = useState({data: []})
+
     const onChangeRole = (value) => {
         //multiple roles
         // const arr = datarole.role_ids
@@ -39,18 +52,6 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
             role_ids: arr
         })
     }
-    const [visible, setVisible] = useState(false)
-    const [visiblenon, setVisiblenon] = useState(false)
-    const [visibleubahpass, setVisibleubahpass] = useState(false)
-    const [loadingupdate, setLoadingupdate] = useState(false)
-    const [loadingubahpass, setloadingubahpass] = useState(false)
-    const [loadingubahaktif, setloadingubahaktif] = useState(false)
-    const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
-
-    const [datapass, setDatapass] = useState({
-        user_id: dataDetailRequester.data.user_id,
-        new_password: ''
-    })
     const onChangeEditAgents = (e) => {
         setData1({
             ...data1,
@@ -202,6 +203,18 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                 }
             })
     }
+    useEffect(()=>{
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps)
+            }
+        })
+        .then(res => res.json())
+        .then(res2 => {
+            setdataraw1(res2)
+        })
+    },[])
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} dataDetailAccount={dataDetailRequester} st={st}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
@@ -320,7 +333,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                                         [133].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                             <Select onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }}>
                                                 {
-                                                    dataRoles.data.map((doc, idx) => {
+                                                    dataraw1.data.map((doc, idx) => {
                                                         return (
                                                             <Option key={idx} value={doc.id}>{doc.name}</Option>
                                                         )
@@ -330,7 +343,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                                             :
                                             <Select disabled onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }}>
                                                 {
-                                                    dataRoles.data.map((doc, idx) => {
+                                                    dataraw1.data.map((doc, idx) => {
                                                         return (
                                                             <Option key={idx} value={doc.id}>{doc.name}</Option>
                                                         )
@@ -470,21 +483,21 @@ export async function getServerSideProps({ req, res, params }) {
     }
     const dataDetailRequester = resjsonDA
 
-    const resourcesRoles = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
-        method: `GET`,
-        headers: {
-            'Authorization': JSON.parse(initProps)
-        }
-    })
-    const resjsonRoles = await resourcesRoles.json()
-    const dataRoles = resjsonRoles
+    // const resourcesRoles = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+    //     method: `GET`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps)
+    //     }
+    // })
+    // const resjsonRoles = await resourcesRoles.json()
+    // const dataRoles = resjsonRoles
 
     return {
         props: {
             initProps,
             dataDetailRequester,
             dataProfile,
-            dataRoles,
+            // dataRoles,
             sidemenu: "4"
         },
     }
