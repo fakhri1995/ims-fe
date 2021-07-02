@@ -146,10 +146,10 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
                 </div>
                 <div className="w-full h-auto p-3 md:p-5 col-span-1 sm:col-span-2 md:col-span-4 flex">
                     <Form layout="vertical" form={instanceForm} onFinish={handleEditProfile} initialValues={data1} style={{ width: `100%` }}>
-                        <div className="md:m-5 mb-5 md:mb-0 ">
+                        {/* <div className="md:m-5 mb-5 md:mb-0 ">
                             <h1 className="font-semibold text-sm">ID Perusahaan:</h1>
                             <h1 className="text-sm font-normal text-black">{data1.id}</h1>
-                        </div>
+                        </div> */}
                         <div className="grid grid-cols-1 md:grid-cols-2">
                             <div className="md:m-5 mb-5 md:mb-0 ">
                                 {

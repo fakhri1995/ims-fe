@@ -357,17 +357,24 @@ export async function getServerSideProps({ req, res }) {
         rows: 50,
         order_by: "asc"
     }
-    if (req && req.headers) {
-        const cookies = req.headers.cookie;
-        if (!cookies) {
-            res.writeHead(302, { Location: '/' })
-            res.end()
-        }
-        if (typeof cookies === 'string') {
-            const cookiesJSON = httpcookie.parse(cookies);
-            initProps = cookiesJSON.token
+    if (!req.headers.cookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
         }
     }
+    const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+    if (!cookiesJSON1.token) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
+        }
+    }
+    initProps = cookiesJSON1.token
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,
         headers: {

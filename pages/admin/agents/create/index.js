@@ -249,7 +249,7 @@ export async function getServerSideProps({ req, res }) {
     if (req && req.headers) {
         const cookies = req.headers.cookie;
         if (!cookies) {
-            res.writeHead(302, { Location: '/' })
+            res.writeHead(302, { Location: '/login' })
             res.end()
         }
         if (typeof cookies === 'string') {
