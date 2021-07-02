@@ -1,47 +1,22 @@
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import st from '../../../components/layout-dashboard.module.css'
 import Layout from '../../../components/layout-dashboard'
 import httpcookie from 'cookie'
-import CopyOutlined from '@ant-design/icons/CopyOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import Link from 'next/link'
 import { Table, notification, Button, Select } from 'antd'
 
 function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList, sidemenu }) {
-    const rt = useRouter()
-    const tok = initProps
-    const pathArr = rt.pathname.split("/").slice(1)
-    const { originPath } = rt.query
-    const { Option } = Select
-    var dataDD = []
-    if (!dataListRequester) {
-        dataDD = []
-        notification['error']({
-            message: dataListRequester.message.errorInfo.status_detail,
-            duration: 3
-        })
-        rt.push('/dashboard/admin')
-    }
-    else {
-        dataDD = dataListRequester.data.map((doc, idx) => {
-            return ({
-                user_id: doc.user_id,
-                profile_image: doc.profile_image === "" ? `/default-users.jpeg` : doc.profile_image,
-                fullname: doc.fullname,
-                email: doc.email,
-                phone_number: doc.phone_number,
-                company_id: doc.company_id
-            })
-        })
-    }
-    const [dataKK, setDataSource] = useState(dataDD);
+    const [dataraw, setdataraw] = useState([])
+    const [datarawloading, setdatarawloading] = useState(false)
+    const [dataKK, setDataSource] = useState([]);
     const FilterAll = () => {
-        setDataSource(dataDD)
+        setDataSource(dataraw)
     }
     const FilterByWord = (word) => {
         const currValue = word;
-        const filteredData = dataDD.filter(entry => {
+        const filteredData = dataraw.filter(entry => {
             if (entry.fullname.toLowerCase()[0] === word) {
                 return entry.fullname.toLowerCase().includes(currValue)
             }
@@ -49,12 +24,66 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
         );
         setDataSource(filteredData);
     };
-    var actionsArr = []
-    for (var i = 0; i < dataDD.length; i++) {
-        actionsArr.push(false)
+    const onFilterByCompany = (val) => {
+        setDataSource(dataraw)
+        if (val === "all") {
+            setDataSource(dataraw)
+        }
+        else {
+            setDataSource(prev => {
+                return prev.filter(dataa => {
+                    return dataa.company_id === val
+                })
+            })
+        }
     }
-    const [actions, setActions] = useState(actionsArr)
-    const [action, setAction] = useState(false)
+    useEffect(() => {
+        setdatarawloading(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
+            method: `POST`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                page: 1,
+                rows: 50,
+                order_by: "asc"
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatarawloading(false)
+                var dataDD = []
+                if (!res2) {
+                    dataDD = []
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                    rt.push('/dashboard/admin')
+                }
+                else {
+                    dataDD = res2.data.map((doc, idx) => {
+                        return ({
+                            user_id: doc.user_id,
+                            profile_image: doc.profile_image === "" ? `/default-users.jpeg` : doc.profile_image,
+                            fullname: doc.fullname,
+                            email: doc.email,
+                            phone_number: doc.phone_number,
+                            company_id: doc.company_id
+                        })
+                    })
+                }
+                setdataraw(dataDD)
+                setDataSource(dataDD)
+            })
+    }, [])
+    const rt = useRouter()
+    const tok = initProps
+    const pathArr = rt.pathname.split("/").slice(1)
+    const { originPath } = rt.query
+    const { Option } = Select
 
     const columnsDD = [
         {
@@ -185,21 +214,6 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
         }
     ];
 
-    const onFilterByCompany = (val) => {
-        setDataSource(dataDD)
-        if (val === "all") {
-            setDataSource(dataDD)
-        }
-        else {
-            setDataSource(prev => {
-                return prev.filter(dataa => {
-                    console.log(dataa.company_id)
-                    return dataa.company_id === val
-                })
-            })
-        }
-    }
-
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
@@ -307,7 +321,7 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                                     Z
                             </button>
                             </div>
-                            <div className="flex mb-2">
+                            {/* <div className="flex mb-2">
                                 <Select placeholder="Filter by companies" defaultValue={"all"} onChange={(value) => { onFilterByCompany(value) }} style={{ width: `40%` }}>
                                     <Option value={"all"}>Semua</Option>
                                     {
@@ -318,8 +332,8 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                                         })
                                     }
                                 </Select>
-                            </div>
-                            <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD}
+                            </div> */}
+                            <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} loading={datarawloading}
                             // onRow={(record, rowIndex) => {
                             //     return {
                             //         onMouseOver: (event) => {
@@ -389,34 +403,34 @@ export async function getServerSideProps({ req, res }) {
         res.end()
     }
 
-    const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(reqBodyAccountList)
-    })
-    const resjsonLA = await resourcesLA.json()
-    const dataListRequester = resjsonLA
+    // const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify(reqBodyAccountList)
+    // })
+    // const resjsonLA = await resourcesLA.json()
+    // const dataListRequester = resjsonLA
 
-    const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(reqBody)
-    })
-    const resjsonGCL = await resourcesGCL.json()
-    const dataCompanyList = resjsonGCL
+    // const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify(reqBody)
+    // })
+    // const resjsonGCL = await resourcesGCL.json()
+    // const dataCompanyList = resjsonGCL
 
     return {
         props: {
             initProps,
             dataProfile,
-            dataListRequester,
-            dataCompanyList,
+            // dataListRequester,
+            // dataCompanyList,
             sidemenu: "4"
         },
     }

@@ -4,9 +4,8 @@ import httpcookie from 'cookie'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import Sticky from 'wil-react-sticky'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import st from '../../../../components/layout-dashboard.module.css'
 import { Button, Form, Input, notification, Modal, Switch, Select } from 'antd'
 
@@ -23,6 +22,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
     const [loadingubahpass, setloadingubahpass] = useState(false)
     const [loadingubahaktif, setloadingubahaktif] = useState(false)
     const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
+    const [dataraw1, setdataraw1] = useState({data: []})
     const [instanceForm] = Form.useForm();
     const { Option } = Select
     console.log(dataDetailAgent.data.feature_roles)
@@ -204,6 +204,18 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
                 }
             })
     }
+    useEffect(()=>{
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+        .then(res => res.json())
+        .then(res2 => {
+            setdataraw1(res2)
+        })
+    },[])
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} dataDetailAccount={dataDetailAgent} st={st}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4" id="formAgentsWrapper">
@@ -323,9 +335,9 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
                                     <h1 className="font-semibold">Role:</h1>
                                     {
                                         [132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                            <Select onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }}>
+                                            <Select onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }} allowClear>
                                                 {
-                                                    dataRoles.data.map((doc, idx) => {
+                                                    dataraw1.data.map((doc, idx) => {
                                                         return (
                                                             <Option key={idx} value={doc.id}>{doc.name}</Option>
                                                         )
@@ -333,9 +345,9 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
                                                 }
                                             </Select>
                                             :
-                                            <Select disabled onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }}>
+                                            <Select disabled onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }} allowClear>
                                                 {
-                                                    dataRoles.data.map((doc, idx) => {
+                                                    dataraw1.data.map((doc, idx) => {
                                                         return (
                                                             <Option key={idx} value={doc.id}>{doc.name}</Option>
                                                         )
@@ -423,21 +435,21 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonDA = await resourcesDA.json()
     const dataDetailAgent = resjsonDA
 
-    const resourcesRoles = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
-        method: `GET`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-        },
-    })
-    const resjsonRoles = await resourcesRoles.json()
-    const dataRoles = resjsonRoles
+    // const resourcesRoles = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+    //     method: `GET`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //     },
+    // })
+    // const resjsonRoles = await resourcesRoles.json()
+    // const dataRoles = resjsonRoles
 
     return {
         props: {
             initProps,
             dataDetailAgent,
             dataProfile,
-            dataRoles,
+            // dataRoles,
             sidemenu: "4"
         },
     }

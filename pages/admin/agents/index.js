@@ -9,6 +9,7 @@ import { Table, notification, Button } from 'antd'
 
 function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
     const [dataraw, setdataraw] = useState([])
+    const [datarawloading, setdatarawloading] = useState(false)
     const [dataKK, setDataSource] = useState([]);
     const FilterAll = () => {
         setDataSource(dataraw)
@@ -24,6 +25,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         setDataSource(filteredData);
     };
     useEffect(() => {
+        setdatarawloading(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList`, {
             method: `POST`,
             headers: {
@@ -38,6 +40,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         })
         .then(res => res.json())
         .then(res2 => {
+            setdatarawloading(false)
             var dataDD = []
             if (!res2) {
                 dataDD = []
@@ -66,12 +69,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         const tok = initProps
         const pathArr = rt.pathname.split("/").slice(1)
         const { originPath } = rt.query
-        var actionsArr = []
-        for (var i = 0; i < dataraw.length; i++) {
-            actionsArr.push(false)
-        }
-        const [actions, setActions] = useState(actionsArr)
-        const [action, setAction] = useState(false)
+        
         const columnsDD = [
             {
                 dataIndex: 'profil_image',
@@ -288,7 +286,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                                         Z
                             </button>
                                 </div>
-                                <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD}
+                                <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} loading={datarawloading}
                                 // onRow={(record, rowIndex) => {
                                 //     return {
                                 //         onMouseOver: (event) => {
