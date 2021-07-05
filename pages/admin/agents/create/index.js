@@ -147,9 +147,9 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                             <h1 className="font-semibold py-2">New agent</h1>
                             <div className="flex space-x-2">
                                 <Link href="/admin/agents">
-                                    <Button type="default">Cancel</Button>
+                                    <Button type="default">Batal</Button>
                                 </Link>
-                                <Button type="primary" loading={loadingsave} onClick={instanceForm.submit}>Save</Button>
+                                <Button type="primary" loading={loadingsave} onClick={instanceForm.submit}>Simpan</Button>
                             </div>
                         </div>
                     </Sticky>

@@ -1,19 +1,18 @@
 import { useRouter } from 'next/router'
 import Layout from '../../../../components/layout-dashboard'
 import httpcookie from 'cookie'
-import EditOutlined from '@ant-design/icons/EditOutlined'
-import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import Sticky from 'wil-react-sticky'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import st from '../../../../components/layout-dashboard.module.css'
-import { Button, Form, Input, notification, Modal, Switch, Select } from 'antd'
+import { Button, Spin } from 'antd'
 
 function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     var pathArr = rt.pathname.split("/").slice(1)
     pathArr[pathArr.length - 1] = dataDetailAgent.data.fullname
+
     const [loadingfoto, setLoadingfoto] = useState(false)
     const [visible, setVisible] = useState(false)
     const [visiblenon, setVisiblenon] = useState(false)
@@ -22,10 +21,11 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
     const [loadingubahpass, setloadingubahpass] = useState(false)
     const [loadingubahaktif, setloadingubahaktif] = useState(false)
     const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
-    const [dataraw1, setdataraw1] = useState({data: []})
-    const [instanceForm] = Form.useForm();
-    const { Option } = Select
-    console.log(dataDetailAgent.data.feature_roles)
+    const [dataraw1, setdataraw1] = useState({ data: [] })
+    const [rolename, setrolename] = useState("")
+    // const [instanceForm] = Form.useForm();
+    // const { Option } = Select
+
     const [datapass, setDatapass] = useState({
         user_id: dataDetailAgent.data.user_id,
         new_password: ''
@@ -41,197 +41,203 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
         account_id: dataDetailAgent.data.user_id,
         role_ids: [dataDetailAgent.data.feature_roles[0]]
     })
-    const onChangeRole = (value) => {
-        //multiple roles
-        // const arr = datarole.role_ids
-        //single roles
-        const arr = []
-        arr.push(value)
-        setdatarole({
-            ...datarole,
-            role_ids: arr
-        })
-    }
-    const onChangeEditAgents = (e) => {
-        setData1({
-            ...data1,
-            [e.target.name]: e.target.value
-        })
-    }
-    const onChangeEditFoto = async (e) => {
-        setLoadingfoto(true)
-        const foto = e.target.files
-        const formdata = new FormData()
-        formdata.append('file', foto[0])
-        formdata.append('upload_preset', 'migsys')
-        const fetching = await fetch(`https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`, {
-            method: 'POST',
-            body: formdata
-        })
-        const datajson = await fetching.json()
-        setData1({
-            ...data1,
-            profile_image: datajson.secure_url
-        })
-        setLoadingfoto(false)
-    }
-    const handleSubmitEditAccount = () => {
-        setLoadingsave(true)
-        if (dataProfile.data.registered_feature.includes(132)) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/updateFeatureAgent`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': JSON.parse(tok),
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(datarole)
-            })
-                .then(res => res.json())
-                .then(res2 => {
-                    setLoadingsave(false)
-                })
-        }
-        if (dataProfile.data.registered_feature.includes(110)) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/updateAgentDetail`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': JSON.parse(tok),
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data1)
-            })
-                .then(res => res.json())
-                .then(res2 => {
-                    setLoadingsave(false)
-                    if (res2.success) {
-                        notification['success']({
-                            message: res2.message,
-                            duration: 3
-                        })
-                        setTimeout(() => {
-                            rt.push(`/admin/agents/${dataDetailAgent.data.user_id}`)
-                        }, 1000)
-                    }
-                    else if (!res2.success) {
-                        notification['error']({
-                            message: res2.message.errorInfo.status_detail,
-                            duration: 3
-                        })
-                    }
-                })
-        }
-    }
-    const handleActivationAgents = (status) => {
-        var keaktifan = false
-        if (status === "aktif") {
-            keaktifan = false
-            setloadingubahaktif(true)
-        }
-        else if (status === "nonAktif") {
-            keaktifan = true
-            setloadingubahnonaktif(true)
-        }
-        fetch(`https://boiling-thicket-46501.herokuapp.com/agentActivation`, {
-            method: 'POST',
-            headers: {
-                'Authorization': JSON.parse(tok),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                user_id: dataDetailAgent.data.user_id,
-                is_enabled: keaktifan
-            })
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                if (res2.success) {
-                    setVisible(false)
-                    setVisiblenon(false)
-                    notification['success']({
-                        message: res2.message,
-                        duration: 3
-                    })
-                    setTimeout(() => {
-                        if (status === "aktif") {
-                            setloadingubahaktif(false)
-                        }
-                        else if (status === "nonAktif") {
-                            setloadingubahnonaktif(false)
-                        }
-                        rt.push(`/admin/agents/${dataDetailAgent.data.user_id}`)
-                    }, 500)
-                }
-                else if (!res2.success) {
-                    setVisible(false)
-                    setVisiblenon(false)
-                    notification['error']({
-                        message: res2.message.errorInfo.status_detail,
-                        duration: 3
-                    })
-                }
-            })
-    }
-    const handleUbahPassword = () => {
-        setloadingubahpass(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/changeAgentPassword`, {
-            method: 'POST',
-            headers: {
-                'Authorization': JSON.parse(tok),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(datapass)
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                if (res2.success) {
-                    setVisibleubahpass(false)
-                    notification['success']({
-                        message: res2.message,
-                        duration: 3
-                    })
-                    setTimeout(() => {
-                        setloadingubahpass(false)
-                        rt.push(`/admin/agents/${dataDetailAgent.data.user_id}`)
-                    }, 500)
-                }
-                else if (!res2.success) {
-                    setloadingubahpass(false)
-                    setVisibleubahpass(false)
-                    notification['error']({
-                        message: res2.message.errorInfo.status_detail,
-                        duration: 3
-                    })
-                }
-            })
-    }
-    useEffect(()=>{
+    // const onChangeRole = (value) => {
+    //     //multiple roles
+    //     // const arr = datarole.role_ids
+    //     //single roles
+    //     const arr = []
+    //     arr.push(value)
+    //     setdatarole({
+    //         ...datarole,
+    //         role_ids: arr
+    //     })
+    // }
+    // const onChangeEditAgents = (e) => {
+    //     setData1({
+    //         ...data1,
+    //         [e.target.name]: e.target.value
+    //     })
+    // }
+    // const onChangeEditFoto = async (e) => {
+    //     setLoadingfoto(true)
+    //     const foto = e.target.files
+    //     const formdata = new FormData()
+    //     formdata.append('file', foto[0])
+    //     formdata.append('upload_preset', 'migsys')
+    //     const fetching = await fetch(`https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`, {
+    //         method: 'POST',
+    //         body: formdata
+    //     })
+    //     const datajson = await fetching.json()
+    //     setData1({
+    //         ...data1,
+    //         profile_image: datajson.secure_url
+    //     })
+    //     setLoadingfoto(false)
+    // }
+    // const handleSubmitEditAccount = () => {
+    //     setLoadingsave(true)
+    //     if (dataProfile.data.registered_feature.includes(132)) {
+    //         fetch(`https://boiling-thicket-46501.herokuapp.com/updateFeatureAgent`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Authorization': JSON.parse(tok),
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify(datarole)
+    //         })
+    //             .then(res => res.json())
+    //             .then(res2 => {
+    //                 setLoadingsave(false)
+    //             })
+    //     }
+    //     if (dataProfile.data.registered_feature.includes(110)) {
+    //         fetch(`https://boiling-thicket-46501.herokuapp.com/updateAgentDetail`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Authorization': JSON.parse(tok),
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify(data1)
+    //         })
+    //             .then(res => res.json())
+    //             .then(res2 => {
+    //                 setLoadingsave(false)
+    //                 if (res2.success) {
+    //                     notification['success']({
+    //                         message: res2.message,
+    //                         duration: 3
+    //                     })
+    //                     setTimeout(() => {
+    //                         rt.push(`/admin/agents/${dataDetailAgent.data.user_id}`)
+    //                     }, 1000)
+    //                 }
+    //                 else if (!res2.success) {
+    //                     notification['error']({
+    //                         message: res2.message.errorInfo.status_detail,
+    //                         duration: 3
+    //                     })
+    //                 }
+    //             })
+    //     }
+    // }
+    // const handleActivationAgents = (status) => {
+    //     var keaktifan = false
+    //     if (status === "aktif") {
+    //         keaktifan = false
+    //         setloadingubahaktif(true)
+    //     }
+    //     else if (status === "nonAktif") {
+    //         keaktifan = true
+    //         setloadingubahnonaktif(true)
+    //     }
+    //     fetch(`https://boiling-thicket-46501.herokuapp.com/agentActivation`, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Authorization': JSON.parse(tok),
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify({
+    //             user_id: dataDetailAgent.data.user_id,
+    //             is_enabled: keaktifan
+    //         })
+    //     })
+    //         .then(res => res.json())
+    //         .then(res2 => {
+    //             if (res2.success) {
+    //                 setVisible(false)
+    //                 setVisiblenon(false)
+    //                 notification['success']({
+    //                     message: res2.message,
+    //                     duration: 3
+    //                 })
+    //                 setTimeout(() => {
+    //                     if (status === "aktif") {
+    //                         setloadingubahaktif(false)
+    //                     }
+    //                     else if (status === "nonAktif") {
+    //                         setloadingubahnonaktif(false)
+    //                     }
+    //                     rt.push(`/admin/agents/${dataDetailAgent.data.user_id}`)
+    //                 }, 500)
+    //             }
+    //             else if (!res2.success) {
+    //                 setVisible(false)
+    //                 setVisiblenon(false)
+    //                 notification['error']({
+    //                     message: res2.message.errorInfo.status_detail,
+    //                     duration: 3
+    //                 })
+    //             }
+    //         })
+    // }
+    // const handleUbahPassword = () => {
+    //     setloadingubahpass(true)
+    //     fetch(`https://boiling-thicket-46501.herokuapp.com/changeAgentPassword`, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Authorization': JSON.parse(tok),
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify(datapass)
+    //     })
+    //         .then(res => res.json())
+    //         .then(res2 => {
+    //             if (res2.success) {
+    //                 setVisibleubahpass(false)
+    //                 notification['success']({
+    //                     message: res2.message,
+    //                     duration: 3
+    //                 })
+    //                 setTimeout(() => {
+    //                     setloadingubahpass(false)
+    //                     rt.push(`/admin/agents/${dataDetailAgent.data.user_id}`)
+    //                 }, 500)
+    //             }
+    //             else if (!res2.success) {
+    //                 setloadingubahpass(false)
+    //                 setVisibleubahpass(false)
+    //                 notification['error']({
+    //                     message: res2.message.errorInfo.status_detail,
+    //                     duration: 3
+    //                 })
+    //             }
+    //         })
+    // }
+    useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
             },
         })
-        .then(res => res.json())
-        .then(res2 => {
-            setdataraw1(res2)
-        })
-    },[])
+            .then(res => res.json())
+            .then(res2 => {
+                setdataraw1(res2)
+                const recordrolename = res2.data.filter(data => data.id === dataDetailAgent.data.feature_roles[0])
+                setrolename(recordrolename[0].name)
+            })
+    }, [])
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} dataDetailAccount={dataDetailAgent} st={st}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4" id="formAgentsWrapper">
                 <div className=" col-span-1 md:col-span-4">
                     <Sticky containerSelectorFocus="#formAgentsWrapper">
                         <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
-                            <h1 className="font-semibold py-2">Edit Agents</h1>
+                            <h1 className="font-semibold py-2">Detail Agents</h1>
                             <div className="flex space-x-2">
                                 <Link href={`/admin/agents`}>
                                     <Button type="default">
-                                        Cancel
+                                        Kembali
                                     </Button>
                                 </Link>
+                                <Button type="primary" style={{ backgroundColor: `red`, borderColor: `red` }}>
+                                    Hapus
+                                </Button>
                                 {
                                     [110, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                        <Button type="primary" loading={loadingsave} onClick={instanceForm.submit}>Save</Button>
+                                        // <Button type="primary" loading={loadingsave} onClick={instanceForm.submit}>Save</Button>
+                                        <Button type="primary" onClick={() => { rt.push(`/admin/agents/update/${dataDetailAgent.data.user_id}`) }}>Ubah Profil</Button>
                                         :
                                         null
                                 }
@@ -249,7 +255,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
                                     :
                                     <div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md w-auto md:mr-5">AKUN NON-AKTIF</div>
                             } */}
-                            {
+                            {/* {
                                 [112].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                     <div className="pt-1">
                                         {
@@ -268,12 +274,12 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
                                                 <Switch disabled checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
                                         }
                                     </div>
-                            }
+                            } */}
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4">
                             <div className="p-3 col-span-1 md:col-span-1 relative flex flex-col items-center">
                                 <img src={data1.profile_image} className=" object-cover w-32 h-32 rounded-full mb-4" />
-                                {
+                                {/* {
                                     [110].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <label className="custom-file-upload py-2 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3">
                                         <input type="file" style={{ display: `none` }} name="profile_image" onChange={onChangeEditFoto} />
@@ -288,7 +294,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
                                             Ubah Password
                                         </button>
                                     </div>
-                                }
+                                } */}
                             </div>
                             <div className="p-3 col-span-1 md:col-span-3">
                                 <h1 className="text-xs text-gray-600 mb-1">Email:</h1>
@@ -297,8 +303,8 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
                                     <h1 className="text-sm">ID</h1>
                                     <h1 className="text-sm font-semibold">{data1.id}</h1>
                                 </div>
-                                <Form layout="vertical" form={instanceForm} onFinish={handleSubmitEditAccount} initialValues={data1}>
-                                    <Form.Item label="Nama Lengkap" name="fullname" required tooltip="Wajib diisi"
+                                {/* <Form layout="vertical" form={instanceForm} onFinish={handleSubmitEditAccount} initialValues={data1}> */}
+                                {/* <Form.Item label="Nama Lengkap" name="fullname" required tooltip="Wajib diisi"
                                         rules={[
                                             {
                                                 required: true,
@@ -308,14 +314,14 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
                                         {
                                             [110].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                                 <Input defaultValue={data1.fullname} onChange={onChangeEditAgents} name="fullname" required />
-                                                :
-                                                <div className="col-span-1 flex flex-col mb-5">
-                                                    <h1 className="font-semibold text-sm">Nama Lengkap:</h1>
-                                                    <h1 className="text-sm font-normal text-black">{data1.fullname}</h1>
-                                                </div>
-                                        }
-                                    </Form.Item>
-                                    <Form.Item label="No. Handphone" name="phone_number" required tooltip="Wajib diisi"
+                                                : */}
+                                <div className="col-span-1 flex flex-col mb-5">
+                                    <h1 className="font-semibold text-sm">Nama Lengkap:</h1>
+                                    <h1 className="text-sm font-normal text-black">{data1.fullname}</h1>
+                                </div>
+                                {/* }
+                                    </Form.Item> */}
+                                {/* <Form.Item label="No. Handphone" name="phone_number" required tooltip="Wajib diisi"
                                         rules={[
                                             {
                                                 required: true,
@@ -325,15 +331,21 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
                                         {
                                             [110].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                                 <Input defaultValue={data1.phone_number} onChange={onChangeEditAgents} name="phone_number" />
-                                                :
-                                                <div className="col-span-1 flex flex-col mb-5">
-                                                    <h1 className="font-semibold text-sm">Nomor Telepon:</h1>
-                                                    <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
-                                                </div>
-                                        }
-                                    </Form.Item>
-                                    <h1 className="font-semibold">Role:</h1>
-                                    {
+                                                : */}
+                                <div className="col-span-1 flex flex-col mb-5">
+                                    <h1 className="font-semibold text-sm">Nomor Telepon:</h1>
+                                    <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
+                                </div>
+                                {/* }
+                                    </Form.Item> */}
+                                <h1 className="font-semibold">Role:</h1>
+                                {
+                                    rolename !== "" ?
+                                        <h1 className="text-sm font-normal text-black">{rolename}</h1>
+                                        :
+                                        <Spin />
+                                }
+                                {/* {
                                         [132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                             <Select onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }} allowClear>
                                                 {
@@ -354,12 +366,12 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
                                                     })
                                                 }
                                             </Select>
-                                    }
-                                </Form>
+                                    } */}
+                                {/* </Form> */}
                             </div>
                         </div>
                     </div>
-                    <Modal
+                    {/* <Modal
                         title="Konfirmasi untuk menon-aktifkan akun"
                         visible={visible}
                         onOk={() => { handleActivationAgents("aktif") }}
@@ -386,7 +398,7 @@ function AgentsDetail({ initProps, dataProfile, dataDetailAgent, dataRoles, side
                         okButtonProps={{ disabled: loadingubahpass }}
                     >
                         <Input.Password name="new_password" value={datapass.new_password} placeholder="Password Baru" type="password" onChange={(e) => { setDatapass({ ...datapass, [e.target.name]: e.target.value }) }} style={{ marginBottom: `2rem` }} />
-                    </Modal>
+                    </Modal> */}
                 </div>
             </div>
         </Layout>
