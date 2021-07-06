@@ -5,7 +5,7 @@ import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import st from '../../../../components/layout-dashboard-mig.module.css'
 import Link from 'next/link'
 import { Tabs, Input, Form, Table, Tree, Drawer, notification, message, Modal, Select, Button, Popconfirm, DatePicker, Upload } from 'antd'
@@ -80,6 +80,7 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
             .then(res2 => {
                 setloadingbtn(false)
                 if (res2.success) {
+                    setEditable(false)
                     notification['success']({
                         message: res2.message,
                         duration: 3
@@ -101,17 +102,17 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-6">
                 <div className="flex space-x-2">
                     {editable ?
-                        <Button type="default" onClick={() => { setEditable(false) }}>Cancel</Button>
+                        <Button type="default" onClick={() => { setEditable(false) }}>Batal</Button>
                         :
                         null
                     }
                     {editable ?
-                        <Button type="primary" onClick={instanceForm.submit} loading={loadingbtn}>Save</Button>
+                        <Button type="primary" onClick={instanceForm.submit} loading={loadingbtn}>Simpan</Button>
                         :
                         <>
                             {
                                 [145].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <Button type="primary" onClick={() => { setEditable(true) }}>Edit</Button>
+                                <Button type="primary" onClick={() => { setEditable(true) }}>Ubah</Button>
                             }
                         </>
                     }
@@ -321,15 +322,16 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
     )
 }
 
-function MigIndexLocations({ dataProfile, dataLocations, dataBranchList, tok }) {
+function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
     const rt = useRouter()
-    const [expandedKeys, setExpandedKeys] = useState([dataLocations.data[0].key])
+    const [expandedKeys, setExpandedKeys] = useState([dataBranchList.data[0].key])
     const [autoExpandParent, setAutoExpandParent] = useState(true);
-    const [datalocations, setdatalocations] = useState(dataLocations.data)
+    const [databranchlist, setdatabranchlist] = useState(dataBranchList.data)
     const [loadingtambah, setloadingtambah] = useState(false)
     const [loadingimage, setloadingimage] = useState(false)
     const [instanceForm] = Form.useForm()
     const [drawablecreate, setdrawablecreate] = useState(false)
+    const { Search } = Input;
     const onExpand = (expandedKeys) => {
         setExpandedKeys(expandedKeys);
         setAutoExpandParent(false);
@@ -415,6 +417,20 @@ function MigIndexLocations({ dataProfile, dataLocations, dataBranchList, tok }) 
                 }
             })
     }
+
+    //useEffect
+    useEffect(() => {
+        // fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
+        //     method: `POST`,
+        //     headers: {
+        //         'Authorization': JSON.parse(tok),
+        //     },
+        // })
+        //     .then(res => res.json())
+        //     .then(res2 => {
+        //         setdatabranchlist(res2)
+        //     })
+    }, [])
     return (
         <div id="locationssDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
@@ -429,11 +445,12 @@ function MigIndexLocations({ dataProfile, dataLocations, dataBranchList, tok }) 
             </div>
             <div className="p-5">
                 <h1 className="text-sm font-semibold">Pilih Parent terakhir</h1>
+                <Search style={{ marginBottom: 8 }} placeholder="Cari Lokasi" />
                 <Tree
                     onExpand={onExpand}
                     expandedKeys={expandedKeys}
                     autoExpandParent={autoExpandParent}
-                    treeData={datalocations}
+                    treeData={databranchlist}
                     titleRender={(nodeData) => (
                         <>
                             <div className={`flex justify-between hover:bg-blue-100 text-black`}
@@ -549,7 +566,7 @@ function MigIndexLocations({ dataProfile, dataLocations, dataBranchList, tok }) 
                                 ]}>
                                 <Select onChange={(value) => { setdatanew({ ...datanew, parent_id: value }) }}>
                                     {
-                                        dataBranchList.data.map((doc, idx) => {
+                                        databranchlist.map((doc, idx) => {
                                             return (
                                                 <Option key={idx} value={doc.company_id}>{doc.company_name}</Option>
                                             )
@@ -559,8 +576,8 @@ function MigIndexLocations({ dataProfile, dataLocations, dataBranchList, tok }) 
                             </Form.Item>
                         </div>
                         <div className="flex justify-end">
-                            <Button type='default' onClick={() => { setdrawablecreate(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
-                            <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingtambah} style={{ marginBottom: `1rem` }}>Save</Button>
+                            <Button type='default' onClick={() => { setdrawablecreate(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
+                            <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingtambah} style={{ marginBottom: `1rem` }}>Simpan</Button>
                         </div>
                     </Form>
                 </div>
@@ -569,20 +586,31 @@ function MigIndexLocations({ dataProfile, dataLocations, dataBranchList, tok }) 
     )
 }
 
-function MigIndexBankAccount({ dataProfile, dataGetBanks, tok }) {
-    if (!dataGetBanks.data) {
-        dataGetBanks.data = []
-    }
+function MigIndexBankAccount({ dataProfile, tok }) {
+    // if (!dataGetBanks.data) {
+    //     dataGetBanks.data = []
+    // }
     const rt = useRouter()
     const { Option } = Select
     const [editable, setEditable] = useState(false)
+    const [tambahdata, settambahdata] = useState(false)
+    const [editdata, seteditdata] = useState(false)
+    const [deldata, setdeldata] = useState(false)
     const [drawablecreate, setDrawablecreate] = useState(false)
     const [drawableedit, setDrawableedit] = useState(false)
     const [modaldel, setModaldel] = useState(false)
-    const [modaldeldata, setModaldeldata] = useState({})
+    const [modaldeldata, setModaldeldata] = useState({
+        id: 0,
+        name: '',
+        account_number: '',
+        owner: '',
+        currency: ''
+    })
     const [loadingbtncreate, setloadingbtncreate] = useState(false)
     const [loadingbtnedit, setloadingbtnedit] = useState(false)
     const [loadingdelete, setloadingdelete] = useState(false)
+    const [datagetBanks, setdatagetBanks] = useState([])
+    const [loadingdatagetBanks, setloadingdatagetBanks] = useState(false)
     // const [selectedrows, setSelectedrows] = useState([])
     const [recordrow, setRecordrow] = useState({
         id: 0,
@@ -598,7 +626,7 @@ function MigIndexBankAccount({ dataProfile, dataGetBanks, tok }) {
         currency: ''
     })
     var actionsArr = []
-    for (var i = 0; i < dataGetBanks.data.length; i++) {
+    for (var i = 0; i < datagetBanks.length; i++) {
         actionsArr.push(false)
     }
     const [actions, setActions] = useState(actionsArr)
@@ -640,6 +668,7 @@ function MigIndexBankAccount({ dataProfile, dataGetBanks, tok }) {
                     })
                     setTimeout(() => {
                         rt.push(`/admin/company/mig`)
+                        setdeldata(prev => !prev)
                     }, 500)
                 }
                 else {
@@ -678,6 +707,7 @@ function MigIndexBankAccount({ dataProfile, dataGetBanks, tok }) {
                     setTimeout(() => {
                         setDrawablecreate(false)
                         rt.push(`/admin/company/mig?active=bankAccounts`)
+                        settambahdata(prev => !prev)
                     }, 500)
                 }
                 else {
@@ -687,10 +717,8 @@ function MigIndexBankAccount({ dataProfile, dataGetBanks, tok }) {
                     })
                 }
             })
-        console.log("isi bank data: " + bankdata.name)
     }
     const handleSubmitEditBA = () => {
-        console.log("isidata2: " + recordrow)
         setloadingbtnedit(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateMainBank`, {
             method: 'PUT',
@@ -719,6 +747,7 @@ function MigIndexBankAccount({ dataProfile, dataGetBanks, tok }) {
                     setTimeout(() => {
                         setDrawableedit(false)
                         rt.push(`/admin/company/mig?active=bankAccounts`)
+                        seteditdata(prev => !prev)
                     }, 500)
                 }
                 else {
@@ -745,23 +774,23 @@ function MigIndexBankAccount({ dataProfile, dataGetBanks, tok }) {
                 }
             }
         },
+        // {
+        //     title: 'ID',
+        //     dataIndex: 'id',
+        //     render: (text, record, index) => {
+        //         return {
+        //             props: {
+        //                 style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+        //             },
+        //             children:
+        //                 <>
+        //                     {record.id}
+        //                 </>
+        //         }
+        //     }
+        // },
         {
-            title: 'ID',
-            dataIndex: 'id',
-            render: (text, record, index) => {
-                return {
-                    props: {
-                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children:
-                        <>
-                            {record.id}
-                        </>
-                }
-            }
-        },
-        {
-            title: 'Bank',
+            title: 'Nama Bank',
             dataIndex: 'name',
             render: (text, record, index) => {
                 return {
@@ -838,8 +867,9 @@ function MigIndexBankAccount({ dataProfile, dataGetBanks, tok }) {
             // onFilter: (value, record) => record.currency.indexOf(value) === 0,
         },
         {
-            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
+            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
             dataIndex: 'actionss',
+            align: 'center',
             render: (text, record, index) => {
                 return {
                     props: {
@@ -873,21 +903,46 @@ function MigIndexBankAccount({ dataProfile, dataGetBanks, tok }) {
             }
         }
     ];
-    var datagetBanks = []
-    dataGetBanks.data ?
-        datagetBanks = dataGetBanks.data.map((doc, idx) => {
-            return ({
-                key: idx + 1,
-                id: doc.id,
-                company_id: doc.company_id,
-                name: doc.name,
-                account_number: doc.account_number,
-                owner: doc.owner,
-                currency: doc.currency
-            })
+    // dataGetBanks.data ?
+    //     datagetBanks = dataGetBanks.data.map((doc, idx) => {
+    //         return ({
+    //             key: idx + 1,
+    //             id: doc.id,
+    //             company_id: doc.company_id,
+    //             name: doc.name,
+    //             account_number: doc.account_number,
+    //             owner: doc.owner,
+    //             currency: doc.currency
+    //         })
+    //     })
+    //     :
+    //     datagetBanks = []
+
+    useEffect(() => {
+        setloadingdatagetBanks(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getMainBanks`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(tok),
+            },
         })
-        :
-        datagetBanks = []
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingdatagetBanks(false)
+                const tempdata = res2.data.map((doc, idx) => {
+                    return ({
+                        key: idx + 1,
+                        id: doc.id,
+                        company_id: doc.company_id,
+                        name: doc.name,
+                        account_number: doc.account_number,
+                        owner: doc.owner,
+                        currency: doc.currency
+                    })
+                })
+                setdatagetBanks(tempdata)
+            })
+    }, [tambahdata, editdata, deldata])
     return (
         <div id="bankAccountDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
@@ -902,7 +957,7 @@ function MigIndexBankAccount({ dataProfile, dataGetBanks, tok }) {
                     }
                     {
                         [147].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                        <Button type="primary" onClick={() => { setDrawablecreate(true) }}>Add New</Button>
+                        <Button type="primary" onClick={() => { setDrawablecreate(true) }}>Tambah</Button>
                     }
                     {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40" onClick={() => { setDrawablecreate(true) }}> Create</button> */}
                     <Drawer title="Edit data Rekening Bank Perusahan MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false); }} width={370} destroyOnClose={true}>
@@ -954,8 +1009,8 @@ function MigIndexBankAccount({ dataProfile, dataGetBanks, tok }) {
                             </div>
                             <Form.Item>
                                 <div className="flex justify-end">
-                                    <Button type="default" onClick={() => { setDrawableedit(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
-                                    <Button htmlType="submit" type="primary" size="middle" loading={loadingbtnedit}>Save</Button>
+                                    <Button type="default" onClick={() => { setDrawableedit(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
+                                    <Button htmlType="submit" type="primary" size="middle" loading={loadingbtnedit}>Simpan</Button>
                                 </div>
                                 {/* <button type="submit" className="bg-gray-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-gray-800">Save</button> */}
                             </Form.Item>
@@ -1012,8 +1067,8 @@ function MigIndexBankAccount({ dataProfile, dataGetBanks, tok }) {
                             </div>
                             <Form.Item>
                                 <div className="flex justify-end">
-                                    <Button type="default" onClick={() => { setDrawablecreate(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
-                                    <Button htmlType="submit" type="primary" size="middle" loading={loadingbtncreate}>Save</Button>
+                                    <Button type="default" onClick={() => { setDrawablecreate(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
+                                    <Button htmlType="submit" type="primary" size="middle" loading={loadingbtncreate}>Simpan</Button>
                                 </div>
                                 {/* <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button> */}
                             </Form.Item>
@@ -1022,7 +1077,7 @@ function MigIndexBankAccount({ dataProfile, dataGetBanks, tok }) {
                 </div>
             </div>
             <div className="md:p-5">
-                <Table pagination={{ pageSize: 6 }} scroll={{ x: 200 }}
+                <Table pagination={{ pageSize: 6 }} scroll={{ x: 200 }} loading={loadingdatagetBanks}
                     onRow={(record, rowIndex) => {
                         return {
                             onMouseOver: (event) => {
@@ -1046,14 +1101,16 @@ function MigIndexBankAccount({ dataProfile, dataGetBanks, tok }) {
                 visible={modaldel}
                 onOk={() => { handleDeleteBA(modaldeldata) }}
                 onCancel={() => setModaldel(false)}
+                okText="Ya"
+                cancelText="Tidak"
                 okButtonProps={{ disabled: loadingdelete }}>
-                Apakah anda yakin ingin menghapus akun bank ini?
+                Apakah anda yakin ingin menghapus <strong>{modaldeldata.name} - {modaldeldata.account_number}</strong>?
             </Modal>
         </div>
     )
 }
 
-function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGetBanks, dataLocations, dataBranchList }) {
+function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataBranchList }) {
     const rt = useRouter()
     const { TabPane } = Tabs;
     const tok = initProps
@@ -1077,13 +1134,13 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGet
                     {
                         [146, 147, 148, 149].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Bank Account" key={`bankAccounts`}>
-                            <MigIndexBankAccount dataProfile={dataProfile} dataGetBanks={dataGetBanks} tok={tok} />
+                            <MigIndexBankAccount dataProfile={dataProfile} tok={tok} />
                         </TabPane>
                     }
                     {
                         [150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Locations" key={`locations`}>
-                            <MigIndexLocations dataProfile={dataProfile} dataLocations={dataLocations} dataDetailCompany={dataDetailCompany} dataBranchList={dataBranchList} tok={tok} />
+                            <MigIndexLocations dataProfile={dataProfile} dataBranchList={dataBranchList} dataDetailCompany={dataDetailCompany} tok={tok} />
                         </TabPane>
                     }
                 </Tabs>
@@ -1099,13 +1156,13 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGet
                     {
                         [146, 147, 148, 149].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Bank Account" key={`bankAccounts`}>
-                            <MigIndexBankAccount dataProfile={dataProfile} dataGetBanks={dataGetBanks} tok={tok} />
+                            <MigIndexBankAccount dataProfile={dataProfile} tok={tok} />
                         </TabPane>
                     }
                     {
                         [150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Locations" key={`locations`}>
-                            <MigIndexLocations dataProfile={dataProfile} dataLocations={dataLocations} dataDetailCompany={dataDetailCompany} dataBranchList={dataBranchList} tok={tok} />
+                            <MigIndexLocations dataProfile={dataProfile} dataBranchList={dataBranchList} dataDetailCompany={dataDetailCompany} tok={tok} />
                         </TabPane>
                     }
                 </Tabs>
@@ -1155,23 +1212,23 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGC = await resourcesGC.json()
     const dataDetailCompany = resjsonGC
 
-    const resourcesGB = await fetch(`https://boiling-thicket-46501.herokuapp.com/getMainBanks`, {
-        method: `GET`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-        },
-    })
-    const resjsonGB = await resourcesGB.json()
-    const dataGetBanks = resjsonGB
+    // const resourcesGB = await fetch(`https://boiling-thicket-46501.herokuapp.com/getMainBanks`, {
+    //     method: `GET`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //     },
+    // })
+    // const resjsonGB = await resourcesGB.json()
+    // const dataGetBanks = resjsonGB
 
-    const resourcesGL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-        },
-    })
-    const resjsonGL = await resourcesGL.json()
-    const dataLocations = resjsonGL
+    // const resourcesGL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //     },
+    // })
+    // const resjsonGL = await resourcesGL.json()
+    // const dataLocations = resjsonGL
 
     const resourcesBL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
         method: `POST`,
@@ -1186,8 +1243,8 @@ export async function getServerSideProps({ req, res }) {
             initProps,
             dataProfile,
             dataDetailCompany,
-            dataGetBanks,
-            dataLocations,
+            // dataGetBanks,
+            // dataLocations,
             dataBranchList,
             sidemenu: "4"
         },
