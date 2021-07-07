@@ -5,11 +5,25 @@ import EditOutlined from '@ant-design/icons/EditOutlined'
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import st from '../../../components/layout-dashboard-clients.module.css'
 import { Input, Form, Table, Upload, notification, Drawer, Button, TreeSelect, Select } from 'antd'
 
-function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataLocations }) {
+function modifData(dataa){
+    for(var i=0; i<dataa.length; i++){
+        dataa[i]['key'] = dataa[i].company_id
+        dataa[i]['value'] = dataa[i].company_id
+        dataa[i]['title'] = dataa[i].company_name
+        dataa[i]['children'] = dataa[i].members
+        delete dataa[i].members
+        if(dataa[i].children)[
+            modifData(dataa[i].children)
+        ]
+    }
+    return dataa
+}
+
+function ClientsIndex({ initProps, dataProfile, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
@@ -26,27 +40,30 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
         image_logo: '',
         parent_id: 0
     })
-    var dataTable = []
-    if (!dataCompanyList.data) {
-        dataTable = []
-        notification['error']({
-            message: dataCompanyList.message.errorInfo.status_detail,
-            duration: 3
-        })
-        rt.push('/admin/company')
-    }
-    else {
-        dataTable = dataCompanyList.data.filter(dataa => dataa.company_id != 66).map((doc, idx) => {
-            return ({
-                image_logo: doc.image_logo,
-                company_id: doc.company_id,
-                company_name: doc.company_name,
-                is_enabled: doc.is_enabled
-            })
-        })
-    }
+    const [datatable, setdatatable] = useState([])
+    const [datatablenonflat, setdatatablenonflat] = useState([])
+    const [loaddatatable, setloaddatatable] = useState(false)
+    // var dataTable = []
+    // if (!dataCompanyList.data) {
+    //     dataTable = []
+    //     notification['error']({
+    //         message: dataCompanyList.message.errorInfo.status_detail,
+    //         duration: 3
+    //     })
+    //     rt.push('/admin/company')
+    // }
+    // else {
+    //     dataTable = dataCompanyList.data.filter(dataa => dataa.company_id != 66).map((doc, idx) => {
+    //         return ({
+    //             image_logo: doc.image_logo,
+    //             company_id: doc.company_id,
+    //             company_name: doc.company_name,
+    //             is_enabled: doc.is_enabled
+    //         })
+    //     })
+    // }
     const eventsArr = []
-    for (var i = 0; i < dataTable.length; i++) {
+    for (var i = 0; i < datatable.length; i++) {
         eventsArr.push(false)
     }
     const [events, setEvents] = useState(eventsArr)
@@ -70,25 +87,25 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
                 }
             }
         },
-        {
-            title: 'ID',
-            dataIndex: 'company_id',
-            render: (text, record, index) => {
-                return {
-                    props: {
-                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children:
-                        <>
-                            <Link href={`/admin/company/${record.company_id}`}>
-                                <a><h1>{record.company_id}</h1></a>
-                            </Link>
-                        </>
-                }
-            },
-            // sorter: (a, b) => a.company_id - b.company_id,
-            // sortDirections: ['descend', 'ascend'],
-        },
+        // {
+        //     title: 'ID',
+        //     dataIndex: 'company_id',
+        //     render: (text, record, index) => {
+        //         return {
+        //             props: {
+        //                 style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+        //             },
+        //             children:
+        //                 <>
+        //                     <Link href={`/admin/company/${record.company_id}`}>
+        //                         <a><h1>{record.company_id}</h1></a>
+        //                     </Link>
+        //                 </>
+        //         }
+        //     },
+        //     // sorter: (a, b) => a.company_id - b.company_id,
+        //     // sortDirections: ['descend', 'ascend'],
+        // },
         {
             title: 'Nama Perusahaan',
             dataIndex: 'company_name',
@@ -287,6 +304,33 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
             })
         console.log("isi bank data: " + newclients.name)
     }
+
+    //useEffect
+    useEffect(() => {
+        setloaddatatable(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
+            method: `POST`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                const temp = res2.data.filter(dataa => dataa.company_id != 66).map((doc, idx) => {
+                    return ({
+                        image_logo: doc.image_logo,
+                        company_id: doc.company_id,
+                        company_name: doc.company_name,
+                        is_enabled: doc.is_enabled
+                    })
+                })
+                setdatatable(temp)
+                setloaddatatable(false)
+                const d = modifData(res2.data)
+                setdatatablenonflat(d)
+            })
+    }, [])
     return (
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
             <div className="flex justify-start md:justify-end p-3 md:border-t-2 md:border-b-2 bg-white mb-4 md:mb-8">
@@ -294,7 +338,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
                     <h1 className="font-bold">Clients</h1>
                     {
                         [157].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                        <Button type="primary" size="large" onClick={() => { setDrawablecreate(true) }}>Add New</Button>
+                        <Button type="primary" size="large" onClick={() => { setDrawablecreate(true); }}>Tambah</Button>
                     }
                 </div>
             </div>
@@ -321,7 +365,8 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
                     //     }
                     // }}
                     columns={columnsTable}
-                    dataSource={dataTable}
+                    dataSource={datatable}
+                    loading={loaddatatable}
                 />
                 {/* {
                     dataCompanyList.data.companies.map((doc, idx) => {
@@ -405,18 +450,17 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
                             </Form.Item>
                         </div>
                         <div className="mb:m-4 mb-5 md:mb-0">
-                            <Form.Item name="parent_id" label="Parent Perusahaan"
+                            <Form.Item name="parent_id" label="Induk Perusahaan"
                                 rules={[
                                     {
                                         required: true,
-                                        message: 'Nomor telepon wajib diisi',
+                                        message: 'Induk perusahaan wajib diisi',
                                     },
                                 ]}>
                                 <TreeSelect
-
                                     dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                    treeData={dataLocations.data}
-                                    placeholder="Pilih parent"
+                                    treeData={datatablenonflat}
+                                    placeholder="Pilih induk"
                                     treeDefaultExpandAll
                                     onChange={(value) => { onChangeParent(value) }}
                                 />
@@ -436,8 +480,8 @@ function ClientsIndex({ initProps, dataProfile, sidemenu, dataCompanyList, dataL
                             </Form.Item>
                         </div>
                         <div className="flex justify-end">
-                            <Button type='default' onClick={() => { setDrawablecreate(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
-                            <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn} style={{ marginBottom: `1rem` }}>Save</Button>
+                            <Button type='default' onClick={() => { setDrawablecreate(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
+                            <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn} style={{ marginBottom: `1rem` }}>Simpan</Button>
                         </div>
                     </Form>
                 </div>
@@ -479,32 +523,31 @@ export async function getServerSideProps({ req, res }) {
         res.end()
     }
 
-    const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-            'Content-Type': 'application/json'
-        },
-        // body: JSON.stringify(reqBody)
-    })
-    const resjsonGCL = await resourcesGCL.json()
-    const dataCompanyList = resjsonGCL
+    // const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //         'Content-Type': 'application/json'
+    //     },
+    // })
+    // const resjsonGCL = await resourcesGCL.json()
+    // const dataCompanyList = resjsonGCL
 
-    const resourcesGL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-        },
-    })
-    const resjsonGL = await resourcesGL.json()
-    const dataLocations = resjsonGL
+    // const resourcesGL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //     },
+    // })
+    // const resjsonGL = await resourcesGL.json()
+    // const dataLocations = resjsonGL
 
     return {
         props: {
             initProps,
             dataProfile,
-            dataCompanyList,
-            dataLocations,
+            // dataCompanyList,
+            // dataLocations,
             sidemenu: "4"
         }
     }

@@ -8,7 +8,7 @@ import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import { useEffect, useState } from 'react'
 import st from '../../../../components/layout-dashboard-mig.module.css'
 import Link from 'next/link'
-import { Tabs, Input, Form, Table, Tree, Drawer, notification, message, Modal, Select, Button, Popconfirm, DatePicker, Upload } from 'antd'
+import { Tabs, Input, Form, Table, Tree, Drawer, notification, message, Modal, Select, Button, TreeSelect, DatePicker, Upload } from 'antd'
 import moment from 'moment'
 
 function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
@@ -327,6 +327,11 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
     const [expandedKeys, setExpandedKeys] = useState([dataBranchList.data[0].key])
     const [autoExpandParent, setAutoExpandParent] = useState(true);
     const [databranchlist, setdatabranchlist] = useState(dataBranchList.data)
+    const [tambahdata, settambahdata] = useState(false)
+    const [editdata, seteditdata] = useState(false)
+    const [deldata, setdeldata] = useState(false)
+    const [defvalparent, setdefvalparent] = useState("")
+    const [frominduk, setfrominduk] = useState(false)
     const [loadingtambah, setloadingtambah] = useState(false)
     const [loadingimage, setloadingimage] = useState(false)
     const [instanceForm] = Form.useForm()
@@ -385,6 +390,17 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
     }
     //Handler
     const handleCreateLocationsMig = () => {
+        setdatanew({
+            ...datanew,
+            parent_id: defvalparent
+        })
+        if (datanew.address === "" || datanew.phone_number === "") {
+            setdatanew({
+                ...datanew,
+                address: '-',
+                phone_number: '-'
+            })
+        }
         setloadingtambah(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyBranch`, {
             method: 'POST',
@@ -398,12 +414,21 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
             .then(res2 => {
                 setloadingtambah(false)
                 if (res2.success) {
+                    setdatanew({
+                        name: '',
+                        address: '',
+                        phone_number: '',
+                        image_logo: '',
+                        parent_id: 0
+                    })
+                    setdrawablecreate(false)
                     notification['success']({
                         message: res2.message,
                         duration: 3
                     })
                     setTimeout(() => {
                         rt.push(`/admin/company/mig`)
+                        settambahdata(prev => !prev)
                     }, 800)
                 }
                 else if (!res2.success) {
@@ -420,17 +445,17 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
 
     //useEffect
     useEffect(() => {
-        // fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
-        //     method: `POST`,
-        //     headers: {
-        //         'Authorization': JSON.parse(tok),
-        //     },
-        // })
-        //     .then(res => res.json())
-        //     .then(res2 => {
-        //         setdatabranchlist(res2)
-        //     })
-    }, [])
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
+            method: `POST`,
+            headers: {
+                'Authorization': JSON.parse(tok),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatabranchlist(res2.data)
+            })
+    }, [tambahdata])
     return (
         <div id="locationssDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
@@ -438,7 +463,7 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                     {/* <Link href={`/admin/company/locations/new?companyId=${dataDetailCompany.data.data.company_id}&parent=`}> */}
                     {
                         [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                        <Button type="primary" size="middle" onClick={() => { setdrawablecreate(true) }}>Tambah</Button>
+                        <Button type="primary" size="middle" onClick={() => { setdrawablecreate(true); setfrominduk(false) }}>Tambah</Button>
                     }
                     {/* </Link> */}
                 </div>
@@ -465,25 +490,25 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                                     e.classList.remove("flex")
                                 }}
                             >
-                                <div className="mr-20">
+                                <div className=" w-full" onClick={() => { rt.push(`/admin/company/locations/${nodeData.id}?parent=${nodeData.id_parent}&edit=`) }}>
                                     {nodeData.title}
                                 </div>
                                 <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
                                     {/* <Link href={`/admin/company/locations/new?parent=${nodeData.id}&companyId=${dataDetailCompany.data.company_id}`}> */}
                                     {
                                         [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                        <a className="mx-2 pb-1" onClick={(e) => { setdrawablecreate(true) }} alt="add"><PlusOutlined /></a>
+                                        <a className="mx-2 pb-1" onClick={(e) => { setdrawablecreate(true); setdefvalparent(nodeData.id); setfrominduk(true) }} alt="add"><PlusOutlined /></a>
                                     }
                                     {/* </Link> */}
                                     {
                                         [151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                        <Link href={`/admin/company/locations/update/${nodeData.id}?parent=${nodeData.title}`}>
+                                        <Link href={`/admin/company/locations/${nodeData.id}?parent=${nodeData.title}&edit=1`}>
                                             <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                         </Link>
                                     }
-                                    <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("API is not available") }} onCancel={() => { message.error("Gagal dihapus") }}>
+                                    {/* <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("API is not available") }} onCancel={() => { message.error("Gagal dihapus") }}>
                                         <a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a>
-                                    </Popconfirm>
+                                    </Popconfirm> */}
                                 </div>
                             </div>
                         </>
@@ -492,7 +517,7 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                     blockNode={true}
                 />
             </div>
-            <Drawer title="Buat Branch" maskClosable={false} visible={drawablecreate} onClose={() => {
+            <Drawer title="Buat Branch" maskClosable={false} destroyOnClose={true} visible={drawablecreate} onClose={() => {
                 setdrawablecreate(false);
                 setdatanew({
                     name: '',
@@ -529,42 +554,43 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                                     },
                                 ]}
                             >
-                                <Input name="name" onChange={(e) => { setdatanew({ ...datanew, name: e.target.value }) }}></Input>
+                                <Input name="name" allowClear onChange={(e) => { setdatanew({ ...datanew, name: e.target.value }) }}></Input>
                             </Form.Item>
                         </div>
                         <div className="md:m-4 mb-5 md:mb-0 ">
-                            <Form.Item name="address" label="Alamat"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Alamat wajib diisi',
-                                    },
-                                ]}
-                            >
-                                <Input name="address" onChange={(e) => { setdatanew({ ...datanew, address: e.target.value }) }}></Input>
+                            <Form.Item name="address" label="Alamat">
+                                <Input name="address" allowClear onChange={(e) => { setdatanew({ ...datanew, address: e.target.value }) }}></Input>
                             </Form.Item>
                         </div>
                         <div className="md:m-4 mb-5 md:mb-0 ">
-                            <Form.Item name="phone_number" label="Telepon"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Nomor telepon wajib diisi',
-                                    },
-                                ]}
-                            >
-                                <Input name="phone_number" onChange={(e) => { setdatanew({ ...datanew, phone_number: e.target.value }) }}></Input>
+                            <Form.Item name="phone_number" label="Telepon">
+                                <Input name="phone_number" allowClear onChange={(e) => { setdatanew({ ...datanew, phone_number: e.target.value }) }}></Input>
                             </Form.Item>
                         </div>
                         <div className="md:m-4 mb-5 md:mb-0">
-                            <Form.Item name="parent_id" label="Parent Perusahaan"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Parent Perusahaan wajib diisi',
-                                    },
-                                ]}>
-                                <Select onChange={(value) => { setdatanew({ ...datanew, parent_id: value }) }}>
+                            {
+                                frominduk ?
+                                    <Form.Item label="Induk Lokasi">
+                                        <TreeSelect
+                                            disabled
+                                            allowClear
+                                            defaultValue={defvalparent}
+                                            style={{ width: '100%' }}
+                                            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                            treeData={databranchlist}
+                                            treeDefaultExpandAll
+                                            value={defvalparent}
+                                        />
+                                    </Form.Item>
+                                    :
+                                    <Form.Item name="parent_id" label="Induk Lokasi"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Parent Perusahaan wajib diisi',
+                                            },
+                                        ]}>
+                                        {/* <Select onChange={(value) => { setdatanew({ ...datanew, parent_id: value }) }}>
                                     {
                                         databranchlist.map((doc, idx) => {
                                             return (
@@ -572,8 +598,18 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                                             )
                                         })
                                     }
-                                </Select>
-                            </Form.Item>
+                                </Select> */}
+                                        <TreeSelect
+                                            allowClear
+                                            style={{ width: '100%' }}
+                                            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                            treeData={databranchlist}
+                                            placeholder="Tambah Induk Lokasi"
+                                            treeDefaultExpandAll
+                                            onChange={(value) => { setdatanew({ ...datanew, parent_id: value }) }}
+                                        />
+                                    </Form.Item>
+                            }
                         </div>
                         <div className="flex justify-end">
                             <Button type='default' onClick={() => { setdrawablecreate(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
