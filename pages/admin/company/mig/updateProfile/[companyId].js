@@ -5,7 +5,7 @@ import { LoadingOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
 import st from '../../../../../components/layout-dashboard.module.css'
 import { EditOutlined } from '@ant-design/icons'
-import { Form, DatePicker, Input, notification, Button, Modal } from 'antd'
+import { Form, DatePicker, Input, InputNumber, notification, Button, Modal } from 'antd'
 import moment from 'moment'
 
 
@@ -198,8 +198,14 @@ function MyCompanyUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailMy
                                 <div className="md:m-5 mb-5 md:mb-0">
                                     {
                                         editable ?
-                                            <Form.Item name="phone_number" label="Telepon">
-                                                <Input defaultValue={data1.phone_number} name="phone_number" onChange={onChangeEditProfile}></Input>
+                                            <Form.Item name="phone_number" label="No. Telepon"
+                                                rules={[
+                                                    {
+                                                        type: `number`,
+                                                        message: 'Nomor Telepon harus berupa angka'
+                                                    }
+                                                ]}>
+                                                <InputNumber defaultValue={data1.phone_number} name="phone_number" onChange={(val) => { setData1({ ...data1, phone_number: `0${val}` }) }} style={{ width: `100%` }}></InputNumber>
                                             </Form.Item>
                                             :
                                             <>
@@ -270,8 +276,14 @@ function MyCompanyUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailMy
                                 <div className="md:m-5 mb-5 md:mb-0">
                                     {
                                         editable ?
-                                            <Form.Item name="fax" label="Fax">
-                                                <Input defaultValue={data1.fax} name="fax" onChange={onChangeEditProfile}></Input>
+                                            <Form.Item name="fax" label="Fax"
+                                            rules={[
+                                                {
+                                                    type: `number`,
+                                                    message: 'Fax harus berupa angka'
+                                                }
+                                            ]}>
+                                                <InputNumber defaultValue={data1.fax} name="fax" onChange={(val) => { setData1({ ...data1, fax: `0${val}` }) }} style={{ width: `100%` }}></InputNumber>
                                             </Form.Item>
                                             :
                                             <>
@@ -283,7 +295,13 @@ function MyCompanyUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailMy
                                 <div className="md:m-5 mb-5 md:mb-0">
                                     {
                                         editable ?
-                                            <Form.Item name="email" label="Email">
+                                            <Form.Item name="email" label="Email"
+                                            rules={[
+                                                {
+                                                    type: `email`,
+                                                    message: 'Email tidak sesuai'
+                                                }
+                                            ]}>
                                                 <Input defaultValue={data1.email} name="email" onChange={onChangeEditProfile}></Input>
                                             </Form.Item>
                                             :

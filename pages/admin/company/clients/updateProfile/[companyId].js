@@ -185,7 +185,7 @@ function ClientUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailCompa
                                 <div className="md:m-5 mb-5 md:mb-0">
                                     {
                                         editable ?
-                                            <Form.Item name="phone_number" label="Telepon">
+                                            <Form.Item name="phone_number" label="No. Telepon">
                                                 <Input defaultValue={data1.phone_number} name="phone_number" onChange={onChangeEditProfile}></Input>
                                             </Form.Item>
                                             :
