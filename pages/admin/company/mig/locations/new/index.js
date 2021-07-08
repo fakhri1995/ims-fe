@@ -1,5 +1,5 @@
 import httpcookie from 'cookie'
-import Layout from '../../../../../../../components/layout-dashboard'
+import Layout from '../../../../../../components/layout-dashboard'
 import Link from 'next/link'
 import st from "../../../../../../components/layout-dashboard.module.css"
 import { useState } from 'react'
@@ -283,13 +283,13 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
     )
 }
 
-export async function getServerSideProps({ req, res, query }) {
+export async function getServerSideProps({ req, res }) {
     var initProps = {};
-    const companyid = query.companyId
-    const parentt = query.parent
-    const reqBodyCompanyDetail = {
-        company_id: companyid
-    }
+    // const companyid = query.companyId
+    // const parentt = query.parent
+    // const reqBodyCompanyDetail = {
+    //     company_id: companyid
+    // }
     if (req && req.headers) {
         const cookies = req.headers.cookie;
         if (!cookies) {
@@ -343,8 +343,8 @@ export async function getServerSideProps({ req, res, query }) {
             dataProfile,
             // dataDetailCompany,
             dataLocations,
-            parentt,
-            companyid,
+            // parentt,
+            // companyid,
             sidemenu: "4"
         },
     }
