@@ -98,7 +98,7 @@ function MyCompanyUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailMy
             .then(res2 => {
                 setloadingbtn(false)
                 if (res2.success) {
-                    setEditable(false)
+                    // setEditable(false)
                     notification['success']({
                         message: res2.message,
                         duration: 3
@@ -201,11 +201,12 @@ function MyCompanyUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailMy
                                             <Form.Item name="phone_number" label="No. Telepon"
                                                 rules={[
                                                     {
-                                                        type: `number`,
+                                                        pattern: /(\-)|(^\d*$)/,
                                                         message: 'Nomor Telepon harus berupa angka'
                                                     }
                                                 ]}>
-                                                <InputNumber defaultValue={data1.phone_number} name="phone_number" onChange={(val) => { setData1({ ...data1, phone_number: `0${val}` }) }} style={{ width: `100%` }}></InputNumber>
+                                                <Input defaultValue={data1.phone_number} name="phone_number" onChange={onChangeEditProfile}></Input>
+                                                {/* <Input defaultValue={data1.phone_number} name="phone_number" onChange={(val) => { setData1({ ...data1, phone_number: `0${val}` }) }} style={{ width: `100%` }}></Input> */}
                                             </Form.Item>
                                             :
                                             <>
@@ -277,13 +278,14 @@ function MyCompanyUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailMy
                                     {
                                         editable ?
                                             <Form.Item name="fax" label="Fax"
-                                            rules={[
-                                                {
-                                                    type: `number`,
-                                                    message: 'Fax harus berupa angka'
-                                                }
-                                            ]}>
-                                                <InputNumber defaultValue={data1.fax} name="fax" onChange={(val) => { setData1({ ...data1, fax: `0${val}` }) }} style={{ width: `100%` }}></InputNumber>
+                                                rules={[
+                                                    {
+                                                        pattern: /(\-)|(^\d*$)/,
+                                                        message: 'Fax harus berupa angka'
+                                                    }
+                                                ]}>
+                                                <Input defaultValue={data1.fax} name="fax" onChange={onChangeEditProfile}></Input>
+                                                {/* <InputNumber defaultValue={data1.fax} name="fax" onChange={(val) => { setData1({ ...data1, fax: `0${val}` }) }} style={{ width: `100%` }}></InputNumber> */}
                                             </Form.Item>
                                             :
                                             <>
@@ -296,12 +298,12 @@ function MyCompanyUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailMy
                                     {
                                         editable ?
                                             <Form.Item name="email" label="Email"
-                                            rules={[
-                                                {
-                                                    type: `email`,
-                                                    message: 'Email tidak sesuai'
-                                                }
-                                            ]}>
+                                                rules={[
+                                                    {
+                                                        pattern: /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
+                                                        message: 'Email tidak sesuai'
+                                                    }
+                                                ]}>
                                                 <Input defaultValue={data1.email} name="email" onChange={onChangeEditProfile}></Input>
                                             </Form.Item>
                                             :
