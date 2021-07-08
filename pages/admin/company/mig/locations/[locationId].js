@@ -1,7 +1,7 @@
 import httpcookie from 'cookie'
-import Layout from '../../../../components/layout-dashboard'
+import Layout from '../../../../../components/layout-dashboard'
 import { useEffect, useState } from 'react'
-import st from "../../../../components/layout-dashboard.module.css"
+import st from "../../../../../components/layout-dashboard.module.css"
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons'
 import { Form, Input, notification, Button, message, Upload, DatePicker } from 'antd'
 import { useRouter } from 'next/router'
@@ -9,8 +9,7 @@ import moment from 'moment'
 
 function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, companyid }) {
     const rt = useRouter()
-    const { edit } = rt.query
-    console.log(typeof(edit))
+    const { edit, cancel } = rt.query
     const tok = initProps
     const originPath = "Admin"
     const [updateLocationForm] = Form.useForm()
@@ -142,7 +141,8 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, c
                         duration: 3
                     })
                     setTimeout(() => {
-                        seteditable(false)
+                        rt.push(`/admin/company/mig`)
+                        // seteditable(false)
                     }, 800)
                 }
                 else if (!res2.success && res2.message) {
@@ -167,9 +167,9 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, c
     }
 
     //useEffect
-    useEffect(()=>{
+    useEffect(() => {
         edit === "1" ? seteditable(true) : seteditable(false)
-    },[])
+    }, [])
 
     return (
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} dataDetailCompany={dataBranchDetail} st={st}>
@@ -185,11 +185,14 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, c
                                 {
                                     editable ?
                                         <>
-                                            <Button type="default" onClick={() => { seteditable(false) }} size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
+                                            <Button type="default" onClick={() => { rt.push(`/admin/company/mig`) }} size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
                                             <Button type="primary" size="middle" loading={loadingupdate} onClick={updateLocationForm.submit}>Simpan</Button>
                                         </>
                                         :
-                                        <Button type="primary" onClick={() => { seteditable(true) }}>Ubah</Button>
+                                        <>
+                                            <Button type="default" onClick={() => { rt.push(`/admin/company/mig`) }} size="middle" style={{ marginRight: `1rem` }}>Kembali</Button>
+                                            <Button type="primary" onClick={() => { window.location.href = `/admin/company/mig/locations/${companyid}?edit=1` }}>Ubah</Button>
+                                        </>
                                 }
                             </div>
                         </div>
@@ -420,22 +423,29 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, c
 }
 
 export async function getServerSideProps({ req, res, params }) {
-    var initProps = {};
     const companyid = params.locationId
     const reqBodyCompanyDetail = {
         company_id: companyid
     }
-    if (req && req.headers) {
-        const cookies = req.headers.cookie;
-        if (!cookies) {
-            res.writeHead(302, { Location: '/login' })
-            res.end()
-        }
-        if (typeof cookies === 'string') {
-            const cookiesJSON = httpcookie.parse(cookies);
-            initProps = cookiesJSON.token
+    var initProps = {};
+    if (!req.headers.cookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
         }
     }
+    const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+    if (!cookiesJSON1.token) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
+        }
+    }
+    initProps = cookiesJSON1.token
 
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,

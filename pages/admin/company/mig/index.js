@@ -112,7 +112,7 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
                         <>
                             {
                                 [145].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <Button type="primary" onClick={() => { setEditable(true) }}>Ubah</Button>
+                                <Button type="primary" onClick={() => { rt.push(`/admin/company/mig/updateProfile/${dataDetailCompany.data.company_id}`) }}>Ubah</Button>
                             }
                         </>
                     }
@@ -204,7 +204,7 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
                                         </Form.Item>
                                         :
                                         <>
-                                            <h1 className="font-semibold text-sm">Telepon:</h1>
+                                            <h1 className="font-semibold text-sm">No. Telepon:</h1>
                                             <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
                                         </>
                                 }
@@ -490,7 +490,7 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                                     e.classList.remove("flex")
                                 }}
                             >
-                                <div className=" w-full" onClick={() => { rt.push(`/admin/company/locations/${nodeData.id}?parent=${nodeData.id_parent}&edit=`) }}>
+                                <div className=" w-full" onClick={() => { rt.push(`/admin/company/mig/locations/${nodeData.id}?parent=${nodeData.id_parent}&edit=`) }}>
                                     {nodeData.title}
                                 </div>
                                 <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
@@ -502,7 +502,7 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                                     {/* </Link> */}
                                     {
                                         [151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                        <Link href={`/admin/company/locations/${nodeData.id}?parent=${nodeData.title}&edit=1`}>
+                                        <Link href={`/admin/company/mig/locations/${nodeData.id}?parent=${nodeData.title}&edit=1`}>
                                             <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                         </Link>
                                     }
@@ -917,15 +917,15 @@ function MigIndexBankAccount({ dataProfile, tok }) {
                                 actions[index] ?
                                     <>{actions[index]}
                                         {
-                                            [149].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                            <Button onClick={() => { setModaldel(true); setModaldeldata(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
-                                                <DeleteOutlined />
-                                            </Button>
-                                        }
-                                        {
                                             [148].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                             <Button onClick={() => { setDrawableedit(true); setRecordrow(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
                                                 <EditOutlined />
+                                            </Button>
+                                        }
+                                        {
+                                            [149].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                            <Button type="danger" onClick={() => { setModaldel(true); setModaldeldata(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
+                                                <DeleteOutlined />
                                             </Button>
                                         }
                                         {/* <a onClick={() => { setModaldel(true); setModaldeldata(record) }}><DeleteOutlined /></a>
@@ -1209,20 +1209,24 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataBra
 
 export async function getServerSideProps({ req, res }) {
     var initProps = {};
-    const reqBodyMigDetail = {
-        company_id: 66
-    }
-    if (req && req.headers) {
-        const cookies = req.headers.cookie;
-        if (!cookies) {
-            res.writeHead(302, { Location: '/' })
-            res.end()
-        }
-        if (typeof cookies === 'string') {
-            const cookiesJSON = httpcookie.parse(cookies);
-            initProps = cookiesJSON.token
+    if (!req.headers.cookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
         }
     }
+    const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+    if (!cookiesJSON1.token) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
+        }
+    }
+    initProps = cookiesJSON1.token
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,
         headers: {

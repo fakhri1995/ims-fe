@@ -157,7 +157,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             }
                             {dataProfile.data.registered_feature.includes(155) ?
                                 <Link href={{
-                                    pathname: '/admin/company/',
+                                    pathname: '/admin/company/clients',
                                 }}>
                                     <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                         <div className="flex">
