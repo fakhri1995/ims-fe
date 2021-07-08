@@ -171,6 +171,11 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, dataBranchDet
         edit === "1" ? seteditable(true) : seteditable(false)
     }, [])
 
+    useEffect(() => {
+        dataupdate.address === "" ? setdataupdate({ ...dataupdate, address: "-" }) : ""
+        dataupdate.phone_number === "" ? setdataupdate({ ...dataupdate, phone_number: "-" }) : ""
+    }, [dataupdate])
+
     return (
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} originPath={originPath} dataDetailCompany={dataBranchDetail} st={st}>
             <div className="w-full h-auto border-t border-opacity-30 border-gray-500 bg-white">
@@ -240,14 +245,7 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, dataBranchDet
                                     }
                                     {
                                         editable ?
-                                            <Form.Item name="address" style={{ marginRight: `1rem` }} label="Alamat Lengkap"
-                                                rules={[
-                                                    {
-                                                        required: true,
-                                                        message: 'Alamat harus diisi',
-                                                    },
-                                                ]}
-                                            >
+                                            <Form.Item name="address" style={{ marginRight: `1rem` }} label="Alamat Lengkap">
                                                 <Input defaultValue={dataupdate.address} name="address" id="address" allowClear onChange={onChangeForm} />
                                             </Form.Item>
                                             :
@@ -260,14 +258,7 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, dataBranchDet
                                     }
                                     {
                                         editable ?
-                                            <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="No. Telepeon"
-                                                rules={[
-                                                    {
-                                                        required: true,
-                                                        message: 'No. Telepon harus diisi',
-                                                    },
-                                                ]}
-                                            >
+                                            <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="No. Telepeon">
                                                 <Input defaultValue={dataupdate.phone_number} name="phone_number" id="phone_number" allowClear onChange={onChangeForm} />
                                             </Form.Item>
                                             :

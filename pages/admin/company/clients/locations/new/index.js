@@ -7,10 +7,10 @@ import { useRouter } from 'next/router'
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons'
 import { Form, Input, Button, Upload, message, notification, Select, TreeSelect } from 'antd'
 
-function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt, companyid }) {
+function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }) {
     const rt = useRouter()
     const tok = initProps
-    const pathArr = ['admin', 'company', `mig`, 'New branch location']
+    const pathArr = ['admin', 'company', `clients`, 'New location']
     const { parent, frominduk } = rt.query
     const [createLocationForm] = Form.useForm()
     const [par, setPar] = useState()
@@ -42,7 +42,7 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
     // })
 
     //useState
-    const [datalocationmycompany, setdatalocationmycompany] = useState([])
+    const [datalocationclient, setdatalocationclient] = useState([])
     const [frominduk1, setfrominduk1] = useState(frominduk)
     const [datanew, setdatanew] = useState({
         name: '',
@@ -120,13 +120,13 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
     }
 
     //Handler
-    const handleCreateLocationsMig = () => {
+    const handleCreateLocationsClients = () => {
         setdatanew({
             ...datanew,
             parent_id: Number(parent)
         })
         setloadingcreate(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyBranch`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyClient`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -138,12 +138,20 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
             .then(res2 => {
                 setloadingcreate(false)
                 if (res2.success) {
+                    setdatanew({
+                        name: '',
+                        address: '',
+                        phone_number: '',
+                        image_logo: '',
+                        parent_id: 0
+                    })
                     notification['success']({
                         message: res2.message,
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/mig`)
+                        rt.push(`/admin/company/clients/${parent}`)
+                        settambahdata(prev => !prev)
                     }, 800)
                 }
                 else if (!res2.success) {
@@ -160,7 +168,7 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
             method: `POST`,
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -168,7 +176,7 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
         })
             .then(res => res.json())
             .then(res2 => {
-                setdatalocationmycompany(res2.data)
+                setdatalocationclient(res2.data)
                 setExpandedKeys([res2.data[0].key])
                 setdatanew({ ...datanew, parent_id: Number(parent) })
             })
@@ -190,7 +198,7 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
                                 {/* <h1 className="mt-2 text-xs font-medium">{dataDetailCompany.data.company_name}</h1> */}
                             </div>
                             <div className="flex mx-2">
-                                <Link href={`/admin/company/mig`}>
+                                <Link href={`/admin/company/clients/${parent}`}>
                                     <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
                                     {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-5 rounded-md mx-2">Cancel</button> */}
                                 </Link>
@@ -213,7 +221,7 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
                             </Upload>
                         </div>
                         <div className="p-2 md:p-5 shadow-md">
-                            <Form layout="vertical" form={createLocationForm} onFinish={handleCreateLocationsMig}>
+                            <Form layout="vertical" form={createLocationForm} onFinish={handleCreateLocationsClients}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 mb-5">
                                     <Form.Item name="name" style={{ marginRight: `1rem` }} label="Nama Anak Perusahaan"
                                         rules={[
@@ -234,7 +242,7 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
                                                     defaultValue={Number(parent)}
                                                     style={{ width: '100%' }}
                                                     dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                                    treeData={datalocationmycompany}
+                                                    treeData={datalocationclient}
                                                     treeDefaultExpandAll
                                                     value={Number(parent)}
                                                 />
@@ -251,18 +259,20 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
                                                     allowClear
                                                     style={{ width: '100%' }}
                                                     dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                                    treeData={datalocationmycompany}
+                                                    treeData={datalocationclient}
                                                     placeholder="Tambah Induk Lokasi"
                                                     treeDefaultExpandAll
                                                     onChange={(value) => { setdatanew({ ...datanew, parent_id: value }) }}
                                                 />
                                             </Form.Item>
                                     }
-                                    <Form.Item name="address" style={{ marginRight: `1rem` }} label="Alamat Lengkap">
-                                        <Input.TextArea rows={4} name="address" id="address" onChange={onChangeForm}/>
+                                    <Form.Item name="address" style={{ marginRight: `1rem` }} label="Alamat Lengkap"
+                                    >
+                                        <Input.TextArea rows={4} name="address" id="address" allowClear onChange={onChangeForm} />
                                     </Form.Item>
-                                    <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="No. Telepeon">
-                                        <Input name="phone_number" allowClear onChange={onChangeForm}/>
+                                    <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="Nomor Telepeon"
+                                    >
+                                        <Input name="phone_number" id="phone_number" allowClear onChange={onChangeForm} />
                                     </Form.Item>
                                 </div>
                                 {/* <h1 className="text-sm font-semibold">Address</h1>
@@ -309,22 +319,24 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
 
 export async function getServerSideProps({ req, res }) {
     var initProps = {};
-    // const companyid = query.companyId
-    // const parentt = query.parent
-    // const reqBodyCompanyDetail = {
-    //     company_id: companyid
-    // }
-    if (req && req.headers) {
-        const cookies = req.headers.cookie;
-        if (!cookies) {
-            res.writeHead(302, { Location: '/login' })
-            res.end()
-        }
-        if (typeof cookies === 'string') {
-            const cookiesJSON = httpcookie.parse(cookies);
-            initProps = cookiesJSON.token
+    if (!req.headers.cookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
         }
     }
+    const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+    if (!cookiesJSON1.token) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
+        }
+    }
+    initProps = cookiesJSON1.token
 
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,
@@ -374,4 +386,4 @@ export async function getServerSideProps({ req, res }) {
     }
 }
 
-export default NewLocations
+export default NewLocationsClients

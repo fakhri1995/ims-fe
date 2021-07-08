@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import st from '../../../../components/layout-dashboard-clients.module.css'
-import { Tabs, Input, Table, Tree, TreeSelect, Drawer, Modal, Select, notification, Form, Button, Switch, DatePicker, Upload } from 'antd'
+import { Tabs, Input, Table, Tree, TreeSelect, Drawer, Modal, Select, notification, Form, Button, Switch, DatePicker, Upload, Spin } from 'antd'
 import moment from 'moment'
 
 function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok, companyid }) {
@@ -511,16 +511,20 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, tok }) {
     }
     //Handler
     const handleCreateLocationsClient = () => {
-        console.log(defvalparent)
         setdatanew({
             ...datanew,
             parent_id: defvalparent
         })
-        if (datanew.address === "" || datanew.phone_number === "") {
+        if (datanew.address === "") {
             setdatanew({
                 ...datanew,
                 address: '-',
-                phone_number: '-'
+            })
+        }
+        if (datanew.phone_number === "") {
+            setdatanew({
+                ...datanew,
+                phone_number: '-',
             })
         }
         setloadingtambah(true)
@@ -584,58 +588,67 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, tok }) {
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
                 <div className="flex space-x-2">
                     {/* <Link href={`/admin/company/locations/new?parent=&companyId=${dataDetailCompany.data.company_id}`}> */}
-                    <Button type="primary" size="middle" onClick={() => { setdrawablecreate(true); setfrominduk(false) }}>Tambah</Button>
+                    {/* <Button type="primary" size="middle" onClick={() => { setdrawablecreate(true); setfrominduk(false) }}>Tambah</Button> */}
+                    <Button type="primary" size="middle" onClick={() => { rt.push(`/admin/company/clients/locations/new?parent=${dataDetailCompany.data.company_id}&frominduk=0`) }}>Tambah</Button>
                     {/* </Link> */}
                 </div>
             </div>
             <div className="p-5">
                 <h1 className="text-sm font-semibold">Pilih Parent terakhir</h1>
                 <Search style={{ marginBottom: 8 }} placeholder="Cari Lokasi" />
-                <Tree
-                    onExpand={onExpand}
-                    expandedKeys={expandedKeys}
-                    autoExpandParent={autoExpandParent}
-                    treeData={datalocationclient}
-                    titleRender={(nodeData) => (
+                {
+                    datalocationclient.length === 0 ?
                         <>
-                            <div className={`flex justify-between hover:bg-blue-100 text-black`}
-                                onMouseOver={() => {
-                                    var d = document.getElementById(`node${nodeData.key}`)
-                                    d.classList.add("flex")
-                                    d.classList.remove("hidden")
-                                }}
-                                onMouseLeave={() => {
-                                    var e = document.getElementById(`node${nodeData.key}`)
-                                    e.classList.add("hidden")
-                                    e.classList.remove("flex")
-                                }}
-                            >
-                                <div className=" w-full" onClick={() => { rt.push(`/admin/company/clients/locations/${nodeData.id}?parent=${nodeData.id_parent}&edit=&cancel=${dataDetailCompany.data.company_id}`) }}>
-                                    {nodeData.title}
-                                </div>
-                                <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
-                                    {/* <Link href={`/admin/company/locations/new?parent=${nodeData.id}&companyId=${dataDetailCompany.data.company_id}`}> */}
-                                    {
-                                        [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                        <a className="mx-2 pb-1" onClick={(e) => { setdrawablecreate(true); setdefvalparent(nodeData.id); setfrominduk(true) }} alt="add"><PlusOutlined /></a>
-                                    }
-                                    {/* </Link> */}
-                                    {
-                                        [151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                        <Link href={`/admin/company/clients/locations/${nodeData.id}?parent=${nodeData.title}&edit=1&cancel=${dataDetailCompany.data.company_id}`}>
-                                            <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
-                                        </Link>
-                                    }
-                                    {/* <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("API is not available") }} onCancel={() => { message.error("Gagal dihapus") }}>
+                            <Spin />
+                        </>
+                        :
+                        <Tree
+                            onExpand={onExpand}
+                            expandedKeys={expandedKeys}
+                            autoExpandParent={autoExpandParent}
+                            treeData={datalocationclient}
+                            titleRender={(nodeData) => (
+                                <>
+                                    <div className={`flex justify-between hover:bg-blue-100 text-black`}
+                                        onMouseOver={() => {
+                                            var d = document.getElementById(`node${nodeData.key}`)
+                                            d.classList.add("flex")
+                                            d.classList.remove("hidden")
+                                        }}
+                                        onMouseLeave={() => {
+                                            var e = document.getElementById(`node${nodeData.key}`)
+                                            e.classList.add("hidden")
+                                            e.classList.remove("flex")
+                                        }}
+                                    >
+                                        <div className=" w-full" onClick={() => { rt.push(`/admin/company/clients/locations/${nodeData.id}?parent=${nodeData.id_parent}&edit=&cancel=${dataDetailCompany.data.company_id}`) }}>
+                                            {nodeData.title}
+                                        </div>
+                                        <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
+                                            {/* <Link href={`/admin/company/locations/new?parent=${nodeData.id}&companyId=${dataDetailCompany.data.company_id}`}> */}
+                                            {
+                                                [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                                <a className="mx-2 pb-1" onClick={(e) => { rt.push(`/admin/company/clients/locations/new?parent=${nodeData.id}&frominduk=1`) }} alt="add"><PlusOutlined /></a>
+                                                // <a className="mx-2 pb-1" onClick={(e) => { setdrawablecreate(true); setdefvalparent(nodeData.id); setfrominduk(true) }} alt="add"><PlusOutlined /></a>
+                                            }
+                                            {/* </Link> */}
+                                            {
+                                                [151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                                <Link href={`/admin/company/clients/locations/${nodeData.id}?parent=${nodeData.title}&edit=1&cancel=${dataDetailCompany.data.company_id}`}>
+                                                    <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
+                                                </Link>
+                                            }
+                                            {/* <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("API is not available") }} onCancel={() => { message.error("Gagal dihapus") }}>
                                         <a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a>
                                     </Popconfirm> */}
-                                </div>
-                            </div>
-                        </>
-                    )
-                    }
-                    blockNode={true}
-                />
+                                        </div>
+                                    </div>
+                                </>
+                            )
+                            }
+                            blockNode={true}
+                        />
+                }
             </div>
             <Drawer title="Buat Clients" maskClosable={false} destroyOnClose={true} visible={drawablecreate} onClose={() => {
                 setdrawablecreate(false);
