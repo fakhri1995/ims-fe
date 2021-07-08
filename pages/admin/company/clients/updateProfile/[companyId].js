@@ -5,7 +5,7 @@ import { LoadingOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
 import st from '../../../../../components/layout-dashboard.module.css'
 import { EditOutlined } from '@ant-design/icons'
-import { Form, DatePicker, Input, notification, Button, Modal } from 'antd'
+import { Form, DatePicker, Input, InputNumber, notification, Button, Modal } from 'antd'
 import moment from 'moment'
 
 
@@ -144,10 +144,10 @@ function ClientUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailCompa
                     </div>
                     <div className="col-span-1 sm:col-span-2 md:col-span-4 w-full h-auto p-3 md:p-5 flex">
                         <Form layout="vertical" form={instanceForm} onFinish={handleEditProfile} initialValues={data1} style={{ width: `100%` }}>
-                            <div className="md:m-5 mb-5 md:mb-0 ">
+                            {/* <div className="md:m-5 mb-5 md:mb-0 ">
                                 <h1 className="font-semibold text-sm">ID Perusahaan:</h1>
                                 <h1 className="text-sm font-normal text-black">{data1.id}</h1>
-                            </div>
+                            </div> */}
                             <div className="grid grid-cols-1 md:grid-cols-2">
                                 <div className="md:m-5 mb-5 md:mb-0">
                                     {
@@ -185,8 +185,15 @@ function ClientUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailCompa
                                 <div className="md:m-5 mb-5 md:mb-0">
                                     {
                                         editable ?
-                                            <Form.Item name="phone_number" label="No. Telepon">
+                                            <Form.Item name="phone_number" label="No. Telepon"
+                                                rules={[
+                                                    {
+                                                        pattern: /(\-)|(^\d*$)/,
+                                                        message: 'Nomor telepon harus berisi angka',
+                                                    },
+                                                ]}>
                                                 <Input defaultValue={data1.phone_number} name="phone_number" onChange={onChangeEditProfile}></Input>
+                                                {/* <InputNumber defaultValue={data1.phone_number} name="phone_number" onChange={(val) => { setData1({ ...data1, phone_number: `0${val}` }) }} style={{ width: `100%` }} /> */}
                                             </Form.Item>
                                             :
                                             <>
@@ -257,7 +264,13 @@ function ClientUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailCompa
                                 <div className="md:m-5 mb-5 md:mb-0">
                                     {
                                         editable ?
-                                            <Form.Item name="fax" label="Fax">
+                                            <Form.Item name="fax" label="Fax"
+                                                rules={[
+                                                    {
+                                                        pattern: /(\-)|(^\d*$)/,
+                                                        message: 'Fax harus berisi angka',
+                                                    },
+                                                ]}>
                                                 <Input defaultValue={data1.fax} name="fax" onChange={onChangeEditProfile}></Input>
                                             </Form.Item>
                                             :
@@ -270,7 +283,17 @@ function ClientUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailCompa
                                 <div className="md:m-5 mb-5 md:mb-0">
                                     {
                                         editable ?
-                                            <Form.Item name="email" label="Email">
+                                            <Form.Item name="email" label="Email"
+                                                rules={[
+                                                    // {
+                                                    //     type: 'email',
+                                                    //     message: 'Email belum diisi dengan benar',
+                                                    // },
+                                                    {
+                                                        pattern: /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
+                                                        message: 'Email belum diisi dengan benar'
+                                                    }
+                                                ]}>
                                                 <Input defaultValue={data1.email} name="email" onChange={onChangeEditProfile}></Input>
                                             </Form.Item>
                                             :
