@@ -7,6 +7,7 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import st from '../../../../components/layout-dashboard-clients.module.css'
 import { Tabs, Input, Table, Tree, TreeSelect, Drawer, Modal, Select, notification, Form, Button, Switch, DatePicker, Upload, Spin } from 'antd'
 import moment from 'moment'
+import { data } from 'autoprefixer'
 
 function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok, companyid }) {
     const rt = useRouter()
@@ -755,7 +756,7 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, tok }) {
     )
 }
 
-function ClientsDetailBankAccount({ dataProfile, dataGetBanks, tok, companyId }) {
+function ClientsDetailBankAccount({ dataProfile, dataDetailCompany, tok, companyId }) {
     // if (!dataGetBanks.data) {
     //     dataGetBanks.data = []
     // }
@@ -900,9 +901,12 @@ function ClientsDetailBankAccount({ dataProfile, dataGetBanks, tok, companyId })
                                     <>{actions[index]}
                                         {
                                             [162].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                            <Button onClick={() => { setDrawableedit(true); setRecordrow(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
+                                            <Button onClick={() => { rt.push(`/admin/company/clients/bank/${record.id}?companyid=${companyId}&name=${dataDetailCompany.data.company_name}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
                                                 <EditOutlined />
                                             </Button>
+                                            // <Button onClick={() => { setDrawableedit(true); setRecordrow(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
+                                            //     <EditOutlined />
+                                            // </Button>
                                         }
                                         {
                                             [163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
@@ -1078,7 +1082,7 @@ function ClientsDetailBankAccount({ dataProfile, dataGetBanks, tok, companyId })
                     const temp = res2.data.map((doc, idx) => {
                         return ({
                             key: idx + 1,
-                            id: 0,
+                            id: doc.id,
                             company_id: companyId,
                             name: doc.name,
                             account_number: doc.account_number,
@@ -1105,7 +1109,8 @@ function ClientsDetailBankAccount({ dataProfile, dataGetBanks, tok, companyId })
                     }
                     {
                         [161].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                        <Button type="primary" onClick={() => { setDrawablecreate(true) }}>Add New</Button>
+                        <Button type="primary" onClick={() => { rt.push(`/admin/company/clients/bank/create?origin=${companyId}&name=${dataDetailCompany.data.company_name}`) }}>Tambah</Button>
+                        // <Button type="primary" onClick={() => { setDrawablecreate(true) }}>Tambah</Button>
                     }
                     {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40 hidden md:block" onClick={() => { setDrawablecreate(true) }}> Create</button>
                     <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40 block md:hidden" onClick={() => { setDrawablecreatesmall(true) }}> Create</button> */}
@@ -1282,7 +1287,7 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
                     {
                         [160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Bank Account" key={`bankAccounts`}>
-                            <ClientsDetailBankAccount dataProfile={dataProfile} dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
+                            <ClientsDetailBankAccount dataProfile={dataProfile} dataDetailCompany={dataDetailCompany} tok={tok} companyId={dataDetailCompany.data.company_id} />
                         </TabPane>
                     }
                     <TabPane tab="Locations" key={`locations`}>
@@ -1301,7 +1306,7 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
                     {
                         [160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Bank Account" key={`bankAccounts`}>
-                            <ClientsDetailBankAccount dataProfile={dataProfile} dataGetBanks={dataGetBanks} tok={tok} companyId={dataDetailCompany.data.company_id} />
+                            <ClientsDetailBankAccount dataProfile={dataProfile} dataDetailCompany={dataDetailCompany} tok={tok} companyId={dataDetailCompany.data.company_id} />
                         </TabPane>
                     }
                     <TabPane tab="Locations" key={`locations`}>

@@ -927,7 +927,10 @@ function MigIndexBankAccount({ dataProfile, tok }) {
                                     <>{actions[index]}
                                         {
                                             [148].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                            <Button onClick={() => { setDrawableedit(true); setRecordrow(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
+                                            // <Button onClick={() => { setDrawableedit(true); setRecordrow(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
+                                            //     <EditOutlined />
+                                            // </Button>
+                                            <Button onClick={() => { rt.push(`/admin/company/mig/bank/${record.id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
                                                 <EditOutlined />
                                             </Button>
                                         }
@@ -1002,7 +1005,8 @@ function MigIndexBankAccount({ dataProfile, tok }) {
                     }
                     {
                         [147].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                        <Button type="primary" onClick={() => { setDrawablecreate(true) }}>Tambah</Button>
+                        // <Button type="primary" onClick={() => { setDrawablecreate(true) }}>Tambah</Button>
+                        <Button type="primary" onClick={() => { rt.push(`/admin/company/mig/bank/create`) }}>Tambah</Button>
                     }
                     {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40" onClick={() => { setDrawablecreate(true) }}> Create</button> */}
                     <Drawer title="Edit data Rekening Bank Perusahan MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false); }} width={370} destroyOnClose={true}>
