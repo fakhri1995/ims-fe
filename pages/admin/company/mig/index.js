@@ -327,9 +327,11 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
     const [expandedKeys, setExpandedKeys] = useState([dataBranchList.data[0].key])
     const [autoExpandParent, setAutoExpandParent] = useState(true);
     const [databranchlist, setdatabranchlist] = useState(dataBranchList.data)
+    const [searchValue, setSearchValue] = useState("");
     const [tambahdata, settambahdata] = useState(false)
     const [editdata, seteditdata] = useState(false)
     const [deldata, setdeldata] = useState(false)
+    const [detaildata, setdetaildata] = useState(false)
     const [defvalparent, setdefvalparent] = useState("")
     const [frominduk, setfrominduk] = useState(false)
     const [loadingtambah, setloadingtambah] = useState(false)
@@ -388,6 +390,108 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                 })
         }
     }
+
+    //filter Locations
+    const dataList = [];
+    const generateList = (data) => {
+        for (let i = 0; i < data.length; i++) {
+            const node = data[i];
+            const { id, key, value, id_parent, title } = node;
+            dataList.push({ id, key, value, id_parent, title });
+            if (node.children) {
+                generateList(node.children);
+            }
+        }
+    };
+    generateList(databranchlist);
+    const getParentKey = (key, tree) => {
+        let parentKey;
+        for (let i = 0; i < tree.length; i++) {
+            const node = tree[i];
+            if (node.children) {
+                if (node.children.some((item) => item.key === key)) {
+                    parentKey = node.key;
+                } else if (getParentKey(key, node.children)) {
+                    parentKey = getParentKey(key, node.children);
+                }
+            }
+        }
+        return parentKey;
+    };
+    const onChangeFilterLoc = (e) => {
+        const { value } = e.target;
+        const expandedKeys = dataList
+            .map((item) => {
+                if (item.title.indexOf(value) > -1) {
+                    return getParentKey(item.key, dataBranchList.data);
+                }
+                return null;
+            })
+            .filter((item, i, self) => item && self.indexOf(item) === i);
+        if (value) {
+            setExpandedKeys(expandedKeys);
+            setSearchValue(value);
+            setAutoExpandParent(true);
+        } else {
+            setExpandedKeys([dataBranchList.data[0].key]);
+            setSearchValue("");
+            setAutoExpandParent(false);
+        }
+    };
+    const filterTreeNode = (node) => {
+        const title = node.title.props.children[0].props ? node.title.props.children[0].props.children[2] : node.title.props.children[2];
+        const result = title.indexOf(searchValue) !== -1 ? true : false;
+        return result;
+    };
+    const loop = (data) =>
+        data.map((item) => {
+            const index = item.title.indexOf(searchValue);
+            const beforeStr = item.title.substr(0, index);
+            const afterStr = item.title.substr(index + searchValue.length);
+            const title =
+                index > -1 ? (
+                    <div className="flex justify-between"
+                        onMouseOver={() => {
+                            var d = document.getElementById(`node${item.key}`)
+                            d.classList.add("flex")
+                            d.classList.remove("hidden")
+                        }}
+                        onMouseLeave={() => {
+                            var e = document.getElementById(`node${item.key}`)
+                            e.classList.add("hidden")
+                            e.classList.remove("flex")
+                        }}
+                    >
+                        <div className="w-full" onClick={() => { rt.push(`/admin/company/mig/locations/${item.id}?parent=${item.id_parent}&edit=`) }}>
+                            {beforeStr}
+                            <span className=" text-blue-500">{searchValue}</span>
+                            {afterStr}
+                        </div>
+                        <div className={`hidden mx-2`} id={`node${item.key}`}>
+                            {
+                                [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                <a className="mx-2 pb-1" onClick={(e) => { rt.push(`/admin/company/mig/locations/new?parent=${item.id}&frominduk=1`) }} alt="add"><PlusOutlined /></a>
+                            }
+                            {
+                                [151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                <Link href={`/admin/company/mig/locations/${item.id}?parent=${item.title}&edit=1`}>
+                                    <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
+                                </Link>
+                            }
+                        </div>
+                    </div>
+                ) : (
+                    <span>{item.title}</span>
+                );
+            if (item.children) {
+                return { title, key: item.key, children: loop(item.children) };
+            }
+            return {
+                title,
+                key: item.key
+            };
+        });
+
     //Handler
     const handleCreateLocationsMig = () => {
         setdatanew({
@@ -456,6 +560,9 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                 setdatabranchlist(res2.data)
             })
     }, [tambahdata])
+    // useEffect(()=>{
+    //     rt.push(`/admin/company/mig/locations/${detaildata.id}?parent=${detaildata.id_parent}&edit=`)
+    // }, [detaildata])
     return (
         <div id="locationssDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
@@ -471,7 +578,7 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
             </div>
             <div className="p-5">
                 <h1 className="text-sm font-semibold">Pilih Parent terakhir</h1>
-                <Search style={{ marginBottom: 8 }} placeholder="Cari Lokasi" />
+                <Search style={{ marginBottom: 8 }} placeholder="Cari Lokasi" onChange={onChangeFilterLoc} />
                 {
                     databranchlist.length === 0 ?
                         <>
@@ -482,38 +589,39 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                             onExpand={onExpand}
                             expandedKeys={expandedKeys}
                             autoExpandParent={autoExpandParent}
-                            treeData={databranchlist}
+                            treeData={loop(databranchlist)}
+                            filterTreeNode={filterTreeNode}
                             titleRender={(nodeData) => (
                                 <>
                                     <div className={`flex justify-between hover:bg-blue-100 text-black`}
-                                        onMouseOver={() => {
-                                            var d = document.getElementById(`node${nodeData.key}`)
-                                            d.classList.add("flex")
-                                            d.classList.remove("hidden")
-                                        }}
-                                        onMouseLeave={() => {
-                                            var e = document.getElementById(`node${nodeData.key}`)
-                                            e.classList.add("hidden")
-                                            e.classList.remove("flex")
-                                        }}
+                                        // onMouseOver={() => {
+                                        //     var d = document.getElementById(`node${nodeData.key}`)
+                                        //     d.classList.add("flex")
+                                        //     d.classList.remove("hidden")
+                                        // }}
+                                        // onMouseLeave={() => {
+                                        //     var e = document.getElementById(`node${nodeData.key}`)
+                                        //     e.classList.add("hidden")
+                                        //     e.classList.remove("flex")
+                                        // }}
                                     >
-                                        <div className=" w-full" onClick={() => { rt.push(`/admin/company/mig/locations/${nodeData.id}?parent=${nodeData.id_parent}&edit=`) }}>
+                                        <div className=" w-full">
                                             {nodeData.title}
                                         </div>
                                         <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
                                             {/* <Link href={`/admin/company/locations/new?parent=${nodeData.id}&companyId=${dataDetailCompany.data.company_id}`}> */}
-                                            {
+                                            {/* {
                                                 [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                                 // <a className="mx-2 pb-1" onClick={(e) => { setdrawablecreate(true); setdefvalparent(nodeData.id); setfrominduk(true) }} alt="add"><PlusOutlined /></a>
                                                 <a className="mx-2 pb-1" onClick={(e) => { rt.push(`/admin/company/mig/locations/new?parent=${nodeData.id}&frominduk=1`) }} alt="add"><PlusOutlined /></a>
-                                            }
+                                            } */}
                                             {/* </Link> */}
-                                            {
+                                            {/* {
                                                 [151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                                 <Link href={`/admin/company/mig/locations/${nodeData.id}?parent=${nodeData.title}&edit=1`}>
                                                     <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                                 </Link>
-                                            }
+                                            } */}
                                             {/* <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("API is not available") }} onCancel={() => { message.error("Gagal dihapus") }}>
                                         <a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a>
                                     </Popconfirm> */}

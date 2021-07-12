@@ -125,7 +125,7 @@ function MyCompanyUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailMy
                     </div>
                     <div className="flex space-x-2">
                         {editable ?
-                            <Button type="default" onClick={() => { rt.push(`/admin/company/clients/${dataDetailMyCompany.data.company_id}`); }}>Batal</Button>
+                            <Button type="default" onClick={() => { rt.push(`/admin/company/mig`); }}>Batal</Button>
                             :
                             null
                         }

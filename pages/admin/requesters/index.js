@@ -225,10 +225,10 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                         [117].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
                             <Link href={{
-                                pathname: '/admin/requesters/create/',
+                                pathname: '/admin/requesters/create',
                             }}>
                                 <Button size="large" type="primary">
-                                    Add New
+                                    Tambah
                                 </Button>
                             </Link>
                         </div>

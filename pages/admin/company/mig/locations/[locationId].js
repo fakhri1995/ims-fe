@@ -263,8 +263,8 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, c
                                             <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="No. Telepeon"
                                                 rules={[
                                                     {
-                                                        required: true,
-                                                        message: 'No. Telepon harus diisi',
+                                                        pattern: /(\-)|(^\d*$)/,
+                                                        message: 'No. Telepon harus berisi angka',
                                                     },
                                                 ]}
                                             >
@@ -332,7 +332,14 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, c
                                     }
                                     {
                                         editable ?
-                                            <Form.Item name="fax" style={{ marginRight: `1rem` }} label="Fax">
+                                            <Form.Item name="fax" style={{ marginRight: `1rem` }} label="Fax"
+                                            rules={[
+                                                {
+                                                    pattern: /(\-)|(^\d*$)/,
+                                                    message: 'Fax harus berisi angka',
+                                                },
+                                            ]}
+                                            >
                                                 <Input defaultValue={dataupdate.fax} name="fax" id="fax" allowClear onChange={onChangeForm} />
                                             </Form.Item>
                                             :
@@ -345,7 +352,14 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, c
                                     }
                                     {
                                         editable ?
-                                            <Form.Item name="email" style={{ marginRight: `1rem` }} label="Email">
+                                            <Form.Item name="email" style={{ marginRight: `1rem` }} label="Email"
+                                            rules={[
+                                                {
+                                                    pattern: /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
+                                                    message: 'Email diisi sesuai format email',
+                                                },
+                                            ]}
+                                            >
                                                 <Input defaultValue={dataupdate.email} name="email" id="email" allowClear onChange={onChangeForm} />
                                             </Form.Item>
                                             :

@@ -258,7 +258,14 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, dataBranchDet
                                     }
                                     {
                                         editable ?
-                                            <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="No. Telepeon">
+                                            <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="No. Telepeon"
+                                            rules={[
+                                                {
+                                                    pattern: /(\-)|(^\d*$)/,
+                                                    message: 'No. Telepon harus berisi angka',
+                                                },
+                                            ]}
+                                            >
                                                 <Input defaultValue={dataupdate.phone_number} name="phone_number" id="phone_number" allowClear onChange={onChangeForm} />
                                             </Form.Item>
                                             :
@@ -323,7 +330,14 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, dataBranchDet
                                     }
                                     {
                                         editable ?
-                                            <Form.Item name="fax" style={{ marginRight: `1rem` }} label="Fax">
+                                            <Form.Item name="fax" style={{ marginRight: `1rem` }} label="Fax"
+                                            rules={[
+                                                {
+                                                    pattern: /(\-)|(^\d*$)/,
+                                                    message: 'Fax harus berisi angka',
+                                                },
+                                            ]}
+                                            >
                                                 <Input defaultValue={dataupdate.fax} name="fax" id="fax" allowClear onChange={onChangeForm} />
                                             </Form.Item>
                                             :
@@ -336,7 +350,14 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, dataBranchDet
                                     }
                                     {
                                         editable ?
-                                            <Form.Item name="email" style={{ marginRight: `1rem` }} label="Email">
+                                            <Form.Item name="email" style={{ marginRight: `1rem` }} label="Email"
+                                            rules={[
+                                                {
+                                                    pattern: /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
+                                                    message: 'Email Anak Perusahaan diisi sesuai format email',
+                                                },
+                                            ]}
+                                            >
                                                 <Input defaultValue={dataupdate.email} name="email" id="email" allowClear onChange={onChangeForm} />
                                             </Form.Item>
                                             :

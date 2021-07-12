@@ -5,7 +5,7 @@ import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import st from '../../../../components/layout-dashboard.module.css'
 import { Form, Upload, Select, Input, Button, notification } from 'antd'
 
@@ -14,7 +14,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
     const tok = initProps
     var pathArr = rt.pathname.split("/").slice(1)
     pathArr[pathArr.length - 1] = "Create"
-    dataCompanyList = dataCompanyList.data.filter(data => data.company_id !== 66)
+    // dataCompanyList = dataCompanyList.data.members.filter(data => data.company_id !== 66)
     const [instanceForm] = Form.useForm()
 
     //useState
@@ -28,6 +28,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
     })
     const [loadingupload, setLoadingupload] = useState(false)
     const [loadingcreate, setLoadingcreate] = useState(false)
+    const [datacompanylist, setdatacompanylist] = useState([])
 
     //handleCreateButton
     const handleCreateAgents = () => {
@@ -113,19 +114,39 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
         </div>
     );
 
+    //useEffect
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
+            method: `POST`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                page: 1,
+                rows: 50,
+                order_by: "asc"
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatacompanylist(res2.data.members)
+            })
+    }, [])
+
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} st={st}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4" id="createAgentsWrapper">
                 <div className="col-span-1 md:col-span-4">
                     <Sticky containerSelectorFocus="#createAgentsWrapper">
                         <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
-                            <h1 className="font-semibold py-2">New Requesters</h1>
+                            <h1 className="font-semibold py-2">Requester Baru</h1>
                             <div className="flex space-x-2">
                                 <Link href="/admin/requesters">
-                                    <Button type="default">Cancel</Button>
+                                    <Button type="default">Batal</Button>
                                     {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button> */}
                                 </Link>
-                                <Button loading={loadingcreate} onClick={instanceForm.submit} type="primary">Save</Button>
+                                <Button loading={loadingcreate} onClick={instanceForm.submit} type="primary">Simpan</Button>
                                 {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={handleCreateAgents}>Save</button> */}
                             </div>
                         </div>
@@ -205,7 +226,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                                         <Select onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }} name={`company_id`} allowClear>
                                             <Select.Option >Choose company</Select.Option>
                                             {
-                                                dataCompanyList.map((doc, idx) => {
+                                                datacompanylist.map((doc, idx) => {
                                                     return (
                                                         <Select.Option title={doc.company_name} key={idx} value={doc.company_id}>{doc.company_name}</Select.Option>
                                                     )
@@ -218,14 +239,6 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                         </div>
                     </div>
                 </div>
-                {/* <div className=" col-span-1 md:col-span-1 hidden md:flex flex-col space-y-4 p-4">
-                    <div className="font-semibold text-sm">Requesters</div>
-                    <p className="font-normal text-sm">
-                        This page lets you handpick a set of requesters and add them to your help desk. These requesters will have selective privileges to submit requests to your helpdesk. You can restrict access such that only people who have been added here are allowed to login to your self-service portal and access your knowledge base.
-                        <br /> <br />
-                        You can fill in the details of each of your new requesters manually or import a list of users from a CSV file. Once you have populated your list, your agents can open up each of your requesters and view their ticket history and contact information.
-                    </p>
-                </div> */}
             </div>
         </Layout>
     )
@@ -259,27 +272,27 @@ export async function getServerSideProps({ req, res }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    if(![117].every((curr) => dataProfile.data.registered_feature.includes(curr))){
+    if (![117].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
         res.writeHead(302, { Location: '/dashboard/admin' })
         res.end()
     }
 
-    const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(reqBody)
-    })
-    const resjsonGCL = await resourcesGCL.json()
-    const dataCompanyList = resjsonGCL
+    // const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify(reqBody)
+    // })
+    // const resjsonGCL = await resourcesGCL.json()
+    // const dataCompanyList = resjsonGCL
 
     return {
         props: {
             initProps,
             dataProfile,
-            dataCompanyList,
+            // dataCompanyList,
             sidemenu: "4"
         }
     }
