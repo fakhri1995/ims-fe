@@ -131,7 +131,7 @@ const BankCreate = ({ initProps, dataProfile, sidemenu }) => {
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Nama bank harus diisi',
+                                                message: 'Nama Bank wajib diisi',
                                             },
                                         ]}>
                                         <Input onChange={onChangeBA} name="name" defaultValue={bankdata.name} />
@@ -140,11 +140,11 @@ const BankCreate = ({ initProps, dataProfile, sidemenu }) => {
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Nomor rekening harus diisi',
+                                                message: 'Nomor Rekening wajib diisi',
                                             },
                                             {
                                                 pattern: /(\-)|(^\d*$)/,
-                                                message: 'Nomor rekening harus diisi dengan angka',
+                                                message: 'Nomor Rekening harus diisi dengan angka',
                                             },
                                         ]}>
                                         <Input onChange={onChangeBA} name="account_number" defaultValue={bankdata.account_number} />
@@ -153,7 +153,7 @@ const BankCreate = ({ initProps, dataProfile, sidemenu }) => {
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Nama penanggung jawab harus diisi',
+                                                message: 'Atas Nama wajib diisi',
                                             },
                                         ]}>
                                         <Input onChange={onChangeBA} name="owner" defaultValue={bankdata.owner} />
@@ -162,7 +162,7 @@ const BankCreate = ({ initProps, dataProfile, sidemenu }) => {
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Mata uang harus diisi',
+                                                message: 'Mata Uang wajib diisi',
                                             },
                                         ]}>
                                         <Select

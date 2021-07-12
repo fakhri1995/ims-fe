@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import st from '../../../../components/layout-dashboard-clients.module.css'
-import { Tabs, Input, Table, Tree, Modal, Select, notification, Form, Button, Switch, DatePicker, Spin } from 'antd'
+import { Tabs, Input, Table, Tree, Modal, notification, Button, Switch, Spin } from 'antd'
 import moment from 'moment'
 
 function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok, companyid }) {
@@ -17,7 +17,6 @@ function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok, companyid }
     const [loadingbtn, setloadingbtn] = useState(false)
     const [loadingubahaktif, setloadingubahaktif] = useState(false)
     const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
-    const [instanceForm] = Form.useForm()
     if (dataDetailCompany.data.tanggal_pkp === null) {
         dataDetailCompany.data.tanggal_pkp = new Date()
     }
@@ -191,7 +190,8 @@ function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok, companyid }
                         null
                     }
                     {editable ?
-                        <Button type="primary" onClick={instanceForm.submit} loading={loadingbtn}>Simpan</Button>
+                        null
+                        // <Button type="primary" onClick={instanceForm.submit} loading={loadingbtn}>Simpan</Button>
                         :
                         <>
                             {
@@ -242,177 +242,182 @@ function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok, companyid }
                     }
                 </div>
                 <div className="col-span-1 sm:col-span-2 md:col-span-4 w-full h-auto p-3 md:p-5 flex">
-                    <Form layout="vertical" form={instanceForm} onFinish={handleEditProfile} initialValues={data1} style={{ width: `100%` }}>
-                        {/* <div className="md:m-5 mb-5 md:mb-0 ">
-                            <h1 className="font-semibold text-sm">ID Perusahaan:</h1>
-                            <h1 className="text-sm font-normal text-black">{data1.id}</h1>
-                        </div> */}
-                        <div className="grid grid-cols-1 md:grid-cols-2">
-                            <div className="md:m-5 mb-5 md:mb-0">
-                                {
-                                    editable ?
-                                        <Form.Item name="company_name" label="Nama Perusahaan"
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Nama Perusahaan wajib diisi',
-                                                },
-                                            ]}>
-                                            <Input defaultValue={data1.company_name} name="company_name" onChange={onChangeEditProfile}></Input>
-                                        </Form.Item>
-                                        :
-                                        <>
-                                            <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
-                                            <h1 className="text-sm font-normal text-black">{data1.company_name}</h1>
-                                        </>
+                    {/* <Form layout="vertical" form={instanceForm} onFinish={handleEditProfile} initialValues={data1} style={{ width: `100%` }}> */}
+                    <div className="grid grid-cols-1 md:grid-cols-2">
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    null
+                                    // <Form.Item name="company_name" label="Nama Perusahaan"
+                                    //     rules={[
+                                    //         {
+                                    //             required: true,
+                                    //             message: 'Nama Perusahaan wajib diisi',
+                                    //         },
+                                    //     ]}>
+                                    //     <Input defaultValue={data1.company_name} name="company_name" onChange={onChangeEditProfile}></Input>
+                                    // </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
+                                        <h1 className="text-sm font-normal text-black">{data1.company_name}</h1>
+                                    </>
 
-                                }
-                            </div>
-                            <div className="md:m-5 mb-5 md:mb-0">
-                                {
-                                    editable ?
-                                        <Form.Item name="address" label="Alamat"
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Alamat wajib diisi',
-                                                },
-                                            ]}>
-                                            <Input defaultValue={data1.address} name="address" onChange={onChangeEditProfile}></Input>
-                                        </Form.Item>
-                                        :
-                                        <>
-                                            <h1 className="font-semibold text-sm">Alamat:</h1>
-                                            <h1 className="text-sm font-normal text-black">{data1.address}</h1>
-                                        </>
-                                }
-                            </div>
-                            <div className="md:m-5 mb-5 md:mb-0">
-                                {
-                                    editable ?
-                                        <Form.Item name="phone_number" label="Telepon"
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Telepon wajib diisi',
-                                                },
-                                            ]}>
-                                            <Input defaultValue={data1.phone_number} name="phone_number" onChange={onChangeEditProfile}></Input>
-                                        </Form.Item>
-                                        :
-                                        <>
-                                            <h1 className="font-semibold text-sm">Telepon:</h1>
-                                            <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
-                                        </>
-                                }
-                            </div>
-                            <div className="md:m-5 mb-5 md:mb-0">
-                                {
-                                    editable ?
-                                        <Form.Item name="singkatan" label="Singkatan">
-                                            <Input defaultValue={data1.singkatan} name="singkatan" onChange={onChangeEditProfile}></Input>
-                                        </Form.Item>
-                                        :
-                                        <>
-                                            <h1 className="font-semibold text-sm">Singkatan:</h1>
-                                            <h1 className="text-sm font-normal text-black">{data1.singkatan}</h1>
-                                        </>
-                                }
-                            </div>
-                            <div className="md:m-5 mb-5 md:mb-0">
-                                {
-                                    editable ?
-                                        <Form.Item name="tanggal_pkp" label="Tanggal PKP"
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Tanggal PKP wajib diisi',
-                                                },
-                                            ]}>
-                                            <DatePicker onChange={(date, dateString) => { setData1({ ...data1, tanggal_pkp: moment(date) }) }} style={{ width: `100%` }} defaultValue={data1.tanggal_pkp}></DatePicker>
-                                        </Form.Item>
-                                        :
-                                        <>
-                                            <h1 className="font-semibold text-sm">Tanggal PKP:</h1>
-                                            {/* <h1 className="text-sm font-normal text-black">{data1.tanggal_pkp.locale('id').format('LL')}</h1> */}
-                                            {
-                                                data1.tanggal_pkp === null ?
-                                                    <h1 className="text-sm font-normal text-black">-</h1>
-                                                    :
-                                                    <h1 className="text-sm font-normal text-black">{data1.tanggal_pkp.locale('id').format('LL')}</h1>
-
-                                            }
-                                        </>
-                                }
-                            </div>
-                            <div className="md:m-5 mb-5 md:mb-0">
-                                {
-                                    editable ?
-                                        <Form.Item name="penanggung_jawab" label="Penanggung Jawab">
-                                            <Input defaultValue={data1.penanggung_jawab} name="penanggung_jawab" onChange={onChangeEditProfile}></Input>
-                                        </Form.Item>
-                                        :
-                                        <>
-                                            <h1 className="font-semibold text-sm">Penanggung Jawab:</h1>
-                                            <h1 className="text-sm font-normal text-black">{data1.penanggung_jawab}</h1>
-                                        </>
-                                }
-                            </div>
-                            <div className="md:m-5 mb-5 md:mb-0">
-                                {
-                                    editable ?
-                                        <Form.Item name="npwp" label="NPWP">
-                                            <Input defaultValue={data1.npwp} name="npwp" onChange={onChangeEditProfile}></Input>
-                                        </Form.Item>
-                                        :
-                                        <>
-                                            <h1 className="font-semibold text-sm">NPWP:</h1>
-                                            <h1 className="text-sm font-normal text-black">{data1.npwp}</h1>
-                                        </>
-                                }
-                            </div>
-                            <div className="md:m-5 mb-5 md:mb-0">
-                                {
-                                    editable ?
-                                        <Form.Item name="fax" label="Fax">
-                                            <Input defaultValue={data1.fax} name="fax" onChange={onChangeEditProfile}></Input>
-                                        </Form.Item>
-                                        :
-                                        <>
-                                            <h1 className="font-semibold text-sm">Fax:</h1>
-                                            <h1 className="text-sm font-normal text-black">{data1.fax}</h1>
-                                        </>
-                                }
-                            </div>
-                            <div className="md:m-5 mb-5 md:mb-0">
-                                {
-                                    editable ?
-                                        <Form.Item name="email" label="Email">
-                                            <Input defaultValue={data1.email} name="email" onChange={onChangeEditProfile}></Input>
-                                        </Form.Item>
-                                        :
-                                        <>
-                                            <h1 className="font-semibold text-sm">Email:</h1>
-                                            <h1 className="text-sm font-normal text-black">{data1.email}</h1>
-                                        </>
-                                }
-                            </div>
-                            <div className="md:m-5 mb-5 md:mb-0">
-                                {
-                                    editable ?
-                                        <Form.Item name="website" label="Website">
-                                            <Input defaultValue={data1.website} name="website" onChange={onChangeEditProfile}></Input>
-                                        </Form.Item>
-                                        :
-                                        <>
-                                            <h1 className="font-semibold text-sm">Website:</h1>
-
-                                            <h1 className="text-sm font-normal text-black">{data1.website}</h1>
-                                        </>
-                                }
-                            </div>
+                            }
                         </div>
-                    </Form>
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    null
+                                    // <Form.Item name="address" label="Alamat"
+                                    //     rules={[
+                                    //         {
+                                    //             required: true,
+                                    //             message: 'Alamat wajib diisi',
+                                    //         },
+                                    //     ]}>
+                                    //     <Input defaultValue={data1.address} name="address" onChange={onChangeEditProfile}></Input>
+                                    // </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Alamat:</h1>
+                                        <h1 className="text-sm font-normal text-black">{data1.address}</h1>
+                                    </>
+                            }
+                        </div>
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    null
+                                    // <Form.Item name="phone_number" label="Telepon"
+                                    //     rules={[
+                                    //         {
+                                    //             required: true,
+                                    //             message: 'Telepon wajib diisi',
+                                    //         },
+                                    //     ]}>
+                                    //     <Input defaultValue={data1.phone_number} name="phone_number" onChange={onChangeEditProfile}></Input>
+                                    // </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Telepon:</h1>
+                                        <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
+                                    </>
+                            }
+                        </div>
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    null
+                                    // <Form.Item name="singkatan" label="Singkatan">
+                                    //     <Input defaultValue={data1.singkatan} name="singkatan" onChange={onChangeEditProfile}></Input>
+                                    // </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Singkatan:</h1>
+                                        <h1 className="text-sm font-normal text-black">{data1.singkatan}</h1>
+                                    </>
+                            }
+                        </div>
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    null
+                                    // <Form.Item name="tanggal_pkp" label="Tanggal PKP"
+                                    //     rules={[
+                                    //         {
+                                    //             required: true,
+                                    //             message: 'Tanggal PKP wajib diisi',
+                                    //         },
+                                    //     ]}>
+                                    //     <DatePicker onChange={(date, dateString) => { setData1({ ...data1, tanggal_pkp: moment(date) }) }} style={{ width: `100%` }} defaultValue={data1.tanggal_pkp}></DatePicker>
+                                    // </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Tanggal PKP:</h1>
+                                        {
+                                            data1.tanggal_pkp === null ?
+                                                <h1 className="text-sm font-normal text-black">-</h1>
+                                                :
+                                                <h1 className="text-sm font-normal text-black">{data1.tanggal_pkp.locale('id').format('LL')}</h1>
+
+                                        }
+                                    </>
+                            }
+                        </div>
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    null
+                                    // <Form.Item name="penanggung_jawab" label="Penanggung Jawab">
+                                    //     <Input defaultValue={data1.penanggung_jawab} name="penanggung_jawab" onChange={onChangeEditProfile}></Input>
+                                    // </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Penanggung Jawab:</h1>
+                                        <h1 className="text-sm font-normal text-black">{data1.penanggung_jawab}</h1>
+                                    </>
+                            }
+                        </div>
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    null
+                                    // <Form.Item name="npwp" label="NPWP">
+                                    //     <Input defaultValue={data1.npwp} name="npwp" onChange={onChangeEditProfile}></Input>
+                                    // </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">NPWP:</h1>
+                                        <h1 className="text-sm font-normal text-black">{data1.npwp}</h1>
+                                    </>
+                            }
+                        </div>
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    null
+                                    // <Form.Item name="fax" label="Fax">
+                                    //     <Input defaultValue={data1.fax} name="fax" onChange={onChangeEditProfile}></Input>
+                                    // </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Fax:</h1>
+                                        <h1 className="text-sm font-normal text-black">{data1.fax}</h1>
+                                    </>
+                            }
+                        </div>
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    null
+                                    // <Form.Item name="email" label="Email">
+                                    //     <Input defaultValue={data1.email} name="email" onChange={onChangeEditProfile}></Input>
+                                    // </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Email:</h1>
+                                        <h1 className="text-sm font-normal text-black">{data1.email}</h1>
+                                    </>
+                            }
+                        </div>
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    null
+                                    // <Form.Item name="website" label="Website">
+                                    //     <Input defaultValue={data1.website} name="website" onChange={onChangeEditProfile}></Input>
+                                    // </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Website:</h1>
+
+                                        <h1 className="text-sm font-normal text-black">{data1.website}</h1>
+                                    </>
+                            }
+                        </div>
+                    </div>
+                    {/* </Form> */}
                 </div>
             </div>
             <Modal
@@ -443,7 +448,6 @@ function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok, companyid }
 
 function ClientsDetailLocations({ dataProfile, dataDetailCompany, tok }) {
     const rt = useRouter()
-    const { Search } = Input;
 
     //useState
     const [tambahdata, settambahdata] = useState(false)
@@ -467,7 +471,6 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, tok }) {
     const [frominduk, setfrominduk] = useState(false)
     const [loadingtambah, setloadingtambah] = useState(false)
     const [loadingimage, setloadingimage] = useState(false)
-    const [instanceForm] = Form.useForm()
 
     //components
     const uploadButton = (
@@ -630,16 +633,16 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, tok }) {
             const title =
                 index > -1 ? (
                     <div className="flex justify-between"
-                    onMouseOver={() => {
-                        var d = document.getElementById(`node${item.key}`)
-                        d.classList.add("flex")
-                        d.classList.remove("hidden")
-                    }}
-                    onMouseLeave={() => {
-                        var e = document.getElementById(`node${item.key}`)
-                        e.classList.add("hidden")
-                        e.classList.remove("flex")
-                    }}
+                        onMouseOver={() => {
+                            var d = document.getElementById(`node${item.key}`)
+                            d.classList.add("flex")
+                            d.classList.remove("hidden")
+                        }}
+                        onMouseLeave={() => {
+                            var e = document.getElementById(`node${item.key}`)
+                            e.classList.add("hidden")
+                            e.classList.remove("flex")
+                        }}
                     >
                         <div className="w-full" onClick={() => { rt.push(`/admin/company/clients/locations/${item.id}?parent=${item.id_parent}&edit=&cancel=${dataDetailCompany.data.company_id}`) }}>
                             {beforeStr}
@@ -678,7 +681,11 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, tok }) {
             method: `POST`,
             headers: {
                 'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
             },
+            body: JSON.stringify({
+                company_id: dataDetailCompany.data.company_id
+            })
         })
             .then(res => res.json())
             .then(res2 => {
@@ -701,7 +708,7 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, tok }) {
             </div>
             <div className="p-5">
                 <h1 className="text-sm font-semibold">Pilih Parent terakhir</h1>
-                <Search style={{ marginBottom: 8 }} placeholder="Cari Lokasi" onChange={onChangeFilterLoc} />
+                <Input style={{ marginBottom: 8 }} placeholder="Cari Lokasi" onChange={onChangeFilterLoc} allowClear />
                 {
                     datalocationclient.length === 0 ?
                         <>
@@ -717,35 +724,35 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, tok }) {
                             titleRender={(nodeData) => (
                                 <>
                                     <div className={`flex justify-between hover:bg-blue-100 text-black`}
-                                        // onMouseOver={() => {
-                                        //     var d = document.getElementById(`node${nodeData.key}`)
-                                        //     d.classList.add("flex")
-                                        //     d.classList.remove("hidden")
-                                        // }}
-                                        // onMouseLeave={() => {
-                                        //     var e = document.getElementById(`node${nodeData.key}`)
-                                        //     e.classList.add("hidden")
-                                        //     e.classList.remove("flex")
-                                        // }}
+                                    // onMouseOver={() => {
+                                    //     var d = document.getElementById(`node${nodeData.key}`)
+                                    //     d.classList.add("flex")
+                                    //     d.classList.remove("hidden")
+                                    // }}
+                                    // onMouseLeave={() => {
+                                    //     var e = document.getElementById(`node${nodeData.key}`)
+                                    //     e.classList.add("hidden")
+                                    //     e.classList.remove("flex")
+                                    // }}
                                     >
                                         <div className=" w-full">
                                             {nodeData.title}
                                         </div>
                                         {/* <div className={`hidden mx-2`} id={`node${nodeData.key}`}> */}
-                                            {/* <Link href={`/admin/company/locations/new?parent=${nodeData.id}&companyId=${dataDetailCompany.data.company_id}`}> */}
-                                            {
-                                                // [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-//                                                 <a className="mx-2 pb-1" onClick={(e) => { rt.push(`/admin/company/clients/locations/new?parent=${nodeData.id}&frominduk=1`) }} alt="add"><PlusOutlined /></a>
-                                                // <a className="mx-2 pb-1" onClick={(e) => { setdrawablecreate(true); setdefvalparent(nodeData.id); setfrominduk(true) }} alt="add"><PlusOutlined /></a>
-                                            }
-                                            {/* </Link> */}
-                                            {/* {
+                                        {/* <Link href={`/admin/company/locations/new?parent=${nodeData.id}&companyId=${dataDetailCompany.data.company_id}`}> */}
+                                        {
+                                            // [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                            //                                                 <a className="mx-2 pb-1" onClick={(e) => { rt.push(`/admin/company/clients/locations/new?parent=${nodeData.id}&frominduk=1`) }} alt="add"><PlusOutlined /></a>
+                                            // <a className="mx-2 pb-1" onClick={(e) => { setdrawablecreate(true); setdefvalparent(nodeData.id); setfrominduk(true) }} alt="add"><PlusOutlined /></a>
+                                        }
+                                        {/* </Link> */}
+                                        {/* {
                                                 [151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                                 <Link href={`/admin/company/clients/locations/${nodeData.id}?parent=${nodeData.title}&edit=1&cancel=${dataDetailCompany.data.company_id}`}>
                                                     <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                                 </Link>
                                             } */}
-                                            {/* <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("API is not available") }} onCancel={() => { message.error("Gagal dihapus") }}>
+                                        {/* <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("API is not available") }} onCancel={() => { message.error("Gagal dihapus") }}>
                                         <a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a>
                                     </Popconfirm> */}
                                         {/* </div> */}
@@ -858,7 +865,6 @@ function ClientsDetailBankAccount({ dataProfile, dataDetailCompany, tok, company
     //     dataGetBanks.data = []
     // }
     const rt = useRouter()
-    const { Option } = Select
     const [editable, setEditable] = useState(false)
     const [tambahdata, settambahdata] = useState(false)
     const [editdata, seteditdata] = useState(false)

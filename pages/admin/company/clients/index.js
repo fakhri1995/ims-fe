@@ -356,7 +356,8 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
                     <h1 className="font-bold">Clients</h1>
                     {
                         [157].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                        <Button type="primary" size="large" onClick={() => { setDrawablecreate(true); }}>Tambah</Button>
+                        <Button type="primary" size="large" onClick={() => { rt.push(`/admin/company/clients/locations/new?parent=list&frominduk=0`) }}>Tambah</Button>
+                        // <Button type="primary" size="large" onClick={() => { setDrawablecreate(true); }}>Tambah</Button>
                     }
                 </div>
             </div>

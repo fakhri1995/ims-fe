@@ -5,16 +5,15 @@ import st from "../../../../../../components/layout-dashboard.module.css"
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons'
-import { Form, Input, Button, Upload, message, notification, Select, TreeSelect } from 'antd'
+import { Form, Input, Button, Upload, message, notification, TreeSelect } from 'antd'
 
 function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }) {
     const rt = useRouter()
     const tok = initProps
-    const pathArr = ['admin', 'company', `clients`, 'New location']
     const { parent, frominduk } = rt.query
+    const pathArr = ['admin', 'company', `clients`, parent !== "list" ? 'Location Baru' : 'Client Baru']
     const [createLocationForm] = Form.useForm()
     const [par, setPar] = useState()
-    const { Option } = Select
 
     //flattening dataLocations
     // function flattenArr(dataassets) {
@@ -194,14 +193,22 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                     <div className=" col-span-1 md:col-span-4">
                         <div className="p-2 md:p-5 border-b flex mb-5 justify-between">
                             <div>
-                                <h1 className="mt-2 text-sm font-bold">New Location</h1>
+                                <h1 className="mt-2 text-sm font-bold">{parent !== 'list' ? 'Location Baru' : 'Client Baru'}</h1>
                                 {/* <h1 className="mt-2 text-xs font-medium">{dataDetailCompany.data.company_name}</h1> */}
                             </div>
                             <div className="flex mx-2">
-                                <Link href={`/admin/company/clients/${parent}`}>
-                                    <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
-                                    {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-5 rounded-md mx-2">Cancel</button> */}
-                                </Link>
+                                {
+                                    parent !== "list" ?
+                                        <Link href={`/admin/company/clients/${parent}`}>
+                                            <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
+                                            {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-5 rounded-md mx-2">Cancel</button> */}
+                                        </Link>
+                                        :
+                                        <Link href={`/admin/company/clients`}>
+                                            <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
+                                            {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-5 rounded-md mx-2">Cancel</button> */}
+                                        </Link>
+                                }
                                 <Button type="primary" size="middle" loading={loadingcreate} onClick={createLocationForm.submit}>Simpan</Button>
                                 {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-5 rounded-md">Save</button> */}
                             </div>
@@ -223,11 +230,11 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                         <div className="p-2 md:p-5 shadow-md">
                             <Form layout="vertical" form={createLocationForm} onFinish={handleCreateLocationsClients}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 mb-5">
-                                    <Form.Item name="name" style={{ marginRight: `1rem` }} label="Nama Anak Perusahaan"
+                                    <Form.Item name="name" style={{ marginRight: `1rem` }} label="Nama Perusahaan"
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Nama Anak Perusahaan harus diisi',
+                                                message: 'Nama Perusahaan wajib diisi',
                                             },
                                         ]}
                                     >
@@ -252,12 +259,13 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                                                 rules={[
                                                     {
                                                         required: true,
-                                                        message: 'Parent Perusahaan wajib diisi',
+                                                        message: 'Induk Perusahaan wajib diisi',
                                                     },
                                                 ]}>
                                                 <TreeSelect
                                                     allowClear
                                                     style={{ width: '100%' }}
+                                                    defaultValue={parent === "list" ? 66 : null}
                                                     dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                                                     treeData={datalocationclient}
                                                     placeholder="Tambah Induk Lokasi"

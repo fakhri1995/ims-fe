@@ -8,14 +8,13 @@ import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import { useEffect, useState } from 'react'
 import st from '../../../../components/layout-dashboard-mig.module.css'
 import Link from 'next/link'
-import { Tabs, Input, Form, Table, Tree, Drawer, notification, message, Modal, Select, Button, TreeSelect, DatePicker, Upload, Spin } from 'antd'
+import { Tabs, Input, Table, Tree, notification, message, Modal, Button, Spin } from 'antd'
 import moment from 'moment'
 
 function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
     const rt = useRouter()
     const [editable, setEditable] = useState(false)
     const [loadingbtn, setloadingbtn] = useState(false)
-    const [instanceForm] = Form.useForm()
     const onClickEdit = () => {
         setEditable(true)
     }
@@ -107,7 +106,8 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
                         null
                     }
                     {editable ?
-                        <Button type="primary" onClick={instanceForm.submit} loading={loadingbtn}>Simpan</Button>
+                        null
+                        // <Button type="primary" onClick={instanceForm.submit} loading={loadingbtn}>Simpan</Button>
                         :
                         <>
                             {
@@ -146,176 +146,182 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
                     }
                 </div>
                 <div className="w-full h-auto p-3 md:p-5 col-span-1 sm:col-span-2 md:col-span-4 flex">
-                    <Form layout="vertical" form={instanceForm} onFinish={handleEditProfile} initialValues={data1} style={{ width: `100%` }}>
-                        {/* <div className="md:m-5 mb-5 md:mb-0 ">
-                            <h1 className="font-semibold text-sm">ID Perusahaan:</h1>
-                            <h1 className="text-sm font-normal text-black">{data1.id}</h1>
-                        </div> */}
-                        <div className="grid grid-cols-1 md:grid-cols-2">
-                            <div className="md:m-5 mb-5 md:mb-0 ">
-                                {
-                                    editable ?
-                                        <Form.Item name="company_name" label="Nama Perusahaan"
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Nama Perusahaan wajib diisi',
-                                                },
-                                            ]}>
-                                            <Input defaultValue={data1.company_name} name="company_name" onChange={onChangeEditProfile}></Input>
-                                        </Form.Item>
-                                        :
-                                        <>
-                                            <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
-                                            <h1 className="text-sm font-normal text-black">{data1.company_name}</h1>
-                                        </>
-                                }
-                            </div>
-                            <div className="md:m-5 mb-5 md:mb-0">
-                                {
-                                    editable ?
-                                        <Form.Item name="address" label="Alamat"
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Alamat wajib diisi',
-                                                },
-                                            ]}>
-                                            <Input defaultValue={data1.address} name="address" onChange={onChangeEditProfile}></Input>
-                                        </Form.Item>
-                                        :
-                                        <>
-                                            <h1 className="font-semibold text-sm">Alamat:</h1>
-                                            <h1 className="text-sm font-normal text-black">{data1.address}</h1>
-                                        </>
-                                }
-                            </div>
-                            <div className="md:m-5 mb-5 md:mb-0">
-                                {
-                                    editable ?
-                                        <Form.Item name="phone_number" label="Telepon"
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Telepon wajib diisi',
-                                                },
-                                            ]}>
-                                            <Input defaultValue={data1.phone_number} name="phone_number" onChange={onChangeEditProfile}></Input>
-                                        </Form.Item>
-                                        :
-                                        <>
-                                            <h1 className="font-semibold text-sm">No. Telepon:</h1>
-                                            <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
-                                        </>
-                                }
-                            </div>
-                            <div className="md:m-5 mb-5 md:mb-0">
-                                {
-                                    editable ?
-                                        <Form.Item name="singkatan" label="Singkatan">
-                                            <Input defaultValue={data1.singkatan} name="singkatan" onChange={onChangeEditProfile}></Input>
-                                        </Form.Item>
-                                        :
-                                        <>
-                                            <h1 className="font-semibold text-sm">Singkatan:</h1>
-                                            <h1 className="text-sm font-normal text-black">{data1.singkatan}</h1>
-                                        </>
-                                }
-                            </div>
-                            <div className="md:m-5 mb-5 md:mb-0">
-                                {
-                                    editable ?
-                                        <Form.Item name="tanggal_pkp" label="Tanggal PKP"
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Tanggal PKP wajib diisi',
-                                                },
-                                            ]}>
-                                            <DatePicker onChange={(date, dateString) => { setData1({ ...data1, tanggal_pkp: moment(date) }) }} style={{ width: `100%` }} defaultValue={data1.tanggal_pkp}></DatePicker>
-                                        </Form.Item>
-                                        :
-                                        <>
-                                            <h1 className="font-semibold text-sm">Tanggal PKP:</h1>
-                                            {/* <h1 className="text-sm font-normal text-black">{data1.tanggal_pkp.locale('id').format('LL')}</h1> */}
-                                            {
-                                                data1.tanggal_pkp === null ?
-                                                    <h1 className="text-sm font-normal text-black">-</h1>
-                                                    :
-                                                    <h1 className="text-sm font-normal text-black">{data1.tanggal_pkp.locale('id').format('LL')}</h1>
-
-                                            }
-                                        </>
-                                }
-                            </div>
-                            <div className="md:m-5 mb-5 md:mb-0">
-                                {
-                                    editable ?
-                                        <Form.Item name="penanggung_jawab" label="Penanggung Jawab">
-                                            <Input defaultValue={data1.penanggung_jawab} name="penanggung_jawab" onChange={onChangeEditProfile}></Input>
-                                        </Form.Item>
-                                        :
-                                        <>
-                                            <h1 className="font-semibold text-sm">Penanggung Jawab:</h1>
-                                            <h1 className="text-sm font-normal text-black">{data1.penanggung_jawab}</h1>
-                                        </>
-                                }
-                            </div>
-                            <div className="md:m-5 mb-5 md:mb-0">
-                                {
-                                    editable ?
-                                        <Form.Item name="npwp" label="NPWP">
-                                            <Input defaultValue={data1.npwp} name="npwp" onChange={onChangeEditProfile}></Input>
-                                        </Form.Item>
-                                        :
-                                        <>
-                                            <h1 className="font-semibold text-sm">NPWP:</h1>
-                                            <h1 className="text-sm font-normal text-black">{data1.npwp}</h1>
-                                        </>
-                                }
-                            </div>
-                            <div className="md:m-5 mb-5 md:mb-0">
-                                {
-                                    editable ?
-                                        <Form.Item name="fax" label="Fax">
-                                            <Input defaultValue={data1.fax} name="fax" onChange={onChangeEditProfile}></Input>
-                                        </Form.Item>
-                                        :
-                                        <>
-                                            <h1 className="font-semibold text-sm">Fax:</h1>
-                                            <h1 className="text-sm font-normal text-black">{data1.fax}</h1>
-                                        </>
-                                }
-                            </div>
-                            <div className="md:m-5 mb-5 md:mb-0">
-                                {
-                                    editable ?
-                                        <Form.Item name="email" label="Email">
-                                            <Input defaultValue={data1.email} name="email" onChange={onChangeEditProfile}></Input>
-                                        </Form.Item>
-                                        :
-                                        <>
-                                            <h1 className="font-semibold text-sm">Email:</h1>
-                                            <h1 className="text-sm font-normal text-black">{data1.email}</h1>
-                                        </>
-                                }
-                            </div>
-                            <div className="md:m-5 mb-5 md:mb-0">
-                                {
-                                    editable ?
-                                        <Form.Item name="website" label="Website">
-                                            <Input defaultValue={data1.website} name="website" onChange={onChangeEditProfile}></Input>
-                                        </Form.Item>
-                                        :
-                                        <>
-                                            <h1 className="font-semibold text-sm">Website:</h1>
-
-                                            <h1 className="text-sm font-normal text-black">{data1.website}</h1>
-                                        </>
-                                }
-                            </div>
+                    {/* <Form layout="vertical" form={instanceForm} onFinish={handleEditProfile} initialValues={data1} style={{ width: `100%` }}> */}
+                    <div className="grid grid-cols-1 md:grid-cols-2">
+                        <div className="md:m-5 mb-5 md:mb-0 ">
+                            {
+                                editable ?
+                                    null
+                                    // <Form.Item name="company_name" label="Nama Perusahaan"
+                                    //     rules={[
+                                    //         {
+                                    //             required: true,
+                                    //             message: 'Nama Perusahaan wajib diisi',
+                                    //         },
+                                    //     ]}>
+                                    //     <Input defaultValue={data1.company_name} name="company_name" onChange={onChangeEditProfile}></Input>
+                                    // </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
+                                        <h1 className="text-sm font-normal text-black">{data1.company_name}</h1>
+                                    </>
+                            }
                         </div>
-                    </Form>
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    null
+                                    // <Form.Item name="address" label="Alamat"
+                                    //     rules={[
+                                    //         {
+                                    //             required: true,
+                                    //             message: 'Alamat wajib diisi',
+                                    //         },
+                                    //     ]}>
+                                    //     <Input defaultValue={data1.address} name="address" onChange={onChangeEditProfile}></Input>
+                                    // </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Alamat:</h1>
+                                        <h1 className="text-sm font-normal text-black">{data1.address}</h1>
+                                    </>
+                            }
+                        </div>
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    null
+                                    // <Form.Item name="phone_number" label="Telepon"
+                                    //     rules={[
+                                    //         {
+                                    //             required: true,
+                                    //             message: 'Telepon wajib diisi',
+                                    //         },
+                                    //     ]}>
+                                    //     <Input defaultValue={data1.phone_number} name="phone_number" onChange={onChangeEditProfile}></Input>
+                                    // </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">No. Telepon:</h1>
+                                        <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
+                                    </>
+                            }
+                        </div>
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    null
+                                    // <Form.Item name="singkatan" label="Singkatan">
+                                    //     <Input defaultValue={data1.singkatan} name="singkatan" onChange={onChangeEditProfile}></Input>
+                                    // </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Singkatan:</h1>
+                                        <h1 className="text-sm font-normal text-black">{data1.singkatan}</h1>
+                                    </>
+                            }
+                        </div>
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    null
+                                    // <Form.Item name="tanggal_pkp" label="Tanggal PKP"
+                                    //     rules={[
+                                    //         {
+                                    //             required: true,
+                                    //             message: 'Tanggal PKP wajib diisi',
+                                    //         },
+                                    //     ]}>
+                                    //     <DatePicker onChange={(date, dateString) => { setData1({ ...data1, tanggal_pkp: moment(date) }) }} style={{ width: `100%` }} defaultValue={data1.tanggal_pkp}></DatePicker>
+                                    // </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Tanggal PKP:</h1>
+                                        {/* <h1 className="text-sm font-normal text-black">{data1.tanggal_pkp.locale('id').format('LL')}</h1> */}
+                                        {
+                                            data1.tanggal_pkp === null ?
+                                                <h1 className="text-sm font-normal text-black">-</h1>
+                                                :
+                                                <h1 className="text-sm font-normal text-black">{data1.tanggal_pkp.locale('id').format('LL')}</h1>
+
+                                        }
+                                    </>
+                            }
+                        </div>
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    null
+                                    // <Form.Item name="penanggung_jawab" label="Penanggung Jawab">
+                                    //     <Input defaultValue={data1.penanggung_jawab} name="penanggung_jawab" onChange={onChangeEditProfile}></Input>
+                                    // </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Penanggung Jawab:</h1>
+                                        <h1 className="text-sm font-normal text-black">{data1.penanggung_jawab}</h1>
+                                    </>
+                            }
+                        </div>
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    null
+                                    // <Form.Item name="npwp" label="NPWP">
+                                    //     <Input defaultValue={data1.npwp} name="npwp" onChange={onChangeEditProfile}></Input>
+                                    // </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">NPWP:</h1>
+                                        <h1 className="text-sm font-normal text-black">{data1.npwp}</h1>
+                                    </>
+                            }
+                        </div>
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    null
+                                    // <Form.Item name="fax" label="Fax">
+                                    //     <Input defaultValue={data1.fax} name="fax" onChange={onChangeEditProfile}></Input>
+                                    // </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Fax:</h1>
+                                        <h1 className="text-sm font-normal text-black">{data1.fax}</h1>
+                                    </>
+                            }
+                        </div>
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    null
+                                    // <Form.Item name="email" label="Email">
+                                    //     <Input defaultValue={data1.email} name="email" onChange={onChangeEditProfile}></Input>
+                                    // </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Email:</h1>
+                                        <h1 className="text-sm font-normal text-black">{data1.email}</h1>
+                                    </>
+                            }
+                        </div>
+                        <div className="md:m-5 mb-5 md:mb-0">
+                            {
+                                editable ?
+                                    null
+                                    // <Form.Item name="website" label="Website">
+                                    //     <Input defaultValue={data1.website} name="website" onChange={onChangeEditProfile}></Input>
+                                    // </Form.Item>
+                                    :
+                                    <>
+                                        <h1 className="font-semibold text-sm">Website:</h1>
+
+                                        <h1 className="text-sm font-normal text-black">{data1.website}</h1>
+                                    </>
+                            }
+                        </div>
+                    </div>
+                    {/* </Form> */}
                 </div>
             </div>
         </div>
@@ -336,9 +342,7 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
     const [frominduk, setfrominduk] = useState(false)
     const [loadingtambah, setloadingtambah] = useState(false)
     const [loadingimage, setloadingimage] = useState(false)
-    const [instanceForm] = Form.useForm()
     const [drawablecreate, setdrawablecreate] = useState(false)
-    const { Search } = Input;
     const onExpand = (expandedKeys) => {
         setExpandedKeys(expandedKeys);
         setAutoExpandParent(false);
@@ -578,7 +582,7 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
             </div>
             <div className="p-5">
                 <h1 className="text-sm font-semibold">Pilih Parent terakhir</h1>
-                <Search style={{ marginBottom: 8 }} placeholder="Cari Lokasi" onChange={onChangeFilterLoc} />
+                <Input style={{ marginBottom: 8 }} placeholder="Cari Lokasi" onChange={onChangeFilterLoc} allowClear />
                 {
                     databranchlist.length === 0 ?
                         <>
@@ -594,16 +598,16 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                             titleRender={(nodeData) => (
                                 <>
                                     <div className={`flex justify-between hover:bg-blue-100 text-black`}
-                                        // onMouseOver={() => {
-                                        //     var d = document.getElementById(`node${nodeData.key}`)
-                                        //     d.classList.add("flex")
-                                        //     d.classList.remove("hidden")
-                                        // }}
-                                        // onMouseLeave={() => {
-                                        //     var e = document.getElementById(`node${nodeData.key}`)
-                                        //     e.classList.add("hidden")
-                                        //     e.classList.remove("flex")
-                                        // }}
+                                    // onMouseOver={() => {
+                                    //     var d = document.getElementById(`node${nodeData.key}`)
+                                    //     d.classList.add("flex")
+                                    //     d.classList.remove("hidden")
+                                    // }}
+                                    // onMouseLeave={() => {
+                                    //     var e = document.getElementById(`node${nodeData.key}`)
+                                    //     e.classList.add("hidden")
+                                    //     e.classList.remove("flex")
+                                    // }}
                                     >
                                         <div className=" w-full">
                                             {nodeData.title}
@@ -634,7 +638,7 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                         />
                 }
             </div>
-            <Drawer title="Buat Branch" maskClosable={false} destroyOnClose={true} visible={drawablecreate} onClose={() => {
+            {/* <Drawer title="Buat Branch" maskClosable={false} destroyOnClose={true} visible={drawablecreate} onClose={() => {
                 setdrawablecreate(false);
                 setdatanew({
                     name: '',
@@ -707,15 +711,6 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                                                 message: 'Parent Perusahaan wajib diisi',
                                             },
                                         ]}>
-                                        {/* <Select onChange={(value) => { setdatanew({ ...datanew, parent_id: value }) }}>
-                                    {
-                                        databranchlist.map((doc, idx) => {
-                                            return (
-                                                <Option key={idx} value={doc.company_id}>{doc.company_name}</Option>
-                                            )
-                                        })
-                                    }
-                                </Select> */}
                                         <TreeSelect
                                             allowClear
                                             style={{ width: '100%' }}
@@ -734,7 +729,7 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                         </div>
                     </Form>
                 </div>
-            </Drawer>
+            </Drawer> */}
         </div>
     )
 }
@@ -744,7 +739,6 @@ function MigIndexBankAccount({ dataProfile, tok }) {
     //     dataGetBanks.data = []
     // }
     const rt = useRouter()
-    const { Option } = Select
     const [editable, setEditable] = useState(false)
     const [tambahdata, settambahdata] = useState(false)
     const [editdata, seteditdata] = useState(false)
@@ -1116,8 +1110,7 @@ function MigIndexBankAccount({ dataProfile, tok }) {
                         // <Button type="primary" onClick={() => { setDrawablecreate(true) }}>Tambah</Button>
                         <Button type="primary" onClick={() => { rt.push(`/admin/company/mig/bank/create`) }}>Tambah</Button>
                     }
-                    {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-3 rounded-md w-24 md:w-40" onClick={() => { setDrawablecreate(true) }}> Create</button> */}
-                    <Drawer title="Edit data Rekening Bank Perusahan MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false); }} width={370} destroyOnClose={true}>
+                    {/* <Drawer title="Edit data Rekening Bank Perusahan MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false); }} width={370} destroyOnClose={true}>
                         <Form layout="vertical" onFinish={handleSubmitEditBA} initialValues={recordrow}>
                             <div className="grid grid-cols-1 mb-5">
                                 <Form.Item name="name" style={{ marginRight: `1rem` }} label="Bank"
@@ -1169,7 +1162,6 @@ function MigIndexBankAccount({ dataProfile, tok }) {
                                     <Button type="default" onClick={() => { setDrawableedit(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
                                     <Button htmlType="submit" type="primary" size="middle" loading={loadingbtnedit}>Simpan</Button>
                                 </div>
-                                {/* <button type="submit" className="bg-gray-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-gray-800">Save</button> */}
                             </Form.Item>
                         </Form>
                     </Drawer>
@@ -1227,10 +1219,9 @@ function MigIndexBankAccount({ dataProfile, tok }) {
                                     <Button type="default" onClick={() => { setDrawablecreate(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
                                     <Button htmlType="submit" type="primary" size="middle" loading={loadingbtncreate}>Simpan</Button>
                                 </div>
-                                {/* <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button> */}
                             </Form.Item>
                         </Form>
-                    </Drawer>
+                    </Drawer> */}
                 </div>
             </div>
             <div className="md:p-5">
@@ -1414,3 +1405,20 @@ export async function getServerSideProps({ req, res }) {
 
 
 export default MigIndex
+
+
+//Trash
+{/* <div className="md:m-5 mb-5 md:mb-0 ">
+                            <h1 className="font-semibold text-sm">ID Perusahaan:</h1>
+                            <h1 className="text-sm font-normal text-black">{data1.id}</h1>
+                        </div> */}
+
+{/* <Select onChange={(value) => { setdatanew({ ...datanew, parent_id: value }) }}>
+                                    {
+                                        databranchlist.map((doc, idx) => {
+                                            return (
+                                                <Option key={idx} value={doc.company_id}>{doc.company_name}</Option>
+                                            )
+                                        })
+                                    }
+                                </Select> */}

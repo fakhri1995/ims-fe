@@ -10,7 +10,7 @@ import { Form, Input, Button, Upload, message, notification, Select, TreeSelect 
 function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt, companyid }) {
     const rt = useRouter()
     const tok = initProps
-    const pathArr = ['admin', 'company', `mig`, 'New branch location']
+    const pathArr = ['admin', 'company', `mig`, 'Branch location baru']
     const { parent, frominduk } = rt.query
     const [createLocationForm] = Form.useForm()
     const [par, setPar] = useState()
@@ -186,7 +186,7 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
                     <div className=" col-span-1 md:col-span-4">
                         <div className="p-2 md:p-5 border-b flex mb-5 justify-between">
                             <div>
-                                <h1 className="mt-2 text-sm font-bold">New Location</h1>
+                                <h1 className="mt-2 text-sm font-bold">Branch Location Baru</h1>
                                 {/* <h1 className="mt-2 text-xs font-medium">{dataDetailCompany.data.company_name}</h1> */}
                             </div>
                             <div className="flex mx-2">
@@ -215,24 +215,15 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
                         <div className="p-2 md:p-5 shadow-md">
                             <Form layout="vertical" form={createLocationForm} onFinish={handleCreateLocationsMig}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 mb-5">
-                                    <Form.Item name="name" style={{ marginRight: `1rem` }} label="Nama Anak Perusahaan"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Nama Anak Perusahaan harus diisi',
-                                            },
-                                        ]}
-                                    >
-                                        <Input name="name" id="name" allowClear onChange={onChangeForm} />
-                                    </Form.Item>
                                     {
                                         frominduk1 === "1" ?
-                                            <Form.Item name="parent_id" label="Induk Lokasi">
+                                            <Form.Item name="parent_id" label="Induk Lokasi" style={{ marginRight: `1rem` }}
+                                            >
                                                 <TreeSelect
                                                     disabled
                                                     allowClear
                                                     defaultValue={Number(parent)}
-                                                    style={{ width: '100%' }}
+                                                    style={{ marginRight: `1rem` }}
                                                     dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                                                     treeData={datalocationmycompany}
                                                     treeDefaultExpandAll
@@ -240,7 +231,7 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
                                                 />
                                             </Form.Item>
                                             :
-                                            <Form.Item name="parent_id" label="Induk Lokasi"
+                                            <Form.Item name="parent_id" label="Induk Lokasi" style={{ marginRight: `1rem` }}
                                                 rules={[
                                                     {
                                                         required: true,
@@ -249,7 +240,7 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
                                                 ]}>
                                                 <TreeSelect
                                                     allowClear
-                                                    style={{ width: '100%' }}
+                                                    style={{ marginRight: `1rem` }}
                                                     dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                                                     treeData={datalocationmycompany}
                                                     placeholder="Tambah Induk Lokasi"
@@ -258,11 +249,28 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
                                                 />
                                             </Form.Item>
                                     }
-                                    <Form.Item name="address" style={{ marginRight: `1rem` }} label="Alamat Lengkap">
-                                        <Input.TextArea rows={4} name="address" id="address" onChange={onChangeForm}/>
+                                    <Form.Item name="name" style={{ marginRight: `1rem` }} label="Nama Perusahaan"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Nama Perusahaan wajib diisi',
+                                            },
+                                        ]}
+                                    >
+                                        <Input name="name" id="name" allowClear onChange={onChangeForm} />
                                     </Form.Item>
-                                    <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="No. Telepeon">
-                                        <Input name="phone_number" allowClear onChange={onChangeForm}/>
+                                    <Form.Item name="address" style={{ marginRight: `1rem` }} label="Alamat Lengkap">
+                                        <Input.TextArea rows={4} name="address" id="address" onChange={onChangeForm} />
+                                    </Form.Item>
+                                    <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="Nomor Telepeon"
+                                        rules={[
+                                            {
+                                                pattern: /(\-)|(^\d*$)/,
+                                                message: 'Nomor Telepon harus berupa angka'
+                                            }
+                                        ]}
+                                    >
+                                        <Input name="phone_number" allowClear onChange={onChangeForm} />
                                     </Form.Item>
                                 </div>
                                 {/* <h1 className="text-sm font-semibold">Address</h1>
