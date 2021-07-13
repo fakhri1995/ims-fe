@@ -5,12 +5,12 @@ import st from "../../../../../../components/layout-dashboard.module.css"
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons'
-import { Form, Input, Button, Upload, message, notification, TreeSelect } from 'antd'
+import { Form, Input, Button, message, notification, TreeSelect } from 'antd'
 
 function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }) {
     const rt = useRouter()
     const tok = initProps
-    const { parent, frominduk } = rt.query
+    const { parent, frominduk, cancel } = rt.query
     const pathArr = ['admin', 'company', `clients`, parent !== "list" ? 'Location Baru' : 'Client Baru']
     const [createLocationForm] = Form.useForm()
     const [par, setPar] = useState()
@@ -145,11 +145,11 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                         parent_id: 0
                     })
                     notification['success']({
-                        message: res2.message,
+                        message: frominduk1 === "1" ? 'Location berhasil disimpan' : 'Location berhasil ditambahkan',
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/clients/${parent}`)
+                        rt.push(`/admin/company/clients/${cancel}?active=locations`)
                         settambahdata(prev => !prev)
                     }, 800)
                 }
@@ -171,7 +171,11 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
             method: `POST`,
             headers: {
                 'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
             },
+            body: JSON.stringify({
+                company_id: Number(cancel)
+            })
         })
             .then(res => res.json())
             .then(res2 => {
@@ -199,7 +203,7 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                             <div className="flex mx-2">
                                 {
                                     parent !== "list" ?
-                                        <Link href={`/admin/company/clients/${parent}`}>
+                                        <Link href={`/admin/company/clients/${parent}?active=locations`}>
                                             <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
                                             {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-5 rounded-md mx-2">Cancel</button> */}
                                         </Link>
@@ -215,7 +219,7 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                         </div>
                     </div>
                     <div className="col-span-1 md:col-span-3 flex flex-col">
-                        <div className="p-3 col-span-1 md:col-span-1">
+                        {/* <div className="p-3 col-span-1 md:col-span-1">
                             <Upload
                                 name="profile_image"
                                 listType="picture-card"
@@ -226,23 +230,13 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                             >
                                 {datanew.image_logo ? <img src={datanew.image_logo} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
                             </Upload>
-                        </div>
+                        </div> */}
                         <div className="p-2 md:p-5 shadow-md">
                             <Form layout="vertical" form={createLocationForm} onFinish={handleCreateLocationsClients}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 mb-5">
-                                    <Form.Item name="name" style={{ marginRight: `1rem` }} label="Nama Perusahaan"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Nama Perusahaan wajib diisi',
-                                            },
-                                        ]}
-                                    >
-                                        <Input name="name" id="name" allowClear onChange={onChangeForm} />
-                                    </Form.Item>
                                     {
                                         frominduk1 === "1" ?
-                                            <Form.Item name="parent_id" label="Induk Lokasi">
+                                            <Form.Item name="parent_id" label="Induk Lokasi" style={{marginRight: `1rem` }}>
                                                 <TreeSelect
                                                     disabled
                                                     allowClear
@@ -255,7 +249,7 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                                                 />
                                             </Form.Item>
                                             :
-                                            <Form.Item name="parent_id" label="Induk Lokasi"
+                                            <Form.Item name="parent_id" label="Induk Lokasi" style={{marginRight: `1rem` }}
                                                 rules={[
                                                     {
                                                         required: true,
@@ -274,11 +268,27 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                                                 />
                                             </Form.Item>
                                     }
+                                    <Form.Item name="name" style={{ marginRight: `1rem` }} label="Nama Perusahaan"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Nama Perusahaan wajib diisi',
+                                            },
+                                        ]}
+                                    >
+                                        <Input name="name" id="name" allowClear onChange={onChangeForm} />
+                                    </Form.Item>
                                     <Form.Item name="address" style={{ marginRight: `1rem` }} label="Alamat Lengkap"
                                     >
                                         <Input.TextArea rows={4} name="address" id="address" allowClear onChange={onChangeForm} />
                                     </Form.Item>
-                                    <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="Nomor Telepeon"
+                                    <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="No. Telepeon"
+                                        rules={[
+                                            {
+                                                pattern: /(\-)|(^\d*$)/,
+                                                message: 'Nomor telepon harus berisi angka',
+                                            },
+                                        ]}
                                     >
                                         <Input name="phone_number" id="phone_number" allowClear onChange={onChangeForm} />
                                     </Form.Item>
@@ -357,7 +367,7 @@ export async function getServerSideProps({ req, res }) {
     const dataProfile = resjsonGP
 
     if (![152].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/admin/company/mig' })
+        res.writeHead(302, { Location: '/admin/company/clients' })
         res.end()
     }
 

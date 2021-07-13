@@ -143,7 +143,7 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/mig`)
+                        rt.push(`/admin/company/mig?active=locations`)
                     }, 800)
                 }
                 else if (!res2.success) {
@@ -200,7 +200,7 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
                         </div>
                     </div>
                     <div className="col-span-1 md:col-span-3 flex flex-col">
-                        <div className="p-3 col-span-1 md:col-span-1">
+                        {/* <div className="p-3 col-span-1 md:col-span-1">
                             <Upload
                                 name="profile_image"
                                 listType="picture-card"
@@ -211,7 +211,7 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
                             >
                                 {datanew.image_logo ? <img src={datanew.image_logo} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
                             </Upload>
-                        </div>
+                        </div> */}
                         <div className="p-2 md:p-5 shadow-md">
                             <Form layout="vertical" form={createLocationForm} onFinish={handleCreateLocationsMig}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 mb-5">
@@ -262,7 +262,7 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
                                     <Form.Item name="address" style={{ marginRight: `1rem` }} label="Alamat Lengkap">
                                         <Input.TextArea rows={4} name="address" id="address" onChange={onChangeForm} />
                                     </Form.Item>
-                                    <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="Nomor Telepeon"
+                                    <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="No. Telepon"
                                         rules={[
                                             {
                                                 pattern: /(\-)|(^\d*$)/,

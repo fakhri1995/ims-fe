@@ -141,7 +141,7 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, c
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/mig`)
+                        rt.push(`/admin/company/mig?active=locations`)
                         // seteditable(false)
                     }, 800)
                 }
@@ -185,12 +185,12 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, c
                                 {
                                     editable ?
                                         <>
-                                            <Button type="default" onClick={() => { rt.push(`/admin/company/mig`) }} size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
+                                            <Button type="default" onClick={() => { rt.push(`/admin/company/mig?active=locations`) }} size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
                                             <Button type="primary" size="middle" loading={loadingupdate} onClick={updateLocationForm.submit}>Simpan</Button>
                                         </>
                                         :
                                         <>
-                                            <Button type="default" onClick={() => { rt.push(`/admin/company/mig`) }} size="middle" style={{ marginRight: `1rem` }}>Kembali</Button>
+                                            <Button type="default" onClick={() => { rt.push(`/admin/company/mig?active=locations`) }} size="middle" style={{ marginRight: `1rem` }}>Kembali</Button>
                                             <Button type="primary" onClick={() => { window.location.href = `/admin/company/mig/locations/${companyid}?edit=1` }}>Ubah</Button>
                                         </>
                                 }
@@ -384,7 +384,7 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, c
                                             </>
                                     }
                                 </div>
-                                <h1 className="text-sm font-semibold">Address</h1>
+                                {/* <h1 className="text-sm font-semibold">Address</h1>
                                 <div className="grid grid-cols-1 md:grid-cols-2 mb-5">
                                     <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Alamat 1">
                                         <Input name="owner" id="editOwner" allowClear disabled />
@@ -408,7 +408,7 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, c
                                             <Input name="owner" id="editOwner" allowClear disabled />
                                         </Form.Item>
                                     </div>
-                                </div>
+                                </div> */}
                                 {/* <Form.Item name="parent" style={{ marginRight: `1rem` }} label="Parent Perusahaan"
                                         rules={[
                                             {

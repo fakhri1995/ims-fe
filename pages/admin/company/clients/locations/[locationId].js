@@ -50,7 +50,7 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, dataBranchDet
         company_name: dataBranchDetail.data.company_name,
         address: dataBranchDetail.data.address,
         phone_number: dataBranchDetail.data.phone_number,
-        image_logo: dataBranchDetail.data.image_logo,
+        image_logo: dataBranchDetail.data.image_logo === "" ? '/default-users.jpeg' : dataBranchDetail.data.image_logo,
         singkatan: dataBranchDetail.data.singkatan,
         tanggal_pkp: moment(dataBranchDetail.data.tanggal_pkp),
         penanggung_jawab: dataBranchDetail.data.penanggung_jawab,
@@ -141,7 +141,7 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, dataBranchDet
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/clients/${cancel}`)
+                        rt.push(`/admin/company/clients/${cancel}?active=locations`)
                         // seteditable(false)
                     }, 800)
                 }
@@ -190,12 +190,12 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, dataBranchDet
                                 {
                                     editable ?
                                         <>
-                                            <Button type="default" onClick={() => { rt.push(`/admin/company/clients/${cancel}`) }} size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
+                                            <Button type="default" onClick={() => { rt.push(`/admin/company/clients/${cancel}?active=locations`) }} size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
                                             <Button type="primary" size="middle" loading={loadingupdate} onClick={updateLocationForm.submit}>Simpan</Button>
                                         </>
                                         :
                                         <>
-                                            <Button type="default" onClick={() => { rt.push(`/admin/company/clients/${cancel}`) }} size="middle" style={{ marginRight: `1rem` }}>Kembali</Button>
+                                            <Button type="default" onClick={() => { rt.push(`/admin/company/clients/${cancel}?active=locations`) }} size="middle" style={{ marginRight: `1rem` }}>Kembali</Button>
                                             <Button type="primary" onClick={() => { window.location.href = `/admin/company/clients/locations/${companyid}?edit=1&cancel=${cancel}` }}>Ubah</Button>
                                         </>
                                 }
@@ -382,7 +382,7 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, dataBranchDet
                                             </>
                                     }
                                 </div>
-                                <h1 className="text-sm font-semibold">Address</h1>
+                                {/* <h1 className="text-sm font-semibold">Address</h1>
                                 <div className="grid grid-cols-1 md:grid-cols-2 mb-5">
                                     <Form.Item name="owner" style={{ marginRight: `1rem` }} label="Alamat 1">
                                         <Input name="owner" id="editOwner" allowClear disabled />
@@ -406,7 +406,7 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, dataBranchDet
                                             <Input name="owner" id="editOwner" allowClear disabled />
                                         </Form.Item>
                                     </div>
-                                </div>
+                                </div> */}
                                 {/* <Form.Item name="parent" style={{ marginRight: `1rem` }} label="Parent Perusahaan"
                                         rules={[
                                             {

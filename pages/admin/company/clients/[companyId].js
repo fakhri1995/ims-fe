@@ -652,7 +652,7 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, tok }) {
                         <div className={`hidden mx-2`} id={`node${item.key}`}>
                             {
                                 [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <a className="mx-2 pb-1" onClick={(e) => { rt.push(`/admin/company/clients/locations/new?parent=${item.id}&frominduk=1`) }} alt="add"><PlusOutlined /></a>
+                                <a className="mx-2 pb-1" onClick={(e) => { rt.push(`/admin/company/clients/locations/new?parent=${item.id}&frominduk=1&cancel=${dataDetailCompany.data.company_id}`) }} alt="add"><PlusOutlined /></a>
                             }
                             {
                                 [151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
@@ -702,7 +702,7 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, tok }) {
                 <div className="flex space-x-2">
                     {/* <Link href={`/admin/company/locations/new?parent=&companyId=${dataDetailCompany.data.company_id}`}> */}
                     {/* <Button type="primary" size="middle" onClick={() => { setdrawablecreate(true); setfrominduk(false) }}>Tambah</Button> */}
-                    <Button type="primary" size="middle" onClick={() => { rt.push(`/admin/company/clients/locations/new?parent=${dataDetailCompany.data.company_id}&frominduk=0`) }}>Tambah</Button>
+                    <Button type="primary" size="middle" onClick={() => { rt.push(`/admin/company/clients/locations/new?parent=${dataDetailCompany.data.company_id}&frominduk=0&cancel=${dataDetailCompany.data.company_id}`) }}>Tambah</Button>
                     {/* </Link> */}
                 </div>
             </div>
