@@ -1,7 +1,7 @@
 import httpcookie from 'cookie'
-import Layout from '../../../../../../components/layout-dashboard'
+import Layout from '../../../../../components/layout-dashboard'
 import Link from 'next/link'
-import st from "../../../../../../components/layout-dashboard.module.css"
+import st from "../../../../../components/layout-dashboard.module.css"
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons'
@@ -11,7 +11,7 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
     const rt = useRouter()
     const tok = initProps
     const { parent, frominduk, cancel } = rt.query
-    const pathArr = ['admin', 'company', `clients`, parent !== "list" ? 'Location Baru' : 'Client Baru']
+    const pathArr = ['admin', `clients`, parent !== "list" ? 'Buat Client Location' : 'Buat Client']
     const [createLocationForm] = Form.useForm()
     const [par, setPar] = useState()
 
@@ -150,9 +150,9 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                     })
                     setTimeout(() => {
                         parent !== "list" ?
-                            rt.push(`/admin/company/clients/${cancel}?active=locations`)
+                            rt.push(`/admin/clients/${cancel}?active=locations`)
                             :
-                            rt.push(`/admin/company/clients`)
+                            rt.push(`/admin/clients`)
                         settambahdata(prev => !prev)
                     }, 800)
                 }
@@ -200,18 +200,18 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                     <div className=" col-span-1 md:col-span-4">
                         <div className="p-2 md:p-5 border-b flex mb-5 justify-between">
                             <div>
-                                <h1 className="mt-2 text-sm font-bold">{parent !== 'list' ? 'Location Baru' : 'Client Baru'}</h1>
+                                <h1 className="mt-2 text-sm font-bold">{parent !== 'list' ? 'Buat Client Location' : 'Buat Client'}</h1>
                                 {/* <h1 className="mt-2 text-xs font-medium">{dataDetailCompany.data.company_name}</h1> */}
                             </div>
                             <div className="flex mx-2">
                                 {
                                     parent !== "list" ?
-                                        <Link href={`/admin/company/clients/${parent}?active=locations`}>
+                                        <Link href={`/admin/clients/${parent}?active=locations`}>
                                             <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
                                             {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-5 rounded-md mx-2">Cancel</button> */}
                                         </Link>
                                         :
-                                        <Link href={`/admin/company/clients`}>
+                                        <Link href={`/admin/clients`}>
                                             <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
                                             {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-5 rounded-md mx-2">Cancel</button> */}
                                         </Link>
@@ -382,7 +382,7 @@ export async function getServerSideProps({ req, res }) {
     const dataProfile = resjsonGP
 
     if (![152].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/admin/company/clients' })
+        res.writeHead(302, { Location: '/admin/clients' })
         res.end()
     }
 

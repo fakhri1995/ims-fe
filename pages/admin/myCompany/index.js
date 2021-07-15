@@ -1,4 +1,4 @@
-import Layout from '../../../../components/layout-dashboard'
+import Layout from '../../../components/layout-dashboard'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
@@ -6,7 +6,7 @@ import EditOutlined from '@ant-design/icons/EditOutlined'
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import { useEffect, useState } from 'react'
-import st from '../../../../components/layout-dashboard-mig.module.css'
+import st from '../../../components/layout-dashboard-mig.module.css'
 import Link from 'next/link'
 import { Tabs, Input, Table, Tree, notification, Modal, Button, Spin } from 'antd'
 import moment from 'moment'
@@ -98,7 +98,7 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/mig`)
+                        rt.push(`/admin/myCompany`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -153,7 +153,7 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
                         <>
                             {
                                 [145].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <Button type="primary" onClick={() => { rt.push(`/admin/company/mig/updateProfile/${id}`) }}>Ubah</Button>
+                                <Button type="primary" onClick={() => { rt.push(`/admin/myCompany/updateProfile/${id}`) }}>Ubah</Button>
                             }
                         </>
                     }
@@ -507,7 +507,7 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                             e.classList.remove("flex")
                         }}
                     >
-                        <div className="w-full" onClick={() => { rt.push(`/admin/company/mig/locations/${item.id}?parent=${item.id_parent}&edit=`) }}>
+                        <div className="w-full" onClick={() => { rt.push(`/admin/myCompany/locations/${item.id}?parent=${item.id_parent}&edit=`) }}>
                             {beforeStr}
                             <span className=" text-blue-500">{searchValue}</span>
                             {afterStr}
@@ -515,11 +515,11 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                         <div className={`hidden mx-2`} id={`node${item.key}`}>
                             {
                                 [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <a className="mx-2 pb-1" onClick={(e) => { rt.push(`/admin/company/mig/locations/new?parent=${item.id}&frominduk=1`) }} alt="add"><PlusOutlined /></a>
+                                <a className="mx-2 pb-1" onClick={(e) => { rt.push(`/admin/myCompany/locations/new?parent=${item.id}&frominduk=1`) }} alt="add"><PlusOutlined /></a>
                             }
                             {
                                 [151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <Link href={`/admin/company/mig/locations/${item.id}?parent=${item.title}&edit=1`}>
+                                <Link href={`/admin/myCompany/locations/${item.id}?parent=${item.title}&edit=1`}>
                                     <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                 </Link>
                             }
@@ -576,7 +576,7 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/mig`)
+                        rt.push(`/admin/myCompany`)
                         settambahdata(prev => !prev)
                     }, 800)
                 }
@@ -616,7 +616,7 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                     {
                         [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         // <Button type="primary" size="middle" onClick={() => { setdrawablecreate(true); setfrominduk(false) }}>Tambah</Button>
-                        <Button type="primary" size="middle" onClick={() => { rt.push(`/admin/company/mig/locations/new?parent=&frominduk=0`) }}>Tambah</Button>
+                        <Button type="primary" size="middle" onClick={() => { rt.push(`/admin/myCompany/locations/new?parent=&frominduk=0`) }}>Tambah</Button>
                     }
                     {/* </Link> */}
                 </div>
@@ -855,7 +855,7 @@ function MigIndexBankAccount({ dataProfile, tok }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/mig`)
+                        rt.push(`/admin/myCompany`)
                         setdeldata(prev => !prev)
                     }, 500)
                 }
@@ -894,7 +894,7 @@ function MigIndexBankAccount({ dataProfile, tok }) {
                     })
                     setTimeout(() => {
                         setDrawablecreate(false)
-                        rt.push(`/admin/company/mig?active=bankAccounts`)
+                        rt.push(`/admin/myCompany?active=bankAccounts`)
                         settambahdata(prev => !prev)
                     }, 500)
                 }
@@ -934,7 +934,7 @@ function MigIndexBankAccount({ dataProfile, tok }) {
                     })
                     setTimeout(() => {
                         setDrawableedit(false)
-                        rt.push(`/admin/company/mig?active=bankAccounts`)
+                        rt.push(`/admin/myCompany?active=bankAccounts`)
                         seteditdata(prev => !prev)
                     }, 500)
                 }
@@ -1073,7 +1073,7 @@ function MigIndexBankAccount({ dataProfile, tok }) {
                                             // <Button onClick={() => { setDrawableedit(true); setRecordrow(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
                                             //     <EditOutlined />
                                             // </Button>
-                                            <Button onClick={() => { rt.push(`/admin/company/mig/bank/${record.id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
+                                            <Button onClick={() => { rt.push(`/admin/myCompany/bank/${record.id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
                                                 <EditOutlined />
                                             </Button>
                                         }
@@ -1149,7 +1149,7 @@ function MigIndexBankAccount({ dataProfile, tok }) {
                     {
                         [147].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         // <Button type="primary" onClick={() => { setDrawablecreate(true) }}>Tambah</Button>
-                        <Button type="primary" onClick={() => { rt.push(`/admin/company/mig/bank/create`) }}>Tambah</Button>
+                        <Button type="primary" onClick={() => { rt.push(`/admin/myCompany/bank/create`) }}>Tambah</Button>
                     }
                     {/* <Drawer title="Edit data Rekening Bank Perusahan MIG" maskClosable={false} visible={drawableedit} onClose={() => { setDrawableedit(false); }} width={370} destroyOnClose={true}>
                         <Form layout="vertical" onFinish={handleSubmitEditBA} initialValues={recordrow}>
@@ -1304,14 +1304,33 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataBra
     const { TabPane } = Tabs;
     const tok = initProps
     // const pathArr = rt.pathname.split("/").slice(1)
-    const pathArr = ['admin', "company", 'mig', "MIG"]
+    // const pathArr = ['admin', "company", 'mig', ""]
     var activeTab = "profile"
     const { active } = rt.query
     if (active) {
         activeTab = active
     }
+
+    //useState
+    const [patharr, setpatharr] = useState([])
+
+    //useEffect
+    useEffect(()=>{
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getMainCompanyDetail`, {
+            method: `POST`,
+            headers: {
+                'Authorization': JSON.parse(tok),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                var temp2 = rt.pathname.split("/").slice(1)
+                temp2[temp2.length - 1] = res2.data.company_name
+                setpatharr(temp2)
+            })
+    })
     return (
-        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
+        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={patharr} st={st}>
             <div className="p-5 bg-white hidden md:block">
                 <Tabs tabPosition={`left`} defaultActiveKey={activeTab}>
                     {

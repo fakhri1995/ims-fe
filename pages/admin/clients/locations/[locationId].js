@@ -1,13 +1,13 @@
 import httpcookie from 'cookie'
-import Layout from '../../../../../components/layout-dashboard'
+import Layout from '../../../../components/layout-dashboard'
 import { useEffect, useState } from 'react'
-import st from "../../../../../components/layout-dashboard.module.css"
+import st from "../../../../components/layout-dashboard.module.css"
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons'
 import { Form, Input, notification, Button, message, Upload, DatePicker } from 'antd'
 import { useRouter } from 'next/router'
 import moment from 'moment'
 
-function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail2, companyid }) {
+function DetailLocationClients({ initProps, dataProfile, sidemenu, companyid }) {
     const rt = useRouter()
     const { edit, cancel } = rt.query
     const tok = initProps
@@ -51,7 +51,7 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail2, 
     //     company_name: dataBranchDetail.data.company_name,
     //     address: dataBranchDetail.data.address,
     //     phone_number: dataBranchDetail.data.phone_number,
-    //     image_logo: dataBranchDetail.data.image_logo,
+    //     image_logo: dataBranchDetail.data.image_logo === "" ? '/default-users.jpeg' : dataBranchDetail.data.image_logo,
     //     singkatan: dataBranchDetail.data.singkatan,
     //     tanggal_pkp: moment(dataBranchDetail.data.tanggal_pkp),
     //     penanggung_jawab: dataBranchDetail.data.penanggung_jawab,
@@ -152,11 +152,11 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail2, 
                 setloadingupdate(false)
                 if (res2.success) {
                     notification['success']({
-                        message: res2.message,
+                        message: 'Location berhasil diubah',
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/mig?active=locations`)
+                        rt.push(`/admin/clients/${cancel}?active=locations`)
                         // seteditable(false)
                     }, 800)
                 }
@@ -183,14 +183,14 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail2, 
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyBranchDetail`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientDetail`, {
             method: `POST`,
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                company_id: companyid
+                company_id: Number(companyid)
             })
         })
             .then(res => res.json())
@@ -211,13 +211,18 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail2, 
                 }
                 setdataupdate(temp)
                 setpraloading(false)
-                const pathArr = ['admin', 'company', `mig`, `Update branch location - ${dataBranchDetail.data.company_name}`]
+                const pathArr = ['admin', `clients`, `Ubah Client Location - ${dataBranchDetail.data.company_name}`]
                 setpatharr(pathArr)
             })
     }, [])
     useEffect(() => {
         edit === "1" ? seteditable(true) : seteditable(false)
     }, [])
+
+    useEffect(() => {
+        dataupdate.address === "" ? setdataupdate({ ...dataupdate, address: "-" }) : ""
+        dataupdate.phone_number === "" ? setdataupdate({ ...dataupdate, phone_number: "-" }) : ""
+    }, [dataupdate])
 
     return (
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={patharr} originPath={originPath} st={st}>
@@ -226,20 +231,20 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail2, 
                     <div className=" col-span-1 md:col-span-4">
                         <div className="p-2 md:p-5 border-b flex mb-5 justify-between">
                             <div>
-                                <h1 className="mt-2 text-sm font-bold">{editable ? "Update" : "Detail"} Location</h1>
+                                <h1 className="mt-2 text-sm font-bold">{edit === "1" ? "Ubah" : "Detail"} Client Location</h1>
                                 <h1 className="mt-2 text-xs font-medium">{dataupdate.company_name}</h1>
                             </div>
                             <div className="flex items-center mx-2">
                                 {
                                     editable ?
                                         <>
-                                            <Button type="default" onClick={() => { rt.push(`/admin/company/mig?active=locations`) }} size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
+                                            <Button type="default" onClick={() => { rt.push(`/admin/clients/${cancel}?active=locations`) }} size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
                                             <Button type="primary" size="middle" loading={loadingupdate} onClick={updateLocationForm.submit}>Simpan</Button>
                                         </>
                                         :
                                         <>
-                                            <Button type="default" onClick={() => { rt.push(`/admin/company/mig?active=locations`) }} size="middle" style={{ marginRight: `1rem` }}>Kembali</Button>
-                                            <Button type="primary" onClick={() => { window.location.href = `/admin/company/mig/locations/${companyid}?edit=1` }}>Ubah</Button>
+                                            <Button type="default" onClick={() => { rt.push(`/admin/clients/${cancel}?active=locations`) }} size="middle" style={{ marginRight: `1rem` }}>Kembali</Button>
+                                            <Button type="primary" onClick={() => { window.location.href = `/admin/clients/locations/${companyid}?edit=1&cancel=${cancel}` }}>Ubah</Button>
                                         </>
                                 }
                             </div>
@@ -309,7 +314,7 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail2, 
                                                         rules={[
                                                             {
                                                                 pattern: /(\-)|(^\d*$)/,
-                                                                message: 'No. Telepon wajib berisi angka',
+                                                                message: 'No. Telepon harus berisi angka',
                                                             },
                                                         ]}
                                                     >
@@ -401,7 +406,7 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail2, 
                                                         rules={[
                                                             {
                                                                 pattern: /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
-                                                                message: 'Email diisi sesuai format email',
+                                                                message: 'Email Anak Perusahaan diisi sesuai format email',
                                                             },
                                                         ]}
                                                     >
@@ -518,11 +523,11 @@ export async function getServerSideProps({ req, res, params }) {
     const dataProfile = resjsonGP
 
     if (![151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/admin/company/mig' })
+        res.writeHead(302, { Location: '/admin/clients' })
         res.end()
     }
 
-    // const resourcesBD = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyBranchDetail`, {
+    // const resourcesBD = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientDetail`, {
     //     method: `POST`,
     //     headers: {
     //         'Authorization': JSON.parse(initProps),
@@ -536,7 +541,7 @@ export async function getServerSideProps({ req, res, params }) {
     //     return {
     //         redirect: {
     //             permanent: false,
-    //             destination: '/admin/company/mig'
+    //             destination: '/admin/company/clients'
     //         }
     //     }
     // }
@@ -562,4 +567,4 @@ export async function getServerSideProps({ req, res, params }) {
     }
 }
 
-export default DetailLocations
+export default DetailLocationClients

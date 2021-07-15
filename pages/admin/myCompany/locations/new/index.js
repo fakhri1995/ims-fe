@@ -1,16 +1,16 @@
 import httpcookie from 'cookie'
-import Layout from '../../../../../../components/layout-dashboard'
+import Layout from '../../../../../components/layout-dashboard'
 import Link from 'next/link'
-import st from "../../../../../../components/layout-dashboard.module.css"
+import st from "../../../../../components/layout-dashboard.module.css"
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons'
-import { Form, Input, Button, Upload, message, notification, Select, TreeSelect } from 'antd'
+import { Form, Input, Button, message, notification, Select, TreeSelect } from 'antd'
 
 function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt, companyid }) {
     const rt = useRouter()
     const tok = initProps
-    const pathArr = ['admin', 'company', `mig`, 'Branch location baru']
+    const pathArr = ['admin', 'myCompany', 'Buat Branch']
     const { parent, frominduk } = rt.query
     const [createLocationForm] = Form.useForm()
     const [par, setPar] = useState()
@@ -143,7 +143,7 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/mig?active=locations`)
+                        rt.push(`/admin/myCompany?active=locations`)
                     }, 800)
                 }
                 else if (!res2.success) {
@@ -186,11 +186,11 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
                     <div className=" col-span-1 md:col-span-4">
                         <div className="p-2 md:p-5 border-b flex mb-5 justify-between">
                             <div>
-                                <h1 className="mt-2 text-sm font-bold">Branch Location Baru</h1>
+                                <h1 className="mt-2 text-sm font-bold">Branch Baru</h1>
                                 {/* <h1 className="mt-2 text-xs font-medium">{dataDetailCompany.data.company_name}</h1> */}
                             </div>
                             <div className="flex mx-2">
-                                <Link href={`/admin/company/mig`}>
+                                <Link href={`/admin/myCompany`}>
                                     <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
                                     {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-5 rounded-md mx-2">Cancel</button> */}
                                 </Link>
@@ -345,7 +345,7 @@ export async function getServerSideProps({ req, res }) {
     const dataProfile = resjsonGP
 
     if (![152].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/admin/company/mig' })
+        res.writeHead(302, { Location: '/admin/myCompany' })
         res.end()
     }
 

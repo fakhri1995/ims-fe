@@ -1,21 +1,23 @@
 import React, { useState, useEffect } from 'react'
 import httpcookie from 'cookie'
-import Layout from '../../../../../components/layout-dashboard'
+import Layout from '../../../../components/layout-dashboard'
 import Link from 'next/link'
-import st from "../../../../../components/layout-dashboard.module.css"
+import st from "../../../../components/layout-dashboard.module.css"
 import { useRouter } from 'next/router'
-import { Form, Input, Button, notification, Select, Spin } from 'antd'
+import { Form, Input, Button, notification, Select } from 'antd'
 
-const BankUpdate = ({ initProps, dataProfile, sidemenu, bankid }) => {
+const BankUpdateClient = ({ initProps, dataProfile, sidemenu, bankid }) => {
     //initial
     const rt = useRouter()
-    const pathArr = ['admin', 'company', `mig`, 'Update Bank Account']
+    const { companyid, name } = rt.query
+    const pathArr = ['admin', `clients`, 'Ubah Bank Account']
     const [editBankForm] = Form.useForm()
     const { Option } = Select
 
     //useState
     const [bankdata, setBankdata] = useState({
         id: bankid,
+        company_id: companyid,
         name: '',
         account_number: '',
         owner: '',
@@ -49,7 +51,7 @@ const BankUpdate = ({ initProps, dataProfile, sidemenu, bankid }) => {
     //handler
     const handleSubmitEditBA = () => {
         setloadingbtnedit(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/updateMainBank`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateClientBank`, {
             method: 'PUT',
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -66,12 +68,12 @@ const BankUpdate = ({ initProps, dataProfile, sidemenu, bankid }) => {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/mig?active=bankAccounts`)
+                        rt.push(`/admin/clients/${companyid}?active=bankAccounts`)
                     }, 500)
                 }
                 else {
                     notification['error']({
-                        message: res2.erroInfo.status_detail,
+                        message: res2.errorInfo.status_detail,
                         duration: 3
                     })
                 }
@@ -80,7 +82,7 @@ const BankUpdate = ({ initProps, dataProfile, sidemenu, bankid }) => {
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getMainBanks`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getClientBanks?id=${Number(companyid)}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -90,7 +92,7 @@ const BankUpdate = ({ initProps, dataProfile, sidemenu, bankid }) => {
             .then(res2 => {
                 const tempdata = res2.data.map((doc, idx) => {
                     return ({
-                        key: idx + 1,
+                        // key: idx + 1,
                         id: doc.id,
                         company_id: doc.company_id,
                         name: doc.name,
@@ -99,7 +101,6 @@ const BankUpdate = ({ initProps, dataProfile, sidemenu, bankid }) => {
                         currency: doc.currency
                     })
                 }).filter(dataa => dataa.id === Number(bankid))[0]
-                console.log(tempdata)
                 setBankdata(tempdata)
                 setloaading(false)
             })
@@ -112,11 +113,11 @@ const BankUpdate = ({ initProps, dataProfile, sidemenu, bankid }) => {
                     <div className=" col-span-1 md:col-span-4">
                         <div className="p-2 md:p-5 border-b flex mb-5 justify-between">
                             <div>
-                                <h1 className="mt-2 text-sm font-bold">Update Bank Account</h1>
+                                <h1 className="mt-2 text-sm font-bold">Update Bank Account | {loading ? "" : `${name}`}</h1>
                                 {/* <h1 className="mt-2 text-xs font-medium">{dataDetailCompany.data.company_name}</h1> */}
                             </div>
                             <div className="flex mx-2">
-                                <Link href={`/admin/company/mig`}>
+                                <Link href={`/admin/clients/${companyid}?active=bankAccounts`}>
                                     <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
                                     {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-5 rounded-md mx-2">Cancel</button> */}
                                 </Link>
@@ -129,7 +130,7 @@ const BankUpdate = ({ initProps, dataProfile, sidemenu, bankid }) => {
                         <div className="p-2 md:p-5 shadow-md">
                             {
                                 loading ?
-                                    <Spin />
+                                    null
                                     :
                                     <Form layout="vertical" onFinish={handleSubmitEditBA} form={editBankForm} initialValues={bankdata}>
                                         <div className="grid grid-cols-1 mb-5">
@@ -137,7 +138,7 @@ const BankUpdate = ({ initProps, dataProfile, sidemenu, bankid }) => {
                                                 rules={[
                                                     {
                                                         required: true,
-                                                        message: 'Nama bank harus diisi',
+                                                        message: 'Nama Bank wajib diisi',
                                                     },
                                                 ]}>
                                                 <Input onChange={onChangeBA} name="name" defaultValue={bankdata.name} />
@@ -146,7 +147,7 @@ const BankUpdate = ({ initProps, dataProfile, sidemenu, bankid }) => {
                                                 rules={[
                                                     {
                                                         required: true,
-                                                        message: 'Nomor rekening harus diisi',
+                                                        message: 'Nomor Rekening wajib diisi',
                                                     },
                                                     {
                                                         pattern: /(\-)|(^\d*$)/,
@@ -159,7 +160,7 @@ const BankUpdate = ({ initProps, dataProfile, sidemenu, bankid }) => {
                                                 rules={[
                                                     {
                                                         required: true,
-                                                        message: 'Nama penanggung jawab harus diisi',
+                                                        message: 'Atas Nama wajib diisi',
                                                     },
                                                 ]}>
                                                 <Input onChange={onChangeBA} name="owner" defaultValue={bankdata.owner} />
@@ -168,7 +169,7 @@ const BankUpdate = ({ initProps, dataProfile, sidemenu, bankid }) => {
                                                 rules={[
                                                     {
                                                         required: true,
-                                                        message: 'Mata uang harus diisi',
+                                                        message: 'Mata uang wajib diisi',
                                                     },
                                                 ]}>
                                                 <select name="currency" onChange={onChangeBA} defaultValue={bankdata.currency} style={{ width: `100%`, borderRadius: `5px` }}>
@@ -231,4 +232,4 @@ export async function getServerSideProps({ req, res, params }) {
     }
 }
 
-export default BankUpdate
+export default BankUpdateClient

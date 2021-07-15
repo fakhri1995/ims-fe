@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import httpcookie from 'cookie'
-import Layout from '../../../../../components/layout-dashboard'
+import Layout from '../../../../components/layout-dashboard'
 import Link from 'next/link'
-import st from "../../../../../components/layout-dashboard.module.css"
+import st from "../../../../components/layout-dashboard.module.css"
 import { useRouter } from 'next/router'
 import { Form, Input, Button, notification, Select } from 'antd'
 
-const BankCreate = ({ initProps, dataProfile, sidemenu }) => {
+const BankCreateClient = ({ initProps, dataProfile, sidemenu }) => {
     //initial
     const rt = useRouter()
-    const pathArr = ['admin', 'company', `mig`, 'Buat Bank Account']
+    const { origin, name } = rt.query
+    const pathArr = ['admin', `clients`, 'Buat Bank Account']
     const [createBankForm] = Form.useForm()
     const { Option } = Select
 
     //useState
     const [bankdata, setBankdata] = useState({
+        company_id: Number(origin),
         name: '',
         account_number: '',
         owner: '',
@@ -41,7 +43,7 @@ const BankCreate = ({ initProps, dataProfile, sidemenu }) => {
     //handler
     const handleSubmitCreateBA = () => {
         setloadingcreate(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/addMainBank`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addClientBank`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -53,25 +55,19 @@ const BankCreate = ({ initProps, dataProfile, sidemenu }) => {
             .then(res2 => {
                 setloadingcreate(false)
                 if (res2.success) {
-                    setBankdata({
-                        name: '',
-                        account_number: '',
-                        owner: '',
-                        currency: ''
-                    })
                     notification['success']({
                         message: res2.message,
-                        duration: 3
+                        duration: 1.5
                     })
                     setTimeout(() => {
                         setloadingcreate(false)
-                        rt.push(`/admin/company/mig?active=bankAccounts`)
+                        rt.push(`/admin/clients/${origin}?active=bankAccounts`)
                     }, 500)
                 }
                 else {
                     notification['error']({
                         message: res2.message.errorInfo.status_detail,
-                        duration: 3
+                        duration: 2
                     })
                 }
             })
@@ -110,11 +106,11 @@ const BankCreate = ({ initProps, dataProfile, sidemenu }) => {
                     <div className=" col-span-1 md:col-span-4">
                         <div className="p-2 md:p-5 border-b flex mb-5 justify-between">
                             <div>
-                                <h1 className="mt-2 text-sm font-bold">Buat Bank Account</h1>
+                                <h1 className="mt-2 text-sm font-bold">Buat Bank Account | {name}</h1>
                                 {/* <h1 className="mt-2 text-xs font-medium">{dataDetailCompany.data.company_name}</h1> */}
                             </div>
                             <div className="flex mx-2">
-                                <Link href={`/admin/company/mig`}>
+                                <Link href={`/admin/clients/${origin}?active=bankAccounts`}>
                                     <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
                                     {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-5 rounded-md mx-2">Cancel</button> */}
                                 </Link>
@@ -162,7 +158,7 @@ const BankCreate = ({ initProps, dataProfile, sidemenu }) => {
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Mata Uang wajib diisi',
+                                                message: 'Mata uang wajib diisi',
                                             },
                                         ]}>
                                         <Select
@@ -228,4 +224,4 @@ export async function getServerSideProps({ req, res }) {
     }
 }
 
-export default BankCreate
+export default BankCreateClient

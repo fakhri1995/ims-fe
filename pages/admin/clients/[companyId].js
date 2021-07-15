@@ -1,10 +1,10 @@
-import Layout from '../../../../components/layout-dashboard'
+import Layout from '../../../components/layout-dashboard'
 import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
-import st from '../../../../components/layout-dashboard-clients.module.css'
+import st from '../../../components/layout-dashboard-clients.module.css'
 import { Tabs, Input, Table, Tree, Modal, notification, Button, Switch, Spin } from 'antd'
 import moment from 'moment'
 
@@ -100,7 +100,7 @@ function ClientsDetailProfile({ dataProfile, tok, companyid }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/clients/${data1.id}`)
+                        rt.push(`/admin/clients/${data1.id}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -148,7 +148,7 @@ function ClientsDetailProfile({ dataProfile, tok, companyid }) {
                         else if (status === "nonAktif") {
                             setloadingubahnonaktif(false)
                         }
-                        rt.push(`/admin/company/clients/${data1.id}`)
+                        rt.push(`/admin/clients/${data1.id}`)
                         setaktifdata(prev => !prev)
                     }, 500)
                 }
@@ -211,7 +211,7 @@ function ClientsDetailProfile({ dataProfile, tok, companyid }) {
                         <>
                             {
                                 [158].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <Button type="primary" onClick={() => { rt.push(`/admin/company/clients/updateProfile/${data1.id}`) }}>Ubah</Button>
+                                <Button type="primary" onClick={() => { rt.push(`/admin/clients/updateProfile/${data1.id}`) }}>Ubah</Button>
                             }
                         </>
                     }
@@ -572,7 +572,7 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, data1, tok }) 
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/clients/${data1.id}`)
+                        rt.push(`/admin/clients/${data1.id}`)
                         settambahdata(prev => !prev)
                     }, 800)
                 }
@@ -659,7 +659,7 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, data1, tok }) 
                             e.classList.remove("flex")
                         }}
                     >
-                        <div className="w-full" onClick={() => { rt.push(`/admin/company/clients/locations/${item.id}?parent=${item.id_parent}&edit=&cancel=${data1.id}`) }}>
+                        <div className="w-full" onClick={() => { rt.push(`/admin/clients/locations/${item.id}?parent=${item.id_parent}&edit=&cancel=${data1.id}`) }}>
                             {beforeStr}
                             <span className=" text-blue-500">{searchValue}</span>
                             {afterStr}
@@ -667,11 +667,11 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, data1, tok }) 
                         <div className={`hidden mx-2`} id={`node${item.key}`}>
                             {
                                 [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <a className="mx-2 pb-1" onClick={(e) => { rt.push(`/admin/company/clients/locations/new?parent=${item.id}&frominduk=1&cancel=${data1.id}`) }} alt="add"><PlusOutlined /></a>
+                                <a className="mx-2 pb-1" onClick={(e) => { rt.push(`/admin/clients/locations/new?parent=${item.id}&frominduk=1&cancel=${data1.id}`) }} alt="add"><PlusOutlined /></a>
                             }
                             {
                                 [151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <Link href={`/admin/company/clients/locations/${item.id}?parent=${item.title}&edit=1&cancel=${data1.id}`}>
+                                <Link href={`/admin/clients/locations/${item.id}?parent=${item.title}&edit=1&cancel=${data1.id}`}>
                                     <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                 </Link>
                             }
@@ -720,7 +720,7 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, data1, tok }) 
                 <div className="flex space-x-2">
                     {/* <Link href={`/admin/company/locations/new?parent=&companyId=${dataDetailCompany.data.company_id}`}> */}
                     {/* <Button type="primary" size="middle" onClick={() => { setdrawablecreate(true); setfrominduk(false) }}>Tambah</Button> */}
-                    <Button type="primary" size="middle" onClick={() => { rt.push(`/admin/company/clients/locations/new?parent=${data1.id}&frominduk=0&cancel=${data1.id}`) }}>Tambah</Button>
+                    <Button type="primary" size="middle" onClick={() => { rt.push(`/admin/clients/locations/new?parent=${data1.id}&frominduk=0&cancel=${data1.id}`) }}>Tambah</Button>
                     {/* </Link> */}
                 </div>
             </div>
@@ -1020,7 +1020,7 @@ function ClientsDetailBankAccount({ dataProfile, data1, tok, companyId }) {
                                     <>{actions[index]}
                                         {
                                             [162].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                            <Button onClick={() => { rt.push(`/admin/company/clients/bank/${record.id}?companyid=${companyId}&name=${data1.company_name}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
+                                            <Button onClick={() => { rt.push(`/admin/clients/bank/${record.id}?companyid=${companyId}&name=${data1.company_name}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
                                                 <EditOutlined />
                                             </Button>
                                             // <Button onClick={() => { setDrawableedit(true); setRecordrow(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
@@ -1104,7 +1104,7 @@ function ClientsDetailBankAccount({ dataProfile, data1, tok, companyId }) {
                     })
                     setTimeout(() => {
                         setDrawablecreate(false)
-                        rt.push(`/admin/company/clients/${companyId}`)
+                        rt.push(`/admin/clients/${companyId}`)
                         settambahdata(prev => !prev)
                     }, 500)
                 }
@@ -1145,7 +1145,7 @@ function ClientsDetailBankAccount({ dataProfile, data1, tok, companyId }) {
                     })
                     setTimeout(() => {
                         setDrawableedit(false)
-                        rt.push(`/admin/company/clients/${companyId}`)
+                        rt.push(`/admin/clients/${companyId}`)
                         seteditdata(prev => !prev)
                     }, 500)
                 }
@@ -1233,7 +1233,7 @@ function ClientsDetailBankAccount({ dataProfile, data1, tok, companyId }) {
                     }
                     {
                         [161].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                        <Button type="primary" onClick={() => { rt.push(`/admin/company/clients/bank/create?origin=${companyId}&name=${data1.company_name}`) }}>Tambah</Button>
+                        <Button type="primary" onClick={() => { rt.push(`/admin/clients/bank/create?origin=${companyId}&name=${data1.company_name}`) }}>Tambah</Button>
                         // <Button type="primary" onClick={() => { setDrawablecreate(true) }}>Tambah</Button>
                     }
                     {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40 hidden md:block" onClick={() => { setDrawablecreate(true) }}> Create</button>

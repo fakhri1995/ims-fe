@@ -1,9 +1,9 @@
-import Layout from '../../../../../components/layout-dashboard'
+import Layout from '../../../../components/layout-dashboard'
 import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
 import { LoadingOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
-import st from '../../../../../components/layout-dashboard.module.css'
+import st from '../../../../components/layout-dashboard.module.css'
 import { EditOutlined } from '@ant-design/icons'
 import { Form, DatePicker, Input, notification, Button } from 'antd'
 import moment from 'moment'
@@ -91,7 +91,7 @@ function ClientUpdateProfile({ initProps, dataProfile, sidemenu, companyid }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/clients/${data1.id}`)
+                        rt.push(`/admin/clients/${data1.id}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -144,11 +144,11 @@ function ClientUpdateProfile({ initProps, dataProfile, sidemenu, companyid }) {
             <div id="profileDetailMigWrapper">
                 <div className="flex justify-start md:justify-between p-3 md:border-t-2 md:border-b-2 bg-white mb-4 md:mb-8">
                     <div>
-                        <h1 className="mt-2 text-sm font-bold">Update Profile</h1>
+                        <h1 className="mt-2 text-sm font-bold">Update Profile Client</h1>
                     </div>
                     <div className="flex space-x-2">
                         {editable ?
-                            <Button type="default" onClick={() => { rt.push(`/admin/company/clients/${data1.id}`); }}>Batal</Button>
+                            <Button type="default" onClick={() => { rt.push(`/admin/clients/${data1.id}`); }}>Batal</Button>
                             :
                             null
                         }
@@ -412,7 +412,7 @@ export async function getServerSideProps({ req, res, params }) {
     const dataProfile = resjsonGP
 
     if (![156, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/admin/company' })
+        res.writeHead(302, { Location: '/admin/clients' })
         res.end()
     }
 

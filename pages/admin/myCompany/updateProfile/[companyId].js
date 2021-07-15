@@ -1,9 +1,9 @@
-import Layout from '../../../../../components/layout-dashboard'
+import Layout from '../../../../components/layout-dashboard'
 import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
 import { LoadingOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
-import st from '../../../../../components/layout-dashboard.module.css'
+import st from '../../../../components/layout-dashboard.module.css'
 import { EditOutlined } from '@ant-design/icons'
 import { Form, DatePicker, Input, notification, Button } from 'antd'
 import moment from 'moment'
@@ -117,7 +117,7 @@ function MyCompanyUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailMy
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/mig`)
+                        rt.push(`/admin/myCompany`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -172,7 +172,7 @@ function MyCompanyUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailMy
                     </div>
                     <div className="flex space-x-2">
                         {editable ?
-                            <Button type="default" onClick={() => { rt.push(`/admin/company/mig`); }}>Batal</Button>
+                            <Button type="default" onClick={() => { rt.push(`/admin/myCompany`); }}>Batal</Button>
                             :
                             null
                         }

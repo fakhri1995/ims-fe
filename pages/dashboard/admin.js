@@ -143,7 +143,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                         <div className="grid md:grid-cols-5 sm:grid-cols-1">
                             {dataProfile.data.registered_feature.includes(144) ?
                                 <Link href={{
-                                    pathname: '/admin/company/mig/',
+                                    pathname: '/admin/myCompany/',
                                 }}>
                                     <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                         <div className="flex">
@@ -157,7 +157,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             }
                             {dataProfile.data.registered_feature.includes(155) ?
                                 <Link href={{
-                                    pathname: '/admin/company/clients',
+                                    pathname: '/admin/clients',
                                 }}>
                                     <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                         <div className="flex">

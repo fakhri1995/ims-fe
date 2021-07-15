@@ -114,7 +114,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                     {
                                         [144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                         <Menu.Item key="411" icon={<IconMIGCompany width={25} height={25} />}>
-                                            <Link href="/admin/company/mig">
+                                            <Link href="/admin/myCompany">
                                                 My Company
                                             </Link>
                                         </Menu.Item>
@@ -122,7 +122,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                     {
                                         [155, 156, 157, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                         <Menu.Item key="412" icon={<IconClientsCompany width={25} height={25} />}>
-                                            <Link href="/admin/company/clients">
+                                            <Link href="/admin/clients">
                                                 Clients
                                             </Link>
                                         </Menu.Item>
@@ -281,7 +281,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                     {
                                         dataProfile.data.registered_feature.includes(144) &&
                                         <Menu.Item key="411" icon={<IconMIGCompany width={20} height={20} />}>
-                                            <Link href="/admin/company/mig">
+                                            <Link href="/admin/myCompany">
                                                 My Company
                                         </Link>
                                         </Menu.Item>
@@ -289,7 +289,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                     {
                                         dataProfile.data.registered_feature.includes(155) &&
                                         <Menu.Item key="412" icon={<IconClientsCompany width={20} height={20} />}>
-                                            <Link href="/admin/company/clients">
+                                            <Link href="/admin/clients">
                                                 Clients
                                         </Link>
                                         </Menu.Item>

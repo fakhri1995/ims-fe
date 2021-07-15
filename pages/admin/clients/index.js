@@ -1,11 +1,11 @@
-import Layout from '../../../../components/layout-dashboard'
+import Layout from '../../../components/layout-dashboard'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import st from '../../../../components/layout-dashboard-clients.module.css'
+import st from '../../../components/layout-dashboard-clients.module.css'
 import { Table, notification, Button } from 'antd'
 
 function modifData(dataa) {
@@ -80,7 +80,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
                     // },
                     children:
                         <>
-                            <Link href={`/admin/company/clients/${record.company_id}`}>
+                            <Link href={`/admin/clients/${record.company_id}`}>
                                 <a><img src={record.image_logo} alt="imageProfile" className=" object-cover w-10 h-10 rounded-full" /></a>
                             </Link>
                         </>
@@ -116,7 +116,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
                     // },
                     children:
                         <>
-                            <Link href={`/admin/company/clients/${record.company_id}`}>
+                            <Link href={`/admin/clients/${record.company_id}`}>
                                 <a><h1>{record.company_name}</h1></a>
                             </Link>
                         </>
@@ -135,7 +135,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
                     // },
                     children:
                         <>
-                            <Link href={`/admin/company/clients/${record.company_id}`}>
+                            <Link href={`/admin/clients/${record.company_id}`}>
                                 {
                                     record.is_enabled ?
                                         <a><div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md text-center w-40">AKTIF MODULE</div></a>
@@ -305,7 +305,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
                     })
                     setTimeout(() => {
                         setDrawablecreate(false)
-                        rt.push(`/admin/company/clients`)
+                        rt.push(`/admin/clients`)
                     }, 800)
                 }
                 else if (!res2.success) {
@@ -355,7 +355,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
                     <h1 className="font-bold">Clients</h1>
                     {
                         [157].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                        <Button type="primary" size="large" onClick={() => { rt.push(`/admin/company/clients/locations/new?parent=list&frominduk=0`) }}>Tambah</Button>
+                        <Button type="primary" size="large" onClick={() => { rt.push(`/admin/clients/locations/new?parent=list&frominduk=0`) }}>Tambah</Button>
                         // <Button type="primary" size="large" onClick={() => { setDrawablecreate(true); }}>Tambah</Button>
                     }
                 </div>
