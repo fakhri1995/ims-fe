@@ -8,7 +8,7 @@ import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import { useEffect, useState } from 'react'
 import st from '../../../../components/layout-dashboard-mig.module.css'
 import Link from 'next/link'
-import { Tabs, Input, Table, Tree, notification, message, Modal, Button, Spin } from 'antd'
+import { Tabs, Input, Table, Tree, notification, Modal, Button, Spin } from 'antd'
 import moment from 'moment'
 
 function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
@@ -18,24 +18,37 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
     const onClickEdit = () => {
         setEditable(true)
     }
-    if (dataDetailCompany.data.tanggal_pkp === null) {
-        dataDetailCompany.data.tanggal_pkp = new Date()
-    }
+    // if (dataDetailCompany.data.tanggal_pkp === null) {
+    //     dataDetailCompany.data.tanggal_pkp = new Date()
+    // }
+    // const [data1, setData1] = useState({
+    //     company_name: dataDetailCompany.data.company_name,
+    //     address: dataDetailCompany.data.address,
+    //     phone_number: dataDetailCompany.data.phone_number,
+    //     image_logo: dataDetailCompany.data.image_logo,
+    //     singkatan: dataDetailCompany.data.singkatan,
+    //     tanggal_pkp: moment(dataDetailCompany.data.tanggal_pkp),
+    //     penanggung_jawab: dataDetailCompany.data.penanggung_jawab,
+    //     npwp: dataDetailCompany.data.npwp,
+    //     fax: dataDetailCompany.data.fax,
+    //     email: dataDetailCompany.data.email,
+    //     website: dataDetailCompany.data.website
+    // })
     const [data1, setData1] = useState({
-        // id: dataDetailCompany.data.data.company_id,
-        company_name: dataDetailCompany.data.company_name,
-        // role: dataDetailCompany.data.data.role,
-        address: dataDetailCompany.data.address,
-        phone_number: dataDetailCompany.data.phone_number,
-        image_logo: dataDetailCompany.data.image_logo,
-        singkatan: dataDetailCompany.data.singkatan,
-        tanggal_pkp: moment(dataDetailCompany.data.tanggal_pkp)/*moment(new Date())*/,
-        penanggung_jawab: dataDetailCompany.data.penanggung_jawab,
-        npwp: dataDetailCompany.data.npwp,
-        fax: dataDetailCompany.data.fax,
-        email: dataDetailCompany.data.email,
-        website: dataDetailCompany.data.website
+        company_name: "",
+        address: "",
+        phone_number: "",
+        image_logo: "",
+        singkatan: "",
+        tanggal_pkp: moment(new Date()),
+        penanggung_jawab: "",
+        npwp: "",
+        fax: "",
+        email: "",
+        website: ""
     })
+    const [id, setid] = useState(0)
+    const [isenabled, setisenabled] = useState(false)
     const [loadingfoto, setLoadingfoto] = useState(false)
 
     const onChangeEditProfile = (e) => {
@@ -96,6 +109,34 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
                 }
             })
     }
+
+    //useEffect
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getMainCompanyDetail`, {
+            method: `POST`,
+            headers: {
+                'Authorization': JSON.parse(tok),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setData1({
+                    company_name: res2.data.company_name,
+                    address: res2.data.address,
+                    phone_number: res2.data.phone_number,
+                    image_logo: res2.data.image_logo,
+                    singkatan: res2.data.singkatan,
+                    tanggal_pkp: moment(res2.data.tanggal_pkp),
+                    penanggung_jawab: res2.data.penanggung_jawab,
+                    npwp: res2.data.npwp,
+                    fax: res2.data.fax,
+                    email: res2.data.email,
+                    website: res2.data.website
+                })
+                setisenabled(res2.data.is_enabled)
+                setid(res2.data.company_id)
+            })
+    })
     return (
         <div id="profileeDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-6">
@@ -112,18 +153,18 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
                         <>
                             {
                                 [145].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <Button type="primary" onClick={() => { rt.push(`/admin/company/mig/updateProfile/${dataDetailCompany.data.company_id}`) }}>Ubah</Button>
+                                <Button type="primary" onClick={() => { rt.push(`/admin/company/mig/updateProfile/${id}`) }}>Ubah</Button>
                             }
                         </>
                     }
                 </div>
             </div>
             <div className=" mb-2 md:mb-4 flex md:flex-row flex-col">
-                <h1 className="font-semibold text-base mr-3 pt-1">{dataDetailCompany.data.company_name}</h1>
+                <h1 className="font-semibold text-base mr-3 pt-1">{data1.company_name}</h1>
                 <h1 className="mr-3 pt-1 hidden md:block">|</h1>
                 <div className="flex">
                     {
-                        dataDetailCompany.data.is_enabled ?
+                        isenabled ?
                             <div className=" bg-blue-100 text-blue-600 border-blue-600 border pt-2 px-3 rounded-md text-xs md:text-sm w-auto">AKTIF</div>
                             :
                             <div className=" bg-red-100 text-red-600 border-red-600 border pt-1 px-3 rounded-md text-xs md:text-sm w-auto">NON-AKTIF</div>
@@ -258,7 +299,7 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
                                     // </Form.Item>
                                     :
                                     <>
-                                        <h1 className="font-semibold text-sm">Penanggung Jawab:</h1>
+                                        <h1 className="font-semibold text-sm">PIC:</h1>
                                         <h1 className="text-sm font-normal text-black">{data1.penanggung_jawab}</h1>
                                     </>
                             }
@@ -360,40 +401,40 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
             <div style={{ marginTop: 8 }}>Unggah</div>
         </div>
     );
-    const beforeUploadProfileImage = (file) => {
-        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
-        if (!isJpgOrPng) {
-            message.error('You can only upload JPG/PNG file!');
-        }
-        const isLt2M = file.size / 1024 / 1024 < 2;
-        if (!isLt2M) {
-            message.error('Image must smaller than 2MB!');
-        }
-        return isJpgOrPng && isLt2M;
-    }
-    const onChangeProfileImage = async (info) => {
-        if (info.file.status === 'uploading') {
-            setloadingimage(true)
-            return;
-        }
-        if (info.file.status === 'done') {
-            const formData = new FormData()
-            formData.append('file', info.file.originFileObj)
-            formData.append('upload_preset', 'migsys')
-            return fetch(`https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`, {
-                method: 'POST',
-                body: formData
-            })
-                .then(res => res.json())
-                .then(res2 => {
-                    setloadingimage(false)
-                    setdatanew({
-                        ...datanew,
-                        image_logo: res2.secure_url
-                    })
-                })
-        }
-    }
+    // const beforeUploadProfileImage = (file) => {
+    //     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
+    //     if (!isJpgOrPng) {
+    //         message.error('You can only upload JPG/PNG file!');
+    //     }
+    //     const isLt2M = file.size / 1024 / 1024 < 2;
+    //     if (!isLt2M) {
+    //         message.error('Image must smaller than 2MB!');
+    //     }
+    //     return isJpgOrPng && isLt2M;
+    // }
+    // const onChangeProfileImage = async (info) => {
+    //     if (info.file.status === 'uploading') {
+    //         setloadingimage(true)
+    //         return;
+    //     }
+    //     if (info.file.status === 'done') {
+    //         const formData = new FormData()
+    //         formData.append('file', info.file.originFileObj)
+    //         formData.append('upload_preset', 'migsys')
+    //         return fetch(`https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`, {
+    //             method: 'POST',
+    //             body: formData
+    //         })
+    //             .then(res => res.json())
+    //             .then(res2 => {
+    //                 setloadingimage(false)
+    //                 setdatanew({
+    //                     ...datanew,
+    //                     image_logo: res2.secure_url
+    //                 })
+    //             })
+    //     }
+    // }
 
     //filter Locations
     const dataList = [];
@@ -1288,7 +1329,7 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataBra
                     {
                         [150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Locations" key={`locations`}>
-                            <MigIndexLocations dataProfile={dataProfile} dataBranchList={dataBranchList} dataDetailCompany={dataDetailCompany} tok={tok} />
+                            <MigIndexLocations dataProfile={dataProfile} dataBranchList={dataBranchList} tok={tok} />
                         </TabPane>
                     }
                 </Tabs>
@@ -1310,7 +1351,7 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataBra
                     {
                         [150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Locations" key={`locations`}>
-                            <MigIndexLocations dataProfile={dataProfile} dataBranchList={dataBranchList} dataDetailCompany={dataDetailCompany} tok={tok} />
+                            <MigIndexLocations dataProfile={dataProfile} dataBranchList={dataBranchList} tok={tok} />
                         </TabPane>
                     }
                 </Tabs>
@@ -1353,16 +1394,14 @@ export async function getServerSideProps({ req, res }) {
         res.end()
     }
 
-    const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getMainCompanyDetail`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-            // 'Content-Type': 'application/json'
-        },
-        // body: JSON.stringify(reqBodyMigDetail)
-    })
-    const resjsonGC = await resourcesGC.json()
-    const dataDetailCompany = resjsonGC
+    // const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getMainCompanyDetail`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //     },
+    // })
+    // const resjsonGC = await resourcesGC.json()
+    // const dataDetailCompany = resjsonGC
 
     // const resourcesGB = await fetch(`https://boiling-thicket-46501.herokuapp.com/getMainBanks`, {
     //     method: `GET`,
@@ -1394,7 +1433,7 @@ export async function getServerSideProps({ req, res }) {
         props: {
             initProps,
             dataProfile,
-            dataDetailCompany,
+            // dataDetailCompany,
             // dataGetBanks,
             // dataLocations,
             dataBranchList,
