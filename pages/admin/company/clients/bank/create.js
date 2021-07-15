@@ -110,7 +110,7 @@ const BankCreateClient = ({ initProps, dataProfile, sidemenu }) => {
                                 {/* <h1 className="mt-2 text-xs font-medium">{dataDetailCompany.data.company_name}</h1> */}
                             </div>
                             <div className="flex mx-2">
-                                <Link href={`/admin/company/clients/${origin}`}>
+                                <Link href={`/admin/company/clients/${origin}?active=bankAccounts`}>
                                     <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
                                     {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-5 rounded-md mx-2">Cancel</button> */}
                                 </Link>
@@ -127,7 +127,7 @@ const BankCreateClient = ({ initProps, dataProfile, sidemenu }) => {
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Nama bank harus diisi',
+                                                message: 'Nama Bank wajib diisi',
                                             },
                                         ]}>
                                         <Input onChange={onChangeBA} name="name" defaultValue={bankdata.name} />
@@ -136,11 +136,11 @@ const BankCreateClient = ({ initProps, dataProfile, sidemenu }) => {
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Nomor rekening harus diisi',
+                                                message: 'Nomor Rekening wajib diisi',
                                             },
                                             {
                                                 pattern: /(\-)|(^\d*$)/,
-                                                message: 'Nomor rekening harus diisi dengan angka',
+                                                message: 'Nomor Rekening harus diisi dengan angka',
                                             },
                                         ]}>
                                         <Input onChange={onChangeBA} name="account_number" defaultValue={bankdata.account_number} />
@@ -149,7 +149,7 @@ const BankCreateClient = ({ initProps, dataProfile, sidemenu }) => {
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Nama penanggung jawab harus diisi',
+                                                message: 'Atas Nama wajib diisi',
                                             },
                                         ]}>
                                         <Input onChange={onChangeBA} name="owner" defaultValue={bankdata.owner} />
@@ -158,7 +158,7 @@ const BankCreateClient = ({ initProps, dataProfile, sidemenu }) => {
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Mata uang harus diisi',
+                                                message: 'Mata uang wajib diisi',
                                             },
                                         ]}>
                                         <Select

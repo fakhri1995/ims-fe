@@ -4,7 +4,7 @@ import Layout from '../../../../../components/layout-dashboard'
 import Link from 'next/link'
 import st from "../../../../../components/layout-dashboard.module.css"
 import { useRouter } from 'next/router'
-import { Form, Input, Button, notification, Select, Spin } from 'antd'
+import { Form, Input, Button, notification, Select } from 'antd'
 
 const BankUpdateClient = ({ initProps, dataProfile, sidemenu, bankid }) => {
     //initial
@@ -68,7 +68,7 @@ const BankUpdateClient = ({ initProps, dataProfile, sidemenu, bankid }) => {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/clients/${companyid}`)
+                        rt.push(`/admin/company/clients/${companyid}?active=bankAccounts`)
                     }, 500)
                 }
                 else {
@@ -117,7 +117,7 @@ const BankUpdateClient = ({ initProps, dataProfile, sidemenu, bankid }) => {
                                 {/* <h1 className="mt-2 text-xs font-medium">{dataDetailCompany.data.company_name}</h1> */}
                             </div>
                             <div className="flex mx-2">
-                                <Link href={`/admin/company/clients/${companyid}`}>
+                                <Link href={`/admin/company/clients/${companyid}?active=bankAccounts`}>
                                     <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
                                     {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-5 rounded-md mx-2">Cancel</button> */}
                                 </Link>
@@ -130,7 +130,7 @@ const BankUpdateClient = ({ initProps, dataProfile, sidemenu, bankid }) => {
                         <div className="p-2 md:p-5 shadow-md">
                             {
                                 loading ?
-                                    <Spin />
+                                    null
                                     :
                                     <Form layout="vertical" onFinish={handleSubmitEditBA} form={editBankForm} initialValues={bankdata}>
                                         <div className="grid grid-cols-1 mb-5">
@@ -138,7 +138,7 @@ const BankUpdateClient = ({ initProps, dataProfile, sidemenu, bankid }) => {
                                                 rules={[
                                                     {
                                                         required: true,
-                                                        message: 'Nama bank harus diisi',
+                                                        message: 'Nama Bank wajib diisi',
                                                     },
                                                 ]}>
                                                 <Input onChange={onChangeBA} name="name" defaultValue={bankdata.name} />
@@ -147,7 +147,7 @@ const BankUpdateClient = ({ initProps, dataProfile, sidemenu, bankid }) => {
                                                 rules={[
                                                     {
                                                         required: true,
-                                                        message: 'Nomor rekening harus diisi',
+                                                        message: 'Nomor Rekening wajib diisi',
                                                     },
                                                     {
                                                         pattern: /(\-)|(^\d*$)/,
@@ -160,7 +160,7 @@ const BankUpdateClient = ({ initProps, dataProfile, sidemenu, bankid }) => {
                                                 rules={[
                                                     {
                                                         required: true,
-                                                        message: 'Nama penanggung jawab harus diisi',
+                                                        message: 'Atas Nama wajib diisi',
                                                     },
                                                 ]}>
                                                 <Input onChange={onChangeBA} name="owner" defaultValue={bankdata.owner} />
@@ -169,7 +169,7 @@ const BankUpdateClient = ({ initProps, dataProfile, sidemenu, bankid }) => {
                                                 rules={[
                                                     {
                                                         required: true,
-                                                        message: 'Mata uang harus diisi',
+                                                        message: 'Mata uang wajib diisi',
                                                     },
                                                 ]}>
                                                 <select name="currency" onChange={onChangeBA} defaultValue={bankdata.currency} style={{ width: `100%`, borderRadius: `5px` }}>

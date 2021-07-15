@@ -251,12 +251,12 @@ function MyCompanyUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailMy
                                 <div className="md:m-5 mb-5 md:mb-0">
                                     {
                                         editable ?
-                                            <Form.Item name="penanggung_jawab" label="Penanggung Jawab">
+                                            <Form.Item name="penanggung_jawab" label="PIC">
                                                 <Input defaultValue={data1.penanggung_jawab} name="penanggung_jawab" onChange={onChangeEditProfile}></Input>
                                             </Form.Item>
                                             :
                                             <>
-                                                <h1 className="font-semibold text-sm">Penanggung Jawab:</h1>
+                                                <h1 className="font-semibold text-sm">PIC:</h1>
                                                 <h1 className="text-sm font-normal text-black">{data1.penanggung_jawab}</h1>
                                             </>
                                     }

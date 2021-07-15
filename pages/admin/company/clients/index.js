@@ -1,13 +1,12 @@
 import Layout from '../../../../components/layout-dashboard'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
-import EditOutlined from '@ant-design/icons/EditOutlined'
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import st from '../../../../components/layout-dashboard-clients.module.css'
-import { Input, Form, Table, Upload, notification, Drawer, Button, TreeSelect, Select } from 'antd'
+import { Table, notification, Button } from 'antd'
 
 function modifData(dataa) {
     for (var i = 0; i < dataa.length; i++) {
@@ -31,8 +30,8 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
     const [drawablecreate, setDrawablecreate] = useState(false)
     const [loadingupload, setLoadingupload] = useState(false)
     const [loadingbtn, setloadingbtn] = useState(false)
-    const [instanceForm] = Form.useForm()
-    const { Option } = Select
+    // const [instanceForm] = Form.useForm()
+    // const { Option } = Select
     const [newclients, setnewclients] = useState({
         name: '',
         role: 2,
@@ -415,7 +414,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
                     })
                 } */}
             </div>
-            <Drawer title="Buat Perusahaan Clients" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false); closeClientsDrawer(); instanceForm.resetFields() }} width={370} destroyOnClose={true}>
+            {/* <Drawer title="Buat Perusahaan Clients" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false); closeClientsDrawer(); instanceForm.resetFields() }} width={370} destroyOnClose={true}>
                 <div className="w-full h-auto grid grid-cols-1 md:grid-cols-1">
                     <div className="px-3 pt-3 pb-0 col-span-1 md:col-span-1">
                         <Form.Item name="profile_image">
@@ -471,21 +470,13 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
                                 />
                             </Form.Item>
                         </div>
-                        {/* <div className="md:m-4 mb-5 md:mb-0">
-                            <Form.Item label="Role" name="role">
-                                <Select defaultValue={2} disabled placeholder="Pilih role" allowClear onChange={(value) => { setnewclients({ ...newclients, role: value }) }}>
-                                    <Option value={2}>Klien</Option>
-                                    <Option value={3}>Cabang</Option>
-                                </Select>
-                            </Form.Item>
-                        </div> */}
                         <div className="flex justify-end">
                             <Button type='default' onClick={() => { setDrawablecreate(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
                             <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn} style={{ marginBottom: `1rem` }}>Simpan</Button>
                         </div>
                     </Form>
                 </div>
-            </Drawer>
+            </Drawer> */}
         </Layout>
     )
 }

@@ -5,7 +5,7 @@ import st from "../../../../../../components/layout-dashboard.module.css"
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons'
-import { Form, Input, Button, message, notification, TreeSelect } from 'antd'
+import { Form, Input, Button, message, notification, TreeSelect, Upload } from 'antd'
 
 function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }) {
     const rt = useRouter()
@@ -145,11 +145,14 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                         parent_id: 0
                     })
                     notification['success']({
-                        message: frominduk1 === "1" ? 'Location berhasil disimpan' : 'Location berhasil ditambahkan',
+                        message: parent === "list" ? "Client berhasil ditambahkan" : (frominduk1 === "1" ? 'Location berhasil disimpan' : 'Location berhasil ditambahkan'),
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/clients/${cancel}?active=locations`)
+                        parent !== "list" ?
+                            rt.push(`/admin/company/clients/${cancel}?active=locations`)
+                            :
+                            rt.push(`/admin/company/clients`)
                         settambahdata(prev => !prev)
                     }, 800)
                 }
@@ -219,24 +222,29 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                         </div>
                     </div>
                     <div className="col-span-1 md:col-span-3 flex flex-col">
-                        {/* <div className="p-3 col-span-1 md:col-span-1">
-                            <Upload
-                                name="profile_image"
-                                listType="picture-card"
-                                className="profileImage"
-                                showUploadList={false}
-                                beforeUpload={beforeUploadProfileImage}
-                                onChange={onChangeProfileImage}
-                            >
-                                {datanew.image_logo ? <img src={datanew.image_logo} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-                            </Upload>
-                        </div> */}
+                        {
+                            parent !== "list" ?
+                                null
+                                :
+                                <div className="p-3 col-span-1 md:col-span-1">
+                                    <Upload
+                                        name="profile_image"
+                                        listType="picture-card"
+                                        className="profileImage"
+                                        showUploadList={false}
+                                        beforeUpload={beforeUploadProfileImage}
+                                        onChange={onChangeProfileImage}
+                                    >
+                                        {datanew.image_logo ? <img src={datanew.image_logo} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                                    </Upload>
+                                </div>
+                        }
                         <div className="p-2 md:p-5 shadow-md">
                             <Form layout="vertical" form={createLocationForm} onFinish={handleCreateLocationsClients}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 mb-5">
                                     {
                                         frominduk1 === "1" ?
-                                            <Form.Item name="parent_id" label="Induk Lokasi" style={{marginRight: `1rem` }}>
+                                            <Form.Item name="parent_id" label="Induk Lokasi" style={{ marginRight: `1rem` }}>
                                                 <TreeSelect
                                                     disabled
                                                     allowClear
@@ -249,24 +257,31 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                                                 />
                                             </Form.Item>
                                             :
-                                            <Form.Item name="parent_id" label="Induk Lokasi" style={{marginRight: `1rem` }}
-                                                rules={[
-                                                    {
-                                                        required: true,
-                                                        message: 'Induk Perusahaan wajib diisi',
-                                                    },
-                                                ]}>
-                                                <TreeSelect
-                                                    allowClear
-                                                    style={{ width: '100%' }}
-                                                    defaultValue={parent === "list" ? 66 : null}
-                                                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                                    treeData={datalocationclient}
-                                                    placeholder="Tambah Induk Lokasi"
-                                                    treeDefaultExpandAll
-                                                    onChange={(value) => { setdatanew({ ...datanew, parent_id: value }) }}
-                                                />
-                                            </Form.Item>
+                                            <>
+                                                {
+                                                    parent === "list" ?
+                                                        null
+                                                        :
+                                                        <Form.Item name="parent_id" label="Induk Lokasi" style={{ marginRight: `1rem` }}
+                                                            rules={[
+                                                                {
+                                                                    required: true,
+                                                                    message: 'Induk Lokasi wajib diisi',
+                                                                },
+                                                            ]}>
+                                                            <TreeSelect
+                                                                allowClear
+                                                                style={{ width: '100%' }}
+                                                                defaultValue={parent === "list" ? 66 : null}
+                                                                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                                                treeData={datalocationclient}
+                                                                placeholder="Tambah Induk Lokasi"
+                                                                treeDefaultExpandAll
+                                                                onChange={(value) => { setdatanew({ ...datanew, parent_id: value }) }}
+                                                            />
+                                                        </Form.Item>
+                                                }
+                                            </>
                                     }
                                     <Form.Item name="name" style={{ marginRight: `1rem` }} label="Nama Perusahaan"
                                         rules={[
@@ -278,11 +293,7 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                                     >
                                         <Input name="name" id="name" allowClear onChange={onChangeForm} />
                                     </Form.Item>
-                                    <Form.Item name="address" style={{ marginRight: `1rem` }} label="Alamat Lengkap"
-                                    >
-                                        <Input.TextArea rows={4} name="address" id="address" allowClear onChange={onChangeForm} />
-                                    </Form.Item>
-                                    <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="No. Telepeon"
+                                    <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="No. Telepon"
                                         rules={[
                                             {
                                                 pattern: /(\-)|(^\d*$)/,
@@ -291,6 +302,10 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                                         ]}
                                     >
                                         <Input name="phone_number" id="phone_number" allowClear onChange={onChangeForm} />
+                                    </Form.Item>
+                                    <Form.Item name="address" style={{ marginRight: `1rem` }} label="Alamat Lengkap"
+                                    >
+                                        <Input.TextArea rows={4} name="address" id="address" allowClear onChange={onChangeForm} />
                                     </Form.Item>
                                 </div>
                                 {/* <h1 className="text-sm font-semibold">Address</h1>

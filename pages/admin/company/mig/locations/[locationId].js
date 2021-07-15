@@ -220,11 +220,11 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, c
                                 <div className="grid grid-cols-1 md:grid-cols-2 mb-5">
                                     {
                                         editable ?
-                                            <Form.Item name="company_name" style={{ marginRight: `1rem` }} label="Nama Anak Perusahaan"
+                                            <Form.Item name="company_name" style={{ marginRight: `1rem` }} label="Nama Perusahaan"
                                                 rules={[
                                                     {
                                                         required: true,
-                                                        message: 'Nama Anak Perusahaan harus diisi',
+                                                        message: 'Nama Perusahaan wajib diisi',
                                                     },
                                                 ]}
                                             >
@@ -240,14 +240,7 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, c
                                     }
                                     {
                                         editable ?
-                                            <Form.Item name="address" style={{ marginRight: `1rem` }} label="Alamat Lengkap"
-                                                rules={[
-                                                    {
-                                                        required: true,
-                                                        message: 'Alamat harus diisi',
-                                                    },
-                                                ]}
-                                            >
+                                            <Form.Item name="address" style={{ marginRight: `1rem` }} label="Alamat Lengkap">
                                                 <Input defaultValue={dataupdate.address} name="address" id="address" allowClear onChange={onChangeForm} />
                                             </Form.Item>
                                             :
@@ -260,11 +253,11 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, c
                                     }
                                     {
                                         editable ?
-                                            <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="No. Telepeon"
+                                            <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="No. Telepon"
                                                 rules={[
                                                     {
                                                         pattern: /(\-)|(^\d*$)/,
-                                                        message: 'No. Telepon harus berisi angka',
+                                                        message: 'No. Telepon wajib berisi angka',
                                                     },
                                                 ]}
                                             >
@@ -306,13 +299,13 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, c
                                     }
                                     {
                                         editable ?
-                                            <Form.Item name="penanggung_jawab" style={{ marginRight: `1rem` }} label="Penanggung Jawab">
+                                            <Form.Item name="penanggung_jawab" style={{ marginRight: `1rem` }} label="PIC">
                                                 <Input defaultValue={dataupdate.penanggung_jawab} name="penanggung_jawab" id="penanggung_jawab" allowClear onChange={onChangeForm} />
                                             </Form.Item>
                                             :
                                             <>
                                                 <div className="col-span-1 flex flex-col mb-5">
-                                                    <h1 className="font-semibold text-sm">Penanggung Jawab:</h1>
+                                                    <h1 className="font-semibold text-sm">PIC:</h1>
                                                     <h1 className="text-sm font-normal text-black">{dataupdate.penanggung_jawab}</h1>
                                                 </div>
                                             </>
@@ -333,12 +326,12 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, c
                                     {
                                         editable ?
                                             <Form.Item name="fax" style={{ marginRight: `1rem` }} label="Fax"
-                                            rules={[
-                                                {
-                                                    pattern: /(\-)|(^\d*$)/,
-                                                    message: 'Fax harus berisi angka',
-                                                },
-                                            ]}
+                                                rules={[
+                                                    {
+                                                        pattern: /(\-)|(^\d*$)/,
+                                                        message: 'Fax harus berisi angka',
+                                                    },
+                                                ]}
                                             >
                                                 <Input defaultValue={dataupdate.fax} name="fax" id="fax" allowClear onChange={onChangeForm} />
                                             </Form.Item>
@@ -353,12 +346,12 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, c
                                     {
                                         editable ?
                                             <Form.Item name="email" style={{ marginRight: `1rem` }} label="Email"
-                                            rules={[
-                                                {
-                                                    pattern: /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
-                                                    message: 'Email diisi sesuai format email',
-                                                },
-                                            ]}
+                                                rules={[
+                                                    {
+                                                        pattern: /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
+                                                        message: 'Email diisi sesuai format email',
+                                                    },
+                                                ]}
                                             >
                                                 <Input defaultValue={dataupdate.email} name="email" id="email" allowClear onChange={onChangeForm} />
                                             </Form.Item>

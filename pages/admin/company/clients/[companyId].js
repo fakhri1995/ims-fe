@@ -8,33 +8,47 @@ import st from '../../../../components/layout-dashboard-clients.module.css'
 import { Tabs, Input, Table, Tree, Modal, notification, Button, Switch, Spin } from 'antd'
 import moment from 'moment'
 
-function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok, companyid }) {
+function ClientsDetailProfile({ dataProfile, tok, companyid }) {
     const rt = useRouter()
     const [editable, setEditable] = useState(false)
     const [visible, setVisible] = useState(false)
     const [visiblenon, setVisiblenon] = useState(false)
-    const [tampildata, settampildata] = useState(false)
+    const [aktifdata, setaktifdata] = useState(false)
     const [loadingbtn, setloadingbtn] = useState(false)
     const [loadingubahaktif, setloadingubahaktif] = useState(false)
     const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
-    if (dataDetailCompany.data.tanggal_pkp === null) {
-        dataDetailCompany.data.tanggal_pkp = new Date()
-    }
+    // if (dataDetailCompany.data.tanggal_pkp === null) {
+    //     dataDetailCompany.data.tanggal_pkp = new Date()
+    // }
+    // const [data1, setData1] = useState({
+    //     id: dataDetailCompany.data.company_id,
+    //     company_name: dataDetailCompany.data.company_name,
+    //     address: dataDetailCompany.data.address,
+    //     phone_number: dataDetailCompany.data.phone_number,
+    //     image_logo: dataDetailCompany.data.image_logo === "" ? '/default-users.jpeg' : dataDetailCompany.data.image_logo,
+    //     singkatan: dataDetailCompany.data.singkatan,
+    //     tanggal_pkp: moment(dataDetailCompany.data.tanggal_pkp),
+    //     penanggung_jawab: dataDetailCompany.data.penanggung_jawab,
+    //     npwp: dataDetailCompany.data.npwp,
+    //     fax: dataDetailCompany.data.fax,
+    //     email: dataDetailCompany.data.email,
+    //     website: dataDetailCompany.data.website
+    // })
     const [data1, setData1] = useState({
-        id: dataDetailCompany.data.company_id,
-        company_name: dataDetailCompany.data.company_name,
-        // role: dataDetailCompany.data.data.role,
-        address: dataDetailCompany.data.address,
-        phone_number: dataDetailCompany.data.phone_number,
-        image_logo: dataDetailCompany.data.image_logo,
-        singkatan: dataDetailCompany.data.singkatan,
-        tanggal_pkp: moment(dataDetailCompany.data.tanggal_pkp)/*moment(new Date())*/,
-        penanggung_jawab: dataDetailCompany.data.penanggung_jawab,
-        npwp: dataDetailCompany.data.npwp,
-        fax: dataDetailCompany.data.fax,
-        email: dataDetailCompany.data.email,
-        website: dataDetailCompany.data.website
+        id: "",
+        company_name: "",
+        address: "",
+        phone_number: "",
+        image_logo: "",
+        singkatan: "",
+        tanggal_pkp: "",
+        penanggung_jawab: "",
+        npwp: "",
+        fax: "",
+        email: "",
+        website: ""
     })
+    const [dataisenabled, setdataisenabled] = useState(false)
     const [loadingfoto, setLoadingfoto] = useState(false)
 
     const onChangeEditProfile = (e) => {
@@ -86,7 +100,7 @@ function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok, companyid }
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/clients/${dataDetailCompany.data.company_id}`)
+                        rt.push(`/admin/company/clients/${data1.id}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -114,7 +128,7 @@ function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok, companyid }
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                company_id: dataDetailCompany.data.company_id,
+                company_id: Number(data1.id),
                 is_enabled: keaktifan
             })
         })
@@ -134,7 +148,8 @@ function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok, companyid }
                         else if (status === "nonAktif") {
                             setloadingubahnonaktif(false)
                         }
-                        rt.push(`/admin/company/clients/${dataDetailCompany.data.company_id}`)
+                        rt.push(`/admin/company/clients/${data1.id}`)
+                        setaktifdata(prev => !prev)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -165,21 +180,21 @@ function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok, companyid }
                 const temp = {
                     id: res2.data.company_id,
                     company_name: res2.data.company_name,
-                    // role: dataDetailCompany.data.data.role,
                     address: res2.data.address,
                     phone_number: res2.data.phone_number,
-                    image_logo: res2.data.image_logo,
+                    image_logo: res2.data.image_logo === "" ? '/default-users.jpeg' : res2.data.image_logo,
                     singkatan: res2.data.singkatan,
-                    tanggal_pkp: moment(res2.data.tanggal_pkp)/*moment(new Date())*/,
+                    tanggal_pkp: res2.data.tanggal_pkp === null ? moment(new Date()) : res2.data.tanggal_pkp,
                     penanggung_jawab: res2.data.penanggung_jawab,
                     npwp: res2.data.npwp,
                     fax: res2.data.fax,
                     email: res2.data.email,
                     website: res2.data.website
                 }
+                setdataisenabled(res2.data.is_enabled)
                 setData1(temp)
             })
-    }, [tampildata])
+    }, [aktifdata])
     return (
         <div id="profileDetailMigWrapper">
             <div className="flex justify-start md:justify-end p-3 md:border-t-2 md:border-b-2 bg-white mb-4 md:mb-8">
@@ -196,20 +211,20 @@ function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok, companyid }
                         <>
                             {
                                 [158].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <Button type="primary" onClick={() => { rt.push(`/admin/company/clients/updateProfile/${dataDetailCompany.data.company_id}`) }}>Ubah</Button>
+                                <Button type="primary" onClick={() => { rt.push(`/admin/company/clients/updateProfile/${data1.id}`) }}>Ubah</Button>
                             }
                         </>
                     }
                 </div>
             </div>
             <div className=" mb-2 md:mb-4 flex md:flex-row flex-col">
-                <h1 className="font-semibold text-base mr-3 pt-1">{dataDetailCompany.data.company_name}</h1>
+                <h1 className="font-semibold text-base mr-3 pt-1">{data1.company_name}</h1>
                 <h1 className="mr-3 pt-1 hidden md:block">|</h1>
                 {
                     [159].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                         <div className="pt-1">
                             {
-                                dataDetailCompany.data.is_enabled ?
+                                dataisenabled ?
                                     <Switch checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
                                     :
                                     <Switch checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
@@ -218,7 +233,7 @@ function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok, companyid }
                         :
                         <div className="pt-1">
                             {
-                                dataDetailCompany.data.is_enabled ?
+                                dataisenabled ?
                                     <Switch disabled checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
                                     :
                                     <Switch disabled checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
@@ -300,7 +315,7 @@ function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok, companyid }
                                     // </Form.Item>
                                     :
                                     <>
-                                        <h1 className="font-semibold text-sm">Telepon:</h1>
+                                        <h1 className="font-semibold text-sm">No. Telepon:</h1>
                                         <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
                                     </>
                             }
@@ -339,7 +354,7 @@ function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok, companyid }
                                             data1.tanggal_pkp === null ?
                                                 <h1 className="text-sm font-normal text-black">-</h1>
                                                 :
-                                                <h1 className="text-sm font-normal text-black">{data1.tanggal_pkp.locale('id').format('LL')}</h1>
+                                                <h1 className="text-sm font-normal text-black">{moment(data1.tanggal_pkp).locale('id').format('LL')}</h1>
 
                                         }
                                     </>
@@ -354,7 +369,7 @@ function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok, companyid }
                                     // </Form.Item>
                                     :
                                     <>
-                                        <h1 className="font-semibold text-sm">Penanggung Jawab:</h1>
+                                        <h1 className="font-semibold text-sm">PIC:</h1>
                                         <h1 className="text-sm font-normal text-black">{data1.penanggung_jawab}</h1>
                                     </>
                             }
@@ -429,7 +444,7 @@ function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok, companyid }
                 cancelText="Tidak"
                 okButtonProps={{ disabled: loadingubahaktif }}
             >
-                Apakah anda yakin ingin menon-aktifkan akun perusahaan <strong>{dataDetailCompany.data.company_name}</strong>?
+                Apakah anda yakin ingin menon-aktifkan akun perusahaan <strong>{data1.company_name}</strong>?
             </Modal>
             <Modal
                 title="Konfirmasi untuk mengakaktifkan akun"
@@ -440,13 +455,13 @@ function ClientsDetailProfile({ dataProfile, dataDetailCompany, tok, companyid }
                 onCancel={() => setVisiblenon(false)}
                 okButtonProps={{ disabled: loadingubahnonaktif }}
             >
-                Apakah anda yakin ingin melakukan aktivasi akun perusahaan <strong>{dataDetailCompany.data.company_name}</strong>?`
+                Apakah anda yakin ingin melakukan aktivasi akun perusahaan <strong>{data1.company_name}</strong>?`
             </Modal>
         </div >
     )
 }
 
-function ClientsDetailLocations({ dataProfile, dataDetailCompany, tok }) {
+function ClientsDetailLocations({ dataProfile, dataDetailCompany, data1, tok }) {
     const rt = useRouter()
 
     //useState
@@ -557,7 +572,7 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, tok }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/clients/${dataDetailCompany.data.company_id}`)
+                        rt.push(`/admin/company/clients/${data1.id}`)
                         settambahdata(prev => !prev)
                     }, 800)
                 }
@@ -644,7 +659,7 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, tok }) {
                             e.classList.remove("flex")
                         }}
                     >
-                        <div className="w-full" onClick={() => { rt.push(`/admin/company/clients/locations/${item.id}?parent=${item.id_parent}&edit=&cancel=${dataDetailCompany.data.company_id}`) }}>
+                        <div className="w-full" onClick={() => { rt.push(`/admin/company/clients/locations/${item.id}?parent=${item.id_parent}&edit=&cancel=${data1.id}`) }}>
                             {beforeStr}
                             <span className=" text-blue-500">{searchValue}</span>
                             {afterStr}
@@ -652,11 +667,11 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, tok }) {
                         <div className={`hidden mx-2`} id={`node${item.key}`}>
                             {
                                 [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <a className="mx-2 pb-1" onClick={(e) => { rt.push(`/admin/company/clients/locations/new?parent=${item.id}&frominduk=1&cancel=${dataDetailCompany.data.company_id}`) }} alt="add"><PlusOutlined /></a>
+                                <a className="mx-2 pb-1" onClick={(e) => { rt.push(`/admin/company/clients/locations/new?parent=${item.id}&frominduk=1&cancel=${data1.id}`) }} alt="add"><PlusOutlined /></a>
                             }
                             {
                                 [151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <Link href={`/admin/company/clients/locations/${item.id}?parent=${item.title}&edit=1&cancel=${dataDetailCompany.data.company_id}`}>
+                                <Link href={`/admin/company/clients/locations/${item.id}?parent=${item.title}&edit=1&cancel=${data1.id}`}>
                                     <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                 </Link>
                             }
@@ -677,22 +692,25 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, tok }) {
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
-            method: `POST`,
-            headers: {
-                'Authorization': JSON.parse(tok),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                company_id: dataDetailCompany.data.company_id
+        data1.id !== "" ?
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
+                method: `POST`,
+                headers: {
+                    'Authorization': JSON.parse(tok),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    company_id: data1.id
+                })
             })
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setdatalocationclient(res2.data)
-                setExpandedKeys([res2.data[0].key])
-            })
-    }, [tambahdata])
+                .then(res => res.json())
+                .then(res2 => {
+                    setdatalocationclient(res2.data)
+                    setExpandedKeys([res2.data[0].key])
+                })
+            :
+            null
+    }, [data1])
     // useEffect(()=>{
     //     rt.push(`/admin/company/clients/locations/${detaildata.id}?parent=${detaildata.id_parent}&edit=&cancel=${dataDetailCompany.data.company_id}`)
     // }, [detaildata])
@@ -702,7 +720,7 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, tok }) {
                 <div className="flex space-x-2">
                     {/* <Link href={`/admin/company/locations/new?parent=&companyId=${dataDetailCompany.data.company_id}`}> */}
                     {/* <Button type="primary" size="middle" onClick={() => { setdrawablecreate(true); setfrominduk(false) }}>Tambah</Button> */}
-                    <Button type="primary" size="middle" onClick={() => { rt.push(`/admin/company/clients/locations/new?parent=${dataDetailCompany.data.company_id}&frominduk=0&cancel=${dataDetailCompany.data.company_id}`) }}>Tambah</Button>
+                    <Button type="primary" size="middle" onClick={() => { rt.push(`/admin/company/clients/locations/new?parent=${data1.id}&frominduk=0&cancel=${data1.id}`) }}>Tambah</Button>
                     {/* </Link> */}
                 </div>
             </div>
@@ -860,10 +878,7 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, tok }) {
     )
 }
 
-function ClientsDetailBankAccount({ dataProfile, dataDetailCompany, tok, companyId }) {
-    // if (!dataGetBanks.data) {
-    //     dataGetBanks.data = []
-    // }
+function ClientsDetailBankAccount({ dataProfile, data1, tok, companyId }) {
     const rt = useRouter()
     const [editable, setEditable] = useState(false)
     const [tambahdata, settambahdata] = useState(false)
@@ -874,6 +889,7 @@ function ClientsDetailBankAccount({ dataProfile, dataDetailCompany, tok, company
     const [modaldel, setModaldel] = useState(false)
     const [loadingbtncreate, setloadingbtncreate] = useState(false)
     const [loadingbtnedit, setloadingbtnedit] = useState(false)
+    const [loadingbtndelete, setloadingbtndelete] = useState(false)
     const [modaldeldata, setModaldeldata] = useState({})
     const [datagetbanks, setdatagetbanks] = useState([])
     const [loadingdatagetbanks, setloadingdatagetbanks] = useState(false)
@@ -1004,7 +1020,7 @@ function ClientsDetailBankAccount({ dataProfile, dataDetailCompany, tok, company
                                     <>{actions[index]}
                                         {
                                             [162].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                            <Button onClick={() => { rt.push(`/admin/company/clients/bank/${record.id}?companyid=${companyId}&name=${dataDetailCompany.data.company_name}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
+                                            <Button onClick={() => { rt.push(`/admin/company/clients/bank/${record.id}?companyid=${companyId}&name=${data1.company_name}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
                                                 <EditOutlined />
                                             </Button>
                                             // <Button onClick={() => { setDrawableedit(true); setRecordrow(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
@@ -1142,6 +1158,7 @@ function ClientsDetailBankAccount({ dataProfile, dataDetailCompany, tok, company
             })
     }
     const handleDeleteBA = (rec) => {
+        setloadingbtndelete(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/deleteClientBank?id=${rec.id}`, {
             method: 'DELETE',
             headers: {
@@ -1151,15 +1168,16 @@ function ClientsDetailBankAccount({ dataProfile, dataDetailCompany, tok, company
             .then(res => res.json())
             .then(res2 => {
                 if (res2.success) {
+                    setloadingbtndelete(false)
                     setModaldel(false)
                     notification['success']({
                         message: res2.message,
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/clients/${companyId}`)
+                        // rt.push(`/admin/company/clients/${companyId}`)
                         setdeldata(prev => !prev)
-                    }, 500)
+                    }, 3000)
                 }
                 else {
                     notification['error']({
@@ -1195,9 +1213,12 @@ function ClientsDetailBankAccount({ dataProfile, dataDetailCompany, tok, company
                     })
                     setdatagetbanks(temp)
                 }
+                else {
+                    setdatagetbanks([])
+                }
                 setloadingdatagetbanks(false)
             })
-    }, [tambahdata, editdata, deldata])
+    }, [tambahdata, editdata, deldata, companyId])
     return (
         <div id="bankAccountDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
@@ -1212,7 +1233,7 @@ function ClientsDetailBankAccount({ dataProfile, dataDetailCompany, tok, company
                     }
                     {
                         [161].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                        <Button type="primary" onClick={() => { rt.push(`/admin/company/clients/bank/create?origin=${companyId}&name=${dataDetailCompany.data.company_name}`) }}>Tambah</Button>
+                        <Button type="primary" onClick={() => { rt.push(`/admin/company/clients/bank/create?origin=${companyId}&name=${data1.company_name}`) }}>Tambah</Button>
                         // <Button type="primary" onClick={() => { setDrawablecreate(true) }}>Tambah</Button>
                     }
                     {/* <button className=" bg-blue-700 hover:bg-blue-800 border text-white py-1 px-2 rounded-md w-24 md:w-40 hidden md:block" onClick={() => { setDrawablecreate(true) }}> Create</button>
@@ -1359,6 +1380,7 @@ function ClientsDetailBankAccount({ dataProfile, dataDetailCompany, tok, company
                 onOk={() => { handleDeleteBA(modaldeldata) }}
                 onCancel={() => setModaldel(false)}
                 okText="Ya"
+                okButtonProps={{ disabled: loadingbtndelete }}
                 cancelText="Tidak">
                 Apakah anda yakin ingin menghapus <strong>{modaldeldata.name} - {modaldeldata.account_number}</strong>?
             </Modal>
@@ -1370,31 +1392,84 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
     const rt = useRouter()
     const { TabPane } = Tabs;
     const tok = initProps
-    const pathArr = rt.pathname.split("/").slice(1)
-    pathArr[pathArr.length - 1] = dataDetailCompany.data.company_name
     var activeTab = "profile"
     const { active } = rt.query
     if (active) {
         activeTab = active
     }
+
+    //useState
+    const [aktifdata, setaktifdata] = useState(false)
+    const [data1, setData1] = useState({
+        id: "",
+        company_name: "",
+        address: "",
+        phone_number: "",
+        image_logo: "",
+        singkatan: "",
+        tanggal_pkp: "",
+        penanggung_jawab: "",
+        npwp: "",
+        fax: "",
+        email: "",
+        website: ""
+    })
+    const [dataisenabled, setdataisenabled] = useState(false)
+
+    const pathArr = rt.pathname.split("/").slice(1)
+    pathArr[pathArr.length - 1] = data1.company_name === "" ? "Clients" : data1.company_name
+
+    //useEffect
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientDetail`, {
+            method: `POST`,
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                company_id: companyid
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                const temp = {
+                    id: res2.data.company_id,
+                    company_name: res2.data.company_name,
+                    address: res2.data.address,
+                    phone_number: res2.data.phone_number,
+                    image_logo: res2.data.image_logo === "" ? '/default-users.jpeg' : res2.data.image_logo,
+                    singkatan: res2.data.singkatan,
+                    tanggal_pkp: res2.data.tanggal_pkp === null ? moment(new Date()) : res2.data.tanggal_pkp,
+                    penanggung_jawab: res2.data.penanggung_jawab,
+                    npwp: res2.data.npwp,
+                    fax: res2.data.fax,
+                    email: res2.data.email,
+                    website: res2.data.website
+                }
+                setdataisenabled(res2.data.is_enabled)
+                setData1(temp)
+            })
+    }, [])
+
     return (
-        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} dataDetailCompany={dataDetailCompany} st={st}>
+        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} data1={data1} st={st}>
             <div className="px-5 pt-5 pb-0 bg-white hidden md:block">
                 <Tabs tabPosition={`left`} defaultActiveKey={activeTab}>
                     {
                         [156, 158, 159].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Profile" key={`profile`}>
-                            <ClientsDetailProfile dataProfile={dataProfile} dataDetailCompany={dataDetailCompany} tok={tok} companyid={companyid}></ClientsDetailProfile>
+                            <ClientsDetailProfile dataProfile={dataProfile} tok={tok} companyid={companyid}></ClientsDetailProfile>
                         </TabPane>
                     }
                     {
                         [160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Bank Account" key={`bankAccounts`}>
-                            <ClientsDetailBankAccount dataProfile={dataProfile} dataDetailCompany={dataDetailCompany} tok={tok} companyId={dataDetailCompany.data.company_id} />
+                            <ClientsDetailBankAccount dataProfile={dataProfile} data1={data1} tok={tok} companyId={data1.id} />
                         </TabPane>
                     }
                     <TabPane tab="Locations" key={`locations`}>
-                        <ClientsDetailLocations dataProfile={dataProfile} dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailLocations>
+                        <ClientsDetailLocations dataProfile={dataProfile} data1={data1} tok={tok}></ClientsDetailLocations>
                     </TabPane>
                 </Tabs>
             </div>
@@ -1403,17 +1478,17 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
                     {
                         [156, 158, 159].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Profile" key={`profile`}>
-                            <ClientsDetailProfile dataProfile={dataProfile} dataDetailCompany={dataDetailCompany} tok={tok} companyid={companyid}></ClientsDetailProfile>
+                            <ClientsDetailProfile dataProfile={dataProfile} tok={tok} companyid={companyid}></ClientsDetailProfile>
                         </TabPane>
                     }
                     {
                         [160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Bank Account" key={`bankAccounts`}>
-                            <ClientsDetailBankAccount dataProfile={dataProfile} dataDetailCompany={dataDetailCompany} tok={tok} companyId={dataDetailCompany.data.company_id} />
+                            <ClientsDetailBankAccount dataProfile={dataProfile} data1={data1} tok={tok} companyId={data1.id} />
                         </TabPane>
                     }
                     <TabPane tab="Locations" key={`locations`}>
-                        <ClientsDetailLocations dataProfile={dataProfile} dataDetailCompany={dataDetailCompany} tok={tok}></ClientsDetailLocations>
+                        <ClientsDetailLocations dataProfile={dataProfile} data1={data1} tok={tok}></ClientsDetailLocations>
                     </TabPane>
                 </Tabs>
             </div>
@@ -1461,16 +1536,16 @@ export async function getServerSideProps({ req, res, params }) {
         res.end()
     }
 
-    const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientDetail`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(reqBodyCompanyDetail)
-    })
-    const resjsonGC = await resourcesGC.json()
-    const dataDetailCompany = resjsonGC
+    // const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientDetail`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify(reqBodyCompanyDetail)
+    // })
+    // const resjsonGC = await resourcesGC.json()
+    // const dataDetailCompany = resjsonGC
 
     // const resourcesGB = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientBanks?id=${dataDetailCompany.data.company_id}`, {
     //     method: `GET`,
@@ -1484,7 +1559,7 @@ export async function getServerSideProps({ req, res, params }) {
         props: {
             initProps,
             dataProfile,
-            dataDetailCompany,
+            // dataDetailCompany,
             // dataGetBanks,
             sidemenu: "4",
             companyid
