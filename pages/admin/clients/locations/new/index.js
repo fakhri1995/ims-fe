@@ -206,7 +206,7 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                             <div className="flex mx-2">
                                 {
                                     parent !== "list" ?
-                                        <Link href={`/admin/clients/${parent}?active=locations`}>
+                                        <Link href={`/admin/clients/${cancel}?active=locations`}>
                                             <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
                                             {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-5 rounded-md mx-2">Cancel</button> */}
                                         </Link>
@@ -303,9 +303,17 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                                     >
                                         <Input name="phone_number" id="phone_number" allowClear onChange={onChangeForm} />
                                     </Form.Item>
-                                    <Form.Item name="address" style={{ marginRight: `1rem` }} label="Alamat Lengkap"
+                                    <Form.Item name="address" style={{ marginRight: `1rem` }} label="Alamat"
                                     >
                                         <Input.TextArea rows={4} name="address" id="address" allowClear onChange={onChangeForm} />
+                                    </Form.Item>
+                                    <Form.Item name="penanggung_jawab" style={{ marginRight: `1rem` }} label="PIC"
+                                    >
+                                        <Input disabled name="penanggung_jawab" id="penanggung_jawab" />
+                                    </Form.Item>
+                                    <Form.Item name="email" style={{ marginRight: `1rem` }} label="Email"
+                                    >
+                                        <Input disabled name="email" id="email" />
                                     </Form.Item>
                                 </div>
                                 {/* <h1 className="text-sm font-semibold">Address</h1>

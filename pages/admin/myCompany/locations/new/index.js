@@ -272,6 +272,14 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
                                     >
                                         <Input name="phone_number" allowClear onChange={onChangeForm} />
                                     </Form.Item>
+                                    <Form.Item name="penanggung_jawab" style={{ marginRight: `1rem` }} label="PIC"
+                                    >
+                                        <Input disabled name="penanggung_jawab" id="penanggung_jawab" />
+                                    </Form.Item>
+                                    <Form.Item name="email" style={{ marginRight: `1rem` }} label="Email"
+                                    >
+                                        <Input disabled name="email" id="email" />
+                                    </Form.Item>
                                 </div>
                                 {/* <h1 className="text-sm font-semibold">Address</h1>
                                 <div className="grid grid-cols-1 md:grid-cols-2 mb-5">

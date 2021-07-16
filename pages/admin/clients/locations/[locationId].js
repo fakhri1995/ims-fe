@@ -9,7 +9,7 @@ import moment from 'moment'
 
 function DetailLocationClients({ initProps, dataProfile, sidemenu, companyid }) {
     const rt = useRouter()
-    const { edit, cancel } = rt.query
+    const { edit, cancel, parent } = rt.query
     const tok = initProps
     const originPath = "Admin"
     const [updateLocationForm] = Form.useForm()
@@ -74,6 +74,7 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, companyid }) 
         email: "",
         website: "",
     })
+    const [induklokasi, setinduklokasi] = useState("")
     const [loadingupdate, setloadingupdate] = useState(false)
     const [loadingupload, setloadingupload] = useState(false)
     const [editable, seteditable] = useState(false)
@@ -139,7 +140,7 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, companyid }) 
     //Handler
     const handleUpdateLocationsMig = () => {
         setloadingupdate(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/updateCompanyBranch`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateCompanyClient`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -213,6 +214,22 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, companyid }) 
                 setpraloading(false)
                 const pathArr = ['admin', `clients`, `Ubah Client Location - ${dataBranchDetail.data.company_name}`]
                 setpatharr(pathArr)
+            })
+    }, [])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
+            method: `POST`,
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                company_id: Number(parent)
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setinduklokasi(res2.data[0].title)
             })
     }, [])
     useEffect(() => {
@@ -297,7 +314,28 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, companyid }) 
                                             }
                                             {
                                                 editable ?
-                                                    <Form.Item name="address" style={{ marginRight: `1rem` }} label="Alamat Lengkap">
+                                                    // <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="Induk Lokasi"
+                                                    //     rules={[
+                                                    //         {
+                                                    //             pattern: /(\-)|(^\d*$)/,
+                                                    //             message: 'No. Telepon harus berisi angka',
+                                                    //         },
+                                                    //     ]}
+                                                    // >
+                                                    //     <Input defaultValue={dataupdate.phone_number} name="phone_number" id="phone_number" allowClear onChange={onChangeForm} />
+                                                    // </Form.Item>
+                                                    null
+                                                    :
+                                                    <>
+                                                        <div className="col-span-1 flex flex-col mb-5">
+                                                            <h1 className="font-semibold text-sm">Induk Lokasi:</h1>
+                                                            <h1 className="text-sm font-normal text-black">{induklokasi}</h1>
+                                                        </div>
+                                                    </>
+                                            }
+                                            {
+                                                editable ?
+                                                    <Form.Item name="address" style={{ marginRight: `1rem` }} label="Alamat">
                                                         <Input defaultValue={dataupdate.address} name="address" id="address" allowClear onChange={onChangeForm} />
                                                     </Form.Item>
                                                     :
@@ -328,7 +366,7 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, companyid }) 
                                                         </div>
                                                     </>
                                             }
-                                            {
+                                            {/* {
                                                 editable ?
                                                     <Form.Item name="singkatan" style={{ marginRight: `1rem` }} label="Singkatan">
                                                         <Input defaultValue={dataupdate.singkatan} name="singkatan" id="singkatan" allowClear onChange={onChangeForm} />
@@ -340,8 +378,8 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, companyid }) 
                                                             <h1 className="text-sm font-normal text-black">{dataupdate.singkatan}</h1>
                                                         </div>
                                                     </>
-                                            }
-                                            {
+                                            } */}
+                                            {/* {
                                                 editable ?
                                                     <Form.Item name="tanggal_pkp" style={{ marginRight: `1rem` }} label="Tanggal PKP">
                                                         <DatePicker onChange={(date, dateString) => { setdataupdate({ ...dataupdate, tanggal_pkp: moment(date) }) }} style={{ width: `100%` }} defaultValue={dataupdate.tanggal_pkp} />
@@ -353,7 +391,7 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, companyid }) 
                                                             <h1 className="text-sm font-normal text-black">{moment(dataupdate.tanggal_pkp).locale('id').format('LL')}</h1>
                                                         </div>
                                                     </>
-                                            }
+                                            } */}
                                             {
                                                 editable ?
                                                     <Form.Item name="penanggung_jawab" style={{ marginRight: `1rem` }} label="PIC">
@@ -367,7 +405,7 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, companyid }) 
                                                         </div>
                                                     </>
                                             }
-                                            {
+                                            {/* {
                                                 editable ?
                                                     <Form.Item name="npwp" style={{ marginRight: `1rem` }} label="NPWP">
                                                         <Input defaultValue={dataupdate.npwp} name="npwp" id="npwp" allowClear onChange={onChangeForm} />
@@ -379,8 +417,8 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, companyid }) 
                                                             <h1 className="text-sm font-normal text-black">{dataupdate.npwp}</h1>
                                                         </div>
                                                     </>
-                                            }
-                                            {
+                                            } */}
+                                            {/* {
                                                 editable ?
                                                     <Form.Item name="fax" style={{ marginRight: `1rem` }} label="Fax"
                                                         rules={[
@@ -399,7 +437,7 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, companyid }) 
                                                             <h1 className="text-sm font-normal text-black">{dataupdate.fax}</h1>
                                                         </div>
                                                     </>
-                                            }
+                                            } */}
                                             {
                                                 editable ?
                                                     <Form.Item name="email" style={{ marginRight: `1rem` }} label="Email"
@@ -420,7 +458,7 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, companyid }) 
                                                         </div>
                                                     </>
                                             }
-                                            {
+                                            {/* {
                                                 editable ?
                                                     <Form.Item name="website" style={{ marginRight: `1rem` }} label="Website">
                                                         <Input defaultValue={dataupdate.website} name="website" id="website" allowClear onChange={onChangeForm} />
@@ -432,7 +470,7 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, companyid }) 
                                                             <h1 className="text-sm font-normal text-black">{dataupdate.website}</h1>
                                                         </div>
                                                     </>
-                                            }
+                                            } */}
                                         </div>
                                         {/* <h1 className="text-sm font-semibold">Address</h1>
                                 <div className="grid grid-cols-1 md:grid-cols-2 mb-5">

@@ -671,7 +671,7 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, data1, tok }) 
                             }
                             {
                                 [151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <Link href={`/admin/clients/locations/${item.id}?parent=${item.title}&edit=1&cancel=${data1.id}`}>
+                                <Link href={`/admin/clients/locations/${item.id}?parent=${item.id_parent}&edit=1&cancel=${data1.id}`}>
                                     <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                 </Link>
                             }
