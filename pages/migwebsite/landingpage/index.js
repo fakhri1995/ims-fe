@@ -1,14 +1,25 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from '../../../components/migwebsite/layout.js'
-import Flickity from 'react-flickity-component'
+// import Flickity from 'react-flickity-component'
 import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
 import Link from 'next/link'
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
+import Slider from "react-slick";
 
 function LandingPage({ }) {
     const flickityOptions = {
         initialIndex: 0,
         wrapAround: 'true',
     }
+    const [nav1, setNav1] = useState(null)
+    const [nav2, setNav2] = useState(null)
+    let slider1 = []
+    let slider2 = []
+    useEffect(() => {
+        setNav1(slider1)
+        setNav2(slider2)
+    }, [slider1, slider2])
     return (
         <Layout>
             <section className={'section1landingpage py-8 px-4 md:px-20 lg:px-28 xl:px-40'}>
@@ -65,39 +76,98 @@ function LandingPage({ }) {
                 </div>
             </section>
             <section className={'section1landingpage py-8 px-4 md:px-20 lg:px-28 xl:px-40'}>
-                <div className={'flex justify-center pb-8'}>
+                {/* <div className={'flex justify-center pb-8'}>
                     <p className={' font-bold text-xl text-green-700 cursor-pointer'}>Hardware</p>
                     <p className={'pl-24 pr-24 font-bold text-xl text-green-700 cursor-pointer'}>People</p>
                     <p className={' font-bold text-xl text-green-700 cursor-pointer'}>Software</p>
+                </div> */}
+                <div className={' pb-8'}>
+                    <Slider
+                    slidesToShow={3}
+                    asNavFor={nav1}
+                    ref={slider => (slider2 = slider) }
+                    focusOnSelect={true}
+                    >
+                        <p className={'text-center font-bold text-xl text-green-700 cursor-pointer'}>Hardware</p>
+                        <p className={'text-center font-bold text-xl text-green-700 cursor-pointer'}>People</p>
+                        <p className={'text-center font-bold text-xl text-green-700 cursor-pointer'}>Software</p>
+                    </Slider>
                 </div>
-                <div className={'flex'}>
-                    <div className={'pt-8 pb-8 w-1/2'}>
-                        <p className={'text-3xl font-bold pb-4 gilroy-bold'}>Hardware</p>
-                        <p className={'w-2/3 pb-4 gilroy-medium'} style={{letterSpacing:'1.5px'}}>Optimize your cost by leasing and maintenances variety of electronic equipments</p>
-                        <Link href="/advantages">
-                            <button style={{width:'150px'}} className={'text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium'}>
-                                Get yours
-                            </button>
-                        </Link>
+                <Slider 
+                dots={false}
+                infinite= {true}
+                speed= {500}
+                slidesToShow= {1}
+                slidesToScroll= {1}
+                ref={slider => (slider1 = slider)}
+                arrows={true}
+                asNavFor={nav2}
+                adaptiveHeight={true}
+                >
+                    <div>
+                        <div className={'flex'}>
+                            <div className={'pt-8 pb-8 w-1/2'}>
+                                <p className={'text-3xl font-bold pb-4 gilroy-bold'}>Hardware</p>
+                                <p className={'w-2/3 pb-4 gilroy-medium'} style={{letterSpacing:'1.5px'}}>Optimize your cost by leasing and maintenances variety of electronic equipments</p>
+                                <Link href="/advantages">
+                                    <button style={{width:'150px'}} className={'text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium'}>
+                                        Get yours
+                                    </button>
+                                </Link>
+                            </div>
+                            <div className={'pt-8 pb-8 w-1/2 ml-8'}>
+                                <img src="/image/landingpage/image-section2.png"></img>
+                            </div>
+                        </div>
+                        <div className={'flex'}>
+                            <div className={'pt-8 pb-8 w-1/2 mr-8'}>
+                                <img src="/image/landingpage/image-section2.png"></img>
+                            </div>
+                            <div className={'pt-8 pb-8 w-1/2'}>
+                                <p className={'text-3xl font-bold pb-4 gilroy-bold'}>Transforming capital heavy IT product into managed service model</p>
+                                <p className={'w-2/3 pb-4 gilroy-medium'} style={{letterSpacing:'1.5px'}}>Offering low-cost ATM  rental and maintenance to reduce hardware upfront investment</p>
+                                <Link href="/hardware">
+                                    <button style={{width:'150px'}} className={'text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium'}>
+                                        Get yours
+                                    </button>
+                                </Link>
+                            </div>
+                        </div>
                     </div>
-                    <div className={'pt-8 pb-8 w-1/2 ml-8'}>
-                        <img src="/image/landingpage/image-section2.png"></img>
+                    <div>
+                        <div className={'flex'}>
+                            <div className={'pt-8 pb-8 w-1/2'}>
+                                <p className={'text-3xl font-bold pb-4 gilroy-bold'}>People</p>
+                                <p className={'w-2/3 pb-4 gilroy-medium'} style={{letterSpacing:'1.5px'}}>We help you reduce complexity in talent sourcing and management</p>
+                                <Link href="/people">
+                                    <button style={{width:'150px'}} className={'text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium'}>
+                                        Get yours
+                                    </button>
+                                </Link>
+                            </div>
+                            <div className={'pt-8 pb-8 w-1/2 ml-8'}>
+                                <img src="/image/landingpage/image-section2.png"></img>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div className={'flex'}>
-                    <div className={'pt-8 pb-8 w-1/2 mr-8'}>
-                        <img src="/image/landingpage/image-section2.png"></img>
+                    <div>
+                        <div className={'flex'}>
+                            <div className={'pt-8 pb-8 w-1/2'}>
+                                <p className={'text-3xl font-bold pb-4 gilroy-bold'}>Software</p>
+                                <p className={'w-2/3 pb-4 gilroy-medium'} style={{letterSpacing:'1.5px'}}>We support your companies to simplify and automate the process through digitalization</p>
+                                <Link href="/people">
+                                    <button style={{width:'150px'}} className={'text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium'}>
+                                        Build now
+                                    </button>
+                                </Link>
+                            </div>
+                            <div className={'pt-8 pb-8 w-1/2 ml-8'}>
+                                <img src="/image/landingpage/image-section2.png"></img>
+                            </div>
+                        </div>
                     </div>
-                    <div className={'pt-8 pb-8 w-1/2'}>
-                        <p className={'text-3xl font-bold pb-4 gilroy-bold'}>Transforming capital heavy IT product into managed service model</p>
-                        <p className={'w-2/3 pb-4 gilroy-medium'} style={{letterSpacing:'1.5px'}}>Offering low-cost ATM  rental and maintenance to reduce hardware upfront investment</p>
-                        <Link href="/advantages">
-                            <button style={{width:'150px'}} className={'text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium'}>
-                                Get yours
-                            </button>
-                        </Link>
-                    </div>
-                </div>
+                </Slider>
+                
             </section>
             {/* <section className={'section4landingpage pt-8 pb-16'}>
                 <div className={'text-center'}>
