@@ -2,16 +2,16 @@ import httpcookie from 'cookie'
 import Layout from '../../../../../components/layout-dashboard'
 import Link from 'next/link'
 import st from "../../../../../components/layout-dashboard.module.css"
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons'
-import { Form, Input, Button, Upload, message, notification, Select } from 'antd'
+import { Form, Input, Button, message, notification, Select, TreeSelect } from 'antd'
 
 function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt, companyid }) {
     const rt = useRouter()
     const tok = initProps
-    const pathArr = ['admin', 'company', `mig`, 'New branch location']
-    const { parent } = rt.query
+    const pathArr = ['admin', 'myCompany', 'Buat Branch']
+    const { parent, frominduk } = rt.query
     const [createLocationForm] = Form.useForm()
     const [par, setPar] = useState()
     const { Option } = Select
@@ -42,17 +42,24 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
     // })
 
     //useState
-    const [dataloc, setdataloc] = useState(dataLocations.data)
+    const [datalocationmycompany, setdatalocationmycompany] = useState([])
+    const [frominduk1, setfrominduk1] = useState(frominduk)
     const [datanew, setdatanew] = useState({
         name: '',
-        role: 3,
-        address: '',
-        phone_number: '',
+        address: '-',
+        phone_number: '-',
         image_logo: '',
-        parent_id: ''
+        parent_id: 0
     })
     const [loadingcreate, setloadingcreate] = useState(false)
     const [loadingupload, setloadingupload] = useState(false)
+    const [tambahdata, settambahdata] = useState(false)
+    const [expandedKeys, setExpandedKeys] = useState([])
+    const [autoExpandParent, setAutoExpandParent] = useState(true);
+    const onExpand = (expandedKeys) => {
+        setExpandedKeys(expandedKeys);
+        setAutoExpandParent(false);
+    };
 
     //Upload Image
     const beforeUploadProfileImage = (file) => {
@@ -114,6 +121,10 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
 
     //Handler
     const handleCreateLocationsMig = () => {
+        setdatanew({
+            ...datanew,
+            parent_id: Number(parent)
+        })
         setloadingcreate(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyBranch`, {
             method: 'POST',
@@ -132,7 +143,7 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/company/mig`)
+                        rt.push(`/admin/myCompany?active=locations`)
                     }, 800)
                 }
                 else if (!res2.success) {
@@ -147,6 +158,27 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
             })
     }
 
+    //useEffect
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
+            method: `POST`,
+            headers: {
+                'Authorization': JSON.parse(tok),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatalocationmycompany(res2.data)
+                setExpandedKeys([res2.data[0].key])
+                setdatanew({ ...datanew, parent_id: Number(parent) })
+            })
+    }, [tambahdata])
+
+    useEffect(() => {
+        datanew.address === "" ? setdatanew({ ...datanew, address: "-" }) : ""
+        datanew.phone_number === "" ? setdatanew({ ...datanew, phone_number: "-" }) : ""
+    }, [datanew])
+
     return (
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
             <div className="w-full h-auto border-t border-opacity-30 border-gray-500 bg-white">
@@ -154,21 +186,21 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
                     <div className=" col-span-1 md:col-span-4">
                         <div className="p-2 md:p-5 border-b flex mb-5 justify-between">
                             <div>
-                                <h1 className="mt-2 text-sm font-bold">New Location</h1>
+                                <h1 className="mt-2 text-sm font-bold">Branch Baru</h1>
                                 {/* <h1 className="mt-2 text-xs font-medium">{dataDetailCompany.data.company_name}</h1> */}
                             </div>
                             <div className="flex mx-2">
-                                <Link href={`/admin/company/mig`}>
-                                    <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Cancel</Button>
+                                <Link href={`/admin/myCompany`}>
+                                    <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
                                     {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-5 rounded-md mx-2">Cancel</button> */}
                                 </Link>
-                                <Button type="primary" size="middle" loading={loadingcreate} onClick={createLocationForm.submit}>Save</Button>
+                                <Button type="primary" size="middle" loading={loadingcreate} onClick={createLocationForm.submit}>Simpan</Button>
                                 {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-5 rounded-md">Save</button> */}
                             </div>
                         </div>
                     </div>
                     <div className="col-span-1 md:col-span-3 flex flex-col">
-                        <div className="p-3 col-span-1 md:col-span-1">
+                        {/* <div className="p-3 col-span-1 md:col-span-1">
                             <Upload
                                 name="profile_image"
                                 listType="picture-card"
@@ -179,66 +211,74 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
                             >
                                 {datanew.image_logo ? <img src={datanew.image_logo} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
                             </Upload>
-                        </div>
+                        </div> */}
                         <div className="p-2 md:p-5 shadow-md">
-                            <Form layout="vertical" form={createLocationForm} onFinish={handleCreateLocationsMig} initialValues={datanew}>
+                            <Form layout="vertical" form={createLocationForm} onFinish={handleCreateLocationsMig}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 mb-5">
-                                    <Form.Item name="name" style={{ marginRight: `1rem` }} label="Nama Anak Perusahaan"
+                                    {
+                                        frominduk1 === "1" ?
+                                            <Form.Item name="parent_id" label="Induk Lokasi" style={{ marginRight: `1rem` }}
+                                            >
+                                                <TreeSelect
+                                                    disabled
+                                                    allowClear
+                                                    defaultValue={Number(parent)}
+                                                    style={{ marginRight: `1rem` }}
+                                                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                                    treeData={datalocationmycompany}
+                                                    treeDefaultExpandAll
+                                                    value={Number(parent)}
+                                                />
+                                            </Form.Item>
+                                            :
+                                            <Form.Item name="parent_id" label="Induk Lokasi" style={{ marginRight: `1rem` }}
+                                                rules={[
+                                                    {
+                                                        required: true,
+                                                        message: 'Parent Perusahaan wajib diisi',
+                                                    },
+                                                ]}>
+                                                <TreeSelect
+                                                    allowClear
+                                                    style={{ marginRight: `1rem` }}
+                                                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                                    treeData={datalocationmycompany}
+                                                    placeholder="Tambah Induk Lokasi"
+                                                    treeDefaultExpandAll
+                                                    onChange={(value) => { setdatanew({ ...datanew, parent_id: value }) }}
+                                                />
+                                            </Form.Item>
+                                    }
+                                    <Form.Item name="name" style={{ marginRight: `1rem` }} label="Nama Perusahaan"
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Nama Anak Perusahaan harus diisi',
+                                                message: 'Nama Perusahaan wajib diisi',
                                             },
                                         ]}
                                     >
                                         <Input name="name" id="name" allowClear onChange={onChangeForm} />
                                     </Form.Item>
-                                    <Form.Item name="parent_id" style={{ marginRight: `1rem` }} label="Parent Perusahaan"
+                                    <Form.Item name="address" style={{ marginRight: `1rem` }} label="Alamat Lengkap">
+                                        <Input.TextArea rows={4} name="address" id="address" onChange={onChangeForm} />
+                                    </Form.Item>
+                                    <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="No. Telepon"
                                         rules={[
                                             {
-                                                required: true,
-                                                message: 'Parent Perusahaan harus diisi',
-                                            },
-                                        ]}
-                                    >
-                                        <Select onChange={(value) => { onChangeParent(value) }}>
-                                            {
-                                                dataLocations.data.map((doc, idx) => {
-                                                    return (
-                                                        <Option key={idx} value={doc.company_id}>{doc.company_name}</Option>
-                                                    )
-                                                })
+                                                pattern: /(\-)|(^\d*$)/,
+                                                message: 'Nomor Telepon harus berupa angka'
                                             }
-                                        </Select>
-                                        {/* <TreeSelect
-                                            style={{ width: '100%' }}
-                                            defaultValue={datanew.parent_id}
-                                            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                            treeData={dataloc}
-                                            placeholder="Pilih parent"
-                                            treeDefaultExpandAll
-                                            onChange={(value) => { onChangeParent(value) }}
-                                        />*/}
-                                    </Form.Item>
-                                    <Form.Item name="address" style={{ marginRight: `1rem` }} label="Alamat Lengkap"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'ALamat harus diisi',
-                                            },
                                         ]}
                                     >
-                                        <Input.TextArea rows={4} name="address" id="address" allowClear onChange={onChangeForm} />
+                                        <Input name="phone_number" allowClear onChange={onChangeForm} />
                                     </Form.Item>
-                                    <Form.Item name="phone_number" style={{ marginRight: `1rem` }} label="No. Telepeon"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'No. Telepon harus diisi',
-                                            },
-                                        ]}
+                                    <Form.Item name="penanggung_jawab" style={{ marginRight: `1rem` }} label="PIC"
                                     >
-                                        <Input name="phone_number" id="phone_number" allowClear onChange={onChangeForm} />
+                                        <Input disabled name="penanggung_jawab" id="penanggung_jawab" />
+                                    </Form.Item>
+                                    <Form.Item name="email" style={{ marginRight: `1rem` }} label="Email"
+                                    >
+                                        <Input disabled name="email" id="email" />
                                     </Form.Item>
                                 </div>
                                 {/* <h1 className="text-sm font-semibold">Address</h1>
@@ -283,17 +323,17 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
     )
 }
 
-export async function getServerSideProps({ req, res, query }) {
+export async function getServerSideProps({ req, res }) {
     var initProps = {};
-    const companyid = query.companyId
-    const parentt = query.parent
-    const reqBodyCompanyDetail = {
-        company_id: companyid
-    }
+    // const companyid = query.companyId
+    // const parentt = query.parent
+    // const reqBodyCompanyDetail = {
+    //     company_id: companyid
+    // }
     if (req && req.headers) {
         const cookies = req.headers.cookie;
         if (!cookies) {
-            res.writeHead(302, { Location: '/' })
+            res.writeHead(302, { Location: '/login' })
             res.end()
         }
         if (typeof cookies === 'string') {
@@ -313,7 +353,7 @@ export async function getServerSideProps({ req, res, query }) {
     const dataProfile = resjsonGP
 
     if (![152].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/admin/company/mig' })
+        res.writeHead(302, { Location: '/admin/myCompany' })
         res.end()
     }
 
@@ -328,23 +368,23 @@ export async function getServerSideProps({ req, res, query }) {
     // const resjsonGC = await resourcesGC.json()
     // const dataDetailCompany = resjsonGC
 
-    const resourcesGL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-        },
-    })
-    const resjsonGL = await resourcesGL.json()
-    const dataLocations = resjsonGL
+    // const resourcesGL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //     },
+    // })
+    // const resjsonGL = await resourcesGL.json()
+    // const dataLocations = resjsonGL
 
     return {
         props: {
             initProps,
             dataProfile,
             // dataDetailCompany,
-            dataLocations,
-            parentt,
-            companyid,
+            // dataLocations,
+            // parentt,
+            // companyid,
             sidemenu: "4"
         },
     }

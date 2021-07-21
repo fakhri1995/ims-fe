@@ -1,44 +1,22 @@
 import Layout from '../../../components/layout-dashboard'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
-import EditOutlined from '@ant-design/icons/EditOutlined'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import st from '../../../components/layout-dashboard.module.css'
 import { Table, notification, Button } from 'antd'
 
 function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
-    const rt = useRouter()
-    const tok = initProps
-    const pathArr = rt.pathname.split("/").slice(1)
-    const { originPath } = rt.query
-    var dataDD = []
-    if (!dataListAgent) {
-        dataDD = []
-        notification['error']({
-            message: dataListAgent.message.errorInfo.status_detail,
-            duration: 3
-        })
-        rt.push('/dashboard/admin')
-    }
-    else {
-        dataDD = dataListAgent.data.map((doc, idx) => {
-            return ({
-                user_id: doc.user_id,
-                profile_image: doc.profile_image === "" ? `/default-users.jpeg` : doc.profile_image,
-                fullname: doc.fullname,
-                email: doc.email,
-                phone_number: doc.phone_number
-            })
-        })
-    }
-    const [dataKK, setDataSource] = useState(dataDD);
+    const [dataraw, setdataraw] = useState([])
+    const [datarawloading, setdatarawloading] = useState(false)
+    const [dataKK, setDataSource] = useState([]);
+    const [rowstate, setrowstate] = useState(0)
     const FilterAll = () => {
-        setDataSource(dataDD)
+        setDataSource(dataraw)
     }
     const FilterByWord = (word) => {
         const currValue = word;
-        const filteredData = dataDD.filter(entry => {
+        const filteredData = dataraw.filter(entry => {
             if (entry.fullname.toLowerCase()[0] === word) {
                 return entry.fullname.toLowerCase().includes(currValue)
             }
@@ -46,20 +24,76 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         );
         setDataSource(filteredData);
     };
-    var actionsArr = []
-    for (var i = 0; i < dataDD.length; i++) {
-        actionsArr.push(false)
-    }
-    const [actions, setActions] = useState(actionsArr)
-    const [action, setAction] = useState(false)
+    useEffect(() => {
+        setdatarawloading(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList`, {
+            method: `POST`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                page: 1,
+                rows: 50,
+                order_by: "asc"
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatarawloading(false)
+                var dataDD = []
+                if (!res2) {
+                    dataDD = []
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                    rt.push('/dashboard/admin')
+                }
+                else {
+                    dataDD = res2.data.map((doc, idx) => {
+                        return ({
+                            nomor: idx + 1,
+                            user_id: doc.user_id,
+                            profile_image: doc.profile_image === "" ? `/default-users.jpeg` : doc.profile_image,
+                            fullname: doc.fullname,
+                            email: doc.email,
+                            phone_number: doc.phone_number
+                        })
+                    })
+                }
+                setdataraw(dataDD)
+                setDataSource(dataDD)
+            })
+    }, [])
+    const rt = useRouter()
+    const tok = initProps
+    const pathArr = rt.pathname.split("/").slice(1)
+    const { originPath } = rt.query
+
     const columnsDD = [
         {
-            dataIndex: 'profil_image',
+            dataIndex: 'nomor',
+            align: `center`,
+            // sorter: (a, b) => a.user_id - b.user_id,
+            // sortDirections: ['descend', 'ascend'],
             render: (text, record, index) => {
                 return {
-                    props: {
-                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
+                    children:
+                        <div className="text-center">
+                            {record.nomor}
+                        </div>
+                }
+            }
+        },
+        {
+            dataIndex: 'profil_image',
+            key: `profil_image`,
+            render: (text, record, index) => {
+                return {
+                    // props: {
+                    //     style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    // },
                     children:
                         <>
                             <img src={record.profile_image} alt="imageProfile" className=" object-cover w-10 h-10 rounded-full" />
@@ -67,99 +101,92 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                 }
             }
         },
-        {
-            title: 'ID',
-            dataIndex: 'user_id',
-            // sorter: (a, b) => a.user_id - b.user_id,
-            // sortDirections: ['descend', 'ascend'],
-            render: (text, record, index) => {
-                return {
-                    props: {
-                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children:
-                        <>
-                            {record.user_id}
-                        </>
-                }
-            }
-        },
+        // {
+        //     title: 'ID',
+        //     dataIndex: 'user_id',
+        //     // sorter: (a, b) => a.user_id - b.user_id,
+        //     // sortDirections: ['descend', 'ascend'],
+        //     // render: (text, record, index) => {
+        //     //     return {
+        //     //         props: {
+        //     //             style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+        //     //         },
+        //     //         children:
+        //     //             <>
+        //     //                 {record.user_id}
+        //     //             </>
+        //     //     }
+        //     // }
+        // },
         {
             title: 'Nama',
             dataIndex: 'fullname',
             // sorter: (a, b) => a.fullname.localeCompare(b.fullname),
             // sortDirections: ['descend', 'ascend'],
-            render: (text, record, index) => {
-                return {
-                    props: {
-                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children:
-                        <>
-                            {record.fullname}
-                        </>
-                }
-            }
+            // render: (text, record, index) => {
+            //     return {
+            //         props: {
+            //             style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+            //         },
+            //         children:
+            //             <>
+            //                 {record.fullname}
+            //             </>
+            //     }
+            // }
         },
         {
             title: 'Email',
             dataIndex: 'email',
-            render: (text, record, index) => {
-                return {
-                    props: {
-                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children:
-                        <>
-                            {record.email}
-                        </>
-                }
-            }
+            // render: (text, record, index) => {
+            //     return {
+            //         props: {
+            //             style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+            //         },
+            //         children:
+            //             <>
+            //                 {record.email}
+            //             </>
+            //     }
+            // }
         },
         {
             title: 'No Handphone',
             dataIndex: 'phone_number',
-            render: (text, record, index) => {
-                return {
-                    props: {
-                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children:
-                        <>
-                            {record.phone_number}
-                        </>
-                }
-            }
+            // render: (text, record, index) => {
+            //     return {
+            //         props: {
+            //             style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+            //         },
+            //         children:
+            //             <>
+            //                 {record.phone_number}
+            //             </>
+            //     }
+            // }
         },
-        {
-            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
-            dataIndex: 'actionss',
-            render: (text, record, index) => {
-                return {
-                    props: {
-                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children:
-                        <>
-                            {/* {
-                                actions[index] ?
-                                    <>{actions[index]} */}
-                            {
-                                [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                    <Button onClick={() => { rt.push(`/admin/agents/${record.user_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
-                                        <EditOutlined />
-                                    </Button>
-                                    :
-                                    null
-                            }
-                            {/* </>
-                                    : 
-                                    null
-                            } */}
-                        </>
-                }
-            }
-        }
+        // {
+        //     title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
+        //     dataIndex: 'actionss',
+        //     render: (text, record, index) => {
+        //         return {
+        //             props: {
+        //                 style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+        //             },
+        //             children:
+        //                 <>
+        //                     {
+        //                         [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+        //                             <Button onClick={() => { rt.push(`/admin/agents/${record.user_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
+        //                                 <EditOutlined />
+        //                             </Button>
+        //                             :
+        //                             null
+        //                     }
+        //                 </>
+        //         }
+        //     }
+        // }
     ];
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
@@ -175,7 +202,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                                 pathname: '/admin/agents/create/',
                             }}>
                                 <Button size="large" type="primary">
-                                    Add New
+                                    Tambah
                             </Button>
                             </Link>
                         </div>
@@ -268,23 +295,27 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                                     Z
                             </button>
                             </div>
-                            <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD}
-                            // onRow={(record, rowIndex) => {
-                            //     return {
-                            //         onMouseOver: (event) => {
-                            //             var actionsCopy = actions
-                            //             actionsCopy[rowIndex] = true
-                            //             setActions(actionsCopy)
-                            //             setAction("block")
-                            //         },
-                            //         onMouseLeave: (event) => {
-                            //             var actionsCopy = actions
-                            //             actionsCopy[rowIndex] = false
-                            //             setActions(actionsCopy)
-                            //             setAction("hidden")
-                            //         }
-                            //     }
-                            // }}
+                            <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} loading={datarawloading}
+                                onRow={(record, rowIndex) => {
+                                    return {
+                                        onMouseOver: (event) => {
+                                            setrowstate(record.user_id)
+                                        },
+                                        onClick: (event) => {
+                                            {
+                                                [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                    rt.push(`/admin/agents/${record.user_id}`)
+                                                    :
+                                                    null
+                                            }
+                                        }
+                                    }
+                                }}
+                                rowClassName={(record, idx) => {
+                                    return (
+                                        record.user_id === rowstate ? `cursor-pointer` : ``
+                                    )
+                                }}
                             ></Table>
                         </div>
                     </div>
@@ -304,7 +335,7 @@ export async function getServerSideProps({ req, res }) {
     if (req && req.headers) {
         const cookies = req.headers.cookie;
         if (!cookies) {
-            res.writeHead(302, { Location: '/' })
+            res.writeHead(302, { Location: '/login' })
             res.end()
         }
         if (typeof cookies === 'string') {
@@ -326,21 +357,21 @@ export async function getServerSideProps({ req, res }) {
         res.end()
     }
 
-    const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(reqBodyAccountList)
-    })
-    const resjsonLA = await resourcesLA.json()
-    const dataListAgent = resjsonLA
+    // const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify(reqBodyAccountList)
+    // })
+    // const resjsonLA = await resourcesLA.json()
+    // const dataListAgent = resjsonLA
     return {
         props: {
             initProps,
             dataProfile,
-            dataListAgent,
+            // dataListAgent,
             sidemenu: "4"
         },
     }

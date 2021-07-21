@@ -1,47 +1,24 @@
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import st from '../../../components/layout-dashboard.module.css'
 import Layout from '../../../components/layout-dashboard'
 import httpcookie from 'cookie'
-import CopyOutlined from '@ant-design/icons/CopyOutlined'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import Link from 'next/link'
 import { Table, notification, Button, Select } from 'antd'
 
 function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList, sidemenu }) {
-    const rt = useRouter()
-    const tok = initProps
-    const pathArr = rt.pathname.split("/").slice(1)
-    const { originPath } = rt.query
-    const { Option } = Select
-    var dataDD = []
-    if (!dataListRequester) {
-        dataDD = []
-        notification['error']({
-            message: dataListRequester.message.errorInfo.status_detail,
-            duration: 3
-        })
-        rt.push('/dashboard/admin')
-    }
-    else {
-        dataDD = dataListRequester.data.map((doc, idx) => {
-            return ({
-                user_id: doc.user_id,
-                profile_image: doc.profile_image === "" ? `/default-users.jpeg` : doc.profile_image,
-                fullname: doc.fullname,
-                email: doc.email,
-                phone_number: doc.phone_number,
-                company_id: doc.company_id
-            })
-        })
-    }
-    const [dataKK, setDataSource] = useState(dataDD);
+    const [dataraw, setdataraw] = useState([])
+    const [datarawloading, setdatarawloading] = useState(false)
+    const [dataKK, setDataSource] = useState([]);
+    const [rowstate, setrowstate] = useState(0)
+
     const FilterAll = () => {
-        setDataSource(dataDD)
+        setDataSource(dataraw)
     }
     const FilterByWord = (word) => {
         const currValue = word;
-        const filteredData = dataDD.filter(entry => {
+        const filteredData = dataraw.filter(entry => {
             if (entry.fullname.toLowerCase()[0] === word) {
                 return entry.fullname.toLowerCase().includes(currValue)
             }
@@ -49,21 +26,74 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
         );
         setDataSource(filteredData);
     };
-    var actionsArr = []
-    for (var i = 0; i < dataDD.length; i++) {
-        actionsArr.push(false)
+    const onFilterByCompany = (val) => {
+        setDataSource(dataraw)
+        if (val === "all") {
+            setDataSource(dataraw)
+        }
+        else {
+            setDataSource(prev => {
+                return prev.filter(dataa => {
+                    return dataa.company_id === val
+                })
+            })
+        }
     }
-    const [actions, setActions] = useState(actionsArr)
-    const [action, setAction] = useState(false)
+    useEffect(() => {
+        setdatarawloading(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
+            method: `POST`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                page: 1,
+                rows: 50,
+                order_by: "asc"
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatarawloading(false)
+                var dataDD = []
+                if (!res2) {
+                    dataDD = []
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                    rt.push('/dashboard/admin')
+                }
+                else {
+                    dataDD = res2.data.map((doc, idx) => {
+                        return ({
+                            user_id: doc.user_id,
+                            profile_image: doc.profile_image === "" ? `/default-users.jpeg` : doc.profile_image,
+                            fullname: doc.fullname,
+                            email: doc.email,
+                            phone_number: doc.phone_number,
+                            company_id: doc.company_id
+                        })
+                    })
+                }
+                setdataraw(dataDD)
+                setDataSource(dataDD)
+            })
+    }, [])
+    const rt = useRouter()
+    const tok = initProps
+    const pathArr = rt.pathname.split("/").slice(1)
+    const { originPath } = rt.query
 
     const columnsDD = [
         {
             dataIndex: 'profil_image',
             render: (text, record, index) => {
                 return {
-                    props: {
-                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
+                    // props: {
+                    //     style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    // },
                     children:
                         <>
                             <img src={record.profile_image} alt="imageProfile" className=" object-cover w-10 h-10 rounded-full" />
@@ -76,23 +106,23 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
             //     </>
             // )
         },
-        {
-            title: 'ID',
-            dataIndex: 'user_id',
-            // sorter: (a, b) => a.user_id - b.user_id,
-            // sortDirections: ['descend', 'ascend'],
-            render: (text, record, index) => {
-                return {
-                    props: {
-                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children:
-                        <>
-                            {record.user_id}
-                        </>
-                }
-            }
-        },
+        // {
+        //     title: 'ID',
+        //     dataIndex: 'user_id',
+        //     // sorter: (a, b) => a.user_id - b.user_id,
+        //     // sortDirections: ['descend', 'ascend'],
+        //     render: (text, record, index) => {
+        //         return {
+        //             // props: {
+        //             //     style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+        //             // },
+        //             children:
+        //                 <>
+        //                     {record.user_id}
+        //                 </>
+        //         }
+        //     }
+        // },
         {
             title: 'Nama',
             dataIndex: 'fullname',
@@ -100,9 +130,9 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
             // sortDirections: ['descend', 'ascend'],
             render: (text, record, index) => {
                 return {
-                    props: {
-                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
+                    // props: {
+                    //     style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    // },
                     children:
                         <>
                             {record.fullname}
@@ -115,9 +145,9 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
             dataIndex: 'email',
             render: (text, record, index) => {
                 return {
-                    props: {
-                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
+                    // props: {
+                    //     style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    // },
                     children:
                         <>
                             {record.email}
@@ -130,9 +160,9 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
             dataIndex: 'phone_number',
             render: (text, record, index) => {
                 return {
-                    props: {
-                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
+                    // props: {
+                    //     style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    // },
                     children:
                         <>
                             {record.phone_number}
@@ -140,65 +170,50 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                 }
             }
         },
-        {
-            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
-            dataIndex: 'actionss',
-            render: (text, record, index) => {
-                return {
-                    props: {
-                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children:
-                        <>
-                            {/* {
-                                actions[index] ?
-                                    <>{actions[index]} */}
-                            {
-                                [114, 115, 116, 118, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                    <Button onClick={() => { rt.push(`/admin/requesters/${record.user_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
-                                        <EditOutlined />
-                                    </Button>
-                                    :
-                                    null
-                            }
-                            {/* </>
-                                    :
-                                    null
-                            } */}
-                        </>
-                }
-            }
-            // render: (text, record, index) => (
-            //     <>
-            //         {
-            //             actions[index] ?
-            //                 <>{actions[index]}
-            //                     <Button onClick={() => { rt.push(`/admin/requesters/${record.user_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
-            //                         <EditOutlined />
-            //                     </Button>
-            //                 </>
-            //                 :
-            //                 null
-            //         }
-            //     </>
-            // )
-        }
+        // {
+        //     title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
+        //     dataIndex: 'actionss',
+        //     render: (text, record, index) => {
+        //         return {
+        //             // props: {
+        //             //     style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+        //             // },
+        //             children:
+        //                 <>
+        //                     {/* {
+        //                         actions[index] ?
+        //                             <>{actions[index]} */}
+        //                     {
+        //                         [114, 115, 116, 118, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+        //                             <Button onClick={() => { rt.push(`/admin/requesters/${record.user_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
+        //                                 <EditOutlined />
+        //                             </Button>
+        //                             :
+        //                             null
+        //                     }
+        //                     {/* </>
+        //                             :
+        //                             null
+        //                     } */}
+        //                 </>
+        //         }
+        //     }
+        //     // render: (text, record, index) => (
+        //     //     <>
+        //     //         {
+        //     //             actions[index] ?
+        //     //                 <>{actions[index]}
+        //     //                     <Button onClick={() => { rt.push(`/admin/requesters/${record.user_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
+        //     //                         <EditOutlined />
+        //     //                     </Button>
+        //     //                 </>
+        //     //                 :
+        //     //                 null
+        //     //         }
+        //     //     </>
+        //     // )
+        // }
     ];
-
-    const onFilterByCompany = (val) => {
-        setDataSource(dataDD)
-        if (val === "all") {
-            setDataSource(dataDD)
-        }
-        else {
-            setDataSource(prev => {
-                return prev.filter(dataa => {
-                    console.log(dataa.company_id)
-                    return dataa.company_id === val
-                })
-            })
-        }
-    }
 
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
@@ -211,10 +226,10 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                         [117].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
                             <Link href={{
-                                pathname: '/admin/requesters/create/',
+                                pathname: '/admin/requesters/create',
                             }}>
                                 <Button size="large" type="primary">
-                                    Add New
+                                    Tambah
                                 </Button>
                             </Link>
                         </div>
@@ -307,7 +322,7 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                                     Z
                             </button>
                             </div>
-                            <div className="flex mb-2">
+                            {/* <div className="flex mb-2">
                                 <Select placeholder="Filter by companies" defaultValue={"all"} onChange={(value) => { onFilterByCompany(value) }} style={{ width: `40%` }}>
                                     <Option value={"all"}>Semua</Option>
                                     {
@@ -318,8 +333,28 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                                         })
                                     }
                                 </Select>
-                            </div>
-                            <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD}
+                            </div> */}
+                            <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} loading={datarawloading}
+                                onRow={(record, rowIndex) => {
+                                    return {
+                                        onMouseOver: (event) => {
+                                            setrowstate(record.user_id)
+                                        },
+                                        onClick: (event) => {
+                                            {
+                                                [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                    rt.push(`/admin/requesters/detail/${record.user_id}`)
+                                                    :
+                                                    null
+                                            }
+                                        }
+                                    }
+                                }}
+                                rowClassName={(record, idx) => {
+                                    return (
+                                        record.user_id === rowstate ? `cursor-pointer` : ``
+                                    )
+                                }}
                             // onRow={(record, rowIndex) => {
                             //     return {
                             //         onMouseOver: (event) => {
@@ -357,17 +392,24 @@ export async function getServerSideProps({ req, res }) {
         rows: 50,
         order_by: "asc"
     }
-    if (req && req.headers) {
-        const cookies = req.headers.cookie;
-        if (!cookies) {
-            res.writeHead(302, { Location: '/' })
-            res.end()
-        }
-        if (typeof cookies === 'string') {
-            const cookiesJSON = httpcookie.parse(cookies);
-            initProps = cookiesJSON.token
+    if (!req.headers.cookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
         }
     }
+    const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+    if (!cookiesJSON1.token) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
+        }
+    }
+    initProps = cookiesJSON1.token
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,
         headers: {
@@ -382,34 +424,34 @@ export async function getServerSideProps({ req, res }) {
         res.end()
     }
 
-    const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(reqBodyAccountList)
-    })
-    const resjsonLA = await resourcesLA.json()
-    const dataListRequester = resjsonLA
+    // const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify(reqBodyAccountList)
+    // })
+    // const resjsonLA = await resourcesLA.json()
+    // const dataListRequester = resjsonLA
 
-    const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(reqBody)
-    })
-    const resjsonGCL = await resourcesGCL.json()
-    const dataCompanyList = resjsonGCL
+    // const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify(reqBody)
+    // })
+    // const resjsonGCL = await resourcesGCL.json()
+    // const dataCompanyList = resjsonGCL
 
     return {
         props: {
             initProps,
             dataProfile,
-            dataListRequester,
-            dataCompanyList,
+            // dataListRequester,
+            // dataCompanyList,
             sidemenu: "4"
         },
     }

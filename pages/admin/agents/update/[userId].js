@@ -1,33 +1,50 @@
 import { useRouter } from 'next/router'
-import { useState } from 'react'
 import Layout from '../../../../components/layout-dashboard'
-import st from '../../../../components/layout-dashboard.module.css'
 import httpcookie from 'cookie'
-import Sticky from 'wil-react-sticky'
-import Link from 'next/link'
 import EditOutlined from '@ant-design/icons/EditOutlined'
-import { Form, Input, Modal, Button, notification, Switch, Select } from 'antd'
+import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
+import Sticky from 'wil-react-sticky'
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import st from '../../../../components/layout-dashboard.module.css'
+import { Button, Form, Input, notification, Modal, Switch, Select } from 'antd'
 
-function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRoles, sidemenu }) {
+const AgentsUpdate = ({ initProps, dataDetailAgent, dataProfile, sidemenu }) => {
+    //inisialisasi
     const rt = useRouter()
-    const tok = initProps
-    var pathArr = rt.pathname.split("/").slice(1)
-    pathArr[pathArr.length - 1] = dataDetailRequester.data.fullname
-    const [instanceForm] = Form.useForm()
+    const [instanceForm] = Form.useForm();
     const { Option } = Select
+    var pathArr = rt.pathname.split("/").slice(1)
+    pathArr[pathArr.length - 1] = `Update - ${dataDetailAgent.data.fullname}`
+    pathArr.splice(2,1)
 
+    //useState
     const [loadingfoto, setLoadingfoto] = useState(false)
+    const [visible, setVisible] = useState(false)
+    const [visiblenon, setVisiblenon] = useState(false)
+    const [visibleubahpass, setVisibleubahpass] = useState(false)
+    const [loadingsave, setLoadingsave] = useState(false)
+    const [loadingubahpass, setloadingubahpass] = useState(false)
+    const [loadingubahaktif, setloadingubahaktif] = useState(false)
+    const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
+    const [dataraw1, setdataraw1] = useState({data: []})
+    const [datapass, setDatapass] = useState({
+        user_id: dataDetailAgent.data.user_id,
+        new_password: ''
+    })
     const [data1, setData1] = useState({
-        id: dataDetailRequester.data.user_id,
-        fullname: dataDetailRequester.data.fullname,
-        role: dataDetailRequester.data.role,
-        phone_number: dataDetailRequester.data.phone_number,
-        profile_image: dataDetailRequester.data.profile_image === "" ? `/default-users.jpeg` : dataDetailRequester.data.profile_image
+        id: dataDetailAgent.data.user_id,
+        fullname: dataDetailAgent.data.fullname,
+        role: dataDetailAgent.data.role,
+        phone_number: dataDetailAgent.data.phone_number,
+        profile_image: dataDetailAgent.data.profile_image === "" ? `/default-users.jpeg` : dataDetailAgent.data.profile_image
     })
     const [datarole, setdatarole] = useState({
-        account_id: dataDetailRequester.data.user_id,
-        role_ids: [dataDetailRequester.data.feature_roles[0]]
+        account_id: dataDetailAgent.data.user_id,
+        role_ids: [dataDetailAgent.data.feature_roles[0]]
     })
+
+    //eventOnChange
     const onChangeRole = (value) => {
         //multiple roles
         // const arr = datarole.role_ids
@@ -39,18 +56,6 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
             role_ids: arr
         })
     }
-    const [visible, setVisible] = useState(false)
-    const [visiblenon, setVisiblenon] = useState(false)
-    const [visibleubahpass, setVisibleubahpass] = useState(false)
-    const [loadingupdate, setLoadingupdate] = useState(false)
-    const [loadingubahpass, setloadingubahpass] = useState(false)
-    const [loadingubahaktif, setloadingubahaktif] = useState(false)
-    const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
-
-    const [datapass, setDatapass] = useState({
-        user_id: dataDetailRequester.data.user_id,
-        new_password: ''
-    })
     const onChangeEditAgents = (e) => {
         setData1({
             ...data1,
@@ -74,42 +79,45 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
         })
         setLoadingfoto(false)
     }
+
+    //eventHandler
     const handleSubmitEditAccount = () => {
-        setLoadingupdate(true)
-        if ([133].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/updateFeatureRequester`, {
+        console.log("masuk api")
+        setLoadingsave(true)
+        if (dataProfile.data.registered_feature.includes(132)) {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/updateFeatureAgent`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': JSON.parse(tok),
+                    'Authorization': JSON.parse(initProps),
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(datarole)
             })
                 .then(res => res.json())
                 .then(res2 => {
-                    setLoadingupdate(false)
+                    setLoadingsave(false)
                 })
         }
-        if ([116].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/updateRequesterDetail`, {
+        if (dataProfile.data.registered_feature.includes(110)) {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/updateAgentDetail`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': JSON.parse(tok),
+                    'Authorization': JSON.parse(initProps),
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data1)
             })
                 .then(res => res.json())
                 .then(res2 => {
-                    setLoadingupdate(false)
+                    setLoadingsave(false)
                     if (res2.success) {
                         notification['success']({
                             message: res2.message,
                             duration: 3
                         })
                         setTimeout(() => {
-                            rt.push(`/admin/requesters/${dataDetailRequester.data.user_id}`)
-                        }, 300)
+                            rt.push(`/admin/agents/${dataDetailAgent.data.user_id}`)
+                        }, 1000)
                     }
                     else if (!res2.success) {
                         notification['error']({
@@ -120,7 +128,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                 })
         }
     }
-    const handleActivationRequesters = (status) => {
+    const handleActivationAgents = (status) => {
         var keaktifan = false
         if (status === "aktif") {
             keaktifan = false
@@ -130,14 +138,14 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
             keaktifan = true
             setloadingubahnonaktif(true)
         }
-        fetch(`https://boiling-thicket-46501.herokuapp.com/requesterActivation`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/agentActivation`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                user_id: dataDetailRequester.data.user_id,
+                user_id: dataDetailAgent.data.user_id,
                 is_enabled: keaktifan
             })
         })
@@ -157,7 +165,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                         else if (status === "nonAktif") {
                             setloadingubahnonaktif(false)
                         }
-                        rt.push(`/admin/requesters/${dataDetailRequester.data.user_id}`)
+                        rt.push(`/admin/agents/${dataDetailAgent.data.user_id}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -172,7 +180,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
     }
     const handleUbahPassword = () => {
         setloadingubahpass(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/changeRequesterPassword`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/changeAgentPassword`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -190,10 +198,11 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                     })
                     setTimeout(() => {
                         setloadingubahpass(false)
-                        rt.push(`/admin/requesters/${dataDetailRequester.data.user_id}`)
+                        rt.push(`/admin/agents/${dataDetailAgent.data.user_id}`)
                     }, 500)
                 }
                 else if (!res2.success) {
+                    setloadingubahpass(false)
                     setVisibleubahpass(false)
                     notification['error']({
                         message: res2.message.errorInfo.status_detail,
@@ -202,41 +211,53 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                 }
             })
     }
+
+    //useEffect
+    useEffect(()=>{
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+        .then(res => res.json())
+        .then(res2 => {
+            setdataraw1(res2)
+        })
+    },[])
+
     return (
-        <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} dataDetailAccount={dataDetailRequester} st={st}>
-            <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-                {/* <div className=" col-span-1 md:col-span-1 flex md:hidden flex-col space-y-4 p-4">
-                    <div className="font-semibold text-base">Requesters</div>
-                    <p className="font-normal text-xs">
-                        This page lets you handpick a set of requesters and add them to your help desk. These requesters will have selective privileges to submit requests to your helpdesk. You can restrict access such that only people who have been added here are allowed to login to your self-service portal and access your knowledge base. <br /> <br />
-                        You can fill in the details of each of your new requesters manually or import a list of users from a CSV file. Once you have populated your list, your agents can open up each of your requesters and view their ticket history and contact information.
-                    </p>
-                </div> */}
-                <div className="col-span-1 md:col-span-4">
+        <Layout tok={initProps} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} dataDetailAccount={dataDetailAgent} st={st}>
+            <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4" id="formAgentsWrapper">
+                <div className=" col-span-1 md:col-span-4">
                     <Sticky containerSelectorFocus="#formAgentsWrapper">
                         <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
-                            <h1 className="font-semibold py-2">Edit Requesters</h1>
+                            <h1 className="font-semibold py-2">Edit Agents</h1>
                             <div className="flex space-x-2">
-                                <Link href={`/admin/requesters`}>
-                                    <Button type="default">Cancel</Button>
+                                <Link href={`/admin/agents/${dataDetailAgent.data.user_id}`}>
+                                    <Button type="default">
+                                        Batalkan
+                                    </Button>
                                 </Link>
                                 {
-                                    [116, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                    <Button type="primary" loading={loadingupdate} onClick={instanceForm.submit}>Save</Button>
+                                    [110, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                        <Button type="primary" loading={loadingsave} onClick={instanceForm.submit}>Simpan</Button>
+                                        :
+                                        null
                                 }
                             </div>
                         </div>
                     </Sticky>
                 </div>
-                <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
-                    <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-5">
+                <div className=" col-span-1 md:col-span-3 flex flex-col">
+                    <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-8">
                         <div className="border-b border-black p-4 font-semibold mb-5 flex">
-                            <div className=" mr-3 md:mr-5 pt-1">Detail Akun Requesters</div>
+                            <div className="md:mr-5 pt-1">Edit Akun Agents</div>
                             {
-                                [114].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                [112].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                     <div className="pt-1">
                                         {
-                                            dataDetailRequester.data.attribute.is_enabled ?
+                                            dataDetailAgent.data.attribute.is_enabled ?
                                                 <Switch checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
                                                 :
                                                 <Switch checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
@@ -245,7 +266,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                                     :
                                     <div className="pt-1">
                                         {
-                                            dataDetailRequester.data.attribute.is_enabled ?
+                                            dataDetailAgent.data.attribute.is_enabled ?
                                                 <Switch disabled checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
                                                 :
                                                 <Switch disabled checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
@@ -254,10 +275,10 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                             }
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4">
-                            <div className="p-3 col-span-1 md:col-span-1 flex flex-col items-center">
-                                <img src={data1.profile_image} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
+                            <div className="p-3 col-span-1 md:col-span-1 relative flex flex-col items-center">
+                                <img src={data1.profile_image} className=" object-cover w-32 h-32 rounded-full mb-4" />
                                 {
-                                    [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                    [110].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <label className="custom-file-upload py-2 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3">
                                         <input type="file" style={{ display: `none` }} name="profile_image" onChange={onChangeEditFoto} />
                                         {loadingfoto ? <LoadingOutlined /> : <EditOutlined style={{ fontSize: `1.2rem` }} />}
@@ -265,23 +286,23 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                                 </label>
                                 }
                                 {
-                                    [115].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                    [111].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <div className="w-full h-auto">
-                                        <button className="w-full h-auto py-2 text-center bg-primary hover:bg-secondary text-white rounded-sm" onClick={() => { setVisibleubahpass(true) }}>
+                                        <button className=" w-full h-auto py-2 text-center bg-primary hover:bg-secondary text-white rounded-sm" onClick={() => { setVisibleubahpass(true) }}>
                                             Ubah Password
                                         </button>
-                                    </div >
+                                    </div>
                                 }
                             </div>
                             <div className="p-3 col-span-1 md:col-span-3">
                                 <h1 className="text-xs text-gray-600 mb-1">Email:</h1>
-                                <h1 className="text-sm text-black mb-5">{dataDetailRequester.data.email}</h1>
-                                <Form layout="vertical" initialValues={data1} form={instanceForm} onFinish={handleSubmitEditAccount}>
-                                    <div className="flex flex-col mb-5">
-                                        <h1 className="text-sm">ID</h1>
-                                        <h1 className="text-sm font-semibold">{data1.id}</h1>
-                                    </div>
-                                    <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi" name="fullname" initialValue={data1.fullname}
+                                <h1 className="text-sm text-black mb-5">{dataDetailAgent.data.email}</h1>
+                                <div className="flex flex-col mb-5">
+                                    <h1 className="text-sm">ID</h1>
+                                    <h1 className="text-sm font-semibold">{data1.id}</h1>
+                                </div>
+                                <Form layout="vertical" form={instanceForm} onFinish={handleSubmitEditAccount} initialValues={data1}>
+                                    <Form.Item label="Nama Lengkap" name="fullname" required tooltip="Wajib diisi"
                                         rules={[
                                             {
                                                 required: true,
@@ -289,8 +310,8 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                                             },
                                         ]}>
                                         {
-                                            [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                                <Input defaultValue={data1.fullname} onChange={onChangeEditAgents} name="fullname" />
+                                            [110].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                <Input defaultValue={data1.fullname} onChange={onChangeEditAgents} name="fullname" required />
                                                 :
                                                 <div className="col-span-1 flex flex-col mb-5">
                                                     <h1 className="font-semibold text-sm">Nama Lengkap:</h1>
@@ -298,7 +319,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                                                 </div>
                                         }
                                     </Form.Item>
-                                    <Form.Item label="No. Handphone" required tooltip="Wajib diisi" name="phone_number" initialValue={data1.phone_number}
+                                    <Form.Item label="No. Handphone" name="phone_number" required tooltip="Wajib diisi"
                                         rules={[
                                             {
                                                 required: true,
@@ -306,7 +327,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                                             },
                                         ]}>
                                         {
-                                            [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                            [110].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                                 <Input defaultValue={data1.phone_number} onChange={onChangeEditAgents} name="phone_number" />
                                                 :
                                                 <div className="col-span-1 flex flex-col mb-5">
@@ -317,10 +338,10 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                                     </Form.Item>
                                     <h1 className="font-semibold">Role:</h1>
                                     {
-                                        [133].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                            <Select onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }}>
+                                        [132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                            <Select onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }} allowClear>
                                                 {
-                                                    dataRoles.data.map((doc, idx) => {
+                                                    dataraw1.data.map((doc, idx) => {
                                                         return (
                                                             <Option key={idx} value={doc.id}>{doc.name}</Option>
                                                         )
@@ -328,9 +349,9 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                                                 }
                                             </Select>
                                             :
-                                            <Select disabled onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }}>
+                                            <Select disabled onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }} allowClear>
                                                 {
-                                                    dataRoles.data.map((doc, idx) => {
+                                                    dataraw1.data.map((doc, idx) => {
                                                         return (
                                                             <Option key={idx} value={doc.id}>{doc.name}</Option>
                                                         )
@@ -338,68 +359,27 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                                                 }
                                             </Select>
                                     }
-                                    {/* <Form.Item label="Role" required tooltip="Wajib diisi" name="role" initialValue={data1.role}
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Role harus diisi',
-                                            },
-                                        ]}>
-                                        <input type="number" defaultValue={data1.role} name={'role'} onChange={onChangeEditAgents} />
-                                    </Form.Item> */}
                                 </Form>
                             </div>
                         </div>
                     </div>
-                    {/* <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-14">
-                        <div className="border-b border-black p-4 font-semibold mb-5">
-                            Detail Perusahaan
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-4">
-                            <div className="p-3 col-span-1 md:col-span-1">
-                                <img src={dataDetailAccount.data.data.company.image_logo} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full" />
-                            </div>
-                            <div className="col-span-1 md:col-span-3 p-3 space-y-4">
-                                <div>
-                                    <h1 className="font-semibold text-sm">ID Perusahaan:</h1>
-                                    <h1 className="font-normal text-sm">{dataDetailAccount.data.data.company.company_id}</h1>
-                                </div>
-                                <div>
-                                    <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
-                                    <h1 className="font-normal text-sm">{dataDetailAccount.data.data.company.company_name}</h1>
-                                </div>
-                            </div>
-                        </div>
-                    </div> */}
-                    {/* <div className="w-full p-3 md:p-5 h-auto">
-                        {
-                            dataDetailAccount.data.data.attribute.is_enabled ?
-                                <button className=" w-full h-auto py-2 text-center bg-red-600 text-white hover:bg-red-800 rounded-md" onClick={() => { setVisible(true) }}>
-                                    Non Aktifkan Akun
-                                </button>
-                                :
-                                <button className=" w-full h-auto py-2 text-center bg-blue-600 text-white hover:bg-blue-800 rounded-md" onClick={() => { setVisiblenon(true) }}>
-                                    Aktifkan Akun
-                                </button>
-                        }
-                    </div > */}
                     <Modal
                         title="Konfirmasi untuk menon-aktifkan akun"
                         visible={visible}
-                        onOk={() => { handleActivationRequesters("aktif") }}
+                        onOk={() => { handleActivationAgents("aktif") }}
                         onCancel={() => setVisible(false)}
                         okButtonProps={{ disabled: loadingubahaktif }}
                     >
-                        Apakah anda yakin ingin menon-aktifkan akun agent <strong>{dataDetailRequester.data.fullname}</strong>?
+                        Apakah anda yakin ingin menon-aktifkan agent <strong>{dataDetailAgent.data.fullname}</strong>?
                     </Modal>
                     <Modal
                         title="Konfirmasi untuk mengakaktifkan akun"
                         visible={visiblenon}
-                        onOk={() => { handleActivationRequesters("nonAktif") }}
+                        onOk={() => { handleActivationAgents("nonAktif") }}
                         onCancel={() => setVisiblenon(false)}
                         okButtonProps={{ disabled: loadingubahnonaktif }}
                     >
-                        Apakah anda yakin ingin melakukan aktivasi akun agent <strong>{dataDetailRequester.data.fullname}</strong>?`
+                        Apakah anda yakin ingin melakukan aktivasi akun agent <strong>{dataDetailAgent.data.fullname}</strong>?`
                     </Modal>
                     <Modal
                         title="Ubah Password"
@@ -412,13 +392,6 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, dataRol
                         <Input.Password name="new_password" value={datapass.new_password} placeholder="Password Baru" type="password" onChange={(e) => { setDatapass({ ...datapass, [e.target.name]: e.target.value }) }} style={{ marginBottom: `2rem` }} />
                     </Modal>
                 </div>
-                {/* <div className="col-span-1 md:col-span-1 hidden md:flex flex-col space-y-4 p-4">
-                    <div className="font-semibold text-base">Requesters</div>
-                    <p className="font-normal text-sm">
-                        This page lets you handpick a set of requesters and add them to your help desk. These requesters will have selective privileges to submit requests to your helpdesk. You can restrict access such that only people who have been added here are allowed to login to your self-service portal and access your knowledge base. <br /> <br />
-                        You can fill in the details of each of your new requesters manually or import a list of users from a CSV file. Once you have populated your list, your agents can open up each of your requesters and view their ticket history and contact information.
-                    </p>
-                </div> */}
             </div>
         </Layout>
     )
@@ -430,7 +403,7 @@ export async function getServerSideProps({ req, res, params }) {
     if (req && req.headers) {
         const cookies = req.headers.cookie;
         if (!cookies) {
-            res.writeHead(302, { Location: '/' })
+            res.writeHead(302, { Location: '/login' })
             res.end()
         }
         if (typeof cookies === 'string') {
@@ -448,12 +421,12 @@ export async function getServerSideProps({ req, res, params }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    if (!([114, 115, 116, 118, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)))) {
+    if (!([107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)))) {
         res.writeHead(302, { Location: '/dashboard/admin' })
         res.end()
     }
 
-    const resourcesDA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterDetail`, {
+    const resourcesDA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentDetail`, {
         method: `POST`,
         headers: {
             'Authorization': JSON.parse(initProps),
@@ -464,30 +437,26 @@ export async function getServerSideProps({ req, res, params }) {
         })
     })
     const resjsonDA = await resourcesDA.json()
-    if (!resjsonDA) {
-        res.writeHead(302, { Location: '/admin/requesters' })
-        res.end()
-    }
-    const dataDetailRequester = resjsonDA
+    const dataDetailAgent = resjsonDA
 
-    const resourcesRoles = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
-        method: `GET`,
-        headers: {
-            'Authorization': JSON.parse(initProps)
-        }
-    })
-    const resjsonRoles = await resourcesRoles.json()
-    const dataRoles = resjsonRoles
+    // const resourcesRoles = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+    //     method: `GET`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //     },
+    // })
+    // const resjsonRoles = await resourcesRoles.json()
+    // const dataRoles = resjsonRoles
 
     return {
         props: {
             initProps,
-            dataDetailRequester,
+            dataDetailAgent,
             dataProfile,
-            dataRoles,
+            // dataRoles,
             sidemenu: "4"
         },
     }
 }
 
-export default RequestersDetail
+export default AgentsUpdate
