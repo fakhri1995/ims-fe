@@ -95,15 +95,29 @@ function layout({ children }) {
                     </div>
                     </section>
                     <div theme="light" mode="horizontal" style={{lineHeight:'3.9rem',}} className={'hidden md:block float-right menu'}>
+                        {/* <div className={'bla'}>bla</div>
+                        <div className={'blabla'}>blabla</div> */}
+                                {/* <div className={'bla'}>aaaaaaaaaa</div>
+                                <div className={'blabla'}>bbbbbbbbbbb</div> */}
+                        
                         <Dropdown overlay={menu1}>
-                            <a style={{fontWeight:'600'}} className="ant-dropdown-link text-black" onClick={e => e.preventDefault()}>
-                            Solution <DownOutlined className={'relative top-3 right-9'} />
-                            </a>
+                            {/* <div> */}
+                                <a style={{fontWeight:'600'}} className={' ant-dropdown-link text-black menu-underlined hover:text-black'} onClick={e => e.preventDefault()}>
+                                {/* <p className={'bla ant-dropdown-link'}>Solution </p> */}
+                                Solution
+                                {/* <div className={'blabla'}>hana</div> */}
+                                    {/* <DownOutlined className={' relative top-3 right-10'} /> */}
+                                </a>
+                                {/* <div className={'bla'}>wijay</div> */}
+                            {/* </div> */}
                         </Dropdown>
                         <Dropdown className={'ml-6 mr-4'} overlay={menu2}>
-                            <a style={{fontWeight:'600'}} className="ant-dropdown-link text-black" onClick={e => e.preventDefault()}>
-                            Company <DownOutlined className={'relative top-3 right-10'} />
-                            </a>
+                            {/* <div> */}
+                                <a style={{fontWeight:'600'}} className=" ant-dropdown-link text-black menu-underlined hover:text-black" onClick={e => e.preventDefault()}>
+                                Company 
+                                {/* <DownOutlined className={' relative top-3 right-10'} /> */}
+                                </a>
+                            {/* </div> */}
                         </Dropdown>
                         {/* <Button type="text" className={'mx-2 '} style={{fontWeight:'600', background:'white'}} key="0">
                             Solution

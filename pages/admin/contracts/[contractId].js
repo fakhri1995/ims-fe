@@ -19,6 +19,7 @@ function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes,
     const contractTypes = dataContractTypes.data.filter((item, idx) => { return dataContract.data.contract.id_tipe_kontrak == item.id })[0]
     // console.log(contractTypes)
     const contract = dataContract.data.contract
+    // console.log(contract)
     const serviceItems = dataContract.data.service_item_kontraks
     // console.log(dataContract)
 

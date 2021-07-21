@@ -32,7 +32,9 @@ const Head = props => (
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
-    <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'></link>
+    {/* <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'></link> */}
+    <link href="http://fonts.cdnfonts.com/css/gilroy-bold" rel="stylesheet"></link>
+                
   </NextHead>
 )
 
