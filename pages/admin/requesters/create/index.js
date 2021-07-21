@@ -7,7 +7,21 @@ import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import st from '../../../../components/layout-dashboard.module.css'
-import { Form, Upload, Select, Input, Button, notification } from 'antd'
+import { Form, Upload, TreeSelect, Input, Button, notification, Select } from 'antd'
+
+function modifData(dataa) {
+    for (var i = 0; i < dataa.length; i++) {
+        dataa[i]['key'] = dataa[i].company_id
+        dataa[i]['value'] = dataa[i].company_id
+        dataa[i]['title'] = dataa[i].company_name
+        dataa[i]['children'] = dataa[i].members
+        delete dataa[i].members
+        if (dataa[i].children) [
+            modifData(dataa[i].children)
+        ]
+    }
+    return dataa
+}
 
 function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     const rt = useRouter()
@@ -29,6 +43,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
     const [loadingupload, setLoadingupload] = useState(false)
     const [loadingcreate, setLoadingcreate] = useState(false)
     const [datacompanylist, setdatacompanylist] = useState([])
+    const [dataraw1, setdataraw1] = useState({ data: [] })
 
     //handleCreateButton
     const handleCreateAgents = () => {
@@ -130,7 +145,21 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
         })
             .then(res => res.json())
             .then(res2 => {
-                setdatacompanylist(res2.data.members)
+                const c = [res2.data]
+                const d = modifData(c)
+                setdatacompanylist(d[0].children)
+            })
+    }, [])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps)
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdataraw1(res2)
             })
     }, [])
 
@@ -140,7 +169,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                 <div className="col-span-1 md:col-span-4">
                     <Sticky containerSelectorFocus="#createAgentsWrapper">
                         <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
-                            <h1 className="font-semibold py-2">Requester Baru</h1>
+                            <h1 className="font-semibold py-2">Buat Akun Requester</h1>
                             <div className="flex space-x-2">
                                 <Link href="/admin/requesters">
                                     <Button type="default">Batal</Button>
@@ -163,7 +192,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                 <div className="col-span-1 md:col-span-3 flex flex-col">
                     <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-14">
                         <div className="border-b border-black p-4 font-semibold mb-5">
-                            Detail Akun Pengguna
+                            Akun Requester - {newuserrequesters.fullname}
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4">
                             <div className="p-3 col-span-1 md:col-span-1">
@@ -180,7 +209,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                             </div>
                             <div className="p-3 col-span-1 md:col-span-3">
                                 <Form layout="vertical" className="createAgentsForm" onFinish={handleCreateAgents} form={instanceForm}>
-                                    <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi" name="fullname"
+                                    <Form.Item label="Nama Lengkap" required name="fullname"
                                         rules={[
                                             {
                                                 required: true,
@@ -189,12 +218,16 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                                         ]}>
                                         <Input value={newuserrequesters.fullname} name={`fullname`} onChange={onChangeCreateRequesters} />
                                     </Form.Item>
-                                    <Form.Item label="Email" required tooltip="Wajib diisi" name="email"
+                                    <Form.Item label="Email" required name="email"
                                         rules={[
                                             {
                                                 required: true,
                                                 message: 'Email harus diisi',
                                             },
+                                            {
+                                                pattern: /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
+                                                message: 'Email belum diisi dengan benar'
+                                            }
                                         ]}>
                                         <Input value={newuserrequesters.email} name={`email`} onChange={onChangeCreateRequesters} />
                                     </Form.Item>
@@ -203,6 +236,10 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                                             {
                                                 required: true,
                                                 message: 'No. Handphone harus diisi',
+                                            },
+                                            {
+                                                pattern: /(\-)|(^\d*$)/,
+                                                message: 'No. Handphone harus berisi angka',
                                             },
                                         ]}>
                                         <Input value={newuserrequesters.phone_number} name={`phone_number`} onChange={onChangeCreateRequesters} />
@@ -223,12 +260,43 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                                                 message: 'Asal Perusahaan harus diisi',
                                             },
                                         ]}>
-                                        <Select onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }} name={`company_id`} allowClear>
+                                        <TreeSelect allowClear
+                                            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                            treeData={datacompanylist}
+                                            placeholder="Pilih Induk Perusahaan"
+                                            treeDefaultExpandAll
+                                            onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }}
+                                        />
+                                        {/* <Select onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }} name={`company_id`} allowClear>
                                             <Select.Option >Choose company</Select.Option>
                                             {
                                                 datacompanylist.map((doc, idx) => {
                                                     return (
                                                         <Select.Option title={doc.company_name} key={idx} value={doc.company_id}>{doc.company_name}</Select.Option>
+                                                    )
+                                                })
+                                            }
+                                        </Select> */}
+                                    </Form.Item>
+                                    <Form.Item label="Password" name="password"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Password harus diisi',
+                                            },
+                                            {
+                                                pattern: /([A-z0-9]{8})/,
+                                                message: 'Password minimal 8 karakter',
+                                            },
+                                        ]}>
+                                        <Input.Password /*value={newuserrequesters.password} name={`password`} onChange={onChangeCreateRequesters}*/ />
+                                    </Form.Item>
+                                    <Form.Item label="Role" name="role">
+                                        <Select /*onChange={(value) => { onChangeRole(value) }} defaultValue={idrole}*/ style={{ width: `100%` }}>
+                                            {
+                                                dataraw1.data.map((doc, idx) => {
+                                                    return (
+                                                        <Select.Option key={idx} value={doc.id}>{doc.name}</Select.Option>
                                                     )
                                                 })
                                             }
@@ -245,23 +313,30 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
 }
 
 export async function getServerSideProps({ req, res }) {
-    var initProps = {};
     const reqBody = {
         page: 1,
         rows: 50,
         order_by: "asc"
     }
-    if (req && req.headers) {
-        const cookies = req.headers.cookie;
-        if (!cookies) {
-            res.writeHead(302, { Location: '/login' })
-            res.end()
-        }
-        if (typeof cookies === 'string') {
-            const cookiesJSON = httpcookie.parse(cookies);
-            initProps = cookiesJSON.token;
+    var initProps = {};
+    if (!req.headers.cookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
         }
     }
+    const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+    if (!cookiesJSON1.token) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
+        }
+    }
+    initProps = cookiesJSON1.token
 
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,

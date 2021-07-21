@@ -11,6 +11,8 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
     const [dataraw, setdataraw] = useState([])
     const [datarawloading, setdatarawloading] = useState(false)
     const [dataKK, setDataSource] = useState([]);
+    const [rowstate, setrowstate] = useState(0)
+
     const FilterAll = () => {
         setDataSource(dataraw)
     }
@@ -83,16 +85,15 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
-    const { Option } = Select
 
     const columnsDD = [
         {
             dataIndex: 'profil_image',
             render: (text, record, index) => {
                 return {
-                    props: {
-                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
+                    // props: {
+                    //     style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    // },
                     children:
                         <>
                             <img src={record.profile_image} alt="imageProfile" className=" object-cover w-10 h-10 rounded-full" />
@@ -105,23 +106,23 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
             //     </>
             // )
         },
-        {
-            title: 'ID',
-            dataIndex: 'user_id',
-            // sorter: (a, b) => a.user_id - b.user_id,
-            // sortDirections: ['descend', 'ascend'],
-            render: (text, record, index) => {
-                return {
-                    props: {
-                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children:
-                        <>
-                            {record.user_id}
-                        </>
-                }
-            }
-        },
+        // {
+        //     title: 'ID',
+        //     dataIndex: 'user_id',
+        //     // sorter: (a, b) => a.user_id - b.user_id,
+        //     // sortDirections: ['descend', 'ascend'],
+        //     render: (text, record, index) => {
+        //         return {
+        //             // props: {
+        //             //     style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+        //             // },
+        //             children:
+        //                 <>
+        //                     {record.user_id}
+        //                 </>
+        //         }
+        //     }
+        // },
         {
             title: 'Nama',
             dataIndex: 'fullname',
@@ -129,9 +130,9 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
             // sortDirections: ['descend', 'ascend'],
             render: (text, record, index) => {
                 return {
-                    props: {
-                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
+                    // props: {
+                    //     style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    // },
                     children:
                         <>
                             {record.fullname}
@@ -144,9 +145,9 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
             dataIndex: 'email',
             render: (text, record, index) => {
                 return {
-                    props: {
-                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
+                    // props: {
+                    //     style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    // },
                     children:
                         <>
                             {record.email}
@@ -159,9 +160,9 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
             dataIndex: 'phone_number',
             render: (text, record, index) => {
                 return {
-                    props: {
-                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
+                    // props: {
+                    //     style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    // },
                     children:
                         <>
                             {record.phone_number}
@@ -169,49 +170,49 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                 }
             }
         },
-        {
-            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
-            dataIndex: 'actionss',
-            render: (text, record, index) => {
-                return {
-                    props: {
-                        style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children:
-                        <>
-                            {/* {
-                                actions[index] ?
-                                    <>{actions[index]} */}
-                            {
-                                [114, 115, 116, 118, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                    <Button onClick={() => { rt.push(`/admin/requesters/${record.user_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
-                                        <EditOutlined />
-                                    </Button>
-                                    :
-                                    null
-                            }
-                            {/* </>
-                                    :
-                                    null
-                            } */}
-                        </>
-                }
-            }
-            // render: (text, record, index) => (
-            //     <>
-            //         {
-            //             actions[index] ?
-            //                 <>{actions[index]}
-            //                     <Button onClick={() => { rt.push(`/admin/requesters/${record.user_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
-            //                         <EditOutlined />
-            //                     </Button>
-            //                 </>
-            //                 :
-            //                 null
-            //         }
-            //     </>
-            // )
-        }
+        // {
+        //     title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
+        //     dataIndex: 'actionss',
+        //     render: (text, record, index) => {
+        //         return {
+        //             // props: {
+        //             //     style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+        //             // },
+        //             children:
+        //                 <>
+        //                     {/* {
+        //                         actions[index] ?
+        //                             <>{actions[index]} */}
+        //                     {
+        //                         [114, 115, 116, 118, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+        //                             <Button onClick={() => { rt.push(`/admin/requesters/${record.user_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
+        //                                 <EditOutlined />
+        //                             </Button>
+        //                             :
+        //                             null
+        //                     }
+        //                     {/* </>
+        //                             :
+        //                             null
+        //                     } */}
+        //                 </>
+        //         }
+        //     }
+        //     // render: (text, record, index) => (
+        //     //     <>
+        //     //         {
+        //     //             actions[index] ?
+        //     //                 <>{actions[index]}
+        //     //                     <Button onClick={() => { rt.push(`/admin/requesters/${record.user_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
+        //     //                         <EditOutlined />
+        //     //                     </Button>
+        //     //                 </>
+        //     //                 :
+        //     //                 null
+        //     //         }
+        //     //     </>
+        //     // )
+        // }
     ];
 
     return (
@@ -334,6 +335,26 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                                 </Select>
                             </div> */}
                             <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} loading={datarawloading}
+                                onRow={(record, rowIndex) => {
+                                    return {
+                                        onMouseOver: (event) => {
+                                            setrowstate(record.user_id)
+                                        },
+                                        onClick: (event) => {
+                                            {
+                                                [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                    rt.push(`/admin/requesters/detail/${record.user_id}`)
+                                                    :
+                                                    null
+                                            }
+                                        }
+                                    }
+                                }}
+                                rowClassName={(record, idx) => {
+                                    return (
+                                        record.user_id === rowstate ? `cursor-pointer` : ``
+                                    )
+                                }}
                             // onRow={(record, rowIndex) => {
                             //     return {
                             //         onMouseOver: (event) => {
