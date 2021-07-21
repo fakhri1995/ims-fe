@@ -7,13 +7,13 @@ import { useEffect, useState } from 'react'
 import st from '../../../../../components/layout-dashboard.module.css'
 import { Form, Input, Button, notification } from 'antd'
 
-function RequestersPassword({ initProps, dataProfile, sidemenu, userid }) {
+function AgentPassword({ initProps, dataProfile, sidemenu, userid }) {
     const rt = useRouter()
     const { name } = rt.query
     const tok = initProps
     var pathArr = rt.pathname.split("/").slice(1)
     pathArr.splice(2,1)
-    pathArr[pathArr.length - 1] = `Ubah Password Requester - ${name}`
+    pathArr[pathArr.length - 1] = `Ubah Password Agent - ${name}`
     const [instanceForm] = Form.useForm()
     // dataCompanyList = dataCompanyList.data.members.filter(data => data.company_id !== 66)
 
@@ -36,7 +36,7 @@ function RequestersPassword({ initProps, dataProfile, sidemenu, userid }) {
         }
         else {
             setloadingubahpass(true)
-            fetch(`https://boiling-thicket-46501.herokuapp.com/changeRequesterPassword`, {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/changeAgentPassword`, {
                 method: 'POST',
                 headers: {
                     'Authorization': JSON.parse(tok),
@@ -53,7 +53,7 @@ function RequestersPassword({ initProps, dataProfile, sidemenu, userid }) {
                         })
                         setTimeout(() => {
                             setloadingubahpass(false)
-                            rt.push(`/admin/requesters/detail/${userid}`)
+                            rt.push(`/admin/agents/detail/${userid}`)
                         }, 500)
                     }
                     else if (!res2.success) {
@@ -73,9 +73,9 @@ function RequestersPassword({ initProps, dataProfile, sidemenu, userid }) {
                 <div className="col-span-1 md:col-span-4">
                     <Sticky containerSelectorFocus="#createAgentsWrapper">
                         <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
-                            <h1 className="font-semibold py-2">Ubah Password Requester</h1>
+                            <h1 className="font-semibold py-2">Ubah Password Agent</h1>
                             <div className="flex space-x-2">
-                                <Link href={`/admin/requesters/detail/${userid}`}>
+                                <Link href={`/admin/agents/detail/${userid}`}>
                                     <Button disabled={praloading} type="default">Batal</Button>
                                     {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button> */}
                                 </Link>
@@ -88,7 +88,7 @@ function RequestersPassword({ initProps, dataProfile, sidemenu, userid }) {
                 <div className="col-span-1 md:col-span-3 flex flex-col">
                     <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-14">
                         <div className="border-b border-black p-4 font-semibold mb-5">
-                            Akun Requester - {name}
+                            Akun Agent - {name}
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4">
                             <div className="p-3 col-span-1 md:col-span-3">
@@ -192,4 +192,4 @@ export async function getServerSideProps({ req, res, params }) {
     }
 }
 
-export default RequestersPassword
+export default AgentPassword

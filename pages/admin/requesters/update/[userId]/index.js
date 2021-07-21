@@ -8,6 +8,20 @@ import Link from 'next/link'
 import EditOutlined from '@ant-design/icons/EditOutlined'
 import { Form, Input, Button, notification, Select } from 'antd'
 
+function modifData(dataa) {
+    for (var i = 0; i < dataa.length; i++) {
+        dataa[i]['key'] = dataa[i].company_id
+        dataa[i]['value'] = dataa[i].company_id
+        dataa[i]['title'] = dataa[i].company_name
+        dataa[i]['children'] = dataa[i].members
+        delete dataa[i].members
+        if (dataa[i].children) [
+            modifData(dataa[i].children)
+        ]
+    }
+    return dataa
+}
+
 function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, sidemenu, userid }) {
     const rt = useRouter()
     const tok = initProps
@@ -29,11 +43,15 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
         fullname: "",
         role: "",
         phone_number: "",
-        profile_image: `/default-users.jpeg`
+        profile_image: `/default-users.jpeg`,
+        company_id: 0,
+        email: ''
     })
     const [idrole, setidrole] = useState(0)
     const [patharr, setpatharr] = useState([])
     const [preloading, setpreloading] = useState(true)
+    const [datacompanylist, setdatacompanylist] = useState([])
+    const [companyid, setcompanyid] = useState(0)
     // const [datarole, setdatarole] = useState({
     //     account_id: dataDetailRequester.data.user_id,
     //     role_ids: [dataDetailRequester.data.feature_roles[0]]
@@ -231,15 +249,33 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
                     fullname: res2.data.fullname,
                     role: res2.data.role,
                     phone_number: res2.data.phone_number,
-                    profile_image: res2.data.profile_image === "" ? `/default-users.jpeg` : res2.data.profile_image
+                    profile_image: res2.data.profile_image === "" ? `/default-users.jpeg` : res2.data.profile_image,
+                    company_id: res2.data.company_id,
+                    email: res2.data.email
                 }
                 setData1(temp)
+                setdatarole({ ...datarole, account_id: res2.data.user_id })
                 setidrole(res2.data.feature_roles[0])
                 var pathArr = rt.pathname.split("/").slice(1)
                 pathArr.splice(3, 1)
                 pathArr[pathArr.length - 1] = `Ubah Profil Requester - ` + res2.data.fullname
                 setpatharr(pathArr)
+                setcompanyid(res2.data.company_id)
                 setpreloading(false)
+            })
+    }, [])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
+            method: `POST`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                const c = [res2.data]
+                const d = modifData(c)
+                setdatacompanylist(d[0].children)
             })
     }, [])
     useEffect(() => {
@@ -271,11 +307,11 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
                             <h1 className="font-semibold py-2">Ubah Profil Requester</h1>
                             <div className="flex space-x-2">
                                 <Link href={`/admin/requesters/detail/${data1.id}`}>
-                                    <Button type="default">Batal</Button>
+                                    <Button disabled={preloading} type="default">Batal</Button>
                                 </Link>
                                 {
                                     [116, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                    <Button type="primary" loading={loadingupdate} onClick={instanceForm.submit}>Simpan</Button>
+                                    <Button disabled={preloading} type="primary" loading={loadingupdate} onClick={instanceForm.submit}>Simpan</Button>
                                 }
                             </div>
                         </div>
@@ -332,11 +368,27 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
                                     :
                                     <div className="p-3 col-span-1 md:col-span-3">
                                         <Form layout="vertical" initialValues={data1} form={instanceForm} onFinish={handleSubmitEditAccount}>
+                                            <Form.Item label="Asal Lokasi (belum berfungsi)" name="company_id"
+                                                rules={[
+                                                    {
+                                                        required: true,
+                                                        message: 'Asal lokasi wajib diisi',
+                                                    },
+                                                ]}>
+                                                <TreeSelect allowClear
+                                                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                                    treeData={datacompanylist}
+                                                    placeholder="Pilih Asal Lokasi"
+                                                    treeDefaultExpandAll
+                                                    defaultValue={companyid}
+                                                /*onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }}*/
+                                                />
+                                            </Form.Item>
                                             <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi" name="fullname"
                                                 rules={[
                                                     {
                                                         required: true,
-                                                        message: 'Nama Lengkap harus diisi',
+                                                        message: 'Nama Lengkap wajib diisi',
                                                     },
                                                 ]}>
                                                 {
@@ -349,11 +401,28 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
                                                         </div>
                                                 }
                                             </Form.Item>
+                                            <Form.Item label="Email (belum berfungsi)" required name="email"
+                                                rules={[
+                                                    {
+                                                        required: true,
+                                                        message: 'Email wajib diisi',
+                                                    },
+                                                    {
+                                                        pattern: /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
+                                                        message: 'Email belum diisi dengan benar'
+                                                    }
+                                                ]}>
+                                                <Input value={data1.email} name={`email`} onChange={onChangeEditAgents} />
+                                            </Form.Item>
                                             <Form.Item label="No. Handphone" required tooltip="Wajib diisi" name="phone_number"
                                                 rules={[
                                                     {
                                                         required: true,
-                                                        message: 'No. Handphone harus diisi',
+                                                        message: 'No. Handphone wajib diisi',
+                                                    },
+                                                    {
+                                                        pattern: /(\-)|(^\d*$)/,
+                                                        message: 'No. Handphone harus berisi angka',
                                                     },
                                                 ]}>
                                                 {

@@ -73,7 +73,8 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                             fullname: doc.fullname,
                             email: doc.email,
                             phone_number: doc.phone_number,
-                            company_id: doc.company_id
+                            company_id: doc.company_id,
+                            company_name: doc.company_name
                         })
                     })
                 }
@@ -166,6 +167,21 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                     children:
                         <>
                             {record.phone_number}
+                        </>
+                }
+            }
+        },
+        {
+            title: 'Asal Perusahaan',
+            dataIndex: 'company_name',
+            render: (text, record, index) => {
+                return {
+                    // props: {
+                    //     style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    // },
+                    children:
+                        <>
+                            {record.company_name}
                         </>
                 }
             }

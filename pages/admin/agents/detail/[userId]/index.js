@@ -7,22 +7,11 @@ import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
 import { Modal, Button, notification, Switch } from 'antd'
 
-function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid, sidemenu }) {
+function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
-    // var pathArr = rt.pathname.split("/").slice(1)
-    // pathArr[pathArr.length - 1] = dataDetailRequester.data.fullname
-    // const [instanceForm] = Form.useForm()
-    // const { Option } = Select
 
     const [loadingfoto, setLoadingfoto] = useState(false)
-    // const [data1, setData1] = useState({
-    //     id: dataDetailRequester.data.user_id,
-    //     fullname: dataDetailRequester.data.fullname,
-    //     role: dataDetailRequester.data.role,
-    //     phone_number: dataDetailRequester.data.phone_number,
-    //     profile_image: dataDetailRequester.data.profile_image === "" ? `/default-users.jpeg` : dataDetailRequester.data.profile_image
-    // })
     const [data1, setData1] = useState({
         id: "",
         fullname: "",
@@ -59,87 +48,6 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
     const [dataraw1, setdataraw1] = useState({ data: [] })
     const [praloading, setpraloading] = useState(true)
 
-
-    const onChangeRole = (value) => {
-        //multiple roles
-        // const arr = datarole.role_ids
-        //single roles
-        const arr = []
-        arr.push(value)
-        setdatarole({
-            ...datarole,
-            role_ids: arr
-        })
-    }
-    const onChangeEditAgents = (e) => {
-        setData1({
-            ...data1,
-            [e.target.name]: e.target.value
-        })
-    }
-    const onChangeEditFoto = async (e) => {
-        setLoadingfoto(true)
-        const foto = e.target.files
-        const formdata = new FormData()
-        formdata.append('file', foto[0])
-        formdata.append('upload_preset', 'migsys')
-        const fetching = await fetch(`https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`, {
-            method: 'POST',
-            body: formdata
-        })
-        const datajson = await fetching.json()
-        setData1({
-            ...data1,
-            profile_image: datajson.secure_url
-        })
-        setLoadingfoto(false)
-    }
-    const handleSubmitEditAccount = () => {
-        setLoadingupdate(true)
-        if ([133].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/updateFeatureRequester`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': JSON.parse(tok),
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(datarole)
-            })
-                .then(res => res.json())
-                .then(res2 => {
-                    setLoadingupdate(false)
-                })
-        }
-        if ([116].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/updateRequesterDetail`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': JSON.parse(tok),
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data1)
-            })
-                .then(res => res.json())
-                .then(res2 => {
-                    setLoadingupdate(false)
-                    if (res2.success) {
-                        notification['success']({
-                            message: res2.message,
-                            duration: 3
-                        })
-                        setTimeout(() => {
-                            rt.push(`/admin/requesters/${data1.id}`)
-                        }, 300)
-                    }
-                    else if (!res2.success) {
-                        notification['error']({
-                            message: res2.message.errorInfo.status_detail,
-                            duration: 3
-                        })
-                    }
-                })
-        }
-    }
     const handleActivationRequesters = (status) => {
         var keaktifan = false
         if (status === "aktif") {
@@ -150,7 +58,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
             keaktifan = true
             setloadingubahnonaktif(true)
         }
-        fetch(`https://boiling-thicket-46501.herokuapp.com/requesterActivation`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/agentActivation`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -187,45 +95,21 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                         message: res2.message.errorInfo.status_detail,
                         duration: 3
                     })
-                }
-            })
-    }
-    const handleUbahPassword = () => {
-        setloadingubahpass(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/changeRequesterPassword`, {
-            method: 'POST',
-            headers: {
-                'Authorization': JSON.parse(tok),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(datapass)
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                if (res2.success) {
-                    setVisibleubahpass(false)
-                    notification['success']({
-                        message: res2.message,
-                        duration: 3
-                    })
                     setTimeout(() => {
-                        setloadingubahpass(false)
-                        rt.push(`/admin/requesters/${data1.id}`)
+                        if (status === "aktif") {
+                            setloadingubahaktif(false)
+                        }
+                        else if (status === "nonAktif") {
+                            setloadingubahnonaktif(false)
+                        }
                     }, 500)
-                }
-                else if (!res2.success) {
-                    setVisibleubahpass(false)
-                    notification['error']({
-                        message: res2.message.errorInfo.status_detail,
-                        duration: 3
-                    })
                 }
             })
     }
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterDetail`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentDetail`, {
             method: `POST`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -250,7 +134,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                 setidrole(res2.data.feature_roles[0])
                 var pathArr = rt.pathname.split("/").slice(1)
                 pathArr.splice(2, 1)
-                pathArr[pathArr.length - 1] = `Detail Profil Requester - ` + res2.data.fullname
+                pathArr[pathArr.length - 1] = `Detail Profil Agent - ` + res2.data.fullname
                 setpatharr(pathArr)
                 setorigincomp(res2.data.company.company_name)
                 return res2.data.feature_roles[0]
@@ -301,20 +185,20 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                 <div className="col-span-1 md:col-span-4">
                     <Sticky containerSelectorFocus="#formAgentsWrapper">
                         <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
-                            <h1 className="font-semibold py-2">Detail Profil Requester</h1>
+                            <h1 className="font-semibold py-2">Detail Profil Agent</h1>
                             <div className="flex space-x-2">
-                                <Link href={`/admin/requesters`}>
+                                <Link href={`/admin/agents`}>
                                     <Button type="default">Kembali</Button>
                                 </Link>
                                 {
                                     [116, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                    <Button disabled={praloading} type="primary" onClick={() => { rt.push(`/admin/requesters/update/${data1.id}`) }}>Ubah Profil</Button>
+                                    <Button disabled={praloading} type="primary" onClick={() => { rt.push(`/admin/agents/update/${data1.id}`) }}>Ubah Profil</Button>
                                     // <Button type="primary" loading={loadingupdate} onClick={instanceForm.submit}>Save</Button>
                                 }
                                 {
                                     [115].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <div className="w-full h-auto">
-                                        <Button disabled={praloading} type="primary" onClick={() => { rt.push(`/admin/requesters/password/${data1.id}?name=${data1.fullname}`) }}>Ubah Password</Button>
+                                        <Button disabled={praloading} type="primary" onClick={() => { rt.push(`/admin/agents/password/${data1.id}?name=${data1.fullname}`) }}>Ubah Password</Button>
                                     </div >
                                 }
                                 {
@@ -419,10 +303,10 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                                     <h1 className="font-semibold text-sm">Role:</h1>
                                     <h1 className="text-sm font-normal text-black">{namarole}</h1>
                                 </div>
-                                <div className="col-span-1 flex flex-col mb-5">
+                                {/* <div className="col-span-1 flex flex-col mb-5">
                                     <h1 className="font-semibold text-sm">Asal Perusahaan:</h1>
                                     <h1 className="text-sm font-normal text-black">{origincomp}</h1>
-                                </div>
+                                </div> */}
                                 {/* {
                                         [133].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                             <Select onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }}>
@@ -608,4 +492,4 @@ export async function getServerSideProps({ req, res, params }) {
     }
 }
 
-export default RequestersDetail
+export default AgentDetail

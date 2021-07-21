@@ -44,6 +44,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
     const [loadingcreate, setLoadingcreate] = useState(false)
     const [datacompanylist, setdatacompanylist] = useState([])
     const [dataraw1, setdataraw1] = useState({ data: [] })
+    const [praloading, setpraloading] = useState(true)
 
     //handleCreateButton
     const handleCreateAgents = () => {
@@ -148,6 +149,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                 const c = [res2.data]
                 const d = modifData(c)
                 setdatacompanylist(d[0].children)
+                setpraloading(false)
             })
     }, [])
     useEffect(() => {
@@ -172,10 +174,10 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                             <h1 className="font-semibold py-2">Buat Akun Requester</h1>
                             <div className="flex space-x-2">
                                 <Link href="/admin/requesters">
-                                    <Button type="default">Batal</Button>
+                                    <Button disabled={praloading} type="default">Batal</Button>
                                     {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button> */}
                                 </Link>
-                                <Button loading={loadingcreate} onClick={instanceForm.submit} type="primary">Simpan</Button>
+                                <Button disabled={praloading} loading={loadingcreate} onClick={instanceForm.submit} type="primary">Simpan</Button>
                                 {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={handleCreateAgents}>Save</button> */}
                             </div>
                         </div>
@@ -208,21 +210,46 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                                 </Upload>
                             </div>
                             <div className="p-3 col-span-1 md:col-span-3">
+                                <Form.Item label="Asal Lokasi" name="company_id"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Asal Lokasi wajib diisi',
+                                        },
+                                    ]}>
+                                    <TreeSelect allowClear
+                                        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                        treeData={datacompanylist}
+                                        placeholder="Pilih Asal Lokasi"
+                                        treeDefaultExpandAll
+                                        onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }}
+                                    />
+                                    {/* <Select onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }} name={`company_id`} allowClear>
+                                            <Select.Option >Choose company</Select.Option>
+                                            {
+                                                datacompanylist.map((doc, idx) => {
+                                                    return (
+                                                        <Select.Option title={doc.company_name} key={idx} value={doc.company_id}>{doc.company_name}</Select.Option>
+                                                    )
+                                                })
+                                            }
+                                        </Select> */}
+                                </Form.Item>
                                 <Form layout="vertical" className="createAgentsForm" onFinish={handleCreateAgents} form={instanceForm}>
                                     <Form.Item label="Nama Lengkap" required name="fullname"
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Nama Lengkap harus diisi',
+                                                message: 'Nama Lengkap wajib diisi',
                                             },
                                         ]}>
                                         <Input value={newuserrequesters.fullname} name={`fullname`} onChange={onChangeCreateRequesters} />
                                     </Form.Item>
-                                    <Form.Item label="Email" required name="email"
+                                    <Form.Item label="Email (belum berfungsi)" required name="email"
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Email harus diisi',
+                                                message: 'Email wajib diisi',
                                             },
                                             {
                                                 pattern: /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
@@ -235,7 +262,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'No. Handphone harus diisi',
+                                                message: 'No. Handphone wajib diisi',
                                             },
                                             {
                                                 pattern: /(\-)|(^\d*$)/,
@@ -253,36 +280,11 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                                     ]}>
                                         <input type="number" value={newuserrequesters.role} name={'role'} onChange={onChangeCreateRequesters} />
                                     </Form.Item> */}
-                                    <Form.Item label="Asal Perusahaan" name="company_id"
+                                    <Form.Item label="Password (belum berfungsi)" name="password"
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Asal Perusahaan harus diisi',
-                                            },
-                                        ]}>
-                                        <TreeSelect allowClear
-                                            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                            treeData={datacompanylist}
-                                            placeholder="Pilih Induk Perusahaan"
-                                            treeDefaultExpandAll
-                                            onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }}
-                                        />
-                                        {/* <Select onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }} name={`company_id`} allowClear>
-                                            <Select.Option >Choose company</Select.Option>
-                                            {
-                                                datacompanylist.map((doc, idx) => {
-                                                    return (
-                                                        <Select.Option title={doc.company_name} key={idx} value={doc.company_id}>{doc.company_name}</Select.Option>
-                                                    )
-                                                })
-                                            }
-                                        </Select> */}
-                                    </Form.Item>
-                                    <Form.Item label="Password" name="password"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Password harus diisi',
+                                                message: 'Password wajib diisi',
                                             },
                                             {
                                                 pattern: /([A-z0-9]{8})/,
@@ -291,7 +293,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                                         ]}>
                                         <Input.Password /*value={newuserrequesters.password} name={`password`} onChange={onChangeCreateRequesters}*/ />
                                     </Form.Item>
-                                    <Form.Item label="Role" name="role">
+                                    <Form.Item label="Role (belum berfungsi)" name="role">
                                         <Select /*onChange={(value) => { onChangeRole(value) }} defaultValue={idrole}*/ style={{ width: `100%` }}>
                                             {
                                                 dataraw1.data.map((doc, idx) => {
