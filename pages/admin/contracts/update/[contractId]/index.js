@@ -24,6 +24,7 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
     const [loadingbtn, setLoadingbtn] = useState(false)
     const [opendrawer, setOpendrawer] = useState(false)
     const contract = contractData.data.contract
+    // console.log(contract)
     const [dataServiceItems, setDataServiceItems] = useState([])
     const [validation,setValidation] = useState({
         harga: true,
@@ -261,6 +262,7 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
     //-----------------Handle create contract-----------------------------
     const handleUpdateContract = () => {
         setLoadingbtn(true)
+        // console.log(updatecontract)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateContract`, {
             method: 'PUT',
             headers: {
@@ -404,9 +406,9 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
                                                     message: 'Tanggal Mulai harus diisi',
                                                 },
                                             ]}
-                                            initialValue={updatecontract.tanggal_mulai}
+                                            initialValue={moment(updatecontract.tanggal_mulai,'YYYY-MM-DD')}
                                         >
-                                            <DatePicker defaultValue={updatecontract.tanggal_mulai} style={{width:"100%"}} placeholder="Tanggal Mulai" name={`tanggal_mulai`} onChange={(date, dateString) => {setUpdatecontract({...updatecontract,tanggal_mulai: dateString})}} allowClear></DatePicker>
+                                            <DatePicker defaultValue={moment(updatecontract.tanggal_mulai,'YYYY-MM-DD')} style={{width:"100%"}} placeholder="Tanggal Mulai" name={`tanggal_mulai`} onChange={(date, dateString) => {setUpdatecontract({...updatecontract,tanggal_mulai: dateString})}} format={'YYYY-MM-DD'} allowClear></DatePicker>
                                         </Form.Item>
                                     </div>
 
@@ -447,9 +449,9 @@ function UpdateContract({ initProps, dataProfile, contractData, contractInputDat
                                                     message: 'Tanggal Selesai harus diisi',
                                                 },
                                             ]}
-                                            initialValue={updatecontract.tanggal_selesai}
+                                            initialValue={moment(updatecontract.tanggal_selesai,'YYYY-MM-DD')}
                                         >
-                                            <DatePicker disabledDate={(curr)=>{return curr < moment(updatecontract.tanggal_mulai)}} defaultValue={updatecontract.tanggal_selesai} style={{width:"100%"}} placeholder="Tanggal Selesai" name={`tanggal_selesai`} onChange={(date, dateString) => {setUpdatecontract({...updatecontract,tanggal_selesai: dateString})}} allowClear></DatePicker>
+                                            <DatePicker disabledDate={(curr)=>{return curr < moment(updatecontract.tanggal_mulai)}} defaultValue={moment(updatecontract.tanggal_selesai,'YYYY-MM-DD')} style={{width:"100%"}} placeholder="Tanggal Selesai" name={`tanggal_selesai`} onChange={(date, dateString) => {setUpdatecontract({...updatecontract,tanggal_selesai: dateString})}} format={'YYYY-MM-DD'} allowClear></DatePicker>
                                         </Form.Item>
                                     </div>
 

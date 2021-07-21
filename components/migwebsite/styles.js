@@ -88,7 +88,8 @@ const Styles = (props) => (
     }
     .section5landingpage{
       height:170px;
-      background:#93D9B5;
+      // background:#93D9B5;
+      background:white;
     }
     .section4landingpage .flickity-page-dots{
       display:none;
@@ -115,7 +116,7 @@ const Styles = (props) => (
       }
     }
     .section3landingpage{
-      top: -50px;
+      // top: -50px;
     }
     .section2landingpage{
       margin: 0 auto 0;
@@ -170,9 +171,36 @@ const Styles = (props) => (
     .menuToggle:checked ~ section .menu2 {
       height: 110px;
     }
+    .asdasd{
+      display: none;
+    }
+    .asdqwe:hover ~ .asdasd{
+      display: block;
+    }
+    .blabla{
+      display: none;
+    }
+    .bla:hover > .blabla{
+      display: block;
+    }
     body {
       margin: 0;
-      font-family: Raleway;
+      font-family: 'Gilroy-Regular', sans-serif;
+    }
+    .gilroy-bold{
+      font-family: 'Gilroy-Bold', sans-serif;
+    }
+    .gilroy-heavy{
+      font-family: 'Gilroy-Heavy', sans-serif;
+    }
+    .gilroy-light{
+      font-family: 'Gilroy-Light', sans-serif;
+    }
+    .gilroy-medium{
+      font-family: 'Gilroy-Medium', sans-serif;
+    }
+    .gilroy-regular{
+      font-family: 'Gilroy-Regular', sans-serif;
     }
     .hero {
       width: 100%;
