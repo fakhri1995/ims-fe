@@ -6,7 +6,7 @@ import httpcookie from 'cookie'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
 import EditOutlined from '@ant-design/icons/EditOutlined'
-import { Form, Input, Button, notification, Select } from 'antd'
+import { Form, Input, Button, notification, Select, TreeSelect } from 'antd'
 
 function modifData(dataa) {
     for (var i = 0; i < dataa.length; i++) {
@@ -275,7 +275,7 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
             .then(res2 => {
                 const c = [res2.data]
                 const d = modifData(c)
-                setdatacompanylist(d[0].children)
+                setdatacompanylist(d)
             })
     }, [])
     useEffect(() => {

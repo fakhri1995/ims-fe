@@ -383,7 +383,7 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
                         cancelText="Tidak"
                         okButtonProps={{ disabled: loadingubahaktif }}
                     >
-                        Apakah anda yakin ingin menon-aktifkan akun requester <strong>{data1.fullname}</strong>?
+                        Apakah anda yakin ingin menon-aktifkan akun agent <strong>{data1.fullname}</strong>?
                     </Modal>
                     <Modal
                         title="Konfirmasi untuk mengakaktifkan akun"
@@ -394,7 +394,7 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
                         cancelText="Tidak"
                         okButtonProps={{ disabled: loadingubahnonaktif }}
                     >
-                        Apakah anda yakin ingin mengaktifkan akun requester <strong>{data1.fullname}</strong>?`
+                        Apakah anda yakin ingin mengaktifkan akun agent <strong>{data1.fullname}</strong>?`
                     </Modal>
                     {/* <Modal
                         title="Ubah Password"
