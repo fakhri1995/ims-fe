@@ -106,10 +106,10 @@ function LandingPage({ }) {
                 >
                     <div>
                         <div className={'flex'}>
-                            <div className={'pt-8 pb-8 w-1/2'}>
+                            <div className={'pt-8 pb-8 w-1/2 my-auto'}>
                                 <p className={'text-3xl font-bold pb-4 gilroy-bold'}>Hardware</p>
                                 <p className={'w-2/3 pb-4 gilroy-medium'} style={{letterSpacing:'1.5px'}}>Optimize your cost by leasing and maintenances variety of electronic equipments</p>
-                                <Link href="/advantages">
+                                <Link href="/hardware">
                                     <button style={{width:'150px'}} className={'text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium'}>
                                         Get yours
                                     </button>
@@ -123,7 +123,7 @@ function LandingPage({ }) {
                             <div className={'pt-8 pb-8 w-1/2 mr-8'}>
                                 <img src="/image/landingpage/image-section2.png"></img>
                             </div>
-                            <div className={'pt-8 pb-8 w-1/2'}>
+                            <div className={'pt-8 pb-8 w-1/2 my-auto'}>
                                 <p className={'text-3xl font-bold pb-4 gilroy-bold'}>Transforming capital heavy IT product into managed service model</p>
                                 <p className={'w-2/3 pb-4 gilroy-medium'} style={{letterSpacing:'1.5px'}}>Offering low-cost ATM  rental and maintenance to reduce hardware upfront investment</p>
                                 <Link href="/hardware">
@@ -136,7 +136,7 @@ function LandingPage({ }) {
                     </div>
                     <div>
                         <div className={'flex'}>
-                            <div className={'pt-8 pb-8 w-1/2'}>
+                            <div className={'pt-8 pb-8 w-1/2 my-auto'}>
                                 <p className={'text-3xl font-bold pb-4 gilroy-bold'}>People</p>
                                 <p className={'w-2/3 pb-4 gilroy-medium'} style={{letterSpacing:'1.5px'}}>We help you reduce complexity in talent sourcing and management</p>
                                 <Link href="/people">
@@ -152,10 +152,10 @@ function LandingPage({ }) {
                     </div>
                     <div>
                         <div className={'flex'}>
-                            <div className={'pt-8 pb-8 w-1/2'}>
+                            <div className={'pt-8 pb-8 w-1/2 my-auto'}>
                                 <p className={'text-3xl font-bold pb-4 gilroy-bold'}>Software</p>
                                 <p className={'w-2/3 pb-4 gilroy-medium'} style={{letterSpacing:'1.5px'}}>We support your companies to simplify and automate the process through digitalization</p>
-                                <Link href="/people">
+                                <Link href="/software">
                                     <button style={{width:'150px'}} className={'text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium'}>
                                         Build now
                                     </button>
