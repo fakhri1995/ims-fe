@@ -5,7 +5,7 @@ import st from '../../../../../components/layout-dashboard.module.css'
 import httpcookie from 'cookie'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
-import EditOutlined from '@ant-design/icons/EditOutlined'
+import { EditOutlined, LoadingOutlined } from '@ant-design/icons'
 import { Form, Input, Button, notification, Select, TreeSelect } from 'antd'
 
 function modifData(dataa) {
@@ -263,6 +263,18 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
                 setcompanyid(res2.data.company_id)
                 setpreloading(false)
             })
+            .then(() => {
+                fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+                    method: `GET`,
+                    headers: {
+                        'Authorization': JSON.parse(initProps)
+                    }
+                })
+                    .then(res => res.json())
+                    .then(res2 => {
+                        setdataraw1(res2)
+                    })
+            })
     }, [])
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
@@ -276,18 +288,6 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
                 const c = [res2.data]
                 const d = modifData(c)
                 setdatacompanylist(d)
-            })
-    }, [])
-    useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
-            method: `GET`,
-            headers: {
-                'Authorization': JSON.parse(initProps)
-            }
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setdataraw1(res2)
             })
     }, [])
 
@@ -381,6 +381,7 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
                                                     placeholder="Pilih Asal Lokasi"
                                                     treeDefaultExpandAll
                                                     defaultValue={companyid}
+                                                    disabled
                                                 /*onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }}*/
                                                 />
                                             </Form.Item>
@@ -412,7 +413,7 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
                                                         message: 'Email belum diisi dengan benar'
                                                     }
                                                 ]}>
-                                                <Input value={data1.email} name={`email`} onChange={onChangeEditAgents} />
+                                                <Input disabled value={data1.email} name={`email`} onChange={onChangeEditAgents} />
                                             </Form.Item>
                                             <Form.Item label="No. Handphone" required tooltip="Wajib diisi" name="phone_number"
                                                 rules={[

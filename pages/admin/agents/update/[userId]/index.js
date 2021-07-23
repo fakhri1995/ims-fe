@@ -5,7 +5,7 @@ import st from '../../../../../components/layout-dashboard.module.css'
 import httpcookie from 'cookie'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
-import EditOutlined from '@ant-design/icons/EditOutlined'
+import {EditOutlined, LoadingOutlined} from '@ant-design/icons'
 import { Form, Input, Button, notification, Select, TreeSelect } from 'antd'
 
 function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, sidemenu, userid }) {
@@ -283,6 +283,7 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                                                     placeholder="Pilih Asal Lokasi"
                                                     treeDefaultExpandAll
                                                     defaultValue={companyid}
+                                                    disabled
                                                 /*onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }}*/
                                                 />
                                             </Form.Item>
@@ -314,7 +315,7 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                                                         message: 'Email belum diisi dengan benar'
                                                     }
                                                 ]}>
-                                                <Input value={data1.email} name={`email`} onChange={onChangeEditAgents} />
+                                                <Input disabled value={data1.email} name={`email`} onChange={onChangeEditAgents} />
                                             </Form.Item>
                                             <Form.Item label="No. Handphone" required name="phone_number"
                                                 rules={[

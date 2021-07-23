@@ -294,7 +294,7 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
                                                 <Input defaultValue={data1.phone_number} onChange={onChangeEditAgents} name="phone_number" />
                                                 : */}
                                 <div className="col-span-1 flex flex-col mb-5">
-                                    <h1 className="font-semibold text-sm">Nomor Handphone:</h1>
+                                    <h1 className="font-semibold text-sm">No. Handphone:</h1>
                                     <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
                                 </div>
                                 {/* }
@@ -303,10 +303,10 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
                                     <h1 className="font-semibold text-sm">Role:</h1>
                                     <h1 className="text-sm font-normal text-black">{namarole}</h1>
                                 </div>
-                                {/* <div className="col-span-1 flex flex-col mb-5">
-                                    <h1 className="font-semibold text-sm">Asal Perusahaan:</h1>
+                                <div className="col-span-1 flex flex-col mb-5">
+                                    <h1 className="font-semibold text-sm">Asal Lokasi:</h1>
                                     <h1 className="text-sm font-normal text-black">{origincomp}</h1>
-                                </div> */}
+                                </div>
                                 {/* {
                                         [133].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                             <Select onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }}>

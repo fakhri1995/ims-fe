@@ -152,7 +152,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
             // }
         },
         {
-            title: 'No Handphone',
+            title: 'No. Handphone',
             dataIndex: 'phone_number',
             // render: (text, record, index) => {
             //     return {

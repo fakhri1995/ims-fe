@@ -410,7 +410,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                                                 <Input defaultValue={data1.phone_number} onChange={onChangeEditAgents} name="phone_number" />
                                                 : */}
                                 <div className="col-span-1 flex flex-col mb-5">
-                                    <h1 className="font-semibold text-sm">Nomor Handphone:</h1>
+                                    <h1 className="font-semibold text-sm">No. Handphone:</h1>
                                     <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
                                 </div>
                                 {/* }
