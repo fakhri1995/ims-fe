@@ -7,7 +7,7 @@ import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import st from '../../../../components/layout-dashboard.module.css'
-import { Form, Upload, Input, notification, Button } from 'antd'
+import { Form, Upload, Input, notification, Button, Select, TreeSelect } from 'antd'
 
 function AgentsCreate({ initProps, dataProfile, sidemenu }) {
     const rt = useRouter()
@@ -28,6 +28,10 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
     })
     const [loadingupload, setLoadingupload] = useState(false)
     const [loadingsave, setLoadingsave] = useState(false)
+    const [datacompanylist, setdatacompanylist] = useState([])
+    const [dataraw1, setdataraw1] = useState({ data: [] })
+    const [praloading, setpraloading] = useState(true)
+
 
     //handleCreateButton
     const handleCreateAgents = () => {
@@ -138,18 +142,45 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
         </div>
     );
 
+    //useEffect
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
+            method: `POST`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatacompanylist(res2.data)
+                setpraloading(false)
+            })
+    }, [])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps)
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdataraw1(res2)
+            })
+    }, [])
+
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4" id="createAgentsWrapper">
                 <div className=" col-span-1 md:col-span-4">
                     <Sticky containerSelectorFocus="#createAgentsWrapper">
                         <div className=" col-span-4 flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
-                            <h1 className="font-semibold py-2">New agent</h1>
+                            <h1 className="font-semibold py-2">Buat Akun Agent</h1>
                             <div className="flex space-x-2">
                                 <Link href="/admin/agents">
                                     <Button type="default">Batal</Button>
                                 </Link>
-                                <Button type="primary" loading={loadingsave} onClick={instanceForm.submit}>Simpan</Button>
+                                <Button disabled={praloading} type="primary" loading={loadingsave} onClick={instanceForm.submit}>Simpan</Button>
                             </div>
                         </div>
                     </Sticky>
@@ -157,7 +188,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                 <div className="col-span-1 md:col-span-3 flex flex-col">
                     <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-14">
                         <div className="border-b border-black p-4 font-semibold mb-5">
-                            Detail Akun Pengguna
+                            Akun Agent - {newuser.fullname}
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4">
                             <div className="p-3 col-span-1 md:col-span-1">
@@ -174,21 +205,50 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                             </div>
                             <div className="p-3 col-span-1 md:col-span-3">
                                 <Form layout="vertical" form={instanceForm} className="createAgentsForm" onFinish={handleCreateAgents}>
-                                    <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi" name="fullname"
+                                    <Form.Item label="Asal Lokasi" name="company_id"
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Nama Lengkap harus diisi',
+                                                message: 'Asal Lokasi wajib diisi',
+                                            },
+                                        ]}>
+                                        <TreeSelect allowClear
+                                            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                            treeData={datacompanylist}
+                                            placeholder="Pilih Asal Lokasi"
+                                            treeDefaultExpandAll
+                                            onChange={(value) => { setNewuser({ ...newuser, company_id: value }) }}
+                                        />
+                                        {/* <Select onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }} name={`company_id`} allowClear>
+                                            <Select.Option >Choose company</Select.Option>
+                                            {
+                                                datacompanylist.map((doc, idx) => {
+                                                    return (
+                                                        <Select.Option title={doc.company_name} key={idx} value={doc.company_id}>{doc.company_name}</Select.Option>
+                                                    )
+                                                })
+                                            }
+                                        </Select> */}
+                                    </Form.Item>
+                                    <Form.Item label="Nama Lengkap" required name="fullname"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Nama Lengkap wajib diisi',
                                             },
                                         ]}>
                                         <Input value={newuser.fullname} name={`fullname`} onChange={onChangeCreateAgents} />
                                     </Form.Item>
-                                    <Form.Item label="Email" required tooltip="Wajib diisi" name="email"
+                                    <Form.Item label="Email (belum berfungsi)" required name="email"
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Email harus diisi',
+                                                message: 'Email wajib diisi',
                                             },
+                                            {
+                                                pattern: /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
+                                                message: 'Email belum diisi dengan benar'
+                                            }
                                         ]}>
                                         <Input value={newuser.email} name={`email`} onChange={onChangeCreateAgents} />
                                     </Form.Item>
@@ -196,10 +256,38 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'No.Handphone harus diisi',
+                                                message: 'No.Handphone wajib diisi',
+                                            },
+                                            {
+                                                pattern: /(\-)|(^\d*$)/,
+                                                message: 'No. Handphone harus berisi angka',
                                             },
                                         ]}>
                                         <Input value={newuser.phone_number} name={`phone_number`} onChange={onChangeCreateAgents} />
+                                    </Form.Item>
+                                    <Form.Item label="Password (belum berfungsi)" name="password"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Password harus diisi',
+                                            },
+                                            {
+                                                pattern: /([A-z0-9]{8})/,
+                                                message: 'Password minimal 8 karakter',
+                                            },
+                                        ]}>
+                                        <Input.Password /*value={newuserrequesters.password} name={`password`} onChange={onChangeCreateRequesters}*/ />
+                                    </Form.Item>
+                                    <Form.Item label="Role (belum berfungsi)" name="role">
+                                        <Select /*onChange={(value) => { onChangeRole(value) }} defaultValue={idrole}*/ style={{ width: `100%` }}>
+                                            {
+                                                dataraw1.data.map((doc, idx) => {
+                                                    return (
+                                                        <Select.Option key={idx} value={doc.id}>{doc.name}</Select.Option>
+                                                    )
+                                                })
+                                            }
+                                        </Select>
                                     </Form.Item>
                                     {/* <Form.Item label="Role" name="role"
                                         rules={[
@@ -267,7 +355,7 @@ export async function getServerSideProps({ req, res }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    if(![109].every((curr) => dataProfile.data.registered_feature.includes(curr))){
+    if (![109].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
         res.writeHead(302, { Location: '/dashboard/admin' })
         res.end()
     }

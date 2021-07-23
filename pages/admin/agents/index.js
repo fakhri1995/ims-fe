@@ -58,7 +58,8 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                             profile_image: doc.profile_image === "" ? `/default-users.jpeg` : doc.profile_image,
                             fullname: doc.fullname,
                             email: doc.email,
-                            phone_number: doc.phone_number
+                            phone_number: doc.phone_number,
+                            company_name: doc.company_name
                         })
                     })
                 }
@@ -151,8 +152,23 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
             // }
         },
         {
-            title: 'No Handphone',
+            title: 'No. Handphone',
             dataIndex: 'phone_number',
+            // render: (text, record, index) => {
+            //     return {
+            //         props: {
+            //             style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+            //         },
+            //         children:
+            //             <>
+            //                 {record.phone_number}
+            //             </>
+            //     }
+            // }
+        },
+        {
+            title: 'Asal Lokasi',
+            dataIndex: 'company_name',
             // render: (text, record, index) => {
             //     return {
             //         props: {
@@ -304,7 +320,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                                         onClick: (event) => {
                                             {
                                                 [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                                    rt.push(`/admin/agents/${record.user_id}`)
+                                                    rt.push(`/admin/agents/detail/${record.user_id}`)
                                                     :
                                                     null
                                             }
@@ -326,23 +342,30 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
 }
 
 export async function getServerSideProps({ req, res }) {
-    var initProps = {};
     const reqBodyAccountList = {
         page: 1,
         rows: 50,
         order_by: "asc"
     }
-    if (req && req.headers) {
-        const cookies = req.headers.cookie;
-        if (!cookies) {
-            res.writeHead(302, { Location: '/login' })
-            res.end()
-        }
-        if (typeof cookies === 'string') {
-            const cookiesJSON = httpcookie.parse(cookies);
-            initProps = cookiesJSON.token
+    var initProps = {};
+    if (!req.headers.cookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
         }
     }
+    const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+    if (!cookiesJSON1.token) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
+        }
+    }
+    initProps = cookiesJSON1.token
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,
         headers: {
