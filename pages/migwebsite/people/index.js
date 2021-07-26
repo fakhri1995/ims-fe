@@ -24,7 +24,7 @@ function People({ }) {
                 </div>
             </section>
             <section className={'section2advantages h-12 hidden md:block'}></section>
-            <section className={'section2people px-4 md:px-20 lg:px-28 xl:px-40 py-8 text-center justify-center'}>
+            {/* <section className={'section2people px-4 md:px-20 lg:px-28 xl:px-40 py-8 text-center justify-center'}>
                 <div className={'pb-8'}>
                     <p className={'text-2xl md:text-3xl font-bold'}>People</p>
                 </div>
@@ -32,6 +32,47 @@ function People({ }) {
                     <p className={'text-base w-full font-bold'}>We help you reduce complexity in talent sourcing and management through staff augmentation. In typical cases, our talents have but not limited to the following specifications and deliverable</p>
                 </div>
                 <Button type="text" className={'button-hover mx-2 px-4 border-green-800 text-white'} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Get a quote</p></Button>
+            </section> */}
+            <section className={'section2people py-4 px-4 md:px-20 lg:px-28 xl:px-40'} style={{backgroundColor:'#D9E5F9'}}>
+                <div className={'flex'}>
+                    <div className={'flex-row my-auto'}>
+                        <p className={'text-3xl font-bold pb-4 gilroy-bold'}>People solution</p>
+                        <p className={'w-2/3 pb-4 gilroy-medium'} style={{letterSpacing:'1.5px'}}>We help you reduce complexity in talent sourcing and management</p>
+                        <button className={'px-4 py-2 text-white'} style={{backgroundColor:'#2A8452'}}> Tombol </button>
+                    </div>
+                        <div className={'flex-row pt-8 pb-8 w-1/2 ml-8'}>
+                            <img src="/image/landingpage/image-section2.png"></img>
+                        </div>
+                </div>
+            </section>
+            <section className={'section2hardware py-8 px-4 md:px-20 lg:px-28 xl:px-40'}>
+                <div className={'text-center py-16'}>
+                    <p className={'text-3xl font-bold pb-4 gilroy-bold'}>Hassle free solution to build your team</p>
+                </div>
+                <div className={'flex'}>
+                    <div className={'pt-8 pb-8 w-1/2 my-auto'}>
+                        <p className={'text-3xl font-bold pb-4 gilroy-bold'}>Custom matched with your needs</p>
+                        <p className={'w-2/3 pb-4 gilroy-medium'} style={{letterSpacing:'1.5px'}}>Amount of talent and their working period can be tailored as per required by project.</p>
+                    </div>
+                    <div className={'pt-8 pb-8 w-1/2 ml-8'}>
+                        <img src="/image/landingpage/image-section2.png"></img>
+                    </div>
+                </div>
+                <div className={'flex'}>
+                    <div className={'pt-8 pb-8 w-1/2 mr-8'}>
+                        <img src="/image/landingpage/image-section2.png"></img>
+                    </div>
+                    <div className={'pt-8 pb-8 w-1/2 my-auto'}>
+                        <p className={'text-3xl font-bold pb-4 gilroy-bold'}>Risk free talent acquisition</p>
+                        <p className={'w-2/3 pb-4 gilroy-medium'} style={{letterSpacing:'1.5px'}}>You have full flexibility to rotate/rematch your talent to ensure your talent quality criteria fullfiled.</p>
+                    </div>
+                </div>
+                <div className={'flex'}>
+                    <div className={'pt-8 pb-8 w-full my-auto'}>
+                        <p className={'text-3xl font-bold pb-4 gilroy-bold'}>Our talents</p>
+                        <p className={'w-full pb-4 gilroy-medium'} style={{letterSpacing:'1.5px'}}>We help you reduce complexity in talent sourcing and management through staff augmentation. In typical cases, our talents have but not limited to the following specifications and deliverable</p>
+                    </div>
+                </div>
             </section>
             <section className={'section3people justify-center px-4 md:px-24 lg:px-28 xl:px-40'} >
                 <div className={'border-2 rounded-sm py-8 px-8'}>
@@ -65,7 +106,26 @@ function People({ }) {
                     <p className={'font-bold text-base'} style={{color:'#188E4D'}}>Didn't find what you are looking for? Inform us your specification, and we'll work it out for you</p>
                 </div>
             </section>
-            <section className={'section5landingpage'}>
+            <section className={'section4people py-8 px-4 md:px-20 lg:px-28 xl:px-40'}>
+                <div>
+                    <p className={'text-3xl font-bold pb-4 gilroy-bold'}>Start now. Let’s be better together</p>
+                    <p className={'pb-4 gilroy-medium'}>A sales expert will contact you within 24 hours</p>
+                    <div className={'flex'}>
+                        <img className={'w-1/2 flex-row py-4 pr-4'} src="/image/hardware/rectangle.png"></img>
+                        <img className={'w-1/2 flex-row py-4 pl-4'} src="/image/hardware/rectangle.png"></img>
+                    </div>
+                    <div className={'flex'}>
+                        <img className={'w-1/2 flex-row py-4 pr-4'} src="/image/hardware/rectangle.png"></img>
+                        <img className={'w-1/2 flex-row py-4 pl-4'} src="/image/hardware/rectangle.png"></img>
+                    </div>
+                    <div className={'flex justify-end'}>
+                        <button className={'text-black flex border-2 text-base md:text-lg border-black px-4 mt-1 focus:outline-none gilroy-medium'}>Get quote &nbsp;
+                            <ArrowRightOutlined className={'pt-1'}/>
+                        </button>
+                    </div>
+                </div>
+            </section>
+            {/* <section className={'section5landingpage'}>
                 <div className={' md:flex relative justify-between px-4 md:px-20 lg:px-28 xl:px-40'}style={{top:'40%'}}>
                     <div className={'flex-col text-2xl md:text-3xl text-white font-bold -top-4 md:top-0 relative'} style={{}}>
                         <p>Let’s be better together</p>
@@ -77,7 +137,7 @@ function People({ }) {
 
                     </div>
                 </div>
-            </section>
+            </section> */}
 
         </Layout>
     )
