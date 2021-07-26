@@ -155,7 +155,7 @@ function Advantages({ }) {
                 </Tabs>
                 </div>
             </section>
-            <div className={'hidden md:block'}>
+            <div className={'hidden md:hidden'}>
                 <Fade ssrFadeout left opposite  collapse when={isHiddenAnimation}>
                     <section onClick={()=>{onClickHiddenAnimation()}} className={` md:px-auto py-8 md:px-auto lg:px-28 xl:px-40`}>
                         <Slider
@@ -184,7 +184,7 @@ function Advantages({ }) {
                     </section>
                 </Fade>
             </div>
-            <div className={'hidden md:block'}>
+            <div className={'hidden md:hidden'}>
                 <Fade ssrFadeout bottom collapse when={!isHiddenAnimation}>
                     <section className={'bg-green-600 py-8 md:px-auto lg:px-28 xl:px-40'}>
                         <div className={'text-center relative -top-4'}>
