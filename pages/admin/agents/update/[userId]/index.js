@@ -270,7 +270,7 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                                     :
                                     <div className="p-3 col-span-1 md:col-span-3">
                                         <Form layout="vertical" initialValues={data1} form={instanceForm} onFinish={handleSubmitEditAccount}>
-                                            <Form.Item label="Asal Lokasi (belum berfungsi)" name="company_id"
+                                            <Form.Item label="Asal Lokasi" name="company_id"
                                                 rules={[
                                                     {
                                                         required: true,
@@ -304,7 +304,7 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                                                         </div>
                                                 }
                                             </Form.Item>
-                                            <Form.Item label="Email (belum berfungsi)" required name="email"
+                                            <Form.Item label="Email" required name="email"
                                                 rules={[
                                                     {
                                                         required: true,
