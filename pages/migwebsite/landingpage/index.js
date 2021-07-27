@@ -70,8 +70,8 @@ function LandingPage({ }) {
                             <img style={{ width: '600px', height: 'auto' }} src='/image/landingpage/image-section3.png' />
                         </div>
                         <div className={'flex-col mx-10 w-auto md:w-120'} style={{margin:'auto'}}>
-                            <p className={'text-2xl md:text-3xl pb-6 text-black gilroy-bold'} style={{ letterSpacing:'1.5px' }}> Bringing you the <span className={'menu-underlined'}>advantages</span></p>
-                            <p className={'text-sm md:text-sm font-normal text-black gilroy-medium'} style={{letterSpacing:'1.5px'}}>With more than 15 years of experiences across archipelago, we strive to provide end-to-end IT solutions to help achieve your business goals and optimize your cost efficiencies</p>
+                            <p className={'text-2xl md:text-3xl pb-6 text-black gilroy-bold'} style={{ letterSpacing:'1.5px' }}> Bringing you the <span className={' border-green-600 border-b-2'}>advantages</span></p>
+                            <p className={'pb-8 text-sm md:text-sm font-normal text-black gilroy-medium'} style={{letterSpacing:'1.5px'}}>Improving efficiencies by supporting you with <span className={' border-green-600 border-b-2'}> staff augmentation</span>, <span className={' border-green-600 border-b-2'}>software</span> and <span className={' border-green-600 border-b-2'}>hardware managed services.</span></p>
                             <Link href="/advantages"><button className={'text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium'}>
                             SEE HOW  IT WORKS 
                             </button></Link>
