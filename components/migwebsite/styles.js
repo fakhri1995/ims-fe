@@ -133,17 +133,18 @@ const Styles = (props) => (
       margin: 0rem;
     }
     .header{
-      padding: 0 10rem;
+      padding: 0 3rem;
       z-index: 50;
+      height: 80px !important;
     }
     @media (max-width: 1280px){
       .header{
-        padding: 0 7rem;
+        padding: 0 3rem;
       }
     }
     @media (max-width: 1024px){
       .header{
-        padding: 0 5rem;
+        padding: 0 3rem;
       }
     }
     @media (max-width: 768px){

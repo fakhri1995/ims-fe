@@ -66,13 +66,13 @@ function layout({ children }) {
             <Head title="Home" />
             <Styles />
             <Layout className={'h-auto'}>
-                <Header className={'header border-b'} style={{ background:'white', position: 'fixed', zIndex: 20, width: '100%' }}>
+                <Header className={'header'} style={{ background:'white', position: 'fixed', zIndex: 20, width: '100%' }}>
                     <Link href="/">
-                        <div className="logo top-3 md:top-2 absolute w-24 md:w-32" >
+                        <div className="logo top-3 md:top-2 absolute w-24 md:w-40" >
                             <img width={'auto'} height={'auto'} src='/mig.png'/>
                         </div>
                     </Link>
-                    <label htmlFor={`menutoggle`} className="md:hidden block float-right cursor-pointer mt-5">
+                    <label htmlFor={`menutoggle`} className="md:hidden block float-right cursor-pointer mt-7">
                             <svg className="fill-current text-gray-900" xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 20 20">
                                 <title>Menu</title>
                                 <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
@@ -80,21 +80,21 @@ function layout({ children }) {
                         </label>
                     <input className={`hidden menuToggle`} type="checkbox" id={`menutoggle`} />
                     <section className={'md:hidden w-full'}>
-                    <div theme="light" mode="horizontal" style={{lineHeight:'3.9rem',}} className={'float-right menu2'}>
-                        {/* <Dropdown overlay={menu1}>
-                            <a className="" onClick={e => e.preventDefault()}>
-                            Solutions <DownOutlined className={'fixed top-10'} />
-                            </a>
-                        </Dropdown> */}
-                        <Button type="text" className={'ml-4 mt-4 '} style={{fontWeight:'600', background:'white'}} key="0">
-                            Solutions
-                        </Button>
-                        <Button type="text" className={'ml-4 '} style={{fontWeight:'600', background:'white'}} key="1">Company</Button>
-                        <Button type="text" className={'ml-4 mr-4 '} style={{fontWeight:'600', background:'white'}} key="2">Support</Button>
-                        {/* <Button type="text" className={'button-hover ml-4 px-4 mb-4 border-green-800 text-white '} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Get Started</p></Button> */}
-                    </div>
+                        <div theme="light" mode="horizontal" style={{lineHeight:'3.9rem',}} className={'float-right menu2'}>
+                            {/* <Dropdown overlay={menu1}>
+                                <a className="" onClick={e => e.preventDefault()}>
+                                Solutions <DownOutlined className={'fixed top-10'} />
+                                </a>
+                            </Dropdown> */}
+                            <Button type="text" className={'ml-4 mt-4 '} style={{fontWeight:'600', background:'white'}} key="0">
+                                Solutions
+                            </Button>
+                            <Button type="text" className={'ml-4 '} style={{fontWeight:'600', background:'white'}} key="1">Company</Button>
+                            <Button type="text" className={'ml-4 mr-4 '} style={{fontWeight:'600', background:'white'}} key="2">Support</Button>
+                            {/* <Button type="text" className={'button-hover ml-4 px-4 mb-4 border-green-800 text-white '} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Get Started</p></Button> */}
+                        </div>
                     </section>
-                    <div theme="light" mode="horizontal" style={{lineHeight:'3.9rem',}} className={'hidden md:block float-right menu'}>
+                    <div theme="light" mode="horizontal" style={{lineHeight:'3.9rem',}} className={'hidden md:block float-right menu pt-2'}>
                         {/* <div className={'bla'}>bla</div>
                         <div className={'blabla'}>blabla</div> */}
                                 {/* <div className={'bla'}>aaaaaaaaaa</div>
