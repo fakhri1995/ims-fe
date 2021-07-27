@@ -6,6 +6,7 @@ import Link from 'next/link'
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
+import CountUp from 'react-countup'
 
 function LandingPage({ }) {
     const flickityOptions = {
@@ -45,15 +46,15 @@ function LandingPage({ }) {
                     </div>
                     <div className={'flex pb-3'}>
                         <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto w-52'}>
-                            <p className={'text-3xl md:text-6xl text-center gilroy-regular '}>20+</p>
+                            <p className={'text-3xl md:text-6xl text-center gilroy-regular '}><CountUp end={45}/>+</p>
                             <p className={'text-base text-center gilroy-regular'}>cities</p>
                         </div>
                         <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto w-52'}>
-                            <p className={'text-3xl md:text-6xl text-center gilroy-regular '}>9000+</p>
+                            <p className={'text-3xl md:text-6xl text-center gilroy-regular '}><CountUp end={8500}/>+</p>
                             <p className={'text-base text-center gilroy-regular'}>managed and leased devices</p>
                         </div>
                         <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto w-52'}>
-                            <p className={'text-3xl md:text-6xl text-center gilroy-regular '}>20+</p>
+                            <p className={'text-3xl md:text-6xl text-center gilroy-regular '}><CountUp end={15}/>+</p>
                             <p className={'text-base text-center gilroy-regular'}>years experienced</p>
                         </div>
                     </div>
