@@ -127,7 +127,7 @@ function layout({ children }) {
                         {/* <Button type="text" className={'button-hover mx-2 px-4 border-green-800 text-white '} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Get Started</p></Button> */}
                     </div>
                 </Header>
-                <Content className="site-layout" style={{ padding: '0px', marginTop: 64 }}>
+                <Content className="site-layout" style={{ padding: '0px' }}>
                     <div className="site-layout-background" style={{ padding: 0, minHeight: 380 }}>
                         <div>
                             <div className=" bg-white h-full">

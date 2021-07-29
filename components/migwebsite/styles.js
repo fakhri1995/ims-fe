@@ -118,17 +118,17 @@ const Styles = (props) => (
     .section3landingpage{
       // top: -50px;
     }
-    .section2landingpage{
-      margin: 0 auto 0;
-      width: 60%;
-      z-index: 10;
-    }
-    @media (max-width: 768px) {
-      .section2landingpage{
-        margin: 0 auto 0;
-        width: 100%;
-      }
-    }
+    // .section2landingpage{
+    //   margin: 0 auto 0;
+    //   width: 60%;
+    //   z-index: 10;
+    // }
+    // @media (max-width: 768px) {
+    //   .section2landingpage{
+    //     margin: 0 auto 0;
+    //     width: 100%;
+    //   }
+    // }
     p {
       margin: 0rem;
     }
