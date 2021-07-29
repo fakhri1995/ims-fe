@@ -59,7 +59,8 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                             fullname: doc.fullname,
                             email: doc.email,
                             phone_number: doc.phone_number,
-                            company_name: doc.company_name
+                            company_name: doc.company_name,
+                            status: doc.attribute.is_enabled
                         })
                     })
                 }
@@ -180,6 +181,23 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
             //             </>
             //     }
             // }
+        },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                        {
+                            record.status ?
+                            <div className="rounded-md w-auto h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">Aktif</div>
+                            :
+                            <div className="rounded-md w-auto h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">{"Non-aktif"}</div>
+                        }
+                        </>
+                }
+            }
         },
         // {
         //     title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',

@@ -5,18 +5,20 @@ import st from '../../../../components/layout-dashboard.module.css'
 import httpcookie from 'cookie'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import { Input, Tabs, Empty, Button, notification, Form, Divider, Checkbox } from 'antd'
+import { Input, Tabs, Empty, Button, notification, Form, Checkbox } from 'antd'
+import { useEffect } from 'react'
 
 function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
-    pathArr[pathArr.length - 1] = "Create"
+    pathArr[pathArr.length - 1] = "Buat Role"
     const { originPath } = rt.query
     const { TextArea } = Input;
     const { TabPane } = Tabs;
     const [instanceForm] = Form.useForm()
     const [loadingcreate, setloadingcreate] = useState(false)
+    const [praloading2, setpraloading2] = useState(true)
 
     //----------CreateGroup-------------
     const [newroles, setNewroles] = useState({
@@ -24,6 +26,23 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
         description: '',
         feature_ids: []
     })
+    const [modules, setmodules] = useState([
+        {
+            id: "",
+            key: "",
+            name: "",
+            status: "",
+            company_id: 0,
+            description: "",
+            feature: [
+                {
+                    id: "",
+                    key: "",
+                    name: ""
+                },
+            ]
+        }
+    ])
     const onChangeCreateRoles = (e) => {
         var val = e.target.value
         setNewroles({
@@ -31,48 +50,6 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
             [e.target.name]: val
         })
     }
-    const treeData = [
-        {
-            title: 'parent 1',
-            key: '0-0',
-            children: [
-                {
-                    title: 'parent 1-0',
-                    key: '0-0-0',
-                    // disabled: true,
-                    children: [
-                        {
-                            title: 'leaf',
-                            key: '0-0-0-0',
-                            // disableCheckbox: true,
-                        },
-                        {
-                            title: 'leaf',
-                            key: '0-0-0-1',
-                        },
-                    ],
-                },
-                {
-                    title: 'parent 1-1',
-                    key: '0-0-1',
-                    children: [
-                        {
-                            title: (
-                                <span
-                                    style={{
-                                        color: '#1890ff',
-                                    }}
-                                >
-                                    sss
-                                </span>
-                            ),
-                            key: '0-0-1-0',
-                        },
-                    ],
-                },
-            ],
-        },
-    ];
     const onChangeCreateCheckbox = (e, id) => {
         if (e.target.checked) {
             const temp = newroles.feature_ids
@@ -106,7 +83,7 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
             .then(res2 => {
                 if (res2.success) {
                     notification['success']({
-                        message: res2.message,
+                        message: "Role berhasil ditambahkan",
                         duration: 3
                     })
                     setNewroles({
@@ -128,6 +105,21 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
                 }
             })
     }
+
+    //useEffect
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
+            method: `POST`,
+            headers: {
+                'Authorization': JSON.parse(initProps)
+            }
+        })
+            .then((res) => res.json())
+            .then(res2 => {
+                setmodules(res2.data)
+                setpraloading2(false)
+            })
+    }, [])
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
@@ -135,12 +127,12 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
                     <div className="col-span-1 md:col-span-4">
                         <Sticky containerSelectorFocus="#formAgentsWrapper">
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
-                                <h1 className="font-semibold text-base w-auto ">New Role</h1>
+                                <h1 className="font-semibold text-base w-auto ">Buat Role</h1>
                                 <div className="flex space-x-2">
                                     <Link href="/admin/roles" >
-                                        <Button type="default" size="middle">Cancel</Button>
+                                        <Button type="default" size="middle">Batal</Button>
                                     </Link>
-                                    <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingcreate}>Save</Button>
+                                    <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingcreate}>Simpan</Button>
                                 </div>
                             </div>
                         </Sticky>
@@ -174,7 +166,8 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
                             </div>
 
                             {/* </div> */}
-                            <Divider style={{ borderTop: '1px solid rgba(0, 0, 0, 0.2)' }} />
+                            {/* <Divider style={{ borderTop: '1px solid rgba(0, 0, 0, 0.2)' }} /> */}
+                            <hr />
                             <h1 className="font-semibold text-base w-auto p-2">Permissions</h1>
                             {/* <div className="border-gray-300 p-4 border bg-white w-full h-auto "> */}
                             {/* <Tabs defaultActiveKey="1" tabPosition={'left'} style={{ }}>
@@ -184,37 +177,41 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
                                 </TabPane>
                                 ))}
                             </Tabs> */}
-
-                            <Tabs defaultActiveKey="1" tabPosition="left">
-                                {
-                                    dataListModules.data.map((doc, idx) => {
-                                        return (
-                                            <TabPane tab={doc.name} key={idx + 1}>
-                                                <div className="mb-5">
-                                                    {
-                                                        doc.feature !== null ?
-                                                            <>
-                                                                {
-                                                                    doc.feature.map((doc, idx) => {
-                                                                        return (
-                                                                            <div key={idx} className="flex items-center hover:bg-gray-300 p-3">
-                                                                                <Checkbox style={{ marginRight: `1rem` }} onChange={(e) => { onChangeCreateCheckbox(e, doc.id) }} /> {doc.name}
-                                                                            </div>
-                                                                        )
-                                                                    })
-                                                                }
-                                                            </>
-                                                            :
-                                                            <>
-                                                                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
-                                                            </>
-                                                    }
-                                                </div>
-                                            </TabPane>
-                                        )
-                                    })
-                                }
-                            </Tabs>
+                            {
+                                praloading2 ?
+                                    null
+                                    :
+                                    <Tabs defaultActiveKey="1" tabPosition="left">
+                                        {
+                                            modules.map((doc, idx) => {
+                                                return (
+                                                    <TabPane tab={doc.name} key={idx + 1}>
+                                                        <div className="mb-5">
+                                                            {
+                                                                doc.feature !== null ?
+                                                                    <>
+                                                                        {
+                                                                            doc.feature.map((doc, idx) => {
+                                                                                return (
+                                                                                    <div key={idx} className="flex items-center hover:bg-gray-300 p-3">
+                                                                                        <Checkbox style={{ marginRight: `1rem` }} onChange={(e) => { onChangeCreateCheckbox(e, doc.id) }} /> {doc.name}
+                                                                                    </div>
+                                                                                )
+                                                                            })
+                                                                        }
+                                                                    </>
+                                                                    :
+                                                                    <>
+                                                                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
+                                                                    </>
+                                                            }
+                                                        </div>
+                                                    </TabPane>
+                                                )
+                                            })
+                                        }
+                                    </Tabs>
+                            }
 
                             {/* <Tabs defaultActiveKey="1" tabPosition={'left'} style={{}}>
                                 <TabPane tab={`Ticket`} key={1} >
@@ -249,17 +246,24 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
 
 export async function getServerSideProps({ req, res }) {
     var initProps = {};
-    if (req && req.headers) {
-        const cookies = req.headers.cookie;
-        if (!cookies) {
-            res.writeHead(302, { Location: '/login' })
-            res.end()
-        }
-        if (typeof cookies === 'string') {
-            const cookiesJSON = httpcookie.parse(cookies);
-            initProps = cookiesJSON.token
+    if (!req.headers.cookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
         }
     }
+    const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+    if (!cookiesJSON1.token) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
+        }
+    }
+    initProps = cookiesJSON1.token
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,
         headers: {
@@ -274,20 +278,20 @@ export async function getServerSideProps({ req, res }) {
         res.end()
     }
 
-    const resourcesGM = await fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps)
-        }
-    })
-    const resjsonGM = await resourcesGM.json()
-    const dataListModules = resjsonGM
+    // const resourcesGM = await fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps)
+    //     }
+    // })
+    // const resjsonGM = await resourcesGM.json()
+    // const dataListModules = resjsonGM
 
     return {
         props: {
             initProps,
             dataProfile,
-            dataListModules,
+            // dataListModules,
             sidemenu: "4"
         },
     }
