@@ -115,7 +115,7 @@ function AboutUs({ }) {
                     </div>
                 </div>
             </section>
-            <section className={'section5landingpage'}>
+            <section className={'section5landingpage'} style={{backgroundColor:'#93D9B5'}}>
                 <div className={' md:flex relative justify-between px-4 md:px-20 lg:px-28 xl:px-40'}style={{top:'40%'}}>
                     <div className={'flex-col text-2xl md:text-3xl text-white font-bold -top-4 md:top-0 relative'} style={{}}>
                         <p>Let’s be better together</p>

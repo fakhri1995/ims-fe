@@ -7,9 +7,13 @@ const Styles = (props) => (
   <div>
     <style jsx global>
     {`
+    .slick-current .parent .child{
+      border-bottom: 2px solid #93D9B5;
+      color: green !important;
+    }
     .menu-underlined :hover{
       border-bottom: 2px solid #93D9B5;
-      color: black !important;
+      color: #0ac20a !important;
     }
     .flex-important{
       display: flex !important;
@@ -118,32 +122,33 @@ const Styles = (props) => (
     .section3landingpage{
       // top: -50px;
     }
-    .section2landingpage{
-      margin: 0 auto 0;
-      width: 60%;
-      z-index: 10;
-    }
-    @media (max-width: 768px) {
-      .section2landingpage{
-        margin: 0 auto 0;
-        width: 100%;
-      }
-    }
+    // .section2landingpage{
+    //   margin: 0 auto 0;
+    //   width: 60%;
+    //   z-index: 10;
+    // }
+    // @media (max-width: 768px) {
+    //   .section2landingpage{
+    //     margin: 0 auto 0;
+    //     width: 100%;
+    //   }
+    // }
     p {
       margin: 0rem;
     }
     .header{
-      padding: 0 10rem;
+      padding: 0 3rem;
       z-index: 50;
+      height: 80px !important;
     }
     @media (max-width: 1280px){
       .header{
-        padding: 0 7rem;
+        padding: 0 3rem;
       }
     }
     @media (max-width: 1024px){
       .header{
-        padding: 0 5rem;
+        padding: 0 3rem;
       }
     }
     @media (max-width: 768px){

@@ -102,7 +102,7 @@ function Advantages({ }) {
                     </div>
                 </div>
             </section>
-            <section className={'hidden md:block md:px-auto py-8 lg:px-28 xl:px-40'}>
+            {/* <section className={'hidden md:block md:px-auto py-8 lg:px-28 xl:px-40'}>
                 <div className={'pb-8'}>
                     <p className={'text-2xl md:text-3xl font-bold'} style={{letterSpacing:'1.5px'}}>Our Advantages</p>
                 </div>
@@ -154,8 +154,8 @@ function Advantages({ }) {
                     </TabPane>
                 </Tabs>
                 </div>
-            </section>
-            <div className={'hidden md:hidden'}>
+            </section> */}
+            <div className={'hidden md:block'}>
                 <Fade ssrFadeout left opposite  collapse when={isHiddenAnimation}>
                     <section onClick={()=>{onClickHiddenAnimation()}} className={` md:px-auto py-8 md:px-auto lg:px-28 xl:px-40`}>
                         <Slider
@@ -184,7 +184,7 @@ function Advantages({ }) {
                     </section>
                 </Fade>
             </div>
-            <div className={'hidden md:hidden'}>
+            <div className={'hidden md:block'}>
                 <Fade ssrFadeout bottom collapse when={!isHiddenAnimation}>
                     <section className={'bg-green-600 py-8 md:px-auto lg:px-28 xl:px-40'}>
                         <div className={'text-center relative -top-4'}>
@@ -289,7 +289,7 @@ function Advantages({ }) {
                     </div>
                 </Flickity>
             </section>
-            <section className={'section5landingpage'}>
+            <section className={'section5landingpage'} style={{backgroundColor:'#93D9B5'}}>
                 <div className={' md:flex relative justify-between px-4 md:px-20 lg:px-28 xl:px-40'}style={{top:'40%'}}>
                     <div className={'flex-col text-2xl md:text-3xl text-white font-bold -top-4 md:top-0 relative'} style={{}}>
                         <p>Let’s be better together</p>

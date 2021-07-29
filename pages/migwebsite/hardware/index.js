@@ -70,7 +70,7 @@ function Hardware({ }) {
                     <div className={'pt-8 pb-8 w-1/2 mr-8'}>
                         <img src="/image/landingpage/image-section2.png"></img>
                     </div>
-                    <div className={'pt-8 pb-8 w-1/2'}>
+                    <div className={'pt-8 pb-8 w-1/2 my-auto'}>
                         <p className={'text-3xl font-bold pb-4 gilroy-bold'}>Enabling you to focus on your core business</p>
                         <p className={'w-2/3 pb-4 gilroy-medium'} style={{letterSpacing:'1.5px'}}>increase efficiency by providing guaranteed level of IT operation services to support your business</p>
                     </div>
