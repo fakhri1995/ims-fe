@@ -449,20 +449,27 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
 }
 
 export async function getServerSideProps({ req, res, resolvedUrl, params }) {
-    var initProps = {};
     // const userid = resolvedUrl.split("/").slice(1)[2]
     const userid = params.userId
-    if (req && req.headers) {
-        const cookies = req.headers.cookie;
-        if (!cookies) {
-            res.writeHead(302, { Location: '/login' })
-            res.end()
-        }
-        if (typeof cookies === 'string') {
-            const cookiesJSON = httpcookie.parse(cookies);
-            initProps = cookiesJSON.token;
+    var initProps = {};
+    if (!req.headers.cookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
         }
     }
+    const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+    if (!cookiesJSON1.token) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
+        }
+    }
+    initProps = cookiesJSON1.token
 
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,

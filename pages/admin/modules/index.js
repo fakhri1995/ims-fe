@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { Button, Form, Input, Modal, Drawer, Checkbox, Select, Empty, notification } from 'antd'
@@ -12,27 +12,31 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
     const rt = useRouter()
     const pathArr = rt.pathname.split("/").slice(1)
     const { Option } = Select
-    const tabnameArr = []
-    const loop = []
-    dataListModules.data.map((doc, idx) => {
-        var nama = doc.name.split(" ")[0]
-        tabnameArr.push(nama)
-    })
-    for (var i = 0; i < dataListModules.data.length; i++) {
-        if (i === 0) {
-            loop.push("block")
-        }
-        else {
-            loop.push("hidden")
-        }
-    }
+    // const loop = []
+    // for (var i = 0; i < dataListModules.data.length; i++) {
+    //     if (i === 0) {
+    //         loop.push("block")
+    //     }
+    //     else {
+    //         loop.push("hidden")
+    //     }
+    // }
 
     //useState
     //1. Basic
+    const [praloading, setpraloading] = useState(true)
+    const [loop, setloop] = useState([])
     const [tabnameArrVal, settabnameArrVal] = useState(loop)
-    const [currentselectkateg, setcurrentselectkateg] = useState(dataListModules.data[0].name)
-    const [currentdesctkateg, setcurrentdesckateg] = useState(dataListModules.data[0].description)
-    const [datafeature, setdatafeature] = useState(dataListModules.data[0].feature)
+    const [datamodules, setdatamodules] = useState([
+        {
+            name: "",
+            description: "",
+            feature: []
+        }
+    ])
+    const [currentselectkateg, setcurrentselectkateg] = useState(datamodules[0].name)
+    const [currentdesctkateg, setcurrentdesckateg] = useState(datamodules[0].description)
+    const [datafeature, setdatafeature] = useState(datamodules[0].feature)
 
     //2. Create
     const [datatambahmodule, setdatatambahmodule] = useState({
@@ -58,8 +62,23 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
     const [modaldelete, setmodaldelete] = useState(false)
     const [loadiingdelete, setloadingdelete] = useState(false)
 
+    //5. Features list
+    const [loadinglistfeat, setloadinglistfeat] = useState(true)
+    const [listfeat, setlistfeat] = useState(
+        [
+            {
+                id: 10,
+                feature_id: 107,
+                feature_key: "b699dca3-9908-41f9-9583-e34f07f7e5c7",
+                name: "AGENT_GET",
+                description: "Fitur untuk mengambil detail data agent",
+                deleted_at: null
+            }
+        ]
+    )
+
     //event
-    const onChangeTab = (e, jenis, idxjenis, namakateg, deskripsi, id, feature) => {
+    const onChangeTab = (e, idxjenis, namakateg, deskripsi, id, feature) => {
         const temp3 = tabnameArrVal
         temp3[idxjenis] = "block"
         settabnameArrVal(temp3)
@@ -87,7 +106,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
         setcurrentselectkateg(namakateg)
         var variable = {}
         if (namakateg != 'all') {
-            variable = dataListModules.data.filter(dataa => { return dataa.name == namakateg }).map((doc, idx) => {
+            variable = datamodules.filter(dataa => { return dataa.name == namakateg }).map((doc, idx) => {
                 return ({
                     idxjenis: idx + 1,
                     id: doc.id,
@@ -222,7 +241,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                     setTimeout(() => {
                         setloadingupdate(false)
                         setdrawableedit(false)
-                        rt.push(`/admin/modules`)
+                        window.location.href = `/admin/modules`
                     }, 300)
                 }
                 else if (!res2.success) {
@@ -272,6 +291,42 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
             })
     }
 
+    //useEffect
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
+            method: `POST`,
+            headers: {
+                'Authorization': JSON.parse(initProps)
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatamodules(res2.data)
+                setcurrentselectkateg(res2.data[0].name)
+                setcurrentdesckateg(res2.data[0].description)
+                setdatafeature(res2.data[0].feature)
+                var temp = loop
+                for (var i = 0; i < res2.data.length; i++) {
+                    i !== 0 ? temp.push("hidden") : temp.push("block")
+                }
+                setloop(temp)
+                setpraloading(false)
+                setloadinglistfeat(false)
+            })
+    }, [])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getAccessFeature`, {
+            method: `POST`,
+            headers: {
+                'Authorization': JSON.parse(initProps)
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setlistfeat(res2)
+            })
+    }, [])
+
     return (
         <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} st={st} pathArr={pathArr}>
             <div id="containerListModules" className="w-full border-t border-opacity-30 border-gray-500">
@@ -280,98 +335,103 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                         <h1 className="font-bold">Modules</h1>
                         {
                             [180].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                            <Button type="primary" size="large" onClick={() => { setdrawablecreate(true) }}>Add New</Button>
+                            <Button disabled={loadinglistfeat} type="primary" size="large" onClick={() => { setdrawablecreate(true) }}>Tambah</Button>
                         }
                     </div>
                 </Sticky>
-                <div className="w-full grid grid-cols-5 bg-white">
-                    <div className="col-span-5">
-                        <div className="w-full grid grid-cols-9">
-                            <div className="col-span-2 hidden md:flex flex-col border-r pr-2">
-                                <div>
-                                    {
-                                        dataListModules.data.map((doc, idx) => {
-                                            return (
-                                                <>
-                                                    {
-                                                        tabnameArrVal[idx] === "block" ?
-                                                            <div className={`p-2 cursor-pointer flex items-center bg-primary text-white rounded-sm`}>
-                                                                {doc.name}
-                                                            </div>
-                                                            :
-                                                            <div className={`p-2 cursor-pointer hover:text-gray-900 flex items-center text-sm font-semibold`} onClick={(e) => { onChangeTab(e, tabnameArr[idx], (idx), doc.name, doc.description, doc.id, doc.feature) }}>
-                                                                {doc.name}
-                                                            </div>
-                                                    }
-                                                </>
-                                            )
-                                        })
-                                    }
-                                </div>
-                            </div>
-                            <div className=" col-span-9 md:col-span-7">
-                                <div className="w-full flex md:hidden mb-5">
-                                    <Select defaultValue={currentselectkateg} onChange={(value) => { onChangeTabSmall(value) }} style={{ width: `100%` }}>
-                                        {
-                                            dataListModules.data.map((doc, idx) => {
-                                                if (doc.feature === null || doc.feature === "null" || typeof (doc.feature) === undefined || typeof (doc.feature) === 'undefined') {
-                                                    doc.feature = []
-                                                }
-                                                return (
-                                                    <Option value={doc.name}>{doc.name}</Option>
-                                                )
-                                            })
-                                        }
-                                    </Select>
-                                </div>
-                                <div className={` p-0 md:py-5 md:px-7 flex flex-col`}>
-                                    <div className="flex justify-between items-center mb-1 md:mb-5">
-                                        <div className="flex flex-col justify-center">
-                                            <div className="flex items-center mb-1">
-                                                <div className="flex flex-col justify-center mr-8">
-                                                    <p className="font-semibold mb-1">{currentselectkateg}</p>
-                                                    <p className="text-xs text-gray-500">{currentdesctkateg}</p>
-                                                </div>
-                                                <div className="flex items-center">
-                                                    {
-                                                        [181].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                                        <Button onClick={() => { setdrawableedit(true) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
-                                                            <EditOutlined />
-                                                        </Button>
-                                                    }
-                                                    {
-                                                        [182].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                                        <Button onClick={() => { setmodaldelete(true) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
-                                                            <DeleteOutlined />
-                                                        </Button>
-                                                    }
-                                                </div>
-                                            </div>
+                {
+                    praloading ?
+                        null
+                        :
+                        <div className="w-full grid grid-cols-5 bg-white">
+                            <div className="col-span-5">
+                                <div className="w-full grid grid-cols-9">
+                                    <div className="col-span-2 hidden md:flex flex-col border-r pr-2">
+                                        <div>
+                                            {
+                                                datamodules.map((doc, idx) => {
+                                                    return (
+                                                        <>
+                                                            {
+                                                                tabnameArrVal[idx] === "block" ?
+                                                                    <div className={`p-2 cursor-pointer flex items-center bg-primary text-white rounded-sm`}>
+                                                                        {doc.name}
+                                                                    </div>
+                                                                    :
+                                                                    <div className={`p-2 cursor-pointer hover:text-gray-900 flex items-center text-sm font-semibold`} onClick={(e) => { onChangeTab(e, (idx), doc.name, doc.description, doc.id, doc.feature) }}>
+                                                                        {doc.name}
+                                                                    </div>
+                                                            }
+                                                        </>
+                                                    )
+                                                })
+                                            }
                                         </div>
                                     </div>
-                                    <div>
-                                        {
-                                            datafeature.length !== 0 ?
-                                                <>
-                                                    {
-                                                        datafeature.map((doc, idx) => {
-                                                            return (
-                                                                <div key={idx} className="border-b mb-3 p-3">
-                                                                    <p className="mb-0 text-sm">{doc.name} : {doc.id}</p>
-                                                                </div>
-                                                            )
-                                                        })
-                                                    }
-                                                </>
-                                                :
-                                                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
-                                        }
+                                    <div className=" col-span-9 md:col-span-7">
+                                        <div className="w-full flex md:hidden mb-5">
+                                            <Select defaultValue={currentselectkateg} onChange={(value) => { onChangeTabSmall(value) }} style={{ width: `100%` }}>
+                                                {
+                                                    datamodules.map((doc, idx) => {
+                                                        if (doc.feature === null || doc.feature === "null" || typeof (doc.feature) === undefined || typeof (doc.feature) === 'undefined') {
+                                                            doc.feature = []
+                                                        }
+                                                        return (
+                                                            <Option value={doc.name}>{doc.name}</Option>
+                                                        )
+                                                    })
+                                                }
+                                            </Select>
+                                        </div>
+                                        <div className={` p-0 md:py-5 md:px-7 flex flex-col`}>
+                                            <div className="flex justify-between items-center mb-1 md:mb-5">
+                                                <div className="flex flex-col justify-center">
+                                                    <div className="flex items-center mb-1">
+                                                        <div className="flex flex-col justify-center mr-8">
+                                                            <p className="font-semibold mb-1">{currentselectkateg}</p>
+                                                            <p className="text-xs text-gray-500">{currentdesctkateg}</p>
+                                                        </div>
+                                                        <div className="flex items-center">
+                                                            {
+                                                                [181].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                                                <Button disabled={loadinglistfeat} onClick={() => { setdrawableedit(true) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
+                                                                    <EditOutlined />
+                                                                </Button>
+                                                            }
+                                                            {
+                                                                [182].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                                                <Button onClick={() => { setmodaldelete(true) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
+                                                                    <DeleteOutlined />
+                                                                </Button>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                {
+                                                    datafeature.length !== 0 ?
+                                                        <>
+                                                            {
+                                                                datafeature.map((doc, idx) => {
+                                                                    return (
+                                                                        <div key={idx} className="border-b mb-3 p-3">
+                                                                            <p className="mb-0 text-sm">{doc.name} : {doc.id}</p>
+                                                                        </div>
+                                                                    )
+                                                                })
+                                                            }
+                                                        </>
+                                                        :
+                                                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
+                                                }
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                }
             </div>
             <Drawer title={`Tambah Module`} maskClosable={false} visible={drawablecreate} onClose={() => { setdrawablecreate(false); }} width={380} destroyOnClose={true}>
                 <div className="flex flex-col">
@@ -396,7 +456,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                         <h1 className="font-semibold">Pilih Feature</h1>
                         <div className=" overflow-y-auto h-80 mb-5">
                             {
-                                dataListFeatures.map((doc, idx) => {
+                                listfeat.map((doc, idx) => {
                                     return (
                                         <div key={idx} className="flex items-center hover:bg-gray-300 p-3">
                                             <Checkbox style={{ marginRight: `1rem` }} onChange={(e) => { onChangeCreateCheckbox(e, doc.feature_id) }} /> {doc.name}
@@ -434,7 +494,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                         {/* <Input prefix={<SearchOutlined />} placeholder="Cari Fitur" style={{ borderRadius: `0.5rem`, marginBottom: `1rem` }} /> */}
                         <div className=" overflow-y-auto h-80 mb-5">
                             {
-                                dataListFeatures.map((doc, idx) => {
+                                listfeat.map((doc, idx) => {
                                     const checkedStatus = dataeditmodule.feature_ids.includes(doc.feature_id)
                                     return (
                                         <div key={idx} className="flex items-center hover:bg-gray-300 p-3">
@@ -494,30 +554,30 @@ export async function getServerSideProps({ req, res }) {
         res.end()
     }
 
-    const resourcesGM = await fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps)
-        }
-    })
-    const resjsonGM = await resourcesGM.json()
-    const dataListModules = resjsonGM
+    // const resourcesGM = await fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps)
+    //     }
+    // })
+    // const resjsonGM = await resourcesGM.json()
+    // const dataListModules = resjsonGM
 
-    const resourcesGF = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAccessFeature`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps)
-        }
-    })
-    const resjsonGF = await resourcesGF.json()
-    const dataListFeatures = resjsonGF
+    // const resourcesGF = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAccessFeature`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps)
+    //     }
+    // })
+    // const resjsonGF = await resourcesGF.json()
+    // const dataListFeatures = resjsonGF
 
     return {
         props: {
             initProps,
             dataProfile,
-            dataListModules,
-            dataListFeatures,
+            // dataListModules,
+            // dataListFeatures,
             sidemenu: "4"
         },
     }

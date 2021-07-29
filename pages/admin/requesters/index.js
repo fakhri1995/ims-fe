@@ -3,9 +3,8 @@ import { useState, useEffect } from 'react'
 import st from '../../../components/layout-dashboard.module.css'
 import Layout from '../../../components/layout-dashboard'
 import httpcookie from 'cookie'
-import EditOutlined from '@ant-design/icons/EditOutlined'
 import Link from 'next/link'
-import { Table, notification, Button, Select } from 'antd'
+import { Table, notification, Button } from 'antd'
 
 function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList, sidemenu }) {
     const [dataraw, setdataraw] = useState([])
