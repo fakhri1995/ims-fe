@@ -5,8 +5,8 @@ import st from '../../../components/layout-dashboard-roles.module.css'
 import httpcookie from 'cookie'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
-import { Table, Button, Modal, notification, Spin } from 'antd'
+import { Table, Button, notification } from 'antd'
+import { useEffect } from 'react'
 
 function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
     const rt = useRouter()
@@ -15,74 +15,115 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
     const { originPath } = rt.query
 
 
-    const [maindata, setmaindata] = useState(dataRoles.data)
+    // const [maindata, setmaindata] = useState(dataRoles.data)
+    const [maindata, setmaindata] = useState([])
     const columnsDD = [
         {
-            title: 'Role Name',
+            title: 'Nama Role',
             dataIndex: 'name',
             key: 'name',
-            render(text, record, index) {
-                return {
-                    props: {
-                        style: { background: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children:
-                        <div>
-                            <Link href={{
-                                pathname: `/admin/roles/${record.id}`,
-                                query: {
-                                    originPath: 'Admin'
-                                }
-                            }}>
-                                <a>
-                                    {record.name}
-                                </a>
-                            </Link>
-                            <p style={{ fontSize: '13px' }}>
-                                {record.description}
-                            </p>
-                        </div>,
+            render(t, r, i) {
+                return (
+                    <div className="font-semibold">
+                        {r.name}
+                    </div>
+                )
+            }
+            // render(text, record, index) {
+            //     return {
+            //         props: {
+            //             style: { background: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+            //         },
+            //         children:
+            //             <div>
+            //                 <Link href={{
+            //                     pathname: `/admin/roles/${record.id}`,
+            //                     query: {
+            //                         originPath: 'Admin'
+            //                     }
+            //                 }}>
+            //                     <a>
+            //                         {record.name}
+            //                     </a>
+            //                 </Link>
+            //                 <p style={{ fontSize: '13px' }}>
+            //                     {record.description}
+            //                 </p>
+            //             </div>,
 
-                };
-            },
+            //     };
+            // },
             // sorter: (a, b) => a.user_id - b.user_id,
             // sortDirections: ['descend', 'ascend'],
         },
         {
-            title: 'Member',
+            title: 'Deskripsi',
+            dataIndex: 'description',
+            key: 'description',
+            render(t, r, i) {
+                return (
+                    <div className="text-xs">
+                        {r.description}
+                    </div>
+                )
+            }
+            // render(text, record, index) {
+            //     return {
+            //         props: {
+            //             style: { background: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+            //         },
+            //         children:
+            //             <div>
+            //                 <Link href={{
+            //                     pathname: `/admin/roles/${record.id}`,
+            //                     query: {
+            //                         originPath: 'Admin'
+            //                     }
+            //                 }}>
+            //                     <a>
+            //                         {record.name}
+            //                     </a>
+            //                 </Link>
+            //                 <p style={{ fontSize: '13px' }}>
+            //                     {record.description}
+            //                 </p>
+            //             </div>,
+
+            //     };
+            // },
+            // sorter: (a, b) => a.user_id - b.user_id,
+            // sortDirections: ['descend', 'ascend'],
+        },
+        {
+            title: 'Jumlah Anggota',
             dataIndex: 'member',
             key: 'member',
             align: `center`,
-            render(text, record, index) {
-                return {
-                    props: {
-                        style: { background: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children:
-                        <>
-                            {
-                                loadingselectedrole[index] ?
-                                    <>
-                                        <Spin />
-                                    </>
-                                    :
-                                    <>
-                                        {
-                                            [175].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                            <div className="text-center text-blue-500 hover:text-blue-700 cursor-pointer" onClick={() => { setselectedrolename(record.name); getRoleUsers(record.id, index) }}>
-                                                {
-                                                    record.member > 1 ?
-                                                        <>{record.member} users</>
-                                                        :
-                                                        <>{record.member} user</>
-                                                }
-                                            </div>
-                                        }
-                                    </>
-                            }
-                        </>
-                };
-            },
+            // render(text, record, index) {
+            //     return {
+            //         props: {
+            //             style: { background: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+            //         },
+            //         children:
+            //             <>
+            //                 {
+            //                     loadingselectedrole[index] ?
+            //                         <>
+            //                             <Spin />
+            //                         </>
+            //                         :
+            //                         <>
+            //                             {
+            //                                 [175].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+            //                                 <div className="text-center" /*onClick={() => { setselectedrolename(record.name); getRoleUsers(record.id, index) }}*/>
+            //                                     {record.member} anggota
+            //                                 </div>
+            //                             }
+            //                         </>
+            //                 }
+            //             </>
+            //     };
+            // },
             // render: agent => (
 
             //   ),
@@ -90,43 +131,45 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
             // sortDirections: ['descend', 'ascend'],
             // responsive: ['lg'],
         },
-        {
-            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0', // Non-breakable space is char 0xa0 (160 dec)
-            dataIndex: 'actionss',
-            key: 'action',
-            render: (text, record, index) => {
-                return {
-                    props: {
-                        style: { background: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    },
-                    children:
-                        <div className=" flex">
-                            {
-                                [174, 177].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <Button onClick={() => { rt.push(`/admin/roles/${record.id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
-                                    <EditOutlined />
-                                </Button>
-                            }
-                            {
-                                [178].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <Button danger onClick={() => { setmodaldelete(true); setdatadelete({ ...datadelete, id: record.id }); setcurrentdelete(record.name) }} loading={loadingdelete} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
-                                    <DeleteOutlined />
-                                </Button>
-                            }
-                        </div>
-                }
-            }
-        }
+        // {
+        //     title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
+        //     dataIndex: 'actionss',
+        //     key: 'action',
+        //     render: (text, record, index) => {
+        //         return {
+        //             props: {
+        //                 style: { background: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+        //             },
+        //             children:
+        //                 <div className=" flex">
+        //                     {
+        //                         [174, 177].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+        //                         <Button onClick={() => { rt.push(`/admin/roles/${record.id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
+        //                             <EditOutlined />
+        //                         </Button>
+        //                     }
+        //                     {
+        //                         [178].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+        //                         <Button danger onClick={() => { setmodaldelete(true); setdatadelete({ ...datadelete, id: record.id }); setcurrentdelete(record.name) }} loading={loadingdelete} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
+        //                             <DeleteOutlined />
+        //                         </Button>
+        //                     }
+        //                 </div>
+        //         }
+        //     }
+        // }
     ];
 
     const [modalviewagents, setmodalviewagents] = useState(false)
     const [selectedrole, setselectedrole] = useState([])
     const [selectedrolename, setselectedrolename] = useState()
     var ln = []
-    for (var i = 0; i < dataRoles.data.length; i++) {
+    for (var i = 0; i < maindata.length; i++) {
         ln.push(false)
     }
     const [loadingselectedrole, setloadingselectedrole] = useState(ln)
+    const [loadingtable, setloadingtable] = useState(true)
+    const [rowstate, setrowstate] = useState(0)
 
     const [datadelete, setdatadelete] = useState({
         id: 0
@@ -189,6 +232,19 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                 }
             })
     }
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps)
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setmaindata(res2.data)
+                setloadingtable(false)
+            })
+    }, [])
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
@@ -201,7 +257,7 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                                     [176].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <div className="flex space-x-2">
                                         <Link href="/admin/roles/create">
-                                            <Button type="primary" size="large">Add New</Button>
+                                            <Button type="primary" size="large">Tambah</Button>
                                         </Link>
                                     </div>
                                 }
@@ -212,31 +268,53 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                         [173].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <div className=" col-span-1 md:col-span-4 flex flex-col">
                             <div className="col-span-3 flex flex-col space-y-3">
-                                <Table scroll={{ x: 400 }} pagination={{ pageSize: 5 }} dataSource={maindata} columns={columnsDD} onRow={(record, rowIndex) => {
-                                    // return {
-                                    //     onMouseOver: (event) => {
-                                    //         var actionsCopy = actions
-                                    //         actionsCopy[rowIndex] = true
-                                    //         setActions(actionsCopy)
-                                    //         setAction("block")
-                                    //         // console.log("row: " + actions[rowIndex] + " " + rowIndex)
-                                    //     },
-                                    //     onMouseLeave: (event) => {
-                                    //         var actionsCopy = actions
-                                    //         actionsCopy[rowIndex] = false
-                                    //         setActions(actionsCopy)
-                                    //         setAction("hidden")
-                                    //         // console.log("row leave: " + actions[rowIndex] + " " + rowIndex)
-                                    //     }
-                                    // }
-                                }}></Table>
+                                <Table loading={loadingtable} scroll={{ x: 400 }} pagination={{ pageSize: 5 }} dataSource={maindata} columns={columnsDD}
+                                    onRow={(record, rowIndex) => {
+                                        return {
+                                            onMouseOver: (event) => {
+                                                setrowstate(record.id)
+                                            },
+                                            onClick: (event) => {
+                                                {
+                                                    [174, 177].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                        rt.push(`/admin/roles/detail/${record.id}`)
+                                                        :
+                                                        null
+                                                }
+                                            }
+                                        }
+                                    }}
+                                    rowClassName={(record, idx) => {
+                                        return (
+                                            record.id === rowstate ? `cursor-pointer` : ``
+                                        )
+                                    }}
+                                // onRow={(record, rowIndex) => {
+                                // return {
+                                //     onMouseOver: (event) => {
+                                //         var actionsCopy = actions
+                                //         actionsCopy[rowIndex] = true
+                                //         setActions(actionsCopy)
+                                //         setAction("block")
+                                //         // console.log("row: " + actions[rowIndex] + " " + rowIndex)
+                                //     },
+                                //     onMouseLeave: (event) => {
+                                //         var actionsCopy = actions
+                                //         actionsCopy[rowIndex] = false
+                                //         setActions(actionsCopy)
+                                //         setAction("hidden")
+                                //         // console.log("row leave: " + actions[rowIndex] + " " + rowIndex)
+                                //     }
+                                // }
+                                // }}
+                                ></Table>
                             </div>
                         </div>
                     }
                 </div>
 
             </>
-            <Modal
+            {/* <Modal
                 title={`Konfirmasi Hapus Role`}
                 visible={modaldelete}
                 onCancel={() => { setmodaldelete(false) }}
@@ -265,24 +343,31 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                         )
                     })
                 }
-            </Modal>
+            </Modal> */}
         </Layout>
     )
 }
 
 export async function getServerSideProps({ req, res }) {
     var initProps = {};
-    if (req && req.headers) {
-        const cookies = req.headers.cookie;
-        if (!cookies) {
-            res.writeHead(302, { Location: '/login' })
-            res.end()
-        }
-        if (typeof cookies === 'string') {
-            const cookiesJSON = httpcookie.parse(cookies);
-            initProps = cookiesJSON.token
+    if (!req.headers.cookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
         }
     }
+    const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+    if (!cookiesJSON1.token) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
+        }
+    }
+    initProps = cookiesJSON1.token
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,
         headers: {
@@ -297,20 +382,20 @@ export async function getServerSideProps({ req, res }) {
         res.end()
     }
 
-    const resourcesGR = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
-        method: `GET`,
-        headers: {
-            'Authorization': JSON.parse(initProps)
-        }
-    })
-    const resjsonGR = await resourcesGR.json()
-    const dataRoles = resjsonGR
+    // const resourcesGR = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+    //     method: `GET`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps)
+    //     }
+    // })
+    // const resjsonGR = await resourcesGR.json()
+    // const dataRoles = resjsonGR
 
     return {
         props: {
             initProps,
             dataProfile,
-            dataRoles,
+            // dataRoles,
             sidemenu: "4"
         },
     }

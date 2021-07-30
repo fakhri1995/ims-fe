@@ -6,7 +6,7 @@ import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import st from '../../../components/layout-dashboard-clients.module.css'
-import { Table, notification, Button } from 'antd'
+import { Table, notification, Button, Input } from 'antd'
 
 function modifData(dataa) {
     for (var i = 0; i < dataa.length; i++) {
@@ -41,6 +41,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
         parent_id: 0
     })
     const [datatable, setdatatable] = useState([])
+    const [datatable2, setdatatable2] = useState([])
     const [datatablenonflat, setdatatablenonflat] = useState([])
     const [loaddatatable, setloaddatatable] = useState(false)
     // var dataTable = []
@@ -261,6 +262,12 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
             parent_id: value
         })
     }
+    const onChangeSearch = (e) => {
+        const filtered = datatable2.filter(flt => {
+            return flt.company_name.toLowerCase().includes(e.target.value.toLowerCase())
+        })
+        setdatatable(filtered)
+    }
     const handleSubmitCreateClients = () => {
         setnewclients({
             ...newclients,
@@ -342,6 +349,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
                     })
                 })
                 setdatatable(temp)
+                setdatatable2(temp)
                 setloaddatatable(false)
                 const c = [res2.data]
                 const d = modifData(c)
@@ -361,6 +369,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
                 </div>
             </div>
             <div className="p-5 mt-5 flex flex-col space-y-5 rounded-md w-full h-auto bg-white">
+                <Input style={{ width: `50%` }} onChange={(e) => { onChangeSearch(e) }} placeholder="Cari Nama Client" />
                 <Table
                     pagination={{ pageSize: 6 }}
                     scroll={{ x: 200 }}
