@@ -102,7 +102,7 @@ function layout({ children }) {
                         
                         <Dropdown overlay={menu1}>
                             {/* <div> */}
-                                <a style={{fontWeight:'600'}} className={' ant-dropdown-link text-black menu-underlined hover:text-black'} onClick={e => e.preventDefault()}>
+                                <a style={{fontWeight:'600'}} className={' ant-dropdown-link text-lg text-black menu-underlined hover:text-black'} onClick={e => e.preventDefault()}>
                                 {/* <p className={'bla ant-dropdown-link'}>Solution </p> */}
                                 Solution
                                 {/* <div className={'blabla'}>hana</div> */}
@@ -113,7 +113,7 @@ function layout({ children }) {
                         </Dropdown>
                         <Dropdown className={'ml-6 mr-4'} overlay={menu2}>
                             {/* <div> */}
-                                <a style={{fontWeight:'600'}} className=" ant-dropdown-link text-black menu-underlined hover:text-black" onClick={e => e.preventDefault()}>
+                                <a style={{fontWeight:'600'}} className=" ant-dropdown-link text-lg text-black menu-underlined hover:text-black" onClick={e => e.preventDefault()}>
                                 Company 
                                 {/* <DownOutlined className={' relative top-3 right-10'} /> */}
                                 </a>
@@ -123,7 +123,7 @@ function layout({ children }) {
                             Solution
                         </Button> */}
                         {/* <Button type="text" className={'mx-2 '} style={{fontWeight:'600', background:'white'}} key="1">Company</Button> */}
-                        <Button type="text" className={' mr-4 '} style={{fontWeight:'600', background:'white'}} key="2">Support</Button>
+                        <Button type="text" className={' mr-4 '} style={{fontWeight:'600', background:'white'}} key="2"><p className={'text-lg'}>Support</p></Button>
                         {/* <Button type="text" className={'button-hover mx-2 px-4 border-green-800 text-white '} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Get Started</p></Button> */}
                     </div>
                 </Header>
