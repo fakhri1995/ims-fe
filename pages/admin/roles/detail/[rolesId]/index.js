@@ -355,9 +355,9 @@ const RolesDetail = ({ initProps, dataProfile, sidemenu, rolesid }) => {
                         <div className="flex justify-between px-1 md:px-4 py-4 md:py-6 border-gray-400 border-t border-b bg-white mb-8">
                             <h1 className="font-semibold text-base w-auto ">Detail Role</h1>
                             <div className="flex space-x-2">
-                                <Link href="/admin/roles" >
+                                {/* <Link href="/admin/roles" >
                                     <Button type="default" size="middle">Batal</Button>
-                                </Link>
+                                </Link> */}
                                 {
                                     [174, 177].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <Button type="primary" size="middle" onClick={() => { rt.push(`/admin/roles/update/${rolesid}`) }}>Ubah</Button>

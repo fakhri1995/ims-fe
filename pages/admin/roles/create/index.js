@@ -140,28 +140,28 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
                     <Form layout="vertical" style={{ display: 'contents' }} form={instanceForm} onFinish={handleCreateRoles} initialValues={newroles}>
                         <div className=" col-span-1 md:col-span-3 flex flex-col">
                             <div className="pb-4 md:mb-0 ">
-                                <Form.Item name="name" style={{ marginRight: `1rem` }} label="Name"
+                                <Form.Item name="name" style={{ marginRight: `1rem` }} label="Nama Role"
                                     rules={[
                                         {
                                             required: true,
-                                            message: 'Nama role harus diisi',
+                                            message: 'Nama role wajib diisi',
                                         },
                                     ]}
                                 >
-                                    <Input placeholder="Group Name" name={`name`} onChange={onChangeCreateRoles}></Input>
+                                    <Input name={`name`} onChange={onChangeCreateRoles}></Input>
                                 </Form.Item>
                             </div>
 
                             <div className="pb-4 md:mb-0">
-                                <Form.Item name="description" style={{ marginRight: `1rem` }} label="Description"
+                                <Form.Item name="description" style={{ marginRight: `1rem` }} label="Deskripsi"
                                     rules={[
                                         {
                                             required: true,
-                                            message: 'Deskripsi role harus diisi',
+                                            message: 'Deskripsi role wajib diisi',
                                         },
                                     ]}
                                 >
-                                    <TextArea placeholder="Group Description" rows={2} name={`description`} onChange={onChangeCreateRoles} />
+                                    <TextArea rows={2} name={`description`} onChange={onChangeCreateRoles} />
                                 </Form.Item>
                             </div>
 

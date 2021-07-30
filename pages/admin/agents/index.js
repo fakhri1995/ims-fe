@@ -74,20 +74,20 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
     const { originPath } = rt.query
 
     const columnsDD = [
-        {
-            dataIndex: 'nomor',
-            align: `center`,
-            // sorter: (a, b) => a.user_id - b.user_id,
-            // sortDirections: ['descend', 'ascend'],
-            render: (text, record, index) => {
-                return {
-                    children:
-                        <div className="text-center">
-                            {record.nomor}
-                        </div>
-                }
-            }
-        },
+        // {
+        //     dataIndex: 'nomor',
+        //     align: `center`,
+        //     // sorter: (a, b) => a.user_id - b.user_id,
+        //     // sortDirections: ['descend', 'ascend'],
+        //     render: (text, record, index) => {
+        //         return {
+        //             children:
+        //                 <div className="text-center">
+        //                     {record.nomor}
+        //                 </div>
+        //         }
+        //     }
+        // },
         {
             dataIndex: 'profil_image',
             key: `profil_image`,
