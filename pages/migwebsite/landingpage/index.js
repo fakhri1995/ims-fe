@@ -31,7 +31,7 @@ function LandingPage({ }) {
                         <div className={'mx-auto my-auto flex'}>
                             <div className={'flex-col w-1/2 my-auto'}>
                                 <div className={'hidden md:block'}>
-                                    <p className={'text-3xl md:text-5xl md:leading-tight lg:leading-normal xl:leading-relaxed lg:text-6xl pb-6 gilroy-medium font-extrabold'} style={{ letterSpacing:'1.5px' }}>Your One Stop,
+                                    <p className={'text-3xl md:text-5xl md:leading-tight lg:leading-normal xl:leading-relaxed lg:text-6xl pb-6 gilroy-medium font-semibold'} style={{ letterSpacing:'1.5px' }}>Your One Stop,
                                         Cost Efficient IT Solutions
                                     </p>
                                     <button className={'text-black text-xl border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>Let's Collaborate</button>
@@ -77,7 +77,7 @@ function LandingPage({ }) {
                         >
                             
                             <img className={'mt-2 mx-auto animate-bounce'} style={{width: '60px'}} src='/image/landingpage/arrow-down.png'/>
-                            <p className={'pt-3 text-black text-xl'}>Discover now</p>
+                            <p className={'pt-3 text-black text-xl text-center'}>Discover now</p>
                         </Link>
                         <div className={'flex pb-3'}>
                             <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto w-52'}>
@@ -119,8 +119,8 @@ function LandingPage({ }) {
                                 <img style={{  }} className={'w-full'} src='/image/landingpage/image-section3.png' />
                             </div>
                             <div className={'flex-col mx-10 w-auto md:w-1/2 '} style={{margin:'auto'}}>
-                                <p className={'text-3xl md:text-4xl  pb-6 text-black gilroy-bold hidden md:block'} style={{ letterSpacing:'1.5px' }}> Bringing you the <span className={' border-green-600 border-b-2'}>advantages</span></p>
-                                <p className={'pb-8 text-xl md:text-xl text-justify font-normal text-black gilroy-medium'} style={{letterSpacing:'1.5px'}}>Improving efficiencies by supporting you with <span className={' border-green-600 border-b-2'}> staff augmentation</span>, <span className={' border-green-600 border-b-2'}>software</span> and <span className={' border-green-600 border-b-2'}>hardware managed services.</span></p>
+                                <p className={'text-3xl md:text-4xl  pb-6 text-black gilroy-bold hidden md:block'} style={{ letterSpacing:'1.5px' }}> Bringing you the <span className={'pb-2'} style={{borderBottom:'solid 4px green'}}>advantages</span></p>
+                                <p className={'pb-8 text-xl md:text-xl text-justify font-normal text-black gilroy-medium'} style={{letterSpacing:'1.5px'}}>Improving efficiencies by supporting you with <span className={''} style={{paddingBottom:'2.5px', borderBottom:'solid 3px green'}}> staff augmentation</span>, <span className={''} style={{paddingBottom:'2.5px', borderBottom:'solid 3px green'}}>software</span> and <span className={''} style={{paddingBottom:'2.5px', borderBottom:'solid 3px green'}}>hardware managed services.</span></p>
                                 <Linkk href="/advantages"><button className={'text-black border-2 text-xl border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
                                 See How It Work
                                 </button></Linkk>
@@ -148,15 +148,19 @@ function LandingPage({ }) {
                         </Slider>
                     </div>
                     <Slider 
+                    autoplay={false}
+                    autoplaySpeed={3000}
+                    pauseOnHover={false}
+                    // pauseOnFocus={true}
                     dots={false}
-                    fade={true}
-                    infinite= {true}
-                    speed= {500}
-                    slidesToShow= {1}
-                    slidesToScroll= {1}
+                    // fade={true}
+                    infinite={true}
+                    speed={500}
+                    slidesToShow={1}
+                    slidesToScroll={1}
                     ref={slider => (slider1 = slider)}
-                    arrows={true}
                     asNavFor={nav2}
+                    arrows={false}
                     adaptiveHeight={true}
                     >
                         <div>
@@ -186,7 +190,7 @@ function LandingPage({ }) {
                                         <img src="/image/landingpage/image-section2.png"></img>
                                     </div>
                                     <p className={'w-full md:w-full pb-4 gilroy-medium text-xl text-justify'} style={{letterSpacing:'1.5px'}}>We help you reduce complexity in talent sourcing and management</p>
-                                    <Linkk href="/hardware">
+                                    <Linkk href="/people">
                                         <button style={{width:'150px'}} className={'text-xl text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
                                             Get yours
                                         </button>
@@ -205,7 +209,7 @@ function LandingPage({ }) {
                                         <img src="/image/landingpage/image-section2.png"></img>
                                     </div>
                                     <p className={'w-full md:w-full pb-4 gilroy-medium text-xl text-justify'} style={{letterSpacing:'1.5px'}}>We support your companies to simplify and automate the process through digitalization</p>
-                                    <Linkk href="/hardware">
+                                    <Linkk href="/software">
                                         <button style={{width:'150px'}} className={'text-xl text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
                                             Get yours
                                         </button>

@@ -7,8 +7,11 @@ const Styles = (props) => (
   <div>
     <style jsx global>
     {`
+    .tesss :hover{
+      background-color: black !important;
+    }
     .slick-current .parent .child{
-      border-bottom: 2px solid #1ac929;
+      border-bottom: 2px solid green;
       color: green !important;
     }
     .menu-underlined :hover{
