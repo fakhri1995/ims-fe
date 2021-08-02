@@ -8,12 +8,12 @@ const Styles = (props) => (
     <style jsx global>
     {`
     .slick-current .parent .child{
-      border-bottom: 2px solid #93D9B5;
+      border-bottom: 2px solid #1ac929;
       color: green !important;
     }
     .menu-underlined :hover{
-      border-bottom: 2px solid #93D9B5;
-      color: #0ac20a !important;
+      border-bottom: 2px solid #1ac929;
+      color: green !important;
     }
     .flex-important{
       display: flex !important;
