@@ -93,7 +93,7 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
                     })
                     setTimeout(() => {
                         setloadingcreate(false)
-                        rt.push(`/admin/roles`)
+                        rt.push(`/admin/roles/detail/${res2.id}`)
                     }, 300)
                 }
                 else if (!res2.success) {

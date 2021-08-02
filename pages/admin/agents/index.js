@@ -4,70 +4,35 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import st from '../../../components/layout-dashboard.module.css'
-import { Table, notification, Button } from 'antd'
+import { SearchOutlined } from '@ant-design/icons'
+import { Table, notification, Button, Input, Select, TreeSelect } from 'antd'
 
 function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
     const [dataraw, setdataraw] = useState([])
+    // const [dataraw2, setdataraw2] = useState([])
+    const [datalokasi, setdatalokasi] = useState([])
     const [datarawloading, setdatarawloading] = useState(false)
     const [dataKK, setDataSource] = useState([]);
     const [rowstate, setrowstate] = useState(0)
-    const FilterAll = () => {
-        setDataSource(dataraw)
-    }
-    const FilterByWord = (word) => {
-        const currValue = word;
-        const filteredData = dataraw.filter(entry => {
-            if (entry.fullname.toLowerCase()[0] === word) {
-                return entry.fullname.toLowerCase().includes(currValue)
-            }
-        }
-        );
-        setDataSource(filteredData);
-    };
-    useEffect(() => {
-        setdatarawloading(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList`, {
-            method: `POST`,
-            headers: {
-                'Authorization': JSON.parse(initProps),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                page: 1,
-                rows: 50,
-                order_by: "asc"
-            })
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setdatarawloading(false)
-                var dataDD = []
-                if (!res2) {
-                    dataDD = []
-                    notification['error']({
-                        message: res2.message.errorInfo.status_detail,
-                        duration: 3
-                    })
-                    rt.push('/dashboard/admin')
-                }
-                else {
-                    dataDD = res2.data.map((doc, idx) => {
-                        return ({
-                            nomor: idx + 1,
-                            user_id: doc.user_id,
-                            profile_image: doc.profile_image === "" ? `/default-users.jpeg` : doc.profile_image,
-                            fullname: doc.fullname,
-                            email: doc.email,
-                            phone_number: doc.phone_number,
-                            company_name: doc.company_name,
-                            status: doc.attribute.is_enabled
-                        })
-                    })
-                }
-                setdataraw(dataDD)
-                setDataSource(dataDD)
-            })
-    }, [])
+    const [namasearchact, setnamasearchact] = useState(false)
+    const [asallokasifilteract, setasallokasifilteract] = useState(false)
+    const [statusfilteract, setstatusfilteract] = useState(false)
+    const [namavalue, setnamavalue] = useState("")
+    const [asallokasivalue, setasallokasivalue] = useState("")
+    const [statusvalue, setstatusvalue] = useState("")
+    // const FilterAll = () => {
+    //     setDataSource(dataraw)
+    // }
+    // const FilterByWord = (word) => {
+    //     const currValue = word;
+    //     const filteredData = dataraw.filter(entry => {
+    //         if (entry.fullname.toLowerCase()[0] === word) {
+    //             return entry.fullname.toLowerCase().includes(currValue)
+    //         }
+    //     }
+    //     );
+    //     setDataSource(filteredData);
+    // };
     const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
@@ -189,12 +154,12 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                 return {
                     children:
                         <>
-                        {
-                            record.status ?
-                            <div className="rounded-md w-auto h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">Aktif</div>
-                            :
-                            <div className="rounded-md w-auto h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">{"Non-aktif"}</div>
-                        }
+                            {
+                                record.status ?
+                                    <div className="rounded-md w-auto h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">Aktif</div>
+                                    :
+                                    <div className="rounded-md w-auto h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">{"Non-aktif"}</div>
+                            }
                         </>
                 }
             }
@@ -222,6 +187,117 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         //     }
         // }
     ];
+
+    //filtering
+    const onChangeSearch = (e) => {
+        if (e.target.value === "") {
+            setDataSource(dataraw)
+            setnamasearchact(false)
+        }
+        else {
+            setnamasearchact(true)
+            setnamavalue(e.target.value)
+        }
+    }
+    const onChangeAsalLokasi = (value) => {
+        if (typeof (value) === 'undefined') {
+            setDataSource(dataraw)
+            setasallokasifilteract(false)
+        }
+        else {
+            setasallokasifilteract(true)
+            setasallokasivalue(value)
+        }
+    }
+    const onChangeStatus = (value) => {
+        if (typeof (value) === 'undefined') {
+            setDataSource(dataraw)
+            setstatusfilteract(false)
+        }
+        else {
+            setstatusfilteract(true)
+            setstatusvalue(value)
+        }
+    }
+    const onFinalClick = () => {
+        var datatemp = dataraw
+        if (asallokasifilteract) {
+            datatemp = datatemp.filter(flt => {
+                return flt.company_id === asallokasivalue
+            })
+        }
+        if (namasearchact) {
+            datatemp = datatemp.filter(flt => {
+                return flt.fullname.toLowerCase().includes(namavalue.toLowerCase())
+            })
+        }
+        if (statusfilteract) {
+            datatemp = datatemp.filter(flt => {
+                return flt.status === statusvalue
+            })
+        }
+        setDataSource(datatemp)
+    }
+
+    //useEffect
+    useEffect(() => {
+        setdatarawloading(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList`, {
+            method: `POST`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                page: 1,
+                rows: 50,
+                order_by: "asc"
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatarawloading(false)
+                var dataDD = []
+                if (!res2) {
+                    dataDD = []
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                    rt.push('/dashboard/admin')
+                }
+                else {
+                    dataDD = res2.data.map((doc, idx) => {
+                        return ({
+                            nomor: idx + 1,
+                            user_id: doc.user_id,
+                            profile_image: doc.profile_image === "" ? `/default-users.jpeg` : doc.profile_image,
+                            fullname: doc.fullname,
+                            email: doc.email,
+                            phone_number: doc.phone_number,
+                            company_name: doc.company_name,
+                            status: doc.attribute.is_enabled,
+                            company_id: doc.company_id
+                        })
+                    })
+                }
+                setdataraw(dataDD)
+                // setdataraw2(dataDD)
+                setDataSource(dataDD)
+            })
+    }, [])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
+            method: `POST`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatalokasi(res2.data)
+            })
+    }, [])
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
@@ -246,7 +322,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                     [108].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                     <div className="h-auto w-full grid grid-cols-1 md:grid-cols-5 mb-5 bg-white rounded-md">
                         <div className="md:col-span-5 col-span-1 flex flex-col py-3">
-                            <div className="flex flex-wrap mb-2">
+                            {/* <div className="flex flex-wrap mb-2">
                                 <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={FilterAll}>
                                     All
                             </button>
@@ -328,6 +404,33 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                                 <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("z")}>
                                     Z
                             </button>
+                            </div> */}
+                            <div className="flex mb-8">
+                                <div className=" w-10/12 mr-1 grid grid-cols-6">
+                                    <div className="col-span-3 mr-1">
+                                        <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari nama agent" onChange={onChangeSearch} allowClear></Input>
+                                    </div>
+                                    <div className="col-span-2 mr-1">
+                                        <TreeSelect allowClear
+                                            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                            treeData={datalokasi}
+                                            placeholder="Cari asal lokasi agent"
+                                            treeDefaultExpandAll
+                                            style={{ width: `100%`, marginRight: `0.5rem` }}
+                                            onChange={onChangeAsalLokasi}
+                                        />
+                                    </div>
+                                    <div className="col-span-1 mr-1">
+                                        <Select placeholder="Pilih status agent" style={{ width: `100%`, marginRight: `0.5rem` }} onChange={onChangeStatus} allowClear>
+                                            <Select.Option value={true}>Aktif</Select.Option>
+                                            <Select.Option value={false}>Non Aktif</Select.Option>
+                                        </Select>
+                                    </div>
+                                </div>
+                                <div className="w-2/12">
+                                    <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
+                                    {/* <Button style={{ width: `40%` }} onClick={() => { setDataSource(dataraw) }}>Reset</Button> */}
+                                </div>
                             </div>
                             <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} loading={datarawloading}
                                 onRow={(record, rowIndex) => {
