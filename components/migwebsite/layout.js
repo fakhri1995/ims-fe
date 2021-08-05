@@ -69,7 +69,7 @@ function layout({ children }) {
                 <Header className={'header'} style={{ background:'white', position: 'fixed', zIndex: 20, width: '100%' }}>
                     <Link href="/">
                         <div className="logo top-3 md:top-2 absolute w-24 md:w-40" >
-                            <img width={'auto'} height={'auto'} src='/mig.png'/>
+                            <img width={'auto'} height={'auto'} src='https://static.wixstatic.com/media/e817ec_be43f247d0d4454f9d29e2d22f8d4ff7~mv2.png/v1/fill/w_194,h_75,al_c,q_85,usm_0.66_1.00_0.01/mig.webp'/>
                         </div>
                     </Link>
                     <label htmlFor={`menutoggle`} className="md:hidden block float-right cursor-pointer mt-7">
