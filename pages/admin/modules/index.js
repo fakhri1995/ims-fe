@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
-import { Button, Form, Input, Modal, Drawer, Checkbox, Select, Empty, notification } from 'antd'
+import { Button, Form, Input, Modal, Drawer, Checkbox, Collapse, notification } from 'antd'
+import { ArrowRightOutlined, ArrowLeftOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard.module.css'
 import Sticky from 'wil-react-sticky'
@@ -11,16 +11,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
     //Initialization
     const rt = useRouter()
     const pathArr = rt.pathname.split("/").slice(1)
-    const { Option } = Select
-    // const loop = []
-    // for (var i = 0; i < dataListModules.data.length; i++) {
-    //     if (i === 0) {
-    //         loop.push("block")
-    //     }
-    //     else {
-    //         loop.push("hidden")
-    //     }
-    // }
+    const { Panel } = Collapse
 
     //useState
     //1. Basic
@@ -28,6 +19,20 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
     const [loop, setloop] = useState([])
     const [tabnameArrVal, settabnameArrVal] = useState(loop)
     const [datamodules, setdatamodules] = useState([
+        {
+            name: "",
+            description: "",
+            feature: []
+        }
+    ])
+    const [datamodules2, setdatamodules2] = useState([
+        {
+            name: "",
+            description: "",
+            feature: []
+        }
+    ])
+    const [datamodules3, setdatamodules3] = useState([
         {
             name: "",
             description: "",
@@ -76,6 +81,44 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
             }
         ]
     )
+    const [listfeat2, setlistfeat2] = useState(
+        [
+            {
+                id: 10,
+                feature_id: 107,
+                feature_key: "b699dca3-9908-41f9-9583-e34f07f7e5c7",
+                name: "AGENT_GET",
+                description: "Fitur untuk mengambil detail data agent",
+                deleted_at: null
+            }
+        ]
+    )
+    const [listfeat3, setlistfeat3] = useState(
+        [
+            {
+                id: 10,
+                feature_id: 107,
+                feature_key: "b699dca3-9908-41f9-9583-e34f07f7e5c7",
+                name: "AGENT_GET",
+                description: "Fitur untuk mengambil detail data agent",
+                deleted_at: null
+            }
+        ]
+    )
+    const [checkedidfeatures, setcheckedidfeatures] = useState(0)
+    const [checkedfeatures, setcheckedfeatures] = useState([])
+
+    //6. Module list
+    const [checkedmodules, setcheckedmodules] = useState(0)
+    const [checkedfeaturemodules, setcheckedfeaturemodules] = useState([])
+    const [checkeddatamodules, setcheckeddatamodules] = useState([])
+    const [idmodulemap, setidmodulemap] = useState([])
+    const [checkAll, setCheckAll] = useState(false);
+
+    //7.arrow
+    const [displayarrow, setdisplayarrow] = useState(false)
+    const [rightstatus, setrightstatus] = useState(true)
+    const [leftstatus, setleftstatus] = useState(false)
 
     //event
     const onChangeTab = (e, idxjenis, namakateg, deskripsi, id, feature) => {
@@ -175,6 +218,37 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                 ...dataeditmodule,
                 feature_ids: temp
             })
+        }
+    }
+    const onChangeUpdateCheckbox2 = (e, id, idx) => {
+        if (e.target.checked) {
+            // var temp = checkedfeaturemodules
+            // temp[idx] = true
+            // setcheckedfeaturemodules(temp)
+            setcheckeddatamodules([...checkeddatamodules, id])
+        }
+        else {
+            // var temp2 = checkedfeaturemodules
+            // temp2[idx] = false
+            // setcheckedfeaturemodules(temp2)
+            var temp3 = checkeddatamodules
+            var idx = temp3.indexOf(id)
+            temp3.splice(idx, 1)
+            setcheckeddatamodules(temp3)
+        }
+    }
+    const onCheckedAll = (e) => {
+        if (e.target.checked) {
+            setCheckAll(true)
+            const status = idmodulemap.map((doc) => true)
+            setcheckedfeaturemodules(status)
+            setcheckeddatamodules(idmodulemap)
+        }
+        else {
+            setCheckAll(false)
+            const status = idmodulemap.map((doc) => false)
+            setcheckedfeaturemodules(status)
+            setcheckeddatamodules([])
         }
     }
 
@@ -302,6 +376,8 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
             .then(res => res.json())
             .then(res2 => {
                 setdatamodules(res2.data)
+                setdatamodules2(res2.data)
+                setdatamodules3(res2.data)
                 setcurrentselectkateg(res2.data[0].name)
                 setcurrentdesckateg(res2.data[0].description)
                 setdatafeature(res2.data[0].feature)
@@ -324,6 +400,8 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
             .then(res => res.json())
             .then(res2 => {
                 setlistfeat(res2)
+                setlistfeat2(res2)
+                setlistfeat3(res2)
             })
     }, [])
 
@@ -333,104 +411,268 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                 <Sticky containerSelectorFocus="#containerListModules">
                     <div className="w-full border-b border-opacity-30 border-gray-400 flex items-center justify-between p-4 mb-5 bg-white">
                         <h1 className="font-bold">Modules</h1>
-                        {
+                        {/* {
                             [180].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                             <Button disabled={loadinglistfeat} type="primary" size="large" onClick={() => { setdrawablecreate(true) }}>Tambah</Button>
-                        }
+                        } */}
                     </div>
                 </Sticky>
                 {
                     praloading ?
                         null
                         :
-                        <div className="w-full grid grid-cols-5 bg-white">
-                            <div className="col-span-5">
-                                <div className="w-full grid grid-cols-9">
-                                    <div className="col-span-2 hidden md:flex flex-col border-r pr-2">
-                                        <div>
-                                            {
-                                                datamodules.map((doc, idx) => {
-                                                    return (
-                                                        <>
-                                                            {
-                                                                tabnameArrVal[idx] === "block" ?
-                                                                    <div className={`p-2 cursor-pointer flex items-center bg-primary text-white rounded-sm`}>
-                                                                        {doc.name}
-                                                                    </div>
-                                                                    :
-                                                                    <div className={`p-2 cursor-pointer hover:text-gray-900 flex items-center text-sm font-semibold`} onClick={(e) => { onChangeTab(e, (idx), doc.name, doc.description, doc.id, doc.feature) }}>
-                                                                        {doc.name}
-                                                                    </div>
-                                                            }
-                                                        </>
-                                                    )
-                                                })
-                                            }
-                                        </div>
-                                    </div>
-                                    <div className=" col-span-9 md:col-span-7">
-                                        <div className="w-full flex md:hidden mb-5">
-                                            <Select defaultValue={currentselectkateg} onChange={(value) => { onChangeTabSmall(value) }} style={{ width: `100%` }}>
-                                                {
-                                                    datamodules.map((doc, idx) => {
-                                                        if (doc.feature === null || doc.feature === "null" || typeof (doc.feature) === undefined || typeof (doc.feature) === 'undefined') {
-                                                            doc.feature = []
+                        <div className="grid grid-cols-1 md:grid-cols-7" id="containerModules">
+                            <div className=" col-span-1 md:col-span-3 flex flex-col p-3">
+                                <div className="flex justify-between mb-2 md:mb-5">
+                                    <h1 className="font-bold text-xl">Module</h1>
+                                    <Button type="primary">Tambah</Button>
+                                </div>
+                                <div className="mb-2 md:mb-5">
+                                    <Input style={{ width: `100%` }} placeholder="Cari module" onChange={(e)=>{
+                                        if(e.target.value === ""){
+                                            setdatamodules(datamodules3)
+                                        }
+                                        else{
+                                            const filtered = datamodules2.filter(flt => {
+                                                return flt.name.toLowerCase().includes(e.target.value.toLowerCase())
+                                            })
+                                            setdatamodules(filtered)
+                                        }
+                                    }} />
+                                </div>
+                                <div className=" mb-2 md:mb-5">
+                                    <Collapse accordion onChange={(value) => {
+                                        if(typeof(value) === 'undefined'){
+                                            setdisplayarrow(false)
+                                        }
+                                        else{
+                                        setdisplayarrow(true) 
+                                        setcheckeddatamodules([])
+                                        setcheckedmodules(value) 
+                                        setidmodulemap(datamodules[value].feature.map((doc, idx) => doc.id))
+                                        // const statustemp = datamodules[value].feature.map((doc) => false)
+                                        // setcheckedfeaturemodules(statustemp)
+                                        }
+                                    }}>
+                                        {
+                                            datamodules.map((doc, idx) => {
+                                                return (
+                                                    <Panel key={idx} header={<strong>{doc.name}</strong>}
+                                                        extra={
+                                                            <div className="flex">
+                                                                <EditOutlined style={{ marginRight: `1rem` }} />
+                                                                <DeleteOutlined style={{ color: `red` }} />
+                                                            </div>
                                                         }
+                                                        key={idx}>
+                                                        <div className="flex flex-col">
+                                                            <div className="flex justify-between border-b pb-3 mb-3">
+                                                                <div>
+                                                                    <Checkbox checked={checkAll} onChange={(e) => { onCheckedAll(e) }} /> {checkeddatamodules.length}/{doc.feature.length} {checkedfeaturemodules.length > 1 ? "items" : "item"}
+                                                                </div>
+                                                                <div>
+                                                                    <strong>Feature yang terdaftar pada - Module {doc.name}</strong>
+                                                                </div>
+                                                            </div>
+                                                            <div className="mb-5">
+                                                                <Input placeholder="Cari feature terdaftar"></Input>
+                                                            </div>
+                                                            <div className="overflow-y-auto flex flex-col h-80 mb-5 border-b pb-3">
+                                                                {
+                                                                    doc.feature.map((doc2, idx2) => {
+                                                                        return (
+                                                                            <div className="flex items-center my-1">
+                                                                                <Checkbox /*checked={checkedfeaturemodules[idx2]}*/ onChange={(e) => { onChangeUpdateCheckbox2(e, doc2.id, idx) }} style={{ marginRight: `1rem` }} /> {doc2.name}
+                                                                            </div>
+                                                                        )
+                                                                    })
+                                                                }
+                                                            </div>
+                                                            <div>
+                                                                <h1 className="font-semibold text-lg">Deskripsi</h1>
+                                                                <p className="text-xs mb-0">
+                                                                    {doc.description}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </Panel>
+                                                )
+                                            })
+                                        }
+                                    </Collapse>
+                                </div>
+                            </div>
+                            <Sticky containerSelectorFocus="#containerModules" offsetTop={200}>
+                                <div className=" col-span-1 md:col-span-1 flex flex-col justify-center items-center">
+                                    {
+                                        displayarrow ?
+                                            <>
+                                                <Button type="primary" disabled={rightstatus} style={{ marginBottom: `0.5rem` }}><ArrowRightOutlined /></Button>
+                                                <Button type="primary" onClick={()=>{console.log(checkeddatamodules)}} disabled={leftstatus} style={{ marginBottom: `0.5rem` }}><ArrowLeftOutlined /></Button>
+                                            </>
+                                            :
+                                            null
+                                    }
+                                </div>
+                            </Sticky>
+                            <div className=" col-span-1 md:col-span-3 flex flex-col p-3">
+                                <div className="flex justify-between mb-2 md:mb-5">
+                                    <h1 className="font-bold text-xl">Feature</h1>
+                                    <Button type="primary">Tambah</Button>
+                                </div>
+                                <div className="mb-2 md:mb-5">
+                                    <Input style={{ width: `100%` }} placeholder="Cari feature" onChange={(e)=>{
+                                        if(e.target.value === ""){
+                                            setlistfeat(listfeat3)
+                                        }
+                                        else{
+                                            const filtered = listfeat2.filter(flt => {
+                                                return flt.name.toLowerCase().includes(e.target.value.toLowerCase())
+                                            })
+                                            setlistfeat(filtered)
+                                        }
+                                    }} />
+                                </div>
+                                <div className=" mb-2 md:mb-5">
+                                    {
+                                        displayarrow ?
+                                            <div className="flex flex-col border p-2">
+                                                <div className="flex justify-between border-b pb-3 mb-3">
+                                                    <div>
+                                                        <Checkbox /> {checkedfeatures.length}/{listfeat.length - idmodulemap.length} {checkedfeatures.length > 1 ? "items" : "item"}
+                                                    </div>
+                                                    <div>
+                                                        <strong>Feature yang tidak terdaftar pada - Module {datamodules[checkedmodules].name}</strong>
+                                                    </div>
+                                                </div>
+                                                <div className="mb-5">
+                                                    <Input placeholder="Cari feature terdaftar"></Input>
+                                                </div>
+                                                <div className="overflow-y-auto flex flex-col h-80 mb-5 border-b pb-5">
+                                                    {
+                                                        listfeat.map((doc3, idx3) => {
+                                                            if (!idmodulemap.includes(doc3.feature_id)) {
+                                                                return (
+                                                                    <div key={idx3} className="flex items-center my-1">
+                                                                        <Checkbox style={{ marginRight: `1rem` }} /> {doc3.name}
+                                                                    </div>
+                                                                )
+                                                            }
+                                                        })
+                                                    }
+                                                </div>
+                                            </div>
+                                            :
+                                            <Collapse accordion>
+                                                {
+                                                    listfeat.map((doc, idx) => {
                                                         return (
-                                                            <Option value={doc.name}>{doc.name}</Option>
+                                                            <Panel key={idx} header={doc.name}
+                                                                extra={
+                                                                    <div className="flex">
+                                                                        <EditOutlined style={{ marginRight: `1rem` }} />
+                                                                        <DeleteOutlined style={{ color: `red` }} />
+                                                                    </div>
+                                                                }
+                                                                key={idx + 1}>
+                                                                <p>{doc.description}</p>
+                                                            </Panel>
                                                         )
                                                     })
                                                 }
-                                            </Select>
-                                        </div>
-                                        <div className={` p-0 md:py-5 md:px-7 flex flex-col`}>
-                                            <div className="flex justify-between items-center mb-1 md:mb-5">
-                                                <div className="flex flex-col justify-center">
-                                                    <div className="flex items-center mb-1">
-                                                        <div className="flex flex-col justify-center mr-8">
-                                                            <p className="font-semibold mb-1">{currentselectkateg}</p>
-                                                            <p className="text-xs text-gray-500">{currentdesctkateg}</p>
-                                                        </div>
-                                                        <div className="flex items-center">
-                                                            {
-                                                                [181].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                                                <Button disabled={loadinglistfeat} onClick={() => { setdrawableedit(true) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
-                                                                    <EditOutlined />
-                                                                </Button>
-                                                            }
-                                                            {
-                                                                [182].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                                                <Button onClick={() => { setmodaldelete(true) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
-                                                                    <DeleteOutlined />
-                                                                </Button>
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                {
-                                                    datafeature.length !== 0 ?
-                                                        <>
-                                                            {
-                                                                datafeature.map((doc, idx) => {
-                                                                    return (
-                                                                        <div key={idx} className="border-b mb-3 p-3">
-                                                                            <p className="mb-0 text-sm">{doc.name} : {doc.id}</p>
-                                                                        </div>
-                                                                    )
-                                                                })
-                                                            }
-                                                        </>
-                                                        :
-                                                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
+                                            </Collapse>
+                                    }
                                 </div>
                             </div>
                         </div>
+                    // <div className="w-full grid grid-cols-5 bg-white">
+                    //     <div className="col-span-5">
+                    //         <div className="w-full grid grid-cols-9">
+                    //             <div className="col-span-2 hidden md:flex flex-col border-r pr-2">
+                    //                 <div>
+                    //                     {
+                    //                         datamodules.map((doc, idx) => {
+                    //                             return (
+                    //                                 <>
+                    //                                     {
+                    //                                         tabnameArrVal[idx] === "block" ?
+                    //                                             <div className={`p-2 cursor-pointer flex items-center bg-primary text-white rounded-sm`}>
+                    //                                                 {doc.name}
+                    //                                             </div>
+                    //                                             :
+                    //                                             <div className={`p-2 cursor-pointer hover:text-gray-900 flex items-center text-sm font-semibold`} onClick={(e) => { onChangeTab(e, (idx), doc.name, doc.description, doc.id, doc.feature) }}>
+                    //                                                 {doc.name}
+                    //                                             </div>
+                    //                                     }
+                    //                                 </>
+                    //                             )
+                    //                         })
+                    //                     }
+                    //                 </div>
+                    //             </div>
+                    //             <div className=" col-span-9 md:col-span-7">
+                    //                 <div className="w-full flex md:hidden mb-5">
+                    //                     <Select defaultValue={currentselectkateg} onChange={(value) => { onChangeTabSmall(value) }} style={{ width: `100%` }}>
+                    //                         {
+                    //                             datamodules.map((doc, idx) => {
+                    //                                 if (doc.feature === null || doc.feature === "null" || typeof (doc.feature) === undefined || typeof (doc.feature) === 'undefined') {
+                    //                                     doc.feature = []
+                    //                                 }
+                    //                                 return (
+                    //                                     <Option value={doc.name}>{doc.name}</Option>
+                    //                                 )
+                    //                             })
+                    //                         }
+                    //                     </Select>
+                    //                 </div>
+                    //                 <div className={` p-0 md:py-5 md:px-7 flex flex-col`}>
+                    //                     <div className="flex justify-between items-center mb-1 md:mb-5">
+                    //                         <div className="flex flex-col justify-center">
+                    //                             <div className="flex items-center mb-1">
+                    //                                 <div className="flex flex-col justify-center mr-8">
+                    //                                     <p className="font-semibold mb-1">{currentselectkateg}</p>
+                    //                                     <p className="text-xs text-gray-500">{currentdesctkateg}</p>
+                    //                                 </div>
+                    //                                 <div className="flex items-center">
+                    //                                     {
+                    //                                         [181].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                    //                                         <Button disabled={loadinglistfeat} onClick={() => { setdrawableedit(true) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
+                    //                                             <EditOutlined />
+                    //                                         </Button>
+                    //                                     }
+                    //                                     {
+                    //                                         [182].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                    //                                         <Button onClick={() => { setmodaldelete(true) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
+                    //                                             <DeleteOutlined />
+                    //                                         </Button>
+                    //                                     }
+                    //                                 </div>
+                    //                             </div>
+                    //                         </div>
+                    //                     </div>
+                    //                     <div>
+                    //                         {
+                    //                             datafeature.length !== 0 ?
+                    //                                 <>
+                    //                                     {
+                    //                                         datafeature.map((doc, idx) => {
+                    //                                             return (
+                    //                                                 <div key={idx} className="border-b mb-3 p-3">
+                    //                                                     <p className="mb-0 text-sm">{doc.name} : {doc.id}</p>
+                    //                                                 </div>
+                    //                                             )
+                    //                                         })
+                    //                                     }
+                    //                                 </>
+                    //                                 :
+                    //                                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
+                    //                         }
+                    //                     </div>
+                    //                 </div>
+                    //             </div>
+                    //         </div>
+                    //     </div>
+                    // </div>
                 }
             </div>
             <Drawer title={`Tambah Module`} maskClosable={false} visible={drawablecreate} onClose={() => { setdrawablecreate(false); }} width={380} destroyOnClose={true}>
@@ -529,17 +771,24 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
 
 export async function getServerSideProps({ req, res }) {
     var initProps = {};
-    if (req && req.headers) {
-        const cookies = req.headers.cookie;
-        if (!cookies) {
-            res.writeHead(302, { Location: '/login' })
-            res.end()
-        }
-        if (typeof cookies === 'string') {
-            const cookiesJSON = httpcookie.parse(cookies);
-            initProps = cookiesJSON.token
+    if (!req.headers.cookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
         }
     }
+    const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+    if (!cookiesJSON1.token) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
+        }
+    }
+    initProps = cookiesJSON1.token
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,
         headers: {
