@@ -110,7 +110,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             null
                         }
                         {dataProfile.data.registered_feature.includes(179) ?
-                            <Link href={'/admin/modules'}>
+                            <Link href={'/admin/modules?module=&featuredisplay='}>
                                 <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                     <div className="flex">
                                         <IconModules />

@@ -97,7 +97,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             {
                                 [179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                 <Menu.Item key="412" icon={<IconModules width={25} height={25} />}>
-                                    <Link href="/admin/modules">
+                                    <Link href="/admin/modules?idmodule=&idfeature=">
                                         Modules
                                     </Link>
                                 </Menu.Item>
@@ -264,7 +264,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             {
                                 [179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                 <Menu.Item key="412" icon={<IconModules width={20} height={20} />}>
-                                    <Link href="/admin/modules">
+                                    <Link href="/admin/modules?module=&featuredisplay=">
                                         Modules
                                     </Link>
                                 </Menu.Item>
