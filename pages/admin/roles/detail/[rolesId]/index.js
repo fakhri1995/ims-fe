@@ -254,8 +254,18 @@ const FiturSide = ({ initProps, rolesid }) => {
     }, [])
     return (
         <div className="flex flex-col space-y-4">
-            <Input style={{ width: `50%` }} onChange={(e) => { onChangeSearch(e) }} placeholder="Cari Nama Fitur" />
+            <Input style={{ width: `50%` }} className="yowes" onChange={(e) => { onChangeSearch(e) }} placeholder="Cari Nama Fitur" />
             <Table loading={loadingdata} dataSource={rolefitur} columns={col} scroll={{ x: 400 }} pagination={{ pageSize: 5 }} size="medium" />
+            <style jsx global>
+                {
+                    `
+                    .ant-pagination-options{
+                        visibility: hidden;
+                        display: none;
+                    }
+                    `
+                }
+            </style>
         </div>
     )
 }

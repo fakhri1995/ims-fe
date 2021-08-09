@@ -131,6 +131,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
     const [praloadingmodulefeat, setpraloadingmodulefeat] = useState(module !== "" || typeof (module) !== 'undefined' ? false : true)
     const [modulecounter, setmodulecounter] = useState(0)
     const [searchmodulefeature, setsearchmodulefeature] = useState("")
+    const [scrolltrigger, setscrolltrigger] = useState(false)
 
     //7.arrow
     const [displayarrow, setdisplayarrow] = useState(featuredisplay === "" || typeof (featuredisplay) === 'undefined' ? false : true)
@@ -526,11 +527,11 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
     return (
         <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} st={st} pathArr={pathArr}>
             <div id="containerListModules" className="w-full border-t border-opacity-30 border-gray-500">
-                <Sticky containerSelectorFocus="#containerListModules">
-                    <div className="w-full border-b border-opacity-30 border-gray-400 flex items-center justify-between p-4 mb-5 bg-white">
-                        <h1 className="font-bold">Modules</h1>
-                    </div>
-                </Sticky>
+                {/* <Sticky containerSelectorFocus="#containerListModules"> */}
+                <div className="w-full border-b border-opacity-30 border-gray-400 flex items-center justify-between p-4 mb-5 bg-white">
+                    <h1 className="font-bold">Modules</h1>
+                </div>
+                {/* </Sticky> */}
                 <div className="grid grid-cols-1 md:grid-cols-7" id="containerModules">
                     <div className=" col-span-1 md:col-span-3 flex flex-col p-3">
                         <div className="flex justify-between mb-2 md:mb-5">
@@ -563,6 +564,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                             setmodulecounter(0)
                                             setfeaturecounter(0)
                                             setcheckeddatamodules([])
+                                            setcheckeddatafeatures([])
                                             setpraloadingmodulefeat(true)
                                             setsearchmodulefeature("")
                                         }
@@ -570,7 +572,10 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                             setpraloadingmodulefeat(false)
                                             setdisplayarrow(true)
                                             setcheckeddatamodules([])
+                                            setcheckeddatafeatures([])
                                             setcheckedmodules(value)
+                                            setmodulecounter(0)
+                                            setfeaturecounter(0)
                                             setdatadeletemodule({ ...datadeletemodule, id: datamodules[value].id })
                                             datamodules[value].feature ? setidmodulemap(datamodules[value].feature.map((doc, idx) => doc.id)) : setidmodulemap([])
                                         }
@@ -578,7 +583,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                         {
                                             datamodules.map((doc, idx) => {
                                                 return (
-                                                    <Panel key={idx} header={<strong>{doc.name}</strong>}
+                                                    <Panel className={`panel${idx}`} key={idx} header={<strong>{doc.name}</strong>}
                                                         extra={
                                                             <div className="flex">
                                                                 <EditOutlined style={{ marginRight: `1rem` }} onClick={() => { rt.push(`/admin/modules/update/module/${doc.id}?module=${idx}`) }} />
@@ -609,10 +614,11 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                                                             {
                                                                                 doc.feature ?
                                                                                     doc.feature.map((doc2, idx2) => {
+                                                                                        const st = checkeddatamodules.includes(doc2.id)
                                                                                         if (doc2.name.toLowerCase().includes(searchmodulefeature.toLowerCase())) {
                                                                                             return (
                                                                                                 <div className="flex items-center my-2">
-                                                                                                    <Checkbox onChange={(e) => { onChangeUpdateCheckbox2(e, doc2.id, idx) }} style={{ marginRight: `1rem` }} /> {doc2.name}
+                                                                                                    <Checkbox checked={st} onChange={(e) => { onChangeUpdateCheckbox2(e, doc2.id, idx) }} style={{ marginRight: `1rem` }} /> {doc2.name}
                                                                                                 </div>
                                                                                             )
                                                                                         }
@@ -677,37 +683,43 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                     {
                                         displayarrow ?
                                             <Sticky containerSelectorFocus="#containerModules" offsetTop={100}>
-                                                <div className="flex flex-col border p-2">
-                                                    <div className="flex justify-between border-b pb-3 mb-3">
-                                                        <div>
-                                                            {/* <Checkbox />  */}
-                                                            {featurecounter}/{listfeat.length - idmodulemap.length} {checkeddatafeatures.length > 1 ? "items" : "item"}
-                                                        </div>
-                                                        <div>
-                                                            <strong>Feature yang tidak terdaftar pada - Module {datamodules[checkedmodules].name}</strong>
-                                                        </div>
-                                                    </div>
-                                                    <div className="mb-5">
-                                                        <Input placeholder="Cari feature terdaftar" onChange={(e) => {
-                                                            setsearchfeature(e.target.value.toLowerCase())
-                                                        }}></Input>
-                                                    </div>
-                                                    <div className="overflow-y-auto flex flex-col h-80 mb-5 border-b pb-5">
-                                                        {
-                                                            listfeat.map((doc3, idx3) => {
-                                                                if (!idmodulemap.includes(doc3.feature_id)) {
-                                                                    if (doc3.name.toLowerCase().includes(searchfeature.toLowerCase())) {
-                                                                        return (
-                                                                            <div key={idx3} className="flex items-center my-1">
-                                                                                <Checkbox style={{ marginRight: `1rem` }} onChange={(e) => { onChangeUpdateCheckbox3(e, doc3.feature_id, idx3) }} style={{ marginRight: `1rem` }} /> {doc3.name}
-                                                                            </div>
-                                                                        )
-                                                                    }
+                                                {
+                                                    datamodules.length > 0 ?
+                                                        <div className="flex flex-col border p-2">
+                                                            <div className="flex justify-between border-b pb-3 mb-3">
+                                                                <div>
+                                                                    {/* <Checkbox />  */}
+                                                                    {featurecounter}/{listfeat.length - idmodulemap.length} {checkeddatafeatures.length > 1 ? "items" : "item"}
+                                                                </div>
+                                                                <div>
+                                                                    <strong>Feature yang tidak terdaftar pada - Module {datamodules[checkedmodules] ? datamodules[checkedmodules].name : ""}</strong>
+                                                                </div>
+                                                            </div>
+                                                            <div className="mb-5">
+                                                                <Input placeholder="Cari feature terdaftar" onChange={(e) => {
+                                                                    setsearchfeature(e.target.value.toLowerCase())
+                                                                }}></Input>
+                                                            </div>
+                                                            <div className="overflow-y-auto flex flex-col h-80 mb-5 border-b pb-5">
+                                                                {
+                                                                    listfeat.map((doc3, idx3) => {
+                                                                        const st = checkeddatafeatures.includes(doc3.feature_id)
+                                                                        if (!idmodulemap.includes(doc3.feature_id)) {
+                                                                            if (doc3.name.toLowerCase().includes(searchfeature.toLowerCase())) {
+                                                                                return (
+                                                                                    <div key={idx3} className="flex items-center my-1">
+                                                                                        <Checkbox checked={st} style={{ marginRight: `1rem` }} onChange={(e) => { onChangeUpdateCheckbox3(e, doc3.feature_id, idx3) }} style={{ marginRight: `1rem` }} /> {doc3.name}
+                                                                                    </div>
+                                                                                )
+                                                                            }
+                                                                        }
+                                                                    })
                                                                 }
-                                                            })
-                                                        }
-                                                    </div>
-                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        :
+                                                        null
+                                                }
                                             </Sticky>
                                             :
                                             <Collapse accordion defaultActiveKey={feature ? Number(feature) : 0} onChange={(value) => {
@@ -828,7 +840,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                 destroyOnClose={true}
             >
                 <div className="flex flex-col">
-                    <p>Apakah anda yakin ingin menambahkan Feature berikut ke Module <strong>{datamodules[checkedmodules].name}</strong>?</p>
+                    <p>Apakah anda yakin ingin menambahkan Feature berikut ke Module <strong>{datamodules[checkedmodules] ? datamodules[checkedmodules].name : null}</strong>?</p>
                     {
                         datamodules.length < 1 ?
                             <p className="font-semibold">-</p>
@@ -863,14 +875,14 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                 destroyOnClose={true}
             >
                 <div className="flex flex-col">
-                    <p>Apakah anda yakin ingin mengeluarkan Feature berikut dari Module <strong>{datamodules[checkedmodules].name}</strong>?</p>
+                    <p>Apakah anda yakin ingin mengeluarkan Feature berikut dari Module <strong>{datamodules[checkedmodules] ? datamodules[checkedmodules].name : null}</strong>?</p>
                     {
-                        datamodules.length < 1 ?
+                        datamodules[checkedmodules] ?
                             <p className="font-semibold">-</p>
                             :
                             <ol>
                                 {
-                                    datamodules[checkedmodules].feature ?
+                                    datamodules[checkedmodules] ?
                                         datamodules[checkedmodules].feature.map((doc, idx) => {
                                             if (checkeddatamodules.includes(doc.id)) {
                                                 return (
@@ -894,14 +906,14 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                 cancelText="Tidak"
                 okButtonProps={{ disabled: loadiingdelete }}
             >
-                <p>Apakah anda yakin ingin menghapus Module <strong>{datamodules[checkedmodules].name}</strong> yang memiliki Feature berikut ini?</p>
+                <p>Apakah anda yakin ingin menghapus Module <strong>{datamodules[checkedmodules] > 0 ? datamodules[checkedmodules].name : null}</strong> yang memiliki Feature berikut ini?</p>
                 {
-                    datamodules.length < 1 ?
+                    datamodules[checkedmodules] ?
                         <p className="font-semibold">-</p>
                         :
                         <ol>
                             {
-                                datamodules[checkedmodules].feature ?
+                                datamodules[checkedmodules] ?
                                     datamodules[checkedmodules].feature.map((doc, idx) => {
                                         return (
                                             <li key={idx} className="font-semibold">{idx + 1}. {doc.name}</li>
@@ -922,7 +934,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                 cancelText="Tidak"
                 okButtonProps={{ disabled: loadiingdelete2 }}
             >
-                <p>Apakah Anda yakin untuk menghapus fitur <strong>{listfeat[checkedfeatures].name}</strong> yang terdaftar pada modul:</p>
+                <p>Apakah Anda yakin untuk menghapus fitur <strong>{listfeat.length > 0 ? listfeat[checkedfeatures].name : null}</strong> yang terdaftar pada modul:</p>
                 {
                     listfeat.length < 1 ?
                         <p className="font-semibold">-</p>
