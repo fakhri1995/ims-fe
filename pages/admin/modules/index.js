@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
-import { Button, Input, Checkbox, Collapse, notification, Modal } from 'antd'
+import { Button, Input, Checkbox, Collapse, notification, Modal, Spin } from 'antd'
 import { ArrowRightOutlined, ArrowLeftOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard.module.css'
@@ -66,11 +66,15 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
     const [datadeletemodule, setdatadeletemodule] = useState({
         id: 0
     })
+    const [datadeletefeature, setdatadeletefeature] = useState({
+        id: 0
+    })
     const [modaldelete, setmodaldelete] = useState(false)
     const [loadiingdelete, setloadingdelete] = useState(false)
+    const [modaldelete2, setmodaldelete2] = useState(false)
+    const [loadiingdelete2, setloadingdelete2] = useState(false)
 
     //5. Features list
-    const [loadinglistfeat, setloadinglistfeat] = useState(true)
     const [listfeat, setlistfeat] = useState(
         [
             {
@@ -107,10 +111,12 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
             }
         ]
     )
-    const [checkedidfeatures, setcheckedidfeatures] = useState(0)
-    const [checkedfeatures, setcheckedfeatures] = useState([])
-    const [checkedfeaturefeatures, setcheckedfeaturefeatures] = useState([])
+    const [loadinglistfeat, setloadinglistfeat] = useState(true)
+    const [checkedfeatures, setcheckedfeatures] = useState(0)
     const [checkeddatafeatures, setcheckeddatafeatures] = useState([])
+    const [praloadingfeature, setpraloadingfeature] = useState(true)
+    const [featurecounter, setfeaturecounter] = useState(0)
+    const [searchfeature, setsearchfeature] = useState("")
 
 
     //6. Module list
@@ -118,13 +124,18 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
     const [checkedfeaturemodules, setcheckedfeaturemodules] = useState([])
     const [checkeddatamodules, setcheckeddatamodules] = useState([])
     const [idmodulemap, setidmodulemap] = useState([])
-    const [checkAll, setCheckAll] = useState(false);
     const [moduletrigger, setmoduletrigger] = useState(false)
+    const [modaldeletefeatmodule, setmodaldeletefeatmodule] = useState(false)
+    const [loadingdeletefeatmodule, setloadingdeletefeatmodule] = useState(false)
+    const [praloadingmodule, setpraloadingmodule] = useState(true)
+    const [praloadingmodulefeat, setpraloadingmodulefeat] = useState(module !== "" || typeof (module) !== 'undefined' ? false : true)
+    const [modulecounter, setmodulecounter] = useState(0)
+    const [searchmodulefeature, setsearchmodulefeature] = useState("")
 
     //7.arrow
     const [displayarrow, setdisplayarrow] = useState(featuredisplay === "" || typeof (featuredisplay) === 'undefined' ? false : true)
     const [rightstatus, setrightstatus] = useState(true)
-    const [leftstatus, setleftstatus] = useState(false)
+    const [leftstatus, setleftstatus] = useState(true)
 
     //event
     const onChangeTab = (e, idxjenis, namakateg, deskripsi, id, feature) => {
@@ -235,6 +246,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
             setcheckeddatamodules([...checkeddatamodules, id])
             checkeddatamodules.length > 0 ? (setleftstatus(true)) : setrightstatus(false)
             checkeddatamodules.length > 0 ? (setrightstatus(false)) : setleftstatus(true)
+            setmodulecounter(previ => previ + 1)
         }
         else {
             // var temp2 = checkedfeaturemodules
@@ -246,6 +258,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
             setcheckeddatamodules(temp3)
             checkeddatamodules.length > 0 ? (setleftstatus(true)) : setrightstatus(false)
             checkeddatamodules.length > 0 ? (setrightstatus(false)) : setleftstatus(true)
+            setmodulecounter(previ => previ - 1)
         }
     }
     const onChangeUpdateCheckbox3 = (e, id, idx) => {
@@ -256,6 +269,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
             // temp[idx] = true
             // setcheckedfeaturemodules(temp)
             setcheckeddatafeatures([...checkeddatafeatures, id])
+            setfeaturecounter(previ => previ + 1)
         }
         else {
             // var temp2 = checkedfeaturemodules
@@ -265,6 +279,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
             var idx = temp3.indexOf(id)
             temp3.splice(idx, 1)
             setcheckeddatafeatures(temp3)
+            setfeaturecounter(previ => previ - 1)
         }
     }
     const onCheckedAll = (e) => {
@@ -320,7 +335,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
             })
     }
     const handleDeleteModuleFeature = () => {
-        setloadingdelete(true)
+        setloadingdeletefeatmodule(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/deleteModuleFeature`, {
             method: 'POST',
             headers: {
@@ -340,8 +355,8 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                         duration: 3
                     })
                     setTimeout(() => {
-                        setloadingdelete(false)
-                        setmodaldelete(false)
+                        setloadingdeletefeatmodule(false)
+                        setmodaldeletefeatmodule(false)
                         window.location.href = `/admin/modules?module=${checkedmodules}&featuredisplay=1`
                     }, 300)
                 }
@@ -350,8 +365,8 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                         message: res2.message.errorInfo.status_detail,
                         duration: 3,
                     })
-                    setloadingdelete(false)
-                    setmodaldelete(false)
+                    setloadingdeletefeatmodule(false)
+                    setmodaldeletefeatmodule(false)
                 }
             })
     }
@@ -392,7 +407,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                 }
             })
     }
-    const handleDelete = () => {
+    const handleDeleteModule = () => {
         setloadingdelete(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/deleteModule`, {
             method: 'POST',
@@ -406,7 +421,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
             .then(res2 => {
                 if (res2.success) {
                     notification['success']({
-                        message: res2.message,
+                        message: 'Module berhasil dihapus',
                         duration: 3
                     })
                     setdatadeletemodule({
@@ -415,7 +430,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                     setTimeout(() => {
                         setloadingdelete(false)
                         setmodaldelete(false)
-                        rt.push(`/admin/modules`)
+                        window.location.href = `/admin/modules?module=&featuredisplay=`
                     }, 300)
                 }
                 else if (!res2.success) {
@@ -425,6 +440,42 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                     })
                     setloadingdelete(false)
                     setmodaldelete(false)
+                }
+            })
+    }
+    const handleDeleteFeature = () => {
+        setloadingdelete2(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteFeature`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datadeletefeature)
+        })
+            .then((res) => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    notification['success']({
+                        message: 'Fitur berhasil dihapus',
+                        duration: 3
+                    })
+                    setdatadeletefeature({
+                        id: 0
+                    })
+                    setTimeout(() => {
+                        setloadingdelete2(false)
+                        setmodaldelete2(false)
+                        window.location.href = `/admin/modules?module=&featuredisplay=`
+                    }, 300)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3,
+                    })
+                    setloadingdelete2(false)
+                    setmodaldelete2(false)
                 }
             })
     }
@@ -450,10 +501,10 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                     i !== 0 ? temp.push("hidden") : temp.push("block")
                 }
                 setloop(temp)
-                setpraloading(false)
                 setloadinglistfeat(false)
-                setidmodulemap(res2.data[Number(module)].feature.map((doc, idx) => doc.id))
+                setidmodulemap(res2.data[Number(module)].feature !== null ? res2.data[Number(module)].feature.map((doc, idx) => doc.id) : [])
                 setcheckedmodules((module !== "" || typeof (module) !== 'undefined' ? Number(module) : 0))
+                setpraloadingmodule(false)
             })
     }, [moduletrigger])
     useEffect(() => {
@@ -468,6 +519,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                 setlistfeat(res2)
                 setlistfeat2(res2)
                 setlistfeat3(res2)
+                setpraloadingfeature(false)
             })
     }, [])
 
@@ -479,38 +531,47 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                         <h1 className="font-bold">Modules</h1>
                     </div>
                 </Sticky>
-                {
-                    praloading ?
-                        null
-                        :
-                        <div className="grid grid-cols-1 md:grid-cols-7" id="containerModules">
-                            <div className=" col-span-1 md:col-span-3 flex flex-col p-3">
-                                <div className="flex justify-between mb-2 md:mb-5">
-                                    <h1 className="font-bold text-xl">Module</h1>
-                                    <Button type="primary" onClick={() => { rt.push(`/admin/modules/create/module`) }}>Tambah</Button>
-                                </div>
-                                <div className="mb-2 md:mb-5">
-                                    <Input style={{ width: `100%` }} placeholder="Cari module" onChange={(e) => {
-                                        if (e.target.value === "") {
-                                            setdatamodules(datamodules3)
-                                        }
-                                        else {
-                                            const filtered = datamodules2.filter(flt => {
-                                                return flt.name.toLowerCase().includes(e.target.value.toLowerCase())
-                                            })
-                                            setdatamodules(filtered)
-                                        }
-                                    }} />
-                                </div>
+                <div className="grid grid-cols-1 md:grid-cols-7" id="containerModules">
+                    <div className=" col-span-1 md:col-span-3 flex flex-col p-3">
+                        <div className="flex justify-between mb-2 md:mb-5">
+                            <h1 className="font-bold text-xl">Module</h1>
+                            <Button type="primary" onClick={() => { rt.push(`/admin/modules/create/module?module=${datamodules.length}`) }}>Tambah</Button>
+                        </div>
+                        <div className="mb-2 md:mb-5">
+                            <Input style={{ width: `100%` }} placeholder="Cari module" onChange={(e) => {
+                                if (e.target.value === "") {
+                                    setdatamodules(datamodules3)
+                                }
+                                else {
+                                    const filtered = datamodules2.filter(flt => {
+                                        return flt.name.toLowerCase().includes(e.target.value.toLowerCase())
+                                    })
+                                    setdatamodules(filtered)
+                                }
+                            }} />
+                        </div>
+                        {
+                            praloadingmodule ?
+                                <Spin size="large" />
+                                :
                                 <div className=" mb-2 md:mb-5">
                                     <Collapse accordion defaultActiveKey={module !== "" || typeof (module) !== 'undefined' ? Number(module) : 0} onChange={(value) => {
                                         if (typeof (value) === 'undefined') {
                                             setdisplayarrow(false)
+                                            setrightstatus(true)
+                                            setleftstatus(true)
+                                            setmodulecounter(0)
+                                            setfeaturecounter(0)
+                                            setcheckeddatamodules([])
+                                            setpraloadingmodulefeat(true)
+                                            setsearchmodulefeature("")
                                         }
                                         else {
+                                            setpraloadingmodulefeat(false)
                                             setdisplayarrow(true)
                                             setcheckeddatamodules([])
                                             setcheckedmodules(value)
+                                            setdatadeletemodule({ ...datadeletemodule, id: datamodules[value].id })
                                             datamodules[value].feature ? setidmodulemap(datamodules[value].feature.map((doc, idx) => doc.id)) : setidmodulemap([])
                                         }
                                     }}>
@@ -520,36 +581,46 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                                     <Panel key={idx} header={<strong>{doc.name}</strong>}
                                                         extra={
                                                             <div className="flex">
-                                                                <EditOutlined style={{ marginRight: `1rem` }} onClick={() => { rt.push(`/admin/modules/update/module/${doc.id}?module=${checkedmodules}`) }} />
-                                                                <DeleteOutlined style={{ color: `red` }} />
+                                                                <EditOutlined style={{ marginRight: `1rem` }} onClick={() => { rt.push(`/admin/modules/update/module/${doc.id}?module=${idx}`) }} />
+                                                                <DeleteOutlined style={{ color: `red` }} onClick={() => { setmodaldelete(true) }} />
                                                             </div>
-                                                        }
-                                                        key={idx}>
+                                                        }>
                                                         <div className="flex flex-col">
                                                             <div className="flex justify-between border-b pb-3 mb-3">
                                                                 <div>
                                                                     {/* <Checkbox checked={checkAll} onChange={(e) => { onCheckedAll(e) }} />  */}
-                                                                    {checkeddatamodules.length}/{doc.feature ? doc.feature.length : 0} {checkeddatamodules.length > 1 ? "items" : "item"}
+                                                                    {modulecounter}/{doc.feature ? doc.feature.length : 0} {checkeddatamodules.length > 1 ? "items" : "item"}
                                                                 </div>
                                                                 <div>
                                                                     <strong>Feature yang terdaftar pada - Module {doc.name}</strong>
                                                                 </div>
                                                             </div>
                                                             <div className="mb-5">
-                                                                <Input placeholder="Cari feature terdaftar"></Input>
+                                                                <Input placeholder="Cari feature terdaftar" onChange={(e) => {
+                                                                    setsearchmodulefeature(e.target.value.toLowerCase())
+                                                                }}></Input>
                                                             </div>
                                                             <div className="overflow-y-auto flex flex-col h-48 mb-5 border-b pb-3">
                                                                 {
-                                                                    doc.feature ?
-                                                                        doc.feature.map((doc2, idx2) => {
-                                                                            return (
-                                                                                <div className="flex items-center my-2">
-                                                                                    <Checkbox onChange={(e) => { onChangeUpdateCheckbox2(e, doc2.id, idx) }} style={{ marginRight: `1rem` }} /> {doc2.name}
-                                                                                </div>
-                                                                            )
-                                                                        })
-                                                                        :
+                                                                    praloadingmodulefeat ?
                                                                         null
+                                                                        :
+                                                                        <>
+                                                                            {
+                                                                                doc.feature ?
+                                                                                    doc.feature.map((doc2, idx2) => {
+                                                                                        if (doc2.name.toLowerCase().includes(searchmodulefeature.toLowerCase())) {
+                                                                                            return (
+                                                                                                <div className="flex items-center my-2">
+                                                                                                    <Checkbox onChange={(e) => { onChangeUpdateCheckbox2(e, doc2.id, idx) }} style={{ marginRight: `1rem` }} /> {doc2.name}
+                                                                                                </div>
+                                                                                            )
+                                                                                        }
+                                                                                    })
+                                                                                    :
+                                                                                    null
+                                                                            }
+                                                                        </>
                                                                 }
                                                             </div>
                                                             <div>
@@ -565,70 +636,87 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                         }
                                     </Collapse>
                                 </div>
-                            </div>
-                            <Sticky containerSelectorFocus="#containerModules" offsetTop={200}>
-                                <div className=" col-span-1 md:col-span-1 flex flex-col justify-center items-center">
-                                    {
-                                        displayarrow ?
-                                            <>
-                                                <Button type="primary" onClick={() => { setmodaldelete(true) }} disabled={rightstatus} style={{ marginBottom: `0.5rem` }}><ArrowRightOutlined /></Button>
-                                                <Button type="primary" onClick={() => { setmodalcreate(true) }} disabled={leftstatus} style={{ marginBottom: `0.5rem` }}><ArrowLeftOutlined /></Button>
-                                            </>
-                                            :
-                                            null
-                                    }
-                                </div>
-                            </Sticky>
-                            <div className=" col-span-1 md:col-span-3 flex flex-col p-3">
-                                <div className="flex justify-between mb-2 md:mb-5">
-                                    <h1 className="font-bold text-xl">Feature</h1>
-                                    <Button type="primary" onClick={() => { rt.push(`/admin/modules/create/feature`) }}>Tambah</Button>
-                                </div>
-                                <div className="mb-2 md:mb-5">
-                                    <Input style={{ width: `100%` }} placeholder="Cari feature" onChange={(e) => {
-                                        if (e.target.value === "") {
-                                            setlistfeat(listfeat3)
-                                        }
-                                        else {
-                                            const filtered = listfeat2.filter(flt => {
-                                                return flt.name.toLowerCase().includes(e.target.value.toLowerCase())
-                                            })
-                                            setlistfeat(filtered)
-                                        }
-                                    }} />
-                                </div>
+                        }
+                    </div>
+                    <Sticky containerSelectorFocus="#containerModules" offsetTop={400}>
+                        <div className=" col-span-1 md:col-span-1 flex flex-col justify-center items-center">
+                            {
+                                displayarrow ?
+                                    <>
+                                        <Button type="primary" onClick={() => { setmodaldeletefeatmodule(true) /*console.log(checkeddatamodules); console.log(datamodules[checkedmodules].id)*/ }} disabled={rightstatus || modulecounter < 1} style={{ marginBottom: `0.5rem` }}><ArrowRightOutlined /></Button>
+                                        <Button type="primary" onClick={() => { setmodalcreate(true) }} disabled={leftstatus || featurecounter < 1} style={{ marginBottom: `0.5rem` }}><ArrowLeftOutlined /></Button>
+                                    </>
+                                    :
+                                    null
+                            }
+                        </div>
+                    </Sticky>
+                    <div className=" col-span-1 md:col-span-3 flex flex-col p-3">
+                        <div className="flex justify-between mb-2 md:mb-5">
+                            <h1 className="font-bold text-xl">Feature</h1>
+                            <Button type="primary" onClick={() => { rt.push(`/admin/modules/create/feature?feature=${listfeat.length}`) }}>Tambah</Button>
+                        </div>
+                        <div className="mb-2 md:mb-5">
+                            <Input style={{ width: `100%` }} placeholder="Cari feature" onChange={(e) => {
+                                if (e.target.value === "") {
+                                    setlistfeat(listfeat3)
+                                }
+                                else {
+                                    const filtered = listfeat2.filter(flt => {
+                                        return flt.name.toLowerCase().includes(e.target.value.toLowerCase())
+                                    })
+                                    setlistfeat(filtered)
+                                }
+                            }} />
+                        </div>
+                        {
+                            praloadingfeature ?
+                                <Spin size="large" />
+                                :
                                 <div className=" mb-2 md:mb-5">
                                     {
                                         displayarrow ?
-                                            <div className="flex flex-col border p-2">
-                                                <div className="flex justify-between border-b pb-3 mb-3">
-                                                    <div>
-                                                        {/* <Checkbox />  */}
-                                                        {checkeddatafeatures.length}/{listfeat.length - idmodulemap.length} {checkeddatafeatures.length > 1 ? "items" : "item"}
+                                            <Sticky containerSelectorFocus="#containerModules" offsetTop={100}>
+                                                <div className="flex flex-col border p-2">
+                                                    <div className="flex justify-between border-b pb-3 mb-3">
+                                                        <div>
+                                                            {/* <Checkbox />  */}
+                                                            {featurecounter}/{listfeat.length - idmodulemap.length} {checkeddatafeatures.length > 1 ? "items" : "item"}
+                                                        </div>
+                                                        <div>
+                                                            <strong>Feature yang tidak terdaftar pada - Module {datamodules[checkedmodules].name}</strong>
+                                                        </div>
                                                     </div>
-                                                    <div>
-                                                        <strong>Feature yang tidak terdaftar pada - Module {datamodules[checkedmodules].name}</strong>
+                                                    <div className="mb-5">
+                                                        <Input placeholder="Cari feature terdaftar" onChange={(e) => {
+                                                            setsearchfeature(e.target.value.toLowerCase())
+                                                        }}></Input>
+                                                    </div>
+                                                    <div className="overflow-y-auto flex flex-col h-80 mb-5 border-b pb-5">
+                                                        {
+                                                            listfeat.map((doc3, idx3) => {
+                                                                if (!idmodulemap.includes(doc3.feature_id)) {
+                                                                    if (doc3.name.toLowerCase().includes(searchfeature.toLowerCase())) {
+                                                                        return (
+                                                                            <div key={idx3} className="flex items-center my-1">
+                                                                                <Checkbox style={{ marginRight: `1rem` }} onChange={(e) => { onChangeUpdateCheckbox3(e, doc3.feature_id, idx3) }} style={{ marginRight: `1rem` }} /> {doc3.name}
+                                                                            </div>
+                                                                        )
+                                                                    }
+                                                                }
+                                                            })
+                                                        }
                                                     </div>
                                                 </div>
-                                                <div className="mb-5">
-                                                    <Input placeholder="Cari feature terdaftar"></Input>
-                                                </div>
-                                                <div className="overflow-y-auto flex flex-col h-80 mb-5 border-b pb-5">
-                                                    {
-                                                        listfeat.map((doc3, idx3) => {
-                                                            if (!idmodulemap.includes(doc3.feature_id)) {
-                                                                return (
-                                                                    <div key={idx3} className="flex items-center my-1">
-                                                                        <Checkbox style={{ marginRight: `1rem` }} onChange={(e) => { onChangeUpdateCheckbox3(e, doc3.feature_id, idx3) }} style={{ marginRight: `1rem` }} /> {doc3.name}
-                                                                    </div>
-                                                                )
-                                                            }
-                                                        })
-                                                    }
-                                                </div>
-                                            </div>
+                                            </Sticky>
                                             :
-                                            <Collapse accordion defaultActiveKey={feature ? Number(feature) : 0}>
+                                            <Collapse accordion defaultActiveKey={feature ? Number(feature) : 0} onChange={(value) => {
+                                                if (typeof (value) !== 'undefined') {
+                                                    setcheckeddatafeatures([])
+                                                    setcheckedfeatures(value)
+                                                    setdatadeletefeature({ ...datadeletefeature, id: listfeat[value].id })
+                                                }
+                                            }}>
                                                 {
                                                     listfeat.map((doc, idx) => {
                                                         return (
@@ -636,10 +724,9 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                                                 extra={
                                                                     <div className="flex">
                                                                         <EditOutlined style={{ marginRight: `1rem` }} onClick={() => { rt.push(`/admin/modules/update/feature/${doc.id}?feature=${idx}`) }} />
-                                                                        <DeleteOutlined style={{ color: `red` }} />
+                                                                        <DeleteOutlined style={{ color: `red` }} onClick={() => { setmodaldelete2(true) }} />
                                                                     </div>
-                                                                }
-                                                                key={idx + 1}>
+                                                                }>
                                                                 <p>{doc.description}</p>
                                                             </Panel>
                                                         )
@@ -648,9 +735,286 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                             </Collapse>
                                     }
                                 </div>
-                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            {/* <Drawer title={`Tambah Module`} maskClosable={false} visible={drawablecreate} onClose={() => { setdrawablecreate(false); }} width={380} destroyOnClose={true}>
+                <div className="flex flex-col">
+                    <Form layout="vertical" initialValues={datatambahmodule} onFinish={handleCreate}>
+                        <Form.Item label="Nama Module" rules={[
+                            {
+                                required: true,
+                                message: 'Nama module wajib diisi',
+                            },
+                        ]} name="name">
+                            <Input name="name" onChange={(e) => { setdatatambahmodule({ ...datatambahmodule, name: e.target.value }) }} />
+                        </Form.Item>
+                        <Form.Item label="Deskripsi" rules={[
+                            {
+                                required: true,
+                                message: 'Deskripsi wajib diisi',
+                            },
+                        ]} name="description">
+                            <Input name="description" onChange={(e) => { setdatatambahmodule({ ...datatambahmodule, description: e.target.value }) }} />
+                        </Form.Item>
+                        <h1 className="font-semibold">Pilih Feature</h1>
+                        <div className=" overflow-y-auto h-80 mb-5">
+                            {
+                                listfeat.map((doc, idx) => {
+                                    return (
+                                        <div key={idx} className="flex items-center hover:bg-gray-300 p-3">
+                                            <Checkbox style={{ marginRight: `1rem` }} onChange={(e) => { onChangeCreateCheckbox(e, doc.feature_id) }} /> {doc.name}
+                                        </div>
+                                    )
+                                })
+                            }
                         </div>
-                    // <div className="w-full grid grid-cols-5 bg-white">
+                        <div className="flex justify-end">
+                            <Button type="default" onClick={() => { setdrawablecreate(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
+                            <Button htmlType="submit" type="primary" loading={loadiingcreate}>Save</Button>
+                        </div>
+                    </Form>
+                </div>
+            </Drawer>
+            <Drawer title={`Edit Module ${currentselectkateg}`} maskClosable={false} visible={drawableedit} onClose={() => { setdrawableedit(false); }} width={380} destroyOnClose={true}>
+                <div className="flex flex-col">
+                    <Form layout="vertical" initialValues={dataeditmodule} onFinish={handleUpdate}>
+                        <Form.Item label="Nama Module" rules={[
+                            {
+                                required: true,
+                                message: 'Nama module wajib diisi',
+                            },
+                        ]} name="name">
+                            <Input name="name" defaultValue={currentselectkateg} disabled />
+                        </Form.Item>
+                        <Form.Item label="Deskripsi" rules={[
+                            {
+                                required: true,
+                                message: 'Deskripsi wajib diisi',
+                            },
+                        ]} style={{ marginBottom: `3rem` }} name="description">
+                            <Input name="name" defaultValue={currentdesctkateg} disabled />
+                        </Form.Item>
+                        <div className=" overflow-y-auto h-80 mb-5">
+                            {
+                                listfeat.map((doc, idx) => {
+                                    const checkedStatus = dataeditmodule.feature_ids.includes(doc.feature_id)
+                                    return (
+                                        <div key={idx} className="flex items-center hover:bg-gray-300 p-3">
+                                            <Checkbox style={{ marginRight: `1rem` }} onChange={(e) => { onChangeUpdateCheckbox(e, doc.feature_id) }} defaultChecked={checkedStatus} /> {doc.name}
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
+                        <div className="flex justify-end">
+                            <Button type="default" onClick={() => { setdrawableedit(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
+                            <Button loading={loadiingupdate} type="primary" onClick={handleUpdate}>Save</Button>
+                        </div>
+                    </Form>
+                </div>
+            </Drawer> */}
+            <Modal
+                title={`Konfirmasi Tambah Feature pada Module`}
+                visible={modalcreate}
+                onCancel={() => { setloadingcreate(false); setmodalcreate(false) }}
+                onOk={handleAddModuleFeature}
+                okButtonProps={{ disabled: loadiingcreate }}
+                okText="Ya"
+                cancelText="Tidak"
+                style={{ top: `3rem` }}
+                width={500}
+                destroyOnClose={true}
+            >
+                <div className="flex flex-col">
+                    <p>Apakah anda yakin ingin menambahkan Feature berikut ke Module <strong>{datamodules[checkedmodules].name}</strong>?</p>
+                    {
+                        datamodules.length < 1 ?
+                            <p className="font-semibold">-</p>
+                            :
+                            <ol>
+                                {
+                                    checkeddatafeatures.length > 0 ?
+                                        listfeat.map((doc, idx) => {
+                                            if (checkeddatafeatures.includes(doc.feature_id)) {
+                                                return (
+                                                    <li key={idx} className="font-semibold">{"-"} {doc.name}</li>
+                                                )
+                                            }
+                                        })
+                                        :
+                                        "-"
+                                }
+                            </ol>
+                    }
+                </div>
+            </Modal>
+            <Modal
+                title={`Konfirmasi Hapus Feature pada Module`}
+                visible={modaldeletefeatmodule}
+                onCancel={() => { setloadingdeletefeatmodule(false); setmodaldeletefeatmodule(false) }}
+                onOk={handleDeleteModuleFeature}
+                okButtonProps={{ disabled: loadingdeletefeatmodule }}
+                okText="Ya"
+                cancelText="Tidak"
+                style={{ top: `3rem` }}
+                width={500}
+                destroyOnClose={true}
+            >
+                <div className="flex flex-col">
+                    <p>Apakah anda yakin ingin mengeluarkan Feature berikut dari Module <strong>{datamodules[checkedmodules].name}</strong>?</p>
+                    {
+                        datamodules.length < 1 ?
+                            <p className="font-semibold">-</p>
+                            :
+                            <ol>
+                                {
+                                    datamodules[checkedmodules].feature ?
+                                        datamodules[checkedmodules].feature.map((doc, idx) => {
+                                            if (checkeddatamodules.includes(doc.id)) {
+                                                return (
+                                                    <li key={idx} className="font-semibold">- {doc.name}</li>
+                                                )
+                                            }
+                                        })
+                                        :
+                                        "-"
+                                }
+                            </ol>
+                    }
+                </div>
+            </Modal>
+            <Modal
+                title="Konfirmasi hapus module"
+                visible={modaldelete}
+                onOk={handleDeleteModule}
+                onCancel={() => setmodaldelete(false)}
+                okText="Ya"
+                cancelText="Tidak"
+                okButtonProps={{ disabled: loadiingdelete }}
+            >
+                <p>Apakah anda yakin ingin menghapus Module <strong>{datamodules[checkedmodules].name}</strong> yang memiliki Feature berikut ini?</p>
+                {
+                    datamodules.length < 1 ?
+                        <p className="font-semibold">-</p>
+                        :
+                        <ol>
+                            {
+                                datamodules[checkedmodules].feature ?
+                                    datamodules[checkedmodules].feature.map((doc, idx) => {
+                                        return (
+                                            <li key={idx} className="font-semibold">{idx + 1}. {doc.name}</li>
+                                        )
+                                    })
+                                    :
+                                    "-"
+                            }
+                        </ol>
+                }
+            </Modal>
+            <Modal
+                title="Konfirmasi hapus feature"
+                visible={modaldelete2}
+                onOk={handleDeleteFeature}
+                onCancel={() => setmodaldelete2(false)}
+                okText="Ya"
+                cancelText="Tidak"
+                okButtonProps={{ disabled: loadiingdelete2 }}
+            >
+                <p>Apakah Anda yakin untuk menghapus fitur <strong>{listfeat[checkedfeatures].name}</strong> yang terdaftar pada modul:</p>
+                {
+                    listfeat.length < 1 ?
+                        <p className="font-semibold">-</p>
+                        :
+                        <ol>
+                            {
+                                datamodules ?
+                                    datamodules.map((doc, idx) => {
+                                        const status = doc.feature !== null ? doc.feature.map(doc => doc.id).includes(listfeat[checkedfeatures].feature_id) : false
+                                        if (status) {
+                                            return (
+                                                <li key={idx} className="font-semibold">- {doc.name}</li>
+                                            )
+                                        }
+                                    })
+                                    :
+                                    "-"
+                            }
+                        </ol>
+                }
+            </Modal>
+        </Layout>
+    )
+}
+
+export async function getServerSideProps({ req, res }) {
+    var initProps = {};
+    if (!req.headers.cookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
+        }
+    }
+    const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+    if (!cookiesJSON1.token) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
+        }
+    }
+    initProps = cookiesJSON1.token
+    const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
+        method: `POST`,
+        headers: {
+            'Authorization': JSON.parse(initProps)
+        }
+    })
+    const resjson = await resources.json()
+    const dataProfile = resjson
+
+    if (![179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+        res.writeHead(302, { Location: '/dashboard/admin' })
+        res.end()
+    }
+
+    // const resourcesGM = await fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps)
+    //     }
+    // })
+    // const resjsonGM = await resourcesGM.json()
+    // const dataListModules = resjsonGM
+
+    // const resourcesGF = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAccessFeature`, {
+    //     method: `POST`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps)
+    //     }
+    // })
+    // const resjsonGF = await resourcesGF.json()
+    // const dataListFeatures = resjsonGF
+
+    return {
+        props: {
+            initProps,
+            dataProfile,
+            // dataListModules,
+            // dataListFeatures,
+            sidemenu: "4"
+        },
+    }
+}
+
+export default ModulesIndex
+
+
+// <div className="w-full grid grid-cols-5 bg-white">
                     //     <div className="col-span-5">
                     //         <div className="w-full grid grid-cols-9">
                     //             <div className="col-span-2 hidden md:flex flex-col border-r pr-2">
@@ -738,211 +1102,3 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                     //         </div>
                     //     </div>
                     // </div>
-                }
-            </div>
-            {/* <Drawer title={`Tambah Module`} maskClosable={false} visible={drawablecreate} onClose={() => { setdrawablecreate(false); }} width={380} destroyOnClose={true}>
-                <div className="flex flex-col">
-                    <Form layout="vertical" initialValues={datatambahmodule} onFinish={handleCreate}>
-                        <Form.Item label="Nama Module" rules={[
-                            {
-                                required: true,
-                                message: 'Nama module wajib diisi',
-                            },
-                        ]} name="name">
-                            <Input name="name" onChange={(e) => { setdatatambahmodule({ ...datatambahmodule, name: e.target.value }) }} />
-                        </Form.Item>
-                        <Form.Item label="Deskripsi" rules={[
-                            {
-                                required: true,
-                                message: 'Deskripsi wajib diisi',
-                            },
-                        ]} name="description">
-                            <Input name="description" onChange={(e) => { setdatatambahmodule({ ...datatambahmodule, description: e.target.value }) }} />
-                        </Form.Item>
-                        <h1 className="font-semibold">Pilih Feature</h1>
-                        <div className=" overflow-y-auto h-80 mb-5">
-                            {
-                                listfeat.map((doc, idx) => {
-                                    return (
-                                        <div key={idx} className="flex items-center hover:bg-gray-300 p-3">
-                                            <Checkbox style={{ marginRight: `1rem` }} onChange={(e) => { onChangeCreateCheckbox(e, doc.feature_id) }} /> {doc.name}
-                                        </div>
-                                    )
-                                })
-                            }
-                        </div>
-                        <div className="flex justify-end">
-                            <Button type="default" onClick={() => { setdrawablecreate(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
-                            <Button htmlType="submit" type="primary" loading={loadiingcreate}>Save</Button>
-                        </div>
-                    </Form>
-                </div>
-            </Drawer>
-            <Drawer title={`Edit Module ${currentselectkateg}`} maskClosable={false} visible={drawableedit} onClose={() => { setdrawableedit(false); }} width={380} destroyOnClose={true}>
-                <div className="flex flex-col">
-                    <Form layout="vertical" initialValues={dataeditmodule} onFinish={handleUpdate}>
-                        <Form.Item label="Nama Module" rules={[
-                            {
-                                required: true,
-                                message: 'Nama module wajib diisi',
-                            },
-                        ]} name="name">
-                            <Input name="name" defaultValue={currentselectkateg} disabled />
-                        </Form.Item>
-                        <Form.Item label="Deskripsi" rules={[
-                            {
-                                required: true,
-                                message: 'Deskripsi wajib diisi',
-                            },
-                        ]} style={{ marginBottom: `3rem` }} name="description">
-                            <Input name="name" defaultValue={currentdesctkateg} disabled />
-                        </Form.Item>
-                        <div className=" overflow-y-auto h-80 mb-5">
-                            {
-                                listfeat.map((doc, idx) => {
-                                    const checkedStatus = dataeditmodule.feature_ids.includes(doc.feature_id)
-                                    return (
-                                        <div key={idx} className="flex items-center hover:bg-gray-300 p-3">
-                                            <Checkbox style={{ marginRight: `1rem` }} onChange={(e) => { onChangeUpdateCheckbox(e, doc.feature_id) }} defaultChecked={checkedStatus} /> {doc.name}
-                                        </div>
-                                    )
-                                })
-                            }
-                        </div>
-                        <div className="flex justify-end">
-                            <Button type="default" onClick={() => { setdrawableedit(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
-                            <Button loading={loadiingupdate} type="primary" onClick={handleUpdate}>Save</Button>
-                        </div>
-                    </Form>
-                </div>
-            </Drawer> */}
-            <Modal
-                title={`Konfirmasi Tambah Feature`}
-                visible={modalcreate}
-                onCancel={() => { setloadingcreate(false); setmodalcreate(false) }}
-                onOk={handleAddModuleFeature}
-                okButtonProps={{ disabled: loadiingcreate }}
-                style={{ top: `3rem` }}
-                width={500}
-                destroyOnClose={true}
-            >
-                <div className="flex flex-col">
-                    <p>Apakah anda yakin ingin menambahkan Feature berikut ke Module <strong>{datamodules[checkedmodules].name}</strong>?</p>
-                    {
-                        datamodules.length < 1 ?
-                            <p className="font-semibold">-</p>
-                            :
-                            <ol>
-                                {
-                                    datamodules[checkedmodules].feature ?
-                                        datamodules[checkedmodules].feature.map((doc, idx) => {
-                                            return (
-                                                <li key={idx} className="font-semibold">{idx + 1}. {doc.name}</li>
-                                            )
-                                        })
-                                        :
-                                        "-"
-                                }
-                            </ol>
-                    }
-                </div>
-            </Modal>
-            <Modal
-                title={`Konfirmasi Hapus Feature`}
-                visible={modaldelete}
-                onCancel={() => { setloadingdelete(false); setmodaldelete(false) }}
-                onOk={handleDeleteModuleFeature}
-                okButtonProps={{ disabled: loadiingdelete }}
-                style={{ top: `3rem` }}
-                width={500}
-                destroyOnClose={true}
-            >
-                <div className="flex flex-col">
-                    <p>Apakah anda yakin ingin mengeluarkan Feature berikut dari Module <strong>{datamodules[checkedmodules].name}</strong>?</p>
-                    {
-                        datamodules.length < 1 ?
-                            <p className="font-semibold">-</p>
-                            :
-                            <ol>
-                                {
-                                    datamodules[checkedmodules].feature ?
-                                        datamodules[checkedmodules].feature.map((doc, idx) => {
-                                            return (
-                                                <li key={idx} className="font-semibold">{idx + 1}. {doc.name}</li>
-                                            )
-                                        })
-                                        :
-                                        "-"
-                                }
-                            </ol>
-                    }
-                </div>
-            </Modal>
-        </Layout>
-    )
-}
-
-export async function getServerSideProps({ req, res }) {
-    var initProps = {};
-    if (!req.headers.cookie) {
-        return {
-            redirect: {
-                permanent: false,
-                destination: '/login'
-            }
-        }
-    }
-    const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
-    if (!cookiesJSON1.token) {
-        return {
-            redirect: {
-                permanent: false,
-                destination: '/login'
-            }
-        }
-    }
-    initProps = cookiesJSON1.token
-    const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
-        headers: {
-            'Authorization': JSON.parse(initProps)
-        }
-    })
-    const resjson = await resources.json()
-    const dataProfile = resjson
-
-    if (![179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
-
-    // const resourcesGM = await fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
-    //     method: `POST`,
-    //     headers: {
-    //         'Authorization': JSON.parse(initProps)
-    //     }
-    // })
-    // const resjsonGM = await resourcesGM.json()
-    // const dataListModules = resjsonGM
-
-    // const resourcesGF = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAccessFeature`, {
-    //     method: `POST`,
-    //     headers: {
-    //         'Authorization': JSON.parse(initProps)
-    //     }
-    // })
-    // const resjsonGF = await resourcesGF.json()
-    // const dataListFeatures = resjsonGF
-
-    return {
-        props: {
-            initProps,
-            dataProfile,
-            // dataListModules,
-            // dataListFeatures,
-            sidemenu: "4"
-        },
-    }
-}
-
-export default ModulesIndex

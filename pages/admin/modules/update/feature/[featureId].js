@@ -80,7 +80,7 @@ const FeatureUpdate = ({ initProps, sidemenu, dataProfile, idfeature }) => {
                 })[0]
                 setdatadisplay(detaildata)
                 var pathArr = rt.pathname.split("/").slice(1)
-                pathArr.splice(3, 1)
+                pathArr.splice(2, 2)
                 pathArr[pathArr.length - 1] = `Ubah Feature - ${detaildata.name}`
                 setpatharr(pathArr)
                 setpraloading(false)

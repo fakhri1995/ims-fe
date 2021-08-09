@@ -15,6 +15,7 @@ const FeatureCreate = ({ sidemenu, initProps, dataProfile }) => {
     pathArr.splice(2, 1)
     pathArr[pathArr.length - 1] = "Buat Feature"
     const [instanceForm] = Form.useForm();
+    const { feature } = rt.query
 
     //useState
     //1. Create
@@ -45,7 +46,7 @@ const FeatureCreate = ({ sidemenu, initProps, dataProfile }) => {
                     })
                     setTimeout(() => {
                         setloadingcreate(false)
-                        rt.push(`/admin/modules?id=`)
+                        rt.push(`/admin/modules?module=&featuredisplay=&feature=${feature}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -68,7 +69,7 @@ const FeatureCreate = ({ sidemenu, initProps, dataProfile }) => {
                         <div className=" col-span-4 flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
                             <h1 className="font-semibold py-2">Buat Feature</h1>
                             <div className="flex space-x-2">
-                                <Link href="/admin/modules">
+                                <Link href={`/admin/modules?module=&featuredisplay=`}>
                                     <Button type="default">Batal</Button>
                                 </Link>
                                 <Button type="primary" loading={loadingcreate} onClick={instanceForm.submit}>Simpan</Button>

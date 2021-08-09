@@ -93,7 +93,7 @@ const ModuleUpdate = ({ initProps, sidemenu, dataProfile, idmodule }) => {
                 setdatadisplay(temp)
                 setpraloading(false)
                 var pathArr = rt.pathname.split("/").slice(1)
-                pathArr.splice(3, 1)
+                pathArr.splice(2, 2)
                 pathArr[pathArr.length - 1] = `Ubah Module - ${detaildata.name}`
                 setpatharr(pathArr)
             })
