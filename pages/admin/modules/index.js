@@ -5,6 +5,7 @@ import { Button, Input, Checkbox, Collapse, notification, Modal, Spin } from 'an
 import { ArrowRightOutlined, ArrowLeftOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard.module.css'
+import ScrollTo from "react-scroll-into-view";
 import Sticky from 'wil-react-sticky'
 
 const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeatures, sidemenu }) => {
@@ -131,7 +132,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
     const [praloadingmodulefeat, setpraloadingmodulefeat] = useState(module !== "" || typeof (module) !== 'undefined' ? false : true)
     const [modulecounter, setmodulecounter] = useState(0)
     const [searchmodulefeature, setsearchmodulefeature] = useState("")
-    const [scrolltrigger, setscrolltrigger] = useState(false)
+    const [scrolltrigger, setscrolltrigger] = useState(0)
 
     //7.arrow
     const [displayarrow, setdisplayarrow] = useState(featuredisplay === "" || typeof (featuredisplay) === 'undefined' ? false : true)
@@ -523,6 +524,9 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                 setpraloadingfeature(false)
             })
     }, [])
+    useEffect(() => {
+        document.getElementById(`panel${scrolltrigger}`).scrollIntoView(true)
+    }, [scrolltrigger])
 
     return (
         <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} st={st} pathArr={pathArr}>
@@ -553,7 +557,9 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                         </div>
                         {
                             praloadingmodule ?
-                                <Spin size="large" />
+                                <div id={`panel0`} className=" flex justify-center">
+                                    <Spin size="large" />
+                                </div>
                                 :
                                 <div className=" mb-2 md:mb-5">
                                     <Collapse accordion defaultActiveKey={module !== "" || typeof (module) !== 'undefined' ? Number(module) : 0} onChange={(value) => {
@@ -578,12 +584,13 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                             setfeaturecounter(0)
                                             setdatadeletemodule({ ...datadeletemodule, id: datamodules[value].id })
                                             datamodules[value].feature ? setidmodulemap(datamodules[value].feature.map((doc, idx) => doc.id)) : setidmodulemap([])
+                                            setscrolltrigger(value)
                                         }
                                     }}>
                                         {
                                             datamodules.map((doc, idx) => {
                                                 return (
-                                                    <Panel className={`panel${idx}`} key={idx} header={<strong>{doc.name}</strong>}
+                                                    <Panel id={`panel${idx}`} key={idx} header={<strong>{doc.name}</strong>}
                                                         extra={
                                                             <div className="flex">
                                                                 <EditOutlined style={{ marginRight: `1rem` }} onClick={() => { rt.push(`/admin/modules/update/module/${doc.id}?module=${idx}`) }} />
@@ -682,7 +689,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                 <div className=" mb-2 md:mb-5">
                                     {
                                         displayarrow ?
-                                            <Sticky containerSelectorFocus="#containerModules" offsetTop={100}>
+                                            <Sticky containerSelectorFocus="#containerModules" offsetTop={60}>
                                                 {
                                                     datamodules.length > 0 ?
                                                         <div className="flex flex-col border p-2">

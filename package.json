@@ -25,6 +25,7 @@
     "react-flickity-component": "^3.6.1",
     "react-reveal": "^1.2.2",
     "react-scroll": "^1.8.3",
+    "react-scroll-into-view": "^1.9.4",
     "react-slick": "^0.28.1",
     "slick-carousel": "^1.8.1",
     "tailwindcss": "^2.0.3",
