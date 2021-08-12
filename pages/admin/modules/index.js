@@ -656,7 +656,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                             {
                                 displayarrow ?
                                     <>
-                                        <Button type="primary" onClick={() => { setmodaldeletefeatmodule(true) /*console.log(checkeddatamodules); console.log(datamodules[checkedmodules].id)*/ }} disabled={rightstatus || modulecounter < 1} style={{ marginBottom: `0.5rem` }}><ArrowRightOutlined /></Button>
+                                        <Button type="primary" onClick={() => { setmodaldeletefeatmodule(true) /*console.log(checkeddatamodules); console.log(datamodules[checkedmodules].feature)*/ }} disabled={rightstatus || modulecounter < 1} style={{ marginBottom: `0.5rem` }}><ArrowRightOutlined /></Button>
                                         <Button type="primary" onClick={() => { setmodalcreate(true) }} disabled={leftstatus || featurecounter < 1} style={{ marginBottom: `0.5rem` }}><ArrowLeftOutlined /></Button>
                                     </>
                                     :
@@ -884,12 +884,12 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                 <div className="flex flex-col">
                     <p>Apakah anda yakin ingin mengeluarkan Feature berikut dari Module <strong>{datamodules[checkedmodules] ? datamodules[checkedmodules].name : null}</strong>?</p>
                     {
-                        datamodules[checkedmodules] ?
-                            <p className="font-semibold">-</p>
+                        datamodules.length < 1 ?
+                            <p className="font-semibold">----</p>
                             :
                             <ol>
                                 {
-                                    datamodules[checkedmodules] ?
+                                    checkeddatamodules.length > 0 && datamodules[checkedmodules].feature ?
                                         datamodules[checkedmodules].feature.map((doc, idx) => {
                                             if (checkeddatamodules.includes(doc.id)) {
                                                 return (
