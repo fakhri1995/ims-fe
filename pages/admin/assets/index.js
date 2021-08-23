@@ -1,11 +1,8 @@
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
-import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
-import EditOutlined from '@ant-design/icons/EditOutlined'
-import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import Link from 'next/link'
-import { Button, Tree, Modal, Form, Input, TreeSelect, notification, message, Popconfirm } from 'antd'
+import { Button, Tree, Modal, Form, Input, TreeSelect, notification, Spin } from 'antd'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard.module.css'
 
@@ -16,21 +13,11 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
     const [loadingbtn, setloadingbtn] = useState(false)
     const [loadingbtnfromparent, setloadingbtnparent] = useState(false)
     const [loadingdelete, setlaodingdelete] = useState(false)
-    const treeData = dataAssetsList.data
-    const onChangeParent = (value) => {
-        setDatanew({
-            ...datanew,
-            ["parent"]: value
-        })
-    }
-    const fungsiSetParent = (val) => {
-        console.log(val)
-        setParentadd(val);
-        setDatanew({
-            ...datanew,
-            ["parent"]: val
-        });
-    }
+    const [searchValue, setSearchValue] = useState("");
+
+    //useState
+    const [maindata, setmaindata] = useState([])
+    const [praloading, setpraloading] = useState(true)
     const [newmodal, setNewmodal] = useState(false)
     const [newmodalparent, setNewmodalparent] = useState(false)
     const [modaldelete, setmodaldelete] = useState(false)
@@ -51,10 +38,126 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
     }
     const [autoExpandParent, setAutoExpandParent] = useState(true);
     const [expandedKeys, setExpandedKeys] = useState([])
+
+    //onChange
+    const onChangeParent = (value) => {
+        setDatanew({
+            ...datanew,
+            ["parent"]: value
+        })
+    }
+    const fungsiSetParent = (val) => {
+        setParentadd(val);
+        setDatanew({
+            ...datanew,
+            ["parent"]: val
+        });
+    }
     const onExpand = (expandedKeys) => {
         setExpandedKeys(expandedKeys);
         setAutoExpandParent(false);
     }
+
+    //filterAsset
+    const dataList = [];
+    const generateList = (data) => {
+        for (let i = 0; i < data.length; i++) {
+            const node = data[i];
+            const { id, key, value, id_parent, title } = node;
+            dataList.push({ id, key, value, id_parent, title });
+            if (node.children) {
+                generateList(node.children);
+            }
+        }
+    };
+    generateList(maindata);
+    const getParentKey = (key, tree) => {
+        let parentKey;
+        for (let i = 0; i < tree.length; i++) {
+            const node = tree[i];
+            if (node.children) {
+                if (node.children.some((item) => item.key === key)) {
+                    parentKey = node.key;
+                } else if (getParentKey(key, node.children)) {
+                    parentKey = getParentKey(key, node.children);
+                }
+            }
+        }
+        return parentKey;
+    };
+    const onChangeFilterAsset = (e) => {
+        const { value } = e.target;
+        const expandedKeys = dataList
+            .map((item) => {
+                if (item.title.indexOf(value) > -1) {
+                    return getParentKey(item.key, maindata);
+                }
+                return null;
+            })
+            .filter((item, i, self) => item && self.indexOf(item) === i);
+        if (value) {
+            setExpandedKeys(expandedKeys);
+            setSearchValue(value);
+            setAutoExpandParent(true);
+        } else {
+            setExpandedKeys([maindata[0].key]);
+            setSearchValue("");
+            setAutoExpandParent(false);
+        }
+    };
+    const filterTreeNode = (node) => {
+        const title = node.title.props.children[0].props ? node.title.props.children[0].props.children[2] : node.title.props.children[2];
+        const result = title.indexOf(searchValue) !== -1 ? true : false;
+        return result;
+    };
+    const loop = (data) =>
+        data.map((item) => {
+            const index = item.title.indexOf(searchValue);
+            const beforeStr = item.title.substr(0, index);
+            const afterStr = item.title.substr(index + searchValue.length);
+            // const prt = item.value.substring(0, item.value.length - 4)
+            const title =
+                index > -1 ? (
+                    <div className={`flex justify-between md:h-7 hover:bg-blue-100 text-black`}
+                        onMouseOver={() => {
+                            var d = document.getElementById(`node${item.key}`)
+                            d.classList.add("flex")
+                            d.classList.remove("hidden")
+                        }}
+                        onMouseLeave={() => {
+                            var e = document.getElementById(`node${item.key}`)
+                            e.classList.add("hidden")
+                            e.classList.remove("flex")
+                        }}
+                    >
+                        <div className="w-full" onClick={() => { rt.push(`/admin/assets/detail/${item.id}`) }}>
+                            {beforeStr}
+                            <span className=" text-blue-500">{searchValue}</span>
+                            {afterStr}
+                        </div>
+                        <div className={`hidden mx-2`} id={`node${item.key}`}>
+                            <a className="mx-2 py-2 flex items-center" alt="add" onClick={() => { rt.push(`/admin/assets/create?idparent=${item.value}`) /*setNewmodalparent(true); fungsiSetParent(item.value); setParenttitle(item.title)*/ }}>
+                                <div className="rounded-full bg-black text-white h-5 w-5 flex items-center text-xs justify-center hover:bg-gray-700">+</div>
+                            </a>
+                            {/* <Link href={`/admin/assets/${item.title}?parent=${prt}&id=${item.id}`}>
+                                <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
+                            </Link>
+                            <button onClick={() => { setmodaldelete(true); setDatadelete({ ...datadelete, id: item.id }) }}><a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a></button> */}
+                        </div>
+                    </div>
+                ) : (
+                    <span>{item.title}</span>
+                );
+            if (item.children) {
+                return { title, key: item.key, children: loop(item.children) };
+            }
+
+            return {
+                title,
+                key: item.key
+            };
+        });
+
     const handleAddAssets = () => {
         // rt.push(`/assets/update/${datanew.name}?originPath=Admin&title=${datanew.name}&parent=${datanew.parent}&create=true`)
         setloadingbtn(true)
@@ -125,6 +228,22 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                 }
             })
     }
+
+    //useEffect
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setmaindata(res2.data)
+                setExpandedKeys([res2.data[0].key])
+                setpraloading(false)
+            })
+    }, [])
     return (
         <Layout tok={tok} pathArr={pathArr} sidemenu={sidemenu} dataProfile={dataProfile} st={st}>
             <div className="w-full h-auto border-t border-opacity-30 border-gray-500 bg-white">
@@ -132,93 +251,103 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                     <div className="col-span-1 md:col-span-4 flex flex-col">
                         <div className="p-2 md:p-5 mb-5 border-b flex justify-between">
                             <div className="text-xs md:text-sm font-semibold">
-                                <h1 className="mt-2">Assets Types & Fields</h1>
+                                <h1 className="mt-2 font-semibold text-xl">Assets Types</h1>
                             </div>
-                            <Button type="primary" size="large" onClick={() => { setNewmodal(true) }}>Add New</Button>
+                            <Button disabled={praloading} type="primary" size="large" onClick={() => { /*setNewmodal(true)*/ rt.push(`/admin/assets/create?idparent=`) }}>Tambah</Button>
                             {/* <div className="w-auto h-auto p-2 text-white bg-blue-700 rounded-md cursor-pointer hover:bg-blue-900 text-xs md:text-sm font-semibold" onClick={() => { setNewmodal(true) }}>
                                 New Asset Type
                             </div> */}
-                            <Modal
-                                title="Tambah Assets Type & Field"
-                                visible={newmodal}
-                                onCancel={() => setNewmodal(false)}
-                                maskClosable={false}
-                                footer={null}
-                                style={{ top: `3rem` }}
-                                width={800}
-                                destroyOnClose
-                            >
-                                <Form layout="vertical" onFinish={handleAddAssets}>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 mb-5">
-                                        <div className="flex flex-col mx-3">
-                                            <h1 className="text-sm">Nama:</h1>
-                                            <Input onChange={onChangeAddAssets} name="name" value={datanew.name} allowClear required />
-                                        </div>
-                                        <div className="flex flex-col mx-3">
-                                            <h1 className="text-sm">Deskripsi:</h1>
-                                            <Input name="description" allowClear />
-                                        </div>
-                                        <div className="flex flex-col mx-3">
-                                            <h1 className="text-sm">Parent:</h1>
-                                            <TreeSelect
-                                                style={{ width: '100%' }}
-                                                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                                treeData={treeData}
-                                                placeholder="Pilih parent"
-                                                treeDefaultExpandAll
-                                                onChange={(value) => { onChangeParent(value) }}
-                                                allowClear
-                                                required
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-end">
-                                        <Button type="default" onClick={() => { setNewmodal(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
-                                        <Button htmlType="submit" loading={loadingbtn} type="primary" size="middle">Save</Button>
-                                    </div>
-                                    {/* <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button> */}
-                                </Form>
-                            </Modal>
-                            <Modal
-                                title={`Tambah Assets Type & Field dari parent ${parenttitle}`}
-                                visible={newmodalparent}
-                                onCancel={() => { setNewmodalparent(false); setParentadd("") }}
-                                maskClosable={false}
-                                footer={null}
-                                style={{ top: `3rem` }}
-                                width={800}
-                                destroyOnClose
-                            >
-                                <Form layout="vertical" onFinish={handleAddAssets}>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 mb-5">
-                                        <div className="flex flex-col mx-3">
-                                            <h1 className="text-sm">Nama:</h1>
-                                            <Input onChange={onChangeAddAssets} name="name" value={datanew.name} allowClear required />
-                                        </div>
-                                        <div className="flex flex-col mx-3">
-                                            <h1 className="text-sm">Deskripsi:</h1>
-                                            <Input name="description" allowClear />
-                                        </div>
-                                        <div className="flex flex-col mx-3">
-                                            <h1 className="text-sm">Parent:</h1>
-                                            <TreeSelect
-                                                style={{ width: '100%' }}
-                                                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                                defaultValue={parentadd}
-                                                // value={parentadd}
-                                                treeData={treeData}
-                                                placeholder="Pilih parent"
-                                                treeDefaultExpandAll
-                                                // onChange={(value) => { onChangeParent(value) }}
-                                                disabled
-                                                allowClear
-                                            />
-                                        </div>
-                                    </div>
-                                    <Button htmlType="submit" loading={loadingbtnfromparent} type="primary" size="middle">Submit</Button>
-                                    {/* <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button> */}
-                                </Form>
-                            </Modal>
+                            {
+                                praloading ?
+                                    null
+                                    :
+                                    <Modal
+                                        title="Tambah Assets Type & Field"
+                                        visible={newmodal}
+                                        onCancel={() => setNewmodal(false)}
+                                        maskClosable={false}
+                                        footer={null}
+                                        style={{ top: `3rem` }}
+                                        width={800}
+                                        destroyOnClose
+                                    >
+                                        <Form layout="vertical" onFinish={handleAddAssets}>
+                                            <div className="grid grid-cols-1 md:grid-cols-3 mb-5">
+                                                <div className="flex flex-col mx-3">
+                                                    <h1 className="text-sm">Nama:</h1>
+                                                    <Input onChange={onChangeAddAssets} name="name" value={datanew.name} allowClear required />
+                                                </div>
+                                                <div className="flex flex-col mx-3">
+                                                    <h1 className="text-sm">Deskripsi:</h1>
+                                                    <Input name="description" allowClear />
+                                                </div>
+                                                <div className="flex flex-col mx-3">
+                                                    <h1 className="text-sm">Parent:</h1>
+                                                    <TreeSelect
+                                                        style={{ width: '100%' }}
+                                                        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                                        treeData={maindata}
+                                                        placeholder="Pilih parent"
+                                                        treeDefaultExpandAll
+                                                        onChange={(value) => { onChangeParent(value) }}
+                                                        allowClear
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="flex justify-end">
+                                                <Button type="default" onClick={() => { setNewmodal(false) }} style={{ marginRight: `1rem` }}>Cancel</Button>
+                                                <Button htmlType="submit" loading={loadingbtn} type="primary" size="middle">Save</Button>
+                                            </div>
+                                            {/* <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button> */}
+                                        </Form>
+                                    </Modal>
+                            }
+                            {
+                                praloading ?
+                                    null
+                                    :
+                                    <Modal
+                                        title={`Tambah Assets Type & Field dari parent ${parenttitle}`}
+                                        visible={newmodalparent}
+                                        onCancel={() => { setNewmodalparent(false); setParentadd("") }}
+                                        maskClosable={false}
+                                        footer={null}
+                                        style={{ top: `3rem` }}
+                                        width={800}
+                                        destroyOnClose
+                                    >
+                                        <Form layout="vertical" onFinish={handleAddAssets}>
+                                            <div className="grid grid-cols-1 md:grid-cols-3 mb-5">
+                                                <div className="flex flex-col mx-3">
+                                                    <h1 className="text-sm">Nama:</h1>
+                                                    <Input onChange={onChangeAddAssets} name="name" value={datanew.name} allowClear required />
+                                                </div>
+                                                <div className="flex flex-col mx-3">
+                                                    <h1 className="text-sm">Deskripsi:</h1>
+                                                    <Input name="description" allowClear />
+                                                </div>
+                                                <div className="flex flex-col mx-3">
+                                                    <h1 className="text-sm">Parent:</h1>
+                                                    <TreeSelect
+                                                        style={{ width: '100%' }}
+                                                        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                                        defaultValue={parentadd}
+                                                        // value={parentadd}
+                                                        treeData={maindata}
+                                                        placeholder="Pilih parent"
+                                                        treeDefaultExpandAll
+                                                        // onChange={(value) => { onChangeParent(value) }}
+                                                        disabled
+                                                        allowClear
+                                                    />
+                                                </div>
+                                            </div>
+                                            <Button htmlType="submit" loading={loadingbtnfromparent} type="primary" size="middle">Submit</Button>
+                                            {/* <button type="submit" className="bg-blue-600 w-auto h-auto py-1 px-3 text-white rounded-md hover:to-blue-800">Submit</button> */}
+                                        </Form>
+                                    </Modal>
+                            }
                             <Modal
                                 title={`Konfirmasi hapus asset`}
                                 visible={modaldelete}
@@ -231,50 +360,58 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                 destroyOnClose={true}
                             >
                                 Yakin ingin hapus asset ini?
-                        </Modal>
+                            </Modal>
                         </div>
-                        <div className="p-2 md:p-5 w-full md:w-8/12">
-                            <Tree
-                                onExpand={onExpand}
-                                expandedKeys={expandedKeys}
-                                autoExpandParent={autoExpandParent}
-                                treeData={treeData}
-                                titleRender={(nodeData) => {
-                                    const prt = nodeData.value.substring(0, nodeData.value.length - 4)
-                                    return (
-                                        <>
-                                            <div className={`flex justify-between hover:bg-blue-100 text-black`}
-                                                onMouseOver={() => {
-                                                    var d = document.getElementById(`node${nodeData.key}`)
-                                                    d.classList.add("flex")
-                                                    d.classList.remove("hidden")
-                                                }}
-                                                onMouseLeave={() => {
-                                                    var e = document.getElementById(`node${nodeData.key}`)
-                                                    e.classList.add("hidden")
-                                                    e.classList.remove("flex")
-                                                }}
-                                            >
-                                                <div className="mr-20">
-                                                    {nodeData.title}
-                                                </div>
-                                                <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
+                        <div className="flex mb-2 md:mb-5">
+                            <Input placeholder="Masukkan Nama Asset Type" style={{ width: `70%` }} onChange={onChangeFilterAsset} allowClear />
+                        </div>
+                        {
+                            praloading ?
+                                <div className="flex">
+                                    <Spin></Spin>
+                                </div>
+                                :
+                                <div className="p-2 md:p-5 w-full md:w-8/12">
+                                    <Tree
+                                        onExpand={onExpand}
+                                        expandedKeys={expandedKeys}
+                                        autoExpandParent={autoExpandParent}
+                                        treeData={loop(maindata)}
+                                        filterTreeNode={filterTreeNode}
+                                        titleRender={(nodeData) => {
+                                            return (
+                                                <>
+                                                    <div
+                                                    // onMouseOver={() => {
+                                                    //     var d = document.getElementById(`node${nodeData.key}`)
+                                                    //     d.classList.add("flex")
+                                                    //     d.classList.remove("hidden")
+                                                    // }}
+                                                    // onMouseLeave={() => {
+                                                    //     var e = document.getElementById(`node${nodeData.key}`)
+                                                    //     e.classList.add("hidden")
+                                                    //     e.classList.remove("flex")
+                                                    // }}
+                                                    >
+                                                        <div>
+                                                            {nodeData.title}
+                                                        </div>
+                                                        {/* <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
                                                     <a className="mx-2 pb-1" alt="add" onClick={() => { setNewmodalparent(true); fungsiSetParent(nodeData.value); setParenttitle(nodeData.title) }}><PlusOutlined /></a>
                                                     <Link href={`/admin/assets/${nodeData.title}?parent=${prt}&id=${nodeData.id}`}>
                                                         <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                                     </Link>
-                                                    {/* <Popconfirm title="Yakin ingin menghapus asset type ini?" onConfirm={() => { handleDeleteAssets(nodeData.id) }} onCancel={() => { message.error("Gagal dihapus") }}> */}
                                                     <button onClick={() => { setmodaldelete(true); setDatadelete({ ...datadelete, id: nodeData.id }) }}><a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a></button>
-                                                    {/* </Popconfirm> */}
-                                                </div>
-                                            </div>
-                                        </>
-                                    )
-                                }
-                                }
-                                blockNode={true}
-                            />
-                        </div>
+                                                </div> */}
+                                                    </div>
+                                                </>
+                                            )
+                                        }
+                                        }
+                                        blockNode={true}
+                                    />
+                                </div>
+                        }
                     </div>
                     {/* <div className="col-span-1 md:col-span-1 flex flex-col p-2 md:p-5">
                         <h1 className="text-xs md:text-sm font-semibold mb-5">Asset Types & Fields</h1>
@@ -292,17 +429,24 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
 
 export async function getServerSideProps({ req, res }) {
     var initProps = {};
-    if (req && req.headers) {
-        const cookies = req.headers.cookie;
-        if (!cookies) {
-            res.writeHead(302, { Location: '/login' })
-            res.end()
-        }
-        if (typeof cookies === 'string') {
-            const cookiesJSON = httpcookie.parse(cookies);
-            initProps = cookiesJSON.token
+    if (!req.headers.cookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
         }
     }
+    const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+    if (!cookiesJSON1.token) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
+        }
+    }
+    initProps = cookiesJSON1.token
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
         method: `POST`,
         headers: {
@@ -312,20 +456,20 @@ export async function getServerSideProps({ req, res }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    const resourcesGA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
-        method: `GET`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-        }
-    })
-    const resjsonGA = await resourcesGA.json()
-    const dataAssetsList = resjsonGA
+    // const resourcesGA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
+    //     method: `GET`,
+    //     headers: {
+    //         'Authorization': JSON.parse(initProps),
+    //     }
+    // })
+    // const resjsonGA = await resourcesGA.json()
+    // const dataAssetsList = resjsonGA
 
     return {
         props: {
             initProps,
             dataProfile,
-            dataAssetsList,
+            // dataAssetsList,
             sidemenu: "4"
         },
     }
