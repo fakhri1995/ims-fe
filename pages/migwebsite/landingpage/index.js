@@ -52,7 +52,7 @@ function LandingPage({ }) {
                     </div>
                     {/* ---------- */}
                     {/* Phone View */}
-                    <div className={'block md:hidden pt-16'}>
+                    <div className={'block md:hidden pt-8'}>
                         <div className={'flex-col center'}>
                             <div className={'text-center'}>
                                 <p className={'text-4xl md:text-5xl lg:text-6xl gilroy-bold font-bold'} style={{ letterSpacing:'1.2px' }}>Your One Stop,
@@ -86,11 +86,13 @@ function LandingPage({ }) {
                             </div>
                             <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto w-52'}>
                                 <p className={'text-3xl md:text-5xl text-center gilroy-regular '}><CountUp end={8500}/>+</p>
-                                <p className={'text-lg md:text-xl text-center gilroy-regular'}>managed and leased devices</p>
+                                <p className={'hidden md:block text-lg md:text-xl text-center gilroy-regular'}>managed and leased devices</p>
+                                <p className={'block md:hidden text-lg md:text-xl text-center gilroy-regular'}>devices</p>
                             </div>
                             <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto w-52'}>
                                 <p className={'text-3xl md:text-5xl text-center gilroy-regular '}><CountUp end={15}/>+</p>
-                                <p className={'text-lg md:text-xl text-center gilroy-regular'}>years experienced</p>
+                                <p className={'hidden md:block text-lg md:text-xl text-center gilroy-regular'}>years experienced</p>
+                                <p className={'block md:hidden text-lg md:text-xl text-center gilroy-regular'}>years</p>
                             </div>
                         </div>
                         <Link 

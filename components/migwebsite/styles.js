@@ -165,8 +165,10 @@ const Styles = (props) => (
       padding: 10px;
     }
     .menu2{
+      z-index: 30;
+      position: fixed;
       display: grid;
-      margin: 1.5rem 0rem;
+      // margin: 1.5rem 0rem;
       // padding: 1rem 0rem;
       background: white;
       border: 1px;
