@@ -1,0 +1,401 @@
+import Layout from '../../../../components/layout-dashboard'
+import { useRouter } from 'next/router'
+import httpcookie from 'cookie'
+import { DeleteOutlined } from '@ant-design/icons'
+import Sticky from 'wil-react-sticky'
+import Link from 'next/link'
+import { useState, useEffect } from 'react'
+import { Form, Input, notification, Button, TreeSelect, Checkbox, Select, Popconfirm, Spin } from 'antd'
+import st from '../../../../components/layout-dashboard.module.css'
+
+
+const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
+    //1. Init
+    const rt = useRouter()
+    var pathArr = rt.pathname.split("/").slice(1)
+    pathArr.splice(3, 1)
+    pathArr[pathArr.length - 1] = "Ubah Asset Type"
+    const [instanceForm] = Form.useForm();
+    const { idparent } = rt.query
+
+    //useState
+    const [displaydata, setdisplaydata] = useState({
+        id: "",
+        name: "",
+        code: "",
+        required_sn: false,
+        description: "",
+        asset_columns: []
+    })
+    const [updatedata, setupdatedata] = useState({
+        id: Number(assettypeid),
+        name: "",
+        code: "",
+        required_sn: false,
+        description: "",
+        add_columns: [],
+        delete_column_ids: []
+    })
+    const [assetdata, setassetdata] = useState([])
+    const [fielddata, setfielddata] = useState([])
+    const [newfielddata, setnewfielddata] = useState([])
+    const [deletefielddata, setdeletefielddata] = useState([])
+    const [currentfield, setcurrentfield] = useState({
+        name: "",
+        data_type: "",
+        default: "",
+        required: false
+    })
+    const [addedfield, setaddedfield] = useState([])
+    const [selectedfieldidx, setselectedfieldidx] = useState(-1)
+    const [selectedfieldidxtrigger, setselectedfieldidxtrigger] = useState(false)
+    const [loadingupdate, setloadingupdate] = useState(false)
+    const [praloading, setpraloading] = useState(true)
+
+    //handle
+    const onClickAddField = () => {
+        console.log(addedfield)
+        setfielddata([...fielddata, {
+            id: -1,
+            name: "",
+            data_type: "",
+            default: "",
+            required: false
+        }])
+        setcurrentfield({
+            id: "",
+            name: "",
+            data_type: "",
+            default: "",
+            required: false
+        })
+        setaddedfield([...addedfield, false])
+    }
+    const handleUpdateAsset = () => {
+        setloadingupdate(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateAsset`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedata)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingupdate(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: "Asset Type berhasil diubah",
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        // rt.push(`/admin/assets/${datanew.name}?parent=${datanew.parent}&create=true`)
+                        rt.push(`/admin/assets/detail/${assettypeid}`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message.errorInfo.status_detail,
+                        duration: 3
+                    })
+                }
+            })
+    }
+
+    //useEffect
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getAsset?id=${assettypeid}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdisplaydata(res2.data)
+                setupdatedata(res2.data)
+                const assetcolmap = res2.data.asset_columns.map((doc, idx) => {
+                    return ({
+                        id: doc.id,
+                        name: doc.name,
+                        data_type: doc.data_type,
+                        default: doc.default,
+                        required: doc.required
+                    })
+                })
+                setfielddata(assetcolmap)
+                const boolarr = []
+                for (var i = 0; i < res2.data.asset_columns.length; i++) {
+                    boolarr.push(true)
+                }
+                setaddedfield(boolarr)
+                setpraloading(false)
+            })
+    }, [])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setassetdata(res2.data)
+            })
+    }, [])
+    useEffect(() => {
+        if (selectedfieldidx !== -1) {
+            setaddedfield(prev => {
+                prev[selectedfieldidx] = true
+                return prev
+            })
+            setupdatedata({
+                ...updatedata,
+                add_columns: newfielddata,
+                delete_column_ids: deletefielddata,
+            })
+            setupdatedata(prev => {
+                const temp = prev
+                delete temp.asset_columns
+                return temp
+            })
+        }
+    }, [selectedfieldidxtrigger])
+
+    return (
+        <Layout tok={initProps} sidemenu={sidemenu} pathArr={pathArr} st={st} dataProfile={dataProfile}>
+            <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4" id="createAssetsWrapper">
+                <div className=" col-span-1 md:col-span-4 mb-8">
+                    <Sticky containerSelectorFocus="#createAgentsWrapper">
+                        <div className=" col-span-4 flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white">
+                            <h1 className="font-semibold py-2">Form Ubah Asset Type {praloading ? null : `- ${displaydata.name}`}</h1>
+                            <div className="flex space-x-2">
+                                {/* <Link href={`/admin/assets/detail=${assettypeid}`}> */}
+                                <Button onClick={() => { console.log(fielddata) }} type="default">Batal</Button>
+                                {/* </Link> */}
+                                <Button type="primary" loading={loadingupdate} onClick={instanceForm.submit}>Simpan</Button>
+                            </div>
+                        </div>
+                    </Sticky>
+                </div>
+                <div className="col-span-1 md:col-span-4 px-5 mb-8">
+                    <div className="shadow-md border p-8 flex flex-col rounded-md">
+                        {
+                            praloading ?
+                                <Spin />
+                                :
+                                <Form form={instanceForm} layout="vertical" onFinish={handleUpdateAsset} initialValues={updatedata}>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 space-x-2">
+                                        <Form.Item name="parent" label="Induk Asset Type">
+                                            <TreeSelect
+                                                style={{ marginRight: `1rem` }}
+                                                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                                treeData={assetdata}
+                                                defaultValue={idparent !== "" ? idparent : "-"}
+                                                disabled={true}
+                                                treeDefaultExpandAll
+                                                allowClear
+                                            />
+                                        </Form.Item>
+                                        <Form.Item name="name" label="Nama Asset Type"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Nama Asset wajib diisi',
+                                                },
+                                            ]}>
+                                            <Input name="name" onChange={(e) => { setupdatedata({ ...updatedata, name: e.target.value }) }} />
+                                        </Form.Item>
+                                    </div>
+                                    <Form.Item name="description" label="Deskripsi"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Deskripsi wajib diisi',
+                                            },
+                                        ]}>
+                                        <Input.TextArea rows={4} name="description" onChange={(e) => { setupdatedata({ ...updatedata, description: e.target.value }) }} />
+                                    </Form.Item>
+                                    <div className="flex">
+                                        <Checkbox style={{ marginRight: `0.5rem` }} onChange={(e) => { setupdatedata({ ...updatedata, required_sn: e.target.checked }) }} checked={updatedata.required_sn} /> Serial Number wajib ada
+                                    </div>
+                                </Form>
+                        }
+                    </div>
+                </div>
+                <div className=" col-span-1 md:col-span-4 px-5 flex flex-col">
+                    <div className="mb-5">
+                        <h1 className="font-bold text-xl">Spesifikasi Asset Type</h1>
+                    </div>
+                    {
+                        fielddata.map((doc, idx) => {
+                            return (
+                                <>
+                                    {
+                                        addedfield[idx] === true ?
+                                            <div key={idx} className="shadow-md border p-8 mx-3 md:mx-8 mb-5 flex flex-col rounded-md cursor-pointer" onClick={() => {
+                                                const temp = [...addedfield]
+                                                temp[idx] = false
+                                                for (var i = 0; i < temp.length; i++) {
+                                                    if (i !== idx) {
+                                                        temp[i] = true
+                                                    }
+                                                }
+                                                setaddedfield(temp)
+                                                setcurrentfield(fielddata[idx])
+                                            }}>
+                                                <div className="font-semibold mb-2">
+                                                    {doc.name}
+                                                    {fielddata[idx].required ? <span className="judulField"></span> : null}
+                                                </div>
+                                                <div className='rounded border w-full h-10'></div>
+                                                <style jsx>
+                                                    {`
+                                                        .judulField::before{
+                                                            content: '*';
+                                                            color: red;
+                                                        }
+                                                    `}
+                                                </style>
+                                            </div>
+                                            :
+                                            <div key={idx} className="shadow-md border p-8 mx-3 md:mx-8 mb-5 flex flex-col rounded-md">
+                                                <Form layout="vertical" initialValues={fielddata[idx]}>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 space-x-2">
+                                                        <Form.Item name="name" label="Nama Field" rules={[
+                                                            {
+                                                                required: true,
+                                                                message: 'Nama Field wajib diisi',
+                                                            },
+                                                        ]}>
+                                                            <Input required name="name" onChange={(e) => {
+                                                                setcurrentfield({ ...currentfield, name: e.target.value })
+                                                            }} />
+
+                                                        </Form.Item>
+                                                        <Form.Item name="data_type" label="Tipe Field"
+                                                            rules={[
+                                                                {
+                                                                    required: true,
+                                                                    message: 'Tipe Field wajib diisi',
+                                                                },
+                                                            ]}>
+                                                            <Select placeholder="Pilih Tipe Field" onChange={(value) => { setcurrentfield({ ...currentfield, data_type: value }) }} name="data_type">
+                                                                <Select.Option value={"dropdown"}>Dropdown</Select.Option>
+                                                                <Select.Option value={"number"}>Number</Select.Option>
+                                                                <Select.Option value={"paragraph"}>Paragraph Text</Select.Option>
+                                                                <Select.Option value={"checkbox"}>Checkbox</Select.Option>
+                                                                <Select.Option value={"single"}>Single Textbox</Select.Option>
+                                                                <Select.Option value={"date"}>Date</Select.Option>
+                                                            </Select>
+                                                        </Form.Item>
+                                                    </div>
+                                                    <hr />
+                                                    <div className="flex mt-4 justify-end">
+                                                        <Popconfirm placement="bottom" title={`Apakah anda yakin ingin menghapus field ${doc.name === "" ? "ini" : doc.name}?`} okText="Ya" cancelText="Tidak" onConfirm={() => {
+                                                            if (displaydata.asset_columns.some((docc) => docc.id === doc.id)) {
+                                                                setdeletefielddata([...deletefielddata, doc.id])
+                                                            }
+                                                            setfielddata(prev => prev.filter((_, idxx) => idxx !== idx))
+                                                            setaddedfield(prev => {
+                                                                prev.splice(idx, 1)
+                                                                return prev
+                                                            })
+                                                        }
+                                                        }>
+                                                            <div className="flex items-center mr-4 hover:text-red-500 cursor-pointer">
+                                                                <DeleteOutlined style={{ fontSize: `1.25rem` }} ></DeleteOutlined>
+                                                            </div>
+                                                        </Popconfirm>
+                                                        <div className=" flex items-center mr-4">
+                                                            <Checkbox checked={currentfield.required} style={{ marginRight: `0.3rem` }} onChange={(e) => {
+                                                                setcurrentfield({ ...currentfield, required: e.target.checked })
+                                                            }} /> Required
+                                                        </div>
+                                                        <Button type="primary" onClick={() => {
+                                                            // console.log(displaydata.asset_columns)
+                                                            // console.log(doc.id)
+                                                            // console.log(displaydata.asset_columns.map(docc => docc.id).includes(doc.id))
+                                                            if (displaydata.asset_columns.map(docc => docc.id).includes(doc.id) === false) {
+                                                                const temp = fielddata
+                                                                temp[idx] = currentfield
+                                                                setfielddata(temp)
+                                                                setnewfielddata([...newfielddata, currentfield])
+                                                            }
+                                                            const temp = fielddata
+                                                            temp[idx] = currentfield
+                                                            setfielddata(temp)
+                                                            setaddedfield(prev => {
+                                                                if (prev[idx] === false) {
+                                                                    setselectedfieldidxtrigger(prev => !prev)
+                                                                    setselectedfieldidx(idx)
+                                                                    prev[idx] = true
+                                                                    return prev
+                                                                }
+                                                                else if (typeof (prev[idx]) === 'undefined') {
+                                                                    const temp2 = [...prev, true]
+                                                                    return temp2
+                                                                }
+                                                            })
+                                                        }}>Tambah</Button>
+                                                    </div>
+                                                </Form>
+                                            </div>
+
+                                    }
+                                </>
+                            )
+                        })
+                    }
+                    <div className="w-full flex justify-center mt-5">
+                        <Button type="dashed" style={{ width: `80%`, height: `4rem` }} onClick={onClickAddField}>+ Tambah Spesifikasi Asset Type</Button>
+                    </div>
+                </div>
+            </div>
+        </Layout>
+    )
+}
+
+export async function getServerSideProps({ req, params }) {
+    var initProps = {};
+    const assettypeid = params.assettypeId
+    if (!req.headers.cookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
+        }
+    }
+    const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+    if (!cookiesJSON1.token) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login'
+            }
+        }
+    }
+    initProps = cookiesJSON1.token
+    const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
+        method: `POST`,
+        headers: {
+            'Authorization': JSON.parse(initProps)
+        }
+    })
+    const resjson = await resources.json()
+    const dataProfile = resjson
+
+    return {
+        props: {
+            initProps,
+            dataProfile,
+            sidemenu: "4",
+            assettypeid
+        },
+    }
+}
+
+export default AssetUpdate

@@ -223,7 +223,7 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
             }
         },
         {
-            title: 'No Handphone',
+            title: 'No. Handphone',
             dataIndex: 'phone_number',
             render: (text, record, index) => {
                 return {
