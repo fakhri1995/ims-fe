@@ -134,7 +134,12 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                         <SubMenu title="Assets">
                             <Menu.Item key="411" icon={<IconAssets width={25} height={25} />}>
                                 <Link href="/admin/assets">
-                                    Assets Type & Field
+                                    Asset Types
+                                </Link>
+                            </Menu.Item>
+                            <Menu.Item key="411" icon={<IconAssets width={25} height={25} />}>
+                                <Link href="/admin/models">
+                                    Models
                                 </Link>
                             </Menu.Item>
                             <Menu.Item key="412" icon={<IconVendors width={25} height={25} />}>
@@ -301,7 +306,12 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                         <SubMenu title="Assets">
                             <Menu.Item key="411" icon={<IconAssets width={20} height={20} />}>
                                 <Link href="/admin/assets">
-                                    Assets Type & Field
+                                    Asset Types
+                                </Link>
+                            </Menu.Item>
+                            <Menu.Item key="411" icon={<IconAssets width={20} height={20} />}>
+                                <Link href="/admin/models">
+                                    Models
                                 </Link>
                             </Menu.Item>
                             <Menu.Item key="412" icon={<IconVendors width={20} height={20} />}>

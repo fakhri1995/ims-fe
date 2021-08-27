@@ -187,7 +187,15 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div className="flex">
                                     <IconAssets />
-                                    <div className=" flex items-center">Asset Types & Fields</div>
+                                    <div className=" flex items-center">Asset Types</div>
+                                </div>
+                            </div>
+                        </Link>
+                        <Link href={'/admin/models'}>
+                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                                <div className="flex">
+                                    <IconAssets />
+                                    <div className=" flex items-center">Models</div>
                                 </div>
                             </div>
                         </Link>
