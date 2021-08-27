@@ -40,6 +40,9 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
     const [fielddata, setfielddata] = useState([])
     const [newfielddata, setnewfielddata] = useState([])
     const [deletefielddata, setdeletefielddata] = useState([])
+    const [currentdropdown, setcurrentdropdown] = useState(["", ""])
+    const [currentdropdownidx, setcurrentdropdownidx] = useState(-1)
+    const [currentdropdowntrigger, setcurrentdropdowntrigger] = useState(false)
     const [currentfield, setcurrentfield] = useState({
         name: "",
         data_type: "",
@@ -54,7 +57,6 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
 
     //handle
     const onClickAddField = () => {
-        console.log(addedfield)
         setfielddata([...fielddata, {
             id: -1,
             name: "",
@@ -70,8 +72,23 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
             required: false
         })
         setaddedfield([...addedfield, false])
+        setcurrentdropdown(["", ""])
     }
     const handleUpdateAsset = () => {
+        var t = {}
+        for (var prop in updatedata) {
+            if (prop === "add_columns") {
+                t[prop] = updatedata[prop].map((doc, idx) => {
+                    return ({
+                        ...doc,
+                        default: JSON.stringify(doc.default)
+                    })
+                })
+            }
+            else{
+                t[prop] = updatedata[prop]
+            }
+        }
         setloadingupdate(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateAsset`, {
             method: 'PUT',
@@ -79,7 +96,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(updatedata)
+            body: JSON.stringify(t)
         })
             .then(res => res.json())
             .then(res2 => {
@@ -90,7 +107,6 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                         duration: 3
                     })
                     setTimeout(() => {
-                        // rt.push(`/admin/assets/${datanew.name}?parent=${datanew.parent}&create=true`)
                         rt.push(`/admin/assets/detail/${assettypeid}`)
                     }, 500)
                 }
@@ -120,7 +136,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                         id: doc.id,
                         name: doc.name,
                         data_type: doc.data_type,
-                        default: doc.default,
+                        default: doc.default.indexOf("{") !== -1 ? JSON.parse(doc.default) : doc.default,
                         required: doc.required
                     })
                 })
@@ -163,6 +179,18 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
             })
         }
     }, [selectedfieldidxtrigger])
+    useEffect(() => {
+        if (currentdropdownidx !== -1) {
+            setfielddata(prev => {
+                var temp = prev
+                temp[currentdropdownidx]["default"] = {
+                    default: "-",
+                    opsi: currentdropdown
+                }
+                return temp
+            })
+        }
+    }, [currentdropdowntrigger])
 
     return (
         <Layout tok={initProps} sidemenu={sidemenu} pathArr={pathArr} st={st} dataProfile={dataProfile}>
@@ -209,13 +237,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                             <Input name="name" onChange={(e) => { setupdatedata({ ...updatedata, name: e.target.value }) }} />
                                         </Form.Item>
                                     </div>
-                                    <Form.Item name="description" label="Deskripsi"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Deskripsi wajib diisi',
-                                            },
-                                        ]}>
+                                    <Form.Item name="description" label="Deskripsi">
                                         <Input.TextArea rows={4} name="description" onChange={(e) => { setupdatedata({ ...updatedata, description: e.target.value }) }} />
                                     </Form.Item>
                                     <div className="flex">
@@ -245,10 +267,13 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                 }
                                                 setaddedfield(temp)
                                                 setcurrentfield(fielddata[idx])
+                                                if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
+                                                    setcurrentdropdown(doc.default.opsi)
+                                                }
                                             }}>
                                                 <div className="font-semibold mb-2">
                                                     {doc.name}
-                                                    {fielddata[idx].required ? <span className="judulField"></span> : null}
+                                                    {fielddata[idx].required ? <span className="judulField"></span> : null} <span className="text-gray-400">({doc.data_type.charAt(0).toUpperCase() + doc.data_type.slice(1)})</span>
                                                 </div>
                                                 <div className='rounded border w-full h-10'></div>
                                                 <style jsx>
@@ -292,11 +317,82 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                             </Select>
                                                         </Form.Item>
                                                     </div>
+                                                    {
+                                                        currentfield.data_type === "dropdown" ?
+                                                            <div className="flex flex-col">
+                                                                {
+                                                                    currentdropdown.map((doc, idxx) => (
+                                                                        <div className="flex mb-3">
+                                                                            <div className="w-11/12 mr-5">
+                                                                                <Input style={{ marginRight: `0.5rem` }} defaultValue={doc} placeholder={`Masukkan opsi ke-${idxx + 1}`} onChange={(e) => {
+                                                                                    setcurrentdropdown(prev => {
+                                                                                        const temp = prev
+                                                                                        temp[idxx] = e.target.value
+                                                                                        return temp
+                                                                                    })
+                                                                                }} />
+                                                                            </div>
+                                                                            <div className="w-1/12 flex justify-around" onClick={() => {
+                                                                                setcurrentdropdown(prev => prev.filter((_, idxxx) => idxxx !== idxx))
+                                                                            }}>
+                                                                                <Button type="danger">-</Button>
+                                                                            </div>
+                                                                        </div>
+                                                                    ))
+                                                                }
+                                                                <div className="mx-auto my-3">
+                                                                    <Button onClick={() => { setcurrentdropdown([...currentdropdown, ""]) }}>+ Tambah Opsi</Button>
+                                                                </div>
+                                                            </div>
+                                                            :
+                                                            null
+                                                    }
+                                                    {
+                                                        currentfield.data_type === "checkbox" ?
+                                                            <div className="flex flex-col">
+                                                                {
+                                                                    currentdropdown.map((doc, idxx) => (
+                                                                        <div className="flex mb-3">
+                                                                            <div className="w-11/12 mr-5">
+                                                                                <Input style={{ marginRight: `0.5rem` }} defaultValue={doc} placeholder={`Masukkan opsi ke-${idxx + 1}`} onChange={(e) => {
+                                                                                    setcurrentdropdown(prev => {
+                                                                                        const temp = prev
+                                                                                        temp[idxx] = e.target.value
+                                                                                        return temp
+                                                                                    })
+                                                                                }} />
+                                                                            </div>
+                                                                            <div className="w-1/12 flex justify-around" onClick={() => {
+                                                                                setcurrentdropdown(prev => prev.filter((_, idxxx) => idxxx !== idxx))
+                                                                            }}>
+                                                                                <Button type="danger">-</Button>
+                                                                            </div>
+                                                                        </div>
+                                                                    ))
+                                                                }
+                                                                <div className="mx-auto my-3">
+                                                                    <Button onClick={() => { setcurrentdropdown([...currentdropdown, ""]) }}>+ Tambah Opsi</Button>
+                                                                </div>
+                                                            </div>
+                                                            :
+                                                            null
+                                                    }
                                                     <hr />
                                                     <div className="flex mt-4 justify-end">
                                                         <Popconfirm placement="bottom" title={`Apakah anda yakin ingin menghapus field ${doc.name === "" ? "ini" : doc.name}?`} okText="Ya" cancelText="Tidak" onConfirm={() => {
                                                             if (displaydata.asset_columns.some((docc) => docc.id === doc.id)) {
                                                                 setdeletefielddata([...deletefielddata, doc.id])
+                                                                setselectedfieldidxtrigger(idx)
+                                                                setselectedfieldidx(idx)
+                                                            }
+                                                            else {
+                                                                setnewfielddata(prev => {
+                                                                    var temp = prev
+                                                                    const idxtemp = temp.map((docc) => docc.name).indexOf(doc.name)
+                                                                    temp.splice(idxtemp, 1)
+                                                                })
+                                                                setselectedfieldidxtrigger(idx)
+                                                                setselectedfieldidx(idx)
                                                             }
                                                             setfielddata(prev => prev.filter((_, idxx) => idxx !== idx))
                                                             setaddedfield(prev => {
@@ -315,21 +411,20 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                             }} /> Required
                                                         </div>
                                                         <Button type="primary" onClick={() => {
-                                                            // console.log(displaydata.asset_columns)
-                                                            // console.log(doc.id)
-                                                            // console.log(displaydata.asset_columns.map(docc => docc.id).includes(doc.id))
                                                             if (displaydata.asset_columns.map(docc => docc.id).includes(doc.id) === false) {
                                                                 const temp = fielddata
                                                                 temp[idx] = currentfield
                                                                 setfielddata(temp)
                                                                 setnewfielddata([...newfielddata, currentfield])
                                                             }
+                                                            setcurrentdropdownidx(idx)
+                                                            setcurrentdropdowntrigger(prev => !prev)
                                                             const temp = fielddata
                                                             temp[idx] = currentfield
                                                             setfielddata(temp)
                                                             setaddedfield(prev => {
                                                                 if (prev[idx] === false) {
-                                                                    setselectedfieldidxtrigger(prev => !prev)
+                                                                    setselectedfieldidxtrigger(idx)
                                                                     setselectedfieldidx(idx)
                                                                     prev[idx] = true
                                                                     return prev

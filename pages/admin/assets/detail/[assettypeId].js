@@ -62,7 +62,7 @@ const Overview = ({ assettypeid, initProps, displaydata, parentcode }) => {
                             displaydata.asset_columns.map((doc, idx) => {
                                 return (
                                     <div className="mb-5">
-                                        <div className="font-semibold mb-2">{doc.name} {doc.required ? <span className="judulField"></span> : null}</div>
+                                        <div className="font-semibold mb-2">{doc.name} {doc.required ? <span className="judulField"></span> : null} <span className="text-gray-400">({doc.data_type.charAt(0).toUpperCase() + doc.data_type.slice(1)})</span></div>
                                         <div className='rounded border bg-gray-400 w-full h-10'></div>
                                         <style jsx>
                                             {`
