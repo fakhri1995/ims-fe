@@ -6,9 +6,20 @@ import React from 'react'
 const Styles = (props) => (
   <div>
     <style jsx global>
-    {`
-    .tesss :hover{
-      background-color: black !important;
+    {` 
+    .animateBounce:hover{
+      animation: bounce 1s infinite;
+
+      @keyframes bounce {
+        0%, 100% {
+          transform: translateY(-15%);
+          animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+        }
+        50% {
+          transform: translateY(0);
+          animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+        }
+      }
     }
     .slick-current .parent .child{
       border-bottom: 2px solid green;
@@ -180,18 +191,6 @@ const Styles = (props) => (
     }
     .menuToggle:checked ~ section .menu2 {
       height: 110px;
-    }
-    .asdasd{
-      display: none;
-    }
-    .asdqwe:hover ~ .asdasd{
-      display: block;
-    }
-    .blabla{
-      display: none;
-    }
-    .bla:hover > .blabla{
-      display: block;
     }
     body {
       margin: 0;

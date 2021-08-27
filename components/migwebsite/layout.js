@@ -5,6 +5,7 @@ import Styles from './styles'
 import { Menu, Layout, Button, Dropdown  } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react'
+import Bounce from 'react-reveal/Bounce';
 
 function layout({ children }) {
     const { Header, Content, Footer } = Layout;
@@ -142,7 +143,7 @@ function layout({ children }) {
                 <input className={`hidden menuToggle`} type="checkbox" id={`menutoggle`} />
                 <section className={'md:hidden w-full pt-16'}>
                     <div theme="light" style={{lineHeight:'3.9rem',}} className={'float-right menu2'}>
-                        <Button type="text" onClick={()=>{handleSolutionNavbar()}} className={'menu-underlined ml-4 mt-2 '} style={{fontWeight:'600', background:'white'}} key="0">
+                        <Button type="text" id="buttonSolution" onClick={()=>{handleSolutionNavbar()}} className={'menu-underlined ml-4 mt-2 '} style={{fontWeight:'600', background:'white'}} key="0">
                             Solution
                         </Button>
                         <Button type="text" onClick={()=>{handleCompanyNavbar()}} className={'menu-underlined ml-4'} style={{fontWeight:'600', background:'white'}} key="1">Company</Button>
@@ -151,12 +152,13 @@ function layout({ children }) {
                 </section>
 
                 {/* SubMenu Solution */}
-                <section className={'bg-white h-screen w-screen z-30 fixed'} hidden={navbarSolution}>
+                <Bounce top when={!navbarSolution}>
+                <section className={`bg-white h-screen w-screen z-30 fixed submenu-solution ${!navbarSolution ? "active" : ""}`} hidden={navbarSolution}>
                     <div style={{paddingTop:'5rem'}}></div>
                     <div className={'flex border-t-2 border-black'} >
                         {/* <button className={'border mx-4 my-2'} onClick={()=>{handleSolutionNavbar()}}>
                         back</button> */}
-                            <svg className={'mx-4 my-2'} onClick={()=>{handleSolutionNavbar()}} width={32} height={32} id="icon-arrow-left2" viewBox="0 0 32 32">
+                            <svg className={'mx-4 my-2 animateBounce'} onClick={()=>{handleSolutionNavbar()}} width={32} height={32} id="icon-arrow-left2" viewBox="0 0 32 32">
                                 <path d="M30.75 14.75h-26.472l4.385-4.364c0.489-0.487 0.491-1.278 0.004-1.768s-1.279-0.491-1.768-0.004l-6.532 6.5c-0 0-0.001 0.001-0.001 0.001-0.488 0.487-0.49 1.281-0 1.77 0 0 0.001 0.001 0.001 0.001l6.532 6.5c0.489 0.487 1.281 0.485 1.768-0.004s0.485-1.281-0.004-1.768l-4.385-4.364h26.472c0.69 0 1.25-0.56 1.25-1.25s-0.56-1.25-1.25-1.25z"></path>
                             </svg>
                     </div>
@@ -191,13 +193,14 @@ function layout({ children }) {
                         </button></Link>
                     </div>
                 </section>
-
+                </Bounce>
                 {/* SubMenu Company */}
+                <Bounce top when={!navbarCompany}>
                 <section className={'bg-white h-screen w-screen z-30 fixed'} hidden={navbarCompany}>
                     <div style={{paddingTop:'5rem'}}></div>
                     <div className={'flex border-t-2 border-black'}>
                         {/* <button className={'mx-4 my-2'} onClick={()=>{handleCompanyNavbar()}}>Back</button> */}
-                        <svg className={'mx-4 my-2'} onClick={()=>{handleCompanyNavbar()}} width={32} height={32} id="icon-arrow-left2" viewBox="0 0 32 32">
+                        <svg className={'mx-4 my-2 animateBounce'} onClick={()=>{handleCompanyNavbar()}} width={32} height={32} id="icon-arrow-left2" viewBox="0 0 32 32">
                             <path d="M30.75 14.75h-26.472l4.385-4.364c0.489-0.487 0.491-1.278 0.004-1.768s-1.279-0.491-1.768-0.004l-6.532 6.5c-0 0-0.001 0.001-0.001 0.001-0.488 0.487-0.49 1.281-0 1.77 0 0 0.001 0.001 0.001 0.001l6.532 6.5c0.489 0.487 1.281 0.485 1.768-0.004s0.485-1.281-0.004-1.768l-4.385-4.364h26.472c0.69 0 1.25-0.56 1.25-1.25s-0.56-1.25-1.25-1.25z"></path>
                         </svg>
                     </div>
@@ -226,6 +229,7 @@ function layout({ children }) {
                         </button></Link>
                     </div>
                 </section>
+                </Bounce>
 
                 <Content className="site-layout" style={{ padding: '0px' }}>
                     <div className="site-layout-background" style={{ padding: 0, minHeight: 380 }}>
