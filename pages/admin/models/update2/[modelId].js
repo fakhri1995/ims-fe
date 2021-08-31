@@ -4,9 +4,9 @@ import httpcookie from 'cookie'
 import { DeleteOutlined } from '@ant-design/icons'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
-import { PlusSquareTwoTone, CloseCircleOutlined } from '@ant-design/icons'
+import { PlusSquareTwoTone, CloseCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
-import { Form, Input, notification, Button, TreeSelect, Checkbox, Select, Popconfirm, Spin, InputNumber, DatePicker, Collapse, Timeline, Empty } from 'antd'
+import { Form, Input, notification, Button, TreeSelect, Checkbox, Select, Popconfirm, Spin, InputNumber, DatePicker, Collapse, Timeline, Empty, Tooltip } from 'antd'
 import st from '../../../../components/layout-dashboard.module.css'
 import Modal from 'antd/lib/modal/Modal'
 
@@ -17,6 +17,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
     pathArr.splice(3, 1)
     pathArr[pathArr.length - 1] = "Ubah Model"
     const [instanceForm] = Form.useForm();
+    const [instanceForm2] = Form.useForm();
     const { Panel } = Collapse
 
     //2.Helper functions
@@ -154,7 +155,6 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
     const [concataddcolumnstrigger, setconcataddcolumnstrigger] = useState(false)
     const [concataddcolumnsidx, setconcataddcolumnsidx] = useState(-1)
     const [concataddcolumnsvalue, setconcataddcolumnsvalue] = useState(-1)
-    const [concataddcolumnsidxcount, setconcataddcolumnsidxcount] = useState(-1)
     const [concatfieldtrigger2, setconcatfieldtrigger2] = useState(false)
     const [editpart, seteditpart] = useState(false)
     const [modaldeletemodel, setmodaldeletemodel] = useState(false)
@@ -180,6 +180,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
             default: "",
             required: false
         })
+        setaddedfield([...addedfield, false])
         setcurrentdropdown2(["", ""])
         setcurrentcheckeddropdown2("")
     }
@@ -210,12 +211,6 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                // const temp = res2.data.asset_columns.map((doc, idx) => {
-                //     return ({
-                //         ...doc,
-                //         default: JSON.parse(doc.default)
-                //     })
-                // })
                 const temp = res2.data.asset_columns.map((doc, idx) => {
                     if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
                         return ({
@@ -229,13 +224,30 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                 })
                 setfielddata2(temp)
                 setnewdata({
-                    ...newdata,
-                    asset_id: Number(id)
+                    ...res2.data,
+                    asset_id: Number(id),
+                    model_columns: temp,
+                    add_columns: [],
+                    update_columns: [],
+                    delete_column_ids: [],
+                    add_models: [],
+                    delete_model_ids: []
                 })
                 setdefaultdata({
-                    ...defaultdata,
-                    asset_id: Number(id)
+                    ...res2.data,
+                    asset_id: Number(id),
+                    model_columns: temp,
+                    add_columns: [],
+                    update_columns: [],
+                    delete_column_ids: [],
+                    add_models: [],
+                    delete_model_ids: []
                 })
+                var arr = []
+                for (var i = 0; i < res2.data.asset_columns.length; i++) {
+                    arr.push(true)
+                }
+                setaddedfield(arr)
                 setnewdatatrigger(prev => !prev)
                 setloadingspec(false)
             })
@@ -280,13 +292,42 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                     }
                 })
             }
+            else if(prop === 'update_columns'){
+                t[prop] = newdata[prop].map((doc, idx) => {
+                    if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
+                        return ({
+                            ...doc,
+                            default: JSON.stringify(doc.default)
+                        })
+                    }
+                    else {
+                        return { ...doc }
+                    }
+                })
+            }
+            else if(prop === 'add_columns'){
+                t[prop] = newdata[prop].map((doc, idx) => {
+                    if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
+                        return ({
+                            ...doc,
+                            default: JSON.stringify(doc.default)
+                        })
+                    }
+                    else {
+                        return { ...doc }
+                    }
+                })
+            }
+            else if(prop === 'asset_id'){
+                t[prop] = Number(assettypecode)
+            }
             else {
                 t[prop] = newdata[prop]
             }
         }
         setloadingcreate(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/addModel`, {
-            method: 'POST',
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateModel`, {
+            method: 'PUT',
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
@@ -298,12 +339,12 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                 setloadingcreate(false)
                 if (res2.success) {
                     notification['success']({
-                        message: "Model berhasil ditambahkan",
+                        message: "Model berhasil diubah",
                         duration: 3
                     })
                     setTimeout(() => {
                         setmodalcreatemodel(false)
-                        rt.push(`/admin/models/detail/${res2.id}`)
+                        rt.push(`/admin/models/detail/${modelid}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -410,11 +451,37 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                         })
                     }
                 })
+                var temp1 = {}
+                var temp11 = []
+                const recursivePartModel = item => {
+                    for (var i = 0; i < item.length; i++) {
+                        temp1 = item[i].model_column.map((doc, idx) => {
+                            if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
+                                return ({
+                                    ...doc,
+                                    default: (doc.default === "") || (doc.default === "-") ? doc.default : JSON.parse(doc.default)
+                                })
+                            }
+                            else {
+                                return ({
+                                    ...doc
+                                })
+                            }
+                        })
+                        temp11.push({
+                            ...item[i],
+                            model_column: temp1,
+                            model_child: item[i].model_child.length > 0 ? recursivePartModel(item[i].model_child) : []
+                        })
+                    }
+                }
+                recursivePartModel(res2.data.model_parts)
                 const temp2 = {
                     ...res2.data,
                     asset_id: res2.data.asset.code,
                     model_columns: temp,
                     add_columns: [],
+                    update_columns: [],
                     delete_column_ids: [],
                     add_models: [],
                     delete_model_ids: []
@@ -422,13 +489,16 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                 setnewdata(temp2)
                 setdefaultdata(temp2)
                 setfielddata2(temp)
+                setmodelpartfielddata(temp11)
                 var arr = []
                 for (var i = 0; i < res2.data.model_columns.length; i++) {
                     arr.push(true)
                 }
                 setaddedfield(arr)
                 setassettypecode(res2.data.asset_id)
-                setpraloading(false)
+                setTimeout(() => {
+                    setpraloading(false)
+                }, 1000);
             })
     }, [])
     useEffect(() => {
@@ -464,12 +534,13 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
     useEffect(() => {
         if (concataddcolumnsidx !== -1) {
             if ((concataddcolumnsidx > defaultdata.model_columns.length - 1) || (typeof (concataddcolumnsvalue.id) === 'undefined')) {
-                if ((fielddata2.length - defaultdata.model_columns.length) > newdata.add_columns.length) {
+                console.log("sini")
+                if ((fielddata2.length - defaultdata.model_columns.length) >= newdata.add_columns.length) {
+                    // console.log(fielddata2.length + ":" + defaultdata.model_columns.length + ":" + newdata.add_columns.length)
                     if (currentfield.data_type === 'dropdown' || currentfield.data_type === 'checkbox') {
                         setnewdata(prev => {
                             var temp = prev
                             temp.add_columns.push(fielddata2[fielddata2.length - 1])
-                            setconcataddcolumnsidxcount(prev => prev + 1)
                             return temp
                         })
                     }
@@ -477,16 +548,16 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                         setnewdata(prev => {
                             var temp = prev
                             temp.add_columns.push(currentfield)
-                            setconcataddcolumnsidxcount(prev => prev + 1)
                             return temp
                         })
                     }
                 }
                 else {
+                    // console.log(newdata.asset_columns.length+":"+concataddcolumnsidx+";"+newdata.add_columns.length)
                     if (currentfield.data_type === 'dropdown' || currentfield.data_type === 'checkbox') {
                         setnewdata(prev => {
                             var temp = prev
-                            temp.add_columns[concataddcolumnsidx - defaultdata.model_columns.length] = {
+                            temp.add_columns[newdata.asset_columns.length + concataddcolumnsidx] = {
                                 name: currentfield.name,
                                 data_type: currentfield.data_type,
                                 default: {
@@ -499,7 +570,6 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                         })
                     }
                     else {
-                        console.log("bener aja")
                         setnewdata(prev => {
                             var temp = prev
                             temp.add_columns[concataddcolumnsidx - defaultdata.model_columns.length] = currentfield
@@ -507,6 +577,14 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                         })
                     }
                 }
+            }
+            else{
+                // console.log(fielddata2[concataddcolumnsidx])
+                setnewdata(prev => {
+                    var temp = prev
+                    temp.update_columns.push(fielddata2[concataddcolumnsidx])
+                    return temp
+                })
             }
         }
     }, [concataddcolumnstrigger])
@@ -585,7 +663,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                         })
                     }
                 })
-                setnewdata({ ...newdata, model_parts: temp })
+                setnewdata({ ...newdata, add_models: temp })
             }
         }
     }, [concatparttrigger])
@@ -597,9 +675,9 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                         <div className=" col-span-4 flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-semibold py-2">Form Ubah Model - {newdata.name}</h1>
                             <div className="flex space-x-2">
-                                {/* <Link href={`/admin/models`}> */}
-                                <Button onClick={() => { console.log(newdata); console.log(fielddata2) }} type="default">Batal</Button>
-                                {/* </Link> */}
+                                <Link href={`/admin/models`}>
+                                <Button /*onClick={() => { console.log(newdata); console.log(fielddata2); console.log(addedfield) }}*/ type="default">Batal</Button>
+                                </Link>
                                 <Button type="primary" loading={loadingcreate} onClick={instanceForm.submit}>Simpan</Button>
                             </div>
                         </div>
@@ -889,32 +967,33 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                 <hr />
                                                                 <div className="flex mt-4 justify-end">
                                                                     <Popconfirm placement="bottom" title={`Apakah anda yakin ingin menghapus field ${doc.name === "" ? "ini" : doc.name}?`} okText="Ya" cancelText="Tidak" onConfirm={() => {
-                                                                        console.log(idx)
-                                                                        console.log(defaultdata.model_columns)
-                                                                        // setfielddata2(prev => prev.filter((_, idxx) => idxx !== idx))
-                                                                        // setnewdata(prev => {
-                                                                        //     var temp = prev
-                                                                        //     temp.model_columns = temp.model_columns.filter((_, idxx) => idxx !== fielddata.length + idx)
-                                                                        //     return temp
-                                                                        // })
-                                                                        // if ((idx <= defaultdata.model_columns.length - 1) && (typeof (doc.id) !== 'undefined')) {
-                                                                        //     setnewdata(prev => {
-                                                                        //         var temp = prev
-                                                                        //         temp.delete_column_ids.push(doc.id)
-                                                                        //         return temp
-                                                                        //     })
-                                                                        // }
-                                                                        // else{
-                                                                        //     setnewdata(prev => {
-                                                                        //         var temp = prev
-                                                                        //         temp.add_columns.splice(idx - defaultdata.model_columns.length, 1)
-                                                                        //         return temp
-                                                                        //     })
-                                                                        // }
-                                                                        // setaddedfield(prev => {
-                                                                        //     prev.splice(idx, 1)
-                                                                        //     return prev
-                                                                        // })
+                                                                        setfielddata2(prev => prev.filter((_, idxx) => idxx !== idx))
+                                                                        setnewdata(prev => {
+                                                                            var temp = prev
+                                                                            temp.model_columns = temp.model_columns.filter((_, idxx) => idxx !== fielddata.length + idx)
+                                                                            return temp
+                                                                        })
+                                                                        if (defaultdata.model_columns.some(docdef => docdef.id === doc.id)) {
+                                                                            setnewdata(prev => {
+                                                                                var temp = prev
+                                                                                temp.delete_column_ids.push(doc.id)
+                                                                                const idxtemp = defaultdata.model_columns.map(doctemp => doctemp.id).indexOf(doc.id)
+                                                                                temp.model_columns.splice(idxtemp, 1)
+                                                                                return temp
+                                                                            })
+                                                                        }
+                                                                        else {
+                                                                            setnewdata(prev => {
+                                                                                var temp = prev
+                                                                                const idxtemp = temp.add_columns.map(doctemp => doctemp.name).indexOf(doc.name)
+                                                                                idxtemp !== -1 ? temp.add_columns.splice(idxtemp, 1) : null
+                                                                                return temp
+                                                                            })
+                                                                        }
+                                                                        setaddedfield(prev => {
+                                                                            prev.splice(idx, 1)
+                                                                            return prev
+                                                                        })
                                                                     }
                                                                     }>
                                                                         <div className="flex items-center mr-4 hover:text-red-500 cursor-pointer">
@@ -969,10 +1048,38 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                     {
                                         modelpartfielddata.map((doc, idx) => {
                                             return (
-                                                <Panel id={`panel${idx}`} key={idx} header={<strong>{doc.name}</strong>}
+                                                <Panel id={`panel${idx}`} key={idx} header={
+                                                    <strong>{doc.name ?
+                                                        <>
+                                                            {
+                                                                doc.model_child.length === 0 ?
+                                                                    <div className="flex items-center w-6/12">
+                                                                        <span className="mr-2">{doc.name}</span>
+                                                                        <Tooltip placement="right" title="Model tidak memiliki part model!">
+                                                                            <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
+                                                                        </Tooltip>
+                                                                    </div>
+                                                                    :
+                                                                    doc.name
+                                                            }
+                                                        </>
+                                                        :
+                                                        "-"}
+                                                    </strong>}
                                                     extra={
-                                                        <div className="flex">
+                                                        <div className="absolute top-2 right-2">
                                                             <Popconfirm placement="bottom" title={`Apakah anda yakin ingin menghapus Model ${doc.name === "" ? "ini" : doc.name} dari Model Part ${newdata.name}?`} okText="Ya" cancelText="Tidak" onConfirm={() => {
+                                                                setnewdata(prev => {
+                                                                    var temp = prev
+                                                                    var idxtemp = modelpartfielddata.map(doctemp => doctemp.id).indexOf(doc.id)
+                                                                    if ((defaultdata.model_parts.map(docparts => docparts.id).includes(doc.id) === false) && idxtemp !== -1) {
+                                                                        temp.add_models.splice(idxtemp, 1)
+                                                                    }
+                                                                    if ((defaultdata.model_parts.map(docparts => docparts.id).includes(doc.id) === true) && idxtemp !== -1) {
+                                                                        temp.delete_model_ids.push(doc.id)
+                                                                    }
+                                                                    return temp
+                                                                })
                                                                 setmodelpartfielddata(prev => prev.filter((_, idxx) => idxx !== idx))
                                                             }}>
                                                                 <CloseCircleOutlined style={{ color: `red` }} />
@@ -983,14 +1090,14 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                         <div className="flex flex-col mb-5">
                                                             <h1 className="font-semibold mb-1">Asset Type <span className="judulassettype"></span></h1>
                                                             <div className="rounded bg-gray-200 w-full flex items-center my-auto h-12 px-2">
-                                                                <p className="mb-0 text-sm">{doc.asset.name}</p>
+                                                                <p className="mb-0 text-sm">{doc.name}</p>
                                                             </div>
                                                         </div>
                                                         {
-                                                            doc.model_columns.map((docmc, idxmc) => {
+                                                            doc.model_column.map((docmc, idxmc) => {
                                                                 return (
                                                                     <div className="flex flex-col mb-5">
-                                                                        <h1 className="font-semibold mb-1">{docmc.name} {docmc.required ? <span className="judulsn"></span> : null} <span className="text-gray-400">({docmc.data_type.charAt(0).toUpperCase() + docmc.data_type.slice(1)})</span></h1>
+                                                                        <h1 className="font-semibold mb-1">{docmc.name} {docmc.required ? <span className="judulsn"></span> : null} <span className="text-gray-400">{docmc.data_type ? <>({docmc.data_type.charAt(0).toUpperCase() + docmc.data_type.slice(1)})</> : ""}</span></h1>
                                                                         <div className="rounded bg-gray-200 w-full flex flex-col justify-center my-auto px-2 py-1">
                                                                             {
                                                                                 docmc.data_type === 'dropdown' || docmc.data_type === 'checkbox' ?
@@ -1023,20 +1130,19 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                                     :
                                                                                     <p className="mb-0 text-sm">{docmc.default}</p>
                                                                             }
-                                                                            {/* <p className="mb-0 text-sm">{docmc.default}</p> */}
                                                                         </div>
                                                                     </div>
                                                                 )
                                                             })
                                                         }
                                                         {
-                                                            doc.model_parts.length === 0 ?
+                                                            doc.model_child.length === 0 ?
                                                                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
                                                                 :
                                                                 <>
                                                                     <Timeline style={{ marginTop: `1rem` }}>
                                                                         {
-                                                                            renderChildPartModel(doc.model_parts)
+                                                                            renderChildPartModel(doc.model_child)
                                                                         }
                                                                     </Timeline>
                                                                 </>
@@ -1064,7 +1170,8 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                     <>
                         {
                             editpart ?
-                                <div className="shadow-md border p-8 mx-3 md:mx-8 my-3 flex flex-col rounded-md">
+                                <div className="shadow-md border p-8 mx-3 md:mx-8 my-3 flex flex-col rounded-md relative">
+                                    <div className="absolute top-2 right-5 text-lg cursor-pointer" onClick={() => { seteditpart(false) }}>x</div>
                                     <Form layout="vertical" initialValues={currentidmodel}>
                                         <div className="flex mb-2">
                                             <div className=" w-11/12 mr-3">
@@ -1106,7 +1213,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                         var t = {}
                                                         for (var prop in res2.data) {
                                                             if (prop === "model_columns") {
-                                                                t[prop] = res2.data[prop].map((doc, idx) => {
+                                                                t["model_column"] = res2.data[prop].map((doc, idx) => {
                                                                     if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
                                                                         return ({
                                                                             ...doc,
@@ -1119,7 +1226,9 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                 })
                                                             }
                                                             else {
-                                                                t[prop] = res2.data[prop]
+                                                                t["model_child"] = res2.data.model_parts
+                                                                t["id"] = res2.data.id
+                                                                t["name"] = res2.data.name
                                                             }
                                                         }
                                                         temp1 = [...temp1, t]
@@ -1149,8 +1258,8 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                     <div className="flex justify-between p-5 mt-5">
                         <h1 className="font-bold text-xl">Form Tambah Model</h1>
                         <div className="flex">
-                            <Button type="default" onClick={() => { /*setmodalcreatemodel(false)*/ console.log(newdata2) }} style={{ marginRight: `1rem` }}>Batal</Button>
-                            <Button type='primary' onClick={instanceForm.submit} loading={loadingcreatemodel}>Simpan</Button>
+                            <Button type="default" onClick={() => { setmodalcreatemodel(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
+                            <Button type='primary' onClick={instanceForm2.submit} loading={loadingcreatemodel}>Simpan</Button>
                         </div>
                     </div>
                 }
@@ -1160,9 +1269,14 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                 width={900}
             >
                 <div className="shadow-md border p-8 flex flex-col rounded-md mb-8">
-                    <Form form={instanceForm} layout="vertical" onFinish={handleCreateModelinModel} initialValues={newdata2}>
+                    <Form form={instanceForm2} layout="vertical" onFinish={handleCreateModelinModel}>
                         <div className="grid grid-cols-1 md:grid-cols-2 space-x-2">
-                            <Form.Item name="asset_id" label="Asset Type">
+                            <Form.Item name="asetid" label="Asset Type" rules={[
+                                    {
+                                        required: true,
+                                        message: 'Asset Type wajib diisi',
+                                    },
+                                ]}>
                                 <TreeSelect
                                     style={{ marginRight: `1rem` }}
                                     dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
@@ -1180,7 +1294,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                         message: 'Nama Model wajib diisi',
                                     },
                                 ]}>
-                                <Input name="name" onChange={(e) => { setnewdata2({ ...newdata2, name: e.target.value }) }} />
+                                <Input name="name" onChange={(e) => { setnewdata2({ ...newdata2, name: e.target.value }) }} allowClear />
                             </Form.Item>
                         </div>
                         <Form.Item name="manufacturer_id" label="Manufacturer"
@@ -1580,8 +1694,10 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                             }} /> Required
                                                         </div>
                                                         <Button type="primary" onClick={() => {
-                                                            setidxdropdowntrigger2(idx)
-                                                            setvaluedropdowntrigger2(prev => !prev)
+                                                            if(currentfield2.data_type === 'dropdown' || currentfield2.data_type === 'checkbox'){
+                                                                setidxdropdowntrigger2(idx)
+                                                                setvaluedropdowntrigger2(prev => !prev)
+                                                            }
                                                             const temp = fielddataa2
                                                             temp[idx] = currentfield2
                                                             setfielddataa2(temp)

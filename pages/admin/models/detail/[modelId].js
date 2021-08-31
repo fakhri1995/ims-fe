@@ -82,7 +82,9 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
         description: "",
         manufacturer_id: "",
         required_sn: false,
-        asset: {},
+        asset: {
+            deleted_at: null
+        },
         manufacturer: {},
         asset_columns: [],
         model_columns: [],
@@ -166,7 +168,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                         <div className=" col-span-4 flex justify-between py-2 px-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-semibold py-2 text-2xl mb-0">{displaydata.name}</h1>
                             <div className="flex space-x-2 items-center">
-                                <Link href={`/admin/models/update1/${displaydata.id}`}>
+                                <Link href={`/admin/models/update2/${displaydata.id}`}>
                                     <Button type="primary">Ubah</Button>
                                 </Link>
                                 <Button type="danger" onClick={() => { setmodaldelete(true) }}>Hapus</Button>
