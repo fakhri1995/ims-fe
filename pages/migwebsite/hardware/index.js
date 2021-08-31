@@ -7,7 +7,7 @@ import {Button} from 'antd'
 function Hardware({ }) {
     return (
         <Layout>
-            <section className={'section1advantages hidden md:block fixed w-full z-50 px-4 md:px-20 lg:px-28 xl:px-40'} style={{background:'#F4F4F4'}}>
+            <section className={'section1advantages hidden md:block fixed w-full z-50 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'} style={{background:'#F4F4F4'}}>
                 <div className={'block md:flex'}>
                     <div className={'flex py-4'}>
                         <Link href={{pathname: '/advantages'}}><p className={'cursor-pointer flex-col text-base font-semibold pr-4'} style={{}}>Advantages
@@ -31,7 +31,7 @@ function Hardware({ }) {
                 </div>
                 <Button type="text" className={'button-hover mx-2 px-4 border-green-800 text-white'} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Get a quote</p></Button>
             </section> */}
-            <section className={'section2hardware py-4 px-4 md:px-20 lg:px-28 xl:px-40'} style={{backgroundColor:'#DAE8DC'}}>
+            <section className={'section2hardware py-8 md:py-8 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'} style={{backgroundColor:'#DAE8DC'}}>
                 <div className={'flex'}>
                     <div className={'flex-row my-auto'}>
                         <p className={'text-3xl font-bold pb-4 gilroy-bold'}>Hardware</p>
@@ -39,7 +39,7 @@ function Hardware({ }) {
                         <button className={'px-4 py-2 text-white'} style={{backgroundColor:'#2A8452'}}> Tombol </button>
                     </div>
                         <div className={'flex-row pt-8 pb-8 w-1/2 ml-8'}>
-                                <img src="/image/landingpage/image-section2.png"></img>
+                                <img src="/image/hardware/Hardware-Solution.png"></img>
                             </div>
                 </div>
             </section>
@@ -53,7 +53,7 @@ function Hardware({ }) {
                     <div style={{borderRadius:'10px'}} className={'relative item-hardware'}><p className={'text-center w-full absolute bottom-2'}>Tablet6</p></div>
                 </div>
             </section> */}
-            <section className={'section3hardware py-8 px-4 md:px-20 lg:px-28 xl:px-40'}>
+            <section className={'section3hardware py-8 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                 <div className={'text-center py-16'}>
                     <p className={'text-3xl font-bold pb-4 gilroy-bold'}>Transforming your capital heavy IT product into managed service model</p>
                 </div>
@@ -85,7 +85,7 @@ function Hardware({ }) {
                     </div>
                 </div>
             </section>
-            <section className={'section4hardware py-4 px-4 md:px-20 lg:px-28 xl:px-40'}>
+            <section className={'section4hardware py-4 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                 <div>
                     <p className={'text-3xl font-bold pb-4 gilroy-bold'}>Products selection</p>
                     <p className={'pb-4 gilroy-medium'}>Desktop & Laptop</p>
@@ -95,7 +95,7 @@ function Hardware({ }) {
                     <p className={'pb-4 gilroy-medium'}>CRM</p>
                 </div>
             </section>
-            <section className={'section5hardware py-8 px-4 md:px-20 lg:px-28 xl:px-40'}>
+            <section className={'section5hardware py-8 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                 <div>
                     <p className={'text-3xl font-bold pb-4 gilroy-bold'}>Start now. Let’s be better together</p>
                     <p className={'pb-4 gilroy-medium'}>A sales expert will contact you within 24 hours</p>
