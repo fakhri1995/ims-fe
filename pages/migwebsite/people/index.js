@@ -41,7 +41,7 @@ function People({ }) {
                         <button className={'px-4 py-2 text-white'} style={{backgroundColor:'#2A8452'}}> Tombol </button>
                     </div>
                         <div className={'flex-row pt-8 pb-8 w-1/2 ml-8'}>
-                            <img src="/image/landingpage/image-section2.png"></img>
+                            <img src="/image/people/People-Solution.png"></img>
                         </div>
                 </div>
             </section>

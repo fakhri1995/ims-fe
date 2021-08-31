@@ -30,7 +30,8 @@ function Advantages({ }) {
 
     return (
         <Layout>
-            <section className={'section1advantages hidden md:block fixed w-full z-50 px-4 md:px-20 lg:px-28 xl:px-40'} style={{background:'#F4F4F4'}}>
+            
+            <section className={'section1advantages hidden md:block fixed w-full z-50 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'} style={{background:'#F4F4F4'}}>
                 <div className={'block md:flex'}>
                     <div className={'flex py-4'}>
                         <Link href={{pathname: '/advantages'}}><p className={'cursor-pointer flex-col text-base font-semibold pr-4'} style={{}}>Advantages
@@ -45,7 +46,7 @@ function Advantages({ }) {
                 </div>
             </section>
             <section className={'section2advantages h-20 hidden md:block'}></section>
-            <section className={'section3advantages py-8 px-4 md:px-20 lg:px-28 xl:px-40'} style={{background:'#F4F4F4'}}>
+            <section className={'section3advantages py-8 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'} style={{background:'#F4F4F4'}}>
                 <div className={'pb-4'}>
                     <p className={'text-2xl md:text-3xl font-bold'} style={{letterSpacing:'1.5px'}}>Support your business efficiently</p>
                 </div>
@@ -157,7 +158,7 @@ function Advantages({ }) {
             </section> */}
             <div className={'hidden md:block'}>
                 <Fade ssrFadeout left opposite  collapse when={isHiddenAnimation}>
-                    <section onClick={()=>{onClickHiddenAnimation()}} className={` md:px-auto py-8 md:px-auto lg:px-28 xl:px-40`}>
+                    <section onClick={()=>{onClickHiddenAnimation()}} className={`py-8 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20`}>
                         <Slider
                         slidesToShow={4}
                         asNavFor={nav1}
@@ -186,7 +187,7 @@ function Advantages({ }) {
             </div>
             <div className={'hidden md:block'}>
                 <Fade ssrFadeout bottom collapse when={!isHiddenAnimation}>
-                    <section className={'bg-green-600 py-8 md:px-auto lg:px-28 xl:px-40'}>
+                    <section className={'bg-green-600 py-8 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                         <div className={'text-center relative -top-4'}>
                             <button type='text' className={'border px-4 py-2 rounded-full border-white'} style={{zIndex:51}} onClick={onClickHiddenAnimation}><p className={'text-white'}>X</p></button>
                         </div>
@@ -289,7 +290,20 @@ function Advantages({ }) {
                     </div>
                 </Flickity>
             </section>
-            <section className={'section5landingpage'} style={{backgroundColor:'#93D9B5'}}>
+            <section className={'section5landingpage sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
+                <div className={' md:flex relative justify-between '}style={{top:'40%'}}>
+                    <div className={'flex-col text-2xl md:text-4xl text-black -top-4 md:top-0 relative gilroy-bold'} style={{}}>
+                        <p>Let’s be better together</p>
+                    </div>
+                    <div className={'flex-col w-auto'}>
+                        <button className={'text-black flex border-2 text-base md:text-xl border-black px-3 py-2 md:px-4 md:py-3 -mt-2 md:right-20 relative focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>Contact Sales &nbsp;
+                            <ArrowRightOutlined className={'pt-1'}/>
+                        </button>
+
+                    </div>
+                </div>
+            </section>
+            {/* <section className={'section5landingpage'} style={{backgroundColor:'#93D9B5'}}>
                 <div className={' md:flex relative justify-between px-4 md:px-20 lg:px-28 xl:px-40'}style={{top:'40%'}}>
                     <div className={'flex-col text-2xl md:text-3xl text-white font-bold -top-4 md:top-0 relative'} style={{}}>
                         <p>Let’s be better together</p>
@@ -301,7 +315,7 @@ function Advantages({ }) {
 
                     </div>
                 </div>
-            </section>
+            </section> */}
 
         </Layout>
     )
