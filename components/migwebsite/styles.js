@@ -35,7 +35,7 @@ const Styles = (props) => (
     .section2careers{
       position: -webkit-sticky; /* Safari & IE */
       position: sticky;
-      top: 64px;
+      top: 80px;
     }
     .section3careers .flickity-page-dots .dot{
       background:#93D9B5;
