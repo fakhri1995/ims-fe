@@ -26,7 +26,7 @@ function Careers({dataCareers}) {
     const { Panel } = Collapse;
     return (
         <Layout>
-            <section className={'section1careers py-4 md:py-20 px-4 md:px-20 lg:px-28 xl:px-40'}>
+            <section className={'section1careers py-4 md:py-20 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                 <div className={'block md:flex'}>
                     <div className={'flex-col m-auto'}>
                         <div className={''}>
@@ -45,7 +45,7 @@ function Careers({dataCareers}) {
                     </div>
                 </div>
             </section>
-            <section className={'section2careers hidden md:block px-4 md:px-20 lg:px-28 xl:px-40 z-50'} style={{background:'#F4F4F4'}}>
+            <section className={'section2careers hidden md:block px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 z-50'} style={{background:'#F4F4F4'}}>
                 <div className={'block md:flex'}>
                     <div className={'flex py-4'}>
                         <Link href='/careers/#ourvalues'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Our Values
@@ -62,37 +62,37 @@ function Careers({dataCareers}) {
                 </div>
             </section>
             <section className={'h-8 hidden md:block'}></section>
-            <section className={'section3careers py-10 px-4 md:px-20 lg:px-28 xl:px-40'} style={{background:'#F4F4F4'}}>
+            <section className={'section3careers py-10 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'} style={{background:'#F4F4F4'}}>
                 <span className={'relative'} style={{top:'-140px'}} id='ourvalues'></span>
                 <div>
                     <p className={'text-2xl font-bold'}>Our Values</p>
                 </div>
                 <div className={'hidden md:flex justify-beetwen'}>
-                    <div className={'w-1/3 flex-col'}>
-                        <div className={'py-8'}>
+                    <div className={'w-1/3 flex-col flex'}>
+                        <div className={'py-8 mx-auto pr-4'}>
                             <img src={'/avatar.png'}></img>
                         </div>
                         <div>
-                            <p className={'text-xl'}>Lorem Ipsum 1</p>
-                            <p className={''}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel mollis risus.</p>
+                            <p className={'text-xl pr-4'}>Agility</p>
+                            <p className={'text-justify pr-4'}>We are adapting to fast-changing environments.</p>
                         </div>
                     </div>
-                    <div className={'w-1/3 flex-col'}>
-                        <div className={'py-8'}>
+                    <div className={'w-1/3 flex-col flex'}>
+                        <div className={'py-8 mx-auto pr-4 pl-4'}>
                             <img src={'/avatar.png'}></img>
                         </div>
                         <div>
-                            <p className={'text-xl'}>Lorem Ipsum 2</p>
-                            <p className={''}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel mollis risus.</p>
+                            <p className={'text-xl pr-4 pl-4'}>Perseverance</p>
+                            <p className={'text-justify pr-4 pl-4'}>We aim high and constantly strive for excellence.</p>
                         </div>
                     </div>
-                    <div className={'w-1/3 flex-col'}>
-                        <div className={'py-8'}>
+                    <div className={'w-1/3 flex-col flex'}>
+                        <div className={'py-8 mx-auto pl-4'}>
                             <img src={'/avatar.png'}></img>
                         </div>
                         <div>
-                            <p className={'text-xl'}>Lorem Ipsum 3</p>
-                            <p className={''}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel mollis risus.</p>
+                            <p className={'text-xl pl-4'}>Integrity</p>
+                            <p className={'text-justify pl-4'}>We are dedicated to adhering to positive ethical values.</p>
                         </div>
                     </div>
                 </div>
@@ -109,8 +109,8 @@ function Careers({dataCareers}) {
                             <img className={'block m-auto'} src={'/avatar.png'}></img>
                         </div>
                         <div className={'pb-4'}>
-                            <p className={'text-xl pb-4 text-center'}>Lorem Ipsum 1</p>
-                            <p className={'text-left'}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel mollis risus.</p>
+                            <p className={'text-xl pb-4 text-center'}>Agility</p>
+                            <p className={'text-left'}>We are adapting to fast-changing environments.</p>
                         </div>
                     </div>
                     <div className={'w-full'}>
@@ -118,8 +118,8 @@ function Careers({dataCareers}) {
                             <img className={'block m-auto'} src={'/avatar.png'}></img>
                         </div>
                         <div  className={'pb-4'}className={''}>
-                            <p className={'text-xl pb-4 text-center'}>Lorem Ipsum 2</p>
-                            <p className={'text-left'}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel mollis risus.</p>
+                            <p className={'text-xl pb-4 text-center'}>Perseverance</p>
+                            <p className={'text-left'}>We aim high and constantly strive for excellence.</p>
                         </div>
                     </div>
                     <div className={'w-full'}>
@@ -127,13 +127,13 @@ function Careers({dataCareers}) {
                             <img className={'block m-auto'} src={'/avatar.png'}></img>
                         </div>
                         <div className={'pb-4'}>
-                            <p className={'text-xl pb-4 text-center'}>Lorem Ipsum 3</p>
-                            <p className={'text-left'}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel mollis risus.</p>
+                            <p className={'text-xl pb-4 text-center'}>Integrity</p>
+                            <p className={'text-left'}>We are dedicated to adhering to positive ethical values.</p>
                         </div>
                     </div>
                 </Flickity>
             </section>
-            <section className={'section4careers py-10 px-4 md:px-20 lg:px-28 xl:px-40 h-auto'} style={{scrollPaddingTop:'80px'}} >
+            <section className={'section4careers py-10 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 h-auto'} style={{scrollPaddingTop:'80px'}} >
                 <span className={'relative'} style={{top:'-140px'}} id="lifeatmig"></span>
                 <div>
                     <p className={'text-2xl font-bold text-center pb-8'}>What is it like to work at Mitramas Solusi?</p>
@@ -167,7 +167,7 @@ function Careers({dataCareers}) {
                     </Flickity>
                 </div>
             </section>
-            <section className={'section5careers py-10 md:p-20 h-auto'} style={{background:'#188E4D'}}>
+            <section className={'section5careers py-10 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 h-auto'} style={{background:'#188E4D'}}>
                 <span className={'relative'} style={{top:'-180px'}} id='employeestories'></span>
                 <Flickity
                 className={'carousel'}
@@ -199,58 +199,58 @@ function Careers({dataCareers}) {
                     </div>
                 </Flickity>
             </section>
-            <section className={'section6careers py-10 px-4 md:px-20 lg:px-28 xl:px-40 h-auto'}>
+            <section className={'section6careers py-10 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 h-auto'}>
                 <span className={'relative'} style={{top:'-140px'}} id='benefits'></span>
                 <div>
                     <p className={'text-center font-bold text-3xl pb-8'}>Benefits</p>
                     <p className={'pb-8 text-justify'}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras convallis sapien ac dapibus aliquet. Cras tempus mauris nibh, in feugiat ipsum tristique quis. In neque velit, fermentum eget auctor nec, ultricies nec nulla. Sed ut odio sapien. Vestibulum at eros dignissim.
+                    Mitramas is a people-centric business with a foundation to gives working opportunities for motivated individuals at all levels. Our long-term sustainable business which has been running for +15 years and operated across 45 cities have a strong commitment to offer pleasant experience for our team, communities, and clients.
                     </p>
                     <div className={'block md:flex justify-center'}>
-                        <div className={'pb-6 flex-row flex justify-center md:pr-20 lg:pr-40'}>
+                        <div className={'pb-6 md:w-1/2 flex-row flex'}>
                             <img className={'flex-row'} src='/avatar.png'></img>
                             <p className={' text-base flex-row my-auto pl-4'}>
-                            Lorem ipsum dolor sit amet 1
+                            We love to empower our team members to solve problems that matter
                             </p>
                         </div>
-                        <div className={'pb-6 flex-row flex justify-center'}>
+                        <div className={'pb-6 md:w-1/2 flex-row flex'}>
                             <img className={'flex-row'} src='/avatar.png'></img>
                             <p className={' text-base flex-row my-auto pl-4'}>
-                            Lorem ipsum dolor sit amet 4
-                            </p>
-                        </div>
-                    </div>
-                    <div className={'block md:flex justify-center'}>
-                        <div className={'pb-6 flex-row flex justify-center md:pr-20 lg:pr-40'}>
-                            <img className={'flex-row'} src='/avatar.png'></img>
-                            <p className={' text-base flex-row my-auto pl-4'}>
-                            Lorem ipsum dolor sit amet 2
-                            </p>
-                        </div>
-                        <div className={'pb-6 flex-row flex justify-center'}>
-                            <img className={'flex-row'} src='/avatar.png'></img>
-                            <p className={' text-base flex-row my-auto pl-4'}>
-                            Lorem ipsum dolor sit amet 5
+                            We offer diverse industry exposures and hands-on experience
                             </p>
                         </div>
                     </div>
                     <div className={'block md:flex justify-center'}>
-                        <div className={'pb-6 flex-row flex justify-center md:pr-20 lg:pr-40'}>
+                        <div className={'pb-6 md:w-1/2 flex-row flex'}>
                             <img className={'flex-row'} src='/avatar.png'></img>
                             <p className={' text-base flex-row my-auto pl-4'}>
-                            Lorem ipsum dolor sit amet 3
+                            We support personal growth through constant experiment and learning
                             </p>
                         </div>
-                        <div className={'pb-6 flex-row flex justify-center'}>
+                        <div className={'pb-6 md:w-1/2 flex-row flex'}>
                             <img className={'flex-row'} src='/avatar.png'></img>
                             <p className={' text-base flex-row my-auto pl-4'}>
-                            Lorem ipsum dolor sit amet 6
+                            We provide unique and competitive packages to launch your career
+                            </p>
+                        </div>
+                    </div>
+                    <div className={'block md:flex justify-center'}>
+                        <div className={'pb-6 md:w-1/2 flex-row flex'}>
+                            <img className={'flex-row'} src='/avatar.png'></img>
+                            <p className={' text-base flex-row my-auto pl-4'}>
+                            We value informal social bonding to offer a enjoyable working environment
+                            </p>
+                        </div>
+                        <div className={'pb-6 md:w-1/2 flex-row flex'}>
+                            <img className={'flex-row'} src='/avatar.png'></img>
+                            <p className={' text-base flex-row my-auto pl-4'}>
+                            We create engaging environment and believe everyone has a voice at the table
                             </p>
                         </div>
                     </div>
                 </div>
             </section>
-            <section className={'section7careers pb-10 md:pb-20 px-4 md:px-20 lg:px-28 xl:px-40 h-auto'}>
+            <section className={'section7careers pb-10 md:pb-20 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 h-auto'}>
                 <span className={'relative'} style={{top:'-150px'}} id='vacancies'></span>
                 <div className={'block md:flex justify-between'}>
                     <div className={'flex-row left-column-section7careers pr-0 md:pr-8'}>
@@ -333,7 +333,20 @@ function Careers({dataCareers}) {
                     </div>
                 </div>
             </section>
-            <section className={'section5landingpage'} style={{backgroundColor:'#93D9B5'}}>
+            <section className={'section5landingpage px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
+                <div className={' md:flex relative justify-between '}style={{top:'40%'}}>
+                    <div className={'flex-col text-2xl md:text-4xl text-black -top-4 md:top-0 relative gilroy-bold'} style={{}}>
+                        <p>Let’s be better together</p>
+                    </div>
+                    <div className={'flex-col w-auto'}>
+                        <button className={'text-black flex border-2 text-base md:text-xl border-black px-3 py-2 md:px-4 md:py-3 -mt-2 md:right-20 relative focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>Contact Sales &nbsp;
+                            <ArrowRightOutlined className={'pt-1'}/>
+                        </button>
+
+                    </div>
+                </div>
+            </section>
+            {/* <section className={'section5landingpage'} style={{backgroundColor:'#93D9B5'}}>
                 <div className={' md:flex relative justify-between px-4 md:px-20 lg:px-28 xl:px-40'}style={{top:'40%'}}>
                     <div className={'flex-col text-2xl md:text-3xl text-white font-bold -top-4 md:top-0 relative'} style={{}}>
                         <p>Let’s be better together</p>
@@ -345,7 +358,7 @@ function Careers({dataCareers}) {
 
                     </div>
                 </div>
-            </section>
+            </section> */}
 
         </Layout>
     )

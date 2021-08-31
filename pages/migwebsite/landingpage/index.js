@@ -139,13 +139,13 @@ function LandingPage({ }) {
                         focusOnSelect={true}
                         >
                             <p className={'text-center parent'}>
-                                <a className={'font-bold text-2xl text-green-700 cursor-pointer menu-underlined child'}>Hardware</a>
+                                <a className={'font-bold text-lg md:text-2xl text-green-700 cursor-pointer menu-underlined child'}>Hardware</a>
                             </p>
                             <p className={'text-center parent'}>
-                                <a className={'font-bold text-2xl text-green-700 cursor-pointer menu-underlined child'}>People</a>
+                                <a className={'font-bold text-lg md:text-2xl text-green-700 cursor-pointer menu-underlined child'}>People</a>
                             </p>
                             <p className={'text-center parent'}>
-                                <a className={'font-bold text-2xl text-green-700 cursor-pointer menu-underlined child'}>Software</a>
+                                <a className={'font-bold text-lg md:text-2xl text-green-700 cursor-pointer menu-underlined child'}>Software</a>
                             </p>
                         </Slider>
                     </div>
@@ -170,7 +170,7 @@ function LandingPage({ }) {
                                 <div className={'pt-8 pb-8 w-full md:w-1/2 my-auto'}>
                                     <p className={'text-4xl font-bold pb-2 md:pb-4 gilroy-bold'}>Hardware</p>
                                     <div className={'pt-4 pb-4 w-full block md:hidden'}>
-                                        <img src="/image/landingpage/Hardware.png"></img>
+                                        <img className={'pr-1'} style={{paddingLeft:'2px'}} src="/image/landingpage/Hardware.png"></img>
                                     </div>
                                     <p className={'w-full md:w-full pb-4 gilroy-medium text-xl text-justify'} style={{letterSpacing:'1.5px'}}>Optimize your cost by leasing and maintenances variety of electronic equipments</p>
                                     <Linkk href="/hardware">
@@ -180,7 +180,7 @@ function LandingPage({ }) {
                                     </Linkk>
                                 </div>
                                 <div className={'pt-8 pb-8 w-1/2 ml-8 hidden md:block'}>
-                                    <img className={'w-full'} src="/image/landingpage/Hardware.png"></img>
+                                    <img className={'w-full pr-1'} src="/image/landingpage/Hardware.png"></img>
                                 </div>
                             </div>
                         </div>
