@@ -40,6 +40,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
     const [fielddata, setfielddata] = useState([])
     const [newfielddata, setnewfielddata] = useState([])
     const [deletefielddata, setdeletefielddata] = useState([])
+    const [updatefielddata, setupdatefielddata] = useState([])
     const [currentdropdown, setcurrentdropdown] = useState(["", ""])
     const [currentdropdownidx, setcurrentdropdownidx] = useState(-1)
     const [currentdropdowntrigger, setcurrentdropdowntrigger] = useState(false)
@@ -54,6 +55,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
     const [selectedfieldidxtrigger, setselectedfieldidxtrigger] = useState(false)
     const [loadingupdate, setloadingupdate] = useState(false)
     const [praloading, setpraloading] = useState(true)
+    const [disabledaddfield, setdisabledaddfield] = useState(false)
 
     //handle
     const onClickAddField = () => {
@@ -73,19 +75,38 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
         })
         setaddedfield([...addedfield, false])
         setcurrentdropdown(["", ""])
+        setdisabledaddfield(true)
     }
     const handleUpdateAsset = () => {
         var t = {}
         for (var prop in updatedata) {
             if (prop === "add_columns") {
                 t[prop] = updatedata[prop].map((doc, idx) => {
-                    return ({
-                        ...doc,
-                        default: JSON.stringify(doc.default)
-                    })
+                    if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
+                        return ({
+                            ...doc,
+                            default: JSON.stringify(doc.default)
+                        })
+                    }
+                    else {
+                        return { ...doc }
+                    }
                 })
             }
-            else{
+            if (prop === "update_columns") {
+                t[prop] = updatedata[prop].map((doc, idx) => {
+                    if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
+                        return ({
+                            ...doc,
+                            default: JSON.stringify(doc.default)
+                        })
+                    }
+                    else {
+                        return { ...doc }
+                    }
+                })
+            }
+            else {
                 t[prop] = updatedata[prop]
             }
         }
@@ -171,6 +192,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                 ...updatedata,
                 add_columns: newfielddata,
                 delete_column_ids: deletefielddata,
+                update_columns: updatefielddata
             })
             setupdatedata(prev => {
                 const temp = prev
@@ -200,9 +222,9 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                         <div className=" col-span-4 flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-semibold py-2">Form Ubah Asset Type {praloading ? null : `- ${displaydata.name}`}</h1>
                             <div className="flex space-x-2">
-                                {/* <Link href={`/admin/assets/detail=${assettypeid}`}> */}
-                                <Button onClick={() => { console.log(fielddata) }} type="default">Batal</Button>
-                                {/* </Link> */}
+                                <Link href={`/admin/assets/detail/${assettypeid}`}>
+                                    <Button /*onClick={() => { console.log(updatedata); console.log(fielddata); console.log(updatefielddata); console.log(addedfield) }}*/ type="default">Batal</Button>
+                                </Link>
                                 <Button type="primary" loading={loadingupdate} onClick={instanceForm.submit}>Simpan</Button>
                             </div>
                         </div>
@@ -216,14 +238,21 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                 :
                                 <Form form={instanceForm} layout="vertical" onFinish={handleUpdateAsset} initialValues={updatedata}>
                                     <div className="grid grid-cols-1 md:grid-cols-2 space-x-2">
-                                        <Form.Item name="parent" label="Induk Asset Type">
+                                        <Form.Item name="parent" label="Induk Asset Type" 
+                                        // rules={[
+                                        //     {
+                                        //         required: true,
+                                        //         message: 'Induk Asset Type wajib diisi',
+                                        //     },
+                                        // ]}
+                                        >
                                             <TreeSelect
                                                 style={{ marginRight: `1rem` }}
                                                 dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                                                 treeData={assetdata}
                                                 defaultValue={idparent !== "" ? idparent : "-"}
-                                                disabled={true}
                                                 treeDefaultExpandAll
+                                                disabled
                                                 allowClear
                                             />
                                         </Form.Item>
@@ -270,12 +299,53 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                 if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
                                                     setcurrentdropdown(doc.default.opsi)
                                                 }
+                                                if (fielddata[idx].name === "" || fielddata[idx].data_type === "") {
+                                                    setdisabledaddfield(true)
+                                                }
+                                                else {
+                                                    setdisabledaddfield(false)
+                                                }
                                             }}>
                                                 <div className="font-semibold mb-2">
                                                     {doc.name}
                                                     {fielddata[idx].required ? <span className="judulField"></span> : null} <span className="text-gray-400">({doc.data_type.charAt(0).toUpperCase() + doc.data_type.slice(1)})</span>
                                                 </div>
-                                                <div className='rounded border w-full h-10'></div>
+                                                <div className='rounded border w-full p-3'>
+                                                    {
+                                                        doc.data_type === 'dropdown' || doc.data_type === 'checkbox' ?
+                                                            <>
+                                                                {
+                                                                    doc.data_type === 'dropdown' &&
+                                                                    <div className="flex flex-col">
+                                                                        {
+                                                                            doc.default.opsi.map((docopsi, idxopsi) => (
+                                                                                <div key={idxopsi} className="flex items-center  mb-2">
+                                                                                    <Checkbox style={{ marginRight: `0.5rem` }} disabled />
+                                                                                    <div className="bg-gray-50 p-2 border w-3/12">{docopsi}</div>
+                                                                                </div>
+                                                                            ))
+                                                                        }
+                                                                    </div>
+                                                                }
+                                                                {
+                                                                    doc.data_type === 'checkbox' &&
+                                                                    <div className="flex flex-col">
+                                                                        {
+                                                                            doc.default.opsi.map((docopsi, idxopsi) => (
+                                                                                <div className="flex items-center  mb-2">
+                                                                                    <Checkbox style={{ marginRight: `0.5rem` }} disabled /> {docopsi}
+                                                                                </div>
+                                                                            ))
+                                                                        }
+                                                                    </div>
+                                                                }
+                                                            </>
+                                                            :
+                                                            <>
+                                                                {doc.default}
+                                                            </>
+                                                    }
+                                                </div>
                                                 <style jsx>
                                                     {`
                                                         .judulField::before{
@@ -289,7 +359,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                             <div key={idx} className="shadow-md border p-8 mx-3 md:mx-8 mb-5 flex flex-col rounded-md">
                                                 <Form layout="vertical" initialValues={fielddata[idx]}>
                                                     <div className="grid grid-cols-1 md:grid-cols-2 space-x-2">
-                                                        <Form.Item name="name" label="Nama Field" rules={[
+                                                        <Form.Item name="name" label="Nama Spesifikasi" rules={[
                                                             {
                                                                 required: true,
                                                                 message: 'Nama Field wajib diisi',
@@ -300,7 +370,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                             }} />
 
                                                         </Form.Item>
-                                                        <Form.Item name="data_type" label="Tipe Field"
+                                                        <Form.Item name="data_type" label="Tipe Spesifikasi"
                                                             rules={[
                                                                 {
                                                                     required: true,
@@ -399,6 +469,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                                 prev.splice(idx, 1)
                                                                 return prev
                                                             })
+                                                            setdisabledaddfield(false)
                                                         }
                                                         }>
                                                             <div className="flex items-center mr-4 hover:text-red-500 cursor-pointer">
@@ -410,30 +481,80 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                                 setcurrentfield({ ...currentfield, required: e.target.checked })
                                                             }} /> Required
                                                         </div>
-                                                        <Button type="primary" onClick={() => {
+                                                        <Button type="primary" disabled={disabledaddfield} onClick={() => {
                                                             if (displaydata.asset_columns.map(docc => docc.id).includes(doc.id) === false) {
                                                                 const temp = fielddata
                                                                 temp[idx] = currentfield
                                                                 setfielddata(temp)
                                                                 setnewfielddata([...newfielddata, currentfield])
                                                             }
-                                                            setcurrentdropdownidx(idx)
-                                                            setcurrentdropdowntrigger(prev => !prev)
+                                                            else {
+                                                                const idxupdatefield = updatefielddata.map(docv => docv.id).indexOf(doc.id)
+                                                                if (idxupdatefield === -1) {
+                                                                    if (currentfield.data_type === "dropdown" || currentfield.data_type === 'checkbox') {
+                                                                        setupdatefielddata([...updatefielddata, {
+                                                                            ...currentfield,
+                                                                            default: {
+                                                                                default: "-",
+                                                                                opsi: currentdropdown
+                                                                            }
+                                                                        }])
+                                                                    }
+                                                                    else {
+                                                                        setupdatefielddata([...updatefielddata, currentfield])
+                                                                    }
+                                                                }
+                                                                else {
+                                                                    setupdatefielddata(prev => {
+                                                                        var temp = prev
+                                                                        if (currentfield.data_type === "dropdown" || currentfield.data_type === 'checkbox') {
+                                                                            temp[idxupdatefield] = {
+                                                                                ...currentfield,
+                                                                                default: {
+                                                                                    default: "-",
+                                                                                    opsi: currentdropdown
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                        else {
+                                                                            temp[idxupdatefield] = {
+                                                                                ...currentfield,
+                                                                                default: "-"
+                                                                            }
+                                                                        }
+                                                                        return temp
+                                                                    })
+                                                                }
+                                                            }
+                                                            if (currentfield.data_type === 'dropdown' || currentfield.data_type === 'checkbox') {
+                                                                setcurrentdropdownidx(idx)
+                                                                setcurrentdropdowntrigger(prev => !prev)
+                                                            }
                                                             const temp = fielddata
                                                             temp[idx] = currentfield
                                                             setfielddata(temp)
-                                                            setaddedfield(prev => {
-                                                                if (prev[idx] === false) {
-                                                                    setselectedfieldidxtrigger(idx)
-                                                                    setselectedfieldidx(idx)
-                                                                    prev[idx] = true
-                                                                    return prev
-                                                                }
-                                                                else if (typeof (prev[idx]) === 'undefined') {
-                                                                    const temp2 = [...prev, true]
-                                                                    return temp2
-                                                                }
-                                                            })
+                                                            if (addedfield[idx] === false) {
+                                                                setselectedfieldidxtrigger(prev => !prev)
+                                                                setselectedfieldidx(idx)
+                                                            }
+                                                            else if (typeof (addedfield[idx] === 'undefined')) {
+                                                                setaddedfield([...addedfield, true])
+                                                            }
+                                                            // setaddedfield(prev => {
+                                                            //     if (prev[idx] === false) {
+                                                            //         console.log("sini1")
+                                                            //         setselectedfieldidxtrigger(idx)
+                                                            //         setselectedfieldidx(idx)
+                                                            //         prev[idx] = true
+                                                            //         return prev
+                                                            //     }
+                                                            //     else if (typeof (prev[idx]) === 'undefined') {
+                                                            //         console.log("situ2")
+                                                            //         const temp2 = [...prev, true]
+                                                            //         return temp2
+                                                            //     }
+                                                            // })
+                                                            setdisabledaddfield(false)
                                                         }}>Tambah</Button>
                                                     </div>
                                                 </Form>
@@ -445,7 +566,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                         })
                     }
                     <div className="w-full flex justify-center mt-5">
-                        <Button type="dashed" style={{ width: `80%`, height: `4rem` }} onClick={onClickAddField}>+ Tambah Spesifikasi Asset Type</Button>
+                        <Button type="dashed" disabled={disabledaddfield} style={{ width: `80%`, height: `4rem` }} onClick={onClickAddField}>+ Tambah Spesifikasi Asset Type</Button>
                     </div>
                 </div>
             </div>
