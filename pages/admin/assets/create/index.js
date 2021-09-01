@@ -15,6 +15,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
     pathArr.splice(3, 1)
     pathArr[pathArr.length - 1] = "Tambah Asset Type"
     const [instanceForm] = Form.useForm();
+    const [instanceForm2] = Form.useForm();
     const { idparent } = rt.query
 
     //useState
@@ -40,8 +41,11 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
     const [currentdropdown, setcurrentdropdown] = useState(["", ""])
     const [currentdropdownidx, setcurrentdropdownidx] = useState(-1)
     const [currentdropdowntrigger, setcurrentdropdowntrigger] = useState(false)
+    const [currentnondropdownidx, setcurrentnondropdownidx] = useState(-1)
+    const [currentnondropdowntrigger, setcurrentnondropdowntrigger] = useState(false)
     const [loadingcreate, setloadingcreate] = useState(false)
     const [praloading, setpraloading] = useState(true)
+    const [disabledaddfield, setdisabledaddfield] = useState(false)
 
     //handle
     const onClickAddField = () => {
@@ -58,19 +62,25 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
             required: false
         })
         setcurrentdropdown(["", ""])
+        setdisabledaddfield(true)
     }
     const handleCreateAsset = () => {
         var t = {}
         for (var prop in newdata) {
             if (prop === "asset_columns") {
                 t[prop] = newdata[prop].map((doc, idx) => {
-                    return ({
-                        ...doc,
-                        default: JSON.stringify(doc.default)
-                    })
+                    if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
+                        return ({
+                            ...doc,
+                            default: JSON.stringify(doc.default)
+                        })
+                    }
+                    else {
+                        return { ...doc }
+                    }
                 })
             }
-            else{
+            else {
                 t[prop] = newdata[prop]
             }
         }
@@ -145,6 +155,15 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
             })
         }
     }, [currentdropdowntrigger])
+    useEffect(() => {
+        if (currentnondropdownidx !== -1) {
+            setfielddata(prev => {
+                var temp = prev
+                temp[currentnondropdownidx]["default"] = '-'
+                return temp
+            })
+        }
+    }, [currentnondropdowntrigger])
 
     return (
         <Layout st={st} tok={initProps} sidemenu={sidemenu} dataProfile={dataProfile} pathArr={pathArr}>
@@ -154,9 +173,9 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                         <div className=" col-span-4 flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-semibold py-2">Form Tambah Asset Types</h1>
                             <div className="flex space-x-2">
-                                {/* <Link href={`/admin/assets`}> */}
-                                <Button type="default" onClick={() => { console.log(fielddata); console.log(currentdropdown) }}>Batal</Button>
-                                {/* </Link> */}
+                                <Link href={`/admin/assets`}>
+                                    <Button type="default" /*onClick={() => { console.log(newdata); console.log(fielddata); console.log(currentdropdown) }}*/>Batal</Button>
+                                </Link>
                                 <Button type="primary" loading={loadingcreate} onClick={instanceForm.submit}>Simpan</Button>
                             </div>
                         </div>
@@ -247,6 +266,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                 if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
                                                     setcurrentdropdown(doc.default.opsi)
                                                 }
+                                                setdisabledaddfield(true)
                                             }}>
                                                 <div className="font-semibold mb-2">
                                                     {doc.name}
@@ -266,18 +286,19 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                             <div key={idx} className="shadow-md border p-8 mx-3 md:mx-8 mb-5 flex flex-col rounded-md">
                                                 <Form layout="vertical" initialValues={fielddata[idx]}>
                                                     <div className="grid grid-cols-1 md:grid-cols-2 space-x-2">
-                                                        <Form.Item name="name" label="Nama Field" rules={[
-                                                            {
-                                                                required: true,
-                                                                message: 'Nama Field wajib diisi',
-                                                            },
-                                                        ]}>
+                                                        <Form.Item name="name" label="Nama Spesifikasi"
+                                                            rules={[
+                                                                {
+                                                                    required: true,
+                                                                    message: 'Nama Field wajib diisi',
+                                                                },
+                                                            ]}>
                                                             <Input required name="name" onChange={(e) => {
                                                                 setcurrentfield({ ...currentfield, name: e.target.value })
                                                             }} />
 
                                                         </Form.Item>
-                                                        <Form.Item name="data_type" label="Tipe Field"
+                                                        <Form.Item name="data_type" label="Tipe Spesifikasi"
                                                             rules={[
                                                                 {
                                                                     required: true,
@@ -358,10 +379,16 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                     <div className="flex mt-4 justify-end">
                                                         <Popconfirm placement="bottom" title={`Apakah anda yakin ingin menghapus field ${doc.name === "" ? "ini" : doc.name}?`} okText="Ya" cancelText="Tidak" onConfirm={() => {
                                                             setfielddata(prev => prev.filter((_, idxx) => idxx !== idx))
+                                                            setnewdata(prev => {
+                                                                var temp = prev
+                                                                temp.asset_columns.splice(idx, 1)
+                                                                return temp
+                                                            })
                                                             setaddedfield(prev => {
                                                                 prev.splice(idx, 1)
                                                                 return prev
                                                             })
+                                                            setdisabledaddfield(false)
                                                         }
                                                         }>
                                                             <div className="flex items-center mr-4 hover:text-red-500 cursor-pointer">
@@ -373,10 +400,16 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                 setcurrentfield({ ...currentfield, required: e.target.checked })
                                                             }} /> Required
                                                         </div>
-                                                        <Button type="primary" onClick={() => {
+                                                        <Button type="primary" disabled={currentfield.name === "" || currentfield.data_type === ""} onClick={() => {
                                                             setnewfieldidxtrigger(prev => !prev)
-                                                            setcurrentdropdownidx(idx)
-                                                            setcurrentdropdowntrigger(prev => !prev)
+                                                            if (currentfield.data_type === 'dropdown' || currentfield.data_type === 'checkbox') {
+                                                                setcurrentdropdownidx(idx)
+                                                                setcurrentdropdowntrigger(prev => !prev)
+                                                            }
+                                                            else {
+                                                                setcurrentnondropdownidx(idx)
+                                                                setcurrentnondropdowntrigger(prev => !prev)
+                                                            }
                                                             const temp = fielddata
                                                             temp[idx] = currentfield
                                                             setfielddata(temp)
@@ -392,6 +425,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                     return temp2
                                                                 }
                                                             })
+                                                            setdisabledaddfield(false)
                                                         }}>Tambah</Button>
                                                     </div>
                                                 </Form>
@@ -403,7 +437,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                         })
                     }
                     <div className="w-full flex justify-center mt-5">
-                        <Button type="dashed" style={{ width: `80%`, height: `4rem` }} onClick={onClickAddField}>+ Tambah Spesifikasi Asset Type</Button>
+                        <Button disabled={disabledaddfield} type="dashed" style={{ width: `80%`, height: `4rem` }} onClick={onClickAddField}>+ Tambah Spesifikasi Asset Type</Button>
                     </div>
                 </div>
             </div>

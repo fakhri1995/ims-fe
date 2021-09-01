@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react'
 import { Modal, Steps, Radio, Button, Tabs, TreeSelect, Empty, notification } from 'antd'
 import st from '../../../../components/layout-dashboard.module.css'
 
-const Overview = ({ assettypeid, initProps, displaydata, parentcode }) => {
+const Overview = ({ assettypeid, initProps, displaydata, parentcode, praloading }) => {
     const rt = useRouter()
     const parentid = displaydata.code.substring(0, displaydata.code.length - 4)
     //useEffect
@@ -30,7 +30,12 @@ const Overview = ({ assettypeid, initProps, displaydata, parentcode }) => {
         <div className="flex flex-col">
             <div className="border-b flex justify-between p-5 mb-8">
                 <h1 className="font-bold text-large my-auto">Overview</h1>
-                <Button type="primary" onClick={() => { rt.push(`/admin/assets/update/${assettypeid}?idparent=${parentid}`) }}>Ubah</Button>
+                {
+                    praloading ?
+                        null
+                        :
+                        <Button type="primary" onClick={() => { rt.push(`/admin/assets/update/${assettypeid}?idparent=${parentid}`) }}>Ubah</Button>
+                }
             </div>
             <div className="mb-8 mx-5 p-5 border shadow-md rounded-md flex flex-col">
                 <div className="flex flex-col mb-3">
@@ -46,6 +51,16 @@ const Overview = ({ assettypeid, initProps, displaydata, parentcode }) => {
                 <div className="flex flex-col mb-3">
                     <h1 className=" text-sm font-semibold mb-0">Deskirpsi:</h1>
                     <p className="mb-0 text-sm">{displaydata ? displaydata.description : "-"}</p>
+                    {/* {
+                        praloadingoverview ?
+                            null
+                            :
+                            <p className="mb-0 text-sm">{displaydata ? displaydata.description : "-"}</p>
+                    } */}
+                </div>
+                <div className="flex flex-col mb-3">
+                    <h1 className=" text-sm font-semibold mb-0">Serial Number:</h1>
+                    <p className="mb-0 text-sm">{displaydata.required_sn ? "Wajib Ada" : "Tidak Wajib"}</p>
                     {/* {
                         praloadingoverview ?
                             null
@@ -129,11 +144,13 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
     const [allmodeldelete, setallmodeldelete] = useState(true)
     const [newparentchild, setnewparentchild] = useState(null)
     const [newparentmodel, setnewparentmodel] = useState(null)
+    const [autoclear, setautoclear] = useState(false)
+    const [childassettype, setchildassettype] = useState([])
     const [parentcode, setparentcode] = useState("")
     const [praloading, setpraloading] = useState(true)
 
     //handle
-    const handleDeleteAsset = ()=>{
+    const handleDeleteAsset = () => {
         setloadingdelete(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/deleteAsset`, {
             method: 'DELETE',
@@ -212,6 +229,23 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
             .then(res => res.json())
             .then(res2 => {
                 setdisplayassetdata(res2.data)
+                var child = []
+                const searchChild = (dataa) => {
+                    for (var i = 0; i < dataa.length; i++) {
+                        if (dataa[i]["id"] === Number(assettypeid)) {
+                            if (dataa[i]["children"]) {
+                                child = dataa[i]["children"]
+                            }
+                        }
+                        else {
+                            if (dataa[i]["children"]) {
+                                searchChild(dataa[i]["children"])
+                            }
+                        }
+                    }
+                }
+                searchChild(res2.data)
+                setchildassettype(child)
             })
     }, [])
     useEffect(() => {
@@ -225,7 +259,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
             .then(res2 => {
                 setmodeldata(res2.data)
             })
-    },[])
+    }, [])
     useEffect(() => {
         if (stepdelete === 0) {
             var el = document.getElementById("step1")
@@ -270,7 +304,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                     <div className=" hidden md:block">
                         <Tabs tabPosition={`left`}>
                             <TabPane tab="Overview" key={`overview`}>
-                                <Overview assettypeid={assettypeid} initProps={initProps} displaydata={displaydata} parentcode={parentcode} />
+                                <Overview assettypeid={assettypeid} initProps={initProps} displaydata={displaydata} parentcode={parentcode} praloading={praloading} />
                             </TabPane>
                             <TabPane tab="Relationship" key={`relationship`}>
                                 <Relationship assettypeid={assettypeid} initProps={initProps} />
@@ -280,7 +314,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                     <div className=" block md:hidden" >
                         <Tabs tabPosition={`top`}>
                             <TabPane tab="Overview" key={`overview`}>
-                                <Overview assettypeid={assettypeid} initProps={initProps} displaydata={displaydata} parentcode={parentcode} />
+                                <Overview assettypeid={assettypeid} initProps={initProps} displaydata={displaydata} parentcode={parentcode} praloading={praloading} />
                             </TabPane>
                             <TabPane tab="Relationship" key={`relationship`}>
                                 <Relationship assettypeid={assettypeid} initProps={initProps} />
@@ -325,10 +359,14 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                         <div className="mb-2">
                             <h5 className=" text-xs font-semibold">Berikut adalah child dari asset type "{displaydata.name}":</h5>
                             <ul>
-                                {
-                                    displaydata.asset_columns.map((doc, idx) => {
+                                {childassettype.length === 0 ?
+                                    <>
+                                        -
+                                    </>
+                                    :
+                                    childassettype.map((doc, idx) => {
                                         return (
-                                            <li className="text-xs">- {doc.name}</li>
+                                            <li className="text-xs">- {doc.title}</li>
                                         )
                                     })
                                 }
@@ -336,7 +374,28 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                         </div>
                         <div className="mb-2">
                             <h5 className=" text-xs font-semibold">Apakah anda ingin menghapus seluruh child dari asset type "{displaydata.name}"? <span className="hapusField1"></span></h5>
-                            <Radio.Group className="step1radio" onChange={(e) => { setallchilddelete(e.target.value) }}>
+                            <Radio.Group className="step1radio" onChange={(e) => {
+                                setallchilddelete(e.target.value)
+                                var y = []
+                                if (e.target.value === false) {
+                                    // const searchChild2 = item => {
+                                    //     for (var i = 0; i < item.length; i++) {
+                                    //         if(item[i].id !== Number(assettypeid)){
+                                    //             delete item[i]
+                                    //         }
+                                    //         else{
+                                    //             if(item[i].children){
+                                    //                 searchChild2(item[i].children)
+                                    //             }
+                                    //         }
+                                    //     }
+                                    //     return item
+                                    // }
+                                }
+                                else {
+                                    setautoclear(true)
+                                }
+                            }}>
                                 <div className="flex flex-col">
                                     <Radio value={true}>Ya</Radio>
                                     <Radio value={false}>Tidak</Radio>
@@ -345,7 +404,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                         </div>
                         <div className="mb-2">
                             <h5 className=" text-xs font-semibold">Jika tidak, pilih Asset Type sebagai parent untuk child dari Asset Type "{displaydata.name}"! <span className="hapusField2"></span></h5>
-                            <TreeSelect className="step1treeselect" placeholder="Pilih Asset Type" onChange={(value) => { setnewparentchild(value) }} disabled={allchilddelete} treeData={displayassetdata} style={{ width: `70%` }} />
+                            <TreeSelect autoClearSearchValue={autoclear} className="step1treeselect" placeholder="Pilih Asset Type" onChange={(value) => { setnewparentchild(value) }} disabled={allchilddelete} treeData={displayassetdata} style={{ width: `70%` }} />
                         </div>
                         <style jsx>
                             {`
@@ -358,7 +417,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                     </div>
                     <div id="step2" className="rounded border bg-gray-50 p-5 hidden">
                         <div className="mb-2">
-                            <h5 className=" text-xs font-semibold">Berikut adalah Model yang dimiliki Asset Type "{displaydata.name}":</h5>
+                            <h5 className=" text-xs font-semibold">1. Berikut adalah Model yang dimiliki Asset Type "{displaydata.name}":</h5>
                             <ul>
                                 {modeldata.length === 0 ?
                                     "-"
@@ -374,7 +433,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                             </ul>
                         </div>
                         <div className="mb-2">
-                            <h5 className=" text-xs font-semibold">Apakah anda ingin menghapus seluruh model yang dimiliki Asset Type "{displaydata.name}"? <span className="hapusField1"></span></h5>
+                            <h5 className=" text-xs font-semibold">2. Apakah anda ingin menghapus seluruh model yang dimiliki Asset Type "{displaydata.name}"? <span className="hapusField1"></span></h5>
                             <Radio.Group className="step2radio" onChange={(e) => { setallmodeldelete(e.target.value) }}>
                                 <div className="flex flex-col">
                                     <Radio value={true}>Ya</Radio>
@@ -383,7 +442,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                             </Radio.Group>
                         </div>
                         <div className="mb-2">
-                            <h5 className=" text-xs font-semibold">Jika tidak, pilih Asset Type untuk memindahkan seluruh model yang dimiliki oleh Asset Type "{displaydata.name}"! <span className="hapusField2"></span></h5>
+                            <h5 className=" text-xs font-semibold">3. Jika tidak, pilih Asset Type untuk memindahkan seluruh model yang dimiliki oleh Asset Type "{displaydata.name}"! <span className="hapusField2"></span></h5>
                             <TreeSelect className="step2treeselect" placeholder="Pilih Asset Type" onChange={(value, label, extra) => { setnewparentmodel(extra.allCheckedNodes[0].node.props.id) }} disabled={allmodeldelete} treeData={displayassetdata} style={{ width: `70%` }} />
                         </div>
                         <style jsx>
