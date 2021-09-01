@@ -7,6 +7,9 @@ const Styles = (props) => (
   <div>
     <style jsx global>
     {` 
+    .flickity-item-landing-page{
+      
+    }
     .animateBounce:hover{
       animation: bounce 1s infinite;
 

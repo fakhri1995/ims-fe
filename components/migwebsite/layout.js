@@ -206,7 +206,7 @@ function layout({ children }) {
                     </div>
                     <div className={'grid justify-start border-b-2 border-t-2 border-black pb-4'} style={{backgroundColor:'#F4EFEE'}}>
                         <a className={''} href={'/careers'}>
-                            <button type="text" className={'text-black menu-underlined mx-4 my-2 hover:bg-black hover:text-white'} style={{fontWeight:'600'}}>
+                            <button type="text" className={'text-black menu-underlined mx-4 my-2'} style={{fontWeight:'600'}}>
                                 Careers
                             </button>
                         </a>

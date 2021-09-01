@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../../../components/migwebsite/layout.js'
-// import Flickity from 'react-flickity-component'
+import Flickity from 'react-flickity-component'
 import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
 import Linkk from 'next/link'
 import "slick-carousel/slick/slick.css"; 
@@ -12,7 +12,11 @@ import { Link, animateScroll as scroll } from "react-scroll";
 function LandingPage({ }) {
     const flickityOptions = {
         initialIndex: 0,
-        wrapAround: 'true',
+        // wrapAround: 'true',
+        cellAlign: 'left',
+        contain: true,
+        pageDots: false,
+        prevNextButtons: false,
     }
     const [nav1, setNav1] = useState(null)
     const [nav2, setNav2] = useState(null)
@@ -130,7 +134,59 @@ function LandingPage({ }) {
                         </div>
                     </div>
                 </section>
-                <section className={'section2landingpage py-8'}>
+                <section className={'section2landingpage py-8 md:hidden'}>
+                    <Flickity
+                    className={'carousel'} // default ''
+                    elementType={'div'} // default 'div'
+                    options={flickityOptions} // takes flickity options {}
+                    disableImagesLoaded={false} // default false
+                    reloadOnUpdate // default false
+                    static // default false
+                    // centerMode={true}
+                    // centerPadding={'30px'}
+                    >
+                        <div className={'bg-gray-200 rounded-2xl w-4/5 h-auto min-h-full flickity-item-landing-page py-4 px-4 mx-4'}>
+                            <p className={'text-4xl font-bold pb-2 md:pb-4 gilroy-bold'}>Hardware</p>
+                            <div className={'pt-4 pb-4 w-full'}>
+                                <img className={'pr-1'} style={{paddingLeft:'2px'}} src="/image/landingpage/Hardware.png"></img>
+                            </div>
+                            <p className={'w-full h-full mb-8 sm:mb-12 sm:h-20 min-h-full pb-4 gilroy-medium text-xl text-justify'} style={{letterSpacing:'1.5px'}}>Optimize your cost by leasing and maintenances variety of electronic equipments</p>
+                            <br></br>
+                            <Linkk href="/hardware">
+                                <button style={{width:'150px'}} className={'bottom-5 fixed text-xl text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
+                                    Get yours
+                                </button>
+                            </Linkk>
+                        </div>
+                        <div className={'bg-gray-200 rounded-2xl w-4/5 h-auto min-h-full flickity-item-landing-page py-4 px-4 mx-4'}>
+                            <p className={'text-4xl font-bold pb-2 md:pb-4 gilroy-bold'}>People</p>
+                            <div className={'pt-4 pb-4 w-full'}>
+                                <img className={'pr-1'} style={{paddingLeft:'2px'}} src="/image/landingpage/People.png"></img>
+                            </div>
+                            <p className={'w-full h-full mb-8 sm:mb-12 sm:h-20 min-h-full pb-4 gilroy-medium text-xl text-justify'} style={{letterSpacing:'1.5px'}}>We help you reduce complexity in talent sourcing and management</p>
+                            <br></br>
+                            <Linkk href="/people">
+                                <button style={{width:'150px'}} className={'bottom-5 fixed text-xl text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
+                                    Get yours
+                                </button>
+                            </Linkk>
+                        </div>
+                        <div className={'bg-gray-200 rounded-2xl w-4/5 h-auto min-h-full flickity-item-landing-page py-4 px-4 mx-4'}>
+                            <p className={'text-4xl font-bold pb-2 md:pb-4 gilroy-bold'}>Software</p>
+                            <div className={'pt-4 pb-4 w-full'}>
+                                <img className={'pr-1'} style={{paddingLeft:'2px'}} src="/image/landingpage/Software.png"></img>
+                            </div>
+                            <p className={'w-full h-full mb-8 sm:mb-12 sm:h-20 min-h-full pb-4 gilroy-medium text-xl text-justify'} style={{letterSpacing:'1.5px'}}>We support your companies to simplify and automate the process through digitalization</p>
+                            <br></br>
+                            <Linkk href="/software">
+                                <button style={{width:'150px'}} className={'bottom-5 fixed text-xl text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
+                                    Get yours
+                                </button>
+                            </Linkk>
+                        </div>
+                    </Flickity>
+                </section>
+                <section className={'section2landingpage py-8 hidden md:block'}>
                     <div className={' pb-8'}>
                         <Slider
                         slidesToShow={3}
