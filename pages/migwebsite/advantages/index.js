@@ -15,6 +15,14 @@ function Advantages({ }) {
         initialIndex: 0,
         wrapAround: 'true',
     }
+    const flickityOptions2 = {
+        initialIndex: 0,
+        // wrapAround: 'true',
+        cellAlign: 'left',
+        contain: true,
+        pageDots: false,
+        prevNextButtons: false,
+    }
     const [nav1, setNav1] = useState(null)
     const [nav2, setNav2] = useState(null)
     let slider1 = []
@@ -46,7 +54,73 @@ function Advantages({ }) {
                 </div>
             </section>
             <section className={'section2advantages h-20 hidden md:block'}></section>
-            <section className={'section3advantages py-8 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'} style={{background:'#F4F4F4'}}>
+            <section className={'section3advantages block md:hidden py-8 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'} style={{background:'#F4F4F4'}}>
+                <div className={'pb-4'}>
+                    <p className={'text-2xl md:text-3xl font-bold'} style={{letterSpacing:'1.5px'}}>Support your business efficiently</p>
+                </div>
+                <div>
+                    <p className={'text-base w-full md:w-2/5 pb-4'}>One stop  seamless technology solution to help you achieve business goals and optimize your cost </p>
+                </div>
+                <Flickity
+                className={'carousel'} // default ''
+                elementType={'div'} // default 'div'
+                options={flickityOptions2} // takes flickity options {}
+                disableImagesLoaded={false} // default false
+                reloadOnUpdate // default false
+                static // default false
+                // centerMode={true}
+                // centerPadding={'30px'}
+                >
+                    <div className={'flex-col flex bg-white p-4 w-4/5 md:w-96 rounded-xl mx-4 h-auto min-h-full'}>
+                        <div className={'min-h-full relative pb-8'} style={{}}>
+                            <img style={{height:'50px', width:'auto'}} src="/image1-section2.png"></img>
+                            <p className={'text-left py-3 font-bold '}>
+                                Hardware
+                            </p>
+                            <p>
+                                Optimize your cost by leasing and maintenances variety of electronic equipments   
+                            </p>
+                            <div className={'absolute bottom-0'}>
+                                <Link href={{pathname: '/hardware'}}><button className={'pt-4 font-bold text-purple-800'}>
+                                    Get yours&nbsp; <ArrowRightOutlined className={'relative'} style={{top:'-2.5px'}}/>
+                                </button></Link> 
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div className={'flex-col flex bg-white p-4 w-4/5 md:w-96 rounded-xl mx-4 h-auto min-h-full'}>
+                        <div className={'min-h-full relative pb-8'} style={{}}>
+                            <img style={{height:'50px', width:'auto', position:'relative', left:'-25px'}} src="/image3-section2.png"></img>
+                            <p className={'text-left py-3 font-bold '}>Software
+                            </p>
+                            <p>
+                                We support your companies to simplify and automate the process through digitalization
+                            </p>
+                            <div className={'absolute bottom-0'}>
+                                <Link href={{pathname: '/software'}}><button className={'pt-4 font-bold text-purple-800'}>
+                                    Build now&nbsp; <ArrowRightOutlined className={'relative'} style={{top:'-2.5px'}}/>
+                                </button></Link>
+                            </div>
+                        </div>
+                    </div>
+                    <div className={'flex-col flex bg-white p-4 w-4/5 md:w-96 rounded-xl mx-4 h-auto min-h-full'}>
+                        <div className={'min-h-full relative pb-8'} style={{}}>
+                            <img style={{height:'50px', width:'auto', position:'relative', left:'-10px'}} src="/image2-section2.png"></img>
+                            <p className={'text-left py-3 font-bold '}>People
+                            </p>
+                            <p>
+                                We help you reduce complexity in talent sourcing and management
+                            </p>
+                            <div className={'absolute bottom-0'}>
+                                <Link href={{pathname: '/people'}}><button className={'pt-4 font-bold text-purple-800'}>
+                                    Setup your team&nbsp; <ArrowRightOutlined className={'relative'} style={{top:'-2.5px'}}/>
+                                </button></Link>
+                            </div>
+                        </div>
+                    </div>
+                </Flickity>
+            </section>
+            <section className={'section3advantages hidden md:block py-8 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'} style={{background:'#F4F4F4'}}>
                 <div className={'pb-4'}>
                     <p className={'text-2xl md:text-3xl font-bold'} style={{letterSpacing:'1.5px'}}>Support your business efficiently</p>
                 </div>
@@ -290,7 +364,7 @@ function Advantages({ }) {
                     </div>
                 </Flickity>
             </section>
-            <section className={'section5landingpage sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
+            <section className={'section5landingpage px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                 <div className={' md:flex relative justify-between '}style={{top:'40%'}}>
                     <div className={'flex-col text-2xl md:text-4xl text-black -top-4 md:top-0 relative gilroy-bold'} style={{}}>
                         <p>Let’s be better together</p>
