@@ -6,6 +6,7 @@ import { Menu, Layout, Button, Dropdown  } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react'
 import Bounce from 'react-reveal/Bounce';
+import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
 
 function layout({ children }) {
     const { Header, Content, Footer } = Layout;
@@ -76,6 +77,7 @@ function layout({ children }) {
         </div>
       );
     const [navbar, setNavbar] = useState(true) //true for hidden
+    const [navbarBottom, setNavbarBottom] = useState(true) //true for hidden
     const [navbarSolution, setNavbarSolution] = useState(true) //true for hidden
     const [navbarCompany, setNavbarCompany] = useState(true) //true for hidden
 
@@ -83,6 +85,16 @@ function layout({ children }) {
         setNavbar(!navbar)
         setNavbarSolution(true) //true for hidden
         setNavbarCompany(true) //true for hidden
+    }
+    const handleNavbarBottom = () => {
+        if (navbarBottom==true) {
+            setTimeout(() => {
+                setNavbarBottom(!navbarBottom)
+            }, 600);
+        } else {
+            setNavbarBottom(!navbarBottom)
+        }
+        
     }
     const handleSolutionNavbar = () => {
         setNavbarSolution(!navbarSolution)
@@ -102,13 +114,13 @@ function layout({ children }) {
             <Layout className={'h-auto'}>
                 <Header className={'header'} style={{ background:'white', position: 'fixed', zIndex: 31, width: '100%' }}>
                     <Link href="/">
-                        <div className="logo top-3 md:top-2 absolute w-24 md:w-40" >
+                        <div className="logo top-4 md:top-2 absolute w-24 md:w-40" >
                             <img width={'auto'} height={'auto'} src='https://static.wixstatic.com/media/e817ec_be43f247d0d4454f9d29e2d22f8d4ff7~mv2.png/v1/fill/w_194,h_75,al_c,q_85,usm_0.66_1.00_0.01/mig.webp'/>
                         </div>
                     </Link>
 
                     {/* Open Hamburger Button */}
-                    <label htmlFor={`menutoggle`} className="md:hidden block float-right cursor-pointer mt-7" hidden={!navbar}>
+                    <label onClick={()=>{handleNavbarBottom()}} htmlFor={`menutoggle`} className="md:hidden block float-right cursor-pointer mt-7" hidden={!navbar}>
                         <svg className="fill-current text-gray-900" xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 20 20">
                             <title>Menu</title>
                             <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
@@ -116,7 +128,7 @@ function layout({ children }) {
                     </label>
 
                     {/* Close Hamburger Button */}
-                    <label onClick={()=>{handleNavbar()}} htmlFor={`menutoggle`} className="md:hidden block float-right cursor-pointer mt-7" hidden={navbar}>
+                    <label onClick={()=>{handleNavbar(),handleNavbarBottom()}} htmlFor={`menutoggle`} className="md:hidden block float-right cursor-pointer mt-7" hidden={navbar}>
                         <svg className="fill-current text-gray-900" xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 32 32">
                             <title>Menu</title>
                             <path d="M17.768 16l13.866-13.866c0.488-0.488 0.488-1.28 0-1.768s-1.28-0.488-1.768 0l-13.866 13.866-13.866-13.866c-0.488-0.488-1.28-0.488-1.768 0s-0.488 1.28 0 1.768l13.866 13.866-13.866 13.866c-0.488 0.488-0.488 1.28 0 1.768 0.244 0.244 0.564 0.366 0.884 0.366s0.64-0.122 0.884-0.366l13.866-13.866 13.866 13.866c0.244 0.244 0.564 0.366 0.884 0.366s0.64-0.122 0.884-0.366c0.488-0.488 0.488-1.28 0-1.768l-13.866-13.866z" />
@@ -143,11 +155,21 @@ function layout({ children }) {
                 <input className={`hidden menuToggle`} type="checkbox" id={`menutoggle`} />
                 <section className={'md:hidden w-full pt-16'}>
                     <div theme="light" style={{lineHeight:'3.9rem',}} className={'float-right menu2'}>
-                        <Button type="text" id="buttonSolution" onClick={()=>{handleSolutionNavbar()}} className={'menu-underlined ml-4 mt-2 '} style={{fontWeight:'600', background:'white'}} key="0">
+                        <Button type="text" onClick={()=>{handleSolutionNavbar()}} className={'menu-navbar mt-2'} style={{fontWeight:'600', background:'white'}} key="0">
                             Solution
-                        </Button>
-                        <Button type="text" onClick={()=>{handleCompanyNavbar()}} className={'menu-underlined ml-4'} style={{fontWeight:'600', background:'white'}} key="1">Company</Button>
-                        <Button type="text" className={'menu-underlined ml-4 mb-4'} style={{fontWeight:'600', background:'white'}} key="2">Support</Button>
+                        </Button><hr className={'mx-4'}/>
+                        <Button type="text" onClick={()=>{handleCompanyNavbar()}} className={'menu-navbar'} style={{fontWeight:'600', background:'white'}} key="1">
+                            Company
+                        </Button><hr className={'mx-4'}/>
+                        <Button type="text" className={'menu-navbar'} style={{fontWeight:'600', background:'white'}} key="2">
+                            Support
+                        </Button><hr className={'mx-4'}/>
+                        <div hidden={navbarBottom} className={'bottom-5'} style={{position:'fixed'}}>
+                            <p className={' text-xs mx-4 -my-4 text-gray-400'}>CONNECT WITH MITRAMAS INFOSYS GLOBAL</p>
+                            <Button  type="text" className={'menu-navbar'} style={{fontWeight:'600', background:'white'}} key="3">
+                                Contact Us <ArrowRightOutlined className={'relative'} style={{top:'-0.1rem'}}/>
+                            </Button>
+                        </div>
                     </div>
                 </section>
 
@@ -206,12 +228,12 @@ function layout({ children }) {
                     </div>
                     <div className={'grid justify-start border-b-2 border-t-2 border-black pb-4'} style={{backgroundColor:'#F4EFEE'}}>
                         <a className={''} href={'/careers'}>
-                            <button type="text" className={'text-black menu-underlined mx-4 my-2 hover:bg-black hover:text-white'} style={{fontWeight:'600'}}>
+                            <button type="text" className={'text-black menu-underlined mx-4 my-2'} style={{fontWeight:'600'}}>
                                 Careers
                             </button>
                         </a>
                         <p className={'mx-4'}>Lorem Ipsum dolor met met an</p>
-                        <Link href="/advantages"><button className={' border-2 mx-4 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none hover:bg-black hover:text-white'}>
+                        <Link href="/careers"><button className={' border-2 mx-4 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none hover:bg-black hover:text-white'}>
                         Explore Careers
                         </button></Link>
                     </div>

@@ -178,7 +178,7 @@ const Styles = (props) => (
     .menu2{
       z-index: 30;
       position: fixed;
-      display: grid;
+      // display: grid;
       // margin: 1.5rem 0rem;
       // padding: 1rem 0rem;
       background: white;
@@ -190,7 +190,10 @@ const Styles = (props) => (
       overflow: hidden;
     }
     .menuToggle:checked ~ section .menu2 {
-      height: 110px;
+      height: 100vh;
+    }
+    .menu-navbar :hover{
+      color: green !important;
     }
     body {
       margin: 0;

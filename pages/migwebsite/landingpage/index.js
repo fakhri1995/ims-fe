@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../../../components/migwebsite/layout.js'
-// import Flickity from 'react-flickity-component'
+import Flickity from 'react-flickity-component'
 import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
 import Linkk from 'next/link'
 import "slick-carousel/slick/slick.css"; 
@@ -12,7 +12,11 @@ import { Link, animateScroll as scroll } from "react-scroll";
 function LandingPage({ }) {
     const flickityOptions = {
         initialIndex: 0,
-        wrapAround: 'true',
+        // wrapAround: 'true',
+        cellAlign: 'left',
+        contain: true,
+        pageDots: false,
+        prevNextButtons: false,
     }
     const [nav1, setNav1] = useState(null)
     const [nav2, setNav2] = useState(null)
@@ -24,8 +28,8 @@ function LandingPage({ }) {
     }, [slider1, slider2])
     return (
         <Layout>
-            <section className={'container mx-auto px-10 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
-                <section className={'section1landingpage md:relative md:-top-20'}>
+            {/* <section className={'container mx-auto px-10 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}> */}
+                <section className={'section1landingpage md:relative md:-top-20 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                     {/* Browser View */}
                     <div className={'hidden md:flex h-screen'}>
                         {/* <div className={'mx-auto my-auto flex'}> */}
@@ -109,7 +113,7 @@ function LandingPage({ }) {
                         </Link>
                     </div>
                 </section>
-                <section className={'section3landingpage md:relative md:bottom-32'} style={{backgroundColor:'white'}}>
+                <section className={'section3landingpage md:relative md:bottom-32 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'} style={{backgroundColor:'white'}}>
                     <div className={'h-auto flex justify-between md:px-30 pt-8 md:pt-16 pb-0: md:pb-4'} >
                         <div className={'block md:flex py-0 md:py-8'} style={{width:'100%',margin:'0 auto 0'}}>
                             {/* Phone View */}
@@ -122,15 +126,67 @@ function LandingPage({ }) {
                             </div>
                             <div className={'flex-col mx-10 w-auto md:w-1/2 '} style={{margin:'auto'}}>
                                 <p className={'text-3xl md:text-4xl  pb-6 text-black gilroy-bold hidden md:block'} style={{ letterSpacing:'1.5px' }}> Bringing you the <span className={''} style={{borderBottom:'solid 3px green',paddingBottom:'2.5px'}}>advantages</span></p>
-                                <p className={'pb-8 text-xl md:text-xl text-justify font-normal text-black gilroy-medium'} style={{letterSpacing:'1.5px'}}>Improving efficiencies by supporting you with <span className={''} style={{paddingBottom:'2.5px', borderBottom:'solid 3px green'}}> staff augmentation</span>, <span className={''} style={{paddingBottom:'2.5px', borderBottom:'solid 3px green'}}>software</span> and <span className={''} style={{paddingBottom:'2.5px', borderBottom:'solid 3px green'}}>hardware managed services.</span></p>
-                                <Linkk href="/advantages"><button className={'text-black border-2 text-xl border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
+                                <p className={'pb-8 text-lg md:text-xl text-justify font-normal text-black gilroy-medium'} style={{letterSpacing:'1.5px'}}>Improving efficiencies by supporting you with <span className={''} style={{paddingBottom:'2.5px', borderBottom:'solid 3px green'}}> staff augmentation</span>, <span className={''} style={{paddingBottom:'2.5px', borderBottom:'solid 3px green'}}>software</span> and <span className={''} style={{paddingBottom:'2.5px', borderBottom:'solid 3px green'}}>hardware managed services.</span></p>
+                                <Linkk href="/advantages"><button className={'text-black border-2 text-lg md:text-xl border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
                                 See How It Work
                                 </button></Linkk>
                             </div>
                         </div>
                     </div>
                 </section>
-                <section className={'section2landingpage py-8'}>
+                <section className={'section2landingpage py-8 md:hidden px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
+                    <Flickity
+                    className={'carousel'} // default ''
+                    elementType={'div'} // default 'div'
+                    options={flickityOptions} // takes flickity options {}
+                    disableImagesLoaded={false} // default false
+                    reloadOnUpdate // default false
+                    static // default false
+                    // centerMode={true}
+                    // centerPadding={'30px'}
+                    >
+                        <div className={'bg-gray-200 rounded-2xl w-4/5 h-auto min-h-full py-4 px-4 mx-4'}>
+                            <p className={'text-3xl font-bold pb-2 md:pb-4 gilroy-bold'}>Hardware</p>
+                            <div className={'pt-4 pb-4 w-full'}>
+                                <img className={'pr-1'} style={{paddingLeft:'2px'}} src="/image/landingpage/Hardware.png"></img>
+                            </div>
+                            <p className={'w-full h-full mb-8 sm:mb-12 sm:h-20 min-h-full pb-4 gilroy-medium text-lg text-justify'} style={{letterSpacing:'1.5px'}}>Optimize your cost by leasing and maintenances variety of electronic equipments</p>
+                            <br></br>
+                            <Linkk href="/hardware">
+                                <button style={{width:'150px'}} className={'bottom-5 fixed text-lg text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
+                                    Get yours
+                                </button>
+                            </Linkk>
+                        </div>
+                        <div className={'bg-gray-200 rounded-2xl w-4/5 h-auto min-h-full py-4 px-4 mx-4'}>
+                            <p className={'text-3xl font-bold pb-2 md:pb-4 gilroy-bold'}>People</p>
+                            <div className={'pt-4 pb-4 w-full'}>
+                                <img className={'pr-1'} style={{paddingLeft:'2px'}} src="/image/landingpage/People.png"></img>
+                            </div>
+                            <p className={'w-full h-full mb-8 sm:mb-12 sm:h-20 min-h-full pb-4 gilroy-medium text-lg text-justify'} style={{letterSpacing:'1.5px'}}>We help you reduce complexity in talent sourcing and management</p>
+                            <br></br>
+                            <Linkk href="/people">
+                                <button style={{width:'150px'}} className={'bottom-5 fixed text-lg text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
+                                    Get yours
+                                </button>
+                            </Linkk>
+                        </div>
+                        <div className={'bg-gray-200 rounded-2xl w-4/5 h-auto min-h-full py-4 px-4 mx-4'}>
+                            <p className={'text-3xl font-bold pb-2 md:pb-4 gilroy-bold'}>Software</p>
+                            <div className={'pt-4 pb-4 w-full'}>
+                                <img className={'pr-1'} style={{paddingLeft:'2px'}} src="/image/landingpage/Software.png"></img>
+                            </div>
+                            <p className={'w-full h-full mb-8 sm:mb-12 sm:h-20 min-h-full pb-4 gilroy-medium text-lg text-justify'} style={{letterSpacing:'1.5px'}}>We support your companies to simplify and automate the process through digitalization</p>
+                            <br></br>
+                            <Linkk href="/software">
+                                <button style={{width:'150px'}} className={'bottom-5 fixed text-lg text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
+                                    Get yours
+                                </button>
+                            </Linkk>
+                        </div>
+                    </Flickity>
+                </section>
+                <section className={'section2landingpage py-8 hidden md:block px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                     <div className={' pb-8'}>
                         <Slider
                         slidesToShow={3}
@@ -225,7 +281,7 @@ function LandingPage({ }) {
                     </Slider>
                     
                 </section>
-                <section className={'py-8'}>
+                <section className={'py-8 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                     <div className={'block md:flex'}>
                         <div className={'py-4 w-full my-auto block md:hidden'}>
                             <p className={'text-3xl font-bold pb-4 gilroy-bold'}>Transforming capital heavy IT product into managed service model</p>
@@ -235,9 +291,9 @@ function LandingPage({ }) {
                         </div>
                         <div className={'pt-8 pb-8 w-full md:w-1/2 my-auto'}>
                             <p className={'text-4xl font-bold pb-4 gilroy-bold hidden md:block'}>Transforming capital heavy IT product into managed service model</p>
-                            <p className={'w-full md:w-full pb-4 gilroy-medium text-xl text-justify'} style={{letterSpacing:'1.5px'}}>Offering low-cost ATM  rental and maintenance to reduce hardware upfront investment</p>
+                            <p className={'w-full md:w-full pb-4 gilroy-medium text-lg md:text-xl text-justify'} style={{letterSpacing:'1.5px'}}>Offering low-cost ATM  rental and maintenance to reduce hardware upfront investment</p>
                             <Linkk href="/hardware">
-                                <button style={{width:'150px'}} className={'text-xl text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
+                                <button style={{width:'150px'}} className={'text-lg md:text-xl text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
                                     Get yours
                                 </button>
                             </Linkk>
@@ -289,7 +345,7 @@ function LandingPage({ }) {
                         </Flickity>
                     </div>
                 </section> */}
-                <section className={'section5landingpage'}>
+                <section className={'section5landingpage px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                     <div className={' md:flex relative justify-between '}style={{top:'40%'}}>
                         <div className={'flex-col text-2xl md:text-4xl text-black -top-4 md:top-0 relative gilroy-bold'} style={{}}>
                             <p>Let’s be better together</p>
@@ -302,7 +358,7 @@ function LandingPage({ }) {
                         </div>
                     </div>
                 </section>
-            </section>
+            {/* </section> */}
         </Layout>
     )
 }
