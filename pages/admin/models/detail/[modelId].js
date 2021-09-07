@@ -168,9 +168,9 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                         <div className=" col-span-4 flex justify-between py-2 px-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-semibold py-2 text-2xl mb-0">{displaydata.name}</h1>
                             <div className="flex space-x-2 items-center">
-                                <Link href={`/admin/models/update2/${displaydata.id}`}>
-                                    <Button type="primary">Ubah</Button>
-                                </Link>
+                                {/* <Link href={`/admin/models/update2/${displaydata.id}`}> */}
+                                <Button onClick={() => { window.location.href = `/admin/models/update2/${displaydata.id}` }} type="primary">Ubah</Button>
+                                {/* </Link> */}
                                 <Button type="danger" onClick={() => { setmodaldelete(true) }}>Hapus</Button>
                             </div>
                         </div>
@@ -252,7 +252,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                                                                             {
                                                                                 docmc.default.opsi.map((docopsi, idxopsi) => (
                                                                                     <div key={idxopsi} className="rounded w-full flex items-center my-auto px-2 py-1 mb-1">
-                                                                                        <Checkbox disabled checked={idxopsi === docmc.default.default} style={{ marginRight: `0.5rem` }} />
+                                                                                        <Checkbox disabled checked={docmc.default.default.includes(idxopsi)} style={{ marginRight: `0.5rem` }} />
                                                                                         {docopsi}
                                                                                     </div>
                                                                                 ))

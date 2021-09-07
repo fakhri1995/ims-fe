@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
 import { DeleteOutlined } from '@ant-design/icons'
 import Sticky from 'wil-react-sticky'
-import Link from 'next/link'
 import { PlusSquareTwoTone, CloseCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
 import { Form, Input, notification, Button, TreeSelect, Checkbox, Select, Popconfirm, Spin, InputNumber, DatePicker, Collapse, Timeline, Empty, Tooltip } from 'antd'
@@ -157,7 +156,6 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
     const [concataddcolumnsvalue, setconcataddcolumnsvalue] = useState(-1)
     const [concatfieldtrigger2, setconcatfieldtrigger2] = useState(false)
     const [editpart, seteditpart] = useState(false)
-    const [modaldeletemodel, setmodaldeletemodel] = useState(false)
     const [modalcreatemodel, setmodalcreatemodel] = useState(false)
     const [newdatatrigger, setnewdatatrigger] = useState(false)
     const [newdatatrigger2, setnewdatatrigger2] = useState(false)
@@ -165,6 +163,12 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
     const [concatparttrigger, setconcatparttrigger] = useState(false)
     const [concatpartvalue, setconcatpartvalue] = useState(-1)
     const [assettypecode, setassettypecode] = useState("")
+    const [assettypecode2, setassettypecode2] = useState("")
+    const [defaultmodel, setdefaultmodel] = useState({})
+    const [disabledtambah, setdisabledtambah] = useState(false)
+    const [disabledtambah2, setdisabledtambah2] = useState(false)
+    const [disabledaddfield, setdisabledaddfield] = useState(false)
+    const [disabledaddfield2, setdisabledaddfield2] = useState(false)
 
     //3.onChange
     const onClickAddField = () => {
@@ -182,7 +186,9 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
         })
         setaddedfield([...addedfield, false])
         setcurrentdropdown2(["", ""])
-        setcurrentcheckeddropdown2("")
+        setcurrentcheckeddropdown2([])
+        setdisabledaddfield(true)
+        setdisabledtambah(true)
     }
     const onClickAddField2 = () => {
         setfielddataa2([...fielddataa2, {
@@ -198,7 +204,9 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
             required: false
         })
         setcurrentdropdownn2(["", ""])
-        setcurrentcheckeddropdownn2("")
+        setcurrentcheckeddropdownn2([])
+        setdisabledaddfield2(true)
+        setdisabledtambah2(true)
     }
     const onClickSelectAsset = (id) => {
         setnewdata({ ...newdata, asset_id: Number(id) });
@@ -211,45 +219,85 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                const temp = res2.data.asset_columns.map((doc, idx) => {
-                    if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
-                        return ({
-                            ...doc,
-                            default: (doc.default === "") || (doc.default === "-") ? doc.default : JSON.parse(doc.default)
-                        })
+                var temp = []
+                if (res2.success) {
+                    temp = res2.data.asset_columns.map((doc, idx) => {
+                        if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
+                            return ({
+                                ...doc,
+                                default: (doc.default === "") || (doc.default === "-") ? doc.default : JSON.parse(doc.default)
+                            })
+                        }
+                        else {
+                            return { ...doc }
+                        }
+                    })
+                    setfielddata2(temp)
+                    setnewdata({
+                        id: defaultmodel.id,
+                        name: defaultmodel.name,
+                        description: defaultmodel.description,
+                        manufacturer_id: defaultmodel.manufacturer_id,
+                        count: defaultmodel.count,
+                        asset: {
+                            id: res2.data.id,
+                            name: res2.data.name,
+                            code: res2.data.code,
+                            description: res2.data.description
+                        },
+                        manufacturer: {
+                            id: defaultmodel.manufacturer.id,
+                            name: defaultmodel.manufacturer.name,
+                        },
+                        asset_id: Number(id),
+                        model_columns: temp,
+                        add_columns: [],
+                        update_columns: [],
+                        delete_column_ids: [],
+                        add_models: [],
+                        delete_model_ids: [],
+                        required_sn: res2.data.required_sn
+                    })
+                    setdefaultdata({
+                        id: defaultmodel.id,
+                        name: defaultmodel.name,
+                        description: defaultmodel.description,
+                        manufacturer_id: defaultmodel.manufacturer_id,
+                        count: defaultmodel.count,
+                        asset: {
+                            id: res2.data.id,
+                            name: res2.data.name,
+                            code: res2.data.code,
+                            description: res2.data.description
+                        },
+                        manufacturer: {
+                            id: defaultmodel.manufacturer.id,
+                            name: defaultmodel.manufacturer.name,
+                        },
+                        asset_id: Number(id),
+                        model_columns: temp,
+                        add_columns: [],
+                        update_columns: [],
+                        delete_column_ids: [],
+                        add_models: [],
+                        delete_model_ids: [],
+                        required_sn: res2.data.required_sn
+                    })
+                    var arr = []
+                    for (var i = 0; i < res2.data.asset_columns.length; i++) {
+                        arr.push(true)
                     }
-                    else {
-                        return { ...doc }
-                    }
-                })
-                setfielddata2(temp)
-                setnewdata({
-                    ...res2.data,
-                    asset_id: Number(id),
-                    model_columns: temp,
-                    add_columns: [],
-                    update_columns: [],
-                    delete_column_ids: [],
-                    add_models: [],
-                    delete_model_ids: []
-                })
-                setdefaultdata({
-                    ...res2.data,
-                    asset_id: Number(id),
-                    model_columns: temp,
-                    add_columns: [],
-                    update_columns: [],
-                    delete_column_ids: [],
-                    add_models: [],
-                    delete_model_ids: []
-                })
-                var arr = []
-                for (var i = 0; i < res2.data.asset_columns.length; i++) {
-                    arr.push(true)
+                    setaddedfield(arr)
+                    setassettypecode(res2.data.id)
+                    setnewdatatrigger(prev => !prev)
+                    setloadingspec(false)
                 }
-                setaddedfield(arr)
-                setnewdatatrigger(prev => !prev)
-                setloadingspec(false)
+                else {
+                    temp = []
+                    setfielddata2(temp)
+                    setnewdata({ ...newdata, model_columns: temp, required_sn: false, asset_id: 0 })
+                    setloadingspec(false)
+                }
             })
     }
     const onClickSelectAsset2 = (id) => {
@@ -263,15 +311,31 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                const temp = res2.data.asset_columns.map((doc, idx) => {
-                    return ({
-                        ...doc,
-                        default: JSON.parse(doc.default)
+                var temp = []
+                if (res2.success) {
+                    temp = res2.data.asset_columns.map((doc, idx) => {
+                        if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
+                            return ({
+                                ...doc,
+                                default: JSON.parse(doc.default)
+                            })
+                        }
+                        else {
+                            return { ...doc }
+                        }
                     })
-                })
-                setfielddataa(temp)
-                setnewdatatrigger2(prev => !prev)
-                setloadingspec2(false)
+                    setfielddataa(temp)
+                    setnewdata2({ ...newdata2, required_sn: res2.data.required_sn, asset_id: res2.data.code })
+                    setassettypecode2(res2.data.id)
+                    setnewdatatrigger2(prev => !prev)
+                    setloadingspec2(false)
+                }
+                else {
+                    temp = []
+                    setfielddataa(temp)
+                    setnewdata2({ ...newdata2, model_columns: temp, required_sn: false, asset_id: 0 })
+                    setloadingspec2(false)
+                }
             })
     }
 
@@ -292,7 +356,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                     }
                 })
             }
-            else if(prop === 'update_columns'){
+            else if (prop === 'update_columns') {
                 t[prop] = newdata[prop].map((doc, idx) => {
                     if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
                         return ({
@@ -305,7 +369,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                     }
                 })
             }
-            else if(prop === 'add_columns'){
+            else if (prop === 'add_columns') {
                 t[prop] = newdata[prop].map((doc, idx) => {
                     if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
                         return ({
@@ -318,7 +382,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                     }
                 })
             }
-            else if(prop === 'asset_id'){
+            else if (prop === 'asset_id') {
                 t[prop] = Number(assettypecode)
             }
             else {
@@ -371,6 +435,9 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                     }
                 })
             }
+            else if (prop === "asset_id") [
+                t[prop] = Number(assettypecode2)
+            ]
             else {
                 t[prop] = newdata2[prop]
             }
@@ -488,6 +555,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                 }
                 setnewdata(temp2)
                 setdefaultdata(temp2)
+                setdefaultmodel(temp2)
                 setfielddata2(temp)
                 setmodelpartfielddata(temp11)
                 var arr = []
@@ -535,8 +603,9 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
         if (concataddcolumnsidx !== -1) {
             if ((concataddcolumnsidx > defaultdata.model_columns.length - 1) || (typeof (concataddcolumnsvalue.id) === 'undefined')) {
                 console.log("sini")
-                if ((fielddata2.length - defaultdata.model_columns.length) >= newdata.add_columns.length) {
-                    // console.log(fielddata2.length + ":" + defaultdata.model_columns.length + ":" + newdata.add_columns.length)
+                // if ((fielddata2.length - defaultdata.model_columns.length) >= newdata.add_columns.length) {
+                if (newdata.add_columns.map(docadd => docadd.name).indexOf(currentfield.name) === -1) {
+                    console.log(fielddata2.length + ":" + defaultdata.model_columns.length + ":" + newdata.add_columns.length)
                     if (currentfield.data_type === 'dropdown' || currentfield.data_type === 'checkbox') {
                         setnewdata(prev => {
                             var temp = prev
@@ -553,11 +622,12 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                     }
                 }
                 else {
+                    const idxaddcolumn = newdata.add_columns.map(docadd2 => docadd2.name).indexOf(currentfield.name)
                     // console.log(newdata.asset_columns.length+":"+concataddcolumnsidx+";"+newdata.add_columns.length)
                     if (currentfield.data_type === 'dropdown' || currentfield.data_type === 'checkbox') {
                         setnewdata(prev => {
                             var temp = prev
-                            temp.add_columns[newdata.asset_columns.length + concataddcolumnsidx] = {
+                            temp.add_columns[idxaddcolumn] = {
                                 name: currentfield.name,
                                 data_type: currentfield.data_type,
                                 default: {
@@ -578,13 +648,42 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                     }
                 }
             }
-            else{
+            else {
                 // console.log(fielddata2[concataddcolumnsidx])
-                setnewdata(prev => {
-                    var temp = prev
-                    temp.update_columns.push(fielddata2[concataddcolumnsidx])
-                    return temp
-                })
+                if (newdata.update_columns.map(docup => docup.id).indexOf(currentfield.id) === -1) {
+                    setnewdata(prev => {
+                        var temp = prev
+                        temp.update_columns.push(fielddata2[concataddcolumnsidx])
+                        return temp
+                    })
+                }
+                else {
+                    const idxupcolumn = newdata.update_columns.map(docadd2 => docadd2.id).indexOf(currentfield.id)
+                    if (currentfield.data_type === 'dropdown' || currentfield.data_type === 'checkbox') {
+                        setnewdata(prev => {
+                            var temp = prev
+                            temp.update_columns[idxupcolumn] = {
+                                id: currentfield.id,
+                                model_id: currentfield.model_id,
+                                name: currentfield.name,
+                                data_type: currentfield.data_type,
+                                default: {
+                                    default: currentcheckeddropdown2,
+                                    opsi: currentdropdown2
+                                },
+                                required: currentfield.required
+                            }
+                            return temp
+                        })
+                    }
+                    else {
+                        setnewdata(prev => {
+                            var temp = prev
+                            temp.update_columns[idxupcolumn] = currentfield
+                            return temp
+                        })
+                    }
+                }
             }
         }
     }, [concataddcolumnstrigger])
@@ -675,10 +774,10 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                         <div className=" col-span-4 flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-semibold py-2">Form Ubah Model - {newdata.name}</h1>
                             <div className="flex space-x-2">
-                                <Link href={`/admin/models`}>
-                                <Button /*onClick={() => { console.log(newdata); console.log(fielddata2); console.log(addedfield) }}*/ type="default">Batal</Button>
+                                <Link href={`/admin/models/detail/${modelid}`}>
+                                    <Button /*onClick={() => { console.log(newdata); console.log(fielddata2); console.log(defaultdata) }}*/ type="default">Batal</Button>
                                 </Link>
-                                <Button type="primary" loading={loadingcreate} onClick={instanceForm.submit}>Simpan</Button>
+                                <Button type="primary" loading={loadingcreate} disabled={disabledaddfield} onClick={instanceForm.submit}>Simpan</Button>
                             </div>
                         </div>
                     </Sticky>
@@ -694,14 +793,27 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                 :
                                 <Form form={instanceForm} layout="vertical" onFinish={handleCreateModel} initialValues={newdata}>
                                     <div className="grid grid-cols-1 md:grid-cols-2 space-x-2">
-                                        <Form.Item name="asset_id" label="Asset Type">
+                                        <Form.Item name="asset_id" label="Asset Type"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Asset Type wajib diisi',
+                                                },
+                                            ]}>
                                             <TreeSelect
                                                 style={{ marginRight: `1rem` }}
                                                 dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                                                 treeData={assetdata}
                                                 placeholder="Pilih Asset Type"
                                                 treeDefaultExpandAll
-                                                onChange={(value, label, extra) => { onClickSelectAsset(extra.allCheckedNodes[0].node.props.id) }}
+                                                onChange={(value, label, extra) => {
+                                                    if (typeof (value) !== 'undefined') {
+                                                        onClickSelectAsset(extra.allCheckedNodes[0].node.props.id)
+                                                    }
+                                                    else {
+                                                        onClickSelectAsset(0)
+                                                    }
+                                                }}
                                                 allowClear
                                             />
                                         </Form.Item>
@@ -771,6 +883,23 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                 setcurrentdropdown2(doc.default.opsi)
                                                                 setcurrentcheckeddropdown2(doc.default.default)
                                                             }
+                                                            if (fielddata2[idx].data_type !== 'dropdown' || fielddata2[idx].data_type !== 'checkbox') {
+                                                                if (fielddata2[idx].name !== "" && fielddata2[idx].data_type !== "") {
+                                                                    setdisabledtambah(false)
+                                                                }
+                                                                else {
+                                                                    setdisabledtambah(true)
+                                                                }
+                                                            }
+                                                            else {
+                                                                if (doc.default.opsi.some(docopsi => docopsi === "")) {
+                                                                    setdisabledtambah(true)
+                                                                }
+                                                                else {
+                                                                    setdisabledtambah(false)
+                                                                }
+                                                            }
+                                                            setdisabledaddfield(true)
                                                         }}>
                                                             <div className="font-semibold mb-2">
                                                                 {doc.name}
@@ -778,7 +907,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                             </div>
                                                             <div className='rounded border w-full pl-3 py-2 flex items-center my-auto'>
                                                                 {
-                                                                    doc.data_type === 'checkbox' || doc.data_type === 'dropdown' ?
+                                                                    doc.data_type === 'checkbox' || doc.data_type === 'dropdown' || doc.data_type === 'paragraph' || doc.data_type === 'date' ?
                                                                         <>
                                                                             {
                                                                                 doc.data_type === 'dropdown' &&
@@ -802,13 +931,27 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                                         doc.default.opsi.map((dok, idk) => {
                                                                                             return (
                                                                                                 <div key={idk} className='rounded border mb-1 w-3/12 py-1 pl-3 flex items-center flex-wrap my-auto'>
-                                                                                                    <Checkbox disabled checked={doc.default.default === idk ? true : false} style={{ marginRight: `0.5rem` }} />
+                                                                                                    <Checkbox disabled checked={doc.default.default.indexOf(idk) !== -1 ? true : false} style={{ marginRight: `0.5rem` }} />
                                                                                                     <p className="mb-0">{dok}</p>
                                                                                                 </div>
                                                                                             )
                                                                                         })
                                                                                     }
                                                                                 </div>
+                                                                            }
+                                                                            {
+                                                                                doc.data_type === 'date' &&
+                                                                                <div className="flex justify-between w-full px-3">
+                                                                                    <p className='mb-0'>{doc.default}</p>
+                                                                                    <div>
+                                                                                        <CalendarOutlined></CalendarOutlined>
+                                                                                    </div>
+                                                                                </div>
+                                                                            }
+                                                                            {
+                                                                                doc.data_type === 'paragraph' &&
+                                                                                <div className="flex h-20">{doc.default}</div>
+
                                                                             }
                                                                         </>
                                                                         :
@@ -828,14 +971,20 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                         <div key={idx} className="shadow-md border p-8 mx-3 md:mx-8 mb-5 flex flex-col rounded-md">
                                                             <Form layout="vertical" initialValues={currentfield}>
                                                                 <div className="grid grid-cols-1 md:grid-cols-2 space-x-2">
-                                                                    <Form.Item name="name" label="Nama Field" rules={[
+                                                                    <Form.Item name="name" label="Nama Spesifikasi" rules={[
                                                                         {
                                                                             required: true,
-                                                                            message: 'Nama Field wajib diisi',
+                                                                            message: 'Nama Spesifikasi wajib diisi',
                                                                         },
                                                                     ]}>
                                                                         <Input required name="name" onChange={(e) => {
                                                                             setcurrentfield({ ...currentfield, name: e.target.value })
+                                                                            if (e.target.value === "") {
+                                                                                setdisabledtambah(true)
+                                                                            }
+                                                                            else if (e.target.value !== "" && currentfield.data_type !== "") {
+                                                                                setdisabledtambah(false)
+                                                                            }
                                                                         }} />
 
                                                                     </Form.Item>
@@ -846,7 +995,24 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                                 message: 'Tipe Field wajib diisi',
                                                                             },
                                                                         ]}>
-                                                                        <Select placeholder="Pilih Tipe Field" onChange={(value) => { setcurrentfield({ ...currentfield, data_type: value }) }} name="data_type">
+                                                                        <Select placeholder="Pilih Tipe Field" onChange={(value) => {
+                                                                            setcurrentfield({ ...currentfield, data_type: value })
+                                                                            if (value === 'dropdown' || value === 'checkbox') {
+                                                                                setdisabledtambah(true)
+                                                                            }
+                                                                            else {
+                                                                                setdisabledtambah(false)
+                                                                            }
+                                                                            if (value === 'dropdown') {
+                                                                                setcurrentcheckeddropdown2("")
+                                                                                setcurrentdropdown2(["", ""])
+                                                                            }
+                                                                            if (value === 'checkbox') {
+                                                                                setcurrentcheckeddropdown2([])
+                                                                                setcurrentdropdown2(["", ""])
+                                                                            }
+                                                                        }}
+                                                                            name="data_type">
                                                                             <Select.Option value={"dropdown"}>Dropdown</Select.Option>
                                                                             <Select.Option value={"number"}>Number</Select.Option>
                                                                             <Select.Option value={"paragraph"}>Paragraph Text</Select.Option>
@@ -878,6 +1044,9 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                                                         temp[idxx] = e.target.value
                                                                                                         return temp
                                                                                                     })
+                                                                                                    if ((e.target.value !== "") && (idxx === currentdropdown2.length - 1)) {
+                                                                                                        setdisabledtambah(false)
+                                                                                                    }
                                                                                                 }} />
                                                                                             </div>
                                                                                             <div className="w-1/12 flex justify-around" onClick={() => {
@@ -889,7 +1058,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                                     ))
                                                                                 }
                                                                                 <div className="mx-auto my-3">
-                                                                                    <Button onClick={() => { setcurrentdropdown2([...currentdropdown2, ""]) }}>+ Tambah Opsi</Button>
+                                                                                    <Button onClick={() => { setcurrentdropdown2([...currentdropdown2, ""]); setdisabledtambah(true) }}>+ Tambah Opsi</Button>
                                                                                 </div>
                                                                             </div>
                                                                             :
@@ -898,36 +1067,54 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                     {
                                                                         currentfield.data_type.toLowerCase() === "checkbox" ?
                                                                             <div className="flex flex-col">
-                                                                                <h1>Default hanya dipilih 1 (satu) dari beberapa opsi dibawah ini</h1>
+                                                                                <h1>Default dapat dipilih lebih dari 1 (satu) opsi dibawah ini</h1>
                                                                                 {
-                                                                                    currentdropdown2.map((doc, idxx) => (
-                                                                                        <div className="flex mb-3">
-                                                                                            <div className="w-7 flex items-center">
-                                                                                                <Checkbox checked={currentcheckeddropdown2 === idxx ? true : false} onChange={(e) => {
-                                                                                                    if (e.target.checked === true) {
-                                                                                                        setcurrentcheckeddropdown2(idxx)
-                                                                                                    }
-                                                                                                }}></Checkbox>
+                                                                                    currentdropdown2.map((doc, idxx) => {
+                                                                                        const idxchecked = currentcheckeddropdown2.includes(idxx)
+                                                                                        return (
+                                                                                            <div className="flex mb-3">
+                                                                                                <div className="w-7 flex items-center">
+                                                                                                    <Checkbox defaultChecked={idxchecked} onChange={(e) => {
+                                                                                                        if (e.target.checked === true) {
+                                                                                                            setcurrentcheckeddropdown2(prev => {
+                                                                                                                var temp = prev
+                                                                                                                temp.push(idxx)
+                                                                                                                return temp
+                                                                                                            })
+                                                                                                        }
+                                                                                                        else {
+                                                                                                            setcurrentcheckeddropdown2(prev => {
+                                                                                                                var temp = prev
+                                                                                                                const index = temp.indexOf(idxx)
+                                                                                                                temp.splice(index, 1)
+                                                                                                                return temp
+                                                                                                            })
+                                                                                                        }
+                                                                                                    }}></Checkbox>
+                                                                                                </div>
+                                                                                                <div className="w-10/12 mr-5">
+                                                                                                    <Input style={{ marginRight: `0.5rem` }} defaultValue={doc} placeholder={`Masukkan opsi ke-${idxx + 1}`} onChange={(e) => {
+                                                                                                        setcurrentdropdown2(prev => {
+                                                                                                            const temp = prev
+                                                                                                            temp[idxx] = e.target.value
+                                                                                                            return temp
+                                                                                                        })
+                                                                                                        if ((e.target.value !== "") && (idxx === currentdropdown2.length - 1)) {
+                                                                                                            setdisabledtambah(false)
+                                                                                                        }
+                                                                                                    }} />
+                                                                                                </div>
+                                                                                                <div className="w-1/12 flex justify-around" onClick={() => {
+                                                                                                    setcurrentdropdown2(prev => prev.filter((_, idxxx) => idxxx !== idxx))
+                                                                                                }}>
+                                                                                                    <Button type="danger">-</Button>
+                                                                                                </div>
                                                                                             </div>
-                                                                                            <div className="w-10/12 mr-5">
-                                                                                                <Input style={{ marginRight: `0.5rem` }} defaultValue={doc} placeholder={`Masukkan opsi ke-${idxx + 1}`} onChange={(e) => {
-                                                                                                    setcurrentdropdown2(prev => {
-                                                                                                        const temp = prev
-                                                                                                        temp[idxx] = e.target.value
-                                                                                                        return temp
-                                                                                                    })
-                                                                                                }} />
-                                                                                            </div>
-                                                                                            <div className="w-1/12 flex justify-around" onClick={() => {
-                                                                                                setcurrentdropdown2(prev => prev.filter((_, idxxx) => idxxx !== idxx))
-                                                                                            }}>
-                                                                                                <Button type="danger">-</Button>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    ))
+                                                                                        )
+                                                                                    })
                                                                                 }
                                                                                 <div className="mx-auto my-3">
-                                                                                    <Button onClick={() => { setcurrentdropdown2([...currentdropdown2, ""]) }}>+ Tambah Opsi</Button>
+                                                                                    <Button onClick={() => { setcurrentdropdown2([...currentdropdown2, ""]); setdisabledtambah(true) }}>+ Tambah Opsi</Button>
                                                                                 </div>
                                                                             </div>
                                                                             :
@@ -994,6 +1181,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                             prev.splice(idx, 1)
                                                                             return prev
                                                                         })
+                                                                        setdisabledaddfield(false)
                                                                     }
                                                                     }>
                                                                         <div className="flex items-center mr-4 hover:text-red-500 cursor-pointer">
@@ -1005,7 +1193,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                             setcurrentfield({ ...currentfield, required: e.target.checked })
                                                                         }} /> Required
                                                                     </div>
-                                                                    <Button type="primary" onClick={() => {
+                                                                    <Button disabled={disabledtambah} type="primary" onClick={() => {
                                                                         if (currentfield.data_type === 'dropdown' || currentfield.data_type === 'checkbox') {
                                                                             setidxdropdowntrigger(idx)
                                                                             setvaluedropdowntrigger(prev => !prev)
@@ -1019,6 +1207,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                         setaddedfieldidx(idx)
                                                                         setaddedfieldtrigger(prev => !prev)
                                                                         setconcatfieldtrigger(prev => !prev)
+                                                                        setdisabledaddfield(false)
                                                                     }}>Tambah</Button>
                                                                 </div>
                                                             </Form>
@@ -1032,7 +1221,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                             </>
                     }
                     <div className="w-full flex justify-center mt-5">
-                        <Button type="dashed" style={{ width: `80%`, height: `4rem` }} onClick={onClickAddField}>+ Tambah Spesifikasi Model</Button>
+                        <Button type="dashed" disabled={disabledaddfield} style={{ width: `80%`, height: `4rem` }} onClick={onClickAddField}>+ Tambah Spesifikasi Model</Button>
                     </div>
                 </div>
                 <div className=" mb-8 col-span-1 md:col-span-4 px-5 flex flex-col">
@@ -1182,13 +1371,13 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                             message: 'Nama Model wajib diisi',
                                                         },
                                                     ]}>
-                                                    <Select showSearch optionFilterProp="children" placeholder="Masukkan atau cari nama modul" onChange={(value) => { setcurrentidmodel({ ...currentidmodel, id: value }) }} name="id" filterOption={(input, opt) => (
+                                                    <Select value={currentidmodel.id} showSearch optionFilterProp="children" placeholder="Masukkan atau cari nama modul" onChange={(value) => { setcurrentidmodel({ ...currentidmodel, id: value }) }} name="id" filterOption={(input, opt) => (
                                                         opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                                     )}>
                                                         {
                                                             modeldata.map((doc, idx) => {
                                                                 return (
-                                                                    <Select.Option key={idx} value={doc.id}>{doc.name}</Select.Option>
+                                                                    <Select.Option key={doc.id} value={doc.id}>{doc.name}</Select.Option>
                                                                 )
                                                             })
                                                         }
@@ -1201,7 +1390,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                         </div>
                                         <hr />
                                         <div className="flex mt-4 justify-end">
-                                            <div className="flex items-center mr-4 hover:text-red-500 cursor-pointer" onClick={() => { seteditpart(false) }}>
+                                            <div className="flex items-center mr-4 hover:text-red-500 cursor-pointer" onClick={() => { seteditpart(false); setcurrentidmodel({ id: "" }) }}>
                                                 <DeleteOutlined style={{ fontSize: `1.25rem` }} ></DeleteOutlined>
                                             </div>
                                             <Button loading={loadinggetmodel} type="primary" onClick={() => {
@@ -1237,6 +1426,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                     setconcatpartvalue(res2.data.model_parts)
                                                     setconcatparttrigger(prev => !prev)
                                                     setloadinggetmodel(false);
+                                                    setcurrentidmodel({ id: "" })
                                                 })
                                             }}>Tambah</Button>
                                         </div>
@@ -1259,7 +1449,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                         <h1 className="font-bold text-xl">Form Tambah Model</h1>
                         <div className="flex">
                             <Button type="default" onClick={() => { setmodalcreatemodel(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
-                            <Button type='primary' onClick={instanceForm2.submit} loading={loadingcreatemodel}>Simpan</Button>
+                            <Button type='primary' disabled={disabledaddfield2} onClick={instanceForm2.submit} loading={loadingcreatemodel}>Simpan</Button>
                         </div>
                     </div>
                 }
@@ -1271,19 +1461,26 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                 <div className="shadow-md border p-8 flex flex-col rounded-md mb-8">
                     <Form form={instanceForm2} layout="vertical" onFinish={handleCreateModelinModel}>
                         <div className="grid grid-cols-1 md:grid-cols-2 space-x-2">
-                            <Form.Item name="asetid" label="Asset Type" rules={[
-                                    {
-                                        required: true,
-                                        message: 'Asset Type wajib diisi',
-                                    },
-                                ]}>
+                            <Form.Item name="asset_id" label="Asset Type" rules={[
+                                {
+                                    required: true,
+                                    message: 'Asset Type wajib diisi',
+                                },
+                            ]}>
                                 <TreeSelect
                                     style={{ marginRight: `1rem` }}
                                     dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                                     treeData={assetdata}
                                     placeholder="Pilih Asset Type"
                                     treeDefaultExpandAll
-                                    onChange={(value, label, extra) => { onClickSelectAsset2(extra.allCheckedNodes[0].node.props.id) }}
+                                    onChange={(value, label, extra) => {
+                                        if (typeof (value) !== 'undefined') {
+                                            onClickSelectAsset2(extra.allCheckedNodes[0].node.props.id)
+                                        }
+                                        else {
+                                            onClickSelectAsset2(0)
+                                        }
+                                    }}
                                     allowClear
                                 />
                             </Form.Item>
@@ -1392,7 +1589,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                     {
                                                         doc.data_type.toLowerCase() === "checkbox" &&
                                                         <div className="flex flex-col">
-                                                            <h1>Default hanya dipilih 1 (satu) dari beberapa opsi dibawah ini</h1>
+                                                            <h1>Default dapat dipilih lebih dari 1 (satu) opsi dibawah ini</h1>
                                                             {
                                                                 doc.default.opsi.map((docc, idxx) => (
                                                                     <div className="flex mb-3">
@@ -1400,7 +1597,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                             if (e.target.checked === true) {
                                                                                 setfielddataa(prev => {
                                                                                     var temp = prev
-                                                                                    temp[idx]["default"]["default"] = idxx
+                                                                                    temp[idx]["default"]["default"].push(idxx)
                                                                                     return temp
                                                                                 })
                                                                             }
@@ -1478,6 +1675,23 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                     setcurrentdropdownn2(doc.default.opsi)
                                                     setcurrentcheckeddropdownn2(doc.default.default)
                                                 }
+                                                if (fielddataa2[idx].data_type !== 'dropdown' || fielddataa2[idx].data_type !== 'checkbox') {
+                                                    if (fielddataa2[idx].name !== "" && fielddataa2[idx].data_type !== "") {
+                                                        setdisabledtambah2(false)
+                                                    }
+                                                    else {
+                                                        setdisabledtambah2(true)
+                                                    }
+                                                }
+                                                else {
+                                                    if (doc.default.opsi.some(docopsi => docopsi === "")) {
+                                                        setdisabledtambah2(true)
+                                                    }
+                                                    else {
+                                                        setdisabledtambah2(false)
+                                                    }
+                                                }
+                                                setdisabledaddfield2(true)
                                             }}>
                                                 <div className="font-semibold mb-2">
                                                     {doc.name}
@@ -1485,7 +1699,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                 </div>
                                                 <div className='rounded border w-full pl-3 py-2 flex items-center my-auto'>
                                                     {
-                                                        doc.data_type === 'checkbox' || doc.data_type === 'dropdown' ?
+                                                        doc.data_type === 'checkbox' || doc.data_type === 'dropdown' || doc.data_type === 'paragraph' || doc.data_type === 'date' ?
                                                             <>
                                                                 {
                                                                     doc.data_type === 'dropdown' &&
@@ -1515,6 +1729,20 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                         }
                                                                     </div>
                                                                 }
+                                                                {
+                                                                    doc.data_type === 'date' &&
+                                                                    <div className="flex justify-between w-full px-3">
+                                                                        <p className='mb-0'>{doc.default}</p>
+                                                                        <div>
+                                                                            <CalendarOutlined></CalendarOutlined>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                {
+                                                                    doc.data_type === 'paragraph' &&
+                                                                    <div className="flex h-20">{doc.default}</div>
+
+                                                                }
                                                             </>
                                                             :
                                                             <p className="mb-0">{doc.default}</p>
@@ -1541,6 +1769,12 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                         ]}>
                                                             <Input required name="name" onChange={(e) => {
                                                                 setcurrentfield2({ ...currentfield2, name: e.target.value })
+                                                                if (e.target.value === "") {
+                                                                    setdisabledtambah2(true)
+                                                                }
+                                                                else if (e.target.value !== "" && currentfield2.data_type !== "") {
+                                                                    setdisabledtambah2(false)
+                                                                }
                                                             }} />
 
                                                         </Form.Item>
@@ -1551,7 +1785,24 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                     message: 'Tipe Field wajib diisi',
                                                                 },
                                                             ]}>
-                                                            <Select placeholder="Pilih Tipe Field" onChange={(value) => { setcurrentfield2({ ...currentfield2, data_type: value }) }} name="data_type">
+                                                            <Select placeholder="Pilih Tipe Field" onChange={(value) => {
+                                                                setcurrentfield2({ ...currentfield2, data_type: value })
+                                                                if (value === 'dropdown' || value === 'checkbox') {
+                                                                    setdisabledtambah2(true)
+                                                                }
+                                                                else {
+                                                                    setdisabledtambah2(false)
+                                                                }
+                                                                if (value === 'dropdown') {
+                                                                    setcurrentcheckeddropdownn2("")
+                                                                    setcurrentdropdownn2(["", ""])
+                                                                }
+                                                                if (value === 'checkbox') {
+                                                                    setcurrentcheckeddropdownn2([])
+                                                                    setcurrentdropdownn2(["", ""])
+                                                                }
+                                                            }}
+                                                                name="data_type">
                                                                 <Select.Option value={"dropdown"}>Dropdown</Select.Option>
                                                                 <Select.Option value={"number"}>Number</Select.Option>
                                                                 <Select.Option value={"paragraph"}>Paragraph Text</Select.Option>
@@ -1583,6 +1834,9 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                                             temp[idxx] = e.target.value
                                                                                             return temp
                                                                                         })
+                                                                                        if ((e.target.value !== "") && (idxx === currentdropdownn2.length - 1)) {
+                                                                                            setdisabledtambah2(false)
+                                                                                        }
                                                                                     }} />
                                                                                 </div>
                                                                                 <div className="w-1/12 flex justify-around" onClick={() => {
@@ -1594,7 +1848,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                         ))
                                                                     }
                                                                     <div className="mx-auto my-3">
-                                                                        <Button onClick={() => { setcurrentdropdownn2([...currentdropdownn2, ""]) }}>+ Tambah Opsi</Button>
+                                                                        <Button onClick={() => { setcurrentdropdownn2([...currentdropdownn2, ""]); setdisabledtambah2(true) }}>+ Tambah Opsi</Button>
                                                                     </div>
                                                                 </div>
                                                                 :
@@ -1603,36 +1857,54 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                         {
                                                             currentfield2.data_type.toLowerCase() === "checkbox" ?
                                                                 <div className="flex flex-col">
-                                                                    <h1>Default hanya dipilih 1 (satu) dari beberapa opsi dibawah ini</h1>
+                                                                    <h1>Default dapat dipilih lebih dari 1 (satu) opsi dibawah ini</h1>
                                                                     {
-                                                                        currentdropdownn2.map((doc, idxx) => (
-                                                                            <div className="flex mb-3">
-                                                                                <div className="w-7 flex items-center">
-                                                                                    <Checkbox checked={currentcheckeddropdownn2 === idxx ? true : false} onChange={(e) => {
-                                                                                        if (e.target.checked === true) {
-                                                                                            setcurrentcheckeddropdownn2(idxx)
-                                                                                        }
-                                                                                    }}></Checkbox>
+                                                                        currentdropdownn2.map((doc, idxx) => {
+                                                                            const idxchecked = currentcheckeddropdownn2.includes(idxx)
+                                                                            return (
+                                                                                <div className="flex mb-3">
+                                                                                    <div className="w-7 flex items-center">
+                                                                                        <Checkbox defaultChecked={idxchecked} onChange={(e) => {
+                                                                                            if (e.target.checked === true) {
+                                                                                                setcurrentcheckeddropdownn2(prev => {
+                                                                                                    var temp = prev
+                                                                                                    temp.push(idxx)
+                                                                                                    return temp
+                                                                                                })
+                                                                                            }
+                                                                                            else {
+                                                                                                setcurrentcheckeddropdownn2(prev => {
+                                                                                                    var temp = prev
+                                                                                                    const index = temp.indexOf(idxx)
+                                                                                                    temp.splice(index, 1)
+                                                                                                    return temp
+                                                                                                })
+                                                                                            }
+                                                                                        }}></Checkbox>
+                                                                                    </div>
+                                                                                    <div className="w-10/12 mr-5">
+                                                                                        <Input style={{ marginRight: `0.5rem` }} defaultValue={doc} placeholder={`Masukkan opsi ke-${idxx + 1}`} onChange={(e) => {
+                                                                                            setcurrentdropdownn2(prev => {
+                                                                                                const temp = prev
+                                                                                                temp[idxx] = e.target.value
+                                                                                                return temp
+                                                                                            })
+                                                                                            if ((e.target.value !== "") && (idxx === currentdropdownn2.length - 1)) {
+                                                                                                setdisabledtambah2(false)
+                                                                                            }
+                                                                                        }} />
+                                                                                    </div>
+                                                                                    <div className="w-1/12 flex justify-around" onClick={() => {
+                                                                                        setcurrentdropdownn2(prev => prev.filter((_, idxxx) => idxxx !== idxx))
+                                                                                    }}>
+                                                                                        <Button type="danger">-</Button>
+                                                                                    </div>
                                                                                 </div>
-                                                                                <div className="w-10/12 mr-5">
-                                                                                    <Input style={{ marginRight: `0.5rem` }} defaultValue={doc} placeholder={`Masukkan opsi ke-${idxx + 1}`} onChange={(e) => {
-                                                                                        setcurrentdropdownn2(prev => {
-                                                                                            const temp = prev
-                                                                                            temp[idxx] = e.target.value
-                                                                                            return temp
-                                                                                        })
-                                                                                    }} />
-                                                                                </div>
-                                                                                <div className="w-1/12 flex justify-around" onClick={() => {
-                                                                                    setcurrentdropdownn2(prev => prev.filter((_, idxxx) => idxxx !== idxx))
-                                                                                }}>
-                                                                                    <Button type="danger">-</Button>
-                                                                                </div>
-                                                                            </div>
-                                                                        ))
+                                                                            )
+                                                                        })
                                                                     }
                                                                     <div className="mx-auto my-3">
-                                                                        <Button onClick={() => { setcurrentdropdownn2([...currentdropdownn2, ""]) }}>+ Tambah Opsi</Button>
+                                                                        <Button onClick={() => { setcurrentdropdownn2([...currentdropdownn2, ""]); setdisabledtambah2(true) }}>+ Tambah Opsi</Button>
                                                                     </div>
                                                                 </div>
                                                                 :
@@ -1682,6 +1954,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                 prev.splice(idx, 1)
                                                                 return prev
                                                             })
+                                                            setdisabledaddfield2(false)
                                                         }
                                                         }>
                                                             <div className="flex items-center mr-4 hover:text-red-500 cursor-pointer">
@@ -1693,8 +1966,8 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                 setcurrentfield2({ ...currentfield2, required: e.target.checked })
                                                             }} /> Required
                                                         </div>
-                                                        <Button type="primary" onClick={() => {
-                                                            if(currentfield2.data_type === 'dropdown' || currentfield2.data_type === 'checkbox'){
+                                                        <Button type="primary" disabled={disabledtambah2} onClick={() => {
+                                                            if (currentfield2.data_type === 'dropdown' || currentfield2.data_type === 'checkbox') {
                                                                 setidxdropdowntrigger2(idx)
                                                                 setvaluedropdowntrigger2(prev => !prev)
                                                             }
@@ -1704,6 +1977,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                             setaddedfieldidx2(idx)
                                                             setaddedfieldtrigger2(prev => !prev)
                                                             setconcatfieldtrigger2(prev => !prev)
+                                                            setdisabledaddfield2(false)
                                                         }}>Tambah</Button>
                                                     </div>
                                                 </Form>
@@ -1715,11 +1989,11 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                         })
                     }
                     <div className="w-full flex justify-center mt-5">
-                        <Button type="dashed" style={{ width: `80%`, height: `4rem` }} onClick={onClickAddField2}>+ Tambah Spesifikasi Model</Button>
+                        <Button type="dashed" disabled={disabledaddfield2} style={{ width: `80%`, height: `4rem` }} onClick={onClickAddField2}>+ Tambah Spesifikasi Model</Button>
                     </div>
                 </div>
             </Modal>
-        </Layout>
+        </Layout >
     )
 }
 
