@@ -51,6 +51,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
     const [selectedfieldidxtrigger, setselectedfieldidxtrigger] = useState(false)
     const [newfieldidxtrigger, setnewfieldidxtrigger] = useState(false)
     const [currentdropdown, setcurrentdropdown] = useState(["", ""])
+    const [currentdropdown2, setcurrentdropdown2] = useState(["", ""])
     const [currentdropdownidx, setcurrentdropdownidx] = useState(-1)
     const [currentdropdowntrigger, setcurrentdropdowntrigger] = useState(false)
     const [currentnondropdownidx, setcurrentnondropdownidx] = useState(-1)
@@ -60,6 +61,10 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
     const [disabledaddfield, setdisabledaddfield] = useState(false)
     const [disabledsimpan, setdisabledsimpan] = useState(false)
     const [disabledtambah, setdisabledtambah] = useState(false)
+    const [cdtrigger, setcdtrigger] = useState(false)
+    const [cdvalue, setcdvalue] = useState(-1)
+    const [cdidx, setcdidx] = useState(-1)
+    const [cddelete, setcddelete] = useState([])
 
     //handle
     const onClickAddField = () => {
@@ -76,6 +81,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
             required: false
         })
         setcurrentdropdown(["", ""])
+        setcurrentdropdown2(["", ""])
         setdisabledaddfield(true)
         setdisabledsimpan(true)
         setdisabledtambah(true)
@@ -180,6 +186,12 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
             })
         }
     }, [currentnondropdowntrigger])
+    useEffect(() => {
+        if (cdidx !== -1) {
+            setcurrentdropdown(prev => currentdropdown2.filter((doccc, idxxx) => cddelete.indexOf(doccc) === -1))
+            // setcurrentdropdown(prev => prev.filter((_, idxxx) => idxxx !== cdidx))
+        }
+    }, [cdtrigger])
 
     return (
         <Layout st={st} tok={initProps} sidemenu={sidemenu} dataProfile={dataProfile} pathArr={pathArr}>
@@ -303,6 +315,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                 setcurrentfield(fielddata[idx])
                                                 if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
                                                     setcurrentdropdown(doc.default.opsi)
+                                                    setcurrentdropdown2(doc.default.opsi)
                                                 }
                                                 if (fielddata[idx].data_type !== 'dropdown' || fielddata[idx].data_type !== 'checkbox') {
                                                     if (fielddata[idx].name !== "" && fielddata[idx].data_type !== "") {
@@ -460,10 +473,12 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                                 }} />
                                                                             </div>
                                                                             <div className="w-1/12 flex justify-around" onClick={() => {
-                                                                                setcurrentdropdown(prev => prev.filter((_, idxxx) => {
-                                                                                    console.log(idxxx !== idxx - 1)
-                                                                                    return idxxx !== idxx
-                                                                                }))
+                                                                                setcurrentdropdown([])
+                                                                                setcddelete([...cddelete, doc])
+                                                                                setcdvalue(doc)
+                                                                                setcdidx(idxx)
+                                                                                setcdtrigger(prev => !prev)
+                                                                                // setcurrentdropdown(prev => prev.filter((_, idxxx) => idxxx !== idxx))
                                                                                 // setcurrentdropdown(prev => prev.splice(idxx,1))
                                                                             }}>
                                                                                 <Button color="black" style={{ border: `1px solid black` }}>-</Button>
@@ -551,7 +566,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                     return temp
                                                                 })
                                                             }
-                                                            else if( currentfield.data_type === 'checkbox'){
+                                                            else if (currentfield.data_type === 'checkbox') {
                                                                 setfielddata(prev => {
                                                                     var temp = prev
                                                                     temp[idx]["default"] = {
