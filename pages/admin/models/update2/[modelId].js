@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react'
 import { Form, Input, notification, Button, TreeSelect, Checkbox, Select, Popconfirm, Spin, InputNumber, DatePicker, Collapse, Timeline, Empty, Tooltip } from 'antd'
 import st from '../../../../components/layout-dashboard.module.css'
 import Modal from 'antd/lib/modal/Modal'
+import Link from 'next/link'
 
 const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
     //1.Init
