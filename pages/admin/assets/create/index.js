@@ -62,9 +62,9 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
     const [disabledsimpan, setdisabledsimpan] = useState(false)
     const [disabledtambah, setdisabledtambah] = useState(false)
     const [cdtrigger, setcdtrigger] = useState(false)
-    const [cdvalue, setcdvalue] = useState(-1)
     const [cdidx, setcdidx] = useState(-1)
     const [cddelete, setcddelete] = useState([])
+    const [pointevent,setpointevent] = useState("")
 
     //handle
     const onClickAddField = () => {
@@ -85,6 +85,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
         setdisabledaddfield(true)
         setdisabledsimpan(true)
         setdisabledtambah(true)
+        setpointevent("pointer-events-none")
     }
     const handleCreateAsset = () => {
         var t = {}
@@ -201,9 +202,9 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                         <div className=" col-span-4 flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-semibold py-2">Form Tambah Asset Types</h1>
                             <div className="flex space-x-2">
-                                {/* <Link href={`/admin/assets`}> */}
-                                <Button type="default" onClick={() => { console.log(newdata); console.log(fielddata); console.log(currentdropdown) }}>Batal</Button>
-                                {/* </Link> */}
+                                <Link href={`/admin/assets`}>
+                                <Button type="default" /*onClick={() => { console.log(newdata); console.log(fielddata); console.log(currentdropdown) }}*/>Batal</Button>
+                                </Link>
                                 <Button type="primary" loading={loadingcreate} onClick={instanceForm.submit} disabled={disabledsimpan}>Simpan</Button>
                             </div>
                         </div>
@@ -303,7 +304,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                 <>
                                     {
                                         addedfield[idx] === true ?
-                                            <div key={idx} className="shadow-md border p-8 mx-3 md:mx-8 mb-5 flex flex-col rounded-md cursor-pointer" onClick={() => {
+                                            <div key={idx} className={`${pointevent} shadow-md border p-8 mx-3 md:mx-8 mb-5 flex flex-col rounded-md cursor-pointer`} onClick={() => {
                                                 const temp = [...addedfield]
                                                 temp[idx] = false
                                                 for (var i = 0; i < temp.length; i++) {
@@ -335,6 +336,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                 }
                                                 setdisabledaddfield(true)
                                                 setdisabledsimpan(true)
+                                                setpointevent("pointer-events-none")
                                             }}>
                                                 <div className="font-semibold mb-2">
                                                     {doc.name}
@@ -475,7 +477,6 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                             <div className="w-1/12 flex justify-around" onClick={() => {
                                                                                 setcurrentdropdown([])
                                                                                 setcddelete([...cddelete, doc])
-                                                                                setcdvalue(doc)
                                                                                 setcdidx(idxx)
                                                                                 setcdtrigger(prev => !prev)
                                                                                 // setcurrentdropdown(prev => prev.filter((_, idxxx) => idxxx !== idxx))
@@ -541,6 +542,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                             })
                                                             setdisabledaddfield(false)
                                                             setdisabledsimpan(false)
+                                                            setpointevent("")
                                                         }
                                                         }>
                                                             <div className="flex items-center mr-4 hover:text-red-500 cursor-pointer">
@@ -597,6 +599,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                             })
                                                             setdisabledaddfield(false)
                                                             setdisabledsimpan(false)
+                                                            setpointevent("")
                                                         }}>Tambah</Button>
                                                     </div>
                                                 </Form>

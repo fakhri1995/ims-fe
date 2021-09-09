@@ -60,6 +60,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
     const [disabledaddfield, setdisabledaddfield] = useState(false)
     const [disabledsimpan, setdisabledsimpan] = useState(false)
     const [disabledtambah, setdisabledtambah] = useState(false)
+    const [pointevent, setpointevent] = useState("")
 
     //handle
     const onClickAddField = () => {
@@ -82,6 +83,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
         setdisabledaddfield(true)
         setdisabledsimpan(true)
         setdisabledtambah(true)
+        setpointevent("pointer-events-none")
     }
     const handleUpdateAsset = () => {
         var t = {}
@@ -249,9 +251,9 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                         <div className=" col-span-4 flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-semibold py-2">Form Ubah Asset Type {praloading ? null : `- ${displaydata.name}`}</h1>
                             <div className="flex space-x-2">
-                                {/* <Link href={`/admin/assets/detail/${assettypeid}`}> */}
-                                <Button onClick={() => { console.log(updatedata); console.log(fielddata); console.log(currentfield); console.log(addedfield) }} type="default">Batal</Button>
-                                {/* </Link> */}
+                                <Link href={`/admin/assets/detail/${assettypeid}`}>
+                                    <Button /*onClick={() => { console.log(updatedata); console.log(fielddata); console.log(currentfield); console.log(addedfield) }}*/ type="default">Batal</Button>
+                                </Link>
                                 <Button type="primary" loading={loadingupdate} onClick={instanceForm.submit} disabled={disabledsimpan}>Simpan</Button>
                             </div>
                         </div>
@@ -313,7 +315,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                 <>
                                     {
                                         addedfield[idx] === true ?
-                                            <div key={idx} className="shadow-md border p-8 mx-3 md:mx-8 mb-5 flex flex-col rounded-md cursor-pointer" onClick={() => {
+                                            <div key={idx} className={`${pointevent} shadow-md border p-8 mx-3 md:mx-8 mb-5 flex flex-col rounded-md cursor-pointer`} onClick={() => {
                                                 const temp = [...addedfield]
                                                 temp[idx] = false
                                                 for (var i = 0; i < temp.length; i++) {
@@ -344,6 +346,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                 }
                                                 setdisabledaddfield(true)
                                                 setdisabledsimpan(true)
+                                                setpointevent("pointer-events-none")
                                             }}>
                                                 <div className="font-semibold mb-2">
                                                     {doc.name}
@@ -544,6 +547,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                             })
                                                             setdisabledaddfield(false)
                                                             setdisabledsimpan(false)
+                                                            setpointevent("")
                                                         }
                                                         }>
                                                             <div className="flex items-center mr-4 hover:text-red-500 cursor-pointer">
@@ -619,7 +623,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                                 setcurrentdropdownidx(idx)
                                                                 setcurrentdropdowntrigger(prev => !prev)
                                                             }
-                                                            else{
+                                                            else {
                                                                 setcurrentnondropdownidx(idx)
                                                                 setcurrentnondropdowntrigger(prev => !prev)
                                                             }
@@ -649,6 +653,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                             // })
                                                             setdisabledaddfield(false)
                                                             setdisabledsimpan(false)
+                                                            setpointevent("")
                                                         }}>Tambah</Button>
                                                     </div>
                                                 </Form>

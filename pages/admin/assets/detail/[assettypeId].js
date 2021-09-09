@@ -4,7 +4,8 @@ import httpcookie from 'cookie'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Modal, Steps, Radio, Button, Tabs, TreeSelect, Empty, notification } from 'antd'
+import { Modal, Steps, Radio, Button, Tabs, TreeSelect, Empty, notification, Select, Checkbox } from 'antd'
+import { CalendarOutlined } from '@ant-design/icons'
 import st from '../../../../components/layout-dashboard.module.css'
 
 const Overview = ({ assettypeid, initProps, displaydata, parentcode, praloading }) => {
@@ -62,7 +63,51 @@ const Overview = ({ assettypeid, initProps, displaydata, parentcode, praloading 
                                 return (
                                     <div className="mb-5">
                                         <div className="font-semibold mb-2">{doc.name} {doc.required ? <span className="judulField"></span> : null} <span className="text-gray-400">({doc.data_type.charAt(0).toUpperCase() + doc.data_type.slice(1)})</span></div>
-                                        <div className='rounded border bg-gray-400 w-full h-10'></div>
+                                        {
+                                            doc.data_type === 'dropdown' || doc.data_type === 'checkbox' || doc.data_type === 'date' || doc.data_type === 'paragraph' ?
+                                                <>
+                                                    {
+                                                        doc.data_type === 'dropdown' &&
+                                                        <Select style={{ width: `100%`, backgroundColor:`rgba(229, 231, 235,1)`, color:`rgba(229, 231, 235,1)` }}>
+                                                            {
+                                                                doc.default.opsi.map((doc2, idx2) => (
+                                                                    <Select.Option disabled value={idx2}>{doc2}</Select.Option>
+                                                                ))
+                                                            }
+                                                        </Select>
+                                                    }
+                                                    {
+                                                        doc.data_type === 'checkbox' &&
+                                                        <div className="w-full flex flex-col">
+                                                            {
+                                                                doc.default.opsi.map((doc3, idx3) => (
+                                                                    <div className="flex mb-1">
+                                                                        <Checkbox disabled style={{ marginRight: `0.5rem` }}></Checkbox>
+                                                                        <p className="mb-0">{doc3}</p>
+                                                                    </div>
+                                                                ))
+                                                            }
+                                                        </div>
+                                                    }
+                                                    {
+                                                        doc.data_type === 'date' &&
+                                                        <div className="flex w-full justify-between px-3">
+                                                            <p className='mb-0'>{doc.default}</p>
+                                                            <div>
+                                                                <CalendarOutlined></CalendarOutlined>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    {
+                                                        doc.data_type === 'paragraph' &&
+                                                        <div className="flex h-20">{doc.default}</div>
+                                                    }
+                                                </>
+                                                :
+                                                <div className='rounded border bg-gray-100 flex items-center w-full h-10 px-3'>
+                                                    {doc.default}
+                                                </div>
+                                        }
                                         <style jsx>
                                             {`
                                                         .judulField::before{
@@ -184,7 +229,19 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                setdisplaydata(res2.data)
+                const assetcolmap = res2.data.asset_columns.map((doc, idx) => {
+                    return ({
+                        id: doc.id,
+                        name: doc.name,
+                        data_type: doc.data_type,
+                        default: doc.default.indexOf("{") !== -1 ? JSON.parse(doc.default) : doc.default,
+                        required: doc.required
+                    })
+                })
+                setdisplaydata({
+                    ...res2.data,
+                    asset_columns:assetcolmap
+                })
                 const prt = res2.data.code.substring(0, res2.data.code.length - 4)
                 setparentcode(prt)
                 return prt

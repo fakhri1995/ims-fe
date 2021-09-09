@@ -63,6 +63,11 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
     const onFinalClick = () => {
         var datatemp = displaydata1
+        // const modelnameatas = displaydata.map(doc1 => doc1.asset_name).filter(doc2 => {
+        //     if(doc2.indexOf("/")!== -1){
+        //         return doc2.replace(/\s/g,'').split("/")[0]
+        //     }
+        // })
         if (assettypefilteract) {
             datatemp = datatemp.filter(flt => {
                 return flt.asset_id === Number(assettypevalue)
