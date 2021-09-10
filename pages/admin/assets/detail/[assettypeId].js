@@ -62,13 +62,13 @@ const Overview = ({ assettypeid, initProps, displaydata, parentcode, praloading 
                             displaydata.asset_columns.map((doc, idx) => {
                                 return (
                                     <div className="mb-5">
-                                        <div className="font-semibold mb-2">{doc.name} {doc.required ? <span className="judulField"></span> : null} <span className="text-gray-400">({doc.data_type.charAt(0).toUpperCase() + doc.data_type.slice(1)})</span></div>
+                                        <div className="font-semibold mb-2">{doc.name} {doc.required ? <span className="judulField"></span> : null} <span className="text-gray-400">({doc.data_type.charAt(0).toUpperCase() + doc.data_type.slice(1)}{doc.data_type === 'single' && ` Textbox`}{doc.data_type === 'paragraph' && ` Text`})</span></div>
                                         {
                                             doc.data_type === 'dropdown' || doc.data_type === 'checkbox' || doc.data_type === 'date' || doc.data_type === 'paragraph' ?
                                                 <>
                                                     {
                                                         doc.data_type === 'dropdown' &&
-                                                        <Select style={{ width: `100%`, backgroundColor:`rgba(229, 231, 235,1)`, color:`rgba(229, 231, 235,1)` }}>
+                                                        <Select disabled style={{ width: `100%`, backgroundColor: `rgba(229, 231, 235,1)`, color: `rgba(229, 231, 235,1)` }}>
                                                             {
                                                                 doc.default.opsi.map((doc2, idx2) => (
                                                                     <Select.Option disabled value={idx2}>{doc2}</Select.Option>
@@ -91,7 +91,7 @@ const Overview = ({ assettypeid, initProps, displaydata, parentcode, praloading 
                                                     }
                                                     {
                                                         doc.data_type === 'date' &&
-                                                        <div className="flex w-full justify-between px-3">
+                                                        <div className="flex w-full items-center justify-between rounded bg-gray-100 h-10 px-3">
                                                             <p className='mb-0'>{doc.default}</p>
                                                             <div>
                                                                 <CalendarOutlined></CalendarOutlined>
@@ -100,7 +100,7 @@ const Overview = ({ assettypeid, initProps, displaydata, parentcode, praloading 
                                                     }
                                                     {
                                                         doc.data_type === 'paragraph' &&
-                                                        <div className="flex h-20">{doc.default}</div>
+                                                        <div className="flex h-20 rounded border bg-gray-100 w-full px-3">{doc.default}</div>
                                                     }
                                                 </>
                                                 :
@@ -168,6 +168,9 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
     const [modeldata, setmodeldata] = useState([])
     const [loadingdelete, setloadingdelete] = useState(false)
     const [modaldelete, setmodaldelete] = useState(false)
+    const [modaldeletenonmodel, setmodaldeletenonmodel] = useState(false)
+    const [modaldeletenonchild, setmodaldeletenonchild] = useState(false)
+    const [modaldeletenonboth, setmodaldeletenonboth] = useState(false)
     const [stepdelete, setstepdelete] = useState(0)
     const [allchilddelete, setallchilddelete] = useState(true)
     const [allmodeldelete, setallmodeldelete] = useState(true)
@@ -240,7 +243,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                 })
                 setdisplaydata({
                     ...res2.data,
-                    asset_columns:assetcolmap
+                    asset_columns: assetcolmap
                 })
                 const prt = res2.data.code.substring(0, res2.data.code.length - 4)
                 setparentcode(prt)
@@ -362,7 +365,25 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                         <div className=" col-span-4 flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-bold text-xl py-2">{displaydata.name}</h1>
                             <div className="flex mr-5 items-center">
-                                <Button type="danger" loading={loadingdelete} onClick={() => { setmodaldelete(true) }}>Hapus</Button>
+                                <Button type="danger" loading={loadingdelete} onClick={() => {
+                                    const modeldata2 = modeldata.filter((doc1,idx1) => doc1.asset_id === Number(assettypeid))
+                                    if (childassettype.length > 0 && modeldata2.length > 0) {
+                                        setmodaldelete(true)
+                                    }
+                                    else {
+                                        console.log(modeldata2)
+                                        console.log(childassettype)
+                                            if (modeldata2.length === 0 && childassettype.length > 0) {
+                                                setmodaldeletenonmodel(true)
+                                            }
+                                            else if (modeldata2.length > 0 && childassettype.length === 0) {
+                                                setmodaldeletenonchild(true)
+                                            }                                        
+                                            else {
+                                            setmodaldeletenonboth(true)
+                                        }
+                                    }
+                                }}>Hapus</Button>
                             </div>
                         </div>
                     </Sticky>
@@ -440,7 +461,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                             </ul>
                         </div>
                         <div className="mb-2">
-                            <h5 className=" text-xs font-semibold">Apakah anda ingin menghapus seluruh child dari asset type "{displaydata.name}"? <span className="hapusField1"></span></h5>
+                            <h5 className=" text-xs font-semibold">1. Apakah anda ingin menghapus seluruh child dari asset type "{displaydata.name}"? <span className="hapusField1"></span></h5>
                             <Radio.Group className="step1radio" onChange={(e) => {
                                 if (e.target.value === true) {
                                     setnewparentchildradio(true)
@@ -460,7 +481,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                             </Radio.Group>
                         </div>
                         <div className="mb-2">
-                            <h5 className=" text-xs font-semibold">Jika tidak, pilih Asset Type sebagai parent untuk child dari Asset Type "{displaydata.name}"! <span className="hapusField2"></span></h5>
+                            <h5 className=" text-xs font-semibold">2. Jika tidak, pilih Asset Type sebagai parent untuk child dari Asset Type "{displaydata.name}"! <span className="hapusField2"></span></h5>
                             <TreeSelect value={newparentchild} className="step1treeselect" placeholder="Pilih Asset Type" onChange={(value) => { setnewparentchild(value); setnewparentchildradio(true) }} disabled={allchilddelete} treeData={displayassetdata} style={{ width: `70%` }} />
                         </div>
                         <style jsx>
@@ -474,7 +495,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                     </div>
                     <div id="step2" className="rounded border bg-gray-50 p-5 hidden">
                         <div className="mb-2">
-                            <h5 className=" text-xs font-semibold">1. Berikut adalah Model yang dimiliki Asset Type "{displaydata.name}":</h5>
+                            <h5 className=" text-xs font-semibold">Berikut adalah Model yang dimiliki Asset Type "{displaydata.name}":</h5>
                             <ul>
                                 {modeldata.length === 0 || modeldata.map(doc => doc.asset_id).indexOf(Number(assettypeid)) === -1 ?
                                     "-"
@@ -490,7 +511,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                             </ul>
                         </div>
                         <div className="mb-2">
-                            <h5 className=" text-xs font-semibold">2. Apakah anda ingin menghapus seluruh model yang dimiliki Asset Type "{displaydata.name}"? <span className="hapusField1"></span></h5>
+                            <h5 className=" text-xs font-semibold">1. Apakah anda ingin menghapus seluruh model yang dimiliki Asset Type "{displaydata.name}"? <span className="hapusField1"></span></h5>
                             <Radio.Group className="step2radio" onChange={(e) => {
                                 if (e.target.value === true) {
                                     setnewparentmodelradio(true)
@@ -510,7 +531,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                             </Radio.Group>
                         </div>
                         <div className="mb-2">
-                            <h5 className=" text-xs font-semibold">3. Jika tidak, pilih Asset Type untuk memindahkan seluruh model yang dimiliki oleh Asset Type "{displaydata.name}"! <span className="hapusField2"></span></h5>
+                            <h5 className=" text-xs font-semibold">2. Jika tidak, pilih Asset Type untuk memindahkan seluruh model yang dimiliki oleh Asset Type "{displaydata.name}"! <span className="hapusField2"></span></h5>
                             <TreeSelect value={newparentmodelcode} className="step2treeselect" placeholder="Pilih Asset Type" onChange={(value, label, extra) => { setnewparentmodel(extra.allCheckedNodes[0].node.props.id); setnewparentmodelcode(value); setnewparentmodelradio(true) }} disabled={allmodeldelete} treeData={displayassetdata} style={{ width: `70%` }} />
                         </div>
                         <style jsx>
@@ -523,6 +544,159 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                         </style>
                     </div>
                 </div>
+            </Modal>
+
+            <Modal
+                title={
+                    <div className="flex justify-between p-5 mt-5">
+                        <h1 className="font-bold text-xl">Form Hapus Asset Type</h1>
+                        <div className="flex">
+                            <>
+                                <Button type="default" onClick={() => { setmodaldeletenonmodel(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
+                                <Button type='primary' disabled={newparentchildradio === null} onClick={handleDeleteAsset} loading={loadingdelete}>Simpan</Button>
+                            </>
+                        </div>
+                    </div>
+                }
+                visible={modaldeletenonmodel}
+                footer={null}
+                onCancel={() => { setmodaldeletenonmodel(false) }}
+                width={850}
+            >
+                <div className="flex flex-col p-5">
+                    <div id="step1" className="rounded border bg-gray-50 p-5 flex flex-col">
+                        <div className="mb-2">
+                            <h5 className=" text-xs font-semibold">Berikut adalah child dari asset type "{displaydata.name}":</h5>
+                            <ul>
+                                {childassettype.length === 0 ?
+                                    <>
+                                        -
+                                    </>
+                                    :
+                                    childassettype.map((doc, idx) => {
+                                        return (
+                                            <li className="text-xs">- {doc.title}</li>
+                                        )
+                                    })
+                                }
+                            </ul>
+                        </div>
+                        <div className="mb-2">
+                            <h5 className=" text-xs font-semibold">1. Apakah anda ingin menghapus seluruh child dari asset type "{displaydata.name}"? <span className="hapusField1"></span></h5>
+                            <Radio.Group className="step1radio" onChange={(e) => {
+                                if (e.target.value === true) {
+                                    setnewparentchildradio(true)
+                                }
+                                else {
+                                    setnewparentchildradio(null)
+                                }
+                                setallchilddelete(e.target.value)
+                                if (e.target.value === true) {
+                                    setnewparentchild(null)
+                                }
+                            }}>
+                                <div className="flex flex-col">
+                                    <Radio value={true}>Ya</Radio>
+                                    <Radio value={false}>Tidak</Radio>
+                                </div>
+                            </Radio.Group>
+                        </div>
+                        <div className="mb-2">
+                            <h5 className=" text-xs font-semibold">2. Jika tidak, pilih Asset Type sebagai parent untuk child dari Asset Type "{displaydata.name}"! <span className="hapusField2"></span></h5>
+                            <TreeSelect value={newparentchild} className="step1treeselect" placeholder="Pilih Asset Type" onChange={(value) => { setnewparentchild(value); setnewparentchildradio(true) }} disabled={allchilddelete} treeData={displayassetdata} style={{ width: `70%` }} />
+                        </div>
+                        <style jsx>
+                            {`
+                                .hapusField1::before, .hapusField2::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+                        </style>
+                    </div>
+                </div>
+            </Modal>
+
+            <Modal
+                title={
+                    <div className="flex justify-between p-5 mt-5">
+                        <h1 className="font-bold text-xl">Form Hapus Asset Type</h1>
+                        <div className="flex">
+                            <>
+                                <Button type="default" onClick={() => { setmodaldeletenonchild }} style={{ marginRight: `1rem` }}>Batal</Button>
+                                <Button type='primary' disabled={newparentmodelradio === null} onClick={handleDeleteAsset} loading={loadingdelete}>Simpan</Button>
+                            </>
+                        </div>
+                    </div>
+                }
+                visible={modaldeletenonchild}
+                footer={null}
+                onCancel={() => { setmodaldeletenonchild(false) }}
+                width={850}
+            >
+                <div className="flex flex-col p-5">
+                    <div id="step2" className="rounded border bg-gray-50 p-5">
+                        <div className="mb-2">
+                            <h5 className=" text-xs font-semibold">Berikut adalah Model yang dimiliki Asset Type "{displaydata.name}":</h5>
+                            <ul>
+                                {modeldata.length === 0 || modeldata.map(doc => doc.asset_id).indexOf(Number(assettypeid)) === -1 ?
+                                    "-"
+                                    :
+                                    modeldata.map((doc, idx) => {
+                                        if (doc.asset_id === Number(assettypeid)) {
+                                            return (
+                                                <li className="text-xs">- {doc.name}</li>
+                                            )
+                                        }
+                                    })
+                                }
+                            </ul>
+                        </div>
+                        <div className="mb-2">
+                            <h5 className=" text-xs font-semibold">1. Apakah anda ingin menghapus seluruh model yang dimiliki Asset Type "{displaydata.name}"? <span className="hapusField1"></span></h5>
+                            <Radio.Group className="step2radio" onChange={(e) => {
+                                if (e.target.value === true) {
+                                    setnewparentmodelradio(true)
+                                }
+                                else {
+                                    setnewparentmodelradio(null)
+                                }
+                                setallmodeldelete(e.target.value)
+                                if (e.target.value === true) {
+                                    setnewparentmodelcode(null)
+                                }
+                            }}>
+                                <div className="flex flex-col">
+                                    <Radio value={true}>Ya</Radio>
+                                    <Radio value={false}>Tidak</Radio>
+                                </div>
+                            </Radio.Group>
+                        </div>
+                        <div className="mb-2">
+                            <h5 className=" text-xs font-semibold">2. Jika tidak, pilih Asset Type untuk memindahkan seluruh model yang dimiliki oleh Asset Type "{displaydata.name}"! <span className="hapusField2"></span></h5>
+                            <TreeSelect value={newparentmodelcode} className="step2treeselect" placeholder="Pilih Asset Type" onChange={(value, label, extra) => { setnewparentmodel(extra.allCheckedNodes[0].node.props.id); setnewparentmodelcode(value); setnewparentmodelradio(true) }} disabled={allmodeldelete} treeData={displayassetdata} style={{ width: `70%` }} />
+                        </div>
+                        <style jsx>
+                            {`
+                                .hapusField1::before, .hapusField2::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+                        </style>
+                    </div>
+                </div>
+            </Modal>
+
+            <Modal title={<h1 className="font-semibold">Konfirmasi Hapus Asset Type</h1>}
+                visible={modaldeletenonboth}
+                onCancel={() => { setmodaldeletenonboth(false) }}
+                okText="Ya"
+                cancelText="Tidak"
+                onOk={handleDeleteAsset}
+                okButtonProps={{ loading: loadingdelete }}
+            >
+                Apakah anda yakin ingin menghapus Asset Type <strong>"{displaydata.name}"</strong> ?
             </Modal>
         </Layout>
     )

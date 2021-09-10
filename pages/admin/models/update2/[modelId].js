@@ -877,6 +877,9 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                             :
                             <>
                                 {
+                                    fielddata2.length === 0 ?
+                                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
+                                    :
                                     fielddata2.map((doc, idx) => {
                                         return (
                                             <>
@@ -917,7 +920,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                         }}>
                                                             <div className="font-semibold mb-2">
                                                                 {doc.name}
-                                                                {fielddata2[idx].required ? <span className="judulField"></span> : null} <span className="text-gray-400 text-sm">({doc.data_type === "single" ? "Single Textbox" : doc.data_type.charAt(0).toUpperCase() + doc.data_type.slice(1)})</span>
+                                                                {fielddata2[idx].required ? <span className="judulField"></span> : null} <span className="text-gray-400 text-sm">({doc.data_type === "single" ? "Single Textbox" : doc.data_type.charAt(0).toUpperCase() + doc.data_type.slice(1)}{doc.data_type === 'paragraph' && ` Text`})</span>
                                                             </div>
                                                             <div className='rounded border w-full pl-3 py-2 flex items-center my-auto'>
                                                                 {
@@ -1677,6 +1680,9 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                             :
                             <>
                                 {
+                                    fielddataa2.length === 0 ?
+                                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
+                                    :
                                     fielddataa2.map((doc, idx) => {
                                         return (
                                             <>
@@ -1717,7 +1723,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                         }}>
                                                             <div className="font-semibold mb-2">
                                                                 {doc.name}
-                                                                {fielddataa2[idx].required ? <span className="judulField"></span> : null} <span className="text-gray-400 text-sm">({doc.data_type === "single" ? "Single Textbox" : doc.data_type.charAt(0).toUpperCase() + doc.data_type.slice(1)})</span>
+                                                                {fielddataa2[idx].required ? <span className="judulField"></span> : null} <span className="text-gray-400 text-sm">({doc.data_type === "single" ? "Single Textbox" : doc.data_type.charAt(0).toUpperCase() + doc.data_type.slice(1)}{doc.data_type === 'paragraph' && ` Text`})</span>
                                                             </div>
                                                             <div className='rounded border w-full pl-3 py-2 flex items-center my-auto'>
                                                                 {

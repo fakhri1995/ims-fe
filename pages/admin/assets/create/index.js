@@ -340,7 +340,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                             }}>
                                                 <div className="font-semibold mb-2">
                                                     {doc.name}
-                                                    {doc.required ? <span className="judulField"></span> : null} <span className="text-gray-400">({doc.data_type.charAt(0).toUpperCase() + doc.data_type.slice(1)})</span>
+                                                    {doc.required ? <span className="judulField"></span> : null} <span className="text-gray-400">({doc.data_type.charAt(0).toUpperCase() + doc.data_type.slice(1)}{doc.data_type === 'single' && ` Textbox`}{doc.data_type === 'paragraph' && ` Text`})</span>
                                                 </div>
                                                 <div className='rounded border w-full p-3'>
                                                     {
