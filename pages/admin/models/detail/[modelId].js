@@ -40,12 +40,59 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                                     </div>
                                 </div>
                                 {
-                                    doc.model_column.map((doc, idx) => {
+                                    doc.model_column.map((docmc2, idx) => {
+                                        if (docmc2.data_type === 'dropdown' || docmc2.data_type === 'checkbox') {
+                                            docmc2.default = JSON.parse(docmc2.default)
+                                        }
                                         return (
                                             <div className="flex flex-col mb-5">
-                                                <h1 className="font-semibold mb-1">{doc.name} {doc.required ? <span className="judulsn"></span> : null} <span className="text-gray-400">({doc.data_type.charAt(0).toUpperCase() + doc.data_type.slice(1)})</span></h1>
-                                                <div className="rounded bg-gray-200 w-full flex items-center my-auto h-12 px-2">
-                                                    <p className="mb-0 text-sm">{doc.default}</p>
+                                                <h1 className="font-semibold mb-1">{docmc2.name} {docmc2.required ? <span className="judulsn"></span> : null} <span className="text-gray-400">({docmc2.data_type === "single" ? "Single Textbox" : docmc2.data_type.charAt(0).toUpperCase() + docmc2.data_type.slice(1)}{docmc2.data_type === 'paragraph' && ` Text`})</span></h1>
+                                                <div className="w-full flex items-center my-auto h-12 px-2">
+                                                    {
+                                                        docmc2.data_type === 'dropdown' || docmc2.data_type === 'checkbox' || docmc2.data_type === 'date' || docmc2.data_type === 'paragraph' ?
+                                                            <>
+                                                                {
+                                                                    docmc2.data_type === 'dropdown' &&
+                                                                    <Select disabled style={{ width: `100%`, backgroundColor: `rgba(229, 231, 235,1)`, color: `rgba(229, 231, 235,1)` }}>
+                                                                        {
+                                                                            docmc2.default.opsi.map((doc2, idx2) => (
+                                                                                <Select.Option disabled value={idx2}>{doc2}</Select.Option>
+                                                                            ))
+                                                                        }
+                                                                    </Select>
+                                                                }
+                                                                {
+                                                                    docmc2.data_type === 'checkbox' &&
+                                                                    <div className="w-full flex flex-col">
+                                                                        {
+                                                                            docmc2.default.opsi.map((doc3, idx3) => (
+                                                                                <div className="flex mb-1">
+                                                                                    <Checkbox disabled style={{ marginRight: `0.5rem` }}></Checkbox>
+                                                                                    <p className="mb-0">{doc3}</p>
+                                                                                </div>
+                                                                            ))
+                                                                        }
+                                                                    </div>
+                                                                }
+                                                                {
+                                                                    docmc2.data_type === 'date' &&
+                                                                    <div className="flex w-full items-center justify-between rounded bg-gray-100 h-10 px-3">
+                                                                        <p className='mb-0'>{docmc2.default}</p>
+                                                                        <div>
+                                                                            <CalendarOutlined></CalendarOutlined>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                {
+                                                                    docmc2.data_type === 'paragraph' &&
+                                                                    <div className="flex h-20 rounded border bg-gray-100 w-full px-3">{docmc2.default}</div>
+                                                                }
+                                                            </>
+                                                            :
+                                                            <div className='rounded border bg-gray-100 flex items-center w-full h-10 px-3'>
+                                                                {docmc2.default}
+                                                            </div>
+                                                    }
                                                 </div>
                                             </div>
                                         )
@@ -226,87 +273,87 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                         <div className="rounded-md border shadow-md flex flex-col w-9/12 px-5 py-3">
                             {
                                 displaydata.model_columns.length === 0 ?
-                                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
-                                :
-                                displaydata.model_columns.map((docmc, idxmc) => {
-                                    return (
-                                        <div className="flex flex-col mb-5">
-                                            <h1 className="font-semibold mb-1">{docmc.name} {docmc.required ? <span className="judulsn"></span> : null} <span className="text-gray-400">({docmc.data_type === 'single' ? "Single Textbox" : docmc.data_type.charAt(0).toUpperCase() + docmc.data_type.slice(1)}{docmc.data_type === 'paragraph' && ` Text`})</span></h1>
-                                            {
-                                                docmc.default === "" ?
-                                                    <div className="rounded bg-gray-200 w-full flex flex-col justify-center my-auto p-3">
-                                                        -
-                                                    </div>
-                                                    :
-                                                    <div className="w-full flex flex-col justify-center my-auto p-3">
-                                                        {
-                                                            docmc.data_type === 'dropdown' || docmc.data_type === 'checkbox' || docmc.data_type === 'date' || docmc.data_type === 'paragraph' ?
-                                                                <>
-                                                                    {docmc.data_type === 'dropdown' &&
-                                                                        // <>
-                                                                        //     {
-                                                                        //         docmc.default.opsi.map((docopsi, idxopsi) => (
-                                                                        //             <div key={idxopsi} className="rounded bg-white border w-5/12 flex items-center my-auto px-2 py-1 mb-1">
-                                                                        //                 <Checkbox disabled checked={idxopsi === docmc.default.default} style={{ marginRight: `0.5rem` }} />
-                                                                        //                 {docopsi}
-                                                                        //             </div>
-                                                                        //         ))
-                                                                        //     }
-                                                                        // </>
-                                                                        <Select disabled style={{ width: `100%`, backgroundColor: `rgba(229, 231, 235,1)`, color: `rgba(229, 231, 235,1)` }}>
-                                                                            {
-                                                                                docmc.default.opsi.map((doc2, idx2) => (
-                                                                                    <Select.Option disabled value={idx2}>{doc2}</Select.Option>
-                                                                                ))
-                                                                            }
-                                                                        </Select>
-                                                                    }
-                                                                    {docmc.data_type === 'checkbox' &&
-                                                                        // <>
-                                                                        //     {
-                                                                        //         docmc.default.opsi.map((docopsi, idxopsi) => (
-                                                                        //             <div key={idxopsi} className="rounded w-full flex items-center my-auto px-2 py-1 mb-1">
-                                                                        //                 <Checkbox disabled checked={docmc.default.default.includes(idxopsi)} style={{ marginRight: `0.5rem` }} />
-                                                                        //                 {docopsi}
-                                                                        //             </div>
-                                                                        //         ))
-                                                                        //     }
-                                                                        // </>
-                                                                        <div className="w-full flex flex-col">
-                                                                            {
-                                                                                docmc.default.opsi.map((doc3, idx3) => (
-                                                                                    <div className="flex mb-1">
-                                                                                        <Checkbox disabled style={{ marginRight: `0.5rem` }}></Checkbox>
-                                                                                        <p className="mb-0">{doc3}</p>
-                                                                                    </div>
-                                                                                ))
-                                                                            }
-                                                                        </div>
-                                                                    }
-                                                                    {
-                                                                        docmc.data_type === 'date' &&
-                                                                        <div className="flex w-full items-center justify-between rounded bg-gray-100 h-10 px-3">
-                                                                            <p className='mb-0'>{docmc.default}</p>
-                                                                            <div>
-                                                                                <CalendarOutlined></CalendarOutlined>
+                                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
+                                    :
+                                    displaydata.model_columns.map((docmc, idxmc) => {
+                                        return (
+                                            <div className="flex flex-col mb-5">
+                                                <h1 className="font-semibold mb-1">{docmc.name} {docmc.required ? <span className="judulsn"></span> : null} <span className="text-gray-400">({docmc.data_type === 'single' ? "Single Textbox" : docmc.data_type.charAt(0).toUpperCase() + docmc.data_type.slice(1)}{docmc.data_type === 'paragraph' && ` Text`})</span></h1>
+                                                {
+                                                    docmc.default === "" ?
+                                                        <div className="rounded bg-gray-200 w-full flex flex-col justify-center my-auto p-3">
+                                                            -
+                                                        </div>
+                                                        :
+                                                        <div className="w-full flex flex-col justify-center my-auto p-3">
+                                                            {
+                                                                docmc.data_type === 'dropdown' || docmc.data_type === 'checkbox' || docmc.data_type === 'date' || docmc.data_type === 'paragraph' ?
+                                                                    <>
+                                                                        {docmc.data_type === 'dropdown' &&
+                                                                            // <>
+                                                                            //     {
+                                                                            //         docmc.default.opsi.map((docopsi, idxopsi) => (
+                                                                            //             <div key={idxopsi} className="rounded bg-white border w-5/12 flex items-center my-auto px-2 py-1 mb-1">
+                                                                            //                 <Checkbox disabled checked={idxopsi === docmc.default.default} style={{ marginRight: `0.5rem` }} />
+                                                                            //                 {docopsi}
+                                                                            //             </div>
+                                                                            //         ))
+                                                                            //     }
+                                                                            // </>
+                                                                            <Select disabled style={{ width: `100%`, backgroundColor: `rgba(229, 231, 235,1)`, color: `rgba(229, 231, 235,1)` }}>
+                                                                                {
+                                                                                    docmc.default.opsi.map((doc2, idx2) => (
+                                                                                        <Select.Option disabled value={idx2}>{doc2}</Select.Option>
+                                                                                    ))
+                                                                                }
+                                                                            </Select>
+                                                                        }
+                                                                        {docmc.data_type === 'checkbox' &&
+                                                                            // <>
+                                                                            //     {
+                                                                            //         docmc.default.opsi.map((docopsi, idxopsi) => (
+                                                                            //             <div key={idxopsi} className="rounded w-full flex items-center my-auto px-2 py-1 mb-1">
+                                                                            //                 <Checkbox disabled checked={docmc.default.default.includes(idxopsi)} style={{ marginRight: `0.5rem` }} />
+                                                                            //                 {docopsi}
+                                                                            //             </div>
+                                                                            //         ))
+                                                                            //     }
+                                                                            // </>
+                                                                            <div className="w-full flex flex-col">
+                                                                                {
+                                                                                    docmc.default.opsi.map((doc3, idx3) => (
+                                                                                        <div className="flex mb-1">
+                                                                                            <Checkbox disabled style={{ marginRight: `0.5rem` }}></Checkbox>
+                                                                                            <p className="mb-0">{doc3}</p>
+                                                                                        </div>
+                                                                                    ))
+                                                                                }
                                                                             </div>
-                                                                        </div>
-                                                                    }
-                                                                    {
-                                                                        docmc.data_type === 'paragraph' &&
-                                                                        <div className="flex h-20 rounded border bg-gray-100 w-full px-3">{docmc.default}</div>
-                                                                    }
-                                                                </>
-                                                                :
-                                                                <div className="rounded border bg-gray-100 w-full flex flex-col justify-center my-auto p-3">
-                                                                    <p className="mb-0 text-sm">{docmc.default}</p>
-                                                                </div>
-                                                        }
-                                                    </div>
-                                            }
-                                        </div>
-                                    )
-                                })
+                                                                        }
+                                                                        {
+                                                                            docmc.data_type === 'date' &&
+                                                                            <div className="flex w-full items-center justify-between rounded bg-gray-100 h-10 px-3">
+                                                                                <p className='mb-0'>{docmc.default}</p>
+                                                                                <div>
+                                                                                    <CalendarOutlined></CalendarOutlined>
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        {
+                                                                            docmc.data_type === 'paragraph' &&
+                                                                            <div className="flex h-20 rounded border bg-gray-100 w-full px-3">{docmc.default}</div>
+                                                                        }
+                                                                    </>
+                                                                    :
+                                                                    <div className="rounded border bg-gray-100 w-full flex flex-col justify-center my-auto p-3">
+                                                                        <p className="mb-0 text-sm">{docmc.default}</p>
+                                                                    </div>
+                                                            }
+                                                        </div>
+                                                }
+                                            </div>
+                                        )
+                                    })
                             }
                             <style jsx>
                                 {`
@@ -337,45 +384,62 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                                                             <div className="flex flex-col mb-5">
                                                                 <h1 className="font-semibold mb-1">Asset Type <span className="judulassettype"></span></h1>
                                                                 <div className="rounded bg-gray-200 w-full flex items-center my-auto h-12 px-2">
-                                                                    <p className="mb-0 text-sm">-</p>
+                                                                    <p className="mb-0 text-sm">{docmp.asset_name}</p>
                                                                 </div>
                                                             </div>
                                                             {
                                                                 docmp.model_column.map((docmc2, idxmc2) => {
+                                                                    if (docmc2.data_type === 'dropdown' || docmc2.data_type === 'checkbox') {
+                                                                        docmc2.default = JSON.parse(docmc2.default)
+                                                                    }
                                                                     return (
                                                                         <div className="flex flex-col mb-5">
-                                                                            <h1 className="font-semibold mb-1">{docmc2.name} {docmc2.required ? <span className="judulsn"></span> : null} <span className="text-gray-400">({docmc2.data_type.charAt(0).toUpperCase() + docmc2.data_type.slice(1)})</span></h1>
-                                                                            <div className="rounded bg-gray-200 w-full flex flex-col justify-center my-auto px-2 py-1">
+                                                                            <h1 className="font-semibold mb-1">{docmc2.name} {docmc2.required ? <span className="judulsn"></span> : null} <span className="text-gray-400">({docmc2.data_type === "single" ? "Single Textbox" : docmc2.data_type.charAt(0).toUpperCase() + docmc2.data_type.slice(1)}{docmc2.data_type === 'paragraph' && ` Text`})</span></h1>
+                                                                            <div className="w-full flex flex-col justify-center my-auto px-2 py-1">
                                                                                 {
-                                                                                    docmc2.data_type === 'dropdown' || docmc2.data_type === 'checkbox' ?
+                                                                                    docmc2.data_type === 'dropdown' || docmc2.data_type === 'checkbox' || docmc2.data_type === 'date' || docmc2.data_type === 'paragraph' ?
                                                                                         <>
-                                                                                            {docmc2.data_type === 'dropdown' &&
-                                                                                                <>
+                                                                                            {
+                                                                                                docmc2.data_type === 'dropdown' &&
+                                                                                                <Select disabled style={{ width: `100%`, backgroundColor: `rgba(229, 231, 235,1)`, color: `rgba(229, 231, 235,1)` }}>
                                                                                                     {
-                                                                                                        docmc2.default.opsi.map((docopsi, idxopsi) => (
-                                                                                                            <div key={idxopsi} className="rounded bg-white border w-3/12 flex items-center my-auto px-2 py-1 mb-1">
-                                                                                                                <Checkbox disabled checked={idxopsi === docmc2.default.default} style={{ marginRight: `0.5rem` }} />
-                                                                                                                {docopsi}
-                                                                                                            </div>
+                                                                                                        docmc2.default.opsi.map((doc2, idx2) => (
+                                                                                                            <Select.Option disabled value={idx2}>{doc2}</Select.Option>
                                                                                                         ))
                                                                                                     }
-                                                                                                </>
+                                                                                                </Select>
                                                                                             }
-                                                                                            {docmc2.data_type === 'checkbox' &&
-                                                                                                <>
+                                                                                            {
+                                                                                                docmc2.data_type === 'checkbox' &&
+                                                                                                <div className="w-full flex flex-col">
                                                                                                     {
-                                                                                                        docmc2.default.opsi.map((docopsi, idxopsi) => (
-                                                                                                            <div key={idxopsi} className="rounded w-full flex items-center my-auto px-2 py-1 mb-1">
-                                                                                                                <Checkbox disabled checked={idxopsi === docmc2.default.default} style={{ marginRight: `0.5rem` }} />
-                                                                                                                {docopsi}
+                                                                                                        docmc2.default.opsi.map((doc3, idx3) => (
+                                                                                                            <div className="flex mb-1">
+                                                                                                                <Checkbox disabled style={{ marginRight: `0.5rem` }}></Checkbox>
+                                                                                                                <p className="mb-0">{doc3}</p>
                                                                                                             </div>
                                                                                                         ))
                                                                                                     }
-                                                                                                </>
+                                                                                                </div>
+                                                                                            }
+                                                                                            {
+                                                                                                docmc2.data_type === 'date' &&
+                                                                                                <div className="flex w-full items-center justify-between rounded bg-gray-100 h-10 px-3">
+                                                                                                    <p className='mb-0'>{docmc2.default}</p>
+                                                                                                    <div>
+                                                                                                        <CalendarOutlined></CalendarOutlined>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            }
+                                                                                            {
+                                                                                                docmc2.data_type === 'paragraph' &&
+                                                                                                <div className="flex h-20 rounded border bg-gray-100 w-full px-3">{docmc2.default}</div>
                                                                                             }
                                                                                         </>
                                                                                         :
-                                                                                        <p className="mb-0 text-sm">{docmc2.default}</p>
+                                                                                        <div className='rounded border bg-gray-100 flex items-center w-full h-10 px-3'>
+                                                                                            {docmc2.default}
+                                                                                        </div>
                                                                                 }
                                                                             </div>
                                                                         </div>
@@ -384,7 +448,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                                                             }
                                                             {
                                                                 docmp.model_child.length === 0 ?
-                                                                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
+                                                                    null
                                                                     :
                                                                     <>
                                                                         <Timeline style={{ marginTop: `1rem` }}>

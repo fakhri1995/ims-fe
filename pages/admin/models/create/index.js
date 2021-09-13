@@ -44,12 +44,59 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                     </div>
                                 </div>
                                 {
-                                    doc.model_column.map((doc, idx) => {
+                                    doc.model_column.map((docmc2, idx) => {
+                                        if (docmc2.data_type === 'dropdown' || docmc2.data_type === 'checkbox') {
+                                            docmc2.default = JSON.parse(docmc2.default)
+                                        }
                                         return (
                                             <div className="flex flex-col mb-5">
-                                                <h1 className="font-semibold mb-1">{doc.name} {doc.required ? <span className="judulsn"></span> : null} <span className="text-gray-400">({doc.data_type.charAt(0).toUpperCase() + doc.data_type.slice(1)})</span></h1>
-                                                <div className="rounded bg-gray-200 w-full flex items-center my-auto h-12 px-2">
-                                                    <p className="mb-0 text-sm">{doc.default}</p>
+                                                <h1 className="font-semibold mb-1">{docmc2.name} {docmc2.required ? <span className="judulsn"></span> : null} <span className="text-gray-400">({docmc2.data_type === "single" ? "Single Textbox" : docmc2.data_type.charAt(0).toUpperCase() + docmc2.data_type.slice(1)}{docmc2.data_type === 'paragraph' && ` Text`})</span></h1>
+                                                <div className="w-full flex items-center my-auto h-12 px-2">
+                                                    {
+                                                        docmc2.data_type === 'dropdown' || docmc2.data_type === 'checkbox' || docmc2.data_type === 'date' || docmc2.data_type === 'paragraph' ?
+                                                            <>
+                                                                {
+                                                                    docmc2.data_type === 'dropdown' &&
+                                                                    <Select disabled style={{ width: `100%`, backgroundColor: `rgba(229, 231, 235,1)`, color: `rgba(229, 231, 235,1)` }}>
+                                                                        {
+                                                                            docmc2.default.opsi.map((doc2, idx2) => (
+                                                                                <Select.Option disabled value={idx2}>{doc2}</Select.Option>
+                                                                            ))
+                                                                        }
+                                                                    </Select>
+                                                                }
+                                                                {
+                                                                    docmc2.data_type === 'checkbox' &&
+                                                                    <div className="w-full flex flex-col h-32 mt-16">
+                                                                        {
+                                                                            docmc2.default.opsi.map((doc3, idx3) => (
+                                                                                <div className="flex mb-1">
+                                                                                    <Checkbox disabled style={{ marginRight: `0.5rem` }}></Checkbox>
+                                                                                    <p className="mb-0">{doc3}</p>
+                                                                                </div>
+                                                                            ))
+                                                                        }
+                                                                    </div>
+                                                                }
+                                                                {
+                                                                    docmc2.data_type === 'date' &&
+                                                                    <div className="flex w-full items-center justify-between rounded bg-gray-100 h-10 px-3">
+                                                                        <p className='mb-0'>{docmc2.default}</p>
+                                                                        <div>
+                                                                            <CalendarOutlined></CalendarOutlined>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                {
+                                                                    docmc2.data_type === 'paragraph' &&
+                                                                    <div className="flex h-20 rounded border bg-gray-100 w-full px-3">{docmc2.default}</div>
+                                                                }
+                                                            </>
+                                                            :
+                                                            <div className='rounded border bg-gray-100 flex items-center w-full h-10 px-3'>
+                                                                {docmc2.default}
+                                                            </div>
+                                                    }
                                                 </div>
                                             </div>
                                         )
@@ -117,9 +164,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
         default: "single",
         required: false
     })
-    const [currentidmodel, setcurrentidmodel] = useState({
-        id: ""
-    })
+    const [currentidmodel, setcurrentidmodel] = useState("")
     const [addedfield, setaddedfield] = useState([])
     const [addedfield2, setaddedfield2] = useState([])
     const [addedfieldidx, setaddedfieldidx] = useState(-1)
@@ -156,8 +201,8 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
     const [disabledaddfield, setdisabledaddfield] = useState(true)
     const [disabledaddfield2, setdisabledaddfield2] = useState(false)
     const [disabledaddpart, setdisabledaddpart] = useState(true)
-    const [pointevent,setpointevent] = useState("")
-    const [pointevent2,setpointevent2] = useState("")
+    const [pointevent, setpointevent] = useState("")
+    const [pointevent2, setpointevent2] = useState("")
 
     //3.onChange
     const onClickAddField = () => {
@@ -284,7 +329,6 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                     setfielddataa2(temp)
                     setnewdata2({ ...newdata2, required_sn: res2.data.required_sn, asset_id: res2.data.id })
                     setassettypecode2(res2.data.id)
-                    // setnewdatatrigger2(prev => !prev)
                     setloadingspec2(false)
                     setdisabledaddfield2(false)
                 }
@@ -391,10 +435,18 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                         message: "Model berhasil ditambahkan",
                         duration: 3
                     })
-                    setTimeout(() => {
-                        setmodalcreatemodel(false)
-                        setmodeltrigger(res2.id)
-                    }, 500)
+                    setnewdata2({
+                        asset_id: "",
+                        name: "",
+                        description: "",
+                        manufacturer_id: "",
+                        required_sn: false,
+                        model_columns: [],
+                        model_parts: []
+                    })
+                    setmodalcreatemodel(false)
+                    seteditpart(false)
+                    setmodeltrigger(res2.id)
                 }
                 else if (!res2.success) {
                     notification['error']({
@@ -442,7 +494,8 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
             .then(res => res.json())
             .then(res2 => {
                 setmodeldata(res2.data)
-                setcurrentidmodel({ id: modeltrigger })
+                setcurrentidmodel(modeltrigger)
+                modeltrigger !== false ? seteditpart(true) : null
             })
     }, [modeltrigger])
     useEffect(() => {
@@ -553,7 +606,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                             <h1 className="font-semibold py-2">Form Tambah Model</h1>
                             <div className="flex space-x-2">
                                 <Link href={`/admin/models`}>
-                                <Button type="default" /*onClick={() => { console.log(fielddata2); console.log(fielddata); console.log(newdata); console.log(currentidmodel) }}*/>Batal</Button>
+                                    <Button type="default" /*onClick={() => { console.log(fielddata2); console.log(fielddata); console.log(newdata); console.log(currentidmodel) }}*/>Batal</Button>
                                 </Link>
                                 <Button type="primary" disabled={disabledaddfield} loading={loadingcreate} onClick={instanceForm.submit}>Simpan</Button>
                             </div>
@@ -821,7 +874,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                         }}>
                                                             <div className="font-semibold mb-2">
                                                                 {doc.name}
-                                                                {fielddata2[idx].required ? <span className="judulField"></span> : null} <span className="text-gray-400 text-sm">({doc.data_type === "single" ? "Single Textbox" : doc.data_type.charAt(0).toUpperCase() + doc.data_type.slice(1)}{doc.data_type === 'single' && ` Textbox`}{doc.data_type === 'paragraph' && ` Text`})</span>
+                                                                {fielddata2[idx].required ? <span className="judulField"></span> : null} <span className="text-gray-400 text-sm">({doc.data_type === "single" ? "Single Textbox" : doc.data_type.charAt(0).toUpperCase() + doc.data_type.slice(1)}{doc.data_type === 'paragraph' && ` Text`})</span>
                                                             </div>
                                                             <div className='rounded border w-full pl-3 py-2 flex items-center my-auto'>
                                                                 {
@@ -1133,7 +1186,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                             null
                             :
                             <>
-                                <Collapse accordion onChange={e => console.log(modelpartfielddata)}>
+                                <Collapse accordion>
                                     {
                                         modelpartfielddata.map((doc, idx) => {
                                             return (
@@ -1142,6 +1195,17 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                         <div className="flex">
                                                             <Popconfirm placement="bottom" title={`Apakah anda yakin ingin menghapus Model ${doc.name === "" ? "ini" : doc.name} dari Model Part ${newdata.name}?`} okText="Ya" cancelText="Tidak" onConfirm={() => {
                                                                 setmodelpartfielddata(prev => prev.filter((_, idxx) => idxx !== idx))
+                                                                setnewdata(prev => {
+                                                                    var temp = prev
+                                                                    const idxdata = temp.model_parts.map(doc2 => doc2.id).indexOf(doc.id)
+                                                                    if (temp.model_parts[idxdata].quantity > 1) {
+                                                                        temp.model_parts[idxdata].quantity -= 1
+                                                                    }
+                                                                    else {
+                                                                        temp.model_parts.splice(idxdata, 1)
+                                                                    }
+                                                                    return temp
+                                                                })
                                                             }}>
                                                                 <CloseCircleOutlined style={{ color: `red` }} />
                                                             </Popconfirm>
@@ -1158,10 +1222,10 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                             doc.model_columns.map((docmc, idxmc) => {
                                                                 return (
                                                                     <div className="flex flex-col mb-5">
-                                                                        <h1 className="font-semibold mb-1">{docmc.name} {docmc.required ? <span className="judulsn"></span> : null} <span className="text-gray-400">({docmc.data_type.charAt(0).toUpperCase() + docmc.data_type.slice(1)})</span></h1>
-                                                                        <div className="rounded bg-gray-200 w-full flex flex-col justify-center my-auto px-2 py-1">
+                                                                        <h1 className="font-semibold mb-1">{docmc.name} {docmc.required ? <span className="judulsn"></span> : null} <span className="text-gray-400">({docmc.data_type === "single" ? "Single Textbox" : docmc.data_type.charAt(0).toUpperCase() + docmc.data_type.slice(1)}{docmc.data_type === 'paragraph' && ` Text`})</span></h1>
+                                                                        <div className="w-full flex flex-col justify-center my-auto px-2 py-1">
                                                                             {
-                                                                                docmc.data_type === 'dropdown' || docmc.data_type === 'checkbox' ?
+                                                                                docmc.data_type === 'dropdown' || docmc.data_type === 'checkbox' || docmc.data_type === 'paragraph' || docmc.data_type === 'date' ?
                                                                                     <>
                                                                                         {docmc.data_type === 'dropdown' &&
                                                                                             <>
@@ -1187,9 +1251,24 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                                                 }
                                                                                             </>
                                                                                         }
+                                                                                        {
+                                                                                            docmc.data_type === 'date' &&
+                                                                                            <div className="flex w-full items-center justify-between rounded h-10 px-3">
+                                                                                                <p className='mb-0'>{docmc.default}</p>
+                                                                                                <div>
+                                                                                                    <CalendarOutlined></CalendarOutlined>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        }
+                                                                                        {
+                                                                                            docmc.data_type === 'paragraph' &&
+                                                                                            <div className="flex h-20 rounded border bg-gray-100 w-full px-3">{docmc.default}</div>
+                                                                                        }
                                                                                     </>
                                                                                     :
-                                                                                    <p className="mb-0 text-sm">{docmc.default}</p>
+                                                                                    <div className="rounded border bg-gray-100 flex items-center w-full h-10 px-3">
+                                                                                        {docmc.default}
+                                                                                    </div>
                                                                             }
                                                                         </div>
                                                                     </div>
@@ -1243,7 +1322,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                             message: 'Nama Model wajib diisi',
                                                         },
                                                     ]}>
-                                                    <Select value={currentidmodel.id} showSearch optionFilterProp="children" placeholder="Masukkan atau cari nama modul" onChange={(value) => { setcurrentidmodel({ ...currentidmodel, id: value }) }} name="id" filterOption={(input, opt) => (
+                                                    <Select defaultValue={currentidmodel} showSearch optionFilterProp="children" placeholder="Cari nama modul" onChange={(value) => { setcurrentidmodel(value) }} name="id" filterOption={(input, opt) => (
                                                         opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                                     )}>
                                                         {
@@ -1262,13 +1341,13 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                         </div>
                                         <hr />
                                         <div className="flex mt-4 justify-end">
-                                            <div className="flex items-center mr-4 hover:text-red-500 cursor-pointer" onClick={() => { seteditpart(false); setcurrentidmodel({ id: "" }) }}>
+                                            <div className="flex items-center mr-4 hover:text-red-500 cursor-pointer" onClick={() => { seteditpart(false); setcurrentidmodel("") }}>
                                                 <DeleteOutlined style={{ fontSize: `1.25rem` }} ></DeleteOutlined>
                                             </div>
                                             <Button loading={loadinggetmodel} type="primary" onClick={() => {
                                                 seteditpart(false)
                                                 setloadinggetmodel(true)
-                                                fetch(`https://boiling-thicket-46501.herokuapp.com/getModel?id=${currentidmodel.id}`).then(res => res.json()).then(res2 => {
+                                                fetch(`https://boiling-thicket-46501.herokuapp.com/getModel?id=${currentidmodel}`).then(res => res.json()).then(res2 => {
                                                     setmodelpartfielddata(prev => {
                                                         var temp1 = prev
                                                         var t = {}
@@ -1293,10 +1372,28 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                         temp1 = [...temp1, t]
                                                         return temp1
                                                     })
-                                                    setconcatpartvalue(res2.data.model_parts)
-                                                    setconcatparttrigger(prev => !prev)
+                                                    // setconcatpartvalue(res2.data.model_parts)
+                                                    // setconcatparttrigger(prev => !prev)
+                                                    setnewdata(prev => {
+                                                        var temp = prev
+                                                        const idxdata2 = temp.model_parts.map(doc3 => doc3.id).indexOf(currentidmodel)
+                                                        if (temp.model_parts.length === 0 || idxdata2 === -1) {
+                                                            temp.model_parts.push({
+                                                                id: currentidmodel,
+                                                                quantity: 1
+                                                            })
+                                                        }
+                                                        else if (idxdata2 !== -1) {
+                                                            temp.model_parts.map(doc1 => {
+                                                                if (doc1.id === currentidmodel) {
+                                                                    doc1.quantity = doc1.quantity + 1
+                                                                }
+                                                            })
+                                                        }
+                                                        return temp
+                                                    })
                                                     setloadinggetmodel(false);
-                                                    setcurrentidmodel({ id: "" })
+                                                    setcurrentidmodel("")
                                                 })
                                             }}>Tambah</Button>
                                         </div>
@@ -1338,6 +1435,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                     treeData={assetdata}
                                     placeholder="Pilih Asset Type"
                                     treeDefaultExpandAll
+                                    value={newdata2.asset_id}
                                     onChange={(value, label, extra) => {
                                         if (typeof (value) !== 'undefined') {
                                             onClickSelectAsset2(extra.allCheckedNodes[0].node.props.id)
@@ -1356,7 +1454,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                         message: 'Nama Model wajib diisi',
                                     },
                                 ]}>
-                                <Input name="name" onChange={(e) => { setnewdata2({ ...newdata2, name: e.target.value }) }} />
+                                <Input name="name" value={newdata2.name} onChange={(e) => { setnewdata2({ ...newdata2, name: e.target.value }) }} />
                             </Form.Item>
                         </div>
                         <Form.Item name="manufacturer_id" label="Manufacturer"
@@ -1366,7 +1464,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                     message: 'Manufacturer wajib diisi',
                                 },
                             ]}>
-                            <Select placeholder="Pilih Manufacturer" onChange={(value) => { setnewdata2({ ...newdata2, manufacturer_id: value }) }} name="manufacturer_id">
+                            <Select placeholder="Pilih Manufacturer" value={newdata2.manufacturer_id} onChange={(value) => { setnewdata2({ ...newdata2, manufacturer_id: value }) }} name="manufacturer_id">
                                 {
                                     manufdata.map((doc, idx) => {
                                         return (
@@ -1377,10 +1475,10 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                             </Select>
                         </Form.Item>
                         <Form.Item name="description" label="Deskripsi">
-                            <Input.TextArea rows={4} name="description" onChange={(e) => { setnewdata2({ ...newdata2, description: e.target.value }) }} />
+                            <Input.TextArea rows={4} name="description" value={newdata2.description} onChange={(e) => { setnewdata2({ ...newdata2, description: e.target.value }) }} />
                         </Form.Item>
                         <div className="flex">
-                            <Checkbox style={{ marginRight: `0.5rem` }} onChange={(e) => { setnewdata2({ ...newdata2, required_sn: e.target.checked }) }} checked={newdata2.required_sn} /> Serial Number wajib ada
+                            <Checkbox style={{ marginRight: `0.5rem` }} checked={newdata2.required_sn} onChange={(e) => { setnewdata2({ ...newdata2, required_sn: e.target.checked }) }} checked={newdata2.required_sn} /> Serial Number wajib ada
                         </div>
                     </Form>
                 </div>
