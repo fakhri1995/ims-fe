@@ -365,14 +365,12 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                         <div className=" col-span-4 flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-bold text-xl py-2">{displaydata.name}</h1>
                             <div className="flex mr-5 items-center">
-                                <Button type="danger" loading={loadingdelete} onClick={() => {
+                                <Button disabled={praloading} type="danger" loading={loadingdelete} onClick={() => {
                                     const modeldata2 = modeldata.filter((doc1,idx1) => doc1.asset_id === Number(assettypeid))
                                     if (childassettype.length > 0 && modeldata2.length > 0) {
                                         setmodaldelete(true)
                                     }
                                     else {
-                                        console.log(modeldata2)
-                                        console.log(childassettype)
                                             if (modeldata2.length === 0 && childassettype.length > 0) {
                                                 setmodaldeletenonmodel(true)
                                             }

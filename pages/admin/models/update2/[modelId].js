@@ -37,12 +37,12 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                     {
                         <Panel header={doc.name}>
                             <div className="flex flex-col p-3">
-                                <div className="flex flex-col mb-5">
+                                {/* <div className="flex flex-col mb-5">
                                     <h1 className="font-semibold mb-1">Quantity <span className="judulsn"></span></h1>
                                     <div className="rounded bg-gray-200 w-full flex items-center my-auto h-12 px-2">
                                         <p className="mb-0 text-sm">{doc.quantity}</p>
                                     </div>
-                                </div>
+                                </div> */}
                                 {
                                     doc.model_column.map((docmc2, idx) => {
                                         if (docmc2.data_type === 'dropdown' || docmc2.data_type === 'checkbox') {
@@ -51,7 +51,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                         return (
                                             <div className="flex flex-col mb-5">
                                                 <h1 className="font-semibold mb-1">{docmc2.name} {docmc2.required ? <span className="judulsn"></span> : null} <span className="text-gray-400">({docmc2.data_type === "single" ? "Single Textbox" : docmc2.data_type.charAt(0).toUpperCase() + docmc2.data_type.slice(1)}{docmc2.data_type === 'paragraph' && ` Text`})</span></h1>
-                                                <div className="w-full flex items-center my-auto h-12 px-2">
+                                                <div className="w-full flex items-center my-auto px-2">
                                                     {
                                                         docmc2.data_type === 'dropdown' || docmc2.data_type === 'checkbox' || docmc2.data_type === 'date' || docmc2.data_type === 'paragraph' ?
                                                             <>
@@ -217,6 +217,9 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
     const [disabledaddfield2, setdisabledaddfield2] = useState(false)
     const [pointevent, setpointevent] = useState("")
     const [pointevent2, setpointevent2] = useState("")
+    const [cd2, setcd2] = useState(["", ""])
+    const [cdidx, setcdidx] = useState(-1)
+    const [cdtrigger, setcdtrigger] = useState(false)
 
     //3.onChange
     const onClickAddField = () => {
@@ -234,6 +237,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
         })
         setaddedfield([...addedfield, false])
         setcurrentdropdown2(["", ""])
+        setcd2(["", ""])
         setcurrentcheckeddropdown2([])
         setdisabledaddfield(true)
         setdisabledtambah(true)
@@ -833,6 +837,14 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
             }
         }
     }, [concatparttrigger])
+    useEffect(() => {
+        if (cdidx !== -1) {
+            setcurrentdropdown2(prev => {
+                return cd2.filter((doc10, idx10) => idx10 !== cdidx)
+            })
+            setcd2(prev => prev.filter((doc11, idx11) => idx11 !== cdidx))
+        }
+    }, [cdtrigger])
     return (
         <Layout st={st} tok={initProps} sidemenu={sidemenu} dataProfile={dataProfile} pathArr={pathArr}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4" id="createAssetsWrapper">
@@ -841,9 +853,9 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                         <div className=" col-span-4 flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-semibold py-2">Form Ubah Model - {newdata.name}</h1>
                             <div className="flex space-x-2">
-                                <Link href={`/admin/models/detail/${modelid}`}>
-                                    <Button /*onClick={() => { console.log(newdata); console.log(fielddata2); console.log(defaultdata) }}*/ type="default">Batal</Button>
-                                </Link>
+                                {/* <Link href={`/admin/models/detail/${modelid}`}> */}
+                                    <Button onClick={() => { console.log(newdata); console.log(fielddata2); console.log(defaultdata) }} type="default">Batal</Button>
+                                {/* </Link> */}
                                 <Button type="primary" loading={loadingcreate} disabled={disabledaddfield} onClick={instanceForm.submit}>Simpan</Button>
                             </div>
                         </div>
@@ -954,6 +966,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                     setcurrentcheckeddropdown2(doc.default.default)
                                                                 }
                                                                 if (fielddata2[idx].data_type !== 'dropdown' || fielddata2[idx].data_type !== 'checkbox') {
+                                                                    setcd2(doc.default.opsi)
                                                                     if (fielddata2[idx].name !== "" && fielddata2[idx].data_type !== "") {
                                                                         setdisabledtambah(false)
                                                                     }
@@ -1115,13 +1128,20 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                                                             temp[idxx] = e.target.value
                                                                                                             return temp
                                                                                                         })
+                                                                                                        setcd2(prev => {
+                                                                                                            const temp = prev
+                                                                                                            temp[idxx] = e.target.value
+                                                                                                            return temp
+                                                                                                        })
                                                                                                         if ((e.target.value !== "") && (idxx === currentdropdown2.length - 1)) {
                                                                                                             setdisabledtambah(false)
                                                                                                         }
                                                                                                     }} />
                                                                                                 </div>
                                                                                                 <div className="w-1/12 flex justify-around" onClick={() => {
-                                                                                                    setcurrentdropdown2(prev => prev.filter((_, idxxx) => idxxx !== idxx))
+                                                                                                    setcurrentdropdown2([])
+                                                                                                    setcdtrigger(prev => !prev)
+                                                                                                    setcdidx(idxx)
                                                                                                 }}>
                                                                                                     <Button type="danger">-</Button>
                                                                                                 </div>
@@ -1129,7 +1149,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                                         ))
                                                                                     }
                                                                                     <div className="mx-auto my-3">
-                                                                                        <Button onClick={() => { setcurrentdropdown2([...currentdropdown2, ""]); setdisabledtambah(true) }}>+ Tambah Opsi</Button>
+                                                                                        <Button onClick={() => { setcurrentdropdown2([...currentdropdown2, ""]); setcd2([...cd2, ""]); setdisabledtambah(true) }}>+ Tambah Opsi</Button>
                                                                                     </div>
                                                                                 </div>
                                                                                 :
@@ -1170,13 +1190,20 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                                                                 temp[idxx] = e.target.value
                                                                                                                 return temp
                                                                                                             })
+                                                                                                            setcd2(prev => {
+                                                                                                                const temp = prev
+                                                                                                                temp[idxx] = e.target.value
+                                                                                                                return temp
+                                                                                                            })
                                                                                                             if ((e.target.value !== "") && (idxx === currentdropdown2.length - 1)) {
                                                                                                                 setdisabledtambah(false)
                                                                                                             }
                                                                                                         }} />
                                                                                                     </div>
                                                                                                     <div className="w-1/12 flex justify-around" onClick={() => {
-                                                                                                        setcurrentdropdown2(prev => prev.filter((_, idxxx) => idxxx !== idxx))
+                                                                                                        setcurrentdropdown2([])
+                                                                                                        setcdtrigger(prev => !prev)
+                                                                                                        setcdidx(idxx)
                                                                                                     }}>
                                                                                                         <Button type="danger">-</Button>
                                                                                                     </div>
@@ -1185,7 +1212,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                                         })
                                                                                     }
                                                                                     <div className="mx-auto my-3">
-                                                                                        <Button onClick={() => { setcurrentdropdown2([...currentdropdown2, ""]); setdisabledtambah(true) }}>+ Tambah Opsi</Button>
+                                                                                        <Button onClick={() => { setcurrentdropdown2([...currentdropdown2, ""]); setcd2([...cd2, ""]); setdisabledtambah(true) }}>+ Tambah Opsi</Button>
                                                                                     </div>
                                                                                 </div>
                                                                                 :
@@ -1331,6 +1358,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                     extra={
                                                         <div className="absolute top-2 right-2">
                                                             <Popconfirm placement="bottom" title={`Apakah anda yakin ingin menghapus Model ${doc.name === "" ? "ini" : doc.name} dari Model Part ${newdata.name}?`} okText="Ya" cancelText="Tidak" onConfirm={() => {
+                                                                // console.log(doc)
                                                                 setnewdata(prev => {
                                                                     var temp = prev
                                                                     var idxtemp = modelpartfielddata.map(doctemp => doctemp.id).indexOf(doc.id)
@@ -1345,8 +1373,8 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                         }
                                                                     }
                                                                     if ((defaultdata.model_parts.map(docparts => docparts.id).includes(doc.id) === true) && idxtemp !== -1) {
-                                                                        if (temp.delete_model_ids.indexOf(doc.id) === -1) {
-                                                                            temp.delete_model_ids.push(doc.id)
+                                                                        if (temp.delete_model_ids.indexOf(doc.child_id) === -1) {
+                                                                            temp.delete_model_ids.push(doc.child_id)
                                                                         }
                                                                     }
                                                                     return temp
@@ -1399,7 +1427,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                                         }
                                                                                         {
                                                                                             docmc.data_type === 'date' &&
-                                                                                            <div className="flex w-full items-center justify-between rounded h-10 px-3">
+                                                                                            <div className="flex w-full items-center justify-between bg-gray-100 rounded h-10 px-3">
                                                                                                 <p className='mb-0'>{docmc.default}</p>
                                                                                                 <div>
                                                                                                     <CalendarOutlined></CalendarOutlined>

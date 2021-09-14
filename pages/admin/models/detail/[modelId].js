@@ -33,12 +33,12 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                     {
                         <Panel header={doc.name}>
                             <div className="flex flex-col p-3">
-                                <div className="flex flex-col mb-5">
+                                {/* <div className="flex flex-col mb-5">
                                     <h1 className="font-semibold mb-1">Quantity <span className="judulsn"></span></h1>
                                     <div className="rounded bg-gray-200 w-full flex items-center my-auto h-12 px-2">
                                         <p className="mb-0 text-sm">{doc.quantity}</p>
                                     </div>
-                                </div>
+                                </div> */}
                                 {
                                     doc.model_column.map((docmc2, idx) => {
                                         if (docmc2.data_type === 'dropdown' || docmc2.data_type === 'checkbox') {
@@ -47,7 +47,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                                         return (
                                             <div className="flex flex-col mb-5">
                                                 <h1 className="font-semibold mb-1">{docmc2.name} {docmc2.required ? <span className="judulsn"></span> : null} <span className="text-gray-400">({docmc2.data_type === "single" ? "Single Textbox" : docmc2.data_type.charAt(0).toUpperCase() + docmc2.data_type.slice(1)}{docmc2.data_type === 'paragraph' && ` Text`})</span></h1>
-                                                <div className="w-full flex items-center my-auto h-12 px-2">
+                                                <div className="w-full flex items-center my-auto px-2">
                                                     {
                                                         docmc2.data_type === 'dropdown' || docmc2.data_type === 'checkbox' || docmc2.data_type === 'date' || docmc2.data_type === 'paragraph' ?
                                                             <>

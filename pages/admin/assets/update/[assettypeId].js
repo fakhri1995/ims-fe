@@ -22,7 +22,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
     const [displaydata, setdisplaydata] = useState({
         id: "",
         name: "",
-        code: "",
+        parent: "",
         required_sn: false,
         description: "",
         asset_columns: []
@@ -30,7 +30,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
     const [updatedata, setupdatedata] = useState({
         id: Number(assettypeid),
         name: "",
-        code: "",
+        parent: "",
         required_sn: false,
         description: "",
         add_columns: [],
@@ -42,6 +42,9 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
     const [deletefielddata, setdeletefielddata] = useState([])
     const [updatefielddata, setupdatefielddata] = useState([])
     const [currentdropdown, setcurrentdropdown] = useState(["", ""])
+    const [currentdropdown2, setcurrentdropdown2] = useState(["", ""])
+    const [cdidx, setcdidx] = useState(-1)
+    const [cdtrigger, setcdtrigger] = useState(false)
     const [currentdropdownidx, setcurrentdropdownidx] = useState(-1)
     const [currentdropdowntrigger, setcurrentdropdowntrigger] = useState(false)
     const [currentnondropdownidx, setcurrentnondropdownidx] = useState(-1)
@@ -114,6 +117,9 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                     }
                 })
             }
+            if(prop === "parent"){
+                t[prop] = idparent
+            }
             else {
                 t[prop] = updatedata[prop]
             }
@@ -141,7 +147,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                 }
                 else if (!res2.success) {
                     notification['error']({
-                        message: res2.message.errorInfo.status_detail,
+                        message: res2.message,
                         duration: 3
                     })
                 }
@@ -158,8 +164,14 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                setdisplaydata(res2.data)
-                setupdatedata(res2.data)
+                setdisplaydata({
+                    ...res2.data,
+                    parent: idparent
+                })
+                setupdatedata({
+                    ...res2.data,
+                    parent: idparent
+                })
                 const assetcolmap = res2.data.asset_columns.map((doc, idx) => {
                     return ({
                         id: doc.id,
@@ -242,6 +254,14 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
             })
         }
     }, [currentnondropdowntrigger])
+    useEffect(() => {
+        if (cdidx !== -1) {
+            setcurrentdropdown(prev => {
+                return currentdropdown2.filter((doc10, idx10) => idx10 !== cdidx)
+            })
+            setcurrentdropdown2(prev => prev.filter((doc11, idx11) => idx11 !== cdidx))
+        }
+    }, [cdtrigger])
 
     return (
         <Layout tok={initProps} sidemenu={sidemenu} pathArr={pathArr} st={st} dataProfile={dataProfile}>
@@ -267,14 +287,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                 :
                                 <Form form={instanceForm} layout="vertical" onFinish={handleUpdateAsset} initialValues={updatedata}>
                                     <div className="grid grid-cols-1 md:grid-cols-2 space-x-2">
-                                        <Form.Item name="parent" label="Induk Asset Type"
-                                        // rules={[
-                                        //     {
-                                        //         required: true,
-                                        //         message: 'Induk Asset Type wajib diisi',
-                                        //     },
-                                        // ]}
-                                        >
+                                        <Form.Item name="parent" label="Induk Asset Type">
                                             <TreeSelect
                                                 style={{ marginRight: `1rem` }}
                                                 dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
@@ -462,10 +475,15 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                             <div className="flex flex-col">
                                                                 {
                                                                     currentdropdown.map((doc, idxx) => (
-                                                                        <div className="flex mb-3">
+                                                                        <div key={idxx} className="flex mb-3">
                                                                             <div className="w-11/12 mr-5">
                                                                                 <Input style={{ marginRight: `0.5rem` }} defaultValue={doc} placeholder={`Masukkan opsi ke-${idxx + 1}`} onChange={(e) => {
                                                                                     setcurrentdropdown(prev => {
+                                                                                        const temp = prev
+                                                                                        temp[idxx] = e.target.value
+                                                                                        return temp
+                                                                                    })
+                                                                                    setcurrentdropdown2(prev => {
                                                                                         const temp = prev
                                                                                         temp[idxx] = e.target.value
                                                                                         return temp
@@ -476,7 +494,9 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                                                 }} />
                                                                             </div>
                                                                             <div className="w-1/12 flex justify-around" onClick={() => {
-                                                                                setcurrentdropdown(prev => prev.filter((_, idxxx) => idxxx !== idxx))
+                                                                                setcurrentdropdown([])
+                                                                                setcdtrigger(prev => !prev)
+                                                                                setcdidx(idxx)
                                                                             }}>
                                                                                 <Button type="danger">-</Button>
                                                                             </div>
@@ -484,7 +504,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                                     ))
                                                                 }
                                                                 <div className="mx-auto my-3">
-                                                                    <Button onClick={() => { setcurrentdropdown([...currentdropdown, ""]); setdisabledtambah(true) }}>+ Tambah Opsi</Button>
+                                                                    <Button onClick={() => { setcurrentdropdown([...currentdropdown, ""]); setcurrentdropdown2([...currentdropdown2, ""]); setdisabledtambah(true) }}>+ Tambah Opsi</Button>
                                                                 </div>
                                                             </div>
                                                             :
@@ -495,10 +515,15 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                             <div className="flex flex-col">
                                                                 {
                                                                     currentdropdown.map((doc, idxx) => (
-                                                                        <div className="flex mb-3">
+                                                                        <div key={idxx} className="flex mb-3">
                                                                             <div className="w-11/12 mr-5">
                                                                                 <Input style={{ marginRight: `0.5rem` }} defaultValue={doc} placeholder={`Masukkan opsi ke-${idxx + 1}`} onChange={(e) => {
                                                                                     setcurrentdropdown(prev => {
+                                                                                        const temp = prev
+                                                                                        temp[idxx] = e.target.value
+                                                                                        return temp
+                                                                                    })
+                                                                                    setcurrentdropdown2(prev => {
                                                                                         const temp = prev
                                                                                         temp[idxx] = e.target.value
                                                                                         return temp
@@ -509,7 +534,9 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                                                 }} />
                                                                             </div>
                                                                             <div className="w-1/12 flex justify-around" onClick={() => {
-                                                                                setcurrentdropdown(prev => prev.filter((_, idxxx) => idxxx !== idxx))
+                                                                                setcurrentdropdown([])
+                                                                                setcdtrigger(prev => !prev)
+                                                                                setcdidx(idxx)
                                                                             }}>
                                                                                 <Button type="danger">-</Button>
                                                                             </div>
@@ -517,7 +544,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                                     ))
                                                                 }
                                                                 <div className="mx-auto my-3">
-                                                                    <Button onClick={() => { setcurrentdropdown([...currentdropdown, ""]); setdisabledtambah(true) }}>+ Tambah Opsi</Button>
+                                                                    <Button onClick={() => { setcurrentdropdown([...currentdropdown, ""]); setcurrentdropdown2([...currentdropdown2, ""]); setdisabledtambah(true) }}>+ Tambah Opsi</Button>
                                                                 </div>
                                                             </div>
                                                             :

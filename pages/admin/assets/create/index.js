@@ -61,10 +61,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
     const [disabledaddfield, setdisabledaddfield] = useState(false)
     const [disabledsimpan, setdisabledsimpan] = useState(false)
     const [disabledtambah, setdisabledtambah] = useState(false)
-    const [cdtrigger, setcdtrigger] = useState(false)
-    const [cdidx, setcdidx] = useState(-1)
-    const [cddelete, setcddelete] = useState([])
-    const [pointevent,setpointevent] = useState("")
+    const [pointevent, setpointevent] = useState("")
 
     //handle
     const onClickAddField = () => {
@@ -188,11 +185,14 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
         }
     }, [currentnondropdowntrigger])
     useEffect(() => {
-        if (cdidx !== -1) {
-            setcurrentdropdown(prev => currentdropdown2.filter((doccc, idxxx) => cddelete.indexOf(doccc) === -1))
-            // setcurrentdropdown(prev => prev.filter((_, idxxx) => idxxx !== cdidx))
+        if (currentdropdownidx !== -1) {
+            console.log("sini")
+            setcurrentdropdown(prev => {
+                return currentdropdown2.filter((doc10, idx10) => idx10 !== currentdropdownidx)
+            })
+            setcurrentdropdown2(prev => prev.filter((doc11, idx11) => idx11 !== currentdropdownidx))
         }
-    }, [cdtrigger])
+    }, [currentdropdowntrigger])
 
     return (
         <Layout st={st} tok={initProps} sidemenu={sidemenu} dataProfile={dataProfile} pathArr={pathArr}>
@@ -203,7 +203,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                             <h1 className="font-semibold py-2">Form Tambah Asset Types</h1>
                             <div className="flex space-x-2">
                                 <Link href={`/admin/assets`}>
-                                <Button type="default" /*onClick={() => { console.log(newdata); console.log(fielddata); console.log(currentdropdown) }}*/>Batal</Button>
+                                    <Button type="default" /*onClick={() => { console.log(newdata); console.log(fielddata); console.log(currentdropdown) }}*/>Batal</Button>
                                 </Link>
                                 <Button type="primary" loading={loadingcreate} onClick={instanceForm.submit} disabled={disabledsimpan}>Simpan</Button>
                             </div>
@@ -349,14 +349,6 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                 {
                                                                     doc.data_type === 'dropdown' &&
                                                                     <div className="flex flex-col z-50">
-                                                                        {/* {
-                                                                            doc.default.opsi.map((docopsi, idxopsi) => (
-                                                                                <div key={idxopsi} className="flex items-center  mb-2">
-                                                                                    <Checkbox style={{ marginRight: `0.5rem` }} disabled />
-                                                                                    <div className="bg-gray-50 p-2 border w-3/12">{docopsi}</div>
-                                                                                </div>
-                                                                            ))
-                                                                        } */}
                                                                         <Select>
                                                                             {
                                                                                 doc.default.opsi.map((docopsi, idxopsi) => {
@@ -461,10 +453,15 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                             <div className="flex flex-col">
                                                                 {
                                                                     currentdropdown.map((doc, idxx) => (
-                                                                        <div className="flex mb-3">
+                                                                        <div key={idxx} className="flex mb-3">
                                                                             <div className="w-11/12 mr-5">
                                                                                 <Input style={{ marginRight: `0.5rem` }} defaultValue={doc} placeholder={`Masukkan opsi ke-${idxx + 1}`} onChange={(e) => {
                                                                                     setcurrentdropdown(prev => {
+                                                                                        const temp = prev
+                                                                                        temp[idxx] = e.target.value
+                                                                                        return temp
+                                                                                    })
+                                                                                    setcurrentdropdown2(prev => {
                                                                                         const temp = prev
                                                                                         temp[idxx] = e.target.value
                                                                                         return temp
@@ -476,11 +473,8 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                             </div>
                                                                             <div className="w-1/12 flex justify-around" onClick={() => {
                                                                                 setcurrentdropdown([])
-                                                                                setcddelete([...cddelete, doc])
-                                                                                setcdidx(idxx)
-                                                                                setcdtrigger(prev => !prev)
-                                                                                // setcurrentdropdown(prev => prev.filter((_, idxxx) => idxxx !== idxx))
-                                                                                // setcurrentdropdown(prev => prev.splice(idxx,1))
+                                                                                setcurrentdropdowntrigger(prev => !prev)
+                                                                                setcurrentdropdownidx(idxx)
                                                                             }}>
                                                                                 <Button color="black" style={{ border: `1px solid black` }}>-</Button>
                                                                             </div>
@@ -488,7 +482,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                     ))
                                                                 }
                                                                 <div className="mx-auto my-3">
-                                                                    <Button onClick={() => { setcurrentdropdown([...currentdropdown, ""]); setdisabledtambah(true) }}>+ Tambah Opsi</Button>
+                                                                    <Button onClick={() => { setcurrentdropdown([...currentdropdown, ""]); setcurrentdropdown2([...currentdropdown2, ""]); setdisabledtambah(true) }}>+ Tambah Opsi</Button>
                                                                 </div>
                                                             </div>
                                                             :
@@ -499,10 +493,15 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                             <div className="flex flex-col">
                                                                 {
                                                                     currentdropdown.map((doc, idxx) => (
-                                                                        <div className="flex mb-3">
+                                                                        <div key={idxx} className="flex mb-3">
                                                                             <div className="w-11/12 mr-5">
                                                                                 <Input style={{ marginRight: `0.5rem` }} defaultValue={doc} placeholder={`Masukkan opsi ke-${idxx + 1}`} onChange={(e) => {
                                                                                     setcurrentdropdown(prev => {
+                                                                                        const temp = prev
+                                                                                        temp[idxx] = e.target.value
+                                                                                        return temp
+                                                                                    })
+                                                                                    setcurrentdropdown2(prev => {
                                                                                         const temp = prev
                                                                                         temp[idxx] = e.target.value
                                                                                         return temp
@@ -513,7 +512,9 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                                 }} />
                                                                             </div>
                                                                             <div className="w-1/12 flex justify-around" onClick={() => {
-                                                                                setcurrentdropdown(prev => prev.filter((_, idxxx) => idxxx !== idxx))
+                                                                                setcurrentdropdown([])
+                                                                                setcurrentdropdowntrigger(prev => !prev)
+                                                                                setcurrentdropdownidx(idxx)
                                                                             }}>
                                                                                 <Button type="danger">-</Button>
                                                                             </div>
@@ -521,7 +522,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                     ))
                                                                 }
                                                                 <div className="mx-auto my-3">
-                                                                    <Button onClick={() => { setcurrentdropdown([...currentdropdown, ""]); setdisabledtambah(true) }}>+ Tambah Opsi</Button>
+                                                                    <Button onClick={() => { setcurrentdropdown([...currentdropdown, ""]); setcurrentdropdown2([...currentdropdown2, ""]); setdisabledtambah(true) }}>+ Tambah Opsi</Button>
                                                                 </div>
                                                             </div>
                                                             :
