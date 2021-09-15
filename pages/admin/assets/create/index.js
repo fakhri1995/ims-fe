@@ -432,7 +432,12 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                             <Select placeholder="Pilih Tipe Field" onChange={(value) => {
                                                                 setcurrentfield({ ...currentfield, data_type: value })
                                                                 if (value === 'dropdown' || value === 'checkbox') {
-                                                                    setdisabledtambah(true)
+                                                                    if((currentdropdown.every((doca, idxa) => doca !== ""))){
+                                                                        setdisabledtambah(false)
+                                                                    }
+                                                                    else{
+                                                                        setdisabledtambah(true)
+                                                                    }
                                                                 }
                                                                 else {
                                                                     setdisabledtambah(false)
@@ -466,8 +471,11 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                                         temp[idxx] = e.target.value
                                                                                         return temp
                                                                                     })
-                                                                                    if ((e.target.value !== "") && (idxx === currentdropdown.length - 1)) {
+                                                                                    if ((e.target.value !== "") && (currentdropdown.every((doca, idxa) => doca !== "") && currentfield.name !== "")) {
                                                                                         setdisabledtambah(false)
+                                                                                    }
+                                                                                    else if(e.target.value === "" || currentfield.name === ""){
+                                                                                        setdisabledtambah(true)
                                                                                     }
                                                                                 }} />
                                                                             </div>
@@ -506,8 +514,11 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                                         temp[idxx] = e.target.value
                                                                                         return temp
                                                                                     })
-                                                                                    if ((e.target.value !== "") && (idxx === currentdropdown.length - 1)) {
+                                                                                    if ((e.target.value !== "") && (currentdropdown.every((doca, idxa) => doca !== "") && currentfield.name !== "")) {
                                                                                         setdisabledtambah(false)
+                                                                                    }
+                                                                                    else if(e.target.value === "" || currentfield.name === ""){
+                                                                                        setdisabledtambah(true)
                                                                                     }
                                                                                 }} />
                                                                             </div>

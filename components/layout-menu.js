@@ -46,7 +46,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                     </Menu.Item>
                     <SubMenu key="3" icon={<InboxOutlined />} title="Assets">
                         <Menu.Item key="sub32">
-                            <Link href="/inventories">
+                            <Link href="/items">
                                 Inventory
                             </Link>
                         </Menu.Item>
@@ -218,7 +218,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             </Link>
                         </Menu.Item>
                         <Menu.Item key="sub32">
-                            <Link href="/inventories">
+                            <Link href="/items">
                                 Inventory
                             </Link>
                         </Menu.Item>

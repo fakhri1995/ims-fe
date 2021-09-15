@@ -13,7 +13,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
     const rt = useRouter()
     var pathArr = rt.pathname.split("/").slice(1)
     pathArr.splice(3, 1)
-    pathArr[pathArr.length - 1] = "Detail Asset Type"
+    pathArr[pathArr.length - 1] = "Detail Model"
     const { Panel } = Collapse
 
     //2.Helper functions
@@ -41,8 +41,9 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                                 </div> */}
                                 {
                                     doc.model_column.map((docmc2, idx) => {
+                                        var default2 = {}
                                         if (docmc2.data_type === 'dropdown' || docmc2.data_type === 'checkbox') {
-                                            docmc2.default = JSON.parse(docmc2.default)
+                                            default2 = JSON.parse(docmc2.default)
                                         }
                                         return (
                                             <div className="flex flex-col mb-5">
@@ -55,7 +56,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                                                                     docmc2.data_type === 'dropdown' &&
                                                                     <Select disabled style={{ width: `100%`, backgroundColor: `rgba(229, 231, 235,1)`, color: `rgba(229, 231, 235,1)` }}>
                                                                         {
-                                                                            docmc2.default.opsi.map((doc2, idx2) => (
+                                                                            default2.opsi.map((doc2, idx2) => (
                                                                                 <Select.Option disabled value={idx2}>{doc2}</Select.Option>
                                                                             ))
                                                                         }
@@ -65,7 +66,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                                                                     docmc2.data_type === 'checkbox' &&
                                                                     <div className="w-full flex flex-col">
                                                                         {
-                                                                            docmc2.default.opsi.map((doc3, idx3) => (
+                                                                            default2.opsi.map((doc3, idx3) => (
                                                                                 <div className="flex mb-1">
                                                                                     <Checkbox disabled style={{ marginRight: `0.5rem` }}></Checkbox>
                                                                                     <p className="mb-0">{doc3}</p>
@@ -378,6 +379,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                                     <Collapse accordion style={{ width: `75%` }}>
                                         {
                                             displaydata.model_parts.map((docmp, idxmp) => {
+                                                var default2 = {}
                                                 return (
                                                     <Panel id={`panel${idxmp}`} key={idxmp} header={<strong>{docmp.name}</strong>}>
                                                         <div className="flex flex-col p-3">
@@ -390,7 +392,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                                                             {
                                                                 docmp.model_column.map((docmc2, idxmc2) => {
                                                                     if (docmc2.data_type === 'dropdown' || docmc2.data_type === 'checkbox') {
-                                                                        docmc2.default = JSON.parse(docmc2.default)
+                                                                        default2 = JSON.parse(docmc2.default)
                                                                     }
                                                                     return (
                                                                         <div className="flex flex-col mb-5">
@@ -403,7 +405,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                                                                                                 docmc2.data_type === 'dropdown' &&
                                                                                                 <Select disabled style={{ width: `100%`, backgroundColor: `rgba(229, 231, 235,1)`, color: `rgba(229, 231, 235,1)` }}>
                                                                                                     {
-                                                                                                        docmc2.default.opsi.map((doc2, idx2) => (
+                                                                                                        default2.opsi.map((doc2, idx2) => (
                                                                                                             <Select.Option disabled value={idx2}>{doc2}</Select.Option>
                                                                                                         ))
                                                                                                     }
@@ -413,7 +415,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                                                                                                 docmc2.data_type === 'checkbox' &&
                                                                                                 <div className="w-full flex flex-col">
                                                                                                     {
-                                                                                                        docmc2.default.opsi.map((doc3, idx3) => (
+                                                                                                        default2.opsi.map((doc3, idx3) => (
                                                                                                             <div className="flex mb-1">
                                                                                                                 <Checkbox disabled style={{ marginRight: `0.5rem` }}></Checkbox>
                                                                                                                 <p className="mb-0">{doc3}</p>

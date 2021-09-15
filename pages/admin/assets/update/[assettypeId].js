@@ -117,7 +117,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                     }
                 })
             }
-            if(prop === "parent"){
+            if (prop === "parent") {
                 t[prop] = idparent
             }
             else {
@@ -454,7 +454,12 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                             <Select placeholder="Pilih Tipe Field" onChange={(value) => {
                                                                 setcurrentfield({ ...currentfield, data_type: value })
                                                                 if (value === 'dropdown' || value === 'checkbox') {
-                                                                    setdisabledtambah(true)
+                                                                    if ((currentdropdown.every((doca, idxa) => doca !== ""))) {
+                                                                        setdisabledtambah(false)
+                                                                    }
+                                                                    else {
+                                                                        setdisabledtambah(true)
+                                                                    }
                                                                 }
                                                                 else {
                                                                     setdisabledtambah(false)
@@ -488,8 +493,11 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                                                         temp[idxx] = e.target.value
                                                                                         return temp
                                                                                     })
-                                                                                    if ((e.target.value !== "") && (idxx === currentdropdown.length - 1)) {
+                                                                                    if ((e.target.value !== "") && (currentdropdown.every((doca, idxa) => doca !== "") && currentfield.name !== "")) {
                                                                                         setdisabledtambah(false)
+                                                                                    }
+                                                                                    else if (e.target.value === "" || currentfield.name === "") {
+                                                                                        setdisabledtambah(true)
                                                                                     }
                                                                                 }} />
                                                                             </div>
@@ -528,8 +536,11 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                                                         temp[idxx] = e.target.value
                                                                                         return temp
                                                                                     })
-                                                                                    if ((e.target.value !== "") && (idxx === currentdropdown.length - 1)) {
+                                                                                    if ((e.target.value !== "") && (currentdropdown.every((doca, idxa) => doca !== "") && currentfield.name !== "")) {
                                                                                         setdisabledtambah(false)
+                                                                                    }
+                                                                                    else if (e.target.value === "" || currentfield.name === "") {
+                                                                                        setdisabledtambah(true)
                                                                                     }
                                                                                 }} />
                                                                             </div>
