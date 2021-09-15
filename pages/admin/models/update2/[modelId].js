@@ -391,7 +391,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                     }
                     setaddedfield2(bool)
                     setfielddataa2(temp)
-                    setnewdata2({ ...newdata2, required_sn: res2.data.required_sn, asset_id: res2.data.code })
+                    setnewdata2({ ...newdata2, required_sn: res2.data.required_sn, asset_id: res2.data.code, model_columns: temp })
                     setassettypecode2(res2.data.id)
                     // setnewdatatrigger2(prev => !prev)
                     setloadingspec2(false)
@@ -1100,7 +1100,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                                     if ((currentdropdown2.every((doca, idxa) => doca !== ""))) {
                                                                                         setdisabledtambah(false)
                                                                                     }
-                                                                                    else{
+                                                                                    else {
                                                                                         setdisabledtambah(true)
                                                                                     }
                                                                                 }
@@ -1573,8 +1573,8 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                                 default: JSON.parse(doc3.default)
                                                                             }
                                                                         }
-                                                                        else{
-                                                                            return {...doc3}
+                                                                        else {
+                                                                            return { ...doc3 }
                                                                         }
                                                                     })
                                                                     return {
@@ -1967,7 +1967,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                                 if (e.target.value === "") {
                                                                                     setdisabledtambah2(true)
                                                                                 }
-                                                                                else if (e.target.value !== "" && currentfield2.data_type !== "") {
+                                                                                else if (e.target.value !== "" && currentfield2.data_type !== "" && (currentdropdownn2.every((doca, idxa) => doca !== ""))) {
                                                                                     setdisabledtambah2(false)
                                                                                 }
                                                                             }} />
@@ -1986,7 +1986,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                                     if ((currentdropdownn2.every((doca, idxa) => doca !== ""))) {
                                                                                         setdisabledtambah2(false)
                                                                                     }
-                                                                                    else{
+                                                                                    else {
                                                                                         setdisabledtambah2(true)
                                                                                     }
                                                                                 }
@@ -1996,10 +1996,12 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                                 if (value === 'dropdown') {
                                                                                     setcurrentcheckeddropdownn2("")
                                                                                     setcurrentdropdownn2(["", ""])
+                                                                                    setdisabledtambah2(true)
                                                                                 }
                                                                                 if (value === 'checkbox') {
                                                                                     setcurrentcheckeddropdownn2([])
                                                                                     setcurrentdropdownn2(["", ""])
+                                                                                    setdisabledtambah2(true)
                                                                                 }
                                                                             }}
                                                                                 name="data_type">
@@ -2039,10 +2041,10 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                                                             temp[idxx] = e.target.value
                                                                                                             return temp
                                                                                                         })
-                                                                                                        if ((e.target.value !== "") && (currentdropdownn2.every((doca, idxa) => doca !== "") && currentfield.name !== "")) {
+                                                                                                        if ((e.target.value !== "") && (currentdropdownn2.every((doca, idxa) => doca !== "") && currentfield2.name !== "")) {
                                                                                                             setdisabledtambah2(false)
                                                                                                         }
-                                                                                                        else if (e.target.value === "" || currentfield.name === "") {
+                                                                                                        else if (e.target.value === "" || currentfield2.name === "") {
                                                                                                             setdisabledtambah2(true)
                                                                                                         }
                                                                                                     }} />
@@ -2104,10 +2106,10 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                                                                 temp[idxx] = e.target.value
                                                                                                                 return temp
                                                                                                             })
-                                                                                                            if ((e.target.value !== "") && (currentdropdownn2.every((doca, idxa) => doca !== "") && currentfield.name !== "")) {
+                                                                                                            if ((e.target.value !== "") && (currentdropdownn2.every((doca, idxa) => doca !== "") && currentfield2.name !== "")) {
                                                                                                                 setdisabledtambah2(false)
                                                                                                             }
-                                                                                                            else if (e.target.value === "" || currentfield.name === "") {
+                                                                                                            else if (e.target.value === "" || currentfield2.name === "") {
                                                                                                                 setdisabledtambah2(true)
                                                                                                             }
                                                                                                         }} />
@@ -2186,7 +2188,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                             <Checkbox checked={currentfield2.required} style={{ marginRight: `0.5rem` }} onChange={(e) => {
                                                                                 setcurrentfield2({ ...currentfield2, required: e.target.checked })
                                                                             }} /> Required
-                                                        </div>
+                                                                        </div>
                                                                         <Button type="primary" disabled={disabledtambah2} onClick={() => {
                                                                             if (currentfield2.data_type === 'dropdown' || currentfield2.data_type === 'checkbox') {
                                                                                 setidxdropdowntrigger2(idx)

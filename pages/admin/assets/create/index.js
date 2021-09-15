@@ -416,7 +416,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                 if (e.target.value === "") {
                                                                     setdisabledtambah(true)
                                                                 }
-                                                                else if (e.target.value !== "" && currentfield.data_type !== "") {
+                                                                else if (e.target.value !== "" && currentfield.data_type !== "" && (currentdropdown.every((doca, idxa) => doca !== ""))) {
                                                                     setdisabledtambah(false)
                                                                 }
                                                             }} />
@@ -441,6 +441,14 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                 }
                                                                 else {
                                                                     setdisabledtambah(false)
+                                                                }
+                                                                if (value === 'dropdown') {
+                                                                    setcurrentdropdown(["", ""])
+                                                                    setdisabledtambah(true)
+                                                                }
+                                                                if (value === 'checkbox') {
+                                                                    setcurrentdropdown(["", ""])
+                                                                    setdisabledtambah(true)
                                                                 }
                                                             }}
                                                                 name="data_type">

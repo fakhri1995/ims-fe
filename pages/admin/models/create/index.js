@@ -336,7 +336,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                     }
                     setaddedfield2(bool)
                     setfielddataa2(temp)
-                    setnewdata2({ ...newdata2, required_sn: res2.data.required_sn, asset_id: res2.data.id })
+                    setnewdata2({ ...newdata2, required_sn: res2.data.required_sn, asset_id: res2.data.id, model_columns: temp })
                     setassettypecode2(res2.data.id)
                     setloadingspec2(false)
                     setdisabledaddfield2(false)
@@ -997,7 +997,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                                 if ((currentdropdown2.every((doca, idxa) => doca !== ""))) {
                                                                                     setdisabledtambah(false)
                                                                                 }
-                                                                                else{
+                                                                                else {
                                                                                     setdisabledtambah(true)
                                                                                 }
                                                                             }
@@ -1792,7 +1792,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                             if (e.target.value === "") {
                                                                                 setdisabledtambah2(true)
                                                                             }
-                                                                            else if (e.target.value !== "" && currentfield2.data_type !== "") {
+                                                                            else if (e.target.value !== "" && currentfield2.data_type !== "" && (currentdropdownn2.every((doca, idxa) => doca !== ""))) {
                                                                                 setdisabledtambah2(false)
                                                                             }
                                                                         }} />
@@ -1809,9 +1809,9 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                             setcurrentfield2({ ...currentfield2, data_type: value })
                                                                             if (value === 'dropdown' || value === 'checkbox') {
                                                                                 if ((currentdropdownn2.every((doca, idxa) => doca !== ""))) {
-                                                                                    setdisabledtambah(false)
+                                                                                    setdisabledtambah2(false)
                                                                                 }
-                                                                                else{
+                                                                                else {
                                                                                     setdisabledtambah2(true)
                                                                                 }
                                                                             }
@@ -1821,10 +1821,12 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                             if (value === 'dropdown') {
                                                                                 setcurrentcheckeddropdownn2("")
                                                                                 setcurrentdropdownn2(["", ""])
+                                                                                setdisabledtambah2(true)
                                                                             }
                                                                             if (value === 'checkbox') {
                                                                                 setcurrentcheckeddropdownn2([])
                                                                                 setcurrentdropdownn2(["", ""])
+                                                                                setdisabledtambah2(true)
                                                                             }
                                                                         }}
                                                                             name="data_type">
@@ -1864,10 +1866,10 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                                                         temp[idxx] = e.target.value
                                                                                                         return temp
                                                                                                     })
-                                                                                                    if ((e.target.value !== "") && (currentdropdownn2.every((doca, idxa) => doca !== "") && currentfield.name !== "")) {
+                                                                                                    if ((e.target.value !== "") && (currentdropdownn2.every((doca, idxa) => doca !== "") && currentfield2.name !== "")) {
                                                                                                         setdisabledtambah2(false)
                                                                                                     }
-                                                                                                    else if (e.target.value === "" || currentfield.name === "") {
+                                                                                                    else if (e.target.value === "" || currentfield2.name === "") {
                                                                                                         setdisabledtambah2(true)
                                                                                                     }
                                                                                                 }} />
@@ -1929,10 +1931,10 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                                                             temp[idxx] = e.target.value
                                                                                                             return temp
                                                                                                         })
-                                                                                                        if ((e.target.value !== "") && (currentdropdownn2.every((doca, idxa) => doca !== "") && currentfield.name !== "")) {
+                                                                                                        if ((e.target.value !== "") && (currentdropdownn2.every((doca, idxa) => doca !== "") && currentfield2.name !== "")) {
                                                                                                             setdisabledtambah2(false)
                                                                                                         }
-                                                                                                        else if (e.target.value === "" || currentfield.name === "") {
+                                                                                                        else if (e.target.value === "" || currentfield2.name === "") {
                                                                                                             setdisabledtambah2(true)
                                                                                                         }
                                                                                                     }} />
