@@ -138,6 +138,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
         model_parts: [],
         add_columns: [],
         delete_column_ids: [],
+        update_columns: [],
         add_models: [],
         delete_model_ids: [],
     })
@@ -152,6 +153,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
         model_parts: [],
         add_columns: [],
         delete_column_ids: [],
+        update_columns: [],
         add_models: [],
         delete_model_ids: [],
     })
@@ -237,7 +239,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
     const [cd2part, setcd2part] = useState(["", ""])
     const [cdpartidx, setcdpartidx] = useState(-1)
     const [cdparttrigger, setcdparttrigger] = useState(false)
-    const [changeasset, setchangeasset] = useState(false)
+    const [changeasset, setchangeasset] = useState([])
     const [defaultasset, setdefaultasset] = useState([])
 
     //3.onChange
@@ -306,20 +308,21 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                             return { ...doc }
                         }
                     })
-                    setfielddata2(temp)
+                    const defaultassetid = defaultasset.map(docmap => docmap.id)
+                    const newassetfielddata2 = newdata.model_columns.filter(docfilter => defaultassetid.includes(docfilter.id)).concat(temp)
                     const newfieldmap = newdata.model_columns.filter(docnewfield => typeof (docnewfield.id) === 'undefined')
-                    const deletecolumnids = defaultasset.model_columns.map(docid => docid.id)
+                    setfielddata2(prev => {
+                        var tempo = prev
+                        tempo = tempo.filter(docfilter => defaultassetid.includes(docfilter.id)).concat(temp)
+                        return tempo
+                    })
                     setnewdata({
                         ...newdata,
                         id: defaultmodel.id,
                         name: defaultmodel.name,
                         description: defaultmodel.description,
-                        model_columns: temp.concat(newfieldmap),
+                        model_columns: newassetfielddata2.concat(newfieldmap),
                         add_columns: temp.concat(newfieldmap),
-                        update_columns: [],
-                        delete_column_ids: deletecolumnids,
-                        delete_model_ids: [],
-                        add_models: [],
                         required_sn: res2.data.required_sn
                     })
                     setdefaultdata({
@@ -340,7 +343,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                             name: defaultmodel.manufacturer.name,
                         },
                         asset_id: Number(id),
-                        model_columns: temp,
+                        model_columns: defaultasset,
                         add_columns: [],
                         update_columns: [],
                         delete_column_ids: [],
@@ -349,22 +352,21 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                         required_sn: res2.data.required_sn
                     })
                     var arr = []
-                    for (var i = 0; i < res2.data.asset_columns.length; i++) {
+                    for (var i = 0; i < newassetfielddata2.length; i++) {
                         arr.push(true)
                     }
+                    setchangeasset(temp)
                     setaddedfield(arr)
                     setloadingspec(false)
                     setdisabledaddfield(false)
-                    setchangeasset(true)
                 }
                 else {
                     temp = []
-                    setfielddata2(temp)
+                    // setfielddata2(temp)
                     const newfieldmap = newdata.model_columns.filter(docnewfield => typeof (docnewfield.id) === 'undefined')
-                    setnewdata({ ...newdata, model_columns: temp.concat(newfieldmap), required_sn: false, asset_id: 0 })
+                    setnewdata({ ...newdata, model_columns: newdata.model_columns.concat(newfieldmap), required_sn: false, asset_id: 0 })
                     setloadingspec(false)
                     setdisabledaddfield(true)
-                    setchangeasset(true)
                 }
             })
     }
@@ -645,7 +647,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                 }
                 setnewdata(temp2)
                 setdefaultdata(temp2)
-                setdefaultasset(temp2)
+                setdefaultasset(temp)
                 setdefaultmodel(temp2)
                 setfielddata2(temp)
                 setmodelpartfielddata(yo)
@@ -674,6 +676,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                 modeltrigger !== false ? seteditpart(true) : null
             })
     }, [modeltrigger])
+    //checkbox dropdown dari model utama yang field asset
     useEffect(() => {
         if (idxdropdowntrigger !== -1) {
             setfielddata2(prev => {
@@ -686,6 +689,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
             })
         }
     }, [valuedropdowntrigger])
+    //checkbox dropdown dari model utama yang field buat sendiri    
     useEffect(() => {
         if (idxdropdowntrigger1 !== -1) {
             setfielddata(prev => {
@@ -700,19 +704,6 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
         }
     }, [valuedropdowntrigger1])
     useEffect(() => {
-        if (idxdropdowntrigger3 !== -1) {
-            setfielddata(prev => {
-                const temp = prev
-                // temp[idxdropdowntrigger]["default"] = `${valuedropdowntrigger}`
-                temp[idxdropdowntrigger3]["default"] = {
-                    default: currentcheckeddropdown2,
-                    opsi: currentdropdown2
-                }
-                return temp
-            })
-        }
-    }, [valuedropdowntrigger3])
-    useEffect(() => {
         setnewdata({
             ...newdata,
             model_columns: fielddata2.concat(fielddata)
@@ -720,7 +711,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
     }, [concatfieldtrigger])
     useEffect(() => {
         if (concataddcolumnsidx !== -1) {
-            if ((concataddcolumnsidx > defaultdata.model_columns.length - 1) || (typeof (concataddcolumnsvalue.id) === 'undefined') || changeasset === true) {
+            if ((changeasset.some(docsome => docsome.id === concataddcolumnsvalue.id)) || (typeof (concataddcolumnsvalue.id) === 'undefined')) {
                 console.log("sini")
                 // if ((fielddata2.length - defaultdata.model_columns.length) >= newdata.add_columns.length) {
                 if (newdata.add_columns.map(docadd => docadd.name).indexOf(currentfield.name) === -1) {
@@ -938,6 +929,21 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
         }
     }, [addedfieldtrigger3])
 
+    //checkbox dropdown dari model baru yang field asset
+    useEffect(() => {
+        if (idxdropdowntrigger3 !== -1) {
+            setfielddataa(prev => {
+                const temp = prev
+                // temp[idxdropdowntrigger]["default"] = `${valuedropdowntrigger}`
+                temp[idxdropdowntrigger3]["default"] = {
+                    default: currentcheckeddropdownn2,
+                    opsi: currentdropdownn2
+                }
+                return temp
+            })
+        }
+    }, [valuedropdowntrigger3])
+    //checkbox dropdown dari model baru yang field buat sendiri
     useEffect(() => {
         if (idxdropdowntrigger2 !== -1) {
             setfielddataa2(prev => {
@@ -1027,7 +1033,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                             <h1 className="font-semibold py-2">Form Ubah Model - {newdata.name}</h1>
                             <div className="flex space-x-2">
                                 <Link href={`/admin/models/detail/${modelid}`}>
-                                    <Button /*onClick={() => { console.log(newdata); console.log(fielddata); console.log(fielddata2); console.log(defaultdata); }}*/ type="default">Batal</Button>
+                                    <Button /*onClick={() => { console.log(newdata); console.log(fielddata); console.log(fielddata2); console.log(defaultdata); console.log(defaultasset) }}*/ type="default">Batal</Button>
                                 </Link>
                                 <Button type="primary" loading={loadingcreate} disabled={disabledaddfield} onClick={instanceForm.submit}>Simpan</Button>
                             </div>
@@ -1445,10 +1451,12 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                                 temp.model_columns = temp.model_columns.filter((_, idxx) => idxx !== fielddata.length + idx)
                                                                                 return temp
                                                                             })
-                                                                            if (defaultdata.model_columns.some(docdef => docdef.id === doc.id) && changeasset === false) {
+                                                                            if (defaultdata.model_columns.some(docdef => docdef.id === doc.id)) {
                                                                                 setnewdata(prev => {
                                                                                     var temp = prev
                                                                                     temp.delete_column_ids.push(doc.id)
+                                                                                    const idxUpdateColumns = temp.update_columns.map(docmap => docmap.id).indexOf(doc.id)
+                                                                                    temp.update_columns.splice(idxUpdateColumns, 1)
                                                                                     const idxtemp = defaultdata.model_columns.map(doctemp => doctemp.id).indexOf(doc.id)
                                                                                     temp.model_columns.splice(idxtemp, 1)
                                                                                     return temp
@@ -1913,22 +1921,25 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                         modelpartfielddata.map((doc, idx) => {
                                             return (
                                                 <Panel id={`panel${idx}`} key={idx} header={
-                                                    <strong>{doc.name ?
-                                                        <>
-                                                            {
-                                                                doc.model_child.length === 0 ?
-                                                                    <div className="flex items-center w-6/12">
-                                                                        <span className="mr-2">{doc.name}</span>
-                                                                        <Tooltip placement="right" title="Model tidak memiliki part model!">
-                                                                            <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
-                                                                        </Tooltip>
-                                                                    </div>
-                                                                    :
-                                                                    doc.name
-                                                            }
-                                                        </>
-                                                        :
-                                                        "-"}
+                                                    <strong>{
+                                                        doc.name 
+                                                        // ?
+                                                        // <>
+                                                        //     {
+                                                        //         doc.model_child.length === 0 ?
+                                                        //             <div className="flex items-center w-6/12">
+                                                        //                 <span className="mr-2">{doc.name}</span>
+                                                        //                 <Tooltip placement="right" title="Model tidak memiliki part model!">
+                                                        //                     <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
+                                                        //                 </Tooltip>
+                                                        //             </div>
+                                                        //             :
+                                                        //             doc.name
+                                                        //     }
+                                                        // </>
+                                                        // :
+                                                        // "-"
+                                                        }
                                                     </strong>}
                                                     extra={
                                                         <div className="absolute top-2 right-2">

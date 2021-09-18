@@ -22,6 +22,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
     const [displaydata, setdisplaydata] = useState({
         id: "",
         name: "",
+        code: "",
         parent: "",
         required_sn: false,
         description: "",
@@ -30,9 +31,11 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
     const [updatedata, setupdatedata] = useState({
         id: Number(assettypeid),
         name: "",
+        code: "",
         parent: "",
         required_sn: false,
         description: "",
+        update_columns: [],
         add_columns: [],
         delete_column_ids: []
     })
@@ -117,9 +120,9 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                     }
                 })
             }
-            if (prop === "parent") {
-                t[prop] = idparent
-            }
+            // if (prop === "code") {
+            //     t[prop] = idparent
+            // }
             else {
                 t[prop] = updatedata[prop]
             }
@@ -166,10 +169,16 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
             .then(res2 => {
                 setdisplaydata({
                     ...res2.data,
+                    update_columns: [],
+                    add_columns: [],
+                    delete_column_ids: [],
                     parent: idparent
                 })
                 setupdatedata({
                     ...res2.data,
+                    update_columns: [],
+                    add_columns: [],
+                    delete_column_ids: [],
                     parent: idparent
                 })
                 const assetcolmap = res2.data.asset_columns.map((doc, idx) => {
@@ -271,9 +280,9 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                         <div className=" col-span-4 flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-semibold py-2">Form Ubah Asset Type {praloading ? null : `- ${displaydata.name}`}</h1>
                             <div className="flex space-x-2">
-                                <Link href={`/admin/assets/detail/${assettypeid}`}>
-                                    <Button /*onClick={() => { console.log(updatedata); console.log(fielddata); console.log(currentfield); console.log(addedfield) }}*/ type="default">Batal</Button>
-                                </Link>
+                                {/* <Link href={`/admin/assets/detail/${assettypeid}`}> */}
+                                <Button onClick={() => { console.log(updatedata); console.log(fielddata); console.log(currentfield); console.log(addedfield) }} type="default">Batal</Button>
+                                {/* </Link> */}
                                 <Button type="primary" loading={loadingupdate} onClick={instanceForm.submit} disabled={disabledsimpan}>Simpan</Button>
                             </div>
                         </div>

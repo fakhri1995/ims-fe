@@ -381,7 +381,21 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                                             displaydata.model_parts.map((docmp, idxmp) => {
                                                 var default2 = {}
                                                 return (
-                                                    <Panel id={`panel${idxmp}`} key={idxmp} header={<strong>{docmp.name}</strong>}>
+                                                    <Panel id={`panel${idxmp}`} key={idxmp} header={
+                                                        <>
+                                                            <div className="flex items-center w-6/12">
+                                                                <strong className="mr-1">{docmp.name}</strong>
+                                                                {
+                                                                    docmp.id === 0 ?
+                                                                        <Tooltip placement="right" title="Model telah dihapus, segera lakukan penyesuaian!">
+                                                                            <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
+                                                                        </Tooltip>
+                                                                        :
+                                                                        null
+                                                                }
+                                                            </div>
+                                                        </>
+                                                    }>
                                                         <div className="flex flex-col p-3">
                                                             <div className="flex flex-col mb-5">
                                                                 <h1 className="font-semibold mb-1">Asset Type <span className="judulassettype"></span></h1>
