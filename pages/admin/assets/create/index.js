@@ -1,7 +1,7 @@
 import Layout from '../../../../components/layout-dashboard'
 import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
-import { DeleteOutlined } from '@ant-design/icons'
+import { DeleteOutlined, CalendarOutlined } from '@ant-design/icons'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
@@ -17,6 +17,18 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
     const [instanceForm] = Form.useForm();
     const [instanceForm2] = Form.useForm();
     const { idparent } = rt.query
+
+    //helperFunctions
+    const searchAsset = (doc, code) => {
+        for (var i = 0; i < doc.length; i++) {
+            if (doc[i].key === code) {
+                return doc[i]
+            }
+            if (doc[i].children) {
+                searchAsset(doc[i].children, code)
+            }
+        }
+    }
 
     //useState
     const [newdata, setnewdata] = useState({
@@ -39,6 +51,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
     const [selectedfieldidxtrigger, setselectedfieldidxtrigger] = useState(false)
     const [newfieldidxtrigger, setnewfieldidxtrigger] = useState(false)
     const [currentdropdown, setcurrentdropdown] = useState(["", ""])
+    const [currentdropdown2, setcurrentdropdown2] = useState(["", ""])
     const [currentdropdownidx, setcurrentdropdownidx] = useState(-1)
     const [currentdropdowntrigger, setcurrentdropdowntrigger] = useState(false)
     const [currentnondropdownidx, setcurrentnondropdownidx] = useState(-1)
@@ -46,6 +59,9 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
     const [loadingcreate, setloadingcreate] = useState(false)
     const [praloading, setpraloading] = useState(true)
     const [disabledaddfield, setdisabledaddfield] = useState(false)
+    const [disabledsimpan, setdisabledsimpan] = useState(false)
+    const [disabledtambah, setdisabledtambah] = useState(false)
+    const [pointevent, setpointevent] = useState("")
 
     //handle
     const onClickAddField = () => {
@@ -62,7 +78,11 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
             required: false
         })
         setcurrentdropdown(["", ""])
+        setcurrentdropdown2(["", ""])
         setdisabledaddfield(true)
+        setdisabledsimpan(true)
+        setdisabledtambah(true)
+        setpointevent("pointer-events-none")
     }
     const handleCreateAsset = () => {
         var t = {}
@@ -143,18 +163,18 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
             asset_columns: fielddata,
         })
     }, [newfieldidxtrigger])
-    useEffect(() => {
-        if (currentdropdownidx !== -1) {
-            setfielddata(prev => {
-                var temp = prev
-                temp[currentdropdownidx]["default"] = {
-                    default: "-",
-                    opsi: currentdropdown
-                }
-                return temp
-            })
-        }
-    }, [currentdropdowntrigger])
+    // useEffect(() => {
+    //     if (currentdropdownidx !== -1) {
+    //         setfielddata(prev => {
+    //             var temp = prev
+    //             temp[currentdropdownidx]["default"] = {
+    //                 default: "-",
+    //                 opsi: currentdropdown
+    //             }
+    //             return temp
+    //         })
+    //     }
+    // }, [currentdropdowntrigger])
     useEffect(() => {
         if (currentnondropdownidx !== -1) {
             setfielddata(prev => {
@@ -164,6 +184,15 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
             })
         }
     }, [currentnondropdowntrigger])
+    useEffect(() => {
+        if (currentdropdownidx !== -1) {
+            console.log("sini")
+            setcurrentdropdown(prev => {
+                return currentdropdown2.filter((doc10, idx10) => idx10 !== currentdropdownidx)
+            })
+            setcurrentdropdown2(prev => prev.filter((doc11, idx11) => idx11 !== currentdropdownidx))
+        }
+    }, [currentdropdowntrigger])
 
     return (
         <Layout st={st} tok={initProps} sidemenu={sidemenu} dataProfile={dataProfile} pathArr={pathArr}>
@@ -176,7 +205,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                 <Link href={`/admin/assets`}>
                                     <Button type="default" /*onClick={() => { console.log(newdata); console.log(fielddata); console.log(currentdropdown) }}*/>Batal</Button>
                                 </Link>
-                                <Button type="primary" loading={loadingcreate} onClick={instanceForm.submit}>Simpan</Button>
+                                <Button type="primary" loading={loadingcreate} onClick={instanceForm.submit} disabled={disabledsimpan}>Simpan</Button>
                             </div>
                         </div>
                     </Sticky>
@@ -191,27 +220,63 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                     <div className="grid grid-cols-1 md:grid-cols-2 space-x-2">
                                         {
                                             idparent !== "" ?
-                                                <Form.Item name="parent" label="Induk Asset Type">
-                                                    <TreeSelect
-                                                        style={{ marginRight: `1rem` }}
-                                                        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                                        treeData={assetdata}
-                                                        defaultValue={idparent !== "" ? idparent : null}
-                                                        placeholder="Pilih parent"
-                                                        disabled={idparent !== ""}
-                                                        treeDefaultExpandAll
-                                                        onChange={(value) => { setnewdata({ ...newdata, parent: value }) }}
-                                                        allowClear
-                                                    />
-                                                </Form.Item>
+                                                <div className="flex flex-col">
+                                                    <p className="mb-2">
+                                                        <span className="judulField1"></span>
+                                                        Induk Asset Type
+                                                    </p>
+                                                    <TreeSelect style={{ marginRight: `1rem` }} treeData={assetdata} defaultValue={idparent !== "" ? idparent : null} disabled={idparent !== ""}></TreeSelect>
+                                                    <style jsx>
+                                                        {`
+                                                        .judulField1::before{
+                                                            content: '*';
+                                                            color: red;
+                                                            margin-right: 5px;
+                                                        }
+                                                    `}
+                                                    </style>
+                                                </div>
+                                                // <Form.Item name="parent" label="Induk Asset Type"
+                                                //     rules={[
+                                                //         {
+                                                //             required: true,
+                                                //             message: 'Induk Asset Type wajib diisi',
+                                                //         },
+                                                //     ]}>
+                                                //     <TreeSelect
+                                                //         style={{ marginRight: `1rem` }}
+                                                //         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                                //         treeData={assetdata}
+                                                //         defaultValue={idparent !== "" ? idparent : null}
+                                                //         placeholder="Pilih parent"
+                                                //         disabled={idparent !== ""}
+                                                //         treeDefaultExpandAll
+                                                //         onChange={(value) => { setnewdata({ ...newdata, parent: value }) }}
+                                                //         allowClear
+                                                //     />
+                                                // </Form.Item>
                                                 :
-                                                <Form.Item name="parent" label="Induk Asset Type"
-                                                    rules={[
-                                                        {
-                                                            required: true,
-                                                            message: 'Induk Asset Type wajib diisi',
-                                                        },
-                                                    ]}>
+                                                <Form.Item name="parent" label={
+                                                    <div className="flex">
+                                                        <span className="judulField"></span> 
+                                                        <p className="mb-0 ml-1">Induk Asset Type</p>
+                                                        <style jsx>
+                                                                    {`
+                                                                    .judulField::before{
+                                                                        content: '*';
+                                                                        color: red;
+                                                                    }
+                                                                `}
+                                                                </style>
+                                                    </div>
+                                                }
+                                                    // rules={[
+                                                    //     {
+                                                    //         required: true,
+                                                    //         message: 'Induk Asset Type wajib diisi',
+                                                    //     },
+                                                    // ]}
+                                                    >
                                                     <TreeSelect
                                                         style={{ marginRight: `1rem` }}
                                                         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
@@ -253,7 +318,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                 <>
                                     {
                                         addedfield[idx] === true ?
-                                            <div key={idx} className="shadow-md border p-8 mx-3 md:mx-8 mb-5 flex flex-col rounded-md cursor-pointer" onClick={() => {
+                                            <div key={idx} className={`${pointevent} shadow-md border p-8 mx-3 md:mx-8 mb-5 flex flex-col rounded-md cursor-pointer`} onClick={() => {
                                                 const temp = [...addedfield]
                                                 temp[idx] = false
                                                 for (var i = 0; i < temp.length; i++) {
@@ -265,14 +330,81 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                 setcurrentfield(fielddata[idx])
                                                 if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
                                                     setcurrentdropdown(doc.default.opsi)
+                                                    setcurrentdropdown2(doc.default.opsi)
+                                                }
+                                                if (fielddata[idx].data_type !== 'dropdown' || fielddata[idx].data_type !== 'checkbox') {
+                                                    if (fielddata[idx].name !== "" && fielddata[idx].data_type !== "") {
+                                                        setdisabledtambah(false)
+                                                    }
+                                                    else {
+                                                        setdisabledtambah(true)
+                                                    }
+                                                }
+                                                else {
+                                                    if (doc.default.opsi.some(docopsi => docopsi === "")) {
+                                                        setdisabledtambah(true)
+                                                    }
+                                                    else {
+                                                        setdisabledtambah(false)
+                                                    }
                                                 }
                                                 setdisabledaddfield(true)
+                                                setdisabledsimpan(true)
+                                                setpointevent("pointer-events-none")
                                             }}>
                                                 <div className="font-semibold mb-2">
                                                     {doc.name}
-                                                    {doc.required ? <span className="judulField"></span> : null} <span className="text-gray-400">({doc.data_type.charAt(0).toUpperCase() + doc.data_type.slice(1)})</span>
+                                                    {doc.required ? <span className="judulField"></span> : null} <span className="text-gray-400">({doc.data_type.charAt(0).toUpperCase() + doc.data_type.slice(1)}{doc.data_type === 'single' && ` Textbox`}{doc.data_type === 'paragraph' && ` Text`})</span>
                                                 </div>
-                                                <div className='rounded border w-full h-10'></div>
+                                                <div className='rounded border w-full p-3'>
+                                                    {
+                                                        doc.data_type === 'dropdown' || doc.data_type === 'checkbox' || doc.data_type === 'date' || doc.data_type === 'paragraph' ?
+                                                            <>
+                                                                {
+                                                                    doc.data_type === 'dropdown' &&
+                                                                    <div className="flex flex-col z-50">
+                                                                        <Select>
+                                                                            {
+                                                                                doc.default.opsi.map((docopsi, idxopsi) => {
+                                                                                    <Select.Option key={idxopsi}>{idxopsi}</Select.Option>
+                                                                                })
+                                                                            }
+                                                                        </Select>
+                                                                    </div>
+                                                                }
+                                                                {
+                                                                    doc.data_type === 'checkbox' &&
+                                                                    <div className="flex flex-col">
+                                                                        {
+                                                                            doc.default.opsi.map((docopsi, idxopsi) => (
+                                                                                <div className="flex items-center  mb-2">
+                                                                                    <Checkbox style={{ marginRight: `0.5rem` }} disabled /> {docopsi}
+                                                                                </div>
+                                                                            ))
+                                                                        }
+                                                                    </div>
+                                                                }
+                                                                {
+                                                                    doc.data_type === 'date' &&
+                                                                    <div className="flex justify-between">
+                                                                        <p className='mb-0'>{doc.default}</p>
+                                                                        <div>
+                                                                            <CalendarOutlined></CalendarOutlined>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                {
+                                                                    doc.data_type === 'paragraph' &&
+                                                                    <div className="flex h-20"></div>
+
+                                                                }
+                                                            </>
+                                                            :
+                                                            <>
+                                                                {doc.default}
+                                                            </>
+                                                    }
+                                                </div>
                                                 <style jsx>
                                                     {`
                                                         .judulField::before{
@@ -295,17 +427,45 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                             ]}>
                                                             <Input required name="name" onChange={(e) => {
                                                                 setcurrentfield({ ...currentfield, name: e.target.value })
+                                                                if (e.target.value === "") {
+                                                                    setdisabledtambah(true)
+                                                                }
+                                                                else if (e.target.value !== "" && currentfield.data_type !== "" && (currentdropdown.every((doca, idxa) => doca !== ""))) {
+                                                                    setdisabledtambah(false)
+                                                                }
                                                             }} />
 
                                                         </Form.Item>
-                                                        <Form.Item name="data_type" label="Tipe Spesifikasi"
+                                                        <Form.Item name="data_type" label="Tipe Field"
                                                             rules={[
                                                                 {
                                                                     required: true,
                                                                     message: 'Tipe Field wajib diisi',
                                                                 },
                                                             ]}>
-                                                            <Select placeholder="Pilih Tipe Field" onChange={(value) => { setcurrentfield({ ...currentfield, data_type: value }) }} name="data_type">
+                                                            <Select placeholder="Pilih Tipe Field" onChange={(value) => {
+                                                                setcurrentfield({ ...currentfield, data_type: value })
+                                                                if (value === 'dropdown' || value === 'checkbox') {
+                                                                    if((currentdropdown.every((doca, idxa) => doca !== ""))){
+                                                                        setdisabledtambah(false)
+                                                                    }
+                                                                    else{
+                                                                        setdisabledtambah(true)
+                                                                    }
+                                                                }
+                                                                else {
+                                                                    setdisabledtambah(false)
+                                                                }
+                                                                if (value === 'dropdown') {
+                                                                    setcurrentdropdown(["", ""])
+                                                                    setdisabledtambah(true)
+                                                                }
+                                                                if (value === 'checkbox') {
+                                                                    setcurrentdropdown(["", ""])
+                                                                    setdisabledtambah(true)
+                                                                }
+                                                            }}
+                                                                name="data_type">
                                                                 <Select.Option value={"dropdown"}>Dropdown</Select.Option>
                                                                 <Select.Option value={"number"}>Number</Select.Option>
                                                                 <Select.Option value={"paragraph"}>Paragraph Text</Select.Option>
@@ -320,7 +480,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                             <div className="flex flex-col">
                                                                 {
                                                                     currentdropdown.map((doc, idxx) => (
-                                                                        <div className="flex mb-3">
+                                                                        <div key={idxx} className="flex mb-3">
                                                                             <div className="w-11/12 mr-5">
                                                                                 <Input style={{ marginRight: `0.5rem` }} defaultValue={doc} placeholder={`Masukkan opsi ke-${idxx + 1}`} onChange={(e) => {
                                                                                     setcurrentdropdown(prev => {
@@ -328,18 +488,31 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                                         temp[idxx] = e.target.value
                                                                                         return temp
                                                                                     })
+                                                                                    setcurrentdropdown2(prev => {
+                                                                                        const temp = prev
+                                                                                        temp[idxx] = e.target.value
+                                                                                        return temp
+                                                                                    })
+                                                                                    if ((e.target.value !== "") && (currentdropdown.every((doca, idxa) => doca !== "") && currentfield.name !== "")) {
+                                                                                        setdisabledtambah(false)
+                                                                                    }
+                                                                                    else if(e.target.value === "" || currentfield.name === ""){
+                                                                                        setdisabledtambah(true)
+                                                                                    }
                                                                                 }} />
                                                                             </div>
                                                                             <div className="w-1/12 flex justify-around" onClick={() => {
-                                                                                setcurrentdropdown(prev => prev.filter((_, idxxx) => idxxx !== idxx))
+                                                                                setcurrentdropdown([])
+                                                                                setcurrentdropdowntrigger(prev => !prev)
+                                                                                setcurrentdropdownidx(idxx)
                                                                             }}>
-                                                                                <Button type="danger">-</Button>
+                                                                                <Button color="black" style={{ border: `1px solid black` }}>-</Button>
                                                                             </div>
                                                                         </div>
                                                                     ))
                                                                 }
                                                                 <div className="mx-auto my-3">
-                                                                    <Button onClick={() => { setcurrentdropdown([...currentdropdown, ""]) }}>+ Tambah Opsi</Button>
+                                                                    <Button onClick={() => { setcurrentdropdown([...currentdropdown, ""]); setcurrentdropdown2([...currentdropdown2, ""]); setdisabledtambah(true) }}>+ Tambah Opsi</Button>
                                                                 </div>
                                                             </div>
                                                             :
@@ -350,7 +523,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                             <div className="flex flex-col">
                                                                 {
                                                                     currentdropdown.map((doc, idxx) => (
-                                                                        <div className="flex mb-3">
+                                                                        <div key={idxx} className="flex mb-3">
                                                                             <div className="w-11/12 mr-5">
                                                                                 <Input style={{ marginRight: `0.5rem` }} defaultValue={doc} placeholder={`Masukkan opsi ke-${idxx + 1}`} onChange={(e) => {
                                                                                     setcurrentdropdown(prev => {
@@ -358,10 +531,23 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                                         temp[idxx] = e.target.value
                                                                                         return temp
                                                                                     })
+                                                                                    setcurrentdropdown2(prev => {
+                                                                                        const temp = prev
+                                                                                        temp[idxx] = e.target.value
+                                                                                        return temp
+                                                                                    })
+                                                                                    if ((e.target.value !== "") && (currentdropdown.every((doca, idxa) => doca !== "") && currentfield.name !== "")) {
+                                                                                        setdisabledtambah(false)
+                                                                                    }
+                                                                                    else if(e.target.value === "" || currentfield.name === ""){
+                                                                                        setdisabledtambah(true)
+                                                                                    }
                                                                                 }} />
                                                                             </div>
                                                                             <div className="w-1/12 flex justify-around" onClick={() => {
-                                                                                setcurrentdropdown(prev => prev.filter((_, idxxx) => idxxx !== idxx))
+                                                                                setcurrentdropdown([])
+                                                                                setcurrentdropdowntrigger(prev => !prev)
+                                                                                setcurrentdropdownidx(idxx)
                                                                             }}>
                                                                                 <Button type="danger">-</Button>
                                                                             </div>
@@ -369,7 +555,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                     ))
                                                                 }
                                                                 <div className="mx-auto my-3">
-                                                                    <Button onClick={() => { setcurrentdropdown([...currentdropdown, ""]) }}>+ Tambah Opsi</Button>
+                                                                    <Button onClick={() => { setcurrentdropdown([...currentdropdown, ""]); setcurrentdropdown2([...currentdropdown2, ""]); setdisabledtambah(true) }}>+ Tambah Opsi</Button>
                                                                 </div>
                                                             </div>
                                                             :
@@ -389,6 +575,8 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                 return prev
                                                             })
                                                             setdisabledaddfield(false)
+                                                            setdisabledsimpan(false)
+                                                            setpointevent("")
                                                         }
                                                         }>
                                                             <div className="flex items-center mr-4 hover:text-red-500 cursor-pointer">
@@ -400,11 +588,29 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                 setcurrentfield({ ...currentfield, required: e.target.checked })
                                                             }} /> Required
                                                         </div>
-                                                        <Button type="primary" disabled={currentfield.name === "" || currentfield.data_type === ""} onClick={() => {
+                                                        <Button type="primary" disabled={disabledtambah} onClick={() => {
                                                             setnewfieldidxtrigger(prev => !prev)
-                                                            if (currentfield.data_type === 'dropdown' || currentfield.data_type === 'checkbox') {
-                                                                setcurrentdropdownidx(idx)
-                                                                setcurrentdropdowntrigger(prev => !prev)
+                                                            if (currentfield.data_type === 'dropdown') {
+                                                                // setcurrentdropdownidx(idx)
+                                                                // setcurrentdropdowntrigger(prev => !prev)
+                                                                setfielddata(prev => {
+                                                                    var temp = prev
+                                                                    temp[idx]["default"] = {
+                                                                        default: "-",
+                                                                        opsi: currentdropdown
+                                                                    }
+                                                                    return temp
+                                                                })
+                                                            }
+                                                            else if (currentfield.data_type === 'checkbox') {
+                                                                setfielddata(prev => {
+                                                                    var temp = prev
+                                                                    temp[idx]["default"] = {
+                                                                        default: [],
+                                                                        opsi: currentdropdown
+                                                                    }
+                                                                    return temp
+                                                                })
                                                             }
                                                             else {
                                                                 setcurrentnondropdownidx(idx)
@@ -426,6 +632,8 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                 }
                                                             })
                                                             setdisabledaddfield(false)
+                                                            setdisabledsimpan(false)
+                                                            setpointevent("")
                                                         }}>Tambah</Button>
                                                     </div>
                                                 </Form>

@@ -21,6 +21,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
     const [namavalue, setnamavalue] = useState("")
     const [assettypefilteract, setassettypefilteract] = useState(false)
     const [assettypevalue, setassettypevalue] = useState("")
+    const [namaasset, setnamaasset] = useState("")
     const [rowstate, setrowstate] = useState(0)
     const [praloading, setpraloading] = useState(true)
 
@@ -51,21 +52,21 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
             setnamavalue(e.target.value)
         }
     }
-    const onChangeAssetType = (value) => {
-        if (typeof (value) === 'undefined') {
+    const onChangeAssetType = (id) => {
+        if (typeof (id) === 'undefined') {
             setdisplaydata(displaydata2)
             setassettypefilteract(false)
         }
         else {
             setassettypefilteract(true)
-            setassettypevalue(value)
+            setassettypevalue(id)
         }
     }
     const onFinalClick = () => {
         var datatemp = displaydata1
         if (assettypefilteract) {
             datatemp = datatemp.filter(flt => {
-                return flt.asset_id === Number(assettypevalue)
+                return (flt.asset_id === Number(assettypevalue)) || (flt.asset_name.replaceAll(/\s+\/\s+/g, "/").split("/")[0] === namaasset)
             })
         }
         if (namasearchact) {
@@ -137,7 +138,15 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
                                     placeholder="Cari Asset Type"
                                     treeDefaultExpandAll
                                     style={{ width: `100%`, marginRight: `0.5rem` }}
-                                    onChange={onChangeAssetType}
+                                    onChange={(value, label, extra) => {
+                                        if (typeof (value) === 'undefined') {
+                                            onChangeAssetType()
+                                        }
+                                        else {
+                                            onChangeAssetType(extra.allCheckedNodes[0].node.props.id)
+                                            setnamaasset(extra.allCheckedNodes[0].node.props.title)
+                                        }
+                                    }}
                                 />
                             </div>
                         </div>
