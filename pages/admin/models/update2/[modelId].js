@@ -3,9 +3,9 @@ import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
 import { DeleteOutlined } from '@ant-design/icons'
 import Sticky from 'wil-react-sticky'
-import { PlusSquareTwoTone, CloseCircleOutlined, ExclamationCircleOutlined, CalendarOutlined } from '@ant-design/icons'
+import { PlusSquareTwoTone, CloseCircleOutlined, CalendarOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
-import { Form, Input, notification, Button, TreeSelect, Checkbox, Select, Popconfirm, Spin, InputNumber, DatePicker, Collapse, Timeline, Empty, Tooltip } from 'antd'
+import { Form, Input, notification, Button, TreeSelect, Checkbox, Select, Popconfirm, Spin, InputNumber, DatePicker, Collapse, Timeline, Empty } from 'antd'
 import st from '../../../../components/layout-dashboard.module.css'
 import Modal from 'antd/lib/modal/Modal'
 import Link from 'next/link'
@@ -359,6 +359,11 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                     setaddedfield(arr)
                     setloadingspec(false)
                     setdisabledaddfield(false)
+                    notification['info']({
+                        message: 'Anda Telah Mengubah Asset Type',
+                        description: 'Hal ini membuat field dari asset type terkait terbentuk di form ini!',
+                        duration: 0
+                    })
                 }
                 else {
                     temp = []

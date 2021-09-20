@@ -5,7 +5,7 @@ import { DeleteOutlined, CalendarOutlined } from '@ant-design/icons'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Form, Input, notification, Button, TreeSelect, Checkbox, Select, Popconfirm, Spin } from 'antd'
+import { Form, Input, notification, Button, TreeSelect, Checkbox, Select, Popconfirm, Spin, Modal, Radio } from 'antd'
 import st from '../../../../components/layout-dashboard.module.css'
 
 
@@ -55,7 +55,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
     const [currentfield, setcurrentfield] = useState({
         name: "",
         data_type: "",
-        default: "",
+        default: "-",
         required: false
     })
     const [addedfield, setaddedfield] = useState([])
@@ -67,6 +67,14 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
     const [disabledsimpan, setdisabledsimpan] = useState(false)
     const [disabledtambah, setdisabledtambah] = useState(false)
     const [pointevent, setpointevent] = useState("")
+    const [modalubahinduk, setmodalubahinduk] = useState(false)
+    const [loadingmodalchild, setloadingmodalchild] = useState(false)
+    const [selectedinduk, setselectedinduk] = useState(0)
+    const [movedchild, setmovedchild] = useState("")
+    const [childassettype, setchildassettype] = useState([])
+    const [childvalue, setchildvalue] = useState(Number(assettypeid))
+    const [childbound, setchildbound] = useState(0)
+    const [childtrigger, setchildtrigger] = useState(false)
 
     //handle
     const onClickAddField = () => {
@@ -271,6 +279,39 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
             setcurrentdropdown2(prev => prev.filter((doc11, idx11) => idx11 !== cdidx))
         }
     }, [cdtrigger])
+    useEffect(() => {
+        if (childbound !== 0) {
+            setloadingmodalchild(true)
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                }
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    var child = []
+                    const searchChild = (dataa) => {
+                        for (var i = 0; i < dataa.length; i++) {
+                            if (dataa[i]["id"] === Number(childvalue)) {
+                                if (dataa[i]["children"]) {
+                                    child = dataa[i]["children"]
+                                }
+                            }
+                            else {
+                                if (dataa[i]["children"]) {
+                                    searchChild(dataa[i]["children"])
+                                }
+                            }
+                        }
+                    }
+                    searchChild(res2.data)
+                    child.length > 0 ? setmodalubahinduk(true) : null
+                    setchildassettype(child)
+                    setloadingmodalchild(false)
+                })
+        }
+    }, [childtrigger])
 
     return (
         <Layout tok={initProps} sidemenu={sidemenu} pathArr={pathArr} st={st} dataProfile={dataProfile}>
@@ -280,9 +321,9 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                         <div className=" col-span-4 flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-semibold py-2">Form Ubah Asset Type {praloading ? null : `- ${displaydata.name}`}</h1>
                             <div className="flex space-x-2">
-                                {/* <Link href={`/admin/assets/detail/${assettypeid}`}> */}
-                                <Button onClick={() => { console.log(updatedata); console.log(fielddata); console.log(currentfield); console.log(addedfield) }} type="default">Batal</Button>
-                                {/* </Link> */}
+                                <Link href={`/admin/assets/detail/${assettypeid}`}>
+                                    <Button /*onClick={() => { console.log(updatedata); console.log(displaydata); console.log(currentfield); console.log(currentdropdown) }}*/ type="default">Batal</Button>
+                                </Link>
                                 <Button type="primary" loading={loadingupdate} onClick={instanceForm.submit} disabled={disabledsimpan}>Simpan</Button>
                             </div>
                         </div>
@@ -303,8 +344,12 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                 treeData={assetdata}
                                                 defaultValue={idparent !== "" ? idparent : "-"}
                                                 treeDefaultExpandAll
-                                                disabled
                                                 allowClear
+                                                onChange={(value, label, extra) => {
+                                                    setchildbound(prev => prev + 1)
+                                                    setselectedinduk(extra.allCheckedNodes[0].node.props)
+                                                    setchildtrigger(prev => !prev)
+                                                }}
                                             />
                                         </Form.Item>
                                         <Form.Item name="name" label="Nama Asset Type"
@@ -520,8 +565,8 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                                             </div>
                                                                             <div className="w-1/12 flex justify-around" onClick={() => {
                                                                                 setcurrentdropdown([])
-                                                                                setcdtrigger(prev => !prev)
                                                                                 setcdidx(idxx)
+                                                                                setcdtrigger(prev => !prev)
                                                                             }}>
                                                                                 <Button type="danger">-</Button>
                                                                             </div>
@@ -563,8 +608,8 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                                             </div>
                                                                             <div className="w-1/12 flex justify-around" onClick={() => {
                                                                                 setcurrentdropdown([])
-                                                                                setcdtrigger(prev => !prev)
                                                                                 setcdidx(idxx)
+                                                                                setcdtrigger(prev => !prev)
                                                                             }}>
                                                                                 <Button type="danger">-</Button>
                                                                             </div>
@@ -616,7 +661,59 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                         </div>
                                                         <Button type="primary" disabled={disabledtambah} onClick={() => {
                                                             if (displaydata.asset_columns.map(docc => docc.id).includes(doc.id) === false) {
-                                                                setnewfielddata([...newfielddata, currentfield])
+                                                                if (updatedata.add_columns.map(docname => docname.name).indexOf(doc.name) === -1) {
+                                                                    if (currentfield.data_type === 'dropdown') {
+                                                                        const newwdd = {
+                                                                            ...currentfield,
+                                                                            default: JSON.stringify({
+                                                                                default: "-",
+                                                                                opsi: currentdropdown
+                                                                            })
+                                                                        }
+                                                                        setnewfielddata([...newfielddata, newwdd])
+                                                                    }
+                                                                    else if (currentfield.data_type === 'checkbox') {
+                                                                        const newwcb = {
+                                                                            ...currentfield,
+                                                                            default: JSON.stringify({
+                                                                                default: [],
+                                                                                opsi: currentdropdown
+                                                                            })
+                                                                        }
+                                                                        setnewfielddata([...newfielddata, newwcb])
+                                                                    }
+                                                                    else {
+                                                                        setnewfielddata([...newfielddata, currentfield])
+                                                                    }
+                                                                }
+                                                                else {
+                                                                    setnewfielddata(prev => {
+                                                                        var temp = prev
+                                                                        const idxnewfield = updatedata.add_columns.map(docname => docname.name).indexOf(doc.name)
+                                                                        if (currentfield.data_type === 'dropdown') {
+                                                                            temp[idxnewfield] = {
+                                                                                ...currentfield,
+                                                                                default: JSON.stringify({
+                                                                                    default: "-",
+                                                                                    opsi: currentdropdown
+                                                                                })
+                                                                            }
+                                                                        }
+                                                                        else if (currentfield.data_type === 'checkbox') {
+                                                                            temp[idxnewfield] = {
+                                                                                ...currentfield,
+                                                                                default: JSON.stringify({
+                                                                                    default: [],
+                                                                                    opsi: currentdropdown
+                                                                                })
+                                                                            }
+                                                                        }
+                                                                        else {
+                                                                            temp[idxnewfield] = currentfield
+                                                                        }
+                                                                        return temp
+                                                                    })
+                                                                }
                                                             }
                                                             else {
                                                                 const idxupdatefield = updatefielddata.map(docv => docv.id).indexOf(doc.id)
@@ -624,19 +721,19 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                                     if (currentfield.data_type === "dropdown") {
                                                                         setupdatefielddata([...updatefielddata, {
                                                                             ...currentfield,
-                                                                            default: {
+                                                                            default: JSON.stringify({
                                                                                 default: "-",
                                                                                 opsi: currentdropdown
-                                                                            }
+                                                                            })
                                                                         }])
                                                                     }
                                                                     else if (currentfield.data_type === 'checkbox') {
                                                                         setupdatefielddata([...updatefielddata, {
                                                                             ...currentfield,
-                                                                            default: {
+                                                                            default: JSON.stringify({
                                                                                 default: [],
                                                                                 opsi: currentdropdown
-                                                                            }
+                                                                            })
                                                                         }])
                                                                     }
                                                                     else {
@@ -649,19 +746,19 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                                         if (currentfield.data_type === "dropdown") {
                                                                             temp[idxupdatefield] = {
                                                                                 ...currentfield,
-                                                                                default: {
+                                                                                default: JSON.stringify({
                                                                                     default: "-",
                                                                                     opsi: currentdropdown
-                                                                                }
+                                                                                })
                                                                             }
                                                                         }
                                                                         else if (currentfield.data_type === 'checkbox') {
                                                                             temp[idxupdatefield] = {
                                                                                 ...currentfield,
-                                                                                default: {
+                                                                                default: JSON.stringify({
                                                                                     default: [],
                                                                                     opsi: currentdropdown
-                                                                                }
+                                                                                })
                                                                             }
                                                                         }
                                                                         else {
@@ -724,6 +821,60 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                     </div>
                 </div>
             </div>
+            <Modal
+                title={
+                    <strong>Konfirmasi Ubah Induk Asset Type</strong>
+                }
+                visible={modalubahinduk}
+                okText={"Simpan"}
+                cancelText={"Batal"}
+                onCancel={() => { setmodalubahinduk(false) }}
+                width={600}
+                onOk={() => { setchildvalue(selectedinduk.id); setmodalubahinduk(false) }}
+            >
+                <div className="flex flex-col p-5">
+                    <div id="step1" className="rounded border bg-gray-50 p-5 flex flex-col">
+                        <div className="mb-2">
+                            <h5 className=" text-xs font-semibold">Berikut adalah child dari asset type "{displaydata.name}":</h5>
+                            <ul>
+                                {childassettype.length === 0 ?
+                                    <>
+                                        -
+                                    </>
+                                    :
+                                    <>
+                                        {loadingmodalchild ?
+                                            <><Spin size="small" /></>
+                                            :
+                                            childassettype.map((doc, idx) => {
+                                                return (
+                                                    <li className="text-xs">- {doc.title}</li>
+                                                )
+                                            })
+                                        }
+                                    </>
+                                }
+                            </ul>
+                        </div>
+                        <div className="mb-2">
+                            <h5 className=" text-xs font-semibold">Apakah anda ingin membawa seluruh Child dari asset type "{displaydata.name}"?</h5>
+                            <Radio.Group className="step1radio" onChange={(e) => {
+                                if (e.target.value === true) {
+                                    setmovedchild(true)
+                                }
+                                else {
+                                    setmovedchild(null)
+                                }
+                            }}>
+                                <div className="flex flex-col">
+                                    <Radio value={true}>Ya</Radio>
+                                    <Radio value={false}>Tidak, saya ingin seluruh child dari asset type "{displaydata.name}" dihapus</Radio>
+                                </div>
+                            </Radio.Group>
+                        </div>
+                    </div>
+                </div>
+            </Modal>
         </Layout>
     )
 }

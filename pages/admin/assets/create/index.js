@@ -256,13 +256,27 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                 //     />
                                                 // </Form.Item>
                                                 :
-                                                <Form.Item name="parent" label="Induk Asset Type"
-                                                    rules={[
-                                                        {
-                                                            required: true,
-                                                            message: 'Induk Asset Type wajib diisi',
-                                                        },
-                                                    ]}>
+                                                <Form.Item name="parent" label={
+                                                    <div className="flex">
+                                                        <span className="judulField"></span> 
+                                                        <p className="mb-0 ml-1">Induk Asset Type</p>
+                                                        <style jsx>
+                                                                    {`
+                                                                    .judulField::before{
+                                                                        content: '*';
+                                                                        color: red;
+                                                                    }
+                                                                `}
+                                                                </style>
+                                                    </div>
+                                                }
+                                                    // rules={[
+                                                    //     {
+                                                    //         required: true,
+                                                    //         message: 'Induk Asset Type wajib diisi',
+                                                    //     },
+                                                    // ]}
+                                                    >
                                                     <TreeSelect
                                                         style={{ marginRight: `1rem` }}
                                                         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}

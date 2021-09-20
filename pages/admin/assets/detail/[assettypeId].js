@@ -237,7 +237,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                         id: doc.id,
                         name: doc.name,
                         data_type: doc.data_type,
-                        default: doc.default.indexOf("{") !== -1 ? JSON.parse(doc.default) : doc.default,
+                        default: doc.data_type === 'dropdown' || doc.data_type === 'checkbox' ? JSON.parse(doc.default) : doc.default,
                         required: doc.required
                     })
                 })
