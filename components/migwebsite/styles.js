@@ -266,18 +266,19 @@ const Styles = (props) => (
       background: #fff;
     }
     .footer-custom{
-      padding: 2rem 10rem;
+      // padding: 2rem 10rem;
+      padding: 24px 50px;
     }
-    @media (max-width: 1280px){
-      .footer-custom{
-        padding: 2rem 7rem;
-      }
-    }
-    @media (max-width: 1024px){
-      .footer-custom{
-        padding: 2rem 5rem;
-      }
-    }
+    // @media (max-width: 1280px){
+    //   .footer-custom{
+    //     padding: 2rem 7rem;
+    //   }
+    // }
+    // @media (max-width: 1024px){
+    //   .footer-custom{
+    //     padding: 2rem 5rem;
+    //   }
+    // }
     @media (max-width: 768px){
       .footer-custom{
         padding: 2rem 1rem;

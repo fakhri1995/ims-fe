@@ -351,10 +351,9 @@ function LandingPage({ }) {
                             <p>Let’s be better together</p>
                         </div>
                         <div className={'flex-col w-auto'}>
-                            <button className={'text-black flex border-2 text-base md:text-xl border-black px-3 py-2 md:px-4 md:py-3 -mt-2 md:right-20 relative focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>Contact Sales &nbsp;
+                            <button className={'text-black flex border-2 text-base md:text-xl border-black px-3 py-2 md:px-4 md:py-3 -mt-2 md:right-20 relative focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>Contact Us &nbsp;
                                 <ArrowRightOutlined className={'pt-1'}/>
                             </button>
-
                         </div>
                     </div>
                 </section>

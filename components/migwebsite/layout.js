@@ -10,72 +10,68 @@ import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
 
 function layout({ children }) {
     const { Header, Content, Footer } = Layout;
+    // const menu2 = (
+    //     <div className={'relative top-5 w-screen flex'}>
+    //       <div className='w-1/2 flex-row' >
+    //         <Menu className={'py-4 h-36'} style={{backgroundColor:'#F5F9EE', padding:'1rem 4rem'}}>
+    //             <Menu.Item className='relative -left-8 -top-2'>
+    //             <a className={'font-bold text-base menu-underlined'} href="/hardware">
+    //                 Product
+    //             </a>
+    //             </Menu.Item>
+    //             <Menu.Item className='relative -left-4 -top-2'>
+    //             <a className={'font-bold text-base menu-underlined'} href="/hardware">
+    //                 Hardware
+    //             </a>
+    //             </Menu.Item>
+    //             <Menu.Item className='relative -left-4 -top-4'>
+    //             <a className={'font-bold text-base menu-underlined'} href="/people">
+    //                 People
+    //             </a>
+    //             </Menu.Item>
+    //             <Menu.Item className='relative -left-4 -top-6'>
+    //             <a className={'font-bold text-base menu-underlined'} href="/software">
+    //                 Software
+    //             </a>
+    //             </Menu.Item>
+    //         </Menu>
+    //       </div>
+    //       <div className='w-1/2 flex-row' style={{backgroundColor:'#E7EDEF'}}>
+    //         <div className={'py-4 px-6 h-36'}>
+    //             <p className={'font-bold text-base'}>Advantages</p>
+    //             <p>Operate your business , more efficient and more agile</p>
+    //             <Link href="/advantages"><button className={' border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none hover:bg-black hover:text-white'}>
+    //             See How It Works
+    //             </button></Link>
+    //         </div>
+    //       </div>
+    //     </div>
+    //   );
     const menu1 = (
-        <div className={'relative top-5 w-screen flex'}>
-          <div className='w-1/2 flex-row' >
-            <Menu className={'py-4 h-36'} style={{backgroundColor:'#F4EFEE', padding:'1rem 10rem'}}>
-                <Menu.Item className='relative -left-4 -top-2'>
-                <a className={'font-bold text-base menu-underlined'} href="/hardware">
-                    Hardware
-                </a>
-                </Menu.Item>
-                <Menu.Item className='relative -left-4 -top-4'>
-                <a className={'font-bold text-base menu-underlined'} href="/people">
-                    People
-                </a>
-                </Menu.Item>
-                <Menu.Item className='relative -left-4 -top-6'>
-                <a className={'font-bold text-base menu-underlined'} href="/software">
-                    Software
-                </a>
-                </Menu.Item>
-            </Menu>
-          </div>
-          <div className='w-1/2 flex-row' style={{backgroundColor:'#E7EDEF'}}>
-            <div className={'py-4 px-6 h-36'}>
-                <p className={'font-bold text-base'}>Advantages</p>
-                <p>Operate your business , more efficient and more agile</p>
-                <Link href="/advantages"><button className={' border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none hover:bg-black hover:text-white'}>
-                See How It Works
-                </button></Link>
-            </div>
-          </div>
-        </div>
-      );
-    const menu2 = (
         <div className={'relative top-5 flex'}>
             <div className={'w-screen  table'}>
-                {/* <div className='w-1/2 table-cell' >
-                    <div className={''} style={{backgroundColor:'#F4EFEE', padding:'1rem 6rem'}}>
-                        <Link href="/careers"><p className={' font-bold text-base'}>Careers</p></Link>
-                        <p className={''}>asdasdasd</p>
-                        <p className={''}>asdasdasd</p>
-                        <Link href="/careers"><button className={' border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none'}>
-                        EXPLORE CAREERS
-                        </button></Link>
-                    </div>
-                </div> */}
-                <div className='w-1/2 table-cell' style={{backgroundColor:'#F4EFEE', padding:'1rem 6rem'}}>
-                    <div className={''}>
-                        <Link  href="/careers"><p className={'font-bold text-base'}>Careers</p></Link>
-                        <p>Lorem Ipsum</p>
-                        <Link href="/careers"><button className={' border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none hover:bg-black hover:text-white'}>
-                        Explore Careers
-                        </button></Link>
+                <div className='w-3/5 table-cell' style={{backgroundColor:'#F5F9EE', padding:'1rem 4rem'}}>
+                    <div className={'grid gap-2'}>
+                        {/* <Button type="text" style={{fontWeight:'600', background:'#F5F9EE'}}><p className={'relative -left-6 gilroy-medium font-bold text-base'}>Product</p></Button> */}
+                        <Link href="#"><p className={'relative -left-3 gilroy-medium font-bold text-base'}>Product</p></Link>
+                        <Link href="/hardware"><p className={'font-bold text-base menu-underlined w-min'}>Hardware</p></Link>
+                        <Link href="/people"><p className={'font-bold text-base menu-underlined w-min'}>People</p></Link>
+                        <Link href="/software"><p className={'font-bold text-base menu-underlined w-min'}>Software</p></Link>                                             
                     </div>
                 </div>
-                <div className='w-1/2 table-cell' style={{backgroundColor:'#E7EDEF'}}>
+                <div className='w-2/5 table-cell' style={{backgroundColor:'#E7EDEF'}}>
                     <div className={'py-4 px-6 '}>
-                        <p className={'font-bold text-base'}>About</p>
-                        <p>We bringing hardware, software, and people advantages to support your business efficiently</p>
-                        <Link href="/aboutus"><button className={' border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none hover:bg-black hover:text-white'}>
-                        Learn More
+                        <p className={'font-bold text-base'}>Advantages</p>
+                        <p>Operate your business, more efficience, and agile</p>
+                        <Link href="/advantages"><button className={' border border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none hover:bg-black hover:text-white'}>
+                        SEE HOW IT WORKS
                         </button></Link>
                     </div>
                 </div>
             </div>
         </div>
       );
+
     const [navbar, setNavbar] = useState(true) //true for hidden
     const [navbarBottom, setNavbarBottom] = useState(true) //true for hidden
     const [navbarSolution, setNavbarSolution] = useState(true) //true for hidden
@@ -114,8 +110,8 @@ function layout({ children }) {
             <Layout className={'h-auto'}>
                 <Header className={'header'} style={{ background:'white', position: 'fixed', zIndex: 31, width: '100%' }}>
                     <Link href="/">
-                        <div className="logo top-4 md:top-2 absolute w-24 md:w-40" >
-                            <img width={'auto'} height={'auto'} src='https://static.wixstatic.com/media/e817ec_be43f247d0d4454f9d29e2d22f8d4ff7~mv2.png/v1/fill/w_194,h_75,al_c,q_85,usm_0.66_1.00_0.01/mig.webp'/>
+                        <div className="logo top-4 md:top-4 absolute w-24 md:w-32" >
+                            <img width={'auto'} height={'auto'} src='/mig.png'/>
                         </div>
                     </Link>
 
@@ -138,16 +134,13 @@ function layout({ children }) {
                     {/* Browser Menu Navbar Header */}
                     <div theme="light" mode="horizontal" style={{lineHeight:'3.9rem',}} className={'hidden md:block float-right menu pt-2'}>
                         <Dropdown overlay={menu1}>
-                            <a style={{fontWeight:'600'}} className={' ant-dropdown-link text-lg text-black menu-underlined hover:text-black'} onClick={e => e.preventDefault()}>
+                            <a style={{fontWeight:'600'}} className={'mr-4 ant-dropdown-link text-lg text-black menu-underlined hover:text-black'} onClick={e => e.preventDefault()}>
                             Solution
                             </a>
                         </Dropdown>
-                        <Dropdown className={'ml-6 mr-4'} overlay={menu2}>
-                            <a style={{fontWeight:'600'}} className=" ant-dropdown-link text-lg text-black menu-underlined hover:text-black" onClick={e => e.preventDefault()}>
-                            Company 
-                            </a>
-                        </Dropdown>
-                        <Button type="text" className={' mr-4 '} style={{fontWeight:'600', background:'white'}} key="2"><p className={'text-lg'}>Support</p></Button>
+                        <Button href="/aboutus" type="text" className={'  '} style={{fontWeight:'600', background:'white'}} key="1"><p className={'text-lg'}>About Us</p></Button>
+                        <Button href="careers" type="text" className={'  '} style={{fontWeight:'600', background:'white'}} key="2"><p className={'text-lg'}>Join Our Team</p></Button>
+                        <Button type="text" className={' mr-4 '} style={{fontWeight:'600', background:'white'}} key="3"><p className={'text-lg'}>Contact Us</p></Button>
                     </div>
                 </Header>
 
@@ -159,10 +152,10 @@ function layout({ children }) {
                             Solution
                         </Button><hr className={'mx-4'}/>
                         <Button type="text" onClick={()=>{handleCompanyNavbar()}} className={'menu-navbar'} style={{fontWeight:'600', background:'white'}} key="1">
-                            Company
+                            About Us
                         </Button><hr className={'mx-4'}/>
                         <Button type="text" className={'menu-navbar'} style={{fontWeight:'600', background:'white'}} key="2">
-                            Support
+                            Join Our Team
                         </Button><hr className={'mx-4'}/>
                         <div hidden={navbarBottom} className={'bottom-5'} style={{position:'fixed'}}>
                             <p className={' text-xs mx-4 -my-4 text-gray-400'}>CONNECT WITH MITRAMAS INFOSYS GLOBAL</p>
@@ -266,7 +259,7 @@ function layout({ children }) {
                         </div>
                     </div>
                 </Content>
-                <Footer className={'footer-custom'} style={{ textAlign: 'left', backgroundColor:'white' }}>
+                <Footer className={'footer-custom'} style={{ textAlign: 'left', backgroundColor:'#EEF1EE' }}>
                     <div className={' flex flex-col md:flex-row'}>
                         <Link href="/">
                         <div className="pb-4" style={{minWidth:'150px',width:'150px'}} >
@@ -274,21 +267,34 @@ function layout({ children }) {
                         </div>  
                         </Link>
                         <div className={'flex justify-between flex-row px-0'}>
-                            <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
-                                <p className={'font-bold py-1'}>Company</p>
-                                <Link href={{pathname: '/aboutus'}}><p className={'cursor-pointer py-1'}>About Us</p></Link>
-                                <Link href={{pathname: '/careers'}}><p className={'cursor-pointer py-1'}>Careers</p></Link>
-                            </div>
-                            <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
+                            <div className={'flex-col pr-2 my-2 md:my-0 md:px-16'}>
                                 <p className={'font-bold py-1'}>Solutions</p>
                                 <Link href={{pathname: '/advantages'}}><p className={'cursor-pointer py-1'}>Advantages</p></Link>
                                 <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer py-1'}>Hardware</p></Link>
                                 <Link href={{pathname: '/software'}}><p className={'cursor-pointer py-1'}>Software</p></Link>
                                 <Link href={{pathname: '/people'}}><p className={'cursor-pointer py-1'}>People</p></Link>
                             </div>
-                            <div className={'flex-col px-0 my-2 md:my-0 md:px-16'}>
-                                <p className={'font-bold py-1'}>Help</p>
-                                <p className={'cursor-pointer py-1'}>Contact Us</p>
+                            <div className={'flex-col pr-2 my-2 md:my-0 md:px-16'}>
+                                <p className={'font-bold py-1'}>Company</p>
+                                <Link href={{pathname: '/aboutus'}}><p className={'cursor-pointer py-1'}>About Us</p></Link>
+                                <Link href={{pathname: '/careers'}}><p className={'cursor-pointer py-1'}>Join Our Team</p></Link>
+                            </div>
+                            <div className={'flex-col pr-2 my-2 md:my-0 md:px-16'}>
+                                <p className={'font-bold py-1'}>Get in touch</p>
+                                <Link href='#'><p className={'cursor-pointer py-1'}>Contact Us</p></Link>
+                            </div>
+                            <div className={'flex-col my-2 md:my-0 md:px-16'}>
+                                <p className={'font-bold py-1'}>Follow</p>
+                                <Link href='https://instagram.com/mitramasglobal?utm_medium=copy_link'>
+                                    <div className={'flex'}>
+                                        <img className={'w-5 h-5 relative top-1 mr-2'} src="/image/footer/instagram.png"/><p className={'cursor-pointer py-1'}>Instagram</p>
+                                    </div>
+                                </Link>
+                                <Link href='https://www.linkedin.com/company/pt-mitramas-infosys-global'>
+                                    <div className={'flex'}>
+                                        <img className={'w-5 h-5 relative top-1 mr-2'} src="/image/footer/linkedin.png"/><p className={'cursor-pointer py-1'}>LinkedIn</p>
+                                    </div>
+                                </Link>
                             </div>
                         </div>
                     </div>
