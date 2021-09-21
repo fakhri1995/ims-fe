@@ -133,7 +133,7 @@ function layout({ children }) {
                     
                     {/* Browser Menu Navbar Header */}
                     <div theme="light" mode="horizontal" style={{lineHeight:'3.9rem',}} className={'hidden md:block float-right menu pt-2'}>
-                        <Dropdown overlay={menu1}>
+                        <Dropdown overlay={menu1} trigger={['click']}>
                             <a style={{fontWeight:'600'}} className={'mr-4 ant-dropdown-link text-lg text-black menu-underlined hover:text-black'} onClick={e => e.preventDefault()}>
                             Solution
                             </a>
@@ -259,31 +259,31 @@ function layout({ children }) {
                         </div>
                     </div>
                 </Content>
-                <Footer className={'footer-custom'} style={{ textAlign: 'left', backgroundColor:'#EEF1EE' }}>
-                    <div className={' flex flex-col md:flex-row'}>
+                <div className={'container mx-auto'} style={{ textAlign: 'left', backgroundColor:'#EEF1EE' }}>
+                    <div className={'py-10 px-4 flex flex-col lg:flex-row'}>
                         <Link href="/">
                         <div className="pb-4" style={{minWidth:'150px',width:'150px'}} >
                             <img src='/mig.png'/>
                         </div>  
                         </Link>
                         <div className={'flex justify-between flex-row px-0'}>
-                            <div className={'flex-col pr-2 my-2 md:my-0 md:px-16'}>
+                            <div className={'flex-col pr-2 my-2 lg:my-0 lg:px-16'}>
                                 <p className={'font-bold py-1'}>Solutions</p>
                                 <Link href={{pathname: '/advantages'}}><p className={'cursor-pointer py-1'}>Advantages</p></Link>
                                 <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer py-1'}>Hardware</p></Link>
                                 <Link href={{pathname: '/software'}}><p className={'cursor-pointer py-1'}>Software</p></Link>
                                 <Link href={{pathname: '/people'}}><p className={'cursor-pointer py-1'}>People</p></Link>
                             </div>
-                            <div className={'flex-col pr-2 my-2 md:my-0 md:px-16'}>
+                            <div className={'flex-col pr-2 my-2 lg:my-0 lg:px-16'}>
                                 <p className={'font-bold py-1'}>Company</p>
                                 <Link href={{pathname: '/aboutus'}}><p className={'cursor-pointer py-1'}>About Us</p></Link>
                                 <Link href={{pathname: '/careers'}}><p className={'cursor-pointer py-1'}>Join Our Team</p></Link>
                             </div>
-                            <div className={'flex-col pr-2 my-2 md:my-0 md:px-16'}>
+                            <div className={'flex-col pr-2 my-2 lg:my-0 lg:px-16'}>
                                 <p className={'font-bold py-1'}>Get in touch</p>
                                 <Link href='#'><p className={'cursor-pointer py-1'}>Contact Us</p></Link>
                             </div>
-                            <div className={'flex-col my-2 md:my-0 md:px-16'}>
+                            <div className={'flex-col my-2 lg:my-0 lg:px-16'}>
                                 <p className={'font-bold py-1'}>Follow</p>
                                 <Link href='https://instagram.com/mitramasglobal?utm_medium=copy_link'>
                                     <div className={'flex'}>
@@ -298,7 +298,14 @@ function layout({ children }) {
                             </div>
                         </div>
                     </div>
-                </Footer>
+                    <hr className={'border'} style={{background:'#000'}}/>
+                    <div className={'flex flex-row px-4'}>
+                        <p>Copyright © 2021 Mitramas Infosys Global. All rights reserved</p>
+                        <p><Link href={{pathname: '/#'}}><p className={'cursor-pointer ml-4 lg:ml-32'}>Privacy</p></Link></p>
+                        <p><Link href={{pathname: '/#'}}><p className={'cursor-pointer ml-4 lg:ml-32'}>Term</p></Link></p>
+                        <p><Link href={{pathname: '/sitemap'}}><p className={'cursor-pointer ml-4 lg:ml-32'}>Sitemap</p></Link></p>
+                    </div>
+                </div>
             </Layout>
         </>
     )

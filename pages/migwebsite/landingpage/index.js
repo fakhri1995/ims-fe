@@ -28,10 +28,10 @@ function LandingPage({ }) {
     }, [slider1, slider2])
     return (
         <Layout>
-            {/* <section className={'container mx-auto px-10 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}> */}
+            {/* <section className={'container mx-auto'}> */}
                 <section className={'section1landingpage md:relative md:-top-20 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                     {/* Browser View */}
-                    <div className={'hidden md:flex h-screen'}>
+                    <div className={'hidden md:flex h-screen container mx-auto'}>
                         {/* <div className={'mx-auto my-auto flex'}> */}
                             <div className={'flex-col w-1/2 my-auto'}>
                                 <div className={'hidden md:block'}>
@@ -69,7 +69,7 @@ function LandingPage({ }) {
                         </div>
                     </div>
                     {/* ------------ */}
-                    <div className={'block md:flex justify-between md:bottom-36 relative '}>
+                    <div className={'block md:flex justify-between md:bottom-36 relative container mx-auto'}>
                         <Link
                             className={'flex-col hidden md:block'}
                             activeClass="active"
@@ -84,17 +84,22 @@ function LandingPage({ }) {
                             <p className={'pt-3 text-black text-xl text-center'}>Discover now</p>
                         </Link>
                         <div className={'flex pb-3'}>
-                            <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto w-52'}>
-                                <p className={'text-3xl md:text-5xl text-center gilroy-regular '}><CountUp end={45}/>+</p>
+                            <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto md:w-40 lg:w-52'}>
+                                <p className={'text-3xl md:text-5xl lg:text-5xl text-center gilroy-regular '}><CountUp end={45}/>+</p>
                                 <p className={'text-lg md:text-xl text-center gilroy-regular'}>cities</p>
                             </div>
-                            <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto w-52'}>
-                                <p className={'text-3xl md:text-5xl text-center gilroy-regular '}><CountUp end={8500}/>+</p>
+                            <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto md:w-40 lg:w-52'}>
+                                <p className={'text-3xl md:text-5xl lg:text-5xl text-center gilroy-regular '}><CountUp end={9000}/>+</p>
                                 <p className={'hidden md:block text-lg md:text-xl text-center gilroy-regular'}>managed and leased devices</p>
                                 <p className={'block md:hidden text-lg md:text-xl text-center gilroy-regular'}>devices</p>
                             </div>
-                            <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto w-52'}>
-                                <p className={'text-3xl md:text-5xl text-center gilroy-regular '}><CountUp end={15}/>+</p>
+                            <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto md:w-40 lg:w-52'}>
+                                <p className={'text-3xl md:text-5xl lg:text-5xl text-center gilroy-regular '}><CountUp end={100}/>+</p>
+                                <p className={'hidden md:block text-lg md:text-xl text-center gilroy-regular'}>IT projects</p>
+                                <p className={'block md:hidden text-lg md:text-xl text-center gilroy-regular'}>projects</p>
+                            </div>
+                            <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto md:w-40 lg:w-52'}>
+                                <p className={'text-3xl md:text-5xl lg:text-5xl text-center gilroy-regular '}><CountUp end={15}/>+</p>
                                 <p className={'hidden md:block text-lg md:text-xl text-center gilroy-regular'}>years experienced</p>
                                 <p className={'block md:hidden text-lg md:text-xl text-center gilroy-regular'}>years</p>
                             </div>
@@ -114,7 +119,7 @@ function LandingPage({ }) {
                     </div>
                 </section>
                 <section className={'section3landingpage md:relative md:bottom-32 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'} style={{backgroundColor:'white'}}>
-                    <div className={'h-auto flex justify-between md:px-30 pt-8 md:pt-16 pb-0: md:pb-4'} >
+                    <div className={'h-auto flex justify-between md:px-30 pt-8 md:pt-16 pb-0: md:pb-4 container mx-auto'} >
                         <div className={'block md:flex py-0 md:py-8'} style={{width:'100%',margin:'0 auto 0'}}>
                             {/* Phone View */}
                             <div className={'flex-col mx-10 w-auto md:w-120 block md:hidden'} style={{margin:'auto'}}>
@@ -187,7 +192,7 @@ function LandingPage({ }) {
                     </Flickity>
                 </section>
                 <section className={'section2landingpage py-8 hidden md:block px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
-                    <div className={' pb-8'}>
+                    <div className={'container mx-auto pb-8'}>
                         <Slider
                         slidesToShow={3}
                         asNavFor={nav1}
@@ -206,6 +211,7 @@ function LandingPage({ }) {
                         </Slider>
                     </div>
                     <Slider 
+                    className={'container mx-auto'}
                     autoplay={false}
                     autoplaySpeed={3000}
                     pauseOnHover={false}
@@ -282,7 +288,7 @@ function LandingPage({ }) {
                     
                 </section>
                 <section className={'py-8 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
-                    <div className={'block md:flex'}>
+                    <div className={'block md:flex container mx-auto'}>
                         <div className={'py-4 w-full my-auto block md:hidden'}>
                             <p className={'text-3xl font-bold pb-4 gilroy-bold'}>Transforming capital heavy IT product into managed service model</p>
                         </div>
@@ -345,7 +351,7 @@ function LandingPage({ }) {
                         </Flickity>
                     </div>
                 </section> */}
-                <section className={'section5landingpage px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
+                {/* <section className={'section5landingpage px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                     <div className={' md:flex relative justify-between '}style={{top:'40%'}}>
                         <div className={'flex-col text-2xl md:text-4xl text-black -top-4 md:top-0 relative gilroy-bold'} style={{}}>
                             <p>Let’s be better together</p>
@@ -356,7 +362,7 @@ function LandingPage({ }) {
                             </button>
                         </div>
                     </div>
-                </section>
+                </section> */}
             {/* </section> */}
         </Layout>
     )

@@ -265,10 +265,16 @@ const Styles = (props) => (
     .site-layout .site-layout-background {
       background: #fff;
     }
+    
     .footer-custom{
       // padding: 2rem 10rem;
-      padding: 24px 50px;
+      padding: 24px 20px;
     }
+    // @media (min-width: 1280px){
+    //   .footer-custom{
+    //     padding: 2rem 35rem;
+    //   }
+    // }
     // @media (max-width: 1280px){
     //   .footer-custom{
     //     padding: 2rem 7rem;
@@ -279,11 +285,11 @@ const Styles = (props) => (
     //     padding: 2rem 5rem;
     //   }
     // }
-    @media (max-width: 768px){
-      .footer-custom{
-        padding: 2rem 1rem;
-      }
-    }
+    // @media (max-width: 768px){
+    //   .footer-custom{
+    //     padding: 2rem 1rem;
+    //   }
+    // }
     `}</style>
   </div>
 )
