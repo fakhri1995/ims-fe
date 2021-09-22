@@ -7,8 +7,9 @@ module.exports = {
       { source: '/software', destination: '/migwebsite/software' },
       { source: '/people', destination: '/migwebsite/people' },
       { source: '/aboutus', destination: '/migwebsite/aboutus' },
-      { source: '/careers', destination: '/migwebsite/careers' }, 
+      { source: '/joinourteam', destination: '/migwebsite/joinourteam' }, 
       { source: '/sitemap', destination: '/migwebsite/sitemap' }, 
+      { source: '/termofuse', destination: '/migwebsite/termofuse' }, 
     ]
   }
 }

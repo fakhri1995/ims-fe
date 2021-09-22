@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import Layout from '../../../components/migwebsite/layout.js'
 import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
-import {Button, Form, Input} from 'antd'
+import {Form, Input} from 'antd'
 import Flickity from 'react-flickity-component'
 
 function People({ }) {

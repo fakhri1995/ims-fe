@@ -1,8 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
 import Layout from '../../../components/migwebsite/layout.js'
-import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
-import {Button, Form, Input} from 'antd'
 
 function Sitemap({ }) {
    
@@ -19,17 +17,17 @@ function Sitemap({ }) {
                                 <Link href={{pathname: '/'}}><p className={'cursor-pointer font-bold pb-8'}>Home</p></Link>
                             </div>
                             <div>
-                                <p className={'cursor-pointer font-bold'}>Our Destination</p>
-                                <Link href={{pathname: '/advantages'}}><p className={'cursor-pointer font-medium'}>Advantages</p></Link>
-                                <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer font-medium'}>Hardware</p></Link>
-                                <Link href={{pathname: '/software'}}><p className={'cursor-pointer font-medium'}>Software</p></Link>
-                                <Link href={{pathname: '/people'}}><p className={'cursor-pointer font-medium'}>People</p></Link>
+                                <p className={'font-bold pb-1'}>Our Solutions</p>
+                                <Link href={{pathname: '/advantages'}}><p className={'cursor-pointer font-medium pb-1'}>Advantages</p></Link>
+                                <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer font-medium pb-1'}>Hardware</p></Link>
+                                <Link href={{pathname: '/software'}}><p className={'cursor-pointer font-medium pb-1'}>Software</p></Link>
+                                <Link href={{pathname: '/people'}}><p className={'cursor-pointer font-medium pb-1'}>People</p></Link>
                             </div>
                         </div>
                         <div className={'w-1/2'}>
                             <div className={'pb-8'}>
-                                <p className={'cursor-pointer font-bold'}>Company</p>
-                                <Link href={{pathname: '/aboutus'}}><p className={'cursor-pointer font-medium'}>About Us</p></Link>
+                                <p className={'font-bold pb-1'}>Company</p>
+                                <Link href={{pathname: '/aboutus'}}><p className={'cursor-pointer font-medium pb-1'}>About Us</p></Link>
                                 <Link href={{pathname: '/careers'}}><p className={'cursor-pointer font-medium'}>Join Our Team</p></Link>
                             </div>
                             <div className={'pb-8'}>

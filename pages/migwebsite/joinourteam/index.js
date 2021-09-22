@@ -5,7 +5,7 @@ import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
 import { Button, Collapse } from 'antd'
 import Flickity from 'react-flickity-component'
 
-function Careers({dataCareers}) {
+function JoinOurTeam({dataCareers}) {
     console.log(dataCareers)
     const careers = dataCareers.data ?? []
     const flickityOption1={
@@ -270,13 +270,13 @@ function Careers({dataCareers}) {
                                 return (
                                     <>
                                     <Panel header={item.position_name} key={idx}>
-                                    <div>
-                                <div className={'pb-4'}>
-                                    <p className={'font-bold'}>Job Description:</p>
-                                    <p>{item.job_description}</p>
-                                </div>
-                                <a className={'text-base'} href={item.register_link}>Apply Now<ArrowRightOutlined className={'pl-2 relative -top-0.5'}/></a>
-                            </div>
+                                        <div>
+                                            <div className={'pb-4'}>
+                                                <p className={'font-bold'}>Job Description:</p>
+                                                <p>{item.job_description}</p>
+                                            </div>
+                                            <a className={'text-base'} href={item.register_link}>Apply Now<ArrowRightOutlined className={'pl-2 relative -top-0.5'}/></a>
+                                        </div>
                                     </Panel>
                                     </>
                                 )
@@ -375,4 +375,4 @@ export async function getServerSideProps(){
         },
     }
 }
-export default Careers
+export default JoinOurTeam
