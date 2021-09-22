@@ -28,7 +28,6 @@ function TermOfUse({ }) {
                         accordion
                         defaultActiveKey={['0']}
                         expandIconPosition={'right'}
-                        className={'pb-8'}
                         >
                             <Panel className={'font-semibold'} header={'General'}>
                                 <p className={'font-medium pb-8'}>
@@ -56,7 +55,6 @@ function TermOfUse({ }) {
                         accordion
                         defaultActiveKey={['0']}
                         expandIconPosition={'right'}
-                        className={'pb-8'}
                         >
                             <Panel className={'font-semibold'} header={'Rules of conduct'}>
                                 <p className={'font-medium pb-8'}>
@@ -91,7 +89,6 @@ function TermOfUse({ }) {
                         accordion
                         defaultActiveKey={['0']}
                         expandIconPosition={'right'}
-                        className={'pb-8'}
                         >
                             <Panel className={'font-semibold'} header={'Disclaimer'}>
                                 <p className={'font-medium pb-8'}>
@@ -111,7 +108,6 @@ function TermOfUse({ }) {
                         accordion
                         defaultActiveKey={['0']}
                         expandIconPosition={'right'}
-                        className={'pb-8'}
                         >
                             <Panel className={'font-semibold'} header={'Forward-looking and cautionary statements'}>
                                 <p className={'font-medium pb-8'}>
@@ -127,7 +123,6 @@ function TermOfUse({ }) {
                         accordion
                         defaultActiveKey={['0']}
                         expandIconPosition={'right'}
-                        className={'pb-8'}
                         >
                             <Panel className={'font-semibold'} header={'Business relationships'}>
                                 <p className={'font-medium pb-8'}>
@@ -146,7 +141,6 @@ function TermOfUse({ }) {
                         accordion
                         defaultActiveKey={['0']}
                         expandIconPosition={'right'}
-                        className={'pb-8'}
                         >
                             <Panel className={'font-semibold'} header={'Disclaimer of warranty'}>
                                 <p className={'font-medium pb-8'}>
@@ -169,7 +163,6 @@ function TermOfUse({ }) {
                         accordion
                         defaultActiveKey={['0']}
                         expandIconPosition={'right'}
-                        className={'pb-8'}
                         >
                             <Panel className={'font-semibold'} header={'Limitation of liability'}>
                                 <p className={'font-medium pb-8'}>
