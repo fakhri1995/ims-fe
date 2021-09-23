@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import Sticky from 'wil-react-sticky'
 import { Form, Input, notification, Button, Modal, Checkbox, Select, Spin, InputNumber, DatePicker, Collapse, Timeline, Empty, Tooltip } from 'antd'
-import Layout from '../../../components/layout-dashboard'
+import Layout from '../../../components/layout-dashboard2'
 import st from '../../../components/layout-dashboard.module.css'
 import moment from 'moment'
 
@@ -851,6 +851,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                         })
                                                     })
                                                     temploc.inventory_parts = yo
+                                                    temploc.manufacturer_id = res2.data.manufacturer_id
                                                     return temploc
                                                 })
                                                 setloadingspec(false)
@@ -991,7 +992,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                 </Select>
                             </Form.Item>
                             <Form.Item name="manufacturer_id" label="Manufacturer">
-                                <Select placeholder="Pilih Manufacturer" onChange={(value) => {
+                                <Select defaultValue={newdata.manufacturer_id} placeholder="Pilih Manufacturer" onChange={(value) => {
                                     setnewdata({ ...newdata, manufacturer_id: value })
                                 }}>
                                     {

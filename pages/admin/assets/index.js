@@ -1,8 +1,7 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
-import Link from 'next/link'
-import { Button, Tree, Modal, Form, Input, TreeSelect, notification, Spin } from 'antd'
+import { Button, Tree, Modal, Form, Input, TreeSelect, notification, Spin, Empty } from 'antd'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard.module.css'
 
@@ -174,7 +173,6 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
             .then(res2 => {
                 setloadingbtn(false)
                 setloadingbtnparent(false)
-                console.log(datanew)
                 // return
                 if (res2.success) {
                     setNewmodal(false)
@@ -239,9 +237,16 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
         })
             .then(res => res.json())
             .then(res2 => {
-                setmaindata(res2.data)
-                setExpandedKeys([res2.data[0].key])
-                setpraloading(false)
+                if (typeof (res2.data) === 'undefined') {
+                    res2.data = []
+                    setmaindata(res2.data)
+                    setpraloading(false)
+                }
+                else {
+                    setmaindata(res2.data)
+                    setExpandedKeys([res2.data[0].key])
+                    setpraloading(false)
+                }
             })
     }, [])
     return (
@@ -372,44 +377,49 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                 </div>
                                 :
                                 <div className="p-2 md:p-5 w-full md:w-8/12">
-                                    <Tree
-                                        onExpand={onExpand}
-                                        expandedKeys={expandedKeys}
-                                        autoExpandParent={autoExpandParent}
-                                        treeData={loop(maindata)}
-                                        filterTreeNode={filterTreeNode}
-                                        titleRender={(nodeData) => {
-                                            return (
-                                                <>
-                                                    <div
-                                                    // onMouseOver={() => {
-                                                    //     var d = document.getElementById(`node${nodeData.key}`)
-                                                    //     d.classList.add("flex")
-                                                    //     d.classList.remove("hidden")
-                                                    // }}
-                                                    // onMouseLeave={() => {
-                                                    //     var e = document.getElementById(`node${nodeData.key}`)
-                                                    //     e.classList.add("hidden")
-                                                    //     e.classList.remove("flex")
-                                                    // }}
-                                                    >
-                                                        <div>
-                                                            {nodeData.title}
-                                                        </div>
-                                                        {/* <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
+                                    {
+                                        maindata.length === 0 ?
+                                            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
+                                            :
+                                            <Tree
+                                                onExpand={onExpand}
+                                                expandedKeys={expandedKeys}
+                                                autoExpandParent={autoExpandParent}
+                                                treeData={loop(maindata)}
+                                                filterTreeNode={filterTreeNode}
+                                                titleRender={(nodeData) => {
+                                                    return (
+                                                        <>
+                                                            <div
+                                                            // onMouseOver={() => {
+                                                            //     var d = document.getElementById(`node${nodeData.key}`)
+                                                            //     d.classList.add("flex")
+                                                            //     d.classList.remove("hidden")
+                                                            // }}
+                                                            // onMouseLeave={() => {
+                                                            //     var e = document.getElementById(`node${nodeData.key}`)
+                                                            //     e.classList.add("hidden")
+                                                            //     e.classList.remove("flex")
+                                                            // }}
+                                                            >
+                                                                <div>
+                                                                    {nodeData.title}
+                                                                </div>
+                                                                {/* <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
                                                     <a className="mx-2 pb-1" alt="add" onClick={() => { setNewmodalparent(true); fungsiSetParent(nodeData.value); setParenttitle(nodeData.title) }}><PlusOutlined /></a>
                                                     <Link href={`/admin/assets/${nodeData.title}?parent=${prt}&id=${nodeData.id}`}>
                                                         <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                                     </Link>
                                                     <button onClick={() => { setmodaldelete(true); setDatadelete({ ...datadelete, id: nodeData.id }) }}><a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a></button>
                                                 </div> */}
-                                                    </div>
-                                                </>
-                                            )
-                                        }
-                                        }
-                                        blockNode={true}
-                                    />
+                                                            </div>
+                                                        </>
+                                                    )
+                                                }
+                                                }
+                                                blockNode={true}
+                                            />
+                                    }
                                 </div>
                         }
                     </div>
