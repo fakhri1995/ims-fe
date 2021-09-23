@@ -15,7 +15,6 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     //2.useState
     const [displaydata, setdisplaydata] = useState([])
-    const [itemdata, setitemdata] = useState([])
     const [invrelations, setinvrelations] = useState({
         models: [],
         assets: [],
@@ -245,11 +244,11 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     <div className="font-semibold text-base w-auto">Inventories</div>
                 </div>
                 <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
-                    {/* <Link href={'/admin/item/create'}> */}
+                    <Link href={'/items/create'}>
                         <Button size="large" type="primary">
                             Tambah
                         </Button>
-                    {/* </Link> */}
+                    </Link>
                 </div>
             </div>
             <div className="h-auto w-full grid grid-cols-1 md:grid-cols-5 mb-5 bg-white rounded-md">
