@@ -128,15 +128,15 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                         <div className="justify-center flex">
                             {
                                 record.status_usage === 1 &&
-                                <div className="rounded-md w-6/12 h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">In Used</div>
+                                <div className="rounded-md w-7/12 h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">In Used</div>
                             }
                             {
                                 record.status_usage === 2 &&
-                                <div className="rounded-md w-6/12 h-auto px-1 text-center py-1 bg-green-100 border border-green-200 text-green-600">In Stock</div>
+                                <div className="rounded-md w-7/12 h-auto px-1 text-center py-1 bg-green-100 border border-green-200 text-green-600">In Stock</div>
                             }
                             {
                                 record.status_usage === 3 &&
-                                <div className="rounded-md w-6/12 h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">Replacement</div>
+                                <div className="rounded-md w-7/12 h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">Replacement</div>
                             }
                         </div>
                 }
