@@ -133,14 +133,14 @@ function layout({ children }) {
                     
                     {/* Browser Menu Navbar Header */}
                     <div theme="light" mode="horizontal" style={{lineHeight:'3.9rem',}} className={'hidden md:block float-right menu pt-2'}>
-                        <Dropdown overlay={menu1} trigger={['click']}>
-                            <a style={{fontWeight:'600'}} className={'mr-4 ant-dropdown-link text-lg text-black menu-underlined hover:text-black'} onClick={e => e.preventDefault()}>
-                            Solution
-                            </a>
+                        <Dropdown overlay={menu1}>
+                            <Button type={'text'} style={{fontWeight:'600', background:'white'}} className={'ant-dropdown-link text-lg text-black hover:text-black'} onClick={e => e.preventDefault()}>
+                            <p className={'text-lg menu-underlined'}>Solution</p>
+                            </Button>
                         </Dropdown>
-                        <Button href="/aboutus" type="text" className={'  '} style={{fontWeight:'600', background:'white'}} key="1"><p className={'text-lg'}>About Us</p></Button>
-                        <Button href="joinourteam" type="text" className={'  '} style={{fontWeight:'600', background:'white'}} key="2"><p className={'text-lg'}>Join Our Team</p></Button>
-                        <Button type="text" className={' mr-4 '} style={{fontWeight:'600', background:'white'}} key="3"><p className={'text-lg'}>Contact Us</p></Button>
+                        <Button href="/aboutus" type="text" className={''} style={{fontWeight:'600', background:'white'}} key="1"><p className={'text-lg menu-underlined'}>About Us</p></Button>
+                        <Button href="/joinourteam" type="text" className={''} style={{fontWeight:'600', background:'white'}} key="2"><p className={'text-lg menu-underlined'}>Join Our Team</p></Button>
+                        <Button href="/contactus" type="text" className={' mr-4 '} style={{fontWeight:'600', background:'white'}} key="3"><p className={'text-lg menu-underlined'}>Contact Us</p></Button>
                     </div>
                 </Header>
 
@@ -261,7 +261,8 @@ function layout({ children }) {
                 </Content>
                 <div className={'px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'} style={{ textAlign: 'left', backgroundColor:'#EEF1EE' }}>
                     <div className={'container mx-auto'}>
-                        <div className={'py-8 flex flex-col lg:flex-row'}>
+                        {/* <div className={'py-8'}> */}
+                        <div className={'py-8 flex flex-col lg:flex-row lg:justify-between'}>
                             <Link href="/">
                             <div className="pb-4" style={{minWidth:'150px',width:'150px'}} >
                                 <img src='/mig.png'/>
@@ -270,30 +271,30 @@ function layout({ children }) {
                             <div className={'flex flex-row px-0 justify-between'}>
                                 <div className={'flex-col pr-2 my-2 lg:my-0 lg:px-16'}>
                                     <p className={'font-bold py-1 text-lg'}>Solutions</p>
-                                    <Link href={{pathname: '/advantages'}}><p className={'cursor-pointer py-1'}>Advantages</p></Link>
-                                    <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer py-1'}>Hardware</p></Link>
-                                    <Link href={{pathname: '/software'}}><p className={'cursor-pointer py-1'}>Software</p></Link>
-                                    <Link href={{pathname: '/people'}}><p className={'cursor-pointer py-1'}>People</p></Link>
+                                    <Link href={{pathname: '/advantages'}}><p className={'cursor-pointer menu-underlined py-1'}>Advantages</p></Link>
+                                    <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer menu-underlined py-1'}>Hardware</p></Link>
+                                    <Link href={{pathname: '/software'}}><p className={'cursor-pointer menu-underlined py-1'}>Software</p></Link>
+                                    <Link href={{pathname: '/people'}}><p className={'cursor-pointer menu-underlined py-1'}>People</p></Link>
                                 </div>
                                 <div className={'flex-col pr-2 my-2 lg:my-0 lg:px-16'}>
                                     <p className={'font-bold py-1 text-lg'}>Company</p>
-                                    <Link href={{pathname: '/aboutus'}}><p className={'cursor-pointer py-1'}>About Us</p></Link>
-                                    <Link href={{pathname: '/joinourteam'}}><p className={'cursor-pointer py-1'}>Join Our Team</p></Link>
+                                    <Link href={{pathname: '/aboutus'}}><p className={'cursor-pointer menu-underlined py-1'}>About Us</p></Link>
+                                    <Link href={{pathname: '/joinourteam'}}><p className={'cursor-pointer menu-underlined py-1'}>Join Our Team</p></Link>
                                 </div>
                                 <div className={'flex-col pr-2 my-2 lg:my-0 lg:px-16'}>
                                     <p className={'font-bold py-1 text-lg'}>Get in touch</p>
-                                    <Link href='#'><p className={'cursor-pointer py-1'}>Contact Us</p></Link>
+                                    <Link href='#'><p className={'cursor-pointer menu-underlined py-1'}>Contact Us</p></Link>
                                 </div>
                                 <div className={'flex-col my-2 lg:my-0 lg:px-16'}>
                                     <p className={'font-bold py-1 text-lg'}>Follow</p>
                                     <Link href='https://instagram.com/mitramasglobal?utm_medium=copy_link'>
                                         <div className={'flex'}>
-                                            <img className={'w-5 h-5 relative top-1 mr-2'} src="/image/footer/instagram.png"/><p className={'cursor-pointer py-1'}>Instagram</p>
+                                            <img className={'w-5 h-5 relative top-1 mr-2'} src="/image/footer/instagram.png"/><p className={'cursor-pointer menu-underlined py-1'}>Instagram</p>
                                         </div>
                                     </Link>
                                     <Link href='https://www.linkedin.com/company/pt-mitramas-infosys-global'>
                                         <div className={'flex'}>
-                                            <img className={'w-5 h-5 relative top-1 mr-2'} src="/image/footer/linkedin.png"/><p className={'cursor-pointer py-1'}>LinkedIn</p>
+                                            <img className={'w-5 h-5 relative top-1 mr-2'} src="/image/footer/linkedin.png"/><p className={'cursor-pointer menu-underlined py-1'}>LinkedIn</p>
                                         </div>
                                     </Link>
                                 </div>
@@ -303,9 +304,9 @@ function layout({ children }) {
                         <div className={'flex flex-row pb-4 justify-between pt-2'}>
                             <p className={' text-xs '}>Copyright © 2021 Mitramas Infosys Global. All rights reserved</p>
                             <div className={'flex flex-row '}>
-                                <Link href={{pathname: '/#'}}><p className={' text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32'}>Privacy</p></Link>
-                                <Link href={{pathname: '/termofuse'}}><p className={' text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32'}>Term</p></Link>
-                                <Link href={{pathname: '/sitemap'}}><p className={' text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32'}>Sitemap</p></Link>
+                                <Link href={{pathname: '/privacy'}}><p className={'menu-underlined text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32 font-semibold'}>Privacy</p></Link>
+                                <Link href={{pathname: '/term'}}><p className={'menu-underlined text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32 font-semibold'}>Term</p></Link>
+                                <Link href={{pathname: '/sitemap'}}><p className={'menu-underlined text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32 font-semibold'}>Sitemap</p></Link>
                             </div>
                         </div>
                     </div>
