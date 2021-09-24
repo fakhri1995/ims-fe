@@ -9,7 +9,9 @@ module.exports = {
       { source: '/aboutus', destination: '/migwebsite/aboutus' },
       { source: '/joinourteam', destination: '/migwebsite/joinourteam' }, 
       { source: '/sitemap', destination: '/migwebsite/sitemap' }, 
-      { source: '/termofuse', destination: '/migwebsite/termofuse' }, 
+      { source: '/term', destination: '/migwebsite/termofuse' }, 
+      { source: '/privacy', destination: '/migwebsite/privacy' }, 
+      { source: '/contactus', destination: '/migwebsite/contactus' }, 
     ]
   }
 }
