@@ -10,6 +10,7 @@ import st from '../../../components/layout-dashboard.module.css'
 import Sticky from 'wil-react-sticky'
 
 const Overview = ({ itemid, initProps, maindata, manuf, praloading }) => {
+    const rt = useRouter()
     //useState
     const [invrelations2, setinvrelations2] = useState({})
 
@@ -23,7 +24,7 @@ const Overview = ({ itemid, initProps, maindata, manuf, praloading }) => {
                     praloading ?
                         null
                         :
-                        <Button type="primary" size="large" /*onClick={() => { rt.push(`/items/update/${itemid}`) }}*/>Ubah</Button>
+                        <Button type="primary" size="large" onClick={() => { rt.push(`/items/update/${itemid}`) }}>Ubah</Button>
                 }
             </div>
             {
@@ -181,6 +182,31 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => 
                         else if(doclogs.properties.attributes.status_usage){
                             descnew = descnew + `Pengubahan status pemakaian dari ${descusageOld} ke ${descusageBaru}`
                         }
+                        else if(doclogs.properties.attributes.inventory_name){
+                            descnew = descnew + `Pengubahan Nama Item dari "${doclogs.properties.old.inventory_name}" ke "${doclogs.properties.attributes.inventory_name}"`
+                        }
+                        else if(doclogs.properties.attributes.serial_number){
+                            descnew = descnew + `Pengubahan Serial Number Item dari "${doclogs.properties.old.serial_number}" ke "${doclogs.properties.attributes.serial_number}"`
+                        }
+                        else if(doclogs.properties.attributes.location){
+                            descnew = descnew + `Pengubahan Location Item dari "${invrelations.companies.filter(doc => doc.id === doclogs.properties.old.location)[0].name}" ke "${invrelations.companies.filter(doc => doc.id === doclogs.properties.attributes.location)[0].name}"`
+                        }
+                        else if(doclogs.properties.attributes.vendor_id){
+                            descnew = descnew + `Pengubahan Vendor Item dari "${invrelations.vendors.filter(doc => doc.id === doclogs.properties.old.vendor_id)[0].name}" ke "${invrelations.vendors.filter(doc => doc.id === doclogs.properties.attributes.vendor_id)[0].name}"`
+                        }
+                        else if(doclogs.properties.attributes.manufacturer_id){
+                            descnew = descnew + `Pengubahan Manufacturer Item dari "${invrelations.manufacturers.filter(doc => doc.id === doclogs.properties.old.manufacturer_id)[0].name}" ke "${invrelations.manufacturers.filter(doc => doc.id === doclogs.properties.attributes.manufacturer_id)[0].name}"`
+                        }
+                        else if(doclogs.properties.attributes.deskripsi){
+                            descnew = descnew + `Pengubahan Deskripsi Item`
+                        }
+                        // else if(doclogs.properties.attributes.model_inventory_column_id){
+                        //     if(doclogs.properties.attributes.value.includes("{\"")){
+                        //         const parsevalueNew = JSON.parse(doclogs.properties.attributes.value)
+                        //         const parsevalueOld = JSON.parse(doclogs.properties.old.value)
+                        //     }
+                        //     descnew = descnew + `Pengubahan ${doclogs.properties.attributes.name} Item dari "${doclogs.properties.old.value}" ke "${doclogs.properties.attributes.value}"`
+                        // }
                     }
                     return {
                         ...doclogs,
@@ -286,6 +312,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
     })
     const [manuf, setmanuf] = useState("")
     const [praloading, setpraloading] = useState(true)
+    const [praloading2, setpraloading2] = useState(true)
     //delete
     const [modaldelete, setmodaldelete] = useState(false)
     const [loadingdelete, setloadingdelete] = useState(false)
@@ -494,6 +521,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                     .then(res2 => {
                         setinvrelations(res2.data)
                         setmanuf(res2.data.manufacturers.filter(docfil => docfil.id === res3.manufacturer_id)[0].name)
+                        setpraloading2(false)
                     })
             })
     }, [])
@@ -650,8 +678,8 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                             <TabPane tab="Association" key={`association`}>
                                 <Association itemid={itemid} initProps={initProps} />
                             </TabPane>
-                            <TabPane tab="Activity" key={`activity`}>
-                                <Acitivty itemid={itemid} initProps={initProps} />
+                            <TabPane disabled={praloading2} tab="Activity" key={`activity`}>
+                                <Acitivty itemid={itemid} initProps={initProps} invrelations={invrelations}/>
                             </TabPane>
                         </Tabs>
                     </div>
@@ -669,8 +697,8 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                             <TabPane tab="Association" key={`association`}>
                                 <Association itemid={itemid} initProps={initProps} />
                             </TabPane>
-                            <TabPane tab="Activity" key={`activity`}>
-                                <Acitivty itemid={itemid} initProps={initProps} />
+                            <TabPane disabled={praloading2} tab="Activity" key={`activity`}>
+                                <Acitivty itemid={itemid} initProps={initProps} invrelations={invrelations}/>
                             </TabPane>
                         </Tabs>
                     </div>

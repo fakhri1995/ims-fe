@@ -4,7 +4,7 @@ import httpcookie from 'cookie'
 import Link from 'next/link'
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import Sticky from 'wil-react-sticky'
-import { Form, Input, notification, Button, Modal, Checkbox, Select, Spin, InputNumber, DatePicker, Collapse, Timeline, Empty, Tooltip } from 'antd'
+import { Form, Input, notification, Button, Modal, Checkbox, Select, Spin, InputNumber, DatePicker, Collapse, Timeline, Empty, Tooltip, TreeSelect } from 'antd'
 import Layout from '../../../components/layout-dashboard2'
 import st from '../../../components/layout-dashboard.module.css'
 import moment from 'moment'
@@ -57,7 +57,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
         status_condition: [],
         status_usage: [],
         vendors: [],
-        companies: []
+        companies: [],
+        tree_companies: {}
     })
     const [modeldata, setmodeldata] = useState([])
     const [columnsmodeldata, setcolumnsmodeldata] = useState([])
@@ -741,11 +742,10 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                         <div className=" col-span-4 flex justify-between pt-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-semibold py-2">Form Tambah Item</h1>
                             <div className="flex space-x-2">
-                                {/* <Link href={`/items`}> */}
-                                <Button type="default" onClick={() => { console.log(newdata); console.log(columnsmodeldata); console.log(partmodeldata); console.log(emptyfieldpart) }}>Batal</Button>
-                                {/* </Link> */}
+                                <Link href={`/items`}>
+                                    <Button type="default" /*onClick={() => { console.log(newdata); console.log(columnsmodeldata); console.log(partmodeldata); console.log(emptyfieldpart) }}*/>Batal</Button>
+                                </Link>
                                 <Button type="primary" onClick={() => {
-                                    // instanceForm.validateFields().then(values => console.log(values))
                                     instanceForm.submit()
                                 }}>Simpan</Button>
                             </div>
@@ -996,7 +996,10 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                     </Form.Item>
                             }
                             <Form.Item name="location" label="Location">
-                                <Select disabled={disabledfielditem} placeholder="Pilih Location" onChange={(value) => {
+                                <TreeSelect disabled={disabledfielditem} treeDefaultExpandedKeys={[invrelations.tree_companies.key]} placeholder="Pilih Location" treeData={[invrelations.tree_companies]} onChange={(value) => {
+                                    setnewdata({ ...newdata, location: value })
+                                }}></TreeSelect>
+                                {/* <Select disabled={disabledfielditem} placeholder="Pilih Location" onChange={(value) => {
                                     setnewdata({ ...newdata, location: value })
                                 }}>
                                     {
@@ -1006,7 +1009,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                             )
                                         })
                                     }
-                                </Select>
+                                </Select> */}
                             </Form.Item>
                             <Form.Item name="vendor_id" label="Vendor">
                                 <Select disabled={disabledfielditem} placeholder="Pilih vendor" onChange={(value) => {
