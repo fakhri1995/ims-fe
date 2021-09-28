@@ -1,13 +1,11 @@
-import React from 'react'
+import {React, useState} from 'react'
 import Link from 'next/link'
 import Layout from '../../../components/migwebsite/layout.js'
 import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
-import {Form, Input} from 'antd'
+import {Form, Input, Button, Checkbox, notification} from 'antd'
 import Flickity from 'react-flickity-component'
 
 function People({ }) {
-    const [softwareForm] = Form.useForm()
-    const { TextArea } = Input;
     const flickityOptions = {
         initialIndex: 0,
         // wrapAround: 'true',
@@ -16,6 +14,45 @@ function People({ }) {
         pageDots: false,
         prevNextButtons: false,
     }
+    const [form] = Form.useForm();
+    const [checkbox, setSubmit] = useState(true)
+    const onChangeCheckBox = () => {
+        // console.log(checkbox)
+        setSubmit(!checkbox)
+    }
+    const handleSubmit = () => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addMessage`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataPeople)
+        })
+        .then(res => res.json())
+        .then(res2 => {
+            if (res2.success) {
+                notification['success']({
+                    message: res2.message,
+                    duration: 3
+                })
+            form.resetFields()
+            }
+            else if (!res2.success) {
+                notification['error']({
+                    message: res2.message.errorInfo.status_detail,
+                    duration: 3
+                })
+            }
+        })
+    }
+    const [dataPeople, setDataPeople] = useState({
+        company_name: null,
+        company_email: null,
+        name: null,
+        phone_number: null,
+        interested_in: 'people',
+        message: null,
+    })
     return (
         <Layout>
             <section className={'section1advantages hidden md:block fixed w-full z-50 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'} style={{background:'#F4F4F4'}}>
@@ -173,6 +210,48 @@ function People({ }) {
                             <ArrowRightOutlined className={'pt-1'}/>
                         </button>
                     </div>
+                </div>
+            </section>
+            <section className={'py-8 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
+                <div className={'container mx-auto'}>
+                    <p className={'text-3xl font-bold pb-8 pt-10'}>Build your team now</p>
+                    <p className={'text-lg pb-4'}>Fill in your contact information, and our sales team will contact you shortly.</p>
+                    <Form
+                        layout={'vertical'}
+                        onFinish={handleSubmit}
+                        form={form}
+                    >
+                        <div className={'flex'}>
+                            <div className={'w-1/2 mr-2'}>
+                                <Form.Item name={'Company Name'} className={'font-semibold'} label="Company Name" rules={[{required: true,},]}>
+                                    <Input name={'Company Name'} onChange={(e)=>{setDataPeople({...dataPeople, company_name: e.target.value})}} placeholder="" />
+                                </Form.Item>
+                                <Form.Item name={'Email'} className={'font-semibold'} label="Email" rules={[{required: true,type:'email'},]}>
+                                    <Input name={'Email'} onChange={(e)=>{setDataPeople({...dataPeople, company_email: e.target.value})}} placeholder="" />
+                                </Form.Item>
+                            </div>
+                            <div className={'w-1/2 ml-2'}>
+                                <Form.Item name={'Contact Name'} className={'font-semibold'} label="Contact Name" rules={[{required: true,},]}>
+                                    <Input name={'Contact Name'} onChange={(e)=>{setDataPeople({...dataPeople, name: e.target.value})}}  placeholder="" />
+                                </Form.Item>
+                                <Form.Item name={'Phone Number'} className={'font-semibold'} label="Phone Number" rules={[{required: true,pattern: new RegExp('^[0-9]*$'), message:"Please input valid phone number",},]}>
+                                    <Input name={'Phone Number'} onChange={(e)=>{setDataPeople({...dataPeople, phone_number: parseInt(e.target.value)})}} placeholder="" />
+                                </Form.Item>
+                            </div>
+                        </div>
+                        <Form.Item name="Message" className={'font-semibold'} label="Message" rules={[{required: true,},]}>
+                            <Input.TextArea name="Message" onChange={(e)=>{setDataPeople({...dataPeople, message: e.target.value})}} />
+                        </Form.Item >
+                        <Form.Item name="checkbox">
+                            <Checkbox name="checkbox" onChange={()=>{onChangeCheckBox()}}>By proceeding, I agree that MIG's representative may contact me by email, phone, or SMS (including by automatic telephone dialing system) at the email address or number I provide, including for marketing purposes.*</Checkbox>
+                        </Form.Item >
+                        <Form.Item>
+                        <div className={'w-full flex justify-center pt-8 pb-8'}>
+                            <Button hidden={!checkbox} disabled={checkbox} type="primary" className={''} style={{backgroundColor:'white', color:'grey', fontWeight:'600'}} key="3"><p>Submit</p></Button>
+                            <Button hidden={checkbox} type="primary" htmlType="submit" className={'button-hover px-4 border-green-800 text-white'} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>Submit</p></Button>
+                        </div>
+                        </Form.Item>
+                    </Form>
                 </div>
             </section>
             {/* <section className={'section5landingpage'}>
