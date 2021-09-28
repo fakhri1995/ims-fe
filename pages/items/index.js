@@ -2,8 +2,8 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
 import Link from 'next/link'
-import { SearchOutlined } from '@ant-design/icons'
-import { Button, TreeSelect, Table, Input, Select } from 'antd'
+import { SearchOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
+import { Button, TreeSelect, Table, Input, Select, Tooltip } from 'antd'
 import Layout from '../../components/layout-dashboard'
 import st from '../../components/layout-dashboard.module.css'
 
@@ -44,15 +44,47 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     const columnsTable = [
         {
             title: 'Nama Item',
-            dataIndex: 'model_name',
+            dataIndex: 'inventory_name',
         },
         {
             title: 'Asset Type',
             dataIndex: 'asset_name',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <div className="flex items-center">
+                            <p className="mb-0 mr-1">{record.asset_name}</p>
+                            {
+                                record.asset_deleted_at !== null ?
+                                    <Tooltip placement="right" title="Asset Type telah dihapus, segera lakukan pengubahan Asset Type!">
+                                        <ExclamationCircleOutlined style={{ color: `red` }}></ExclamationCircleOutlined>
+                                    </Tooltip>
+                                    :
+                                    null
+                            }
+                        </div>
+                }
+            }
         },
         {
             title: 'Model',
             dataIndex: 'model_name',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <div className="flex items-center">
+                            <p className="mb-0 mr-1">{record.model_name}</p>
+                            {
+                                record.model_deleted_at !== null ?
+                                    <Tooltip placement="right" title="Model telah dihapus, segera lakukan pengubahan Model!">
+                                        <ExclamationCircleOutlined style={{ color: `red` }}></ExclamationCircleOutlined>
+                                    </Tooltip>
+                                    :
+                                    null
+                            }
+                        </div>
+                }
+            }
         },
         {
             title: 'Kondisi',
@@ -96,15 +128,15 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                         <div className="justify-center flex">
                             {
                                 record.status_usage === 1 &&
-                                <div className="rounded-md w-6/12 h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">In Used</div>
+                                <div className="rounded-md w-7/12 h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">In Used</div>
                             }
                             {
                                 record.status_usage === 2 &&
-                                <div className="rounded-md w-6/12 h-auto px-1 text-center py-1 bg-green-100 border border-green-200 text-green-600">In Stock</div>
+                                <div className="rounded-md w-7/12 h-auto px-1 text-center py-1 bg-green-100 border border-green-200 text-green-600">In Stock</div>
                             }
                             {
                                 record.status_usage === 3 &&
-                                <div className="rounded-md w-6/12 h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">Replacement</div>
+                                <div className="rounded-md w-7/12 h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">Replacement</div>
                             }
                         </div>
                 }
@@ -175,13 +207,13 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 return (flt.asset_name.toLowerCase().includes(assettypevalue.toLowerCase())) || (flt.asset_name.replaceAll(/\s+\/\s+/g, "/").split("/")[0] === namaasset)
             })
         }
-        if(modelfilteract){
+        if (modelfilteract) {
             datatemp = datatemp.filter(flt => flt.modelid === modelvalue)
         }
-        if(kondisifilteract){
+        if (kondisifilteract) {
             datatemp = datatemp.filter(flt => flt.status_condition === kondisivalue)
         }
-        if(pemakaianfilteract){
+        if (pemakaianfilteract) {
             datatemp = datatemp.filter(flt => flt.status_usage === pemakaianvalue)
         }
         if (namasearchact) {
@@ -344,7 +376,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                 onClick: (event) => {
                                     // {
                                     //     [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                        //rt.push(`/admin/items/detail/${record.id}`)
+                                    rt.push(`/items/detail/${record.id}`)
                                     //         :
                                     //         null
                                     // }
