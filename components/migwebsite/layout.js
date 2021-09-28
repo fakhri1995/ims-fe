@@ -271,19 +271,19 @@ function layout({ children }) {
                             <div className={'flex flex-row px-0 justify-between'}>
                                 <div className={'flex-col pr-2 my-2 lg:my-0 lg:px-16'}>
                                     <p className={'font-bold py-1 text-lg'}>Solutions</p>
-                                    <Link href={{pathname: '/advantages'}}><p className={'cursor-pointer menu-underlined py-1'}>Advantages</p></Link>
-                                    <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer menu-underlined py-1'}>Hardware</p></Link>
-                                    <Link href={{pathname: '/software'}}><p className={'cursor-pointer menu-underlined py-1'}>Software</p></Link>
-                                    <Link href={{pathname: '/people'}}><p className={'cursor-pointer menu-underlined py-1'}>People</p></Link>
+                                    <Link href={{pathname: '/advantages'}}><p className={'cursor-pointer menu-underlined py-1 w-min'}>Advantages</p></Link>
+                                    <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer menu-underlined py-1 w-min'}>Hardware</p></Link>
+                                    <Link href={{pathname: '/software'}}><p className={'cursor-pointer menu-underlined py-1 w-min'}>Software</p></Link>
+                                    <Link href={{pathname: '/people'}}><p className={'cursor-pointer menu-underlined py-1 w-min'}>People</p></Link>
                                 </div>
                                 <div className={'flex-col pr-2 my-2 lg:my-0 lg:px-16'}>
                                     <p className={'font-bold py-1 text-lg'}>Company</p>
-                                    <Link href={{pathname: '/aboutus'}}><p className={'cursor-pointer menu-underlined py-1'}>About Us</p></Link>
-                                    <Link href={{pathname: '/joinourteam'}}><p className={'cursor-pointer menu-underlined py-1'}>Join Our Team</p></Link>
+                                    <Link href={{pathname: '/aboutus'}}><p className={'cursor-pointer menu-underlined py-1 w-min'}>About&nbsp;Us</p></Link>
+                                    <Link href={{pathname: '/joinourteam'}}><p className={'cursor-pointer menu-underlined py-1 w-min'}>Join&nbsp;Our&nbsp;Team</p></Link>
                                 </div>
                                 <div className={'flex-col pr-2 my-2 lg:my-0 lg:px-16'}>
                                     <p className={'font-bold py-1 text-lg'}>Get in touch</p>
-                                    <Link href='#'><p className={'cursor-pointer menu-underlined py-1'}>Contact Us</p></Link>
+                                    <Link href='#'><p className={'cursor-pointer menu-underlined py-1 w-min'}>Contact&nbsp;Us</p></Link>
                                 </div>
                                 <div className={'flex-col my-2 lg:my-0 lg:px-16'}>
                                     <p className={'font-bold py-1 text-lg'}>Follow</p>

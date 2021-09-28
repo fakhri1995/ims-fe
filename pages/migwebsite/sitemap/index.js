@@ -31,11 +31,11 @@ function Sitemap({ }) {
                                 <Link href={{pathname: '/joinourteam'}}><p className={'cursor-pointer font-medium menu-underlined w-min'}>Join&nbsp;Our&nbsp;Team</p></Link>
                             </div>
                             <div className={'pb-8'}>
-                                <Link href={{pathname: '#'}}><p className={'cursor-pointer font-bold menu-underlined w-min'}>Contact&nbsp;Us</p></Link>
+                                <Link href={{pathname: '/contactus'}}><p className={'cursor-pointer font-bold menu-underlined w-min'}>Contact&nbsp;Us</p></Link>
                             </div>
                             <div>
-                                <Link href={{pathname: '#'}}><p className={'cursor-pointer font-bold menu-underlined w-min'}>Privacy</p></Link>
-                                <Link href={{pathname: '/termofuse'}}><p className={'cursor-pointer font-bold menu-underlined w-min'}>Term&nbsp;of&nbsp;Use</p></Link>
+                                <Link href={{pathname: '/privacy'}}><p className={'cursor-pointer font-bold menu-underlined w-min'}>Privacy</p></Link>
+                                <Link href={{pathname: '/term'}}><p className={'cursor-pointer font-bold menu-underlined w-min'}>Term&nbsp;of&nbsp;Use</p></Link>
                             </div>
                         </div>
                     </div>
