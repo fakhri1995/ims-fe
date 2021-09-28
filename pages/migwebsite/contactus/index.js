@@ -63,7 +63,7 @@ function ContactUs({ }) {
                         </div>
                         <div className={'flex flex-row'}>
                             <p className={'font-semibold'}>Email:&nbsp;</p>
-                            <p>help@mitrasolusi.group</p>
+                            <a href="mailto:help@mitrasolusi.group" className={'text-black'}>help@mitrasolusi.group</a>
                         </div>
                     </div>
                     <div className={'w-1/2'}>
@@ -96,7 +96,7 @@ function ContactUs({ }) {
                                 <Select name="Interest" onChange={(value)=>{setDataContactUs({...dataContactUs, interested_in: value})}} allowClear>
                                     <Option value="hardware">Hardware</Option>
                                     <Option value="software">Software</Option>
-                                    <Option value="people">People</Option>
+                                    <Option value="talents">Talents</Option>
                                     <Option value="other">Other</Option>
                                 </Select>
                             </Form.Item>

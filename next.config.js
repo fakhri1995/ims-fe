@@ -5,7 +5,7 @@ module.exports = {
       { source: '/advantages', destination: '/migwebsite/advantages' },
       { source: '/hardware', destination: '/migwebsite/hardware' },
       { source: '/software', destination: '/migwebsite/software' },
-      { source: '/people', destination: '/migwebsite/people' },
+      { source: '/talents', destination: '/migwebsite/talents' },
       { source: '/aboutus', destination: '/migwebsite/aboutus' },
       { source: '/joinourteam', destination: '/migwebsite/joinourteam' }, 
       { source: '/sitemap', destination: '/migwebsite/sitemap' }, 

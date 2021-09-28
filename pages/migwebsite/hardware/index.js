@@ -18,7 +18,6 @@ function Hardware({ }) {
     const [form] = Form.useForm();
     const [checkbox, setSubmit] = useState(true)
     const onChangeCheckBox = () => {
-        // console.log(checkbox)
         setSubmit(!checkbox)
     }
     const handleSubmit = () => {
@@ -61,23 +60,23 @@ function Hardware({ }) {
                     <div className={'flex py-4'}>
                         {/* <Link href={{pathname: '/advantages'}}><p className={'cursor-pointer flex-col text-base font-semibold pr-4'} style={{}}>Advantages
                             </p></Link> */}
-                        <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer flex-col gilroy-bold text-lg pr-4'}>Hardware
+                        <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer flex-col gilroy-medium text-lg pr-4'}>Hardware
                             </p></Link>
-                        <Link href={{pathname: '/software'}}><p className={'cursor-pointer flex-col gilroy-bold text-lg px-4'}>Software
+                        <Link href={{pathname: '/software'}}><p className={'cursor-pointer flex-col gilroy-medium text-lg px-4'}>Software
                             </p></Link>
-                        <Link href={{pathname: '/people'}}><p className={'cursor-pointer flex-col gilroy-bold text-lg px-4'}>People
+                        <Link href={{pathname: '/talents'}}><p className={'cursor-pointer flex-col gilroy-medium text-lg px-4'}>Talents
                             </p></Link>
                     </div>
                 </div>
             </section>
             <section className={'section2advantages h-12 hidden md:block'}></section>
             <section className={'md:pt-60 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 md:relative md:bottom-32 text-center'}>
-                    <div className={'container mx-auto'}>
-                        <p className={'text-3xl md:text-4xl gilroy-bold py-8 md:py-0'}>
-                        Nation-wide managed service model for your IT hardwares
-                        </p>
-                    </div>
-                </section>
+                <div className={'container mx-auto'}>
+                    <p className={'text-3xl md:text-4xl gilroy-bold py-8 md:py-0'}>
+                    Nation-wide managed service model for your IT hardwares
+                    </p>
+                </div>
+            </section>
             <section className={'section2hardware py-8 md:py-0 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                 <div className={'hidden md:flex container mx-auto'}>
                     <div className={'flex-col w-1/2 my-auto'}>
@@ -95,7 +94,7 @@ function Hardware({ }) {
                 </div>
                 <div className={'block md:hidden'}>
                     <div className={'my-auto'}>
-                        <p className={'text-2xl pb-4 gilroy-bold'}>Managing IT infrastructures is challenging. </p>
+                        <p className={'text-2xl pb-4 gilroy-bold'}>Managing IT infrastructures is <span style={{borderBottom:'solid 3px #188E4D',paddingBottom:'2.5px'}}>challenging.</span> </p>
                         <div className={'my-auto'}>
                             <img src="/image/hardware/Hardware-Solution.png"></img>
                         </div>
@@ -105,9 +104,7 @@ function Hardware({ }) {
                             <li className={'gilroy-medium text-xl'}><span className={'gilroy-bold'}>predictable</span> monthly cost </li>
                             <li className={'gilroy-medium text-xl'}><span className={'gilroy-bold'}>guaranteed</span> service level</li>
                         </ul>
-                        {/* <button className={'px-4 py-2 text-white'} style={{backgroundColor:'#2A8452'}}> Tombol </button> */}
                     </div>
-                        
                 </div>
             </section>
             {/* <section className={'section3hardware justify-center'} >
@@ -182,21 +179,21 @@ function Hardware({ }) {
                 </div>
             </section>
             <section className={'section4hardware py-4 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
-                <div className={'container mx-auto flex'}>
-                    <div className={'w-1/3 pr-4'}>
+                <div className={'container mx-auto block md:flex'}>
+                    <div className={'w-full md:w-1/3 pr-0 md:pr-4'}>
                         <p className={'text-3xl md:text-4xl font-bold pb-4 gilroy-bold'}>Products selection</p>
                         <p className={'pb-4 gilroy-medium text-lg md:text-xl'}>We leasing and maintaining a variety of IT hardwares</p>
                     </div>
-                    <div className={'pb-8 w-1/3 pr-4'}>
+                    <div className={'pb-0 md:pb-8 w-full md:w-1/3 pr-0 md:pr-4'}>
                         <div className={'pb-8'}>
                             <Collapse
                             accordion
                             // defaultActiveKey={['0']}
                             // expandIconPosition={'right'}
                             >
-                                <Panel className={'gilroy-medium text-center'} header={'ATM/CRM'} showArrow={false}>
+                                <Panel className={'gilroy-medium text-lg'} header={'ATM/CRM'} showArrow={false}>
                                     <p className={'font-medium'}>
-                                        Lorem Ipsunm
+                                        Lorem Ipsum
                                     </p>
                                 </Panel>
                             </Collapse>
@@ -205,24 +202,24 @@ function Hardware({ }) {
                             <Collapse
                             accordion
                             >
-                                <Panel className={'gilroy-medium text-center'} header={'UPS'} showArrow={false}>
+                                <Panel className={'gilroy-medium text-lg'} header={'UPS'} showArrow={false}>
                                     <p className={'font-medium'}>
-                                        Lorem Ipsunm
+                                        Lorem Ipsum
                                     </p>
                                 </Panel>
                             </Collapse>
                         </div>
                     </div>
-                    <div className={'pb-8 w-1/3 pl-4'}>
+                    <div className={'pb-0 md:pb-8 w-full md:w-1/3 pr-0 md:pr-4'}>
                         <div className={'pb-8'}>
                             <Collapse
                             accordion
                             // defaultActiveKey={['0']}
                             // expandIconPosition={'right'}
                             >
-                                <Panel className={'gilroy-medium text-center'} header={'Laptop/desktop'} showArrow={false}>
+                                <Panel className={'gilroy-medium text-lg'} header={'Laptop/desktop'} showArrow={false}>
                                     <p className={'font-medium'}>
-                                        Lorem Ipsunm
+                                        Lorem Ipsum
                                     </p>
                                 </Panel>
                             </Collapse>
@@ -231,19 +228,14 @@ function Hardware({ }) {
                             <Collapse
                             accordion
                             >
-                                <Panel className={'gilroy-medium text-center'} header={'Server'} showArrow={false}>
+                                <Panel className={'gilroy-medium text-lg'} header={'Server'} showArrow={false}>
                                     <p className={'font-medium'}>
-                                        Lorem Ipsunm
+                                        Lorem Ipsum
                                     </p>
                                 </Panel>
                             </Collapse>
                         </div>
                     </div>
-                    {/* <p className={'pb-4 gilroy-medium text-lg md:text-xl'}>Desktop & Laptop</p>
-                    <p className={'pb-4 gilroy-medium text-lg md:text-xl'}>UPS</p>
-                    <p className={'pb-4 gilroy-medium text-lg md:text-xl'}>Server</p>
-                    <p className={'pb-4 gilroy-medium text-lg md:text-xl'}>ATM</p>
-                    <p className={'pb-4 gilroy-medium text-lg md:text-xl'}>CRM</p> */}
                 </div>
             </section>
             {/* <section className={'section5hardware py-8 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
@@ -267,8 +259,8 @@ function Hardware({ }) {
             </section> */}
             <section className={'py-8 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                 <div className={'container mx-auto'}>
-                    <p className={'text-3xl gilroy-bold pb-8 pt-10'}>Get yours</p>
-                    <p className={'text-lg pb-4'}>Fill in your contact information, and our sales team will contact you shortly.</p>
+                    <p className={'text-3xl gilroy-bold pb-8 pt-4 md:pt-10'}>Get yours</p>
+                    <p className={'gilroy-medium text-xl pb-4'}>Fill in your contact information, and our sales team will contact you shortly.</p>
                     <Form
                         layout={'vertical'}
                         onFinish={handleSubmit}
@@ -276,32 +268,32 @@ function Hardware({ }) {
                     >
                         <div className={'flex'}>
                             <div className={'w-1/2 mr-2'}>
-                                <Form.Item name={'Company Name'} className={'font-semibold'} label="Company Name" rules={[{required: true,},]}>
+                                <Form.Item name={'Company Name'} className={'gilroy-medium text-xl'} label="Company Name" rules={[{required: true,},]}>
                                     <Input name={'Company Name'} onChange={(e)=>{setDataHardware({...dataHardware, company_name: e.target.value})}} placeholder="" />
                                 </Form.Item>
-                                <Form.Item name={'Email'} className={'font-semibold'} label="Email" rules={[{required: true,type:'email'},]}>
+                                <Form.Item name={'Email'} className={'gilroy-medium text-xl'} label="Email" rules={[{required: true,type:'email'},]}>
                                     <Input name={'Email'} onChange={(e)=>{setDataHardware({...dataHardware, company_email: e.target.value})}} placeholder="" />
                                 </Form.Item>
                             </div>
                             <div className={'w-1/2 ml-2'}>
-                                <Form.Item name={'Contact Name'} className={'font-semibold'} label="Contact Name" rules={[{required: true,},]}>
+                                <Form.Item name={'Contact Name'} className={'gilroy-medium text-xl'} label="Contact Name" rules={[{required: true,},]}>
                                     <Input name={'Contact Name'} onChange={(e)=>{setDataHardware({...dataHardware, name: e.target.value})}}  placeholder="" />
                                 </Form.Item>
-                                <Form.Item name={'Phone Number'} className={'font-semibold'} label="Phone Number" rules={[{required: true,pattern: new RegExp('^[0-9]*$'), message:"Please input valid phone number",},]}>
+                                <Form.Item name={'Phone Number'} className={'gilroy-medium text-xl'} label="Phone Number" rules={[{required: true,pattern: new RegExp('^[0-9]*$'), message:"Please input valid phone number",},]}>
                                     <Input name={'Phone Number'} onChange={(e)=>{setDataHardware({...dataHardware, phone_number: parseInt(e.target.value)})}} placeholder="" />
                                 </Form.Item>
                             </div>
                         </div>
-                        <Form.Item name="Message" className={'font-semibold'} label="Message" rules={[{required: true,},]}>
+                        <Form.Item name="Message" className={'gilroy-medium text-xl'} label="Message" rules={[{required: true,},]}>
                             <Input.TextArea name="Message" onChange={(e)=>{setDataHardware({...dataHardware, message: e.target.value})}} />
                         </Form.Item >
                         <Form.Item name="checkbox">
-                            <Checkbox name="checkbox" onChange={()=>{onChangeCheckBox()}}>By proceeding, I agree that MIG's representative may contact me by email, phone, or SMS (including by automatic telephone dialing system) at the email address or number I provide, including for marketing purposes.*</Checkbox>
+                            <Checkbox name="checkbox" className={'gilroy-regular text-xl'} onChange={()=>{onChangeCheckBox()}}>By proceeding, I agree that MIG's representative may contact me by email, phone, or SMS (including by automatic telephone dialing system) at the email address or number I provide, including for marketing purposes.*</Checkbox>
                         </Form.Item >
                         <Form.Item>
                         <div className={'w-full flex justify-center pt-8 pb-8'}>
-                            <Button hidden={!checkbox} disabled={checkbox} type="primary" className={''} style={{backgroundColor:'white', color:'grey', fontWeight:'600'}} key="3"><p>Submit</p></Button>
-                            {/* <Button hidden={checkbox} type="primary" htmlType="submit" className={'border-black border px-4 text-white'} style={{backgroundColor:'white', color:'black', fontWeight:'600'}} key="3"><p>Submit</p></Button> */}
+                            <Button hidden={!checkbox} disabled={checkbox} type="primary" className={''} style={{backgroundColor:'white', color:'grey'}} key="3"><p>Submit</p></Button>
+                            {/* <Button hidden={checkbox} type="primary" htmlType="submit" className={'border-black border px-4 text-white'} style={{backgroundColor:'white', color:'black'}} key="3"><p>Submit</p></Button> */}
                             <button hidden={checkbox} type={'submit'} className={'text-black border border-black px-4 py-1 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
                                 Submit
                             </button>
