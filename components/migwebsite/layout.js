@@ -48,30 +48,30 @@ function layout({ children }) {
     //     </div>
     //   );
     const menu = (
-        <div className={'bg-white w-96 h-auto p-4 top-6 relative'}>
+        <div className={'bg-white w-96 h-auto p-4 fixed'}>
             <div className={'flex pb-4'}>
-                <div className={'px-4 my-auto'}>
+                <div className={'px-4 my-auto w-1/3'}>
                     <img className={'w-60'} src={'/image/navbar/hardware.png'}></img>
                 </div>
-                <div>
+                <div className={'w-2/3'}>
                     <p className={'text-lg gilroy-medium'}>Hardware</p>
                     <p className={'text-sm gilroy-regular'}>Optimize your cost by leasing and maintenances IT hardwares</p>
                 </div>
             </div>
             <div className={'flex pb-4'}>
-                <div className={'px-4 my-auto'}>
+                <div className={'px-4 my-auto w-1/3'}>
                     <img className={'w-60'} src={'/image/navbar/software.png'}></img>
                 </div>
-                <div>
+                <div className={'w-2/3'}>
                     <p className={'text-lg gilroy-medium'}>Software</p>
                     <p className={'text-sm gilroy-regular'}>Simplify and automate the process through digitalization</p>
                 </div>
             </div>
             <div className={'flex pb-4'}>
-                <div className={'px-4 my-auto'}>
+                <div className={'px-4 my-auto w-1/3'}>
                     <img className={'w-60'} src={'/image/navbar/talents.png'}></img>
                 </div>
-                <div>
+                <div className={'w-2/3'}>
                     <p className={'text-lg gilroy-medium'}>Talents</p>
                     <p className={'text-sm gilroy-regular'}>Reduce complexity in talent sourcing and management</p>
                 </div>
@@ -102,6 +102,18 @@ function layout({ children }) {
             </div>
         </div>
       );
+    const [kelas, setKelas] = useState('notShadow')
+    const handleScroll = () => { 
+        if (document.documentElement.scrollTop > 1) {
+           setKelas('shadow')
+         }
+        else{
+            setKelas('notShadow')
+        }
+       }
+    useEffect(() => {
+        window.onscroll = () => {handleScroll()}
+    }, [])
 
     const [navbar, setNavbar] = useState(true) //true for hidden
     const [navbarBottom, setNavbarBottom] = useState(true) //true for hidden
@@ -133,13 +145,12 @@ function layout({ children }) {
         setNavbar(!navbar)
         // console.log(navbar)
     }
-    
     return (
         <>
             <Head title="Home" />
             <Styles />
             <Layout className={'h-auto'}>
-                <Header className={'header'} style={{boxShadow:'0 5px 20px rgba(0,0,0,.15)' ,background:'white', position: 'fixed', zIndex: 31, width: '100%' }}>
+                <Header className={`${kelas} header`} style={{background:'white', position: 'fixed', zIndex: 31, width: '100%' }}>
                     <Link href="/">
                         <div className="logo top-4 md:top-4 absolute w-24 md:w-32" >
                             <img width={'auto'} height={'auto'} src='/mig.png'/>
@@ -299,10 +310,9 @@ function layout({ children }) {
                                 <img src='/mig.png'/>
                             </div>  
                             </Link>
-                            <div className={'flex flex-row px-0 justify-between'}>
+                            <div className={'hidden md:flex flex-row px-0 justify-between'}>
                                 <div className={'flex-col pr-2 my-2 lg:my-0 lg:px-16'}>
                                     <p className={'gilroy-bold py-1 text-lg'}>Solutions</p>
-                                    <Link href={{pathname: '/advantages'}}><p className={'gilroy-regular cursor-pointer menu-underlined py-1 w-min'}>Advantages</p></Link>
                                     <Link href={{pathname: '/hardware'}}><p className={'gilroy-regular cursor-pointer menu-underlined py-1 w-min'}>Hardware</p></Link>
                                     <Link href={{pathname: '/software'}}><p className={'gilroy-regular cursor-pointer menu-underlined py-1 w-min'}>Software</p></Link>
                                     <Link href={{pathname: '/talents'}}><p className={'gilroy-regular cursor-pointer menu-underlined py-1 w-min'}>Talents</p></Link>
@@ -314,7 +324,7 @@ function layout({ children }) {
                                 </div>
                                 <div className={'flex-col pr-2 my-2 lg:my-0 lg:px-16'}>
                                     <p className={'gilroy-bold py-1 text-lg'}>Get in touch</p>
-                                    <Link href='#'><p className={'gilroy-regular cursor-pointer menu-underlined py-1 w-min'}>Contact&nbsp;Us</p></Link>
+                                    <Link href='/contactus'><p className={'gilroy-regular cursor-pointer menu-underlined py-1 w-min'}>Contact&nbsp;Us</p></Link>
                                 </div>
                                 <div className={'flex-col my-2 lg:my-0 lg:px-16'}>
                                     <p className={'gilroy-bold py-1 text-lg'}>Follow</p>
@@ -330,14 +340,48 @@ function layout({ children }) {
                                     </Link>
                                 </div>
                             </div>
+                            <div className={'block md:hidden'}>
+                                <div className={'flex'}>
+                                    <div className={'w-1/2 pr-2 my-2 lg:my-0 lg:px-16'}>
+                                        <p className={'gilroy-bold py-1 text-lg'}>Solutions</p>
+                                        <Link href={{pathname: '/hardware'}}><p className={'gilroy-regular cursor-pointer menu-underlined py-1 w-min'}>Hardware</p></Link>
+                                        <Link href={{pathname: '/software'}}><p className={'gilroy-regular cursor-pointer menu-underlined py-1 w-min'}>Software</p></Link>
+                                        <Link href={{pathname: '/talents'}}><p className={'gilroy-regular cursor-pointer menu-underlined py-1 w-min'}>Talents</p></Link>
+                                    </div>
+                                    <div className={'w-1/2 pr-2 my-2 lg:my-0 lg:px-16'}>
+                                        <p className={'gilroy-bold py-1 text-lg'}>Company</p>
+                                        <Link href={{pathname: '/aboutus'}}><p className={'gilroy-regular cursor-pointer menu-underlined py-1 w-min'}>About&nbsp;Us</p></Link>
+                                        <Link href={{pathname: '/joinourteam'}}><p className={'gilroy-regular cursor-pointer menu-underlined py-1 w-min'}>Join&nbsp;Our&nbsp;Team</p></Link>
+                                    </div>
+                                </div>
+                                <div className={'flex'}>
+                                    <div className={'w-1/2 pr-2 my-2 lg:my-0 lg:px-16'}>
+                                        <p className={'gilroy-bold py-1 text-lg'}>Get in touch</p>
+                                        <Link href='/contactus'><p className={'gilroy-regular cursor-pointer menu-underlined py-1 w-min'}>Contact&nbsp;Us</p></Link>
+                                    </div>
+                                    <div className={'w-1/2 my-2 lg:my-0 lg:px-16'}>
+                                        <p className={'gilroy-bold py-1 text-lg'}>Follow</p>
+                                        <Link href='https://instagram.com/mitramasglobal?utm_medium=copy_link'>
+                                            <div className={'flex'}>
+                                                <img className={'w-5 h-5 relative top-1 mr-2'} src="/image/footer/instagram.png"/><p className={'gilroy-regular cursor-pointer menu-underlined py-1'}>Instagram</p>
+                                            </div>
+                                        </Link>
+                                        <Link href='https://www.linkedin.com/company/pt-mitramas-infosys-global'>
+                                            <div className={'flex'}>
+                                                <img className={'w-5 h-5 relative top-1 mr-2'} src="/image/footer/linkedin.png"/><p className={'gilroy-regular cursor-pointer menu-underlined py-1'}>LinkedIn</p>
+                                            </div>
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <hr className={'border'} style={{background:'#000'}}/>
                         <div className={'flex flex-row pb-4 justify-between pt-2'}>
                             <p className={' text-xs '}>Copyright © 2021 Mitramas Infosys Global. All rights reserved</p>
                             <div className={'flex flex-row '}>
-                                <Link href={{pathname: '/privacy'}}><p className={'menu-underlined text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32 font-semibold'}>Privacy</p></Link>
-                                <Link href={{pathname: '/term'}}><p className={'menu-underlined text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32 font-semibold'}>Term</p></Link>
-                                <Link href={{pathname: '/sitemap'}}><p className={'menu-underlined text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32 font-semibold'}>Sitemap</p></Link>
+                                <Link href={{pathname: '/privacy'}}><p className={'menu-underlined text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32'}>Privacy</p></Link>
+                                <Link href={{pathname: '/term'}}><p className={'menu-underlined text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32'}>Term</p></Link>
+                                <Link href={{pathname: '/sitemap'}}><p className={'menu-underlined text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32'}>Sitemap</p></Link>
                             </div>
                         </div>
                     </div>
