@@ -2,8 +2,8 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
 import Link from 'next/link'
-import { ExclamationCircleOutlined, CalendarOutlined } from '@ant-design/icons'
-import { notification, Button, Spin, Timeline, Empty, Modal, Tooltip, Select, Tabs, Input, TreeSelect } from 'antd'
+import { ExclamationCircleOutlined, SearchOutlined, CloseCircleOutlined } from '@ant-design/icons'
+import { notification, Button, Spin, Timeline, Empty, Modal, Tooltip, Select, Tabs, Input, TreeSelect, Table, Popover } from 'antd'
 import Layout from '../../../components/layout-dashboard2'
 import moment from 'moment'
 import st from '../../../components/layout-dashboard.module.css'
@@ -113,7 +113,9 @@ const Overview = ({ itemid, initProps, maindata, manuf, praloading }) => {
                                                         {
                                                             doccolumns.data_type === 'checkbox' &&
                                                             <>
-                                                                {doccolumns.value.opsi.filter(docfil => doccolumns.value.default.indexOf(docfil) !== 1).join(",")}
+                                                                {doccolumns.value.opsi.filter((_,idxfil) => {
+                                                                    return doccolumns.value.default.includes(idxfil)
+                                                                }).join(", ")}
                                                             </>
                                                         }
                                                         {
@@ -138,9 +140,457 @@ const Overview = ({ itemid, initProps, maindata, manuf, praloading }) => {
         </div>
     )
 }
-const KonfigurasiPart = () => {
+const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading2 }) => {
+    const rt = useRouter()
+
+    //usestate
+    const [mainpartdata, setmainpartdata] = useState([])
+    const [praloadingpart, setpraloadingpart] = useState(true)
+    const [events, setevents] = useState("")
+    const [datatable, setdatatable] = useState([])
+    const [datatable2, setdatatable2] = useState([])
+    const [datatable3, setdatatable3] = useState([])
+    const [namasearchact, setnamasearchact] = useState(false)
+    const [namavalue, setnamavalue] = useState("")
+    const [assettypefilteract, setassettypefilteract] = useState(false)
+    const [assettypevalue, setassettypevalue] = useState("")
+    const [modelfilteract, setmodelfilteract] = useState(false)
+    const [modelvalue, setmodelvalue] = useState("")
+    //changed dan removed
+    const [datareplacements, setdatareplacements] = useState([])
+    const [popover, setpopover] = useState(false)
+    //changed
+    const [datachanged, setdatachanged] = useState(-1)
+    const [dataApichanged, setdataApichanged] = useState({
+        id: 0,
+        replacement_id: 0,
+        notes: ""
+    })
+    const [modalchanged, setmodalchanged] = useState(false)
+    const [disabledchanged, setdisabledchanged] = useState(true)
+    const [loadingchanged, setloadingchanged] = useState(false)
+    //removed
+    const [dataremoved, setdataremoved] = useState(-1)
+    const [dataApiremoved, setdataApiremoved] = useState({
+        id: 0,
+        inventory_part_id: 0,
+        notes: ""
+    })
+    const [modalremoved, setmodalremoved] = useState(false)
+    const [disabledremoved, setdisabledremoved] = useState(true)
+    const [loadingremoved, setloadingremoved] = useState(false)
+
+    const columns = [
+        {
+            title: 'Nama Item',
+            dataIndex: 'inventory_name',
+            key: 'inventory_name',
+        },
+        {
+            title: 'Serial Number',
+            dataIndex: 'serial_number',
+            key: 'serial_number',
+        },
+        {
+            title: 'Model',
+            dataIndex: 'model',
+            key: 'model',
+        },
+        {
+            title: 'Asset Type',
+            dataIndex: 'asset_name',
+            key: 'asset_name',
+        },
+        {
+            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
+            dataIndex: 'actionss',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {
+                                events === record.id ?
+                                    <Popover visible={popover} onVisibleChange={() => { setpopover(true) }} style={{ padding: `0px`, margin: `0px` }} placement="bottomLeft" trigger="click" content={
+                                        <div className="flex flex-col">
+                                            <div className="flex justify-center cursor-pointer" onClick={() => setpopover(false)}>
+                                                <CloseCircleOutlined style={{ color: `red`, fontSize: `1.1rem` }} />
+                                            </div>
+                                            <Button type="text" style={{ width: `100%` }} onClick={() => { setdataremoved(record); setdataApiremoved({ ...dataApiremoved, id: mainpartdata.id, inventory_part_id: record.id, }); setmodalremoved(true); setpopover(false) }}>Keluarkan Part</Button>
+                                            <Button type="text" style={{ width: `100%` }} onClick={() => { setdatachanged(record); setmodalchanged(true); setpopover(false) }}>Gantikan Part</Button>
+                                            {/* <div className="cursor-pointer hover:bg-gray-300 w-full p-4">Keluarkan Part</div>
+                                            <div className="cursor-pointer hover:bg-gray-300 w-full p-4">Gantikan Part</div> */}
+                                        </div>
+                                    }>
+                                        <div className="cursor-pointer" onClick={() => setpopover(false)}>
+                                            <CloseCircleOutlined style={{ color: `red`, fontSize: `1.5rem` }} />
+                                        </div>
+                                    </Popover>
+                                    :
+                                    null
+                            }
+                        </>
+                }
+            }
+        }
+    ];
+
+    //helper
+    //1 nya lagi ada di useEffect
+    const recursiveFlattenArr = (dataassets) => {
+        const result = []
+        dataassets.forEach((item, idx) => {
+            result.push(item.id)
+            if (item.children) {
+                result.push(...recursiveFlattenArr(item.children))
+            }
+        })
+        return result
+    }
+
+    //handler
+    //deliver API
+    const handleReplacementItemPart = () => {
+        setloadingchanged(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/replaceInventoryPart`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataApichanged)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingchanged(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: "Item Part berhasil diganti",
+                        duration: 3
+                    })
+                    setmodalchanged(false)
+                    rt.push(`/items/detail/${itemid}?active=konfigurasiPart`)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
+    const handleRemoveItemPart = () => {
+        setloadingremoved(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/removeInventoryPart`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataApiremoved)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingremoved(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: "Item Part berhasil dikeluarkan",
+                        duration: 3
+                    })
+                    setmodalremoved(false)
+                    rt.push(`/items/detail/${itemid}?active=konfigurasiPart`)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
+
+    //search nama
+    const onChangeSearch = (e) => {
+        if (e.target.value === "") {
+            setdatatable(datatable2)
+            setnamasearchact(false)
+        }
+        else {
+            setnamasearchact(true)
+            setnamavalue(e.target.value)
+        }
+    }
+    // //search asset type
+    // const onChangeAssetType = (id) => {
+    //     if (typeof (id) === 'undefined') {
+    //         setdisplaydata(displaydata2)
+    //         setassettypefilteract(false)
+    //     }
+    //     else {
+    //         setassettypefilteract(true)
+    //         setassettypevalue(id)
+    //     }
+    // }
+    //search model
+    const onChangeModel = (idmodel) => {
+        if (typeof (idmodel) === 'undefined') {
+            setdatatable(datatable2)
+            setmodelfilteract(false)
+        }
+        else {
+            setmodelfilteract(true)
+            setmodelvalue(idmodel)
+        }
+    }
+    // const onFinalClick = () => {
+    //     var datatemp = displaydata1
+    //     // if (assettypefilteract) {
+    //     //     datatemp = datatemp.filter(flt => {
+    //     //         return (flt.asset_name.toLowerCase().includes(assettypevalue.toLowerCase())) || (flt.asset_name.replaceAll(/\s+\/\s+/g, "/").split("/")[0] === namaasset)
+    //     //     })
+    //     // }
+    //     if (modelfilteract) {
+    //         datatemp = datatemp.filter(flt => flt.modelid === modelvalue)
+    //     }
+    //     if (namasearchact) {
+    //         datatemp = datatemp.filter(flt => {
+    //             return flt.model_name.toLowerCase().includes(namavalue.toLowerCase())
+    //         })
+    //     }
+    //     setdisplaydata(datatemp)
+    // }
+
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getInventory?id=${itemid}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setmainpartdata(res2.data.inventory_parts)
+                setpraloadingpart(false)
+                return res2.data
+            })
+            .then(res3 => {
+                const recursiveChangetoChildren = (rsc) => {
+                    var res = []
+                    for (var i = 0; i < rsc.length; i++) {
+                        rsc[i].key = rsc[i].id
+                        rsc[i].title = rsc[i].inventory_name
+                        rsc[i].children = rsc[i].inventory_parts
+                        delete rsc[i].inventory_parts
+                        if (rsc[i].children.length !== 0) {
+                            res.push({
+                                ...rsc[i],
+                                children: recursiveChangetoChildren(rsc[i].children)
+                            })
+                        }
+                        else {
+                            delete rsc[i].children
+                            res.push({
+                                ...rsc[i],
+                            })
+                        }
+                    }
+                    return res
+                }
+                const t = recursiveChangetoChildren(res3.inventory_parts)
+                setdatatable(t)
+                setdatatable2(t)
+                setdatatable3(t)
+            })
+    }, [])
+    useEffect(() => {
+        if (datachanged !== -1) {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryReplacements?id=${datachanged.asset_id}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                }
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    setdatareplacements(res2.data)
+                    if (res2.data.length === 0) {
+                        setdisabledchanged(false)
+                    }
+                })
+        }
+    }, [datachanged])
+
     return (
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
+        <div className="flex flex-col">
+            <div className="border-b flex justify-between p-5 mb-8">
+                <h1 className="font-bold text-xl my-auto">Konfigurasi Part</h1>
+                {
+                    praloading2 ?
+                        null
+                        :
+                        <Button type="primary" size="large" onClick={() => { console.log(datachanged) /*rt.push(`/items/update/${itemid}`)*/ }}>Tambah</Button>
+                }
+            </div>
+            <div className="flex mb-5">
+                {
+                    praloading2 ?
+                        null
+                        :
+                        <div className=" w-full mr-1 grid grid-cols-12">
+                            <div className="col-span-6 mr-1">
+                                <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Nama Model" onChange={e => onChangeSearch(e)} allowClear></Input>
+                            </div>
+                            <div className="col-span-2 mr-1">
+                                <Select placeholder="Model" style={{ width: `100%` }} allowClear onChange={(value) => {
+                                    if (typeof (value) === 'undefined') {
+                                        onChangeModel()
+                                    }
+                                    else {
+                                        onChangeModel(value)
+                                    }
+                                }}>
+                                    {
+                                        invrelations.models.map((docmodels, idxmodels) => {
+                                            return (
+                                                <Select.Option value={docmodels.id}>{docmodels.name}</Select.Option>
+                                            )
+                                        })
+                                    }
+                                </Select>
+                            </div>
+                            <div className="col-span-3 mr-1">
+                                <TreeSelect allowClear
+                                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                    treeData={[invrelations.tree_companies]}
+                                    placeholder="Cari Asset Type"
+                                    treeDefaultExpandAll
+                                    style={{ width: `100%` }}
+                                // onChange={(value, label, extra) => {
+                                //     if (typeof (value) === 'undefined') {
+                                //         onChangeAssetType()
+                                //     }
+                                //     else {
+                                //         onChangeAssetType(extra.allCheckedNodes[0].node.props.title)
+                                //         setnamaasset(extra.allCheckedNodes[0].node.props.title)
+                                //     }
+                                // }}
+                                />
+                            </div>
+                            <div className=" col-span-1">
+                                <Button type="primary" style={{ width: `100%` }}><SearchOutlined /></Button>
+                            </div>
+                        </div>
+                }
+            </div>
+            <Table loading={praloadingpart} pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={datatable} columns={columns}
+                onRow={(record, rowIndex) => {
+                    return {
+                        onMouseOver: (event) => {
+                            setevents(record.id)
+                        },
+                        onMouseLeave: (event) => {
+                            setevents(record.id)
+                        }
+                    }
+                }}
+            ></Table>
+            <Modal title={
+                <div className="flex justify-between p-5 mt-5">
+                    <h1 className="font-bold text-xl">Form Pergantian Part {datachanged.inventory_name}</h1>
+                    <div className="flex">
+                        <>
+                            <Button type="default" onClick={() => { setmodalchanged(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
+                            <Button type='primary' disabled={disabledchanged} onClick={handleReplacementItemPart} loading={loadingchanged}>Simpan</Button>
+                        </>
+                    </div>
+                </div>
+            }
+                visible={modalchanged}
+                onCancel={() => { setmodalchanged(false) }}
+                footer={null}
+                width={760}
+            >
+                <div className="flex flex-col mb-3">
+                    <div className="flex flex-col mb-3">
+                        <p className="mb-0">Nama Item Part yang Ingin Diganti <span className="namapart"></span></p>
+                        <TreeSelect disabled treeData={datatable3} defaultValue={datachanged.key}></TreeSelect>
+                        <style jsx>
+                            {`
+                                .namapart::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+                        </style>
+                    </div>
+                    <div className="flex flex-col mb-3">
+                        <p className="mb-0">Asset Type dari Item Part yang ingin diganti <span className="namapart"></span></p>
+                        <div className="w-full rounded-sm flex items-center bg-gray-100 border p-2 h-8">{datachanged.asset_name}</div>
+                        <style jsx>
+                            {`
+                                .namapart::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+                        </style>
+                    </div>
+                    <div className="flex flex-col mb-3">
+                        <p className="mb-0">Nama Item Part Pengganti <span className="namapart"></span></p>
+                        <Select onChange={(value) => {
+                            setdisabledchanged(false)
+                            setdataApichanged({
+                                ...dataApichanged,
+                                id: datachanged.id,
+                                replacement_id: value,
+                            })
+                        }}>
+                            {
+                                datareplacements.map((doc, idx) => {
+                                    return (
+                                        <Select.Option value={doc.id}>{doc.inventory_name}</Select.Option>
+                                    )
+                                })
+                            }
+                        </Select>
+                        <style jsx>
+                            {`
+                                .namapart::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+                        </style>
+                    </div>
+                    <div className="flex flex-col mb-3">
+                        <p className="mb-0">Notes</p>
+                        <Input.TextArea rows={3} placeholder="Masukkan Notes" onChange={(e => {
+                            setdataApichanged({
+                                ...dataApichanged,
+                                notes: e.target.value
+                            })
+                        })}></Input.TextArea>
+                    </div>
+                </div>
+            </Modal>
+            <Modal title={<h1 className="font-semibold">Apakah anda yakin ingin mengeluarkan item "{dataremoved.inventory_name}" dari "{mainpartdata.inventory_name}"?</h1>}
+                visible={modalremoved}
+                onCancel={() => { setmodalremoved(false) }}
+                okText="Ya"
+                cancelText="Tidak"
+                onOk={handleRemoveItemPart}
+                okButtonProps={{ loading: loadingremoved }}
+                width={760}
+            >
+                <div className="flex flex-col">
+                    <div className="flex flex-col">
+                        <p className="mb-0">Notes</p>
+                        <Input placeholder="Masukkan Notes" onChange={(e => {
+                            setdataApiremoved({ ...dataApiremoved, notes: e.target.value })
+                        })}></Input>
+                    </div>
+                </div>
+            </Modal>
+        </div>
     )
 }
 const Relationship = () => {
@@ -168,36 +618,36 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => 
                 var logsmap = res2.data.inventory.map((doclogs, idxlogs) => {
                     const datenew = moment(doclogs.date).locale("id").format('LLL')
                     var descnew = ''
-                    const desckondisiOld = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.old.status_condition === 1 ? 'Good' : (doclogs.properties.old.status_condition === 2 ? 'Grey' : (doclogs.properties.old.status_condition === 3 ? 'Bad' : null))): null) : null
-                    const desckondisiBaru = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.attributes.status_condition === 1 ? 'Good' : (doclogs.properties.attributes.status_condition === 2 ? 'Grey' : (doclogs.properties.attributes.status_condition === 3 ? 'Bad' : null))): null) : null
-                    const descusageOld = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.old.status_usage === 1 ? 'In Used' : (doclogs.properties.old.status_usage === 2 ? 'In Stock' : (doclogs.properties.old.status_usage === 3 ? 'Replacement' : null))): null) : null
-                    const descusageBaru = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.attributes.status_usage === 1 ? 'In Used' : (doclogs.properties.attributes.status_usage === 2 ? 'In Stock' : (doclogs.properties.attributes.status_usage === 3 ? 'Replacement' : null))): null) : null
+                    const desckondisiOld = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.old.status_condition === 1 ? 'Good' : (doclogs.properties.old.status_condition === 2 ? 'Grey' : (doclogs.properties.old.status_condition === 3 ? 'Bad' : null))) : null) : null
+                    const desckondisiBaru = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.attributes.status_condition === 1 ? 'Good' : (doclogs.properties.attributes.status_condition === 2 ? 'Grey' : (doclogs.properties.attributes.status_condition === 3 ? 'Bad' : null))) : null) : null
+                    const descusageOld = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.old.status_usage === 1 ? 'In Used' : (doclogs.properties.old.status_usage === 2 ? 'In Stock' : (doclogs.properties.old.status_usage === 3 ? 'Replacement' : null))) : null) : null
+                    const descusageBaru = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.attributes.status_usage === 1 ? 'In Used' : (doclogs.properties.attributes.status_usage === 2 ? 'In Stock' : (doclogs.properties.attributes.status_usage === 3 ? 'Replacement' : null))) : null) : null
                     const desc1 = doclogs.description.split(" ")
                     desc1[0] === 'created' ? descnew = descnew + `Pembuatan Item Baru bernama "${doclogs.properties.attributes.inventory_name}"` : null
                     desc1[0] === 'note' ? descnew = descnew + `Penambahan Notes` : null
-                    if(desc1[0] === 'updated'){
-                        if(doclogs.properties.attributes.status_condition){
+                    if (desc1[0] === 'updated') {
+                        if (doclogs.properties.attributes.status_condition) {
                             descnew = descnew + `Pengubahan status kondisi dari ${desckondisiOld} ke ${desckondisiBaru}`
                         }
-                        else if(doclogs.properties.attributes.status_usage){
+                        else if (doclogs.properties.attributes.status_usage) {
                             descnew = descnew + `Pengubahan status pemakaian dari ${descusageOld} ke ${descusageBaru}`
                         }
-                        else if(doclogs.properties.attributes.inventory_name){
+                        else if (doclogs.properties.attributes.inventory_name) {
                             descnew = descnew + `Pengubahan Nama Item dari "${doclogs.properties.old.inventory_name}" ke "${doclogs.properties.attributes.inventory_name}"`
                         }
-                        else if(doclogs.properties.attributes.serial_number){
+                        else if (doclogs.properties.attributes.serial_number) {
                             descnew = descnew + `Pengubahan Serial Number Item dari "${doclogs.properties.old.serial_number}" ke "${doclogs.properties.attributes.serial_number}"`
                         }
-                        else if(doclogs.properties.attributes.location){
+                        else if (doclogs.properties.attributes.location) {
                             descnew = descnew + `Pengubahan Location Item dari "${invrelations.companies.filter(doc => doc.id === doclogs.properties.old.location)[0].name}" ke "${invrelations.companies.filter(doc => doc.id === doclogs.properties.attributes.location)[0].name}"`
                         }
-                        else if(doclogs.properties.attributes.vendor_id){
+                        else if (doclogs.properties.attributes.vendor_id) {
                             descnew = descnew + `Pengubahan Vendor Item dari "${invrelations.vendors.filter(doc => doc.id === doclogs.properties.old.vendor_id)[0].name}" ke "${invrelations.vendors.filter(doc => doc.id === doclogs.properties.attributes.vendor_id)[0].name}"`
                         }
-                        else if(doclogs.properties.attributes.manufacturer_id){
+                        else if (doclogs.properties.attributes.manufacturer_id) {
                             descnew = descnew + `Pengubahan Manufacturer Item dari "${invrelations.manufacturers.filter(doc => doc.id === doclogs.properties.old.manufacturer_id)[0].name}" ke "${invrelations.manufacturers.filter(doc => doc.id === doclogs.properties.attributes.manufacturer_id)[0].name}"`
                         }
-                        else if(doclogs.properties.attributes.deskripsi){
+                        else if (doclogs.properties.attributes.deskripsi) {
                             descnew = descnew + `Pengubahan Deskripsi Item`
                         }
                         // else if(doclogs.properties.attributes.model_inventory_column_id){
@@ -670,7 +1120,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                 <Overview itemid={itemid} initProps={initProps} maindata={maindata} manuf={manuf} praloading={praloading} />
                             </TabPane>
                             <TabPane tab="Konfigurasi Part" key={`konfigurasiPart`}>
-                                <KonfigurasiPart itemid={itemid} initProps={initProps} />
+                                <KonfigurasiPart itemid={itemid} initProps={initProps} maindata={maindata} invrelations={invrelations} praloading2={praloading2} />
                             </TabPane>
                             <TabPane tab="Relationship" key={`relationship`}>
                                 <Relationship itemid={itemid} initProps={initProps} />
@@ -679,7 +1129,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                 <Association itemid={itemid} initProps={initProps} />
                             </TabPane>
                             <TabPane disabled={praloading2} tab="Activity" key={`activity`}>
-                                <Acitivty itemid={itemid} initProps={initProps} invrelations={invrelations}/>
+                                <Acitivty itemid={itemid} initProps={initProps} invrelations={invrelations} />
                             </TabPane>
                         </Tabs>
                     </div>
@@ -689,7 +1139,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                 <Overview itemid={itemid} initProps={initProps} maindata={maindata} manuf={manuf} praloading={praloading} />
                             </TabPane>
                             <TabPane tab="Konfigurasi Part" key={`konfigurasiPart`}>
-                                <KonfigurasiPart itemid={itemid} initProps={initProps} />
+                                <KonfigurasiPart itemid={itemid} initProps={initProps} maindata={maindata} invrelations={invrelations} praloading2={praloading2} />
                             </TabPane>
                             <TabPane tab="Relationship" key={`relationship`}>
                                 <Relationship itemid={itemid} initProps={initProps} />
@@ -698,7 +1148,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                 <Association itemid={itemid} initProps={initProps} />
                             </TabPane>
                             <TabPane disabled={praloading2} tab="Activity" key={`activity`}>
-                                <Acitivty itemid={itemid} initProps={initProps} invrelations={invrelations}/>
+                                <Acitivty itemid={itemid} initProps={initProps} invrelations={invrelations} />
                             </TabPane>
                         </Tabs>
                     </div>
