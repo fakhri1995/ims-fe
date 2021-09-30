@@ -113,7 +113,7 @@ const Overview = ({ itemid, initProps, maindata, manuf, praloading }) => {
                                                         {
                                                             doccolumns.data_type === 'checkbox' &&
                                                             <>
-                                                                {doccolumns.value.opsi.filter((_,idxfil) => {
+                                                                {doccolumns.value.opsi.filter((_, idxfil) => {
                                                                     return doccolumns.value.default.includes(idxfil)
                                                                 }).join(", ")}
                                                             </>
@@ -156,6 +156,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
     const [assettypevalue, setassettypevalue] = useState("")
     const [modelfilteract, setmodelfilteract] = useState(false)
     const [modelvalue, setmodelvalue] = useState("")
+    const [datatrigger, setdatatrigger] = useState(0)
     //changed dan removed
     const [datareplacements, setdatareplacements] = useState([])
     const [popover, setpopover] = useState(false)
@@ -268,7 +269,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                         duration: 3
                     })
                     setmodalchanged(false)
-                    rt.push(`/items/detail/${itemid}?active=konfigurasiPart`)
+                    setdatatrigger(prev => prev + 1)
                 }
                 else if (!res2.success) {
                     notification['error']({
@@ -297,7 +298,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                         duration: 3
                     })
                     setmodalremoved(false)
-                    rt.push(`/items/detail/${itemid}?active=konfigurasiPart`)
+                    setdatatrigger(prev => prev + 1)
                 }
                 else if (!res2.success) {
                     notification['error']({
@@ -368,8 +369,6 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
         })
             .then(res => res.json())
             .then(res2 => {
-                setmainpartdata(res2.data.inventory_parts)
-                setpraloadingpart(false)
                 return res2.data
             })
             .then(res3 => {
@@ -396,11 +395,16 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                     return res
                 }
                 const t = recursiveChangetoChildren(res3.inventory_parts)
+                setmainpartdata({
+                    ...res3,
+                    inventory_parts: t
+                })
                 setdatatable(t)
                 setdatatable2(t)
                 setdatatable3(t)
+                setpraloadingpart(false)
             })
-    }, [])
+    }, [datatrigger])
     useEffect(() => {
         if (datachanged !== -1) {
             fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryReplacements?id=${datachanged.asset_id}`, {
@@ -427,7 +431,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                     praloading2 ?
                         null
                         :
-                        <Button type="primary" size="large" onClick={() => { console.log(datachanged) /*rt.push(`/items/update/${itemid}`)*/ }}>Tambah</Button>
+                        <Button type="primary" size="large" onClick={() => { /*console.log(mainpartdata); console.log(dataremoved)*/ rt.push(`/items/createpart/${itemid}?name=${mainpartdata.inventory_name}&asset_id=${2}`) }}>Tambah</Button>
                 }
             </div>
             <div className="flex mb-5">
@@ -436,10 +440,10 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                         null
                         :
                         <div className=" w-full mr-1 grid grid-cols-12">
-                            <div className="col-span-6 mr-1">
+                            <div className="col-span-5 mr-1">
                                 <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Nama Model" onChange={e => onChangeSearch(e)} allowClear></Input>
                             </div>
-                            <div className="col-span-2 mr-1">
+                            <div className="col-span-3 mr-1">
                                 <Select placeholder="Model" style={{ width: `100%` }} allowClear onChange={(value) => {
                                     if (typeof (value) === 'undefined') {
                                         onChangeModel()
@@ -488,7 +492,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                             setevents(record.id)
                         },
                         onMouseLeave: (event) => {
-                            setevents(record.id)
+                            setevents(0)
                         }
                     }
                 }}

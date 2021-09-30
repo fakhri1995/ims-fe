@@ -22,15 +22,15 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
     //2.useState
     const [newdata, setnewdata] = useState({
         model_id: 0,
-        vendor_id: null,
+        vendor_id: 0,
         inventory_name: "",
-        status_condition: null,
-        status_usage: null,
+        status_condition: 0,
+        status_usage: 0,
         serial_number: "",
-        location: null,
+        location: 0,
         is_exist: true,
         deskripsi: "",
-        manufacturer_id: null,
+        manufacturer_id: 0,
         mig_id: "",
         notes: "",
         inventory_values: [],
@@ -120,7 +120,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                 })
             }
             else {
-                if (doq[i].inventory_parts) {
+                if (doq[i].inventory_parts.length > 0) {
                     arr.push({
                         ...doq[i],
                         inventory_parts: changeEnablePart(doq[i].inventory_parts, partid, checked)
@@ -261,20 +261,20 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
     const Children = ({ doc, idx }) => {
         return (
             <Timeline.Item>
-                <Collapse accordion>
+                <Collapse>
                     {
                         <Panel id={`panel${idx}`} key={idx} header={<strong>{doc.model_name}</strong>}
                             extra={
                                 <div className="flex">
-                                    <Checkbox style={{ marginRight: `0.5rem` }} onChange={(e) => {
+                                    <Checkbox checked={doc.enable_part} style={{ marginRight: `0.5rem` }} onChange={(e) => {
                                         var temp = newdata.inventory_parts
                                         const selectedpart = changeEnablePart(temp, doc.model_id, e.target.checked)
                                         setpartmodeldata(selectedpart)
-                                        // setnewdata(prev => {
-                                        //     var tmp = prev
-                                        //     var hsl = ignorePart(tmp.inventory_parts, doc.id)
-                                        //     return hsl
-                                        // })
+                                        setnewdata(prev => {
+                                            var temp = prev
+                                            temp.inventory_parts = selectedpart
+                                            return temp
+                                        })
                                     }}></Checkbox>
                                     <p className="mb-0">{doc.enable_part ? "Item Ada" : "Item Tidak Ada"}</p>
                                 </div>
@@ -744,7 +744,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                             <h1 className="font-semibold py-2">Form Tambah Item</h1>
                             <div className="flex space-x-2">
                                 {/* <Link href={`/items`}> */}
-                                    <Button type="default" onClick={() => { console.log(newdata); console.log(columnsmodeldata); console.log(partmodeldata); console.log(emptyfieldpart) }}>Batal</Button>
+                                <Button type="default" onClick={() => { console.log(newdata); console.log(columnsmodeldata); console.log(partmodeldata); console.log(emptyfieldpart) }}>Batal</Button>
                                 {/* </Link> */}
                                 <Button type="primary" onClick={() => {
                                     instanceForm.submit()
@@ -1310,22 +1310,22 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                         partmodeldata.length === 0 ?
                                             <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
                                             :
-                                            <Collapse accordion>
+                                            <Collapse>
                                                 {
                                                     partmodeldata.map((docpart, idxpart) => {
                                                         return (
                                                             <Panel id={`panel${idxpart}`} key={idxpart} header={<strong>{docpart.model_name}</strong>}
                                                                 extra={
                                                                     <div className="flex">
-                                                                        <Checkbox style={{ marginRight: `0.5rem` }} onChange={(e) => {
+                                                                        <Checkbox value={docpart.enable_part} style={{ marginRight: `0.5rem` }} onChange={(e) => {
                                                                             var temp = newdata.inventory_parts
                                                                             const selectedpart = changeEnablePart(temp, docpart.model_id, e.target.checked)
                                                                             setpartmodeldata(selectedpart)
-                                                                            // setnewdata(prev => {
-                                                                            //     var tmp = prev
-                                                                            //     var hsl = ignorePart(tmp.inventory_parts, docpart.id)
-                                                                            //     return hsl
-                                                                            // })
+                                                                            setnewdata(prev => {
+                                                                                var temp = prev
+                                                                                temp.inventory_parts = selectedpart
+                                                                                return temp
+                                                                            })
                                                                         }}></Checkbox>
                                                                         <p className="mb-0">{docpart.enable_part ? "Item Ada" : "Item Tidak Ada"}</p>
                                                                     </div>
