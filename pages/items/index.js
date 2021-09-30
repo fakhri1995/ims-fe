@@ -273,7 +273,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
         <Layout dataProfile={dataProfile} sidemenu={sidemenu} tok={initProps} st={st} pathArr={pathArr}>
             <div className="h-20 w-full grid grid-cols-1 md:grid-cols-3 border-gray-400 md:border-t md:border-b bg-white mb-5 p-4">
                 <div className=" col-span-1 md:col-span-2 flex items-center mb-2 md:mb-0">
-                    <div className="font-semibold text-base w-auto">Inventories</div>
+                    <div className="font-semibold text-base w-auto">Items</div>
                 </div>
                 <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
                     <Link href={'/items/create'}>
