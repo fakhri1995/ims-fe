@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
 import Link from 'next/link'
 import { SearchOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
-import { Button, TreeSelect, Table, Input, Select, Modal } from 'antd'
+import { Button, TreeSelect, Table, Input, Select, Modal, notification } from 'antd'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard.module.css'
 
@@ -14,7 +14,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
     const pathArr = rt.pathname.split("/").slice(1)
     pathArr.splice(2, 1)
     pathArr[pathArr.length - 1] = "Tambah Item Part"
-    const { name, asset_id } = rt.query
+    const { name } = rt.query
 
     //useState
     const [displaydata, setdisplaydata] = useState([])
@@ -57,6 +57,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
     const [namavalue, setnamavalue] = useState("")
     const [assettypefilteract, setassettypefilteract] = useState(false)
     const [assettypevalue, setassettypevalue] = useState("")
+    const [namaasset, setnamaasset] = useState("")
     const [modelfilteract, setmodelfilteract] = useState(false)
     const [modelvalue, setmodelvalue] = useState("")
     const [assetdata, setassetdata] = useState([])
@@ -74,14 +75,14 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
             key: 'inventory_name',
         },
         {
-            title: 'Serial Number',
-            dataIndex: 'serial_number',
-            key: 'serial_number',
+            title: 'MIG ID',
+            dataIndex: 'mig_id',
+            key: 'mig_id',
         },
         {
             title: 'Model',
-            dataIndex: 'model',
-            key: 'model',
+            dataIndex: 'model_name',
+            key: 'model_name',
         },
         {
             title: 'Asset Type',
@@ -89,98 +90,6 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
             key: 'asset_name',
         },
     ]
-    const dummiesColumn = [
-        {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
-        },
-        {
-            title: 'Age',
-            dataIndex: 'age',
-            key: 'age',
-            width: '12%',
-        },
-        {
-            title: 'Address',
-            dataIndex: 'address',
-            width: '30%',
-            key: 'address',
-        },
-    ];
-    const dummies = [
-        {
-            key: 1,
-            id: 23,
-            name: 'John Brown sr.',
-            age: 60,
-            address: 'New York No. 1 Lake Park',
-            children: [
-                {
-                    key: 11,
-                    id: 29,
-                    name: 'John Brown',
-                    age: 42,
-                    address: 'New York No. 2 Lake Park',
-                },
-                {
-                    key: 12,
-                    id: 30,
-                    name: 'John Brown jr.',
-                    age: 30,
-                    address: 'New York No. 3 Lake Park',
-                    children: [
-                        {
-                            key: 121,
-                            id: 37,
-                            name: 'Jimmy Brown',
-                            age: 16,
-                            address: 'New York No. 3 Lake Park',
-                        },
-                    ],
-                },
-                {
-                    key: 13,
-                    id: 39,
-                    name: 'Jim Green sr.',
-                    age: 72,
-                    address: 'London No. 1 Lake Park',
-                    children: [
-                        {
-                            key: 131,
-                            id: 44,
-                            name: 'Jim Green',
-                            age: 42,
-                            address: 'London No. 2 Lake Park',
-                            children: [
-                                {
-                                    key: 1311,
-                                    id: 45,
-                                    name: 'Jim Green jr.',
-                                    age: 25,
-                                    address: 'London No. 3 Lake Park',
-                                },
-                                {
-                                    key: 1312,
-                                    id: 50,
-                                    name: 'Jimmy Green sr.',
-                                    age: 18,
-                                    address: 'London No. 4 Lake Park',
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            key: 2,
-            id: 78,
-            name: 'Joe Black',
-            age: 32,
-            address: 'Sidney No. 1 Lake Park',
-        },
-    ];
     const recursiveGetParentId = (id, tree) => {
         let parentId;
         for (let i = 0; i < tree.length; i++) {
@@ -209,6 +118,20 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
         }
         return parentKey;
     };
+    const recursiveGetParent = (key, tree) => {
+        let parent;
+        for (let i = 0; i < tree.length; i++) {
+            const node = tree[i];
+            if (node.children) {
+                if (node.children.some((item) => item.key === key)) {
+                    parent = node;
+                } else if (recursiveGetParent(key, node.children)) {
+                    parent = recursiveGetParent(key, node.children);
+                }
+            }
+        }
+        return parent;
+    };
     var selectedPart = {}
     const recursiveSearchPart = (doc, key) => {
         for (var i = 0; i < doc.length; i++) {
@@ -222,13 +145,85 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
             }
         }
     }
+    const assetPart = []
+    const recursiveSearchPartFromAsset = (doc, assetid) => {
+        var arr = []
+        for (var i = 0; i < doc.length; i++) {
+            if (doc[i].asset_id === Number(assetid)) {
+                // continue
+                assetPart.push(doc[i])
+            }
+            else {
+                if (doc[i].children) {
+                    arr.push({
+                        ...doc[i],
+                        children: recursiveSearchPartFromAsset(doc[i].children, assetid)
+                    })
+                }
+                else {
+                    arr.push({
+                        ...doc[i]
+                    })
+                }
+            }
+        }
+        return arr
+    }
+    const modelPart = []
+    const recursiveSearchPartFromModel = (doc, modelid) => {
+        var arr = []
+        for (var i = 0; i < doc.length; i++) {
+            if (doc[i].model_id === Number(modelid)) {
+                // continue
+                modelPart.push(doc[i])
+            }
+            else {
+                if (doc[i].children) {
+                    arr.push({
+                        ...doc[i],
+                        children: recursiveSearchPartFromModel(doc[i].children, modelid)
+                    })
+                }
+                else {
+                    arr.push({
+                        ...doc[i]
+                    })
+                }
+            }
+        }
+        return arr
+    }
+    const namePart = []
+    const recursiveSearchPartFromName = (doc, name) => {
+        var arr = []
+        for (var i = 0; i < doc.length; i++) {
+            if (doc[i].inventory_name.toLowerCase().includes(name.toLowerCase())) {
+                // continue
+                namePart.push(doc[i])
+            }
+            else {
+                if (doc[i].children) {
+                    arr.push({
+                        ...doc[i],
+                        children: recursiveSearchPartFromName(doc[i].children, name)
+                    })
+                }
+                else {
+                    arr.push({
+                        ...doc[i]
+                    })
+                }
+            }
+        }
+        return arr
+    }
 
     //handler
     //1.onChange
     //search nama
     const onChangeSearch = (e) => {
         if (e.target.value === "") {
-            setdisplaydata(displaydata2)
+            setdisplaydata(displaydata3)
             setnamasearchact(false)
         }
         else {
@@ -239,7 +234,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
     //search asset type
     const onChangeAssetType = (id) => {
         if (typeof (id) === 'undefined') {
-            setdisplaydata(displaydata2)
+            setdisplaydata(displaydata3)
             setassettypefilteract(false)
         }
         else {
@@ -250,7 +245,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
     //search model
     const onChangeModel = (idmodel) => {
         if (typeof (idmodel) === 'undefined') {
-            setdisplaydata(displaydata2)
+            setdisplaydata(displaydata3)
             setmodelfilteract(false)
         }
         else {
@@ -259,54 +254,56 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
         }
     }
     const onFinalClick = () => {
-        var datatemp = displaydata1
+        var datatemp = displaydata2
         if (assettypefilteract) {
-            datatemp = datatemp.filter(flt => {
-                return (flt.asset_name.toLowerCase().includes(assettypevalue.toLowerCase())) || (flt.asset_name.replaceAll(/\s+\/\s+/g, "/").split("/")[0] === namaasset)
-            })
+            // const t = recursiveSearchPartFromAsset(datatemp, assettypevalue)
+            recursiveSearchPartFromAsset(datatemp, assettypevalue)
+            datatemp = assetPart
         }
         if (modelfilteract) {
-            datatemp = datatemp.filter(flt => flt.modelid === modelvalue)
+            // const t = recursiveSearchPartFromModel(datatemp, modelvalue)
+            recursiveSearchPartFromModel(datatemp, modelvalue)
+            datatemp = modelPart
         }
         if (namasearchact) {
-            datatemp = datatemp.filter(flt => {
-                return flt.model_name.toLowerCase().includes(namavalue.toLowerCase())
-            })
+            // const t = recursiveSearchPartFromName(datatemp, namavalue)
+            recursiveSearchPartFromName(datatemp, namavalue)
+            datatemp = namePart
         }
         setdisplaydata(datatemp)
     }
     const handleAddItemPart = () => {
-        // setloadingadd(true)
-        // fetch(`https://boiling-thicket-46501.herokuapp.com/addInventoryParts`, {
-        //     method: 'POST',
-        //     headers: {
-        //         'Authorization': JSON.parse(initProps),
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify(newpartdata)
-        // })
-        //     .then(res => res.json())
-        //     .then(res2 => {
-        //         setloadingadd(false)
-        //         if (res2.success) {
-        //             notification['success']({
-        //                 message: "Item Part berhasil ditambahkan",
-        //                 duration: 3
-        //             })
-        //             setmodaladd(false)
-        //         }
-        //         else if (!res2.success) {
-        //             notification['error']({
-        //                 message: res2.message,
-        //                 duration: 3
-        //             })
-        //         }
-        //     })
+        setloadingadd(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addInventoryParts`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newpartdata)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingadd(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: "Item Part berhasil ditambahkan",
+                        duration: 3
+                    })
+                    setmodaladd(false)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
     }
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryReplacements?id=${asset_id}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryAddable`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -314,9 +311,32 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                setdisplaydata(res2.data)
-                setdisplaydata2(res2.data)
-                setdisplaydata3(res2.data)
+                const recursiveChangetoChildren = (rsc) => {
+                    var res = []
+                    for (var i = 0; i < rsc.length; i++) {
+                        rsc[i].key = rsc[i].id
+                        rsc[i].title = rsc[i].inventory_name
+                        rsc[i].children = rsc[i].inventory_parts
+                        delete rsc[i].inventory_parts
+                        if (rsc[i].children.length !== 0) {
+                            res.push({
+                                ...rsc[i],
+                                children: recursiveChangetoChildren(rsc[i].children)
+                            })
+                        }
+                        else {
+                            delete rsc[i].children
+                            res.push({
+                                ...rsc[i],
+                            })
+                        }
+                    }
+                    return res
+                }
+                const t = recursiveChangetoChildren(res2.data)
+                setdisplaydata(t)
+                setdisplaydata2(t)
+                setdisplaydata3(t)
                 setpraloading(false)
             })
     }, [])
@@ -351,7 +371,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                     <div className="font-semibold text-xl w-auto">Form Tambah Item Part "{name}"</div>
                 </div>
                 <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
-                    <Button onClick={() => { rt.push(`/items/detail/${itemid}?active=konfigurasiPart`) }} style={{ marginRight: `1rem` }} size="middle" type="danger">
+                    <Button onClick={() => { rt.push(`/items/detail/${itemid}?active=konfigurasiPart`) /*console.log(listselectedpart)*/ }} style={{ marginRight: `1rem` }} size="middle" type="danger">
                         Batal
                     </Button>
                     <Button disabled={disabledadd} onClick={()=>{setmodaladd(true)}} size="middle" type="primary">
@@ -396,7 +416,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                                             onChangeAssetType()
                                         }
                                         else {
-                                            onChangeAssetType(extra.allCheckedNodes[0].node.props.title)
+                                            onChangeAssetType(extra.allCheckedNodes[0].node.props.id)
                                             setnamaasset(extra.allCheckedNodes[0].node.props.title)
                                         }
                                     }}
@@ -419,13 +439,13 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                                 setnewpartdata({...newpartdata, inventory_part_ids: selectedRows.map(doc=>doc.id)})
                                 var listarr = []
                                 selectedRows.forEach((doc, idx) => {
-                                    const a = recursiveGetParentKey(doc.key, dummies)
+                                    const a = recursiveGetParentKey(doc.key, displaydata3)
                                     if(typeof(a) !== 'undefined'){
-                                        recursiveSearchPart(dummies ,a)
-                                        listarr.push({ name: doc.name, parent: selectedPart })
+                                        recursiveSearchPart(displaydata3, a)
+                                        listarr.push({ name: doc.inventory_name, parent: selectedPart })
                                     }
                                     else{
-                                        listarr.push({ name: doc.name, parent: "" })
+                                        listarr.push({ name: doc.inventory_name, parent: "" })
                                     }
                                 })
                                 setlistselectedpart(listarr)
@@ -435,27 +455,27 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                             },
                             checkStrictly: true
                         }}
-                        pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dummies} columns={dummiesColumn} loading={praloading}
-                        onRow={(record, rowIndex) => {
-                            return {
-                                onMouseOver: (event) => {
-                                    setrowstate(record.id)
-                                },
-                                onClick: (event) => {
-                                    // {
-                                    //     [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                    // rt.push(`/items/detail/${record.id}`)
-                                    //         :
-                                    //         null
-                                    // }
-                                }
-                            }
-                        }}
-                        rowClassName={(record, idx) => {
-                            return (
-                                record.id === rowstate ? `cursor-pointer` : ``
-                            )
-                        }}
+                        pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={displaydata} columns={columnsTable} loading={praloading}
+                        // onRow={(record, rowIndex) => {
+                        //     return {
+                        //         onMouseOver: (event) => {
+                        //             setrowstate(record.id)
+                        //         },
+                        //         onClick: (event) => {
+                        //             // {
+                        //             //     [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                        //             // rt.push(`/items/detail/${record.id}`)
+                        //             //         :
+                        //             //         null
+                        //             // }
+                        //         }
+                        //     }
+                        // }}
+                        // rowClassName={(record, idx) => {
+                        //     return (
+                        //         record.id === rowstate ? `cursor-pointer` : ``
+                        //     )
+                        // }}
                     ></Table>
                 </div>
             </div>
@@ -474,7 +494,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                             listselectedpart.map((doc,idx)=>{
                                 if(doc.parent !== ""){
                                     return(
-                                        <p className="mb-0 text-xs font-semibold">- {doc.name}, sedang menjadi Item Part dari "{doc.parent.name}"</p>
+                                        <p className="mb-0 text-xs font-semibold">- {doc.name}, sedang menjadi Item Part dari "{doc.parent.inventory_name}"</p>
                                     )
                                 }
                                 else{

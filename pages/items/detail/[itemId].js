@@ -145,6 +145,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
 
     //usestate
     const [mainpartdata, setmainpartdata] = useState([])
+    const [assetdata, setassetdata] = useState([])
     const [praloadingpart, setpraloadingpart] = useState(true)
     const [events, setevents] = useState("")
     const [datatable, setdatatable] = useState([])
@@ -249,6 +250,78 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
     }
 
     //handler
+    const assetPart = []
+    const recursiveSearchPartFromAsset = (doc, assetid) => {
+        var arr = []
+        for (var i = 0; i < doc.length; i++) {
+            if (doc[i].asset_id === Number(assetid)) {
+                // continue
+                assetPart.push(doc[i])
+            }
+            else {
+                if (doc[i].children) {
+                    arr.push({
+                        ...doc[i],
+                        children: recursiveSearchPartFromAsset(doc[i].children, assetid)
+                    })
+                }
+                else {
+                    arr.push({
+                        ...doc[i]
+                    })
+                }
+            }
+        }
+        return arr
+    }
+    const modelPart = []
+    const recursiveSearchPartFromModel = (doc, modelid) => {
+        var arr = []
+        for (var i = 0; i < doc.length; i++) {
+            if (doc[i].model_id === Number(modelid)) {
+                // continue
+                modelPart.push(doc[i])
+            }
+            else {
+                if (doc[i].children) {
+                    arr.push({
+                        ...doc[i],
+                        children: recursiveSearchPartFromModel(doc[i].children, modelid)
+                    })
+                }
+                else {
+                    arr.push({
+                        ...doc[i]
+                    })
+                }
+            }
+        }
+        return arr
+    }
+    const namePart = []
+    const recursiveSearchPartFromName = (doc, name) => {
+        var arr = []
+        for (var i = 0; i < doc.length; i++) {
+            if (doc[i].inventory_name.toLowerCase().includes(name.toLowerCase())) {
+                // continue
+                namePart.push(doc[i])
+            }
+            else {
+                if (doc[i].children) {
+                    arr.push({
+                        ...doc[i],
+                        children: recursiveSearchPartFromName(doc[i].children, name)
+                    })
+                }
+                else {
+                    arr.push({
+                        ...doc[i]
+                    })
+                }
+            }
+        }
+        return arr
+    }
     //deliver API
     const handleReplacementItemPart = () => {
         setloadingchanged(true)
@@ -312,7 +385,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
     //search nama
     const onChangeSearch = (e) => {
         if (e.target.value === "") {
-            setdatatable(datatable2)
+            setdatatable(datatable3)
             setnamasearchact(false)
         }
         else {
@@ -320,21 +393,21 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
             setnamavalue(e.target.value)
         }
     }
-    // //search asset type
-    // const onChangeAssetType = (id) => {
-    //     if (typeof (id) === 'undefined') {
-    //         setdisplaydata(displaydata2)
-    //         setassettypefilteract(false)
-    //     }
-    //     else {
-    //         setassettypefilteract(true)
-    //         setassettypevalue(id)
-    //     }
-    // }
+    //search asset type
+    const onChangeAssetType = (id) => {
+        if (typeof (id) === 'undefined') {
+            setdisplaydata(datatable3)
+            setassettypefilteract(false)
+        }
+        else {
+            setassettypefilteract(true)
+            setassettypevalue(id)
+        }
+    }
     //search model
     const onChangeModel = (idmodel) => {
         if (typeof (idmodel) === 'undefined') {
-            setdatatable(datatable2)
+            setdatatable(datatable3)
             setmodelfilteract(false)
         }
         else {
@@ -342,23 +415,25 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
             setmodelvalue(idmodel)
         }
     }
-    // const onFinalClick = () => {
-    //     var datatemp = displaydata1
-    //     // if (assettypefilteract) {
-    //     //     datatemp = datatemp.filter(flt => {
-    //     //         return (flt.asset_name.toLowerCase().includes(assettypevalue.toLowerCase())) || (flt.asset_name.replaceAll(/\s+\/\s+/g, "/").split("/")[0] === namaasset)
-    //     //     })
-    //     // }
-    //     if (modelfilteract) {
-    //         datatemp = datatemp.filter(flt => flt.modelid === modelvalue)
-    //     }
-    //     if (namasearchact) {
-    //         datatemp = datatemp.filter(flt => {
-    //             return flt.model_name.toLowerCase().includes(namavalue.toLowerCase())
-    //         })
-    //     }
-    //     setdisplaydata(datatemp)
-    // }
+    const onFinalClick = () => {
+        var datatemp = datatable2
+        if (assettypefilteract) {
+            // const t = recursiveSearchPartFromAsset(datatemp, assettypevalue)
+            recursiveSearchPartFromAsset(datatemp, assettypevalue)
+            datatemp = assetPart
+        }
+        if (modelfilteract) {
+            // const t = recursiveSearchPartFromModel(datatemp, modelvalue)
+            recursiveSearchPartFromModel(datatemp, modelvalue)
+            datatemp = modelPart
+        }
+        if (namasearchact) {
+            // const t = recursiveSearchPartFromName(datatemp, namavalue)
+            recursiveSearchPartFromName(datatemp, namavalue)
+            datatemp = namePart
+        }
+        setdatatable(datatemp)
+    }
 
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getInventory?id=${itemid}`, {
@@ -422,6 +497,18 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                 })
         }
     }, [datachanged])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setassetdata(res2.data)
+            })
+    }, [])
 
     return (
         <div className="flex flex-col">
@@ -431,7 +518,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                     praloading2 ?
                         null
                         :
-                        <Button type="primary" size="large" onClick={() => { /*console.log(mainpartdata); console.log(dataremoved)*/ rt.push(`/items/createpart/${itemid}?name=${mainpartdata.inventory_name}&asset_id=${2}`) }}>Tambah</Button>
+                        <Button type="primary" size="large" onClick={() => { /*console.log(mainpartdata); console.log(dataremoved)*/ rt.push(`/items/createpart/${itemid}?name=${mainpartdata.inventory_name}`) }}>Tambah</Button>
                 }
             </div>
             <div className="flex mb-5">
@@ -464,23 +551,23 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                             <div className="col-span-3 mr-1">
                                 <TreeSelect allowClear
                                     dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                    treeData={[invrelations.tree_companies]}
+                                    treeData={assetdata}
                                     placeholder="Cari Asset Type"
                                     treeDefaultExpandAll
                                     style={{ width: `100%` }}
-                                // onChange={(value, label, extra) => {
-                                //     if (typeof (value) === 'undefined') {
-                                //         onChangeAssetType()
-                                //     }
-                                //     else {
-                                //         onChangeAssetType(extra.allCheckedNodes[0].node.props.title)
-                                //         setnamaasset(extra.allCheckedNodes[0].node.props.title)
-                                //     }
-                                // }}
+                                    onChange={(value, label, extra) => {
+                                        if (typeof (value) === 'undefined') {
+                                            onChangeAssetType()
+                                        }
+                                        else {
+                                            onChangeAssetType(extra.allCheckedNodes[0].node.props.id)
+                                            setnamaasset(extra.allCheckedNodes[0].node.props.title)
+                                        }
+                                    }}
                                 />
                             </div>
                             <div className=" col-span-1">
-                                <Button type="primary" style={{ width: `100%` }}><SearchOutlined /></Button>
+                                <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
                             </div>
                         </div>
                 }
