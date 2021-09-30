@@ -14,10 +14,10 @@ function Sitemap({ }) {
                     <div className={'flex flex-rowflex-row'}>
                         <div className={'w-1/2'}>
                             <div>
-                                <Link href={{pathname: '/'}}><p className={'cursor-pointer gilroy-bold pb-8 text-base'}>Home</p></Link>
+                                <Link href={{pathname: '/'}}><p className={'cursor-pointer gilroy-bold menu-underlined w-min mb-8 text-base'}>Home</p></Link>
                             </div>
                             <div>
-                                <p className={'gilroy-bold pb-1'}>Our Solutions</p>
+                                <p className={'gilroy-bold pb-1 text-base'}>Our Solutions</p>
                                 {/* <Link href={{pathname: '/advantages'}}><p className={'cursor-pointer gilroy-regular pb-1 menu-underlined w-min text-base'}>Advantages</p></Link> */}
                                 <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer gilroy-regular pb-1 menu-underlined w-min text-base'}>Hardware</p></Link>
                                 <Link href={{pathname: '/software'}}><p className={'cursor-pointer gilroy-regular pb-1 menu-underlined w-min text-base'}>Software</p></Link>
@@ -26,7 +26,7 @@ function Sitemap({ }) {
                         </div>
                         <div className={'w-1/2'}>
                             <div className={'pb-8'}>
-                                <p className={'gilroy-bold pb-1'}>Company</p>
+                                <p className={'gilroy-bold pb-1 text-base'}>Company</p>
                                 <Link href={{pathname: '/aboutus'}}><p className={'cursor-pointer gilroy-regular pb-1 menu-underlined w-min text-base'}>About&nbsp;Us</p></Link>
                                 <Link href={{pathname: '/joinourteam'}}><p className={'cursor-pointer gilroy-regular menu-underlined w-min text-base'}>Join&nbsp;Our&nbsp;Team</p></Link>
                             </div>

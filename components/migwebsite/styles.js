@@ -7,6 +7,9 @@ const Styles = (props) => (
   <div>
     <style jsx global>
     {` 
+    .shadow{
+      box-shadow:0 5px 20px rgba(0,0,0,.15)
+    }
     .animateBounce:hover{
       animation: bounce 1s infinite;
 

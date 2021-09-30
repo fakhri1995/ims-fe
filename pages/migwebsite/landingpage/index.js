@@ -31,11 +31,11 @@ function LandingPage({ }) {
             {/* <section className={'container mx-auto'}> */}
                 <section className={'section1landingpage md:relative md:-top-20 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                     {/* Browser View */}
-                    <div className={'hidden md:flex h-screen container mx-auto'}>
+                    <div className={'hidden md:flex h-screen container mx-auto -top-10 relative'}>
                             <div className={'flex-col w-1/2 my-auto'}>
                                 <div className={'hidden md:block'}>
-                                    <p className={'text-3xl md:text-5xl md:leading-tight lg:leading-normal xl:leading-relaxed lg:text-6xl pb-6 gilroy-medium font-semibold'} style={{ lineHeight:'1.25' }}>
-                                        Focus on what you do best, we take care the rest
+                                    <p className={'text-3xl md:text-4xl md:leading-tight lg:leading-normal xl:leading-relaxed lg:text-5xl pb-6 gilroy-bold'} style={{ lineHeight:'1.25' }}>
+                                        Focus on what you do best, we take care of the rest
                                     </p>
                                     {/* <button className={'text-black text-xl border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>Let's Collaborate</button> */}
                                     <p className={' text-xl gilroy-regular'}>
@@ -58,7 +58,7 @@ function LandingPage({ }) {
                         <div className={'flex-col center'}>
                             <div className={'text-center'}>
                                 <p className={'text-4xl gilroy-bold'} style={{ lineHeight:'1.25' }}>
-                                    Focus on what you do best, we take care the rest
+                                    Focus on what you do best, we take care of the rest
                                 </p>
                             </div>
                         </div>
@@ -71,10 +71,10 @@ function LandingPage({ }) {
                         <Link
                             className={'flex-col hidden md:block'}
                             activeClass="active"
-                            to="section2landingpagebrowser"
+                            to="youronestop"
                             spy={true}
                             smooth={true}
-                            offset={-70}
+                            offset={-120}
                             duration={500}
                         >
                             
@@ -89,23 +89,23 @@ function LandingPage({ }) {
                             <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto md:w-40 lg:w-52'}>
                                 <p className={'text-3xl md:text-5xl lg:text-5xl text-center gilroy-regular '}><CountUp end={9000}/>+</p>
                                 <p className={'hidden md:block text-lg md:text-xl text-center gilroy-regular'}>managed and leased devices</p>
-                                <p className={'block md:hidden text-lg md:text-xl text-center gilroy-regular'}>devices</p>
+                                <p className={'block md:hidden text-lg md:text-xl text-center gilroy-regular'}>managed and leased devices</p>
                             </div>
                             <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto md:w-40 lg:w-52'}>
                                 <p className={'text-3xl md:text-5xl lg:text-5xl text-center gilroy-regular '}><CountUp end={100}/>+</p>
                                 <p className={'hidden md:block text-lg md:text-xl text-center gilroy-regular'}>IT projects</p>
-                                <p className={'block md:hidden text-lg md:text-xl text-center gilroy-regular'}>projects</p>
+                                <p className={'block md:hidden text-lg md:text-xl text-center gilroy-regular'}>IT projects</p>
                             </div>
                             <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto md:w-40 lg:w-52'}>
                                 <p className={'text-3xl md:text-5xl lg:text-5xl text-center gilroy-regular '}><CountUp end={15}/>+</p>
                                 <p className={'hidden md:block text-lg md:text-xl text-center gilroy-regular'}>years experience</p>
-                                <p className={'block md:hidden text-lg md:text-xl text-center gilroy-regular'}>years</p>
+                                <p className={'block md:hidden text-lg md:text-xl text-center gilroy-regular'}>years experience</p>
                             </div>
                         </div>
                         <Link 
                             className={'flex-col block md:hidden'}
                             activeClass="active"
-                            to="section2landingpagephone"
+                            to="youronestop"
                             spy={true}
                             smooth={true}
                             offset={-70}
@@ -116,7 +116,7 @@ function LandingPage({ }) {
                         </Link>
                     </div>
                 </section>
-                <section className={'px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 md:relative md:bottom-32 text-center'}>
+                <section className={'youronestop px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 md:relative md:bottom-32 text-center'}>
                     <div className={'container mx-auto'}>
                         <p className={'text-3xl md:text-4xl gilroy-bold py-8 md:py-0'}>
                             Your one stop <span style={{borderBottom:'solid 3px #188E4D',paddingBottom:'2.5px'}}>cost efficient</span> IT solution 
@@ -145,60 +145,61 @@ function LandingPage({ }) {
                     </div>
                 </section> */}
                 <section className={'section2landingpagephone py-8 md:hidden px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
-                    <Flickity
+                    {/* <Flickity
                     className={'carousel'}
                     elementType={'div'}
                     options={flickityOptions}
                     disableImagesLoaded={false}
                     reloadOnUpdate
                     static
-                    >
-                        <div className={'bg-gray-200 rounded-2xl w-4/5 h-auto min-h-full py-4 px-4 mx-4'}>
+                    > */}
+                        <div className={'bg-gray-200 rounded-2xl py-4 px-4 mx-4 mb-4'}>
                             <p className={'text-xl pb-2 md:pb-4 gilroy-bold text-green-600'}>Hardware</p>
                             <div className={'pt-4 pb-4 w-full'}>
-                                <img className={'pr-1'} style={{paddingLeft:'2px'}} src="/image/landingpage/Hardware.png"></img>
+                                <img className={''} style={{paddingLeft:'2px'}} src="/image/landingpage/Hardware.png"></img>
                             </div>
                             <p className={'text-2xl pb-2 md:pb-4 gilroy-bold'}>Lighten up your capital heavy IT infrastructure</p>
-                            <p className={'w-full h-full mb-8 sm:mb-12 sm:h-20 min-h-full pb-4 gilroy-medium text-lg'}>Transform yours into managed service model, guaranteeing you with predictable monthly cost and excelent service level.</p>
+                            <p className={'gilroy-medium text-lg'}>Transform yours into managed service model, guaranteeing you with predictable monthly cost and excelent service level.</p>
                             <br></br>
                             <Linkk href="/hardware">
-                                <button style={{width:'150px'}} className={'bottom-5 fixed text-lg text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
+                                <button className={'text-lg text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
                                     Get yours
                                 </button>
                             </Linkk>
                         </div>
-                        <div className={'bg-gray-200 rounded-2xl w-4/5 h-auto min-h-full py-4 px-4 mx-4'}>
-                            <p className={'text-xl pb-2 md:pb-4 gilroy-bold text-green-600'}>Talents</p>
-                            <div className={'pt-4 pb-4 w-full'}>
-                                <img className={'pr-1'} style={{paddingLeft:'2px'}} src="/image/landingpage/People.png"></img>
-                            </div>
-                            <p className={'text-2xl pb-2 md:pb-4 gilroy-bold'}>Our people, your growth</p>
-                            <p className={'w-full h-full mb-8 sm:mb-12 sm:h-20 min-h-full pb-4 gilroy-medium text-lg'}>Let us streamline your hiring process with on- demand expertise, giving you flexible head counts and talents working period</p>
-                            <br></br>
-                            <Linkk href="/people">
-                                <button style={{width:'150px'}} className={'bottom-5 fixed text-lg text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
-                                    Get yours
-                                </button>
-                            </Linkk>
-                        </div>
-                        <div className={'bg-gray-200 rounded-2xl w-4/5 h-auto min-h-full py-4 px-4 mx-4'}>
+                        <div className={'bg-gray-200 rounded-2xl py-4 px-4 mx-4 mb-4'}>
                             <p className={'text-xl pb-2 md:pb-4 gilroy-bold text-green-600'}>Software</p>
                             <div className={'pt-4 pb-4 w-full'}>
-                                <img className={'pr-1'} style={{paddingLeft:'2px'}} src="/image/landingpage/Software.png"></img>
+                                <img className={''} style={{paddingLeft:'2px'}} src="/image/landingpage/Software.png"></img>
                             </div>
                             <p className={'text-2xl pb-2 md:pb-4 gilroy-bold'}>Automate your business</p>
-                            <p className={'w-full h-full mb-8 sm:mb-12 sm:h-20 min-h-full pb-4 gilroy-medium text-lg'}>Simplify and digitalize your business process. Customize your system with us.</p>
+                            <p className={'gilroy-medium text-lg'}>Simplify and digitalize your business process. Customize your system with us.</p>
                             <br></br>
                             <Linkk href="/software">
-                                <button style={{width:'150px'}} className={'bottom-5 fixed text-lg text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
-                                    Get yours
+                                <button className={'text-lg text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
+                                    Build now
                                 </button>
                             </Linkk>
                         </div>
-                    </Flickity>
+                        <div className={'bg-gray-200 rounded-2xl py-4 px-4 mx-4 mb-4'}>
+                            <p className={'text-xl pb-2 md:pb-4 gilroy-bold text-green-600'}>Talents</p>
+                            <div className={'pt-4 pb-4 w-full'}>
+                                <img className={''} style={{paddingLeft:'2px'}} src="/image/landingpage/People.png"></img>
+                            </div>
+                            <p className={'text-2xl pb-2 md:pb-4 gilroy-bold'}>Our people, your growth</p>
+                            <p className={'gilroy-medium text-lg'}>Let us streamline your hiring process with on-demand expertise, giving you flexible headcounts and talents working period.</p>
+                            <br></br>
+                            <Linkk href="/people">
+                                <button className={'text-lg text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
+                                    Set up your team
+                                </button>
+                            </Linkk>
+                        </div>
+                        
+                    {/* </Flickity> */}
                 </section>
                 <section className={'section2landingpagebrowser md:bottom-16 md:relative py-8 hidden md:block px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
-                    <div className={'container mx-auto pb-8 flex justify-around'}>
+                    <div className={'container mx-auto flex justify-around pb-16'}>
                         <Link className={''} activeClass="active" to="hardware" spy={true} smooth={true} offset={-70} duration={500}>
                             <p className={'gilroy-bold text-lg md:text-2xl text-green-600 cursor-pointer menu-underlined child'}>Hardware</p>
                         </Link>
@@ -209,7 +210,7 @@ function LandingPage({ }) {
                             <p className={'gilroy-bold text-lg md:text-2xl text-green-600 cursor-pointer menu-underlined child'}>Talents</p>
                         </Link>
                     </div>
-                    <div className={'hardware'}>
+                    <div className={'hardware pb-16'}>
                         <div className={'container mx-auto block md:flex'}>
                             <div className={'pt-8 pb-8 w-full md:w-1/2 my-auto'}>
                                 <p className={'text-2xl pb-2 gilroy-bold text-green-600'}>Hardware</p>
@@ -229,7 +230,7 @@ function LandingPage({ }) {
                             </div>
                         </div>
                     </div>
-                    <div className={'software'}>
+                    <div className={'software pb-16'}>
                         <div className={'container mx-auto block md:flex'}>
                             <div className={'pt-8 pb-8 w-1/2 mr-8 hidden md:block'}>
                                 <img className={'w-full pl-1'} src="/image/landingpage/Software.png"></img>
@@ -249,7 +250,7 @@ function LandingPage({ }) {
                             </div>
                         </div>
                     </div>
-                    <div className={'talents'}>
+                    <div className={'talents pb-16'}>
                         <div className={'container mx-auto block md:flex'}>
                             <div className={'pt-8 pb-8 w-full md:w-1/2 my-auto'}>
                                 <p className={'text-2xl pb-2 gilroy-bold text-green-600'}>Talents</p>
@@ -257,7 +258,7 @@ function LandingPage({ }) {
                                 <div className={'pt-4 pb-4 w-full block md:hidden'}>
                                     <img className={'pr-1'} style={{paddingLeft:'2px'}} src="/image/landingpage/People.png"></img>
                                 </div>
-                                <p className={'w-full md:w-full pb-4 gilroy-medium text-xl text-justify'}>Let us streamline your hiring process with on- demand expertise, giving you flexible head counts  and talents working period.</p>
+                                <p className={'w-full md:w-full pb-4 gilroy-medium text-xl text-justify'}>Let us streamline your hiring process with on-demand expertise, giving you flexible headcounts and talents working period.</p>
                                 <Linkk href="/talents">
                                     <button className={'flex text-xl text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
                                         <p className={'pl-4 pr-8'}>Set up your team</p><ArrowRightOutlined className={'pt-1 pr-4'}/>

@@ -32,14 +32,14 @@ function Software({ }) {
             if (res2.success) {
                 notification['success']({
                     message: res2.message,
-                    duration: 3
+                    duration: 5
                 })
             form.resetFields()
             }
             else if (!res2.success) {
                 notification['error']({
                     message: res2.message.errorInfo.status_detail,
-                    duration: 3
+                    duration: 5
                 })
             }
         })
@@ -195,14 +195,21 @@ function Software({ }) {
                         <Form.Item name="Message" className={'gilroy-medium text-xl'} label="Message" rules={[{required: true,},]}>
                             <Input.TextArea name="Message" onChange={(e)=>{setDataSoftware({...dataSoftware, message: e.target.value})}} />
                         </Form.Item >
-                        <Form.Item name="checkbox">
+                        <Form.Item name="checkbox" valuePropName='checked'
+                            rules={[
+                                {
+                                    validator: (_, value) =>
+                                    value ? Promise.resolve() : Promise.reject(new Error('Should accept agreement')),
+                                },
+                            ]}
+                        >
                             <Checkbox name="checkbox" className={'gilroy-regular text-xl'} onChange={()=>{onChangeCheckBox()}}>By proceeding, I agree that MIG's representative may contact me by email, phone, or SMS (including by automatic telephone dialing system) at the email address or number I provide, including for marketing purposes.*</Checkbox>
                         </Form.Item >
                         <Form.Item>
                         <div className={'w-full flex justify-center pt-8 pb-8'}>
-                            <Button hidden={!checkbox} disabled={checkbox} type="primary" className={''} style={{backgroundColor:'white', color:'grey'}} key="3"><p>Submit</p></Button>
+                            {/* <Button hidden={!checkbox} disabled={checkbox} type="primary" className={''} style={{backgroundColor:'white', color:'grey'}} key="3"><p>Submit</p></Button> */}
                             {/* <Button hidden={checkbox} type="primary" htmlType="submit" className={'border-black border px-4 text-white'} style={{backgroundColor:'white', color:'black'}} key="3"><p>Submit</p></Button> */}
-                            <button hidden={checkbox} type={'submit'} className={'text-black border border-black px-4 py-1 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
+                            <button type={'submit'} className={'text-black border border-black px-4 py-1 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
                                 Submit
                             </button>
                             

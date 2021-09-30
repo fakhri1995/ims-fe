@@ -33,14 +33,14 @@ function Hardware({ }) {
             if (res2.success) {
                 notification['success']({
                     message: res2.message,
-                    duration: 3
+                    duration: 5
                 })
             form.resetFields()
             }
             else if (!res2.success) {
                 notification['error']({
                     message: res2.message.errorInfo.status_detail,
-                    duration: 3
+                    duration: 5
                 })
             }
         })
@@ -189,9 +189,9 @@ function Hardware({ }) {
                             <Collapse
                             accordion
                             // defaultActiveKey={['0']}
-                            // expandIconPosition={'right'}
+                            expandIconPosition={'right'}
                             >
-                                <Panel className={'gilroy-medium text-lg'} header={'ATM/CRM'} showArrow={false}>
+                                <Panel className={'gilroy-medium text-lg'} header={'ATM/CRM'}>
                                     <p className={'font-medium'}>
                                         Lorem Ipsum
                                     </p>
@@ -201,8 +201,9 @@ function Hardware({ }) {
                         <div className={'pb-8'}>
                             <Collapse
                             accordion
+                            expandIconPosition={'right'}
                             >
-                                <Panel className={'gilroy-medium text-lg'} header={'UPS'} showArrow={false}>
+                                <Panel className={'gilroy-medium text-lg'} header={'UPS'}>
                                     <p className={'font-medium'}>
                                         Lorem Ipsum
                                     </p>
@@ -215,9 +216,9 @@ function Hardware({ }) {
                             <Collapse
                             accordion
                             // defaultActiveKey={['0']}
-                            // expandIconPosition={'right'}
+                            expandIconPosition={'right'}
                             >
-                                <Panel className={'gilroy-medium text-lg'} header={'Laptop/desktop'} showArrow={false}>
+                                <Panel className={'gilroy-medium text-lg'} header={'Laptop/desktop'}>
                                     <p className={'font-medium'}>
                                         Lorem Ipsum
                                     </p>
@@ -227,8 +228,9 @@ function Hardware({ }) {
                         <div className={'pb-8'}>
                             <Collapse
                             accordion
+                            expandIconPosition={'right'}
                             >
-                                <Panel className={'gilroy-medium text-lg'} header={'Server'} showArrow={false}>
+                                <Panel className={'gilroy-medium text-lg'} header={'Server'}>
                                     <p className={'font-medium'}>
                                         Lorem Ipsum
                                     </p>
@@ -259,7 +261,7 @@ function Hardware({ }) {
             </section> */}
             <section className={'py-8 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                 <div className={'container mx-auto'}>
-                    <p className={'text-3xl gilroy-bold pb-8 pt-4 md:pt-10'}>Get yours</p>
+                    <p className={'text-3xl gilroy-bold pb-8 pt-4 md:pt-10'}>Get yours now</p>
                     <p className={'gilroy-medium text-xl pb-4'}>Fill in your contact information, and our sales team will contact you shortly.</p>
                     <Form
                         layout={'vertical'}
@@ -287,14 +289,21 @@ function Hardware({ }) {
                         <Form.Item name="Message" className={'gilroy-medium text-xl'} label="Message" rules={[{required: true,},]}>
                             <Input.TextArea name="Message" onChange={(e)=>{setDataHardware({...dataHardware, message: e.target.value})}} />
                         </Form.Item >
-                        <Form.Item name="checkbox">
+                        <Form.Item name="checkbox" valuePropName='checked' 
+                            rules={[
+                                {
+                                    validator: (_, value) =>
+                                    value ? Promise.resolve() : Promise.reject(new Error('Should accept agreement')),
+                                },
+                            ]}
+                        >
                             <Checkbox name="checkbox" className={'gilroy-regular text-xl'} onChange={()=>{onChangeCheckBox()}}>By proceeding, I agree that MIG's representative may contact me by email, phone, or SMS (including by automatic telephone dialing system) at the email address or number I provide, including for marketing purposes.*</Checkbox>
                         </Form.Item >
                         <Form.Item>
                         <div className={'w-full flex justify-center pt-8 pb-8'}>
-                            <Button hidden={!checkbox} disabled={checkbox} type="primary" className={''} style={{backgroundColor:'white', color:'grey'}} key="3"><p>Submit</p></Button>
+                            {/* <Button hidden={!checkbox} disabled={checkbox} type="primary" className={''} style={{backgroundColor:'white', color:'grey'}} key="3"><p>Submit</p></Button> */}
                             {/* <Button hidden={checkbox} type="primary" htmlType="submit" className={'border-black border px-4 text-white'} style={{backgroundColor:'white', color:'black'}} key="3"><p>Submit</p></Button> */}
-                            <button hidden={checkbox} type={'submit'} className={'text-black border border-black px-4 py-1 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
+                            <button type={'submit'} className={'text-black border border-black px-4 py-1 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
                                 Submit
                             </button>
                             
