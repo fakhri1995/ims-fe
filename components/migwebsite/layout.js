@@ -48,34 +48,40 @@ function layout({ children }) {
     //     </div>
     //   );
     const menu = (
-        <div className={'bg-white w-96 h-auto p-4 fixed'}>
-            <div className={'flex pb-4'}>
-                <div className={'px-4 my-auto w-1/3'}>
-                    <img className={'w-60'} src={'/image/navbar/hardware.png'}></img>
+        <div className={'bg-white w-96 h-auto p-2 top-6 relative'} style={{boxShadow:'0px 40px 50px rgb(0 0 0 / 20%)'}}>
+            <Link href="/hardware">
+            <div className={'flex py-2 cursor-pointer hover:bg-gray-100'}>
+                <div className={'px-4 my-auto w-1/6'}>
+                    <img className={'relative -top-5'} width={40} src={'/image/navbar/hardware.png'}></img>
                 </div>
-                <div className={'w-2/3'}>
+                <div className={'w-5/6'}>
                     <p className={'text-lg gilroy-medium'}>Hardware</p>
                     <p className={'text-sm gilroy-regular'}>Optimize your cost by leasing and maintenances IT hardwares</p>
                 </div>
             </div>
-            <div className={'flex pb-4'}>
-                <div className={'px-4 my-auto w-1/3'}>
-                    <img className={'w-60'} src={'/image/navbar/software.png'}></img>
+            </Link>
+            <Link href="/software">
+            <div className={'flex py-2 cursor-pointer hover:bg-gray-100'}>
+                <div className={'px-4 my-auto w-1/6'}>
+                    <img className={'relative -top-5'} width={40} src={'/image/navbar/software.png'}></img>
                 </div>
-                <div className={'w-2/3'}>
+                <div className={'w-5/6'}>
                     <p className={'text-lg gilroy-medium'}>Software</p>
                     <p className={'text-sm gilroy-regular'}>Simplify and automate the process through digitalization</p>
                 </div>
             </div>
-            <div className={'flex pb-4'}>
-                <div className={'px-4 my-auto w-1/3'}>
-                    <img className={'w-60'} src={'/image/navbar/talents.png'}></img>
+            </Link>
+            <Link href="/talents">
+            <div className={'flex py-2 cursor-pointer hover:bg-gray-100'}>
+                <div className={'px-4 my-auto w-1/6'}>
+                    <img className={'relative -top-5'} width={40} src={'/image/navbar/talents.png'}></img>
                 </div>
-                <div className={'w-2/3'}>
+                <div className={'w-5/6'}>
                     <p className={'text-lg gilroy-medium'}>Talents</p>
                     <p className={'text-sm gilroy-regular'}>Reduce complexity in talent sourcing and management</p>
                 </div>
             </div>
+            </Link>
         </div>
     )
     const menu1 = (
@@ -152,7 +158,7 @@ function layout({ children }) {
             <Layout className={'h-auto'}>
                 <Header className={`${kelas} header`} style={{background:'white', position: 'fixed', zIndex: 31, width: '100%' }}>
                     <Link href="/">
-                        <div className="logo top-4 md:top-4 absolute w-24 md:w-32" >
+                        <div className="logo top-4 md:top-4 absolute w-24 md:w-32 cursor-pointer" >
                             <img width={'auto'} height={'auto'} src='/mig.png'/>
                         </div>
                     </Link>
@@ -306,7 +312,7 @@ function layout({ children }) {
                         {/* <div className={'py-8'}> */}
                         <div className={'py-8 flex flex-col lg:flex-row lg:justify-between'}>
                             <Link href="/">
-                            <div className="pb-4" style={{minWidth:'150px',width:'150px'}} >
+                            <div className={'pb-4 cursor-pointer'} style={{minWidth:'150px',width:'150px'}} >
                                 <img src='/mig.png'/>
                             </div>  
                             </Link>

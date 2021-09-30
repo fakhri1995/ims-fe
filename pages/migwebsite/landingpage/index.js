@@ -35,7 +35,7 @@ function LandingPage({ }) {
                             <div className={'flex-col w-1/2 my-auto'}>
                                 <div className={'hidden md:block'}>
                                     <p className={'text-3xl md:text-4xl md:leading-tight lg:leading-normal xl:leading-relaxed lg:text-5xl pb-6 gilroy-bold'} style={{ lineHeight:'1.25' }}>
-                                        Focus on what you do best, we take care of the rest
+                                        Focus on your best, we take care of the rest
                                     </p>
                                     {/* <button className={'text-black text-xl border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>Let's Collaborate</button> */}
                                     <p className={' text-xl gilroy-regular'}>
@@ -57,8 +57,8 @@ function LandingPage({ }) {
                     <div className={'block md:hidden pt-8'}>
                         <div className={'flex-col center'}>
                             <div className={'text-center'}>
-                                <p className={'text-4xl gilroy-bold'} style={{ lineHeight:'1.25' }}>
-                                    Focus on what you do best, we take care of the rest
+                                <p className={'text-4xl gilroy-bold'}>
+                                    Focus on your best, we take care of the rest
                                 </p>
                             </div>
                         </div>
@@ -83,27 +83,28 @@ function LandingPage({ }) {
                         </Link>
                         <div className={'flex pb-3'}>
                             <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto md:w-40 lg:w-52'}>
-                                <p className={'text-3xl md:text-5xl lg:text-5xl text-center gilroy-regular '}><CountUp end={45}/>+</p>
-                                <p className={'text-lg md:text-xl text-center gilroy-regular'}>cities</p>
+                                <p className={'text-2xl md:text-5xl lg:text-5xl text-center gilroy-regular '}><CountUp end={45}/>+</p>
+                                <p className={'hidden md:block text-lg md:text-xl text-center gilroy-regular'}>cities</p>
+                                <p className={'block md:hidden text-base md:text-xl text-center gilroy-regular'}>cities</p>
                             </div>
                             <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto md:w-40 lg:w-52'}>
-                                <p className={'text-3xl md:text-5xl lg:text-5xl text-center gilroy-regular '}><CountUp end={9000}/>+</p>
+                                <p className={'text-2xl md:text-5xl lg:text-5xl text-center gilroy-regular '}><CountUp end={9000}/>+</p>
                                 <p className={'hidden md:block text-lg md:text-xl text-center gilroy-regular'}>managed and leased devices</p>
-                                <p className={'block md:hidden text-lg md:text-xl text-center gilroy-regular'}>managed and leased devices</p>
+                                <p className={'block md:hidden text-base md:text-xl text-center gilroy-regular'}>managed and leased devices</p>
                             </div>
                             <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto md:w-40 lg:w-52'}>
-                                <p className={'text-3xl md:text-5xl lg:text-5xl text-center gilroy-regular '}><CountUp end={100}/>+</p>
+                                <p className={'text-2xl md:text-5xl lg:text-5xl text-center gilroy-regular '}><CountUp end={100}/>+</p>
                                 <p className={'hidden md:block text-lg md:text-xl text-center gilroy-regular'}>IT projects</p>
-                                <p className={'block md:hidden text-lg md:text-xl text-center gilroy-regular'}>IT projects</p>
+                                <p className={'block md:hidden text-base md:text-xl text-center gilroy-regular'}>IT projects</p>
                             </div>
                             <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto md:w-40 lg:w-52'}>
-                                <p className={'text-3xl md:text-5xl lg:text-5xl text-center gilroy-regular '}><CountUp end={15}/>+</p>
+                                <p className={'text-2xl md:text-5xl lg:text-5xl text-center gilroy-regular '}><CountUp end={15}/>+</p>
                                 <p className={'hidden md:block text-lg md:text-xl text-center gilroy-regular'}>years experience</p>
-                                <p className={'block md:hidden text-lg md:text-xl text-center gilroy-regular'}>years experience</p>
+                                <p className={'block md:hidden text-base md:text-xl text-center gilroy-regular'}>years experience</p>
                             </div>
                         </div>
                         <Link 
-                            className={'flex-col block md:hidden'}
+                            className={'flex-col block md:hidden pt-8 md:pt-0'}
                             activeClass="active"
                             to="youronestop"
                             spy={true}
