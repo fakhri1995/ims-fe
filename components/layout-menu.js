@@ -147,6 +147,11 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                     Vendors
                                 </Link>
                             </Menu.Item>
+                            <Menu.Item key="413" icon={<IconVendors width={25} height={25} />}>
+                                <Link href="/admin/manufacturers">
+                                    Manufacturers
+                                </Link>
+                            </Menu.Item>
                         </SubMenu>
                         {
                             serviceFeat.every(isIncludesFeat) ?
@@ -317,6 +322,11 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             <Menu.Item key="412" icon={<IconVendors width={20} height={20} />}>
                                 <Link href="/admin/vendors">
                                     Vendors
+                                </Link>
+                            </Menu.Item>
+                            <Menu.Item key="413" icon={<IconVendors width={25} height={25} />}>
+                                <Link href="/admin/manufacturers">
+                                    Manufacturers
                                 </Link>
                             </Menu.Item>
                         </SubMenu>

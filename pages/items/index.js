@@ -4,7 +4,7 @@ import httpcookie from 'cookie'
 import Link from 'next/link'
 import { SearchOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import { Button, TreeSelect, Table, Input, Select, Tooltip } from 'antd'
-import Layout from '../../components/layout-dashboard'
+import Layout from '../../components/layout-dashboard2'
 import st from '../../components/layout-dashboard.module.css'
 
 
