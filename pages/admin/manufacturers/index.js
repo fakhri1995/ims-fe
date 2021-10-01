@@ -18,6 +18,10 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
     const [displaydata3, setdisplaydata3] = useState([])
     const [displaytrigger, setdisplaytrigger] = useState(0)
     const [praloading, setpraloading] = useState(true)
+    const [namasearchact, setnamasearchact] = useState(false)
+    const [namavalue, setnamavalue] = useState("")
+    const [hover, sethover] = useState("")
+    const [hovercolor, sethovercolor] = useState("")
     //Tambah
     const [dataadd, setdataadd] = useState({
         name: ""
@@ -39,9 +43,6 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
     })
     const [modaldelete, setmodaldelete] = useState(false)
     const [loadingdelete, setloadingdelete] = useState(false)
-    const [namasearchact, setnamasearchact] = useState(false)
-    const [namavalue, setnamavalue] = useState("")
-    const [hover, sethover] = useState("")
 
     //3.onChange
     //search nama
@@ -85,6 +86,10 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
                         message: "Manufacturer berhasil ditambahkan",
                         duration: 2
                     })
+                    setdataadd({
+                        ...dataadd,
+                        name: ""
+                    })
                     setdisplaytrigger(prev => prev + 1)
                 }
                 else if (!res2.success) {
@@ -113,6 +118,10 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
                     notification['success']({
                         message: "Manufacturer berhasil diubah",
                         duration: 2
+                    })
+                    setdataupdate({
+                        ...dataupdate,
+                        name: ""
                     })
                     setdisplaytrigger(prev => prev + 1)
                 }
@@ -174,7 +183,7 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     return (
         <Layout dataProfile={dataProfile} sidemenu={sidemenu} tok={initProps} st={st} pathArr={pathArr}>
-            <div className="w-full grid grid-cols-1 md:grid-cols-3 bg-white mb-5 p-4">
+            <div className="w-full grid grid-cols-1 md:grid-cols-3 border-t border-b bg-white mb-5 p-4">
                 <div className=" col-span-1 md:col-span-2 flex items-center mb-2 md:mb-0">
                     <div className="font-semibold text-base w-auto">Manufacturer</div>
                 </div>
@@ -209,12 +218,14 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
                                         displaydata.length > 0 ?
                                             displaydata.map((doc, idx) => {
                                                 return (
-                                                    <div className="flex justify-between w-full p-4 items-center text-sm border-b"
+                                                    <div className={`flex justify-between w-full p-4 items-center text-sm border-b ${idx === hover && hovercolor}`}
                                                         onMouseOver={() => {
                                                             sethover(idx)
+                                                            sethovercolor("bg-gray-50")
                                                         }}
                                                         onMouseLeave={() => {
                                                             sethover("")
+                                                            sethovercolor("")
                                                         }}
                                                     >
                                                         <p className="mb-0">{doc.name}</p>
@@ -243,7 +254,7 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
                     <h1 className="font-bold text-xl">Form Tambah Manufacturer</h1>
                     <div className="flex">
                         <>
-                            <Button type="danger" onClick={() => { setmodaladd(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
+                            <Button type="danger" onClick={() => { setmodaladd(false); setdataadd({ ...dataadd, name: "" }) }} style={{ marginRight: `1rem` }}>Batal</Button>
                             <Button type='primary' disabled={disabledadd} onClick={handleAddManufacturer} loading={loadingadd}>Simpan</Button>
                         </>
                     </div>
@@ -257,7 +268,7 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <div className="flex flex-col mb-3">
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Nama Manufacturer <span className="namamanu"></span></p>
-                        <Input placeholder="Masukkan Nama Manufacturer" onChange={(e => {
+                        <Input value={dataadd.name} placeholder="Masukkan Nama Manufacturer" onChange={(e => {
                             e.target.value === "" ? setdisabledadd(true) : setdisabledadd(false)
                             setdataadd({ name: e.target.value })
                         })}></Input>

@@ -182,9 +182,9 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                         <div className=" col-span-4 flex justify-between pt-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-bold text-xl py-2">Form Ubah Item - {updatedata.inventory_name}</h1>
                             <div className="flex space-x-2">
-                                {/* <Link href={`/items`}> */}
-                                <Button type="default" onClick={() => { console.log(updatedata); console.log(disabledfield) }}>Batal</Button>
-                                {/* </Link> */}
+                                <Link href={`/items/detail/${itemid}`}>
+                                    <Button type="default" /*onClick={() => { console.log(updatedata); console.log(disabledfield) }}*/>Batal</Button>
+                                </Link>
                                 <Button disabled={disabledfield} type="primary" onClick={() => {
                                     instanceForm.submit()
                                 }}>Simpan</Button>
@@ -334,7 +334,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                                     setupdatedata({ ...updatedata, manufacturer_id: value })
                                                 }}>
                                                     {
-                                                        invrelations.manufacturers.map((doc, idx) => {
+                                                        invrelations.manufacturers.filter(docfil => docfil.deleted_at === null).map((doc, idx) => {
                                                             return (
                                                                 <Select.Option value={doc.id}>{doc.name}</Select.Option>
                                                             )
@@ -523,7 +523,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                                                                                 temp.inventory_values.push({
                                                                                                     id: docinvvalue.id,
                                                                                                     data_type: docinvvalue.data_type,
-                                                                                                    value: datestring
+                                                                                                    value: datestring === "" ? null : datestring
                                                                                                 })
                                                                                             }
                                                                                             else {
@@ -578,9 +578,8 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                                                         {
                                                                             docinvvalue.data_type === 'number' &&
                                                                             <>
-                                                                                <InputNumber defaultValue={docinvvalue.value} onChange={(value) => {
-                                                                                    console.log(value)
-                                                                                    if (value === "") {
+                                                                                <InputNumber allowClear defaultValue={docinvvalue.value} onChange={(value) => {
+                                                                                    if (value === "" || value ===null) {
                                                                                         setdisabledfield(true)
                                                                                     }
                                                                                     else {
@@ -592,7 +591,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                                                                                 temp.inventory_values.push({
                                                                                                     id: docinvvalue.id,
                                                                                                     data_type: docinvvalue.data_type,
-                                                                                                    value: `${value}`
+                                                                                                    value: value === "" || value === null ? "" : `${value}`
                                                                                                 })
                                                                                             }
                                                                                             else {
@@ -759,7 +758,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                                                                         temp.inventory_values.push({
                                                                                             id: docinvvalue.id,
                                                                                             data_type: docinvvalue.data_type,
-                                                                                            value: datestring
+                                                                                            value: datestring === "" ? null : datestring
                                                                                         })
                                                                                     }
                                                                                     else {

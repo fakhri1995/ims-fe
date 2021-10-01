@@ -9,7 +9,7 @@ import moment from 'moment'
 import st from '../../../components/layout-dashboard.module.css'
 import Sticky from 'wil-react-sticky'
 
-const Overview = ({ itemid, initProps, maindata, manuf, praloading }) => {
+const Overview = ({ itemid, initProps, maindata, manuf, vendor, praloading }) => {
     const rt = useRouter()
     //useState
     const [invrelations2, setinvrelations2] = useState({})
@@ -86,6 +86,10 @@ const Overview = ({ itemid, initProps, maindata, manuf, praloading }) => {
                                     :
                                     <p className="mb-0 text-sm">{manuf}</p>
                             }
+                        </div>
+                        <div className="flex flex-col mb-5">
+                            <h1 className=" text-sm font-semibold mb-0">Vendor:</h1>
+                            <p className="mb-0 text-sm">{maindata.vendor_id === null ? "-" : vendor}</p>
                         </div>
                         <div className="flex flex-col mb-5">
                             <h1 className=" text-sm font-semibold mb-0">Location:</h1>
@@ -189,9 +193,9 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
             key: 'inventory_name',
         },
         {
-            title: 'Serial Number',
-            dataIndex: 'serial_number',
-            key: 'serial_number',
+            title: 'MIG ID',
+            dataIndex: 'mig_id',
+            key: 'mig_id',
         },
         {
             title: 'Model',
@@ -275,10 +279,10 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
         return arr
     }
     const modelPart = []
-    const recursiveSearchPartFromModel = (doc, modelid) => {
+    const recursiveSearchPartFromModel = (doc, modelname) => {
         var arr = []
         for (var i = 0; i < doc.length; i++) {
-            if (doc[i].model_id === Number(modelid)) {
+            if (doc[i].model === modelname) {
                 // continue
                 modelPart.push(doc[i])
             }
@@ -286,7 +290,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                 if (doc[i].children) {
                     arr.push({
                         ...doc[i],
-                        children: recursiveSearchPartFromModel(doc[i].children, modelid)
+                        children: recursiveSearchPartFromModel(doc[i].children, modelname)
                     })
                 }
                 else {
@@ -396,7 +400,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
     //search asset type
     const onChangeAssetType = (id) => {
         if (typeof (id) === 'undefined') {
-            setdisplaydata(datatable3)
+            setdatatable(datatable3)
             setassettypefilteract(false)
         }
         else {
@@ -415,6 +419,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
             setmodelvalue(idmodel)
         }
     }
+    //finalClick
     const onFinalClick = () => {
         var datatemp = datatable2
         if (assettypefilteract) {
@@ -422,6 +427,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
             recursiveSearchPartFromAsset(datatemp, assettypevalue)
             datatemp = assetPart
         }
+        console.log(datatemp,modelvalue)
         if (modelfilteract) {
             // const t = recursiveSearchPartFromModel(datatemp, modelvalue)
             recursiveSearchPartFromModel(datatemp, modelvalue)
@@ -528,7 +534,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                         :
                         <div className=" w-full mr-1 grid grid-cols-12">
                             <div className="col-span-5 mr-1">
-                                <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Nama Model" onChange={e => onChangeSearch(e)} allowClear></Input>
+                                <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Nama Item" onChange={e => onChangeSearch(e)} allowClear></Input>
                             </div>
                             <div className="col-span-3 mr-1">
                                 <Select placeholder="Model" style={{ width: `100%` }} allowClear onChange={(value) => {
@@ -542,7 +548,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                                     {
                                         invrelations.models.map((docmodels, idxmodels) => {
                                             return (
-                                                <Select.Option value={docmodels.id}>{docmodels.name}</Select.Option>
+                                                <Select.Option value={docmodels.name}>{docmodels.name}</Select.Option>
                                             )
                                         })
                                     }
@@ -561,7 +567,6 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                                         }
                                         else {
                                             onChangeAssetType(extra.allCheckedNodes[0].node.props.id)
-                                            setnamaasset(extra.allCheckedNodes[0].node.props.title)
                                         }
                                     }}
                                 />
@@ -586,10 +591,10 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
             ></Table>
             <Modal title={
                 <div className="flex justify-between p-5 mt-5">
-                    <h1 className="font-bold text-xl">Form Pergantian Part {datachanged.inventory_name}</h1>
+                    <h1 className="font-bold text-xl">Form Pergantian Part "{datachanged.inventory_name}"</h1>
                     <div className="flex">
                         <>
-                            <Button type="default" onClick={() => { setmodalchanged(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
+                            <Button type="default" onClick={() => { setmodalchanged(false); setdataApichanged({ ...dataApichanged, replacement_id: null, notes: "" }) }} style={{ marginRight: `1rem` }}>Batal</Button>
                             <Button type='primary' disabled={disabledchanged} onClick={handleReplacementItemPart} loading={loadingchanged}>Simpan</Button>
                         </>
                     </div>
@@ -603,7 +608,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                 <div className="flex flex-col mb-3">
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Nama Item Part yang Ingin Diganti <span className="namapart"></span></p>
-                        <TreeSelect disabled treeData={datatable3} defaultValue={datachanged.key}></TreeSelect>
+                        <TreeSelect disabled treeData={datatable3} value={datachanged.key}></TreeSelect>
                         <style jsx>
                             {`
                                 .namapart::before{
@@ -627,7 +632,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                     </div>
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Nama Item Part Pengganti <span className="namapart"></span></p>
-                        <Select onChange={(value) => {
+                        <Select value={dataApichanged.replacement_id} onChange={(value) => {
                             setdisabledchanged(false)
                             setdataApichanged({
                                 ...dataApichanged,
@@ -654,7 +659,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                     </div>
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Notes</p>
-                        <Input.TextArea rows={3} placeholder="Masukkan Notes" onChange={(e => {
+                        <Input.TextArea rows={3} placeholder="Masukkan Notes" value={dataApichanged.notes} onChange={(e => {
                             setdataApichanged({
                                 ...dataApichanged,
                                 notes: e.target.value
@@ -765,24 +770,26 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => 
                 <h1 className="font-bold text-xl my-auto">Activity</h1>
             </div>
             <div className="flex flex-col w-6/12">
-                <Timeline mode="left">
-                    {
-                        praloadinglogs ?
-                            <Spin />
-                            :
-                            logs.map((doclog, idxlog) => {
-                                return (
-                                    <Timeline.Item label={doclog.date}>
-                                        <div className="flex flex-col">
-                                            <h1 className="font-semibold text-base mb-1">{doclog.description}</h1>
-                                            <p className="mb-1 text-xs text-gray-500">Oleh {doclog.causer_name}</p>
-                                            <p className="mb-1 text-sm">Notes: {doclog.notes}</p>
-                                        </div>
-                                    </Timeline.Item>
-                                )
-                            })
-                    }
-                </Timeline>
+                {
+                    praloadinglogs ?
+                        <Spin />
+                        :
+                        <Timeline mode="left">
+                            {
+                                logs.map((doclog, idxlog) => {
+                                    return (
+                                        <Timeline.Item label={doclog.date}>
+                                            <div className="flex flex-col">
+                                                <h1 className="font-semibold text-base mb-1">{doclog.description}</h1>
+                                                <p className="mb-1 text-xs text-gray-500">Oleh {doclog.causer_name}</p>
+                                                <p className="mb-1 text-sm">Notes: {doclog.notes}</p>
+                                            </div>
+                                        </Timeline.Item>
+                                    )
+                                })
+                            }
+                        </Timeline>
+                }
             </div>
         </div>
     )
@@ -852,6 +859,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
         companies: []
     })
     const [manuf, setmanuf] = useState("")
+    const [vendor, setvendor] = useState("")
     const [praloading, setpraloading] = useState(true)
     const [praloading2, setpraloading2] = useState(true)
     //delete
@@ -1062,6 +1070,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                     .then(res2 => {
                         setinvrelations(res2.data)
                         setmanuf(res2.data.manufacturers.filter(docfil => docfil.id === res3.manufacturer_id)[0].name)
+                        setvendor(res2.data.vendors.filter(docfil => docfil.id === res3.vendor_id)[0].name)
                         setpraloading2(false)
                     })
             })
@@ -1126,7 +1135,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4" id="createAssetsWrapper">
                 <div className=" col-span-1 md:col-span-4 mb-8">
                     <Sticky containerSelectorFocus="#createAgentsWrapper">
-                        <div className=" col-span-4 flex justify-between py-5 px-4 border-t-2 border-b-2 bg-white">
+                        <div className=" col-span-4 flex justify-between py-5 px-4 border-t border-b bg-white">
                             <div className="flex items-center">
                                 <h1 className="font-semibold py-2 text-2xl mb-0 mr-20">{maindata.inventory_name}</h1>
                                 {
@@ -1208,7 +1217,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                     <div className=" hidden md:block">
                         <Tabs tabPosition={`left`} defaultActiveKey={activeTab}>
                             <TabPane tab="Overview" key={`overview`}>
-                                <Overview itemid={itemid} initProps={initProps} maindata={maindata} manuf={manuf} praloading={praloading} />
+                                <Overview itemid={itemid} initProps={initProps} maindata={maindata} manuf={manuf} vendor={vendor} praloading={praloading} />
                             </TabPane>
                             <TabPane tab="Konfigurasi Part" key={`konfigurasiPart`}>
                                 <KonfigurasiPart itemid={itemid} initProps={initProps} maindata={maindata} invrelations={invrelations} praloading2={praloading2} />
@@ -1227,7 +1236,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                     <div className=" block md:hidden" >
                         <Tabs tabPosition={`top`} defaultActiveKey={activeTab}>
                             <TabPane tab="Overview" key={`overview`}>
-                                <Overview itemid={itemid} initProps={initProps} maindata={maindata} manuf={manuf} praloading={praloading} />
+                                <Overview itemid={itemid} initProps={initProps} maindata={maindata} manuf={manuf} vendor={vendor} praloading={praloading} />
                             </TabPane>
                             <TabPane tab="Konfigurasi Part" key={`konfigurasiPart`}>
                                 <KonfigurasiPart itemid={itemid} initProps={initProps} maindata={maindata} invrelations={invrelations} praloading2={praloading2} />
