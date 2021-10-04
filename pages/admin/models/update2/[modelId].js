@@ -9,6 +9,7 @@ import { Form, Input, notification, Button, TreeSelect, Checkbox, Select, Popcon
 import st from '../../../../components/layout-dashboard.module.css'
 import Modal from 'antd/lib/modal/Modal'
 import Link from 'next/link'
+import moment from 'moment'
 
 const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
     //1.Init
@@ -104,7 +105,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                     })
                                 }
                                 {
-                                    doc.model_child.length > 0 && renderChildPartModel(doc.model_child)
+                                    doc.model_parts.length > 0 && renderChildPartModel(doc.model_parts)
                                 }
                             </div>
                             <style jsx>
@@ -580,7 +581,6 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
             .then(res => res.json())
             .then(res2 => {
                 setassetdata(res2.data)
-                setpraloading(false)
             })
     }, [])
     useEffect(() => {
@@ -593,11 +593,15 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
             .then(res => res.json())
             .then(res2 => {
                 setmanufdata(res2.data)
-                setpraloading(false)
             })
     }, [])
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getModel?id=${modelid}`)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getModel?id=${modelid}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
             .then(res => res.json())
             .then(res2 => {
                 const temp = res2.data.model_columns.map((doc, idx) => {
@@ -634,7 +638,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                         temp11.push({
                             ...item[i],
                             model_column: temp1,
-                            model_child: item[i].model_child.length > 0 ? recursivePartModel(item[i].model_child) : []
+                            model_parts: item[i].model_parts.length > 0 ? recursivePartModel(item[i].model_parts) : []
                         })
                     }
                     return temp11
@@ -662,9 +666,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                 }
                 setaddedfield(arr)
                 setassettypecode(res2.data.asset_id)
-                setTimeout(() => {
-                    setpraloading(false)
-                }, 1000);
+                setpraloading(false)
             })
     }, [])
     useEffect(() => {
@@ -717,10 +719,8 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
     useEffect(() => {
         if (concataddcolumnsidx !== -1) {
             if ((changeasset.some(docsome => docsome.id === concataddcolumnsvalue.id)) || (typeof (concataddcolumnsvalue.id) === 'undefined')) {
-                console.log("sini")
                 // if ((fielddata2.length - defaultdata.model_columns.length) >= newdata.add_columns.length) {
                 if (newdata.add_columns.map(docadd => docadd.name).indexOf(currentfield.name) === -1) {
-                    console.log("1")
                     if (currentfield.data_type === 'dropdown' || currentfield.data_type === 'checkbox') {
                         setnewdata(prev => {
                             var temp = prev
@@ -737,9 +737,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                     }
                 }
                 else {
-                    console.log("2")
                     const idxaddcolumn = newdata.add_columns.map(docadd2 => docadd2.name).indexOf(currentfield.name)
-                    console.log(idxaddcolumn)
                     // console.log(newdata.asset_columns.length+":"+concataddcolumnsidx+";"+newdata.add_columns.length)
                     if (currentfield.data_type === 'dropdown' || currentfield.data_type === 'checkbox') {
                         setnewdata(prev => {
@@ -807,7 +805,6 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
     useEffect(() => {
         if (concataddcolumnsidx1 !== -1) {
             if ((concataddcolumnsidx1 > defaultdata.model_columns.length - 1) || (typeof (concataddcolumnsvalue1.id) === 'undefined' || changeasset === true)) {
-                console.log("sini")
                 // if ((fielddata2.length - defaultdata.model_columns.length) >= newdata.add_columns.length) {
                 if (newdata.add_columns.map(docadd => docadd.name).indexOf(currentfield.name) === -1) {
                     if (currentfield.data_type === 'dropdown' || currentfield.data_type === 'checkbox') {
@@ -1442,7 +1439,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                         }
                                                                         {
                                                                             currentfield.data_type.toLowerCase() === "date" &&
-                                                                            <DatePicker style={{ width: `30%` }} placeholder={`Masukkan default ${currentfield.name}`} onChange={(value, dateString) => {
+                                                                            <DatePicker defaultValue={moment(fielddata2[idx].default)} style={{ width: `30%` }} placeholder={`Masukkan default ${currentfield.name}`} onChange={(value, dateString) => {
                                                                                 setcurrentfield({ ...currentfield, default: dateString })
                                                                             }}></DatePicker>
                                                                         }
@@ -1834,7 +1831,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                         }
                                                         {
                                                             currentfield.data_type.toLowerCase() === "date" &&
-                                                            <DatePicker style={{ width: `30%` }} placeholder={`Masukkan default ${currentfield.name}`} onChange={(value, dateString) => {
+                                                            <DatePicker defaultValue={moment(fielddata[idx].default)} style={{ width: `30%` }} placeholder={`Masukkan default ${currentfield.name}`} onChange={(value, dateString) => {
                                                                 setcurrentfield({ ...currentfield, default: dateString })
                                                             }}></DatePicker>
                                                         }
@@ -1927,7 +1924,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                             return (
                                                 <Panel id={`panel${idx}`} key={idx} header={
                                                     <strong>{
-                                                        doc.name 
+                                                        doc.name
                                                         // ?
                                                         // <>
                                                         //     {
@@ -1944,7 +1941,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                         // </>
                                                         // :
                                                         // "-"
-                                                        }
+                                                    }
                                                     </strong>}
                                                     extra={
                                                         <div className="absolute top-2 right-2">
@@ -1955,7 +1952,6 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                     var idxtemp = modelpartfielddata.map(doctemp => doctemp.id).indexOf(doc.id)
                                                                     if ((defaultdata.model_parts.map(docparts => docparts.id).includes(doc.id) === false) && idxtemp !== -1) {
                                                                         const idxdata = temp.add_models.map(doc2 => doc2.id).indexOf(doc.id)
-                                                                        console.log(temp.add_models[idxdata].quantity)
                                                                         if (temp.add_models[idxdata].quantity > 1) {
                                                                             temp.add_models[idxdata].quantity -= 1
                                                                         }
@@ -2040,13 +2036,13 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                             })
                                                         }
                                                         {
-                                                            doc.model_child.length === 0 ?
+                                                            doc.model_parts.length === 0 ?
                                                                 null
                                                                 :
                                                                 <>
                                                                     <Timeline style={{ marginTop: `1rem` }}>
                                                                         {
-                                                                            renderChildPartModel(doc.model_child)
+                                                                            renderChildPartModel(doc.model_parts)
                                                                         }
                                                                     </Timeline>
                                                                 </>
@@ -2111,7 +2107,12 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                             <Button loading={loadinggetmodel} type="primary" onClick={() => {
                                                 seteditpart(false)
                                                 setloadinggetmodel(true)
-                                                fetch(`https://boiling-thicket-46501.herokuapp.com/getModel?id=${currentidmodel}`).then(res => res.json()).then(res2 => {
+                                                fetch(`https://boiling-thicket-46501.herokuapp.com/getModel?id=${currentidmodel}`, {
+                                                    method: `GET`,
+                                                    headers: {
+                                                        'Authorization': JSON.parse(initProps),
+                                                    }
+                                                }).then(res => res.json()).then(res2 => {
                                                     setmodelpartfielddata(prev => {
                                                         var temp1 = prev
                                                         var t = {}
@@ -2147,7 +2148,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                         model_column: map3
                                                                     }
                                                                 })
-                                                                t["model_child"] = modelparts
+                                                                t["model_parts"] = modelparts
                                                                 t["id"] = res2.data.id
                                                                 t["name"] = res2.data.name
                                                             }
@@ -2721,7 +2722,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                     }
                                                                     {
                                                                         currentfield2.data_type.toLowerCase() === "date" &&
-                                                                        <DatePicker style={{ width: `30%` }} placeholder={`Masukkan default ${currentfield2.name}`} onChange={(value, dateString) => {
+                                                                        <DatePicker defaultValue={fielddataa[idx].default} style={{ width: `30%` }} placeholder={`Masukkan default ${currentfield2.name}`} onChange={(value, dateString) => {
                                                                             setcurrentfield2({ ...currentfield2, default: dateString })
                                                                         }}></DatePicker>
                                                                     }
@@ -3175,7 +3176,7 @@ export async function getServerSideProps({ req, res, params }) {
     }
     initProps = cookiesJSON1.token
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }

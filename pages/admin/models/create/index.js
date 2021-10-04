@@ -68,7 +68,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                 }
                                                                 {
                                                                     docmc2.data_type === 'checkbox' &&
-                                                                    <div className="w-full flex flex-col h-32 mt-16">
+                                                                    <div className="w-full flex flex-col">
                                                                         {
                                                                             default2.opsi.map((doc3, idx3) => (
                                                                                 <div className="flex mb-1">
@@ -104,7 +104,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                     })
                                 }
                                 {
-                                    doc.model_child.length > 0 && renderChildPartModel(doc.model_child)
+                                    doc.model_parts.length > 0 && renderChildPartModel(doc.model_parts)
                                 }
                             </div>
                             <style jsx>
@@ -1848,7 +1848,12 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                             <Button loading={loadinggetmodel} type="primary" onClick={() => {
                                                 seteditpart(false)
                                                 setloadinggetmodel(true)
-                                                fetch(`https://boiling-thicket-46501.herokuapp.com/getModel?id=${currentidmodel}`).then(res => res.json()).then(res2 => {
+                                                fetch(`https://boiling-thicket-46501.herokuapp.com/getModel?id=${currentidmodel}`, {
+                                                    method: `GET`,
+                                                    headers: {
+                                                        'Authorization': JSON.parse(initProps),
+                                                    }
+                                                }).then(res => res.json()).then(res2 => {
                                                     setmodelpartfielddata(prev => {
                                                         var temp1 = prev
                                                         var t = {}
@@ -2887,7 +2892,7 @@ export async function getServerSideProps({ req, res }) {
     }
     initProps = cookiesJSON1.token
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }

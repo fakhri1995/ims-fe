@@ -1077,16 +1077,16 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
     }, [])
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList`, {
-            method: `POST`,
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
-            body: {
-                page: 1,
-                rows: 50,
-                order_by: "asc"
-            }
+            // body: {
+            //     page: 1,
+            //     rows: 50,
+            //     order_by: "asc"
+            // }
         })
             .then(res => res.json())
             .then(res2 => {
@@ -1095,15 +1095,15 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
     }, [])
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
-            method: `POST`,
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
             },
-            body: {
-                page: 1,
-                rows: 50,
-                order_by: "asc"
-            }
+            // body: {
+            //     page: 1,
+            //     rows: 50,
+            //     order_by: "asc"
+            // }
         })
             .then(res => res.json())
             .then(res2 => {
@@ -1114,7 +1114,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
         if (locationtrigger !== -1) {
             setloadingchangecompanyusage(true)
             fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
-                method: `POST`,
+                method: `GET`,
                 headers: {
                     'Authorization': JSON.parse(initProps),
                     'Content-Type': 'application/json'
@@ -1524,7 +1524,7 @@ export async function getServerSideProps({ req, res, params }) {
     }
     initProps = cookiesJSON1.token
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -1532,10 +1532,10 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![107, 108, 109, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![107, 108, 109, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     return {
         props: {

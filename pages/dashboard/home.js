@@ -78,7 +78,7 @@ export async function getServerSideProps({ req, res }) {
                     initProps = cookiesJSON.token;
                 }
                 const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-                    method: `POST`,
+                    method: `GET`,
                     headers: {
                         'Authorization': JSON.parse(initProps)
                     }

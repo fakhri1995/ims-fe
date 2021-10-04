@@ -100,7 +100,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                                     })
                                 }
                                 {
-                                    doc.model_child.length > 0 && renderChildPartModel(doc.model_child)
+                                    doc.model_parts.length > 0 && renderChildPartModel(doc.model_parts)
                                 }
                             </div>
                             <style jsx>
@@ -182,7 +182,12 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
 
     //5.useeffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getModel?id=${modelid}`)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getModel?id=${modelid}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
             .then(res => res.json())
             .then(res2 => {
                 var t = {}
@@ -204,6 +209,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                         t[prop] = res2.data[prop]
                     }
                 }
+                console.log(t)
                 setdisplaydata(t)
             })
     }, [])
@@ -463,13 +469,13 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                                                                 })
                                                             }
                                                             {
-                                                                docmp.model_child.length === 0 ?
+                                                                docmp.model_parts.length === 0 ?
                                                                     null
                                                                     :
                                                                     <>
                                                                         <Timeline style={{ marginTop: `1rem` }}>
                                                                             {
-                                                                                renderChildPartModel(docmp.model_child)
+                                                                                renderChildPartModel(docmp.model_parts)
                                                                             }
                                                                         </Timeline>
                                                                     </>
@@ -530,7 +536,7 @@ export async function getServerSideProps({ req, res, params }) {
     }
     initProps = cookiesJSON1.token
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -538,10 +544,10 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![107, 108, 109, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![107, 108, 109, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     return {
         props: {

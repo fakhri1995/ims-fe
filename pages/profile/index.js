@@ -177,7 +177,7 @@ function ProfileIndex({ initProps, dataProfile }) {
                 <div className="flex flex-col justify-center">
                     <div className="flex flex-col md:flex-row mb-8">
                         <div className="md:mx-4">
-                            <img src={dataProfile.data.image_profile} alt="imageProfile" className=" object-cover w-10 md:w-20 h-10 md:h-20 rounded-full" />
+                            <img src={dataProfile.data.profile_image} alt="imageProfile" className=" object-cover w-10 md:w-20 h-10 md:h-20 rounded-full" />
                         </div>
                         <div className="flex flex-col">
                             <h1 className=" text-base md:text-2xl font-semibold mb-1">{dataProfile.data.fullname}</h1>
@@ -219,7 +219,7 @@ export async function getServerSideProps({ req, res }) {
         }
     }
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }

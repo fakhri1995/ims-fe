@@ -14,7 +14,7 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
             <div className="w-auto h-auto flex flex-col shadow-md rounded bg-white space-y-4 px-10 py-5">
                 <div className="flex justify-center space-x-3">
                     <div className="w-10 h-10 rounded-full bg-blue-500 flex text-white text-center justify-center items-center">
-                        <img src={dataProfile.data.image_profile} alt="imageProfile" className=" object-cover w-full h-full" />
+                        <img src={dataProfile.data.profile_image} alt="imageProfile" className=" object-cover w-full h-full" />
                     </div>
                     <div className="flex flex-col">
                         <h2 className="text-lg font-semibold mb-1">{dataProfile.data.fullname}</h2>
@@ -102,8 +102,8 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
             <div className="md:mr-12 mr-4 mt-4">
                 <Dropdown overlay={menuProfile2} trigger={['click']}>
                     {
-                        dataProfile.data.image_profile ?
-                            <img src={dataProfile.data.image_profile} alt="ava" className="w-8 h-8 rounded-full object-cover cursor-pointer" />
+                        dataProfile.data.profile_image ?
+                            <img src={dataProfile.data.profile_image} alt="ava" className="w-8 h-8 rounded-full object-cover cursor-pointer" />
                             :
                             <Avatar icon={<UserOutlined></UserOutlined>} style={{ cursor: `pointer` }} />
                     }

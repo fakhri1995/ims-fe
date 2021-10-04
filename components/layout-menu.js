@@ -13,7 +13,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
     const serviceFeat = [183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206]
     const companyFeat = [144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163]
     const depreFeat = [169, 170, 171, 172]
-    const isIncludesFeat = (curr) => dataProfile.data.registered_feature.includes(curr);
+    // const isIncludesFeat = (curr) => dataProfile.data.registered_feature.includes(curr);
     const { SubMenu } = Menu;
     const { Sider } = Layout
     // const [collsmall, setCollsmall] = useState(true)
@@ -58,36 +58,36 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             </Link>
                         </Menu.Item>
                         {
-                            userFeat.every(isIncludesFeat) ?
+                            // userFeat.every(isIncludesFeat) ?
                                 <SubMenu title="Users Management">
-                                    {[107, 108, 109, 110, 111, 112, 132].every(isIncludesFeat) &&
+                                    {/* {[107, 108, 109, 110, 111, 112, 132].every(isIncludesFeat) && */}
                                         <Menu.Item key="411" icon={<IconAgents width={25} height={25} />}>
                                             <Link href="/admin/agents">
                                                 Agents
                                         </Link>
                                         </Menu.Item>
-                                    }
-                                    {[119, 118, 117, 116, 115, 114, 133].every(isIncludesFeat) &&
+                                    {/* // } */}
+                                    {/* {[119, 118, 117, 116, 115, 114, 133].every(isIncludesFeat) && */}
                                         <Menu.Item key="412" icon={<IconRequesters width={25} height={25} />}>
                                             <Link href="/admin/requesters">
                                                 Requesters
                                         </Link>
                                         </Menu.Item>
-                                    }
-                                    {[134, 135, 136, 137, 138, 139, 140, 141, 142, 143].every(isIncludesFeat) &&
+                                    {/* // } */}
+                                    {/* {[134, 135, 136, 137, 138, 139, 140, 141, 142, 143].every(isIncludesFeat) && */}
                                         <Menu.Item key="413" icon={<Icongroups width={25} height={25} />}>
                                             <Link href="/admin/groups">
                                                 Groups
                                         </Link>
                                         </Menu.Item>
-                                    }
+                                    {/* // } */}
                                 </SubMenu>
-                                :
-                                null
+                                // :
+                                // null
                         }
                         <SubMenu title="Features Management">
                             {
-                                [173, 174, 175, 176, 177, 178].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                // [173, 174, 175, 176, 177, 178].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                 <Menu.Item key="411" icon={<IconRoles width={25} height={25} />}>
                                     <Link href="/admin/roles">
                                         Roles
@@ -95,7 +95,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                 </Menu.Item>
                             }
                             {
-                                [179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                // [179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                 <Menu.Item key="412" icon={<IconModules width={25} height={25} />}>
                                     <Link href="/admin/modules?module=&featuredisplay=">
                                         Modules
@@ -109,10 +109,10 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             </Menu.Item>
                         </SubMenu>
                         {
-                            companyFeat.every(isIncludesFeat) ?
+                            // companyFeat.every(isIncludesFeat) ?
                                 <SubMenu title="Company Management">
                                     {
-                                        [144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                        // [144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                         <Menu.Item key="411" icon={<IconMIGCompany width={25} height={25} />}>
                                             <Link href="/admin/myCompany">
                                                 My Company
@@ -120,7 +120,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                         </Menu.Item>
                                     }
                                     {
-                                        [155, 156, 157, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                        // [155, 156, 157, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                         <Menu.Item key="412" icon={<IconClientsCompany width={25} height={25} />}>
                                             <Link href="/admin/clients">
                                                 Clients
@@ -128,8 +128,8 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                         </Menu.Item>
                                     }
                                 </SubMenu>
-                                :
-                                null
+                                // :
+                                // null
                         }
                         <SubMenu title="Assets">
                             <Menu.Item key="411" icon={<IconAssets width={25} height={25} />}>
@@ -154,10 +154,10 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             </Menu.Item>
                         </SubMenu>
                         {
-                            serviceFeat.every(isIncludesFeat) ?
+                            // serviceFeat.every(isIncludesFeat) ?
                                 <SubMenu title="Service Management">
                                     {
-                                        [183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193].every(isIncludesFeat) &&
+                                        // [183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193].every(isIncludesFeat) &&
                                         <Menu.Item key="411" icon={<IconCatalog width={25} height={25} />}>
                                             <Link href="/admin/service">
                                                 Service Catalog
@@ -165,7 +165,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                         </Menu.Item>
                                     }
                                     {
-                                        [194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206].every(isIncludesFeat) &&
+                                        // [194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206].every(isIncludesFeat) &&
                                         <Menu.Item key="412" icon={<IconContract width={25} height={25} />}>
                                             <Link href="/admin/contracts">
                                                 Contracts
@@ -173,11 +173,11 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                         </Menu.Item>
                                     }
                                 </SubMenu>
-                                :
-                                null
+                                // :
+                                // null
                         }
                         {
-                            depreFeat.every(isIncludesFeat) ?
+                            // depreFeat.every(isIncludesFeat) ?
                                 <SubMenu title="Financial Management">
                                     <Menu.Item key="411" icon={<IconDepreciation width={25} height={25} />}>
                                         <Link href="/admin/financial">
@@ -185,8 +185,8 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                         </Link>
                                     </Menu.Item>
                                 </SubMenu>
-                                :
-                                null
+                                // :
+                                // null
                         }
                         <SubMenu title="MIG CMS">
                             <Menu.Item key="411" icon={<IconCareer width={25} height={25} />}>
@@ -235,36 +235,36 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             </Link>
                         </Menu.Item>
                         {
-                            userFeat.every(isIncludesFeat) ?
+                            // userFeat.every(isIncludesFeat) ?
                                 <SubMenu title="Users Management">
-                                    {dataProfile.data.registered_feature.includes(108) &&
+                                    {/* {dataProfile.data.registered_feature.includes(108) && */}
                                         <Menu.Item key="411" icon={<IconAgents width={20} height={20} />}>
                                             <Link href="/admin/agents">
                                                 Agents
                                         </Link>
                                         </Menu.Item>
-                                    }
-                                    {dataProfile.data.registered_feature.includes(119) &&
+                                    {/* // } */}
+                                    {/* {dataProfile.data.registered_feature.includes(119) && */}
                                         <Menu.Item key="412" icon={<IconRequesters width={20} height={20} />}>
                                             <Link href="/admin/requesters">
                                                 Requesters
                                         </Link>
                                         </Menu.Item>
-                                    }
-                                    {dataProfile.data.registered_feature.includes(134) &&
+                                    {/* } */}
+                                    {/* {dataProfile.data.registered_feature.includes(134) && */}
                                         <Menu.Item key="413" icon={<Icongroups width={20} height={20} />}>
                                             <Link href="/admin/groups">
                                                 Groups
                                         </Link>
                                         </Menu.Item>
-                                    }
+                                    {/* // } */}
                                 </SubMenu>
-                                :
-                                null
+                                // :
+                                // null
                         }
                         <SubMenu title="Features Management">
                             {
-                                [173, 174, 175, 176, 177, 178].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                // [173, 174, 175, 176, 177, 178].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                 <Menu.Item key="411" icon={<IconRoles width={20} height={20} />}>
                                     <Link href="/admin/roles">
                                         Roles
@@ -272,7 +272,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                 </Menu.Item>
                             }
                             {
-                                [179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                // [179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                 <Menu.Item key="412" icon={<IconModules width={20} height={20} />}>
                                     <Link href="/admin/modules?module=&featuredisplay=">
                                         Modules
@@ -286,10 +286,10 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             </Menu.Item>
                         </SubMenu>
                         {
-                            dataProfile.data.registered_feature.includes(144) && dataProfile.data.registered_feature.includes(155) && dataProfile.data.registered_feature.includes(150) ?
+                            // dataProfile.data.registered_feature.includes(144) && dataProfile.data.registered_feature.includes(155) && dataProfile.data.registered_feature.includes(150) ?
                                 <SubMenu title="Company Management">
                                     {
-                                        dataProfile.data.registered_feature.includes(144) &&
+                                        // dataProfile.data.registered_feature.includes(144) &&
                                         <Menu.Item key="411" icon={<IconMIGCompany width={20} height={20} />}>
                                             <Link href="/admin/myCompany">
                                                 My Company
@@ -297,7 +297,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                         </Menu.Item>
                                     }
                                     {
-                                        dataProfile.data.registered_feature.includes(155) &&
+                                        // dataProfile.data.registered_feature.includes(155) &&
                                         <Menu.Item key="412" icon={<IconClientsCompany width={20} height={20} />}>
                                             <Link href="/admin/clients">
                                                 Clients
@@ -305,8 +305,8 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                         </Menu.Item>
                                     }
                                 </SubMenu>
-                                :
-                                null
+                                // :
+                                // null
                         }
                         <SubMenu title="Assets">
                             <Menu.Item key="411" icon={<IconAssets width={20} height={20} />}>
@@ -331,10 +331,10 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             </Menu.Item>
                         </SubMenu>
                         {
-                            serviceFeat.every(isIncludesFeat) ?
+                            // serviceFeat.every(isIncludesFeat) ?
                                 <SubMenu title="Service Management">
                                     {
-                                        [183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193].every(isIncludesFeat) &&
+                                        // [183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193].every(isIncludesFeat) &&
                                         <Menu.Item key="411" icon={<IconCatalog width={20} height={20} />}>
                                             <Link href="/admin/service">
                                                 Service Catalog
@@ -342,7 +342,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                         </Menu.Item>
                                     }
                                     {
-                                        [194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206].every(isIncludesFeat) &&
+                                        // [194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206].every(isIncludesFeat) &&
                                         <Menu.Item key="412" icon={<IconContract width={20} height={20} />}>
                                             <Link href="/admin/contracts">
                                                 Contracts
@@ -350,11 +350,11 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                         </Menu.Item>
                                     }
                                 </SubMenu>
-                                :
-                                null
+                                // :
+                                // null
                         }
                         {
-                            depreFeat.every(isIncludesFeat) ?
+                            // depreFeat.every(isIncludesFeat) ?
                                 <SubMenu title="Financial Management">
                                     <Menu.Item key="411" icon={<IconDepreciation width={20} height={20} />}>
                                         <Link href="/admin/financial">
@@ -362,8 +362,8 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                         </Link>
                                     </Menu.Item>
                                 </SubMenu>
-                                :
-                                null
+                                // :
+                                // null
                         }
                         <SubMenu title="MIG CMS">
                             <Menu.Item key="411" icon={<IconCareer width={20} height={20} />}>

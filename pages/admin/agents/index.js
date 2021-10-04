@@ -243,16 +243,16 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
     useEffect(() => {
         setdatarawloading(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList`, {
-            method: `POST`,
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                page: 1,
-                rows: 50,
-                order_by: "asc"
-            })
+            // body: JSON.stringify({
+            //     page: 1,
+            //     rows: 50,
+            //     order_by: "asc"
+            // })
         })
             .then(res => res.json())
             .then(res2 => {
@@ -276,7 +276,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                             email: doc.email,
                             phone_number: doc.phone_number,
                             company_name: doc.company_name,
-                            status: doc.attribute.is_enabled,
+                            status: doc.is_enabled,
                             company_id: doc.company_id
                         })
                     })
@@ -288,14 +288,14 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
     }, [])
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
-            method: `POST`,
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
             },
         })
             .then(res => res.json())
             .then(res2 => {
-                setdatalokasi(res2.data)
+                setdatalokasi([res2.data])
             })
     }, [])
     return (
@@ -306,7 +306,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                         <div className="font-semibold text-base w-auto">Agents</div>
                     </div>
                     {
-                        [109].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        // [109].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
                             <Link href={{
                                 pathname: '/admin/agents/create/',
@@ -319,7 +319,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                     }
                 </div>
                 {
-                    [108].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                    // [108].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                     <div className="h-auto w-full grid grid-cols-1 md:grid-cols-5 mb-5 bg-white rounded-md">
                         <div className="md:col-span-5 col-span-1 flex flex-col py-3">
                             {/* <div className="flex flex-wrap mb-2">
@@ -440,10 +440,10 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                                         },
                                         onClick: (event) => {
                                             {
-                                                [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                // [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                                     rt.push(`/admin/agents/detail/${record.user_id}`)
-                                                    :
-                                                    null
+                                                    // :
+                                                    // null
                                             }
                                         }
                                     }
@@ -488,7 +488,7 @@ export async function getServerSideProps({ req, res }) {
     }
     initProps = cookiesJSON1.token
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -496,21 +496,11 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![107, 108, 109, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![107, 108, 109, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
-    // const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList`, {
-    //     method: `POST`,
-    //     headers: {
-    //         'Authorization': JSON.parse(initProps),
-    //         'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify(reqBodyAccountList)
-    // })
-    // const resjsonLA = await resourcesLA.json()
-    // const dataListAgent = resjsonLA
     return {
         props: {
             initProps,
