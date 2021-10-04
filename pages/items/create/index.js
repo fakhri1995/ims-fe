@@ -73,6 +73,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
     const [loadingspec, setloadingspec] = useState(false)
     const [modalfinal, setmodalfinal] = useState(false)
     const [loadingcreate, setloadingcreate] = useState(false)
+    const [disabledfield, setdisabledfield] = useState(true)
     //2.1trigger
     const [emptyfieldpart, setemptyfieldpart] = useState([])
     const [emptyfieldpartmodel, setemptyfieldpartmodel] = useState(0)
@@ -114,6 +115,11 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
         var arr = []
         for (var i = 0; i < doq.length; i++) {
             if (doq[i].model_id === Number(partid)) {
+                if (doq[i].inventory_parts.length > 0) {
+                    for (var j = 0; j < doq[i].inventory_parts.length; j++) {
+                        doq[i].inventory_parts[j].disable_part = checked ? false : true
+                    }
+                }
                 arr.push({
                     ...doq[i],
                     enable_part: checked ? true : false
@@ -220,7 +226,6 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
             if (doq[i].model_id === Number(partid)) {
                 const idxfield = doq[i].inventory_values.map(docname => docname.model_inventory_column_id).indexOf(idcolumn)
                 if (checked === true) {
-                    console.log(idx)
                     doq[i].inventory_values[idxfield].value.default.push(idx)
                     doq[i].inventory_values[idxfield].default.default.push(idx)
                 }
@@ -266,7 +271,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                         <Panel id={`panel${idx}`} key={idx} header={<strong>{doc.model_name}</strong>}
                             extra={
                                 <div className="flex">
-                                    <Checkbox checked={doc.enable_part} style={{ marginRight: `0.5rem` }} onChange={(e) => {
+                                    <Checkbox disabled={doc.disable_part} checked={doc.enable_part} style={{ marginRight: `0.5rem` }} onChange={(e) => {
                                         var temp = newdata.inventory_parts
                                         const selectedpart = changeEnablePart(temp, doc.model_id, e.target.checked)
                                         setpartmodeldata(selectedpart)
@@ -649,11 +654,13 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                         })
                     }
                 })
-                temp11.push({
-                    ...item[i],
-                    inventory_values: temp1,
-                    inventory_parts: item[i].inventory_parts.length > 0 ? recursivePartItem(item[i].inventory_parts) : []
-                })
+                if (item[i].enable_part) {
+                    temp11.push({
+                        ...item[i],
+                        inventory_values: temp1,
+                        inventory_parts: item[i].inventory_parts.length > 0 ? recursivePartItem(item[i].inventory_parts) : []
+                    })
+                }
             }
             return temp11
         }
@@ -738,7 +745,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
     return (
         <Layout dataProfile={dataProfile} sidemenu={sidemenu} tok={initProps} st={st} pathArr={pathArr}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4" id="createAssetsWrapper">
-                <div className=" col-span-1 md:col-span-4 mb-8 p-3">
+                <div className=" col-span-1 md:col-span-4 mb-8 p-3 z-20">
                     <Sticky containerSelectorFocus="#createAgentsWrapper">
                         <div className=" col-span-4 flex justify-between pt-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-semibold py-2">Form Tambah Item</h1>
@@ -746,7 +753,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                 {/* <Link href={`/items`}> */}
                                 <Button type="default" onClick={() => { console.log(newdata); console.log(columnsmodeldata); console.log(partmodeldata); console.log(emptyfieldpart) }}>Batal</Button>
                                 {/* </Link> */}
-                                <Button type="primary" onClick={() => {
+                                <Button disabled={disabledfield} type="primary" onClick={() => {
                                     instanceForm.submit()
                                 }}>Simpan</Button>
                             </div>
@@ -809,10 +816,20 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                         return { ...doc }
                                                     }
                                                 })
+                                                setdisabledfield(prev => {
+                                                    if (temp.filter(doc => doc.required).some(docsome => docsome.default === "" || docsome.default === "-" || docsome.default.default === "-")) {
+                                                        return true
+                                                    }
+                                                    else {
+                                                        return false
+                                                    }
+                                                })
                                                 setcolumnsmodeldata(temp)
                                                 setdynamicfielditem(temp)
                                                 //model_parts
-                                                const recursivePartModel = item => {
+                                                var level = -1
+                                                const recursivePartModel = (item, level) => {
+                                                    level += 1
                                                     var temp11 = []
                                                     for (var i = 0; i < item.length; i++) {
                                                         var temp1 = {}
@@ -848,6 +865,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                             model_name: item[i].name,
                                                             asset_name: item[i].asset_name,
                                                             enable_part: false,
+                                                            disable_part: level > 0 ? true : false,
                                                             id: item[i].id,
                                                             model_id: item[i].child_id,
                                                             vendor_id: 0,
@@ -860,12 +878,12 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                             manufacturer_id: 0,
                                                             mig_id: "",
                                                             inventory_values: temp1,
-                                                            inventory_parts: item[i].model_parts.length > 0 ? recursivePartModel(item[i].model_parts) : []
+                                                            inventory_parts: item[i].model_parts.length > 0 ? recursivePartModel(item[i].model_parts, level) : []
                                                         })
                                                     }
                                                     return temp11
                                                 }
-                                                const yo = recursivePartModel(res2.data.model_parts)
+                                                const yo = recursivePartModel(res2.data.model_parts, level)
                                                 setpartmodeldata(yo)
                                                 setnewdata(prev => {
                                                     var temploc = prev
@@ -1085,20 +1103,34 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                                 }>
                                                                     <>
                                                                         {docinvvalue.data_type === 'dropdown' &&
-                                                                            <Select defaultValue={docinvvalue.default.default} style={{ width: `100%` }} onChange={(value, label) => {
-                                                                                setnewdata(prev => {
-                                                                                    var temp = prev
-                                                                                    const idxfield = temp.inventory_values.map(docname => docname.model_inventory_column_id).indexOf(docinvvalue.id)
-                                                                                    temp.inventory_values[idxfield].value.default = value
-                                                                                    return temp
-                                                                                })
-                                                                            }}>
+                                                                            <>
+                                                                                <Select defaultValue={docinvvalue.default.default} style={{ width: `100%` }} onChange={(value, label) => {
+                                                                                    if (typeof (value) === 'undefined') {
+                                                                                        setdisabledfield(true)
+                                                                                    }
+                                                                                    else {
+                                                                                        setdisabledfield(false)
+                                                                                        setnewdata(prev => {
+                                                                                            var temp = prev
+                                                                                            const idxfield = temp.inventory_values.map(docname => docname.model_inventory_column_id).indexOf(docinvvalue.id)
+                                                                                            temp.inventory_values[idxfield].value.default = value
+                                                                                            return temp
+                                                                                        })
+                                                                                    }
+                                                                                }}>
+                                                                                    {
+                                                                                        docinvvalue.default.opsi.map((doc2, idx2) => (
+                                                                                            <Select.Option key={doc2} value={idx2}>{doc2}</Select.Option>
+                                                                                        ))
+                                                                                    }
+                                                                                </Select>
                                                                                 {
-                                                                                    docinvvalue.default.opsi.map((doc2, idx2) => (
-                                                                                        <Select.Option key={doc2} value={idx2}>{doc2}</Select.Option>
-                                                                                    ))
+                                                                                    disabledfield ?
+                                                                                        <p className=" text-red-500 mb-0">{docinvvalue.name} harus dipilih</p>
+                                                                                        :
+                                                                                        null
                                                                                 }
-                                                                            </Select>
+                                                                            </>
                                                                         }
                                                                         {docinvvalue.data_type === 'checkbox' &&
                                                                             <div className="w-full flex flex-col">
@@ -1107,23 +1139,35 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                                                         return (
                                                                                             <div className="flex mb-1">
                                                                                                 <Checkbox defaultChecked={docinvvalue.default.default.includes(idx3)} style={{ marginRight: `0.5rem` }} onChange={(e) => {
-                                                                                                    setnewdata(prev => {
-                                                                                                        var temp = prev
-                                                                                                        const idxfield = temp.inventory_values.map(docname => docname.model_inventory_column_id).indexOf(docinvvalue.id)
-                                                                                                        if (e.target.checked === true) {
-                                                                                                            temp.inventory_values[idxfield].value.default.push(idx3)
-                                                                                                        }
-                                                                                                        else {
-                                                                                                            var idxtoremove = temp.inventory_values[idxfield].value.default.indexOf(idx3)
-                                                                                                            temp.inventory_values[idxfield].value.default.splice(idxtoremove, 1)
-                                                                                                        }
-                                                                                                        return temp
-                                                                                                    })
+                                                                                                    if (docinvvalue.default.default.length === 0) {
+                                                                                                        setdisabledfield(true)
+                                                                                                    }
+                                                                                                    else {
+                                                                                                        setdisabledfield(false)
+                                                                                                        setnewdata(prev => {
+                                                                                                            var temp = prev
+                                                                                                            const idxfield = temp.inventory_values.map(docname => docname.model_inventory_column_id).indexOf(docinvvalue.id)
+                                                                                                            if (e.target.checked === true) {
+                                                                                                                temp.inventory_values[idxfield].value.default.push(idx3)
+                                                                                                            }
+                                                                                                            else {
+                                                                                                                var idxtoremove = temp.inventory_values[idxfield].value.default.indexOf(idx3)
+                                                                                                                temp.inventory_values[idxfield].value.default.splice(idxtoremove, 1)
+                                                                                                            }
+                                                                                                            return temp
+                                                                                                        })
+                                                                                                    }
                                                                                                 }}></Checkbox>
                                                                                                 <p className="mb-0">{doc3}</p>
                                                                                             </div>
                                                                                         )
                                                                                     })
+                                                                                }
+                                                                                {
+                                                                                    disabledfield ?
+                                                                                        <p className=" text-red-500 mb-0">{docinvvalue.name} harus dipilih</p>
+                                                                                        :
+                                                                                        null
                                                                                 }
                                                                             </div>
                                                                         }
@@ -1131,18 +1175,30 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                                             docinvvalue.data_type === 'date' &&
                                                                             <>
                                                                                 <DatePicker /*style={dynamicfielditem[idxinvvalue].value === "" ? { borderColor: `red` } : null}*/ defaultValue={docinvvalue.default === "" ? null : moment(docinvvalue.default)} onChange={(date, datestring) => {
-                                                                                    setnewdata(prev => {
-                                                                                        var temp = prev
-                                                                                        const idxfield = temp.inventory_values.map(docname => docname.model_inventory_column_id).indexOf(docinvvalue.id)
-                                                                                        temp.inventory_values[idxfield].value = datestring
-                                                                                        return temp
-                                                                                    })
+                                                                                    if (datestring === "") {
+                                                                                        setdisabledfield(true)
+                                                                                    }
+                                                                                    else {
+                                                                                        setdisabledfield(false)
+                                                                                        setnewdata(prev => {
+                                                                                            var temp = prev
+                                                                                            const idxfield = temp.inventory_values.map(docname => docname.model_inventory_column_id).indexOf(docinvvalue.id)
+                                                                                            temp.inventory_values[idxfield].value = datestring
+                                                                                            return temp
+                                                                                        })
+                                                                                    }
                                                                                     // setdynamicfielditem(prev => {
                                                                                     //     var temp = prev
                                                                                     //     temp[idxinvvalue].value = datestring
                                                                                     //     return temp
                                                                                     // })
                                                                                 }}></DatePicker>
+                                                                                {
+                                                                                    disabledfield ?
+                                                                                        <p className=" text-red-500 mb-0">{docinvvalue.name} harus dipilih</p>
+                                                                                        :
+                                                                                        null
+                                                                                }
                                                                                 {/* {
                                                                                     dynamicfielditem[idxinvvalue].value === "" ?
                                                                                         null
@@ -1153,36 +1209,78 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                                         }
                                                                         {
                                                                             docinvvalue.data_type === 'paragraph' &&
-                                                                            <Input.TextArea rows={4} defaultValue={docinvvalue.default} onChange={(e) => {
-                                                                                setnewdata(prev => {
-                                                                                    var temp = prev
-                                                                                    const idxfield = temp.inventory_values.map(docname => docname.model_inventory_column_id).indexOf(docinvvalue.id)
-                                                                                    temp.inventory_values[idxfield].value = e.target.value
-                                                                                    return temp
-                                                                                })
-                                                                            }}></Input.TextArea>
+                                                                            <>
+                                                                                <Input.TextArea rows={4} defaultValue={docinvvalue.default} onChange={(e) => {
+                                                                                    if (e.target.value === "") {
+                                                                                        setdisabledfield(true)
+                                                                                    }
+                                                                                    else {
+                                                                                        setdisabledfield(false)
+                                                                                        setnewdata(prev => {
+                                                                                            var temp = prev
+                                                                                            const idxfield = temp.inventory_values.map(docname => docname.model_inventory_column_id).indexOf(docinvvalue.id)
+                                                                                            temp.inventory_values[idxfield].value = e.target.value
+                                                                                            return temp
+                                                                                        })
+                                                                                    }
+                                                                                }}></Input.TextArea>
+                                                                                {
+                                                                                    disabledfield ?
+                                                                                        <p className=" text-red-500 mb-0">{docinvvalue.name} harus diisi</p>
+                                                                                        :
+                                                                                        null
+                                                                                }
+                                                                            </>
                                                                         }
                                                                         {
                                                                             docinvvalue.data_type === 'number' &&
-                                                                            <InputNumber defaultValue={docinvvalue.default} onChange={(value) => {
-                                                                                setnewdata(prev => {
-                                                                                    var temp = prev
-                                                                                    const idxfield = temp.inventory_values.map(docname => docname.model_inventory_column_id).indexOf(docinvvalue.id)
-                                                                                    temp.inventory_values[idxfield].value = `${value}`
-                                                                                    return temp
-                                                                                })
-                                                                            }}></InputNumber>
+                                                                            <>
+                                                                                <InputNumber defaultValue={docinvvalue.default} onChange={(value) => {
+                                                                                    if (value === "" || value === null) {
+                                                                                        setdisabledfield(true)
+                                                                                    }
+                                                                                    else {
+                                                                                        setdisabledfield(false)
+                                                                                        setnewdata(prev => {
+                                                                                            var temp = prev
+                                                                                            const idxfield = temp.inventory_values.map(docname => docname.model_inventory_column_id).indexOf(docinvvalue.id)
+                                                                                            temp.inventory_values[idxfield].value = `${value}`
+                                                                                            return temp
+                                                                                        })
+                                                                                    }
+                                                                                }}></InputNumber>
+                                                                                {
+                                                                                    disabledfield ?
+                                                                                        <p className=" text-red-500 mb-0">{docinvvalue.name} harus diisi</p>
+                                                                                        :
+                                                                                        null
+                                                                                }
+                                                                            </>
                                                                         }
                                                                         {
                                                                             docinvvalue.data_type === 'single' &&
-                                                                            <Input defaultValue={docinvvalue.default} onChange={(e) => {
-                                                                                setnewdata(prev => {
-                                                                                    var temp = prev
-                                                                                    const idxfield = temp.inventory_values.map(docname => docname.model_inventory_column_id).indexOf(docinvvalue.id)
-                                                                                    temp.inventory_values[idxfield].value = e.target.value
-                                                                                    return temp
-                                                                                })
-                                                                            }}></Input>
+                                                                            <>
+                                                                                <Input defaultValue={docinvvalue.default} onChange={(e) => {
+                                                                                    if (e.target.value === "") {
+                                                                                        setdisabledfield(true)
+                                                                                    }
+                                                                                    else {
+                                                                                        setdisabledfield(false)
+                                                                                        setnewdata(prev => {
+                                                                                            var temp = prev
+                                                                                            const idxfield = temp.inventory_values.map(docname => docname.model_inventory_column_id).indexOf(docinvvalue.id)
+                                                                                            temp.inventory_values[idxfield].value = e.target.value
+                                                                                            return temp
+                                                                                        })
+                                                                                    }
+                                                                                }}></Input>
+                                                                                {
+                                                                                    disabledfield ?
+                                                                                        <p className=" text-red-500 mb-0">{docinvvalue.name} harus diisi</p>
+                                                                                        :
+                                                                                        null
+                                                                                }
+                                                                            </>
                                                                         }
                                                                     </>
                                                                 </Form.Item>
@@ -1317,7 +1415,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                             <Panel id={`panel${idxpart}`} key={idxpart} header={<strong>{docpart.model_name}</strong>}
                                                                 extra={
                                                                     <div className="flex">
-                                                                        <Checkbox value={docpart.enable_part} style={{ marginRight: `0.5rem` }} onChange={(e) => {
+                                                                        <Checkbox disabled={docpart.disable_part} value={docpart.enable_part} style={{ marginRight: `0.5rem` }} onChange={(e) => {
                                                                             var temp = newdata.inventory_parts
                                                                             const selectedpart = changeEnablePart(temp, docpart.model_id, e.target.checked)
                                                                             setpartmodeldata(selectedpart)

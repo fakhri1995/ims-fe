@@ -255,7 +255,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                                 message: 'Kondisi wajib dipilih',
                                             },
                                         ]}>
-                                        <Select defaultValue={updatedata.status_condition} onChange={(value) => {
+                                        <Select disabled defaultValue={updatedata.status_condition} onChange={(value) => {
                                             setupdatedata({ ...updatedata, status_condition: value })
                                         }}>
                                             <Select.Option value={1}>
@@ -285,7 +285,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                                 message: 'Status Pemakaian wajib dipilih',
                                             },
                                         ]}>
-                                        <Select defaultValue={updatedata.status_usage} onChange={(value) => {
+                                        <Select disabled defaultValue={updatedata.status_usage} onChange={(value) => {
                                             setupdatedata({ ...updatedata, status_usage: value })
                                         }}>
                                             <Select.Option value={1}>In Used</Select.Option>

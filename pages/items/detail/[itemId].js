@@ -36,7 +36,7 @@ const Overview = ({ itemid, initProps, maindata, manuf, vendor, praloading }) =>
                             <h1 className=" text-sm font-semibold mb-0">Model:</h1>
                             {
                                 // invrelations.models.filter(docfil => docfil.id === maindata.model_id)[0].deleted_at !== null
-                                maindata.model_name === "Model Tidak Ditemukan"
+                                maindata.model_deleted_at !== null
                                     ?
                                     <div className="flex items-center">
                                         <p className="mb-0 mr-1">{maindata.model_name}</p>
@@ -51,7 +51,7 @@ const Overview = ({ itemid, initProps, maindata, manuf, vendor, praloading }) =>
                         <div className="flex flex-col mb-5">
                             <h1 className=" text-sm font-semibold mb-0">Asset Type:</h1>
                             {
-                                maindata.asset_name === "Asset Tidak Ditemukan"
+                                maindata.asset_deleted_at !== null
                                     ?
                                     <div className="flex items-center">
                                         <p className="mb-0 mr-1">{maindata.asset_name}</p>
@@ -199,8 +199,8 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
         },
         {
             title: 'Model',
-            dataIndex: 'model',
-            key: 'model',
+            dataIndex: 'model_name',
+            key: 'model_name',
         },
         {
             title: 'Asset Type',
@@ -1228,7 +1228,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                             <TabPane tab="Association" key={`association`}>
                                 <Association itemid={itemid} initProps={initProps} />
                             </TabPane>
-                            <TabPane disabled={praloading2} tab="Activity" key={`activity`}>
+                            <TabPane /*disabled={praloading2}*/ disabled tab="Activity" key={`activity`}>
                                 <Acitivty itemid={itemid} initProps={initProps} invrelations={invrelations} />
                             </TabPane>
                         </Tabs>
@@ -1247,7 +1247,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                             <TabPane tab="Association" key={`association`}>
                                 <Association itemid={itemid} initProps={initProps} />
                             </TabPane>
-                            <TabPane disabled={praloading2} tab="Activity" key={`activity`}>
+                            <TabPane /*disabled={praloading2}*/ disabled tab="Activity" key={`activity`}>
                                 <Acitivty itemid={itemid} initProps={initProps} invrelations={invrelations} />
                             </TabPane>
                         </Tabs>
