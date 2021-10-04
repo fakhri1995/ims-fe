@@ -37,7 +37,7 @@ function RequestersPassword({ initProps, dataProfile, sidemenu, userid }) {
         else {
             setloadingubahpass(true)
             fetch(`https://boiling-thicket-46501.herokuapp.com/changeRequesterPassword`, {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Authorization': JSON.parse(tok),
                     'Content-Type': 'application/json'
@@ -46,20 +46,19 @@ function RequestersPassword({ initProps, dataProfile, sidemenu, userid }) {
             })
                 .then(res => res.json())
                 .then(res2 => {
+                    setloadingubahpass(false)
                     if (res2.success) {
                         notification['success']({
                             message: res2.message,
                             duration: 3
                         })
                         setTimeout(() => {
-                            setloadingubahpass(false)
                             rt.push(`/admin/requesters/detail/${userid}`)
                         }, 500)
                     }
                     else if (!res2.success) {
-                        setVisibleubahpass(false)
                         notification['error']({
-                            message: res2.message.errorInfo.status_detail,
+                            message: res2.message,
                             duration: 3
                         })
                     }
@@ -157,7 +156,7 @@ export async function getServerSideProps({ req, res, params }) {
     initProps = cookiesJSON1.token
 
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -165,10 +164,10 @@ export async function getServerSideProps({ req, res, params }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    if (![117].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![117].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     // const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
     //     method: `POST`,

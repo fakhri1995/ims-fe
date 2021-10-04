@@ -5,7 +5,7 @@ import { LoadingOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
 import st from '../../../../components/layout-dashboard.module.css'
 import { EditOutlined } from '@ant-design/icons'
-import { Form, DatePicker, Input, notification, Button } from 'antd'
+import { Form, DatePicker, Input, notification, Button, Spin } from 'antd'
 import moment from 'moment'
 
 
@@ -100,7 +100,7 @@ function MyCompanyUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailMy
         }
         setloadingbtn(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateMainCompany`, {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
@@ -122,7 +122,7 @@ function MyCompanyUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailMy
                 }
                 else if (!res2.success) {
                     notification['error']({
-                        message: res2.message.errorInfo.status_detail,
+                        message: res2.message,
                         duration: 3
                     })
                 }
@@ -132,7 +132,7 @@ function MyCompanyUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailMy
     //useEffect
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getMainCompanyDetail`, {
-            method: `POST`,
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
@@ -178,7 +178,7 @@ function MyCompanyUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailMy
                         }
                         <>
                             {
-                                [158].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                // [158].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                 <Button type="primary" onClick={instanceForm.submit} loading={loadingbtn}>Simpan</Button>
                             }
                         </>
@@ -189,7 +189,7 @@ function MyCompanyUpdateProfile({ initProps, dataProfile, sidemenu, dataDetailMy
                 </div>
                 {
                     praloading ?
-                        null
+                        <Spin />
                         :
                         <div className="grid grid-cols-1 sm:grid-col-3 md:grid-cols-5 mb-4">
                             <div className="p-3 relative col-span-1 sm:col-span-1 md:col-span-1 flex flex-col items-center">
@@ -432,7 +432,7 @@ export async function getServerSideProps({ req, res, params }) {
     initProps = cookiesJSON1.token
 
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps),
             'Content-Type': 'application/json'
@@ -441,10 +441,10 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![156, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/admin/company/clients' })
-        res.end()
-    }
+    // if (![156, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/admin/company/clients' })
+    //     res.end()
+    // }
 
     // const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getMainCompanyDetail`, {
     //     method: `POST`,

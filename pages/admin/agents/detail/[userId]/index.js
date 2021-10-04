@@ -109,15 +109,15 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentDetail`, {
-            method: `POST`,
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentDetail?account_id=${userid}`, {
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                account_id: userid
-            })
+            // body: JSON.stringify({
+            //     account_id: userid
+            // })
         })
             .then(res => res.json())
             .then(res2 => {
@@ -128,7 +128,7 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
                     phone_number: res2.data.phone_number,
                     profile_image: res2.data.profile_image === "" ? `/default-users.jpeg` : res2.data.profile_image
                 }
-                setisenabled(res2.data.attribute.is_enabled)
+                setisenabled(res2.data.is_enabled)
                 setData1(temp)
                 setdataemail(res2.data.email)
                 setidrole(res2.data.feature_roles[0])
@@ -191,12 +191,12 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
                                     <Button type="default">Kembali</Button>
                                 </Link>
                                 {
-                                    [116, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                    // [116, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <Button disabled={praloading} type="primary" onClick={() => { rt.push(`/admin/agents/update/${data1.id}`) }}>Ubah Profil</Button>
                                     // <Button type="primary" loading={loadingupdate} onClick={instanceForm.submit}>Save</Button>
                                 }
                                 {
-                                    [115].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                    // [115].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <div className="w-full h-auto">
                                         <Button disabled={praloading} type="primary" onClick={() => { rt.push(`/admin/agents/password/${data1.id}?name=${data1.fullname}`) }}>Ubah Password</Button>
                                     </div >
@@ -215,7 +215,7 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
                         <div className="border-b border-black p-4 font-semibold mb-5 flex">
                             <div className=" mr-3 md:mr-5 pt-1">{data1.fullname}</div>
                             {
-                                [114].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                // [114].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                     <div className="pt-1">
                                         {
                                             isenabled ?
@@ -224,15 +224,15 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
                                                 <Switch disabled={praloading} checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
                                         }
                                     </div>
-                                    :
-                                    <div className="pt-1">
-                                        {
-                                            isenabled ?
-                                                <Switch disabled checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
-                                                :
-                                                <Switch disabled checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
-                                        }
-                                    </div>
+                                    // :
+                                    // <div className="pt-1">
+                                    //     {
+                                    //         isenabled ?
+                                    //             <Switch disabled checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
+                                    //             :
+                                    //             <Switch disabled checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
+                                    //     }
+                                    // </div>
                             }
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4">
@@ -441,7 +441,7 @@ export async function getServerSideProps({ req, res, params }) {
     }
     initProps = cookiesJSON1.token
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -449,10 +449,10 @@ export async function getServerSideProps({ req, res, params }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    if (!([114, 115, 116, 118, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (!([114, 115, 116, 118, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     // const resourcesDA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterDetail`, {
     //     method: `POST`,

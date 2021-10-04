@@ -279,10 +279,10 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
         return arr
     }
     const modelPart = []
-    const recursiveSearchPartFromModel = (doc, modelname) => {
+    const recursiveSearchPartFromModel = (doc, modelid) => {
         var arr = []
         for (var i = 0; i < doc.length; i++) {
-            if (doc[i].model === modelname) {
+            if (doc[i].model_id === modelid) {
                 // continue
                 modelPart.push(doc[i])
             }
@@ -290,7 +290,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                 if (doc[i].children) {
                     arr.push({
                         ...doc[i],
-                        children: recursiveSearchPartFromModel(doc[i].children, modelname)
+                        children: recursiveSearchPartFromModel(doc[i].children, modelid)
                     })
                 }
                 else {
@@ -548,7 +548,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                                     {
                                         invrelations.models.map((docmodels, idxmodels) => {
                                             return (
-                                                <Select.Option value={docmodels.name}>{docmodels.name}</Select.Option>
+                                                <Select.Option value={docmodels.id}>{docmodels.name}</Select.Option>
                                             )
                                         })
                                     }

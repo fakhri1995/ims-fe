@@ -113,7 +113,7 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
     //useEffect
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getMainCompanyDetail`, {
-            method: `POST`,
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(tok),
             },
@@ -152,7 +152,7 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
                         :
                         <>
                             {
-                                [145].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                // [145].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                 <Button type="primary" onClick={() => { rt.push(`/admin/myCompany/updateProfile/${id}`) }}>Ubah</Button>
                             }
                         </>
@@ -595,14 +595,14 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
     //useEffect
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
-            method: `POST`,
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(tok),
             },
         })
             .then(res => res.json())
             .then(res2 => {
-                setdatabranchlist(res2.data)
+                setdatabranchlist([res2.data])
             })
     }, [tambahdata])
     // useEffect(()=>{
@@ -614,7 +614,7 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                 <div className="flex space-x-2">
                     {/* <Link href={`/admin/company/locations/new?companyId=${dataDetailCompany.data.data.company_id}&parent=`}> */}
                     {
-                        [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        // [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         // <Button type="primary" size="middle" onClick={() => { setdrawablecreate(true); setfrominduk(false) }}>Tambah</Button>
                         <Button type="primary" size="middle" onClick={() => { rt.push(`/admin/myCompany/locations/new?parent=&frominduk=0`) }}>Tambah</Button>
                     }
@@ -1147,7 +1147,7 @@ function MigIndexBankAccount({ dataProfile, tok }) {
                             null
                     }
                     {
-                        [147].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        // [147].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         // <Button type="primary" onClick={() => { setDrawablecreate(true) }}>Tambah</Button>
                         <Button type="primary" onClick={() => { rt.push(`/admin/myCompany/bank/create`) }}>Tambah</Button>
                     }
@@ -1317,7 +1317,7 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataBra
     //useEffect
     useEffect(()=>{
         fetch(`https://boiling-thicket-46501.herokuapp.com/getMainCompanyDetail`, {
-            method: `POST`,
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(tok),
             },
@@ -1334,20 +1334,20 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataBra
             <div className="p-5 bg-white hidden md:block">
                 <Tabs tabPosition={`left`} defaultActiveKey={activeTab}>
                     {
-                        [144, 145].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        // [144, 145].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Profile" key={`profile`}>
                             <MigIndexProfile dataProfile={dataProfile} dataDetailCompany={dataDetailCompany} tok={tok}></MigIndexProfile>
                         </TabPane>
                     }
                     {
-                        [146, 147, 148, 149].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                        <TabPane tab="Bank Account" key={`bankAccounts`}>
+                        // [146, 147, 148, 149].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        <TabPane disabled tab="Bank Account" key={`bankAccounts`}>
                             <MigIndexBankAccount dataProfile={dataProfile} tok={tok} />
                         </TabPane>
                     }
                     {
-                        [150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                        <TabPane tab="Locations" key={`locations`}>
+                        // [150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        <TabPane disabled tab="Locations" key={`locations`}>
                             <MigIndexLocations dataProfile={dataProfile} dataBranchList={dataBranchList} tok={tok} />
                         </TabPane>
                     }
@@ -1356,20 +1356,20 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataBra
             <div className="p-5 bg-white block md:hidden">
                 <Tabs tabPosition={`top`} defaultActiveKey={activeTab}>
                     {
-                        [144, 145].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        // [144, 145].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Profile" key={`profile`}>
                             <MigIndexProfile dataProfile={dataProfile} dataDetailCompany={dataDetailCompany} tok={tok}></MigIndexProfile>
                         </TabPane>
                     }
                     {
-                        [146, 147, 148, 149].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                        <TabPane tab="Bank Account" key={`bankAccounts`}>
+                        // [146, 147, 148, 149].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        <TabPane disabled tab="Bank Account" key={`bankAccounts`}>
                             <MigIndexBankAccount dataProfile={dataProfile} tok={tok} />
                         </TabPane>
                     }
                     {
-                        [150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                        <TabPane tab="Locations" key={`locations`}>
+                        // [150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        <TabPane disabled tab="Locations" key={`locations`}>
                             <MigIndexLocations dataProfile={dataProfile} dataBranchList={dataBranchList} tok={tok} />
                         </TabPane>
                     }
@@ -1400,7 +1400,7 @@ export async function getServerSideProps({ req, res }) {
     }
     initProps = cookiesJSON1.token
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -1408,10 +1408,10 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     // const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getMainCompanyDetail`, {
     //     method: `POST`,
@@ -1441,7 +1441,7 @@ export async function getServerSideProps({ req, res }) {
     // const dataLocations = resjsonGL
 
     const resourcesBL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps),
         },

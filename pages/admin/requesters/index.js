@@ -318,16 +318,16 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
     useEffect(() => {
         setdatarawloading(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
-            method: `POST`,
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                page: 1,
-                rows: 50,
-                order_by: "asc"
-            })
+            // body: JSON.stringify({
+            //     page: 1,
+            //     rows: 50,
+            //     order_by: "asc"
+            // })
         })
             .then(res => res.json())
             .then(res2 => {
@@ -351,7 +351,7 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                             phone_number: doc.phone_number,
                             company_id: doc.company_id,
                             company_name: doc.company_name,
-                            status: doc.attribute.is_enabled
+                            status: doc.is_enabled
                         })
                     })
                 }
@@ -361,7 +361,7 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
     }, [])
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
-            method: `POST`,
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
             },
@@ -370,24 +370,24 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
             .then(res2 => {
                 const c = [res2.data]
                 const d = modifData(c)
-                setdatacompany(d[0].children)
+                setdatacompany(d)
             })
     }, [])
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
-            method: `POST`,
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
-                'Content-Type': 'application/json'
+                // 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                company_id: Number(asalcompanyvalue)
-            })
+            // body: JSON.stringify({
+            //     company_id: Number(asalcompanyvalue)
+            // })
         })
             .then(res => res.json())
             .then(res2 => {
-                setdatalokasi(res2.data[0].children)
-                getidData(res2.data)
+                setdatalokasi([res2.data])
+                getidData([res2.data])
                 setasalcompanyvalue(temp)
             })
     }, [asallokasitrigger])
@@ -400,7 +400,7 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                         <div className="font-semibold text-base w-auto">Requesters</div>
                     </div>
                     {
-                        [117].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        // [117].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
                             <Link href={{
                                 pathname: '/admin/requesters/create',
@@ -413,7 +413,7 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                     }
                 </div>
                 {
-                    [119].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                    // [119].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                     <div className="h-auto w-full grid grid-cols-1 md:grid-cols-5 mb-5 bg-white">
                         <div className="md:col-span-5 col-span-1 flex flex-col py-3">
                             {/* <div className="flex flex-wrap mb-2">
@@ -546,10 +546,10 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                                         },
                                         onClick: (event) => {
                                             {
-                                                [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                // [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                                     rt.push(`/admin/requesters/detail/${record.user_id}`)
-                                                    :
-                                                    null
+                                                    // :
+                                                    // null
                                             }
                                         }
                                     }
@@ -615,7 +615,7 @@ export async function getServerSideProps({ req, res }) {
     }
     initProps = cookiesJSON1.token
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -623,10 +623,10 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![119, 118, 117, 116, 115, 114, 133].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![119, 118, 117, 116, 115, 114, 133].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     // const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
     //     method: `POST`,

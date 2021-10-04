@@ -135,15 +135,15 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentDetail`, {
-            method: `POST`,
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentDetail?account_id=${userid}`, {
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                account_id: userid
-            })
+            // body: JSON.stringify({
+            //     account_id: userid
+            // })
         })
             .then(res => res.json())
             .then(res2 => {
@@ -170,14 +170,14 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
     useEffect(() => {
 
         fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
-            method: `POST`,
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
             },
         })
             .then(res => res.json())
             .then(res2 => {
-                setdatacompanylist(res2.data)
+                setdatacompanylist([res2.data])
             })
     }, [])
     useEffect(() => {
@@ -212,7 +212,7 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                                     <Button disabled={preloading} type="default">Batal</Button>
                                 </Link>
                                 {
-                                    [116, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                    // [116, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <Button disabled={preloading} type="primary" loading={loadingupdate} onClick={instanceForm.submit}>Simpan</Button>
                                 }
                             </div>
@@ -248,7 +248,7 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                             <div className="p-3 col-span-1 md:col-span-1 flex flex-col items-center">
                                 <img src={data1.profile_image} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
                                 {
-                                    [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                    // [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <label className="custom-file-upload py-2 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3">
                                         <input type="file" style={{ display: `none` }} name="profile_image" onChange={onChangeEditFoto} />
                                         {loadingfoto ? <LoadingOutlined /> : <EditOutlined style={{ fontSize: `1.2rem` }} />}
@@ -295,13 +295,13 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                                                     },
                                                 ]}>
                                                 {
-                                                    [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                    // [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                                         <Input defaultValue={data1.fullname} onChange={onChangeEditAgents} name="fullname" />
-                                                        :
-                                                        <div className="col-span-1 flex flex-col mb-5">
-                                                            <h1 className="font-semibold text-sm">Nama Lengkap:</h1>
-                                                            <h1 className="text-sm font-normal text-black">{data1.fullname}</h1>
-                                                        </div>
+                                                        // :
+                                                        // <div className="col-span-1 flex flex-col mb-5">
+                                                        //     <h1 className="font-semibold text-sm">Nama Lengkap:</h1>
+                                                        //     <h1 className="text-sm font-normal text-black">{data1.fullname}</h1>
+                                                        // </div>
                                                 }
                                             </Form.Item>
                                             <Form.Item label="Email" required name="email"
@@ -329,18 +329,18 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                                                     },
                                                 ]}>
                                                 {
-                                                    [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                    // [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                                         <Input defaultValue={data1.phone_number} onChange={onChangeEditAgents} name="phone_number" />
-                                                        :
-                                                        <div className="col-span-1 flex flex-col mb-5">
-                                                            <h1 className="font-semibold text-sm">Nomor Telepon:</h1>
-                                                            <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
-                                                        </div>
+                                                        // :
+                                                        // <div className="col-span-1 flex flex-col mb-5">
+                                                        //     <h1 className="font-semibold text-sm">Nomor Telepon:</h1>
+                                                        //     <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
+                                                        // </div>
                                                 }
                                             </Form.Item>
                                             <h1 className="text-sm">Role:</h1>
                                             {
-                                                [133].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                // [133].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                                     <Select placeholder="Pilih Role" onChange={(value) => { onChangeRole(value) }} defaultValue={idrole} style={{ width: `100%` }}>
                                                         {
                                                             dataraw1.data.map((doc, idx) => {
@@ -350,16 +350,16 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                                                             })
                                                         }
                                                     </Select>
-                                                    :
-                                                    <Select disabled onChange={(value) => { onChangeRole(value) }} defaultValue={idrole} style={{ width: `100%` }}>
-                                                        {
-                                                            dataraw1.data.map((doc, idx) => {
-                                                                return (
-                                                                    <Option key={idx} value={doc.id}>{doc.name}</Option>
-                                                                )
-                                                            })
-                                                        }
-                                                    </Select>
+                                                    // :
+                                                    // <Select disabled onChange={(value) => { onChangeRole(value) }} defaultValue={idrole} style={{ width: `100%` }}>
+                                                    //     {
+                                                    //         dataraw1.data.map((doc, idx) => {
+                                                    //             return (
+                                                    //                 <Option key={idx} value={doc.id}>{doc.name}</Option>
+                                                    //             )
+                                                    //         })
+                                                    //     }
+                                                    // </Select>
                                             }
                                             {/* <Form.Item label="Role" required tooltip="Wajib diisi" name="role" initialValue={data1.role}
                                         rules={[
@@ -472,7 +472,7 @@ export async function getServerSideProps({ req, res, resolvedUrl, params }) {
     initProps = cookiesJSON1.token
 
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -480,10 +480,10 @@ export async function getServerSideProps({ req, res, resolvedUrl, params }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    if (!([114, 115, 116, 118, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (!([114, 115, 116, 118, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     // const resourcesDA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterDetail`, {
     //     method: `POST`,

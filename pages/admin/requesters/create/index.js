@@ -133,22 +133,22 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
     //useEffect
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
-            method: `POST`,
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                page: 1,
-                rows: 50,
-                order_by: "asc"
-            })
+            // body: JSON.stringify({
+            //     page: 1,
+            //     rows: 50,
+            //     order_by: "asc"
+            // })
         })
             .then(res => res.json())
             .then(res2 => {
                 const c = [res2.data]
                 const d = modifData(c)
-                setdatacompanylist(d[0].children)
+                setdatacompanylist(d)
                 setpraloading(false)
             })
     }, [])
@@ -341,7 +341,7 @@ export async function getServerSideProps({ req, res }) {
     initProps = cookiesJSON1.token
 
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -349,10 +349,10 @@ export async function getServerSideProps({ req, res }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    if (![117].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![117].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     // const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
     //     method: `POST`,

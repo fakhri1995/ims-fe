@@ -157,7 +157,7 @@ export async function getServerSideProps({ req, res, params }) {
     initProps = cookiesJSON1.token
 
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -165,10 +165,10 @@ export async function getServerSideProps({ req, res, params }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    if (![117].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![117].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     // const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
     //     method: `POST`,
