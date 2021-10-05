@@ -219,6 +219,16 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                 </div>
                             </div>
                         </Link>
+                        <Link href={{
+                            pathname: '/admin/relationships',
+                        }}>
+                            <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
+                                <div className="flex">
+                                    <IconAssets />
+                                    <div className=" flex items-center">Relationship Type</div>
+                                </div>
+                            </div>
+                        </Link>
                     </div>
                 </div>
 

@@ -75,16 +75,16 @@ const Overview = ({ itemid, initProps, maindata, manuf, vendor, praloading }) =>
                             <h1 className=" text-sm font-semibold mb-0">Manufacturer:</h1>
                             {
                                 // invrelations.manufacturers.filter(docfil => docfil.id === maindata.manufacturer_id)[0].deleted_at !== null
-                                maindata.manufacturer_id === "Manufacturer Tidak Ditemukan"
+                                manuf.isnull === false
                                     ?
                                     <div className="flex items-center">
-                                        <p className="mb-0 mr-1">{manuf}</p>
+                                        <p className="mb-0 mr-1">{manuf.name}</p>
                                         <Tooltip placement="right" title="Manufacturer telah dihapus, segera lakukan pengubahan Manufacturer!">
                                             <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
                                         </Tooltip>
                                     </div>
                                     :
-                                    <p className="mb-0 text-sm">{manuf}</p>
+                                    <p className="mb-0 text-sm">{manuf.name}</p>
                             }
                         </div>
                         <div className="flex flex-col mb-5">
@@ -251,6 +251,19 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
             }
         })
         return result
+    }
+    function recursiveModifData(dataa) {
+        for (var i = 0; i < dataa.length; i++) {
+            dataa[i]['key'] = dataa[i].id
+            dataa[i]['value'] = dataa[i].id
+            dataa[i]['title'] = dataa[i].inventory_name
+            dataa[i]['children'] = dataa[i].inventory_parts
+            delete dataa[i].inventory_parts
+            if (dataa[i].children.length > 0) {
+                recursiveModifData(dataa[i].children)
+            }
+        }
+        return dataa
     }
 
     //handler
@@ -427,7 +440,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
             recursiveSearchPartFromAsset(datatemp, assettypevalue)
             datatemp = assetPart
         }
-        console.log(datatemp,modelvalue)
+        console.log(datatemp, modelvalue)
         if (modelfilteract) {
             // const t = recursiveSearchPartFromModel(datatemp, modelvalue)
             recursiveSearchPartFromModel(datatemp, modelvalue)
@@ -496,8 +509,9 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
             })
                 .then(res => res.json())
                 .then(res2 => {
-                    setdatareplacements(res2.data)
-                    if (res2.data.length === 0) {
+                    const mapdata = recursiveModifData(res2.data)
+                    setdatareplacements(mapdata)
+                    if (mapdata.length === 0) {
                         setdisabledchanged(false)
                     }
                 })
@@ -632,22 +646,26 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                     </div>
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Nama Item Part Pengganti <span className="namapart"></span></p>
-                        <Select value={dataApichanged.replacement_id} onChange={(value) => {
+                        <TreeSelect 
+                        value={dataApichanged.replacement_id} 
+                        onChange={(value) => {
                             setdisabledchanged(false)
                             setdataApichanged({
                                 ...dataApichanged,
                                 id: datachanged.id,
                                 replacement_id: value,
                             })
-                        }}>
-                            {
+                        }}
+                        treeData={datareplacements}
+                        >
+                            {/* {
                                 datareplacements.map((doc, idx) => {
                                     return (
                                         <Select.Option value={doc.id}>{doc.inventory_name}</Select.Option>
                                     )
                                 })
-                            }
-                        </Select>
+                            } */}
+                        </TreeSelect>
                         <style jsx>
                             {`
                                 .namapart::before{
@@ -1069,7 +1087,11 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                     .then(res => res.json())
                     .then(res2 => {
                         setinvrelations(res2.data)
-                        setmanuf(res2.data.manufacturers.filter(docfil => docfil.id === res3.manufacturer_id)[0].name)
+                        const del_manuf = res2.data.manufacturers.filter(docfil => docfil.id === res3.manufacturer_id)[0].deleted_at
+                        setmanuf({
+                            name: res2.data.manufacturers.filter(docfil => docfil.id === res3.manufacturer_id)[0].name,
+                            isnull: del_manuf !== null ? false : true
+                        })
                         setvendor(res2.data.vendors.filter(docfil => docfil.id === res3.vendor_id)[0].name)
                         setpraloading2(false)
                     })
