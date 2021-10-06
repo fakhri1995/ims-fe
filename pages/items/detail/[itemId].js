@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
 import Link from 'next/link'
-import { ExclamationCircleOutlined, SearchOutlined, CloseCircleOutlined } from '@ant-design/icons'
+import { ExclamationCircleOutlined, SearchOutlined, CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons'
 import { notification, Button, Spin, Timeline, Empty, Modal, Tooltip, Select, Tabs, Input, TreeSelect, Table, Popover } from 'antd'
 import Layout from '../../../components/layout-dashboard2'
 import moment from 'moment'
@@ -646,17 +646,17 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                     </div>
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Nama Item Part Pengganti <span className="namapart"></span></p>
-                        <TreeSelect 
-                        value={dataApichanged.replacement_id} 
-                        onChange={(value) => {
-                            setdisabledchanged(false)
-                            setdataApichanged({
-                                ...dataApichanged,
-                                id: datachanged.id,
-                                replacement_id: value,
-                            })
-                        }}
-                        treeData={datareplacements}
+                        <TreeSelect
+                            value={dataApichanged.replacement_id}
+                            onChange={(value) => {
+                                setdisabledchanged(false)
+                                setdataApichanged({
+                                    ...dataApichanged,
+                                    id: datachanged.id,
+                                    replacement_id: value,
+                                })
+                            }}
+                            treeData={datareplacements}
                         >
                             {/* {
                                 datareplacements.map((doc, idx) => {
@@ -707,9 +707,207 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
         </div>
     )
 }
-const Relationship = () => {
+const Relationship = ({ initProps, maindata, itemid }) => {
+    //init
+    const rt = useRouter()
+    //usestate
+    const [events, setevents] = useState("")
+    const [datatable, setdatatable] = useState([])
+    const [datatable2, setdatatable2] = useState([])
+    const [datatable3, setdatatable3] = useState([])
+    const [namasearchact, setnamasearchact] = useState(false)
+    const [namavalue, setnamavalue] = useState("")
+    const [datatrigger, setdatatrigger] = useState(0)
+    const [loadingrel, setloadingrel] = useState(false)
+    const [praloadingrel, setpraloadingrel] = useState(false)
+    //delete
+    const [dataApidelete, setdataApidelete] = useState({
+        id: "",
+    })
+    const [modaldelete, setmodaldelete] = useState(false)
+    const [loadingdelete, setloadingdelete] = useState(false)
+    const [relationdatadelete, setrelationdatadelete] = useState({
+        name: "",
+        tipe: "",
+        koneksi: ""
+    })
+
+    //declaration
+    //Declaration
+    const columns = [
+        {
+            title: 'Relationship Type',
+            dataIndex: 'relationship',
+            key: 'relationship',
+        },
+        {
+            title: 'Nama Item',
+            dataIndex: 'connected_detail_name',
+            key: 'connected_detail_name',
+        },
+        {
+            title: 'Type',
+            dataIndex: 'type',
+            key: 'type',
+        },
+        {
+            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
+            dataIndex: 'actionss',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {
+                                events === record.id ?
+                                    <>
+                                        <DeleteOutlined onClick={() => { setdataApidelete({ id: record.id }); setrelationdatadelete({ name: record.relationship, tipe: record.type, koneksi: record.connected_detail_name }); setmodaldelete(true); }} style={{ fontSize: `1.2rem`, color: `red`, cursor: `pointer` }} />
+                                    </>
+                                    :
+                                    null
+                            }
+                        </>
+                }
+            }
+        }
+    ]
+
+    //handler
+    //search nama
+    const onChangeSearch = (e) => {
+        if (e.target.value === "") {
+            setdatatable(datatable3)
+            setnamasearchact(false)
+        }
+        else {
+            setnamasearchact(true)
+            setnamavalue(e.target.value)
+        }
+    }
+    //finalClick
+    const onFinalClick = () => {
+        var datatemp = datatable2
+        if (namasearchact) {
+            datatemp = datatemp.filter(flt => {
+                return flt.connected_detail_name.toLowerCase().includes(namavalue.toLowerCase())
+            })        }
+        setdatatable(datatemp)
+    }
+
+    //handler
+    const handleDeleteRelationshipItem = () => {
+        setloadingdelete(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteRelationshipInventory`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataApidelete)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingdelete(false)
+                setmodaldelete(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: "Relationship berhasil dihapus",
+                        duration: 3
+                    })
+                    setdatatrigger(prev => prev + 1)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
+
+    //useEffect
+    useEffect(() => {
+        if (datatrigger !== -1) {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventory?id=${itemid}&type_id=-4`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                }
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    setdatatable(res2.data.from_inverse.concat(res2.data.not_from_inverse))
+                    setdatatable2(res2.data.from_inverse.concat(res2.data.not_from_inverse))
+                    setdatatable3(res2.data.from_inverse.concat(res2.data.not_from_inverse))
+                })
+        }
+    }, [datatrigger])
+
     return (
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
+        <div className="flex flex-col">
+            <div className="border-b flex justify-between p-5 mb-8">
+                <h1 className="font-bold text-xl my-auto">Relationship</h1>
+                <Button type="primary" size="large" onClick={() => { /*console.log(mainpartdata); console.log(dataremoved)*/ rt.push(`/items/createrelationship/${itemid}?name=${maindata.inventory_name}`) }}>Tambah</Button>
+            </div>
+            <div className="flex mb-5">
+                {
+                    praloadingrel ?
+                        null
+                        :
+                        <div className=" w-full mr-1 grid grid-cols-12">
+                            <div className="col-span-11 mr-1">
+                                <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Nama Item" onChange={e => onChangeSearch(e)} allowClear></Input>
+                            </div>
+                            <div className=" col-span-1">
+                                <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
+                            </div>
+                        </div>
+                }
+            </div>
+            <Table loading={praloadingrel} pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={datatable} columns={columns}
+                onRow={(record, rowIndex) => {
+                    return {
+                        onMouseOver: (event) => {
+                            setevents(record.id)
+                        },
+                        onMouseLeave: (event) => {
+                            setevents(0)
+                        }
+                    }
+                }}
+            ></Table>
+            <Modal title={<>Apakah Anda yakin ingin menghapus Relationship berikut ini dari "{maindata.inventory_name}"?</>}
+                visible={modaldelete}
+                onCancel={() => { setmodaldelete(false) }}
+                okText="Ya"
+                cancelText="Tidak"
+                onOk={handleDeleteRelationshipItem}
+                okButtonProps={{ loading: loadingdelete }}
+                width={700}
+            >
+                <div className="flex flex-col">
+                    <div className="flex flex-col border-b mb-5">
+                        <div className="flex flex-col mb-3">
+                            <h1 className="font-semibold mb-0">Relationship Type:</h1>
+                            <p className="mb-0">{relationdatadelete.name}</p>
+                        </div>
+                        <div className="flex flex-col mb-3">
+                            <h1 className="font-semibold mb-0">Tipe:</h1>
+                            <p className="mb-0">{relationdatadelete.tipe}</p>
+                        </div>
+                        <div className="flex flex-col mb-3">
+                            <h1 className="font-semibold mb-0">Item:</h1>
+                            <p className="mb-0">{relationdatadelete.koneksi}</p>
+                        </div>
+                    </div>
+                    <div className="flex flex-col">
+                        <p className="mb-0">Notes</p>
+                        <Input placeholder="Masukkan Notes" onChange={(e => {
+                            // setdataApiremoved({ ...dataApiremoved, notes: e.target.value })
+                        })}></Input>
+                    </div>
+                </div>
+            </Modal>
+        </div>
     )
 }
 const Association = () => {
@@ -1245,7 +1443,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                 <KonfigurasiPart itemid={itemid} initProps={initProps} maindata={maindata} invrelations={invrelations} praloading2={praloading2} />
                             </TabPane>
                             <TabPane tab="Relationship" key={`relationship`}>
-                                <Relationship itemid={itemid} initProps={initProps} />
+                                <Relationship itemid={itemid} initProps={initProps} maindata={maindata} />
                             </TabPane>
                             <TabPane tab="Association" key={`association`}>
                                 <Association itemid={itemid} initProps={initProps} />
@@ -1264,7 +1462,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                 <KonfigurasiPart itemid={itemid} initProps={initProps} maindata={maindata} invrelations={invrelations} praloading2={praloading2} />
                             </TabPane>
                             <TabPane tab="Relationship" key={`relationship`}>
-                                <Relationship itemid={itemid} initProps={initProps} />
+                                <Relationship itemid={itemid} initProps={initProps} maindata={maindata} />
                             </TabPane>
                             <TabPane tab="Association" key={`association`}>
                                 <Association itemid={itemid} initProps={initProps} />

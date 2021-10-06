@@ -103,7 +103,7 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
         var datatemp = displaydata2
         if (namasearchact) {
             datatemp = datatemp.filter(flt => {
-                return flt.relationship_type.toLowerCase().includes(namavalue.toLowerCase())
+                return flt.relationship_type.toLowerCase().includes(namavalue.toLowerCase()) || flt.inverse_relationship_type.toLowerCase().includes(namavalue.toLowerCase())
             })
         }
         setdisplaydata(datatemp)
@@ -242,7 +242,7 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
                     <div className="flex mb-8">
                         <div className=" w-full mr-1 grid grid-cols-12">
                             <div className="col-span-11 mr-1">
-                                <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Relationship Type" onChange={onChangeSearch} allowClear></Input>
+                                <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Relationship Type atau Inverse Relationship Type" onChange={onChangeSearch} allowClear></Input>
                             </div>
                             <div className=" col-span-1">
                                 <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
