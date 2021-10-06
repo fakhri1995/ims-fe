@@ -232,7 +232,7 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
                     <div className="font-semibold text-base w-auto">Relationship Type</div>
                 </div>
                 <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
-                    <Button onClick={() => { setmodaladd(true) }} size="large" type="primary">
+                    <Button onClick={() => { setmodaladd(true); setdataadd({ ...dataadd, relationship_type: "", inverse_relationship_type: "", description: "" }) }} size="large" type="primary">
                         Tambah
                     </Button>
                 </div>
@@ -267,7 +267,7 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
                     <h1 className="font-bold text-xl">Form Tambah Relationship Type</h1>
                     <div className="flex">
                         <>
-                            <Button type="danger" onClick={() => { setmodaladd(false); setdataadd({ ...dataadd, relationship_type: "" }) }} style={{ marginRight: `1rem` }}>Batal</Button>
+                            <Button type="danger" onClick={() => { setmodaladd(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
                             <Button type='primary' disabled={disabledadd} onClick={handleAddRelationships} loading={loadingadd}>Simpan</Button>
                         </>
                     </div>

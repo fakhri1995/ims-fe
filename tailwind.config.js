@@ -15,6 +15,11 @@ module.exports = {
       },
       backgroundColor: theme => ({
         'primary': '#1890ff',
+        'secondary': '#60A5FA',
+        'ternary': `rgb(230,247,255)`
+      }),
+      borderColor: theme =>({
+        'primary': '#1890ff',
         'secondary': '#60A5FA'
       })
     },

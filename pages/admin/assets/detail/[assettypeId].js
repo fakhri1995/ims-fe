@@ -4,8 +4,8 @@ import httpcookie from 'cookie'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Modal, Steps, Radio, Button, Tabs, TreeSelect, Empty, notification, Select, Checkbox } from 'antd'
-import { CalendarOutlined } from '@ant-design/icons'
+import { Modal, Steps, Radio, Button, Tabs, TreeSelect, Empty, notification, Select, Checkbox, Table, Input } from 'antd'
+import { CalendarOutlined, DownOutlined, UpOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import st from '../../../../components/layout-dashboard.module.css'
 
 const Overview = ({ assettypeid, initProps, displaydata, parentcode, praloading }) => {
@@ -14,7 +14,7 @@ const Overview = ({ assettypeid, initProps, displaydata, parentcode, praloading 
     return (
         <div className="flex flex-col">
             <div className="border-b flex justify-between p-5 mb-8">
-                <h1 className="font-bold text-large my-auto">Overview</h1>
+                <h1 className="font-bold text-xl my-auto">Overview</h1>
                 {
                     praloading ?
                         null
@@ -34,7 +34,7 @@ const Overview = ({ assettypeid, initProps, displaydata, parentcode, praloading 
                     } */}
                 </div>
                 <div className="flex flex-col mb-3">
-                    <h1 className=" text-sm font-semibold mb-0">Deskirpsi:</h1>
+                    <h1 className=" text-sm font-semibold mb-0">Deskripsi:</h1>
                     <p className="mb-0 text-sm">{displaydata ? displaydata.description : "-"}</p>
                     {/* {
                         praloadingoverview ?
@@ -128,10 +128,633 @@ const Overview = ({ assettypeid, initProps, displaydata, parentcode, praloading 
     )
 }
 
-const Relationship = ({ assettypeid, initProps }) => {
+const Relationship = ({ assettypeid, initProps, maindata }) => {
+
+    //useState
+    const [displaydata, setdisplaydata] = useState([])
+    const [displaydatarelations, setdisplaydatarelations] = useState({
+        relationships: [],
+        types: []
+    })
+    const [praloadingrel, setpraloadingrel] = useState(false)
+    const [displaytrigger, setdisplaytrigger] = useState(-1)
+    const [events, setevents] = useState("")
+    //add
+    const [dataApiadd, setdataApiadd] = useState({
+        subject_id: Number(assettypeid),
+        relationship_id: null,
+        is_inverse: null,
+        type_id: null,
+        connected_id: null
+    })
+    const [relationnameadd, setrelationnameadd] = useState("")
+    const [relationnameddadd, setrelationnameddadd] = useState(false)
+    const [relationselectedidxadd, setrelationselectedidxadd] = useState(-1)
+    const [relationselectedisinverseadd, setrelationselectedisinverseadd] = useState(-1)
+    const [detailtipeadd, setdetailtipeadd] = useState(-10)
+    const [detailtipedataadd, setdetailtipedataadd] = useState([])
+    const [modaladd, setmodaladd] = useState(false)
+    const [disabledadd, setdisabledadd] = useState(true)
+    const [loadingadd, setloadingadd] = useState(false)
+    //Ubah
+    const [dataApiupdate, setdataApiupdate] = useState({
+        id: Number(assettypeid),
+        relationship_id: null,
+        is_inverse: null,
+        from_inverse: null,
+        type_id: null,
+        connected_id: null
+    })
+    const [modalupdate, setmodalupdate] = useState(false)
+    const [loadingupdate, setloadingupdate] = useState(false)
+    const [disabledupdate, setdisabledupdate] = useState(true)
+    const [relationnameupdate, setrelationnameupdate] = useState("")
+    const [relationnameddupdate, setrelationnameddupdate] = useState(false)
+    const [detailtipeupdate, setdetailtipeupdate] = useState(-10)
+    const [detailtipedataupdate, setdetailtipedataupdate] = useState([])
+    //Hapus
+    const [dataApidelete, setdataApidelete] = useState({
+        id: "",
+    })
+    const [modaldelete, setmodaldelete] = useState(false)
+    const [loadingdelete, setloadingdelete] = useState(false)
+    const [relationdatadelete, setrelationdatadelete] = useState({
+        name: "",
+        tipe: "",
+        koneksi: ""
+    })
+
+    //Declaration
+    const columns = [
+        {
+            title: 'Relationship Type',
+            dataIndex: 'relationship',
+            key: 'relationship',
+        },
+        {
+            title: 'Type',
+            dataIndex: 'type',
+            key: 'type',
+        },
+        {
+            title: 'Detail Tipe',
+            dataIndex: 'connected_detail_name',
+            key: 'connected_detail_name',
+        },
+        {
+            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
+            dataIndex: 'actionss',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {
+                                events === record.id ?
+                                    <>
+                                        <EditOutlined onClick={() => { setdataApiupdate({ ...dataApiupdate, from_inverse: record.from_inverse, is_inverse: record.is_inverse, relationship_id: record.relationship_id, type_id: record.type_id }); setrelationnameupdate(record.relationship); setdetailtipeupdate(record.type_id); setmodalupdate(true); setdisabledupdate(false) }} style={{ fontSize: `1.2rem`, color: `rgb(15,146,255)`, cursor: `pointer`, marginRight: `1rem` }} />
+                                        <DeleteOutlined onClick={() => { setdataApidelete({ id: record.id }); setrelationdatadelete({ name: record.relationship, tipe: record.type, koneksi: record.connected_detail_name }); setmodaldelete(true); }} style={{ fontSize: `1.2rem`, color: `red`, cursor: `pointer` }} />
+                                    </>
+                                    :
+                                    null
+                            }
+                        </>
+                }
+            }
+        }
+    ]
+
+    //handler
+    const handleAddRelationshipAsset = () => {
+        setloadingadd(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addRelationshipAsset`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataApiadd)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingadd(false)
+                setmodaladd(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: "Relationship Asset berhasil ditambahkan",
+                        duration: 3
+                    })
+                    setdisplaytrigger(prev => prev + 1)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
+    const handleDeleteRelationshipAsset = () => {
+        setloadingdelete(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteRelationshipAsset`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataApidelete)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingdelete(false)
+                setmodaldelete(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: "Relationship Asset berhasil dihapus",
+                        duration: 3
+                    })
+                    setdisplaytrigger(prev => prev + 1)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
+    const handleUpdateRelationshipAsset = () => {
+        setloadingupdate(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateRelationshipAsset`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataApiupdate)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingupdate(false)
+                setmodalupdate(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: "Relationship Asset berhasil diubah",
+                        duration: 3
+                    })
+                    setdisplaytrigger(prev => prev + 1)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
+
+    //useEffect
+    useEffect(() => {
+        setpraloadingrel(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipAsset?id=${assettypeid}&type_id=-4`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdisplaydata(res2.data.not_from_inverse.concat(res2.data.from_inverse))
+                setpraloadingrel(false)
+            })
+    }, [displaytrigger])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipAssetRelation`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdisplaydatarelations(res2.data)
+            })
+    }, [])
+    useEffect(() => {
+        if (detailtipeadd !== -10) {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipAssetDetailList?type_id=${dataApiadd.type_id}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                }
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    setdetailtipedataadd(res2.data)
+                })
+        }
+    }, [detailtipeadd])
+    useEffect(() => {
+        if (detailtipeupdate !== -10) {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipAssetDetailList?type_id=${dataApiupdate.type_id}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                }
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    setdetailtipedataupdate(res2.data)
+                })
+        }
+    }, [detailtipeupdate])
     return (
-        <>
-        </>
+        <div className="flex flex-col">
+            <div className="border-b flex justify-between p-5 mb-8">
+                <h1 className="font-bold text-xl my-auto">Relationship</h1>
+                {
+                    praloadingrel ?
+                        null
+                        :
+                        <Button type="primary" size="middle" onClick={() => { /*console.log(mainpartdata); console.log(dataremoved)*/ /*rt.push(`/items/createpart/${itemid}?name=${mainpartdata.inventory_name}`)*/
+                            setdataApiadd({
+                                ...dataApiadd,
+                                relationship_id: null,
+                                is_inverse: null,
+                                type_id: null,
+                                connected_id: null
+                            }); 
+                            setrelationnameadd("")
+                            setrelationselectedidxadd(-1)
+                            setrelationselectedisinverseadd(-1)
+                            setmodaladd(true)
+                        }}>Tambah</Button>
+                }
+            </div>
+            <Table loading={praloadingrel} pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={displaydata} columns={columns}
+                onRow={(record, rowIndex) => {
+                    return {
+                        onMouseOver: (event) => {
+                            setevents(record.id)
+                        },
+                        onMouseLeave: (event) => {
+                            setevents(0)
+                        }
+                    }
+                }}
+            ></Table>
+            <Modal title={
+                <div className="flex justify-between p-5 mt-5">
+                    <h1 className="font-bold text-xl">Form Tambah Relaationship "{maindata.name}"</h1>
+                    <div className="flex">
+                        <>
+                            <Button type="default" onClick={() => { setmodaladd(false); /*setdataApiadd({ ...dataApiadd, relationship_id: null, type_id: null, connected_id: null })*/ /*console.log(dataApiadd)*/ }} style={{ marginRight: `1rem` }}>Batal</Button>
+                            <Button type='primary' disabled={disabledadd} onClick={handleAddRelationshipAsset} loading={loadingadd}>Simpan</Button>
+                        </>
+                    </div>
+                </div>
+            }
+                visible={modaladd}
+                onCancel={() => { setmodaladd(false) }}
+                footer={null}
+                width={760}
+            >
+                <div className="flex flex-col mb-3">
+                    <div className="flex flex-col mb-3">
+                        <p className="mb-0">Relationship Type <span className="namapart"></span></p>
+                        <div className="w-full border p-2 hover:border-primary rounded-sm flex items-center justify-between cursor-pointer" onClick={() => { setrelationnameddadd(prev => !prev) }}>
+                            <p className="mb-0">{relationnameadd}</p>
+                            {relationnameddadd ? <UpOutlined style={{ color: `rgb(229,231,235)` }} /> : <DownOutlined style={{ color: `rgb(229,231,235)` }} />}
+                        </div>
+                        {
+                            relationnameddadd ?
+                                <div className="flex flex-col">
+                                    <div className="flex">
+                                        <div className="bg-gray-200 font-semibold p-3 w-6/12">Relationship Type</div>
+                                        <div className="bg-gray-200 font-semibold p-3 w-6/12">Inverse Relationship Type</div>
+                                    </div>
+                                    {
+                                        displaydatarelations.relationships.map((doc, idx) => {
+                                            return (
+                                                <div className="flex">
+                                                    <div className={`hover:bg-ternary cursor-pointer hover:text-black p-3 w-6/12 ${relationselectedidxadd === idx && relationselectedisinverseadd === false ? " bg-secondary" : "bg-white"}`}
+                                                        onClick={(e) => {
+                                                            setrelationnameddadd(false);
+                                                            setrelationnameadd(doc.relationship_type);
+                                                            setdataApiadd({ ...dataApiadd, relationship_id: doc.id, is_inverse: false })
+                                                            doc.id === null || dataApiadd.type_id === null ? setdisabledadd(true) : setdisabledadd(false)
+                                                            setrelationselectedidxadd(idx)
+                                                            setrelationselectedisinverseadd(false)
+                                                        }}
+                                                    >{doc.relationship_type}</div>
+                                                    <div className={`hover:bg-ternary cursor-pointer hover:text-black p-3 w-6/12 ${relationselectedidxadd === idx && relationselectedisinverseadd === true ? " bg-secondary" : "bg-white"}`}
+                                                        onClick={(e) => {
+                                                            setrelationnameddadd(false);
+                                                            setrelationnameadd(doc.inverse_relationship_type);
+                                                            setdataApiadd({ ...dataApiadd, relationship_id: doc.id, is_inverse: true })
+                                                            doc.id === null || dataApiadd.type_id === null ? setdisabledadd(true) : setdisabledadd(false)
+                                                            setrelationselectedidxadd(idx)
+                                                            setrelationselectedisinverseadd(true)
+                                                        }}
+                                                    >{doc.inverse_relationship_type}</div>
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                </div>
+                                :
+                                null
+                        }
+                        <style jsx>
+                            {`
+                                .namapart::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+                        </style>
+                    </div>
+                    <div className="flex flex-col mb-3">
+                        <p className="mb-0">Tipe <span className="tipepart"></span></p>
+                        <Select value={dataApiadd.type_id} onChange={(value) => {
+                            setdataApiadd({ ...dataApiadd, type_id: value })
+                            dataApiadd.relationship_id === null || value === null ? setdisabledadd(true) : setdisabledadd(false)
+                            setdetailtipeadd(value)
+                        }}>
+                            {
+                                displaydatarelations.types.map((doc, idx) => {
+                                    return (
+                                        <Select.Option value={doc.id}>{doc.name}</Select.Option>
+                                    )
+                                })
+                            }
+                        </Select>
+                        <style jsx>
+                            {`
+                                .tipepart::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+                        </style>
+                    </div>
+                    {
+                        dataApiadd.type_id !== null ?
+                            <>
+                                {
+                                    dataApiadd.type_id === -1 &&
+                                    <div className="flex flex-col mb-3">
+                                        <p className="mb-0">Detail Tipe</p>
+                                        <Select onChange={(value) => {
+                                            setdataApiadd({ ...dataApiadd, connected_id: value })
+                                        }}>
+                                            {
+                                                detailtipedataadd.map((doc, idx) => {
+                                                    return (
+                                                        <Select.Option value={doc.user_id}>{doc.fullname}</Select.Option>
+                                                    )
+                                                })
+                                            }
+                                        </Select>
+                                    </div>
+                                }
+                                {
+                                    dataApiadd.type_id === -2 &&
+                                    <div className="flex flex-col mb-3">
+                                        <p className="mb-0">Detail Tipe</p>
+                                        <Select onChange={(value) => {
+                                            setdataApiadd({ ...dataApiadd, connected_id: value })
+                                        }}>
+                                            {
+                                                detailtipedataadd.map((doc, idx) => {
+                                                    return (
+                                                        <Select.Option value={doc.user_id}>{doc.fullname}</Select.Option>
+                                                    )
+                                                })
+                                            }
+                                        </Select>
+                                    </div>
+                                }
+                                {
+                                    dataApiadd.type_id === -3 &&
+                                    <div className="flex flex-col mb-3">
+                                        <p className="mb-0">Detail Tipe</p>
+                                        <Select onChange={(value) => {
+                                            setdataApiadd({ ...dataApiadd, connected_id: value })
+                                        }}>
+                                            {
+                                                detailtipedataadd.map((doc, idx) => {
+                                                    return (
+                                                        <Select.Option value={doc.user_id}>{doc.fullname}</Select.Option>
+                                                    )
+                                                })
+                                            }
+                                        </Select>
+                                    </div>
+                                }
+                                {
+                                    dataApiadd.type_id === -4 &&
+                                    <div className="flex flex-col mb-3">
+                                        <p className="mb-0">Detail Tipe</p>
+                                        <TreeSelect treeData={detailtipedataadd} onChange={(value, label, extra) => {
+                                            setdataApiadd({ ...dataApiadd, connected_id: extra.allCheckedNodes[0].node.props.id })
+                                        }}></TreeSelect>
+                                    </div>
+                                }
+                            </>
+                            :
+                            null
+                    }
+                </div>
+            </Modal>
+            <Modal title={
+                <div className="flex justify-between p-5 mt-5">
+                    <h1 className="font-bold text-xl">Form Ubah Relaationship "{maindata.name}"</h1>
+                    <div className="flex">
+                        <>
+                            <Button type="default" onClick={() => { setmodalupdate(false); /*setdataApiadd({ ...dataApiadd, relationship_id: null, type_id: null, connected_id: null }) console.log(dataApiupdate)*/ }} style={{ marginRight: `1rem` }}>Batal</Button>
+                            <Button type='primary' disabled={disabledupdate} onClick={handleUpdateRelationshipAsset} loading={loadingupdate}>Simpan</Button>
+                        </>
+                    </div>
+                </div>
+            }
+                visible={modalupdate}
+                onCancel={() => { setmodalupdate(false) }}
+                footer={null}
+                width={760}
+            >
+                <div className="flex flex-col mb-3">
+                    <div className="flex flex-col mb-3">
+                        <p className="mb-0">Relationship Type <span className="namapart"></span></p>
+                        <div className="w-full border p-2 hover:border-primary rounded-sm flex items-center justify-between cursor-pointer" onClick={() => { setrelationnameddupdate(prev => !prev) }}>
+                            <p className="mb-0">{relationnameupdate}</p>
+                            {relationnameddupdate ? <UpOutlined style={{ color: `rgb(229,231,235)` }} /> : <DownOutlined style={{ color: `rgb(229,231,235)` }} />}
+                        </div>
+                        {
+                            relationnameddupdate ?
+                                <div className="flex flex-col">
+                                    <div className="flex">
+                                        <div className="bg-gray-200 font-semibold p-3 w-6/12">Relationship Type</div>
+                                        <div className="bg-gray-200 font-semibold p-3 w-6/12">Inverse Relationship Type</div>
+                                    </div>
+                                    {
+                                        displaydatarelations.relationships.map((doc, idx) => {
+                                            return (
+                                                <div className="flex">
+                                                    <div className={`hover:bg-ternary cursor-pointer hover:text-black p-3 w-6/12 ${dataApiupdate.relationship_id === doc.id && dataApiupdate.is_inverse === false ? " bg-secondary" : "bg-white"}`}
+                                                        onClick={(e) => {
+                                                            setrelationnameddupdate(false);
+                                                            setrelationnameupdate(doc.relationship_type);
+                                                            setdataApiupdate({ ...dataApiupdate, relationship_id: doc.id, is_inverse: false })
+                                                            doc.id === null || dataApiupdate.is_inverse === null ? setdisabledadd(true) : setdisabledadd(false)
+                                                        }}
+                                                    >{doc.relationship_type}</div>
+                                                    <div className={`hover:bg-ternary cursor-pointer hover:text-black p-3 w-6/12 ${dataApiupdate.relationship_id === doc.id && dataApiupdate.is_inverse === true ? " bg-secondary" : "bg-white"}`}
+                                                        onClick={(e) => {
+                                                            setrelationnameddupdate(false);
+                                                            setrelationnameupdate(doc.inverse_relationship_type);
+                                                            setdataApiupdate({ ...dataApiupdate, relationship_id: doc.id, is_inverse: true })
+                                                            doc.id === null || dataApiupdate.is_inverse === null ? setdisabledadd(true) : setdisabledadd(false)
+                                                        }}
+                                                    >{doc.inverse_relationship_type}</div>
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                </div>
+                                :
+                                null
+                        }
+                        <style jsx>
+                            {`
+                                .namapart::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+                        </style>
+                    </div>
+                    <div className="flex flex-col mb-3">
+                        <p className="mb-0">Tipe <span className="tipepart"></span></p>
+                        <Select defaultValue={detailtipeupdate} disabled>
+                            {
+                                displaydatarelations.types.map((doc, idx) => {
+                                    return (
+                                        <Select.Option value={doc.id}>{doc.name}</Select.Option>
+                                    )
+                                })
+                            }
+                        </Select>
+                        <style jsx>
+                            {`
+                                .tipepart::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+                        </style>
+                    </div>
+                    {
+                        dataApiupdate.type_id !== null ?
+                            <>
+                                {
+                                    dataApiupdate.type_id === -1 &&
+                                    <div className="flex flex-col mb-3">
+                                        <p className="mb-0">Detail Tipe</p>
+                                        <Select onChange={(value) => {
+                                            setdataApiupdate({ ...dataApiupdate, connected_id: value })
+                                        }}>
+                                            {
+                                                detailtipedataupdate.map((doc, idx) => {
+                                                    return (
+                                                        <Select.Option value={doc.user_id}>{doc.fullname}</Select.Option>
+                                                    )
+                                                })
+                                            }
+                                        </Select>
+                                    </div>
+                                }
+                                {
+                                    dataApiupdate.type_id === -2 &&
+                                    <div className="flex flex-col mb-3">
+                                        <p className="mb-0">Detail Tipe</p>
+                                        <Select onChange={(value) => {
+                                            setdataApiupdate({ ...dataApiupdate, connected_id: value })
+                                        }}>
+                                            {
+                                                detailtipedataupdate.map((doc, idx) => {
+                                                    return (
+                                                        <Select.Option value={doc.user_id}>{doc.fullname}</Select.Option>
+                                                    )
+                                                })
+                                            }
+                                        </Select>
+                                    </div>
+                                }
+                                {
+                                    dataApiupdate.type_id === -3 &&
+                                    <div className="flex flex-col mb-3">
+                                        <p className="mb-0">Detail Tipe</p>
+                                        <Select onChange={(value) => {
+                                            setdataApiupdate({ ...dataApiupdate, connected_id: value })
+                                        }}>
+                                            {
+                                                detailtipedataupdate.map((doc, idx) => {
+                                                    return (
+                                                        <Select.Option value={doc.user_id}>{doc.fullname}</Select.Option>
+                                                    )
+                                                })
+                                            }
+                                        </Select>
+                                    </div>
+                                }
+                                {
+                                    dataApiupdate.type_id === -4 &&
+                                    <div className="flex flex-col mb-3">
+                                        <p className="mb-0">Detail Tipe</p>
+                                        <TreeSelect treeData={detailtipedataupdate} onChange={(value, label, extra) => {
+                                            setdataApiupdate({ ...dataApiupdate, connected_id: extra.allCheckedNodes[0].node.props.id })
+                                        }}></TreeSelect>
+                                    </div>
+                                }
+                            </>
+                            :
+                            null
+                    }
+                </div>
+            </Modal>
+            <Modal title={<>Apakah Anda yakin ingin menghapus Relationship berikut dari "<strong>{maindata.name}</strong>"?</>}
+                visible={modaldelete}
+                onCancel={() => { setmodaldelete(false) }}
+                okText="Ya"
+                cancelText="Tidak"
+                onOk={handleDeleteRelationshipAsset}
+                okButtonProps={{ loading: loadingdelete }}
+                width={700}
+            >
+                <div className="flex flex-col">
+                    <div className="flex flex-col border-b mb-5">
+                        <div className="flex flex-col mb-3">
+                            <h1 className="font-semibold mb-0">Relationship Type:</h1>
+                            <p className="mb-0">{relationdatadelete.name}</p>
+                        </div>
+                        <div className="flex flex-col mb-3">
+                            <h1 className="font-semibold mb-0">Tipe:</h1>
+                            <p className="mb-0">{relationdatadelete.tipe}</p>
+                        </div>
+                        <div className="flex flex-col mb-3">
+                            <h1 className="font-semibold mb-0">Item:</h1>
+                            <p className="mb-0">{relationdatadelete.koneksi}</p>
+                        </div>
+                    </div>
+                    <div className="flex flex-col">
+                        <p className="mb-0">Notes</p>
+                        <Input placeholder="Masukkan Notes" onChange={(e => {
+                            // setdataApiremoved({ ...dataApiremoved, notes: e.target.value })
+                        })}></Input>
+                    </div>
+                </div>
+            </Modal>
+        </div>
     )
 }
 
@@ -366,18 +989,18 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                             <h1 className="font-bold text-xl py-2">{displaydata.name}</h1>
                             <div className="flex mr-5 items-center">
                                 <Button disabled={praloading} type="danger" loading={loadingdelete} onClick={() => {
-                                    const modeldata2 = modeldata.filter((doc1,idx1) => doc1.asset_id === Number(assettypeid))
+                                    const modeldata2 = modeldata.filter((doc1, idx1) => doc1.asset_id === Number(assettypeid))
                                     if (childassettype.length > 0 && modeldata2.length > 0) {
                                         setmodaldelete(true)
                                     }
                                     else {
-                                            if (modeldata2.length === 0 && childassettype.length > 0) {
-                                                setmodaldeletenonmodel(true)
-                                            }
-                                            else if (modeldata2.length > 0 && childassettype.length === 0) {
-                                                setmodaldeletenonchild(true)
-                                            }                                        
-                                            else {
+                                        if (modeldata2.length === 0 && childassettype.length > 0) {
+                                            setmodaldeletenonmodel(true)
+                                        }
+                                        else if (modeldata2.length > 0 && childassettype.length === 0) {
+                                            setmodaldeletenonchild(true)
+                                        }
+                                        else {
                                             setmodaldeletenonboth(true)
                                         }
                                     }
@@ -393,7 +1016,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                                 <Overview assettypeid={assettypeid} initProps={initProps} displaydata={displaydata} parentcode={parentcode} praloading={praloading} />
                             </TabPane>
                             <TabPane tab="Relationship" key={`relationship`}>
-                                <Relationship assettypeid={assettypeid} initProps={initProps} />
+                                <Relationship assettypeid={assettypeid} initProps={initProps} maindata={displaydata} />
                             </TabPane>
                         </Tabs>
                     </div>
@@ -403,7 +1026,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                                 <Overview assettypeid={assettypeid} initProps={initProps} displaydata={displaydata} parentcode={parentcode} praloading={praloading} />
                             </TabPane>
                             <TabPane tab="Relationship" key={`relationship`}>
-                                <Relationship assettypeid={assettypeid} initProps={initProps} />
+                                <Relationship assettypeid={assettypeid} initProps={initProps} maindata={displaydata} />
                             </TabPane>
                         </Tabs>
                     </div>
