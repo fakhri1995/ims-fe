@@ -105,15 +105,15 @@ function ClientUpdateProfile({ initProps, dataProfile, sidemenu, companyid }) {
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientDetail`, {
-            method: `POST`,
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientDetail?id=${companyid}`, {
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                company_id: Number(companyid)
-            })
+            // body: JSON.stringify({
+            //     company_id: Number(companyid)
+            // })
         })
             .then(res => res.json())
             .then(res2 => {
@@ -402,7 +402,7 @@ export async function getServerSideProps({ req, res, params }) {
     initProps = cookiesJSON1.token
 
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps),
             'Content-Type': 'application/json'
@@ -411,10 +411,10 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![156, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/admin/clients' })
-        res.end()
-    }
+    // if (![156, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/admin/clients' })
+    //     res.end()
+    // }
 
     // const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientDetail`, {
     //     method: `POST`,

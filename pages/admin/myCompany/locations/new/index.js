@@ -161,15 +161,16 @@ function NewLocations({ initProps, dataProfile, sidemenu, dataLocations, parentt
     //useEffect
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
-            method: `POST`,
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(tok),
             },
         })
             .then(res => res.json())
             .then(res2 => {
-                setdatalocationmycompany(res2.data)
-                setExpandedKeys([res2.data[0].key])
+                const resdataarr = [res2.data]
+                setdatalocationmycompany(resdataarr)
+                setExpandedKeys(resdataarr[0].key)
                 setdatanew({ ...datanew, parent_id: Number(parent) })
             })
     }, [tambahdata])
@@ -343,7 +344,7 @@ export async function getServerSideProps({ req, res }) {
     }
 
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps),
             'Content-Type': 'application/json'
@@ -352,10 +353,10 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![152].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/admin/myCompany' })
-        res.end()
-    }
+    // if (![152].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/admin/myCompany' })
+    //     res.end()
+    // }
 
     // const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
     //     method: `POST`,

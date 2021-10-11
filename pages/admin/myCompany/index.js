@@ -8,7 +8,7 @@ import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import { useEffect, useState } from 'react'
 import st from '../../../components/layout-dashboard-mig.module.css'
 import Link from 'next/link'
-import { Tabs, Input, Table, Tree, notification, Modal, Button, Spin } from 'antd'
+import { Tabs, Input, Table, Tree, notification, Modal, Button, Spin, Empty } from 'antd'
 import moment from 'moment'
 
 function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
@@ -136,7 +136,7 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
                 setisenabled(res2.data.is_enabled)
                 setid(res2.data.company_id)
             })
-    })
+    }, [])
     return (
         <div id="profileeDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-6">
@@ -371,9 +371,17 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
 
 function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
     const rt = useRouter()
-    const [expandedKeys, setExpandedKeys] = useState([dataBranchList.data[0].key])
+    const [praloading, setpraloading] = useState(true)
+    const [visiblehapus, setvisiblehapus] = useState(false)
+    const [loadinghapus, setloadinghapus] = useState(false)
+    const [hapustrigger, sethapustrigger] = useState(-1)
+    const [datahapus, setdatahapus] = useState({
+        title: "",
+        id: ""
+    })
+    const [expandedKeys, setExpandedKeys] = useState([dataBranchList[0].key])
     const [autoExpandParent, setAutoExpandParent] = useState(true);
-    const [databranchlist, setdatabranchlist] = useState(dataBranchList.data)
+    const [databranchlist, setdatabranchlist] = useState(dataBranchList)
     const [searchValue, setSearchValue] = useState("");
     const [tambahdata, settambahdata] = useState(false)
     const [editdata, seteditdata] = useState(false)
@@ -468,7 +476,7 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
         const expandedKeys = dataList
             .map((item) => {
                 if (item.title.indexOf(value) > -1) {
-                    return getParentKey(item.key, dataBranchList.data);
+                    return getParentKey(item.key, dataBranchList);
                 }
                 return null;
             })
@@ -478,7 +486,7 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
             setSearchValue(value);
             setAutoExpandParent(true);
         } else {
-            setExpandedKeys([dataBranchList.data[0].key]);
+            setExpandedKeys([dataBranchList[0].key]);
             setSearchValue("");
             setAutoExpandParent(false);
         }
@@ -514,14 +522,17 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                         </div>
                         <div className={`hidden mx-2`} id={`node${item.key}`}>
                             {
-                                [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                // [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                 <a className="mx-2 pb-1" onClick={(e) => { rt.push(`/admin/myCompany/locations/new?parent=${item.id}&frominduk=1`) }} alt="add"><PlusOutlined /></a>
                             }
                             {
-                                [151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                // [151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                 <Link href={`/admin/myCompany/locations/${item.id}?parent=${item.title}&edit=1`}>
                                     <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                 </Link>
+                            }
+                            {
+                                <a className="mx-2 pb-1" onClick={() => { setvisiblehapus(true); setdatahapus({ id: item.id, title: item.title }) }}><DeleteOutlined /></a>
                             }
                         </div>
                     </div>
@@ -591,10 +602,41 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                 }
             })
     }
+    const handleDeleteLocationMyCompany = () => {
+        setloadinghapus(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteCompanyBranch`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: datahapus.id
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setvisiblehapus(false)
+                setloadinghapus(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: 'Location My Company berhasil dihapus',
+                        duration: 3
+                    })
+                    sethapustrigger(prev => prev + 1)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.company.role !== 2 ? `getBranchCompanyList` : `getLocations?company_id=${dataProfile.data.company.company_id}`}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -602,12 +644,12 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
         })
             .then(res => res.json())
             .then(res2 => {
-                setdatabranchlist([res2.data])
+                res2.data.children ? setdatabranchlist(res2.data.children) : setdatabranchlist([])
+                const expandkeyArr = res2.data.children.map(doc => doc.key)
+                res2.data.children ? setExpandedKeys(expandkeyArr) : setExpandedKeys([])
+                setpraloading(false)
             })
-    }, [tambahdata])
-    // useEffect(()=>{
-    //     rt.push(`/admin/company/mig/locations/${detaildata.id}?parent=${detaildata.id_parent}&edit=`)
-    // }, [detaildata])
+    }, [tambahdata, hapustrigger])
     return (
         <div id="locationssDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
@@ -625,60 +667,76 @@ function MigIndexLocations({ dataProfile, tok, dataBranchList }) {
                 <h1 className="text-sm font-semibold">Pilih Parent terakhir</h1>
                 <Input style={{ marginBottom: 8 }} placeholder="Cari Lokasi" onChange={onChangeFilterLoc} allowClear />
                 {
-                    databranchlist.length === 0 ?
+                    praloading ?
                         <>
                             <Spin />
                         </>
                         :
-                        <Tree
-                            onExpand={onExpand}
-                            expandedKeys={expandedKeys}
-                            autoExpandParent={autoExpandParent}
-                            treeData={loop(databranchlist)}
-                            filterTreeNode={filterTreeNode}
-                            titleRender={(nodeData) => (
-                                <>
-                                    <div className={`flex justify-between hover:bg-blue-100 text-black`}
-                                    // onMouseOver={() => {
-                                    //     var d = document.getElementById(`node${nodeData.key}`)
-                                    //     d.classList.add("flex")
-                                    //     d.classList.remove("hidden")
-                                    // }}
-                                    // onMouseLeave={() => {
-                                    //     var e = document.getElementById(`node${nodeData.key}`)
-                                    //     e.classList.add("hidden")
-                                    //     e.classList.remove("flex")
-                                    // }}
-                                    >
-                                        <div className=" w-full">
-                                            {nodeData.title}
-                                        </div>
-                                        <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
-                                            {/* <Link href={`/admin/company/locations/new?parent=${nodeData.id}&companyId=${dataDetailCompany.data.company_id}`}> */}
-                                            {/* {
+                        databranchlist.length === 0 ?
+                            <>
+                                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                            </>
+                            :
+                            <Tree
+                                onExpand={onExpand}
+                                expandedKeys={expandedKeys}
+                                autoExpandParent={autoExpandParent}
+                                treeData={loop(databranchlist)}
+                                filterTreeNode={filterTreeNode}
+                                titleRender={(nodeData) => (
+                                    <>
+                                        <div className={`flex justify-between hover:bg-blue-100 text-black`}
+                                        // onMouseOver={() => {
+                                        //     var d = document.getElementById(`node${nodeData.key}`)
+                                        //     d.classList.add("flex")
+                                        //     d.classList.remove("hidden")
+                                        // }}
+                                        // onMouseLeave={() => {
+                                        //     var e = document.getElementById(`node${nodeData.key}`)
+                                        //     e.classList.add("hidden")
+                                        //     e.classList.remove("flex")
+                                        // }}
+                                        >
+                                            <div className=" w-full">
+                                                {nodeData.title}
+                                            </div>
+                                            <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
+                                                {/* <Link href={`/admin/company/locations/new?parent=${nodeData.id}&companyId=${dataDetailCompany.data.company_id}`}> */}
+                                                {/* {
                                                 [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                                 // <a className="mx-2 pb-1" onClick={(e) => { setdrawablecreate(true); setdefvalparent(nodeData.id); setfrominduk(true) }} alt="add"><PlusOutlined /></a>
                                                 <a className="mx-2 pb-1" onClick={(e) => { rt.push(`/admin/company/mig/locations/new?parent=${nodeData.id}&frominduk=1`) }} alt="add"><PlusOutlined /></a>
                                             } */}
-                                            {/* </Link> */}
-                                            {/* {
+                                                {/* </Link> */}
+                                                {/* {
                                                 [151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                                 <Link href={`/admin/company/mig/locations/${nodeData.id}?parent=${nodeData.title}&edit=1`}>
                                                     <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                                 </Link>
                                             } */}
-                                            {/* <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("API is not available") }} onCancel={() => { message.error("Gagal dihapus") }}>
+                                                {/* <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("API is not available") }} onCancel={() => { message.error("Gagal dihapus") }}>
                                         <a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a>
                                     </Popconfirm> */}
+                                            </div>
                                         </div>
-                                    </div>
-                                </>
-                            )
-                            }
-                            blockNode={true}
-                        />
+                                    </>
+                                )
+                                }
+                                blockNode={true}
+                            />
                 }
             </div>
+            <Modal
+                title="Konfirmasi untuk menghapus Location MyCompany"
+                visible={visiblehapus}
+                onOk={handleDeleteLocationMyCompany}
+                onCancel={() => setvisiblehapus(false)}
+                okText="Ya"
+                cancelText="Tidak"
+                okButtonProps={{ loading: loadinghapus }}
+            >
+                Apakah anda yakin ingin menghapus Location <strong>{datahapus.title}</strong>?`
+            </Modal>
             {/* <Drawer title="Buat Branch" maskClosable={false} destroyOnClose={true} visible={drawablecreate} onClose={() => {
                 setdrawablecreate(false);
                 setdatanew({
@@ -1069,7 +1127,7 @@ function MigIndexBankAccount({ dataProfile, tok }) {
                                 actions[index] ?
                                     <>{actions[index]}
                                         {
-                                            [148].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                            // [148].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                             // <Button onClick={() => { setDrawableedit(true); setRecordrow(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
                                             //     <EditOutlined />
                                             // </Button>
@@ -1078,7 +1136,7 @@ function MigIndexBankAccount({ dataProfile, tok }) {
                                             </Button>
                                         }
                                         {
-                                            [149].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                            // [149].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                             <Button type="danger" onClick={() => { setModaldel(true); setModaldeldata(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
                                                 <DeleteOutlined />
                                             </Button>
@@ -1292,7 +1350,7 @@ function MigIndexBankAccount({ dataProfile, tok }) {
                 onCancel={() => setModaldel(false)}
                 okText="Ya"
                 cancelText="Tidak"
-                okButtonProps={{ disabled: loadingdelete }}>
+                okButtonProps={{ loading: loadingdelete }}>
                 Apakah anda yakin ingin menghapus <strong>{modaldeldata.name} - {modaldeldata.account_number}</strong>?
             </Modal>
         </div>
@@ -1315,7 +1373,7 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataBra
     const [patharr, setpatharr] = useState([])
 
     //useEffect
-    useEffect(()=>{
+    useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getMainCompanyDetail`, {
             method: `GET`,
             headers: {
@@ -1328,7 +1386,7 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataBra
                 temp2[temp2.length - 1] = res2.data.company_name
                 setpatharr(temp2)
             })
-    })
+    }, [])
     return (
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={patharr} st={st}>
             <div className="p-5 bg-white hidden md:block">
@@ -1341,13 +1399,13 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataBra
                     }
                     {
                         // [146, 147, 148, 149].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                        <TabPane disabled tab="Bank Account" key={`bankAccounts`}>
+                        <TabPane tab="Bank Account" key={`bankAccounts`}>
                             <MigIndexBankAccount dataProfile={dataProfile} tok={tok} />
                         </TabPane>
                     }
                     {
                         // [150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                        <TabPane disabled tab="Locations" key={`locations`}>
+                        <TabPane tab="Locations" key={`locations`}>
                             <MigIndexLocations dataProfile={dataProfile} dataBranchList={dataBranchList} tok={tok} />
                         </TabPane>
                     }
@@ -1363,13 +1421,13 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataBra
                     }
                     {
                         // [146, 147, 148, 149].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                        <TabPane disabled tab="Bank Account" key={`bankAccounts`}>
+                        <TabPane tab="Bank Account" key={`bankAccounts`}>
                             <MigIndexBankAccount dataProfile={dataProfile} tok={tok} />
                         </TabPane>
                     }
                     {
                         // [150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                        <TabPane disabled tab="Locations" key={`locations`}>
+                        <TabPane tab="Locations" key={`locations`}>
                             <MigIndexLocations dataProfile={dataProfile} dataBranchList={dataBranchList} tok={tok} />
                         </TabPane>
                     }
@@ -1439,15 +1497,27 @@ export async function getServerSideProps({ req, res }) {
     // })
     // const resjsonGL = await resourcesGL.json()
     // const dataLocations = resjsonGL
-
-    const resourcesBL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
-        method: `GET`,
-        headers: {
-            'Authorization': JSON.parse(initProps),
-        },
-    })
-    const resjsonBL = await resourcesBL.json()
-    const dataBranchList = resjsonBL
+    var dataBranchList = {}
+    if (dataProfile.data.company.role !== 2) {
+        const resourcesBL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+        const resjsonBL = await resourcesBL.json()
+        dataBranchList = [resjsonBL.data]
+    }
+    else {
+        const resourcesBL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations?company_id=${dataProfile.data.company.company_id}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+        const resjsonBL = await resourcesBL.json()
+        dataBranchList = [resjsonBL.data]
+    }
     return {
         props: {
             initProps,

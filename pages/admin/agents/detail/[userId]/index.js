@@ -40,6 +40,8 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
     })
     const [visible, setVisible] = useState(false)
     const [visiblenon, setVisiblenon] = useState(false)
+    const [visiblehapus, setvisiblehapus] = useState(false)
+    const [loadinghapus, setloadinghapus] = useState(false)
     const [visibleubahpass, setVisibleubahpass] = useState(false)
     const [loadingupdate, setLoadingupdate] = useState(false)
     const [loadingubahpass, setloadingubahpass] = useState(false)
@@ -59,7 +61,7 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
             setloadingubahnonaktif(true)
         }
         fetch(`https://boiling-thicket-46501.herokuapp.com/agentActivation`, {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
@@ -103,6 +105,37 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
                             setloadingubahnonaktif(false)
                         }
                     }, 500)
+                }
+            })
+    }
+    const handleDeleteAgent = () => {
+        setloadinghapus(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteAgent`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: Number(userid)
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setvisiblehapus(false)
+                setloadinghapus(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: 'Akun Agent berhasil dihapus',
+                        duration: 3
+                    })
+                    rt.push(`/admin/agents`)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
                 }
             })
     }
@@ -203,7 +236,7 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
                                 }
                                 {
                                     <div className="w-full h-auto">
-                                        <Button type="danger">Hapus</Button>
+                                        <Button type="danger" onClick={() => { setvisiblehapus(true) }}>Hapus</Button>
                                     </div >
                                 }
                             </div>
@@ -381,7 +414,7 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
                         onCancel={() => setVisible(false)}
                         okText="Ya"
                         cancelText="Tidak"
-                        okButtonProps={{ disabled: loadingubahaktif }}
+                        okButtonProps={{ loading: loadingubahaktif }}
                     >
                         Apakah anda yakin ingin menon-aktifkan akun agent <strong>{data1.fullname}</strong>?
                     </Modal>
@@ -392,9 +425,20 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
                         onCancel={() => setVisiblenon(false)}
                         okText="Ya"
                         cancelText="Tidak"
-                        okButtonProps={{ disabled: loadingubahnonaktif }}
+                        okButtonProps={{ loading: loadingubahnonaktif }}
                     >
                         Apakah anda yakin ingin mengaktifkan akun agent <strong>{data1.fullname}</strong>?`
+                    </Modal>
+                    <Modal
+                        title="Konfirmasi untuk menghapus akun Agent"
+                        visible={visiblehapus}
+                        onOk={handleDeleteAgent}
+                        onCancel={() => setvisiblehapus(false)}
+                        okText="Ya"
+                        cancelText="Tidak"
+                        okButtonProps={{ loading: loadinghapus }}
+                    >
+                        Apakah anda yakin ingin menghapus akun agent <strong>{data1.fullname}</strong>?`
                     </Modal>
                     {/* <Modal
                         title="Ubah Password"

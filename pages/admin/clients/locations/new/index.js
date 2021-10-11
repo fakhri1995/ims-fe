@@ -170,20 +170,21 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
-            method: `POST`,
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations${typeof(cancel) === 'undefined' ? "" : `?company_id=${cancel}` }`, {
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(tok),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                company_id: Number(cancel)
-            })
+            // body: JSON.stringify({
+            //     company_id: Number(cancel)
+            // })
         })
             .then(res => res.json())
             .then(res2 => {
-                setdatalocationclient(res2.data)
-                setExpandedKeys([res2.data[0].key])
+                const comparr = [res2.data]
+                setdatalocationclient(comparr)
+                setExpandedKeys(comparr[0].key)
                 setdatanew({ ...datanew, parent_id: Number(parent) })
             })
     }, [tambahdata])
@@ -380,7 +381,7 @@ export async function getServerSideProps({ req, res }) {
     initProps = cookiesJSON1.token
 
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps),
             'Content-Type': 'application/json'
@@ -389,10 +390,10 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![152].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/admin/clients' })
-        res.end()
-    }
+    // if (![152].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/admin/clients' })
+    //     res.end()
+    // }
 
     // const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
     //     method: `POST`,

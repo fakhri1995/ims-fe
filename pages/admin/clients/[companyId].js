@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import st from '../../../components/layout-dashboard-clients.module.css'
-import { Tabs, Input, Table, Tree, Modal, notification, Button, Switch, Spin } from 'antd'
+import { Tabs, Input, Table, Tree, Modal, notification, Button, Switch, Spin, Empty } from 'antd'
 import moment from 'moment'
 
 function ClientsDetailProfile({ dataProfile, tok, companyid }) {
@@ -122,7 +122,7 @@ function ClientsDetailProfile({ dataProfile, tok, companyid }) {
             setloadingubahnonaktif(true)
         }
         fetch(`https://boiling-thicket-46501.herokuapp.com/companyClientActivation`, {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Authorization': JSON.parse(tok),
                 'Content-Type': 'application/json'
@@ -134,9 +134,9 @@ function ClientsDetailProfile({ dataProfile, tok, companyid }) {
         })
             .then(res => res.json())
             .then(res2 => {
+                setVisible(false)
+                setVisiblenon(false)
                 if (res2.success) {
-                    setVisible(false)
-                    setVisiblenon(false)
                     notification['success']({
                         message: res2.message,
                         duration: 3
@@ -153,27 +153,33 @@ function ClientsDetailProfile({ dataProfile, tok, companyid }) {
                     }, 500)
                 }
                 else if (!res2.success) {
-                    setVisible(false)
-                    setVisiblenon(false)
                     notification['error']({
                         message: res2.message.errorInfo.status_detail,
                         duration: 3
                     })
+                    setTimeout(() => {
+                        if (status === "aktif") {
+                            setloadingubahaktif(false)
+                        }
+                        else if (status === "nonAktif") {
+                            setloadingubahnonaktif(false)
+                        }
+                    }, 500)
                 }
             })
     }
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientDetail`, {
-            method: `POST`,
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientDetail?id=${companyid}`, {
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(tok),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                company_id: companyid
-            })
+            // body: JSON.stringify({
+            //     company_id: companyid
+            // })
         })
             .then(res => res.json())
             .then(res2 => {
@@ -210,7 +216,7 @@ function ClientsDetailProfile({ dataProfile, tok, companyid }) {
                         :
                         <>
                             {
-                                [158].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                // [158].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                 <Button type="primary" onClick={() => { rt.push(`/admin/clients/updateProfile/${data1.id}`) }}>Ubah</Button>
                             }
                         </>
@@ -221,24 +227,24 @@ function ClientsDetailProfile({ dataProfile, tok, companyid }) {
                 <h1 className="font-semibold text-base mr-3 pt-1">{data1.company_name}</h1>
                 <h1 className="mr-3 pt-1 hidden md:block">|</h1>
                 {
-                    [159].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                        <div className="pt-1">
-                            {
-                                dataisenabled ?
-                                    <Switch checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
-                                    :
-                                    <Switch checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
-                            }
-                        </div>
-                        :
-                        <div className="pt-1">
-                            {
-                                dataisenabled ?
-                                    <Switch disabled checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
-                                    :
-                                    <Switch disabled checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
-                            }
-                        </div>
+                    // [159].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                    <div className="pt-1">
+                        {
+                            dataisenabled ?
+                                <Switch checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
+                                :
+                                <Switch checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
+                        }
+                    </div>
+                    // :
+                    // <div className="pt-1">
+                    //     {
+                    //         dataisenabled ?
+                    //             <Switch disabled checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
+                    //             :
+                    //             <Switch disabled checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
+                    //     }
+                    // </div>
                 }
             </div>
             <div className="grid grid-cols-1 sm:grid-col-3 md:grid-cols-5 mb-4">
@@ -442,7 +448,7 @@ function ClientsDetailProfile({ dataProfile, tok, companyid }) {
                 onCancel={() => setVisible(false)}
                 okText="Ya"
                 cancelText="Tidak"
-                okButtonProps={{ disabled: loadingubahaktif }}
+                okButtonProps={{ loading: loadingubahaktif }}
             >
                 Apakah anda yakin ingin menon-aktifkan akun perusahaan <strong>{data1.company_name}</strong>?
             </Modal>
@@ -453,7 +459,7 @@ function ClientsDetailProfile({ dataProfile, tok, companyid }) {
                 okText="Ya"
                 cancelText="Tidak"
                 onCancel={() => setVisiblenon(false)}
-                okButtonProps={{ disabled: loadingubahnonaktif }}
+                okButtonProps={{ loading: loadingubahnonaktif }}
             >
                 Apakah anda yakin ingin melakukan aktivasi akun perusahaan <strong>{data1.company_name}</strong>?`
             </Modal>
@@ -481,11 +487,19 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, data1, tok }) 
         image_logo: '',
         parent_id: 0
     })
+    const [praloading, setpraloading] = useState(true)
     const [drawablecreate, setdrawablecreate] = useState(false)
     const [defvalparent, setdefvalparent] = useState("")
     const [frominduk, setfrominduk] = useState(false)
     const [loadingtambah, setloadingtambah] = useState(false)
     const [loadingimage, setloadingimage] = useState(false)
+    const [visiblehapus, setvisiblehapus] = useState(false)
+    const [loadinghapus, setloadinghapus] = useState(false)
+    const [hapustrigger, sethapustrigger] = useState(-1)
+    const [datahapus, setdatahapus] = useState({
+        title: "",
+        id: ""
+    })
 
     //components
     const uploadButton = (
@@ -587,6 +601,37 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, data1, tok }) 
                 }
             })
     }
+    const handleDeleteLocationClient = () => {
+        setloadinghapus(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteCompanyClient`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: datahapus.id
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setvisiblehapus(false)
+                setloadinghapus(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: 'Location Client berhasil dihapus',
+                        duration: 3
+                    })
+                    sethapustrigger(prev => prev + 1)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
 
     //filter Locations
     const dataList = [];
@@ -666,14 +711,17 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, data1, tok }) 
                         </div>
                         <div className={`hidden mx-2`} id={`node${item.key}`}>
                             {
-                                [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                // [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                 <a className="mx-2 pb-1" onClick={(e) => { rt.push(`/admin/clients/locations/new?parent=${item.id}&frominduk=1&cancel=${data1.id}`) }} alt="add"><PlusOutlined /></a>
                             }
                             {
-                                [151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                // [151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                 <Link href={`/admin/clients/locations/${item.id}?parent=${item.id_parent}&edit=1&cancel=${data1.id}`}>
                                     <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                 </Link>
+                            }
+                            {
+                                <a className="mx-2 pb-1" onClick={() => { setvisiblehapus(true); setdatahapus({ id: item.id, title: item.title }) }}><DeleteOutlined /></a>
                             }
                         </div>
                     </div>
@@ -693,27 +741,26 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, data1, tok }) 
     //useEffect
     useEffect(() => {
         data1.id !== "" ?
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
-                method: `POST`,
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations?company_id=${data1.id}`, {
+                method: `GET`,
                 headers: {
                     'Authorization': JSON.parse(tok),
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    company_id: data1.id
-                })
+                // body: JSON.stringify({
+                //     company_id: data1.id
+                // })
             })
                 .then(res => res.json())
                 .then(res2 => {
-                    setdatalocationclient(res2.data)
-                    setExpandedKeys([res2.data[0].key])
+                    res2.data.children ? setdatalocationclient(res2.data.children) : setdatalocationclient([])
+                    const expandkeyArr = res2.data.children.map(doc => doc.key)
+                    res2.data.children ? setExpandedKeys(expandkeyArr) : setExpandedKeys([])
+                    setpraloading(false)
                 })
             :
             null
-    }, [data1])
-    // useEffect(()=>{
-    //     rt.push(`/admin/company/clients/locations/${detaildata.id}?parent=${detaildata.id_parent}&edit=&cancel=${dataDetailCompany.data.company_id}`)
-    // }, [detaildata])
+    }, [data1, hapustrigger])
     return (
         <div id="locationsDetailMigWrapper">
             <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
@@ -728,60 +775,76 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, data1, tok }) 
                 <h1 className="text-sm font-semibold">Pilih Parent terakhir</h1>
                 <Input style={{ marginBottom: 8 }} placeholder="Cari Lokasi" onChange={onChangeFilterLoc} allowClear />
                 {
-                    datalocationclient.length === 0 ?
+                    praloading ?
                         <>
                             <Spin />
                         </>
                         :
-                        <Tree
-                            onExpand={onExpand}
-                            expandedKeys={expandedKeys}
-                            autoExpandParent={autoExpandParent}
-                            treeData={loop(datalocationclient)}
-                            filterTreeNode={filterTreeNode}
-                            titleRender={(nodeData) => (
-                                <>
-                                    <div className={`flex justify-between hover:bg-blue-100 text-black`}
-                                    // onMouseOver={() => {
-                                    //     var d = document.getElementById(`node${nodeData.key}`)
-                                    //     d.classList.add("flex")
-                                    //     d.classList.remove("hidden")
-                                    // }}
-                                    // onMouseLeave={() => {
-                                    //     var e = document.getElementById(`node${nodeData.key}`)
-                                    //     e.classList.add("hidden")
-                                    //     e.classList.remove("flex")
-                                    // }}
-                                    >
-                                        <div className=" w-full">
-                                            {nodeData.title}
-                                        </div>
-                                        {/* <div className={`hidden mx-2`} id={`node${nodeData.key}`}> */}
-                                        {/* <Link href={`/admin/company/locations/new?parent=${nodeData.id}&companyId=${dataDetailCompany.data.company_id}`}> */}
-                                        {
-                                            // [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                            //                                                 <a className="mx-2 pb-1" onClick={(e) => { rt.push(`/admin/company/clients/locations/new?parent=${nodeData.id}&frominduk=1`) }} alt="add"><PlusOutlined /></a>
-                                            // <a className="mx-2 pb-1" onClick={(e) => { setdrawablecreate(true); setdefvalparent(nodeData.id); setfrominduk(true) }} alt="add"><PlusOutlined /></a>
-                                        }
-                                        {/* </Link> */}
-                                        {/* {
+                        datalocationclient.length === 0 ?
+                            <>
+                                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                            </>
+                            :
+                            <Tree
+                                onExpand={onExpand}
+                                expandedKeys={expandedKeys}
+                                autoExpandParent={autoExpandParent}
+                                treeData={loop(datalocationclient)}
+                                filterTreeNode={filterTreeNode}
+                                titleRender={(nodeData) => (
+                                    <>
+                                        <div className={`flex justify-between hover:bg-blue-100 text-black`}
+                                        // onMouseOver={() => {
+                                        //     var d = document.getElementById(`node${nodeData.key}`)
+                                        //     d.classList.add("flex")
+                                        //     d.classList.remove("hidden")
+                                        // }}
+                                        // onMouseLeave={() => {
+                                        //     var e = document.getElementById(`node${nodeData.key}`)
+                                        //     e.classList.add("hidden")
+                                        //     e.classList.remove("flex")
+                                        // }}
+                                        >
+                                            <div className=" w-full">
+                                                {nodeData.title}
+                                            </div>
+                                            {/* <div className={`hidden mx-2`} id={`node${nodeData.key}`}> */}
+                                            {/* <Link href={`/admin/company/locations/new?parent=${nodeData.id}&companyId=${dataDetailCompany.data.company_id}`}> */}
+                                            {
+                                                // [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                                //                                                 <a className="mx-2 pb-1" onClick={(e) => { rt.push(`/admin/company/clients/locations/new?parent=${nodeData.id}&frominduk=1`) }} alt="add"><PlusOutlined /></a>
+                                                // <a className="mx-2 pb-1" onClick={(e) => { setdrawablecreate(true); setdefvalparent(nodeData.id); setfrominduk(true) }} alt="add"><PlusOutlined /></a>
+                                            }
+                                            {/* </Link> */}
+                                            {/* {
                                                 [151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                                 <Link href={`/admin/company/clients/locations/${nodeData.id}?parent=${nodeData.title}&edit=1&cancel=${dataDetailCompany.data.company_id}`}>
                                                     <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                                 </Link>
                                             } */}
-                                        {/* <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("API is not available") }} onCancel={() => { message.error("Gagal dihapus") }}>
+                                            {/* <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("API is not available") }} onCancel={() => { message.error("Gagal dihapus") }}>
                                         <a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a>
                                     </Popconfirm> */}
-                                        {/* </div> */}
-                                    </div>
-                                </>
-                            )
-                            }
-                            blockNode={true}
-                        />
+                                            {/* </div> */}
+                                        </div>
+                                    </>
+                                )
+                                }
+                                blockNode={true}
+                            />
                 }
             </div>
+            <Modal
+                title="Konfirmasi untuk menghapus Location Client"
+                visible={visiblehapus}
+                onOk={handleDeleteLocationClient}
+                onCancel={() => setvisiblehapus(false)}
+                okText="Ya"
+                cancelText="Tidak"
+                okButtonProps={{ loading: loadinghapus }}
+            >
+                Apakah anda yakin ingin menghapus Location <strong>{datahapus.title}</strong>?`
+            </Modal>
             {/* <Drawer title="Buat Clients" maskClosable={false} destroyOnClose={true} visible={drawablecreate} onClose={() => {
                 setdrawablecreate(false);
                 setdatanew({
@@ -1019,7 +1082,7 @@ function ClientsDetailBankAccount({ dataProfile, data1, tok, companyId }) {
                                 actions[index] ?
                                     <>{actions[index]}
                                         {
-                                            [162].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                            // [162].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                             <Button onClick={() => { rt.push(`/admin/clients/bank/${record.id}?companyid=${companyId}&name=${data1.company_name}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
                                                 <EditOutlined />
                                             </Button>
@@ -1028,7 +1091,7 @@ function ClientsDetailBankAccount({ dataProfile, data1, tok, companyId }) {
                                             // </Button>
                                         }
                                         {
-                                            [163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                            // [163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                             <Button type="danger" onClick={() => { setModaldel(true); setModaldeldata(record) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `0.4rem` }}>
                                                 <DeleteOutlined />
                                             </Button>
@@ -1232,7 +1295,7 @@ function ClientsDetailBankAccount({ dataProfile, data1, tok, companyId }) {
                             null
                     }
                     {
-                        [161].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        // [161].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <Button type="primary" onClick={() => { rt.push(`/admin/clients/bank/create?origin=${companyId}&name=${data1.company_name}`) }}>Tambah</Button>
                         // <Button type="primary" onClick={() => { setDrawablecreate(true) }}>Tambah</Button>
                     }
@@ -1380,7 +1443,7 @@ function ClientsDetailBankAccount({ dataProfile, data1, tok, companyId }) {
                 onOk={() => { handleDeleteBA(modaldeldata) }}
                 onCancel={() => setModaldel(false)}
                 okText="Ya"
-                okButtonProps={{ disabled: loadingbtndelete }}
+                okButtonProps={{ loading: loadingbtndelete }}
                 cancelText="Tidak">
                 Apakah anda yakin ingin menghapus <strong>{modaldeldata.name} - {modaldeldata.account_number}</strong>?
             </Modal>
@@ -1421,15 +1484,15 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientDetail`, {
-            method: `POST`,
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientDetail?id=${companyid}`, {
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(tok),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                company_id: companyid
-            })
+            // body: JSON.stringify({
+            //     company_id: companyid
+            // })
         })
             .then(res => res.json())
             .then(res2 => {
@@ -1457,13 +1520,13 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
             <div className="px-5 pt-5 pb-0 bg-white hidden md:block">
                 <Tabs tabPosition={`left`} defaultActiveKey={activeTab}>
                     {
-                        [156, 158, 159].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        // [156, 158, 159].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Profile" key={`profile`}>
                             <ClientsDetailProfile dataProfile={dataProfile} tok={tok} companyid={companyid}></ClientsDetailProfile>
                         </TabPane>
                     }
                     {
-                        [160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        // [160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Bank Account" key={`bankAccounts`}>
                             <ClientsDetailBankAccount dataProfile={dataProfile} data1={data1} tok={tok} companyId={data1.id} />
                         </TabPane>
@@ -1476,13 +1539,13 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
             <div className="pt-5 pb-0 bg-white block md:hidden" >
                 <Tabs tabPosition={`top`} defaultActiveKey={activeTab}>
                     {
-                        [156, 158, 159].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        // [156, 158, 159].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Profile" key={`profile`}>
                             <ClientsDetailProfile dataProfile={dataProfile} tok={tok} companyid={companyid}></ClientsDetailProfile>
                         </TabPane>
                     }
                     {
-                        [160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        // [160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <TabPane tab="Bank Account" key={`bankAccounts`}>
                             <ClientsDetailBankAccount dataProfile={dataProfile} data1={data1} tok={tok} companyId={data1.id} />
                         </TabPane>
@@ -1522,7 +1585,7 @@ export async function getServerSideProps({ req, res, params }) {
     initProps = cookiesJSON1.token
 
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps),
             'Content-Type': 'application/json'
@@ -1531,10 +1594,10 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![156, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/admin/company' })
-        res.end()
-    }
+    // if (![156, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/admin/company' })
+    //     res.end()
+    // }
 
     // const resourcesGC = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientDetail`, {
     //     method: `POST`,

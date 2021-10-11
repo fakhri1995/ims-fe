@@ -42,8 +42,8 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
     const [statusfilteract, setstatusfilteract] = useState(false)
     //state value
     const [namavalue, setnamavalue] = useState("")
-    const [asallokasivalue, setasallokasivalue] = useState("")
-    const [asalcompanyvalue, setasalcompanyvalue] = useState(0)
+    const [asallokasivalue, setasallokasivalue] = useState(null)
+    const [asalcompanyvalue, setasalcompanyvalue] = useState(null)
     const [statusvalue, setstatusvalue] = useState("")
     const [loadinglokasi, setloadinglokasi] = useState(true)
 
@@ -73,21 +73,26 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
         if (typeof (value) === 'undefined') {
             setDataSource(dataraw)
             setasalcompanyfilteract(false)
+            setasalcompanyvalue(null)
+            setdatalokasi([])
+            setloadinglokasi(true)
         }
         else {
             setasalcompanyfilteract(true)
             setasalcompanyvalue(value)
             setasallokasitrigger(prev => !prev)
-            setloadinglokasi(false) 
         }
     }
     const onChangeAsalLokasi = (value) => {
         if (typeof (value) === 'undefined') {
             setDataSource(dataraw)
             setasallokasifilteract(false)
+            setasalcompanyfilteract(true)
+            setasallokasivalue(null)
         }
         else {
             setasallokasifilteract(true)
+            setasalcompanyfilteract(false)
             setasallokasivalue(value)
         }
     }
@@ -105,7 +110,7 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
         var datatemp = dataraw
         if (asalcompanyfilteract) {
             datatemp = datatemp.filter(flt => {
-                return asalcompanyvalue.indexOf(flt.company_id) !== -1
+                return flt.company_id === asalcompanyvalue
             })
         }
         if (asallokasifilteract) {
@@ -368,13 +373,13 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
         })
             .then(res => res.json())
             .then(res2 => {
-                const c = [res2.data]
-                const d = modifData(c)
-                setdatacompany(d)
+                const c = res2.data.members
+                setdatacompany(c)
             })
     }, [])
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
+        setloadinglokasi(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations${asalcompanyvalue !== null ? `?company_id=${asalcompanyvalue}` : ``}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -386,9 +391,13 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
         })
             .then(res => res.json())
             .then(res2 => {
-                setdatalokasi([res2.data])
-                getidData([res2.data])
-                setasalcompanyvalue(temp)
+                if (asalcompanyvalue !== null) {
+                    res2.data.children ? setdatalokasi(res2.data.children) : setdatalokasi([])
+                    setloadinglokasi(false)
+                }
+                else {
+                    setdatalokasi([])
+                }
             })
     }, [asallokasitrigger])
 
@@ -416,89 +425,6 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                     // [119].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                     <div className="h-auto w-full grid grid-cols-1 md:grid-cols-5 mb-5 bg-white">
                         <div className="md:col-span-5 col-span-1 flex flex-col py-3">
-                            {/* <div className="flex flex-wrap mb-2">
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={FilterAll}>
-                                    All
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("a")}>
-                                    A
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("b")}>
-                                    B
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("c")}>
-                                    C
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("d")}>
-                                    D
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("e")}>
-                                    E
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("f")}>
-                                    F
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("g")}>
-                                    G
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("h")}>
-                                    H
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("i")}>
-                                    I
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("j")}>
-                                    J
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("k")}>
-                                    K
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("l")}>
-                                    L
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("m")}>
-                                    M
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("n")}>
-                                    N
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("o")}>
-                                    O
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("p")}>
-                                    P
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("q")}>
-                                    Q
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("r")}>
-                                    R
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("s")}>
-                                    S
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("t")}>
-                                    T
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("u")}>
-                                    U
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("v")}>
-                                    V
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("w")}>
-                                    W
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("x")}>
-                                    X
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("y")}>
-                                    Y
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("z")}>
-                                    Z
-                            </button>
-                            </div> */}
                             <div className="flex mb-8">
                                 <div className=" w-10/12 mr-1 grid grid-cols-9">
                                     <div className="col-span-3 mr-1">
@@ -547,9 +473,9 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                                         onClick: (event) => {
                                             {
                                                 // [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                                    rt.push(`/admin/requesters/detail/${record.user_id}`)
-                                                    // :
-                                                    // null
+                                                rt.push(`/admin/requesters/detail/${record.user_id}`)
+                                                // :
+                                                // null
                                             }
                                         }
                                     }

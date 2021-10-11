@@ -23,8 +23,6 @@ const BankUpdate = ({ initProps, dataProfile, sidemenu, bankid }) => {
     })
     const [loadingbtnedit, setloadingbtnedit] = useState(false)
     const [loading, setloaading] = useState(true)
-    // const [datagetBanks, setdatagetBanks] = useState([])
-    // const [loadingdatagetBanks, setloadingdatagetBanks] = useState(false)
 
     //onChange
     const onChangeBA = (e) => {
@@ -99,7 +97,6 @@ const BankUpdate = ({ initProps, dataProfile, sidemenu, bankid }) => {
                         currency: doc.currency
                     })
                 }).filter(dataa => dataa.id === Number(bankid))[0]
-                console.log(tempdata)
                 setBankdata(tempdata)
                 setloaading(false)
             })
@@ -209,7 +206,7 @@ export async function getServerSideProps({ req, res, params }) {
     }
     initProps = cookiesJSON1.token
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }

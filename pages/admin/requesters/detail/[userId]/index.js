@@ -51,6 +51,8 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
     })
     const [visible, setVisible] = useState(false)
     const [visiblenon, setVisiblenon] = useState(false)
+    const [visiblehapus, setvisiblehapus] = useState(false)
+    const [loadinghapus, setloadinghapus] = useState(false)
     const [visibleubahpass, setVisibleubahpass] = useState(false)
     const [loadingupdate, setLoadingupdate] = useState(false)
     const [loadingubahpass, setloadingubahpass] = useState(false)
@@ -190,6 +192,37 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                 }
             })
     }
+    const handleDeleteRequesters = () => {
+        setloadinghapus(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteRequester`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: Number(userid)
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setvisiblehapus(false)
+                setloadinghapus(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: 'Profil Requester berhasil dihapus',
+                        duration: 3
+                    })
+                    rt.push(`/admin/requesters`)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
     const handleUbahPassword = () => {
         setloadingubahpass(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/changeRequesterPassword`, {
@@ -319,7 +352,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                                 }
                                 {
                                     <div className="w-full h-auto">
-                                        <Button type="danger">Hapus</Button>
+                                        <Button type="danger" onClick={() => { setvisiblehapus(true) }}>Hapus</Button>
                                     </div >
                                 }
                             </div>
@@ -332,23 +365,23 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                             <div className=" mr-3 md:mr-5 pt-1">{data1.fullname}</div>
                             {
                                 // [114].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                    <div className="pt-1">
-                                        {
-                                            isenabled ?
-                                                <Switch disabled={praloading} checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
-                                                :
-                                                <Switch disabled={praloading} checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
-                                        }
-                                    </div>
-                                    // :
-                                    // <div className="pt-1">
-                                    //     {
-                                    //         isenabled ?
-                                    //             <Switch disabled checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
-                                    //             :
-                                    //             <Switch disabled checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
-                                    //     }
-                                    // </div>
+                                <div className="pt-1">
+                                    {
+                                        isenabled ?
+                                            <Switch disabled={praloading} checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
+                                            :
+                                            <Switch disabled={praloading} checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
+                                    }
+                                </div>
+                                // :
+                                // <div className="pt-1">
+                                //     {
+                                //         isenabled ?
+                                //             <Switch disabled checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
+                                //             :
+                                //             <Switch disabled checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
+                                //     }
+                                // </div>
                             }
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4">
@@ -497,7 +530,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                         onCancel={() => setVisible(false)}
                         okText="Ya"
                         cancelText="Tidak"
-                        okButtonProps={{ disabled: loadingubahaktif }}
+                        okButtonProps={{ loading: loadingubahaktif }}
                     >
                         Apakah anda yakin ingin menon-aktifkan akun requester <strong>{data1.fullname}</strong>?
                     </Modal>
@@ -508,9 +541,20 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                         onCancel={() => setVisiblenon(false)}
                         okText="Ya"
                         cancelText="Tidak"
-                        okButtonProps={{ disabled: loadingubahnonaktif }}
+                        okButtonProps={{ loading: loadingubahnonaktif }}
                     >
                         Apakah anda yakin ingin mengaktifkan akun requester <strong>{data1.fullname}</strong>?`
+                    </Modal>
+                    <Modal
+                        title="Konfirmasi untuk menghapus akun Requester"
+                        visible={visiblehapus}
+                        onOk={handleDeleteRequesters}
+                        onCancel={() => setvisiblehapus(false)}
+                        okText="Ya"
+                        cancelText="Tidak"
+                        okButtonProps={{ loading: loadinghapus }}
+                    >
+                        Apakah anda yakin ingin menghapus akun requester <strong>{data1.fullname}</strong>?`
                     </Modal>
                     {/* <Modal
                         title="Ubah Password"

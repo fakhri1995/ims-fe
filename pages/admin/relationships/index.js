@@ -21,6 +21,8 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
     const [namasearchact, setnamasearchact] = useState(false)
     const [namavalue, setnamavalue] = useState("")
     const [events, setevents] = useState("")
+    const [same, setsame] = useState(true)
+    const [same2, setsame2] = useState(false)
     //Tambah
     const [dataadd, setdataadd] = useState({
         relationship_type: "",
@@ -282,7 +284,8 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Nama Relationship Type <span className="namamanu"></span></p>
                         <Input value={dataadd.relationship_type} placeholder="Masukkan Relationship Type" onChange={(e => {
-                            e.target.value === "" ? setdisabledadd(true) : setdisabledadd(false)
+                            e.target.value === "" || dataadd.inverse_relationship_type === "" || e.target.value === dataadd.inverse_relationship_type ? setdisabledadd(true) : setdisabledadd(false)
+                            e.target.value === dataadd.inverse_relationship_type ? setsame(true) : setsame(false)
                             setdataadd({ ...dataadd, relationship_type: e.target.value })
                         })}></Input>
                         <style jsx>
@@ -297,9 +300,14 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Nama Inverse Relationship Type <span className="namainversemanu"></span></p>
                         <Input value={dataadd.inverse_relationship_type} placeholder="Masukkan Inverse Relationship Type" onChange={(e => {
-                            e.target.value === "" ? setdisabledadd(true) : setdisabledadd(false)
+                            e.target.value === "" || dataadd.relationship_type === "" || e.target.value === dataadd.relationship_type ? setdisabledadd(true) : setdisabledadd(false)
+                            e.target.value === dataadd.relationship_type ? setsame(true) : setsame(false)
                             setdataadd({ ...dataadd, inverse_relationship_type: e.target.value })
                         })}></Input>
+                        {
+                            same &&
+                            <p className=" text-red-500 mb-0">Relationship Type dan Inverse harus berbeda</p>
+                        }
                         <style jsx>
                             {`
                                 .namainversemanu::before{
@@ -337,7 +345,8 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Nama Relationship Type <span className="namamanu"></span></p>
                         <Input value={dataupdate.relationship_type} defaultValue={dataupdate.relationship_type} placeholder="Masukkan Relationship Type" onChange={(e => {
-                            e.target.value === "" ? setdisabledupdate(true) : setdisabledupdate(false)
+                            e.target.value === "" || dataupdate.inverse_relationship_type === "" || e.target.value === dataupdate.inverse_relationship_type ? setdisabledupdate(true) : setdisabledupdate(false)
+                            e.target.value === dataupdate.inverse_relationship_type ? setsame2(true) : setsame2(false)
                             setdataupdate({ ...dataupdate, relationship_type: e.target.value })
                         })}></Input>
                         <style jsx>
@@ -352,9 +361,14 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Nama Inverse Relationship Type <span className="namainversemanu"></span></p>
                         <Input value={dataupdate.inverse_relationship_type} defaultValue={dataupdate.inverse_relationship_type} placeholder="Masukkan Inverse Relationship Type" onChange={(e => {
-                            e.target.value === "" ? setdisabledupdate(true) : setdisabledupdate(false)
+                            e.target.value === "" || dataupdate.relationship_type === "" || e.target.value === dataupdate.relationship_type ? setdisabledupdate(true) : setdisabledupdate(false)
+                            e.target.value === dataupdate.relationship_type ? setsame2(true) : setsame2(false)
                             setdataupdate({ ...dataupdate, inverse_relationship_type: e.target.value })
                         })}></Input>
+                        {
+                            same2 &&
+                            <p className=" text-red-500 mb-0">Relationship Type dan Inverse harus berbeda</p>
+                        }
                         <style jsx>
                             {`
                                 .namainversemanu::before{

@@ -88,9 +88,9 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
     }
     const handleSubmitEditAccount = () => {
         setLoadingupdate(true)
-        if ([133].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+        // if ([133].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
             fetch(`https://boiling-thicket-46501.herokuapp.com/updateFeatureAgent`, {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Authorization': JSON.parse(tok),
                     'Content-Type': 'application/json'
@@ -101,10 +101,10 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                 .then(res2 => {
                     setLoadingupdate(false)
                 })
-        }
-        if ([116].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+        // }
+        // if ([116].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
             fetch(`https://boiling-thicket-46501.herokuapp.com/updateAgentDetail`, {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Authorization': JSON.parse(tok),
                     'Content-Type': 'application/json'
@@ -130,7 +130,7 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                         })
                     }
                 })
-        }
+        // }
     }
 
     //useEffect
@@ -158,7 +158,7 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                 }
                 setData1(temp)
                 setdatarole({ ...datarole, account_id: res2.data.user_id })
-                setidrole(res2.data.feature_roles[0])
+                setidrole(res2.data.feature_roles)
                 var pathArr = rt.pathname.split("/").slice(1)
                 pathArr.splice(3, 1)
                 pathArr[pathArr.length - 1] = `Ubah Profil Agent - ` + res2.data.fullname
@@ -168,7 +168,6 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
             })
     }, [])
     useEffect(() => {
-
         fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
             method: `GET`,
             headers: {
@@ -341,7 +340,7 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                                             <h1 className="text-sm">Role:</h1>
                                             {
                                                 // [133].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                                    <Select placeholder="Pilih Role" onChange={(value) => { onChangeRole(value) }} defaultValue={idrole} style={{ width: `100%` }}>
+                                                    <Select mode="multiple" placeholder="Pilih Role" onChange={(value) => { onChangeRole(value) }} defaultValue={idrole} style={{ width: `100%` }}>
                                                         {
                                                             dataraw1.data.map((doc, idx) => {
                                                                 return (

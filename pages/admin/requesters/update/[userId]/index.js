@@ -255,7 +255,7 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
                 }
                 setData1(temp)
                 setdatarole({ ...datarole, account_id: res2.data.user_id })
-                setidrole(res2.data.role)
+                setidrole(res2.data.feature_roles)
                 var pathArr = rt.pathname.split("/").slice(1)
                 pathArr.splice(3, 1)
                 pathArr[pathArr.length - 1] = `Ubah Profil Requester - ` + res2.data.fullname
@@ -441,7 +441,7 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
                                             <h1 className="font-semibold">Role:</h1>
                                             {
                                                 // [133].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                                    <Select onChange={(value) => { onChangeRole(value) }} defaultValue={idrole} style={{ width: `100%` }}>
+                                                    <Select mode="multiple" onChange={(value) => { onChangeRole(value) }} defaultValue={idrole} style={{ width: `100%` }}>
                                                         {
                                                             dataraw1.data.map((doc, idx) => {
                                                                 return (

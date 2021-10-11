@@ -19,9 +19,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
     return (
         <Layout tok={tok} pathArr={pathArr} sidemenu={sidemenu} dataProfile={dataProfile} st={st}>
             <div className="w-full h-auto p-5 font-mont border-t border-opacity-30 border-gray-500 bg-white space-y-10">
-                {
-                    dataProfile.data.registered_feature.includes(108) && dataProfile.data.registered_feature.includes(119) && dataProfile.data.registered_feature.includes(134)
-                        ?
+                {/* {dataProfile.data.registered_feature.includes(108) && dataProfile.data.registered_feature.includes(119) && dataProfile.data.registered_feature.includes(134)? */}
                         <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
                             <div className="border-b border-gray-300">
                                 <h3 className="font-semibold text-lg mb-0">User Management</h3>
@@ -80,9 +78,9 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                 }
                             </div>
                         </div>
-                        :
+                        {/* :
                         null
-                }
+                } */}
 
                 <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
                     <div className="border-b border-gray-300">
@@ -92,7 +90,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                         </h3>
                     </div>
                     <div className="grid md:grid-cols-5 sm:grid-cols-1">
-                        {dataProfile.data.registered_feature.includes(173) ?
+                        {/* {dataProfile.data.registered_feature.includes(173) ? */}
                             <Link href={{
                                 pathname: '/admin/roles',
                                 query: {
@@ -106,10 +104,10 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                     </div>
                                 </div>
                             </Link>
-                            :
-                            null
-                        }
-                        {dataProfile.data.registered_feature.includes(179) ?
+                         {/* :
+                         null
+                        } */}
+                        {/* {dataProfile.data.registered_feature.includes(179) ? */}
                             <Link href={'/admin/modules?module=&featuredisplay='}>
                                 <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                     <div className="flex">
@@ -118,9 +116,9 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                     </div>
                                 </div>
                             </Link>
-                            :
-                            null
-                        }
+                         {/* :
+                         null
+                     } */}
                         <Link href={'/admin/features'}>
                             <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                 <div className="flex">
@@ -132,7 +130,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                     </div>
                 </div>
 
-                {dataProfile.data.registered_feature.includes(144) && dataProfile.data.registered_feature.includes(155) && dataProfile.data.registered_feature.includes(150) ?
+                {/* {dataProfile.data.registered_feature.includes(144) && dataProfile.data.registered_feature.includes(155) && dataProfile.data.registered_feature.includes(150) ? */}
                     <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
                         <div className="border-b border-gray-300">
                             <h3 className="font-semibold text-lg mb-0">Company</h3>
@@ -141,7 +139,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                         </h3>
                         </div>
                         <div className="grid md:grid-cols-5 sm:grid-cols-1">
-                            {dataProfile.data.registered_feature.includes(144) ?
+                            {/* {dataProfile.data.registered_feature.includes(144) ? */}
                                 <Link href={{
                                     pathname: '/admin/myCompany/',
                                 }}>
@@ -152,10 +150,10 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                         </div>
                                     </div>
                                 </Link>
-                                :
-                                null
-                            }
-                            {dataProfile.data.registered_feature.includes(155) ?
+                                 {/* :
+                                 null
+                             } */}
+                            {/* {dataProfile.data.registered_feature.includes(155) ? */}
                                 <Link href={{
                                     pathname: '/admin/clients',
                                 }}>
@@ -166,14 +164,14 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                         </div>
                                     </div>
                                 </Link>
-                                :
-                                null
-                            }
+                                 {/* :
+                                 null
+                             } */}
                         </div>
                     </div>
-                    :
-                    null
-                }
+                     {/* :
+                     null
+                 } */}
 
                 <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
                     <div className="border-b border-gray-300">
@@ -232,7 +230,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                     </div>
                 </div>
 
-                {dataProfile.data.registered_feature.includes(183) && dataProfile.data.registered_feature.includes(187) && dataProfile.data.registered_feature.includes(194) ?
+                {/* {dataProfile.data.registered_feature.includes(183) && dataProfile.data.registered_feature.includes(187) && dataProfile.data.registered_feature.includes(194) ? */}
                     <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
                         <div className="border-b border-gray-300">
                             <h3 className="font-semibold text-lg mb-0">Service Management</h3>
@@ -241,7 +239,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             </h3>
                         </div>
                         <div className="grid md:grid-cols-5 sm:grid-cols-1">
-                            {dataProfile.data.registered_feature.includes(183) && dataProfile.data.registered_feature.includes(187) ?
+                            {/* {dataProfile.data.registered_feature.includes(183) && dataProfile.data.registered_feature.includes(187) ? */}
                                 <Link href={'/admin/service'}>
                                     <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                         <div className="flex">
@@ -250,10 +248,10 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                         </div>
                                     </div>
                                 </Link>
-                                :
-                                null
-                            }
-                            {dataProfile.data.registered_feature.includes(194) ?
+                                 {/* :
+                                 null
+                             } */}
+                            {/* {dataProfile.data.registered_feature.includes(194) ? */}
                                 <Link href={'/admin/contracts'}>
                                     <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                                         <div className="flex">
@@ -262,16 +260,16 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                         </div>
                                     </div>
                                 </Link>
-                                :
-                                null
-                            }
+                                 {/* :
+                                 null
+                             } */}
                         </div>
                     </div>
-                    :
-                    null
-                }
+                     {/* :
+                     null
+                 } */}
 
-                {dataProfile.data.registered_feature.includes(169) ?
+                {/* {dataProfile.data.registered_feature.includes(169) ? */}
                     <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
                         <div className="border-b border-gray-300">
                             <h3 className="font-semibold text-lg mb-0">Financial Management</h3>
@@ -290,9 +288,9 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             </Link>
                         </div>
                     </div>
-                    :
-                    null
-                }
+                     {/* :
+                     null
+                 } */}
 
                 <div className="divide-y divide-gray-300 divide-opacity-50 border border-gray-300 p-5 rounded-md">
                     <div className="border-b border-gray-300">

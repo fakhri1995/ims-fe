@@ -141,7 +141,7 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, companyid }) 
     const handleUpdateLocationsMig = () => {
         setloadingupdate(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateCompanyClient`, {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Authorization': JSON.parse(tok),
                 'Content-Type': 'application/json'
@@ -184,15 +184,15 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, companyid }) 
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientDetail`, {
-            method: `POST`,
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientDetail?id=${companyid}`, {
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                company_id: Number(companyid)
-            })
+            // body: JSON.stringify({
+            //     company_id: Number(companyid)
+            // })
         })
             .then(res => res.json())
             .then(dataBranchDetail => {
@@ -217,19 +217,19 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, companyid }) 
             })
     }, [])
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
-            method: `POST`,
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations?company_id=${parent}`, {
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(tok),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                company_id: Number(parent)
-            })
+            // body: JSON.stringify({
+            //     company_id: Number(parent)
+            // })
         })
             .then(res => res.json())
             .then(res2 => {
-                setinduklokasi(res2.data[0].title)
+                setinduklokasi(res2.data.title)
             })
     }, [])
     useEffect(() => {
@@ -261,7 +261,7 @@ function DetailLocationClients({ initProps, dataProfile, sidemenu, companyid }) 
                                         :
                                         <>
                                             <Button type="default" onClick={() => { rt.push(`/admin/clients/${cancel}?active=locations`) }} size="middle" style={{ marginRight: `1rem` }}>Kembali</Button>
-                                            <Button type="primary" onClick={() => { window.location.href = `/admin/clients/locations/${companyid}?edit=1&cancel=${cancel}` }}>Ubah</Button>
+                                            <Button type="primary" onClick={() => { window.location.href = `/admin/clients/locations/${companyid}?edit=1&cancel=${cancel}&parent=${parent}` }}>Ubah</Button>
                                         </>
                                 }
                             </div>
@@ -551,7 +551,7 @@ export async function getServerSideProps({ req, res, params }) {
     initProps = cookiesJSON1.token
 
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps),
             'Content-Type': 'application/json'
@@ -560,10 +560,10 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/admin/clients' })
-        res.end()
-    }
+    // if (![151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/admin/clients' })
+    //     res.end()
+    // }
 
     // const resourcesBD = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientDetail`, {
     //     method: `POST`,

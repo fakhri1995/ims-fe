@@ -140,7 +140,7 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail2, 
     const handleUpdateLocationsMig = () => {
         setloadingupdate(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateCompanyBranch`, {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Authorization': JSON.parse(tok),
                 'Content-Type': 'application/json'
@@ -183,15 +183,15 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail2, 
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyBranchDetail`, {
-            method: `POST`,
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyBranchDetail?id=${companyid}`, {
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                company_id: companyid
-            })
+            // body: JSON.stringify({
+            //     company_id: companyid
+            // })
         })
             .then(res => res.json())
             .then(dataBranchDetail => {
@@ -508,7 +508,7 @@ export async function getServerSideProps({ req, res, params }) {
     initProps = cookiesJSON1.token
 
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps),
             'Content-Type': 'application/json'
@@ -517,10 +517,10 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/admin/myCompany' })
-        res.end()
-    }
+    // if (![151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/admin/myCompany' })
+    //     res.end()
+    // }
 
     // const resourcesBD = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyBranchDetail`, {
     //     method: `POST`,

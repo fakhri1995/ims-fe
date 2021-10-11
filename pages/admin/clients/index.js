@@ -42,7 +42,6 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
     })
     const [datatable, setdatatable] = useState([])
     const [datatable2, setdatatable2] = useState([])
-    const [datatablenonflat, setdatatablenonflat] = useState([])
     const [loaddatatable, setloaddatatable] = useState(false)
     // var dataTable = []
     // if (!dataCompanyList.data) {
@@ -129,13 +128,14 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
         {
             title: 'Status',
             dataIndex: 'is_enabled',
+            align: `center`,
             render: (text, record, index) => {
                 return {
                     // props: {
                     //     style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
                     // },
                     children:
-                        <>
+                        <div className="flex justify-center">
                             <Link href={`/admin/clients/${record.company_id}`}>
                                 {
                                     record.is_enabled ?
@@ -144,7 +144,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
                                         <a><div className=" bg-red-100 text-red-600 border-red-600 border py-1 px-3 rounded-md text-center w-52">NON-AKTIF MODULE</div></a>
                                 }
                             </Link>
-                        </>
+                        </div>
                 }
             },
             // filters: [
@@ -325,14 +325,13 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
                     })
                 }
             })
-        console.log("isi bank data: " + newclients.name)
     }
 
     //useEffect
     useEffect(() => {
         setloaddatatable(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
-            method: `POST`,
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
@@ -340,20 +339,18 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
         })
             .then(res => res.json())
             .then(res2 => {
-                const temp = res2.data.members.filter(dataa => dataa.company_id != 66).map((doc, idx) => {
-                    return ({
-                        image_logo: doc.image_logo,
-                        company_id: doc.company_id,
-                        company_name: doc.company_name,
-                        is_enabled: doc.is_enabled
-                    })
-                })
-                setdatatable(temp)
-                setdatatable2(temp)
+                // const temp = [res2.data].map((doc, idx) => {
+                //     return ({
+                //         image_logo: doc.image_logo,
+                //         company_id: doc.company_id,
+                //         company_name: doc.company_name,
+                //         is_enabled: doc.is_enabled
+                //     })
+                // })
+                console.log(res2.data.members)
+                setdatatable(res2.data.members)
+                setdatatable2(res2.data.members)
                 setloaddatatable(false)
-                const c = [res2.data]
-                const d = modifData(c)
-                setdatatablenonflat(d)
             })
     }, [])
     return (
@@ -362,7 +359,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
                 <div className=" w-full flex justify-between items-center px-2">
                     <h1 className="font-bold">Clients</h1>
                     {
-                        [157].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        // [157].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <Button type="primary" size="large" onClick={() => { rt.push(`/admin/clients/locations/new?parent=list&frominduk=0`) }}>Tambah</Button>
                         // <Button type="primary" size="large" onClick={() => { setDrawablecreate(true); }}>Tambah</Button>
                     }
@@ -423,69 +420,6 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
                     })
                 } */}
             </div>
-            {/* <Drawer title="Buat Perusahaan Clients" maskClosable={false} visible={drawablecreate} onClose={() => { setDrawablecreate(false); closeClientsDrawer(); instanceForm.resetFields() }} width={370} destroyOnClose={true}>
-                <div className="w-full h-auto grid grid-cols-1 md:grid-cols-1">
-                    <div className="px-3 pt-3 pb-0 col-span-1 md:col-span-1">
-                        <Form.Item name="profile_image">
-                            <Upload
-                                name="profile_image"
-                                listType="picture-card"
-                                className="profileImage"
-                                showUploadList={false}
-                                beforeUpload={beforeUploadProfileImage}
-                                onChange={onChangeProfileImage}
-                            >
-                                {newclients.image_logo ? <img src={newclients.image_logo} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-                            </Upload>
-                        </Form.Item>
-                    </div>
-                    <Form layout="vertical" className="createClientsForm" onFinish={handleSubmitCreateClients} form={instanceForm}>
-                        <div className="md:m-4 mb-5 md:mb-0 ">
-                            <Form.Item name="name" label="Nama Perusahaan"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Nama perusahaan wajib diisi',
-                                    },
-                                ]}
-                            >
-                                <Input name="name" allowClear onChange={onChangeCreateClients} style={{ width: `100%` }}></Input>
-                            </Form.Item>
-                        </div>
-                        <div className="md:m-4 mb-5 md:mb-0 ">
-                            <Form.Item name="address" label="Alamat">
-                                <Input name="address" allowClear onChange={onChangeCreateClients} style={{ width: `100%` }}></Input>
-                            </Form.Item>
-                        </div>
-                        <div className="md:m-4 mb-5 md:mb-0 ">
-                            <Form.Item name="phone_number" label="Telepon">
-                                <Input name="phone_number" allowClear onChange={onChangeCreateClients} style={{ width: `100%` }}></Input>
-                            </Form.Item>
-                        </div>
-                        <div className="md:m-4 mb-5 md:mb-0">
-                            <Form.Item name="parent_id" label="Induk Perusahaan"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Induk perusahaan wajib diisi',
-                                    },
-                                ]}>
-                                <TreeSelect allowClear
-                                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                    treeData={datatablenonflat}
-                                    placeholder="Pilih induk"
-                                    treeDefaultExpandAll
-                                    onChange={(value) => { onChangeParent(value) }}
-                                />
-                            </Form.Item>
-                        </div>
-                        <div className="flex justify-end">
-                            <Button type='default' onClick={() => { setDrawablecreate(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
-                            <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingbtn} style={{ marginBottom: `1rem` }}>Simpan</Button>
-                        </div>
-                    </Form>
-                </div>
-            </Drawer> */}
         </Layout>
     )
 }
@@ -509,7 +443,7 @@ export async function getServerSideProps({ req, res }) {
         }
     }
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps),
             'Content-Type': 'application/json'
@@ -518,10 +452,10 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![155, 156, 157, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![155, 156, 157, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     // const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
     //     method: `POST`,

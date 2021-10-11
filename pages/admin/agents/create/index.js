@@ -21,15 +21,17 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
     const [newuser, setNewuser] = useState({
         fullname: '',
         email: '',
-        // role: 2,
+        role_ids: [],
         phone_number: '',
         profile_image: '',
-        company_id: 66
+        company_id: 1,
+        password: "",
+        confirm_password: ""
     })
     const [loadingupload, setLoadingupload] = useState(false)
     const [loadingsave, setLoadingsave] = useState(false)
     const [datacompanylist, setdatacompanylist] = useState([])
-    const [dataraw1, setdataraw1] = useState({ data: [] })
+    const [dataraw1, setdataraw1] = useState([])
     const [praloading, setpraloading] = useState(true)
 
 
@@ -53,7 +55,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/agents`)
+                        rt.push(`/admin/agents/detail/${res2.id}`)
                     }, 1000)
                 }
                 else if (!res2.success) {
@@ -165,7 +167,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
         })
             .then(res => res.json())
             .then(res2 => {
-                setdataraw1(res2)
+                setdataraw1(res2.data)
             })
     }, [])
 
@@ -239,7 +241,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                                         ]}>
                                         <Input value={newuser.fullname} name={`fullname`} onChange={onChangeCreateAgents} />
                                     </Form.Item>
-                                    <Form.Item label="Email (belum berfungsi)" required name="email"
+                                    <Form.Item label="Email" required name="email"
                                         rules={[
                                             {
                                                 required: true,
@@ -265,25 +267,44 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                                         ]}>
                                         <Input value={newuser.phone_number} name={`phone_number`} onChange={onChangeCreateAgents} />
                                     </Form.Item>
-                                    <Form.Item label="Password (belum berfungsi)" name="password"
+                                    <Form.Item label="Password" name="password"
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Password harus diisi',
+                                                message: 'Password wajib diisi',
                                             },
                                             {
                                                 pattern: /([A-z0-9]{8})/,
                                                 message: 'Password minimal 8 karakter',
                                             },
                                         ]}>
-                                        <Input.Password /*value={newuserrequesters.password} name={`password`} onChange={onChangeCreateRequesters}*/ />
+                                        <Input.Password value={newuser.password} name={`password`} onChange={onChangeCreateAgents} />
                                     </Form.Item>
-                                    <Form.Item label="Role (belum berfungsi)" name="role">
-                                        <Select /*onChange={(value) => { onChangeRole(value) }} defaultValue={idrole}*/ style={{ width: `100%` }}>
+                                    <Form.Item label="Konfirmasi Password" name="password"
+                                        rules={[
                                             {
-                                                dataraw1.data.map((doc, idx) => {
+                                                required: true,
+                                                message: 'Confirm Password wajib diisi',
+                                            },
+                                            {
+                                                pattern: /([A-z0-9]{8})/,
+                                                message: 'Confirm Password minimal 8 karakter',
+                                            },
+                                        ]}>
+                                        <>
+                                            <Input.Password value={newuser.confirm_password} name={`confirm_password`} onChange={onChangeCreateAgents} />
+                                            {
+                                                newuser.password !== newuser.confirm_password &&
+                                                <p className=" text-red-500 mb-0">Confirm Password harus sesuai dengan password</p>
+                                            }
+                                        </>
+                                    </Form.Item>
+                                    <Form.Item label="Role" name="role">
+                                        <Select mode="multiple" onChange={(value) => { setNewuser({ ...newuser, role_ids: value }) }} /*defaultValue={idrole}*/ style={{ width: `100%` }}>
+                                            {
+                                                dataraw1.map((doc, idx) => {
                                                     return (
-                                                        <Select.Option key={idx} value={doc.id}>{doc.name}</Select.Option>
+                                                        <Select.Option key={doc.id} value={doc.id}>{doc.name}</Select.Option>
                                                     )
                                                 })
                                             }

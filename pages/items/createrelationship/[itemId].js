@@ -70,6 +70,14 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
             key: 'mig_id',
         },
     ]
+    const columns3 = [
+        {
+            title: 'Nama Perusahaan',
+            dataIndex: 'name',
+            key: 'name',
+        },
+
+    ]
 
 
     //handler
@@ -155,10 +163,10 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
                             setnewdata({
                                 ...newdata,
                                 relationship_asset_id: typeof (value) === 'undefined' ? null : value,
-                                is_inverse: typeof(option) === 'undefined' ? null : option.is_inverse
+                                is_inverse: typeof (option) === 'undefined' ? null : option.is_inverse
                             })
                             setreltipeitemdata(typeof (option) === 'undefined' ? -10 : option.type_id)
-                            setreldetailitemdata(typeof(option) === 'undefined' ? "" : option.detail)
+                            setreldetailitemdata(typeof (option) === 'undefined' ? "" : option.detail)
                             typeof (value) === 'undefined' ? setrelitemdata([]) : setrelitemdatatrigger(value)
                         }}>
                             {
@@ -192,7 +200,7 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
                             },
                             checkStrictly: true
                         }}
-                        pagination={{ pageSize: 9 }} rowKey={reltipeitemdata === -1 || reltipeitemdata === -2 ? "user_id" : "id"} scroll={{ x: 200 }} dataSource={relitemdata} columns={reltipeitemdata === -1 || reltipeitemdata === -2 ? columns12 : (columns4)} loading={relitemloading}
+                        pagination={{ pageSize: 9 }} rowKey={reltipeitemdata === -1 || reltipeitemdata === -2 ? "user_id" : "id"} scroll={{ x: 200 }} dataSource={relitemdata} columns={reltipeitemdata === -1 || reltipeitemdata === -2 ? columns12 : (reltipeitemdata === -3 ? column3 : columns4)} loading={relitemloading}
                     ></Table>
                 </div>
             </div>
@@ -214,7 +222,7 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
                         <div className="flex flex-col mb-3">
                             <h1 className="font-semibold mb-0">Item:</h1>
                             {
-                                selectedrelitemdata.map((doc,idx)=>(
+                                selectedrelitemdata.map((doc, idx) => (
                                     <p className="mb-0">- {reltipeitemdata === -1 || reltipeitemdata === -2 ? doc.fullname : doc.inventory_name}</p>
                                 ))
                             }

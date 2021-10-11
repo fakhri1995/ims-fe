@@ -158,11 +158,10 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
     const [loadingadd, setloadingadd] = useState(false)
     //Ubah
     const [dataApiupdate, setdataApiupdate] = useState({
-        id: Number(assettypeid),
+        id: null,
         relationship_id: null,
         is_inverse: null,
         from_inverse: null,
-        type_id: null,
         connected_id: null
     })
     const [modalupdate, setmodalupdate] = useState(false)
@@ -211,7 +210,7 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
                             {
                                 events === record.id ?
                                     <>
-                                        <EditOutlined onClick={() => { setdataApiupdate({ ...dataApiupdate, from_inverse: record.from_inverse, is_inverse: record.is_inverse, relationship_id: record.relationship_id, type_id: record.type_id }); setrelationnameupdate(record.relationship); setdetailtipeupdate(record.type_id); setmodalupdate(true); setdisabledupdate(false) }} style={{ fontSize: `1.2rem`, color: `rgb(15,146,255)`, cursor: `pointer`, marginRight: `1rem` }} />
+                                        <EditOutlined onClick={() => { setdataApiupdate({ ...dataApiupdate, id:record.id, from_inverse: record.from_inverse, is_inverse: record.is_inverse, relationship_id: record.relationship_id, connected_id: record.connected_id }); setrelationnameupdate(record.relationship); setdetailtipeupdate(record.type_id); setmodalupdate(true); setdisabledupdate(false) }} style={{ fontSize: `1.2rem`, color: `rgb(15,146,255)`, cursor: `pointer`, marginRight: `1rem` }} />
                                         <DeleteOutlined onClick={() => { setdataApidelete({ id: record.id }); setrelationdatadelete({ name: record.relationship, tipe: record.type, koneksi: record.connected_detail_name }); setmodaldelete(true); }} style={{ fontSize: `1.2rem`, color: `red`, cursor: `pointer` }} />
                                     </>
                                     :
@@ -222,6 +221,16 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
             }
         }
     ]
+    function recursiveModifData(dataa) {
+        for (var i = 0; i < dataa.length; i++) {
+            dataa[i]['key'] = dataa[i].id
+            dataa[i]['value'] = dataa[i].id
+            if (dataa[i].children) {
+                recursiveModifData(dataa[i].children)
+            }
+        }
+        return dataa
+    }
 
     //handler
     const handleAddRelationshipAsset = () => {
@@ -355,7 +364,7 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
     }, [detailtipeadd])
     useEffect(() => {
         if (detailtipeupdate !== -10) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipAssetDetailList?type_id=${dataApiupdate.type_id}`, {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipAssetDetailList?type_id=${detailtipeupdate}`, {
                 method: `GET`,
                 headers: {
                     'Authorization': JSON.parse(initProps),
@@ -363,7 +372,13 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
             })
                 .then(res => res.json())
                 .then(res2 => {
-                    setdetailtipedataupdate(res2.data)
+                    if (detailtipeupdate === -4) {
+                        const mapdata = recursiveModifData(res2.data)
+                        setdetailtipedataupdate(mapdata)
+                    }
+                    else {
+                        setdetailtipedataupdate(res2.data)
+                    }
                 })
         }
     }, [detailtipeupdate])
@@ -382,7 +397,7 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
                                 is_inverse: null,
                                 type_id: null,
                                 connected_id: null
-                            }); 
+                            });
                             setrelationnameadd("")
                             setrelationselectedidxadd(-1)
                             setrelationselectedisinverseadd(-1)
@@ -544,7 +559,7 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
                                             {
                                                 detailtipedataadd.map((doc, idx) => {
                                                     return (
-                                                        <Select.Option value={doc.user_id}>{doc.fullname}</Select.Option>
+                                                        <Select.Option value={doc.id}>{doc.name}</Select.Option>
                                                     )
                                                 })
                                             }
@@ -635,7 +650,7 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
                     </div>
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Tipe <span className="tipepart"></span></p>
-                        <Select defaultValue={detailtipeupdate} disabled>
+                        <Select value={detailtipeupdate} disabled>
                             {
                                 displaydatarelations.types.map((doc, idx) => {
                                     return (
@@ -654,13 +669,13 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
                         </style>
                     </div>
                     {
-                        dataApiupdate.type_id !== null ?
+                        detailtipeupdate !== null ?
                             <>
                                 {
-                                    dataApiupdate.type_id === -1 &&
+                                    detailtipeupdate === -1 &&
                                     <div className="flex flex-col mb-3">
                                         <p className="mb-0">Detail Tipe</p>
-                                        <Select onChange={(value) => {
+                                        <Select defaultValue={dataApiupdate.connected_id} onChange={(value) => {
                                             setdataApiupdate({ ...dataApiupdate, connected_id: value })
                                         }}>
                                             {
@@ -674,10 +689,10 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
                                     </div>
                                 }
                                 {
-                                    dataApiupdate.type_id === -2 &&
+                                    detailtipeupdate === -2 &&
                                     <div className="flex flex-col mb-3">
                                         <p className="mb-0">Detail Tipe</p>
-                                        <Select onChange={(value) => {
+                                        <Select defaultValue={dataApiupdate.connected_id} onChange={(value) => {
                                             setdataApiupdate({ ...dataApiupdate, connected_id: value })
                                         }}>
                                             {
@@ -691,16 +706,16 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
                                     </div>
                                 }
                                 {
-                                    dataApiupdate.type_id === -3 &&
+                                    detailtipeupdate === -3 &&
                                     <div className="flex flex-col mb-3">
                                         <p className="mb-0">Detail Tipe</p>
-                                        <Select onChange={(value) => {
+                                        <Select defaultValue={dataApiupdate.connected_id} onChange={(value) => {
                                             setdataApiupdate({ ...dataApiupdate, connected_id: value })
                                         }}>
                                             {
                                                 detailtipedataupdate.map((doc, idx) => {
                                                     return (
-                                                        <Select.Option value={doc.user_id}>{doc.fullname}</Select.Option>
+                                                        <Select.Option value={doc.id}>{doc.name}</Select.Option>
                                                     )
                                                 })
                                             }
@@ -708,10 +723,10 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
                                     </div>
                                 }
                                 {
-                                    dataApiupdate.type_id === -4 &&
+                                    detailtipeupdate === -4 &&
                                     <div className="flex flex-col mb-3">
                                         <p className="mb-0">Detail Tipe</p>
-                                        <TreeSelect treeData={detailtipedataupdate} onChange={(value, label, extra) => {
+                                        <TreeSelect treeDefaultExpandAll={true} defaultValue={dataApiupdate.connected_id} treeData={detailtipedataupdate} onChange={(value, label, extra) => {
                                             setdataApiupdate({ ...dataApiupdate, connected_id: extra.allCheckedNodes[0].node.props.id })
                                         }}></TreeSelect>
                                     </div>
