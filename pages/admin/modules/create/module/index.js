@@ -22,7 +22,6 @@ const ModuleCreate = ({ sidemenu, initProps, dataProfile }) => {
     const [newdata, setnewdata] = useState({
         name: '',
         description: '',
-        feature_ids: []
     })
     const [loadingcreate, setloadingcreate] = useState(false)
     const [praloading, setpraloading] = useState(true)
@@ -52,7 +51,7 @@ const ModuleCreate = ({ sidemenu, initProps, dataProfile }) => {
                 }
                 else if (!res2.success) {
                     notification['error']({
-                        message: res2.message.errorInfo.status_detail,
+                        message: res2.message,
                         duration: 3
                     })
                     setloadingcreate(false)
@@ -145,7 +144,7 @@ export async function getServerSideProps({ req, res }) {
     }
     initProps = cookiesJSON1.token
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -153,10 +152,10 @@ export async function getServerSideProps({ req, res }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    if (![179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     return {
         props: {

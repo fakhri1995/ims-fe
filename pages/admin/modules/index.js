@@ -24,21 +24,21 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
         {
             name: "",
             description: "",
-            feature: []
+            features: []
         }
     ])
     const [datamodules2, setdatamodules2] = useState([
         {
             name: "",
             description: "",
-            feature: []
+            features: []
         }
     ])
     const [datamodules3, setdatamodules3] = useState([
         {
             name: "",
             description: "",
-            feature: []
+            features: []
         }
     ])
     // const [currentselectkateg, setcurrentselectkateg] = useState(datamodules[0].name)
@@ -79,11 +79,11 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
     const [listfeat, setlistfeat] = useState(
         [
             {
-                id: 10,
-                feature_id: 107,
-                feature_key: "b699dca3-9908-41f9-9583-e34f07f7e5c7",
-                name: "AGENT_GET",
-                description: "Fitur untuk mengambil detail data agent",
+                id: "",
+                feature_id: "",
+                feature_key: "",
+                name: "",
+                description: "",
                 deleted_at: null
             }
         ]
@@ -91,11 +91,11 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
     const [listfeat2, setlistfeat2] = useState(
         [
             {
-                id: 10,
-                feature_id: 107,
-                feature_key: "b699dca3-9908-41f9-9583-e34f07f7e5c7",
-                name: "AGENT_GET",
-                description: "Fitur untuk mengambil detail data agent",
+                id: "",
+                feature_id: "",
+                feature_key: "",
+                name: "",
+                description: "",
                 deleted_at: null
             }
         ]
@@ -103,11 +103,11 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
     const [listfeat3, setlistfeat3] = useState(
         [
             {
-                id: 10,
-                feature_id: 107,
-                feature_key: "b699dca3-9908-41f9-9583-e34f07f7e5c7",
-                name: "AGENT_GET",
-                description: "Fitur untuk mengambil detail data agent",
+                id: "",
+                feature_id: "",
+                feature_key: "",
+                name: "",
+                description: "",
                 deleted_at: null
             }
         ]
@@ -339,7 +339,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
     const handleDeleteModuleFeature = () => {
         setloadingdeletefeatmodule(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/deleteModuleFeature`, {
-            method: 'POST',
+            method: 'DELETE',
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
@@ -412,7 +412,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
     const handleDeleteModule = () => {
         setloadingdelete(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/deleteModule`, {
-            method: 'POST',
+            method: 'DELETE',
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
@@ -448,7 +448,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
     const handleDeleteFeature = () => {
         setloadingdelete2(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/deleteFeature`, {
-            method: 'POST',
+            method: 'DELETE',
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
@@ -485,7 +485,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
     //useEffect
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
-            method: `POST`,
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps)
             }
@@ -504,23 +504,23 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                 }
                 setloop(temp)
                 setloadinglistfeat(false)
-                setidmodulemap(res2.data[Number(module)].feature !== null ? res2.data[Number(module)].feature.map((doc, idx) => doc.id) : [])
+                setidmodulemap(res2.data[Number(module)].features !== null ? res2.data[Number(module)].features.map((doc, idx) => doc.id) : [])
                 setcheckedmodules((module !== "" || typeof (module) !== 'undefined' ? Number(module) : 0))
                 setpraloadingmodule(false)
             })
     }, [moduletrigger])
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getAccessFeature`, {
-            method: `POST`,
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getFeatures`, {
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps)
             }
         })
             .then(res => res.json())
             .then(res2 => {
-                setlistfeat(res2)
-                setlistfeat2(res2)
-                setlistfeat3(res2)
+                setlistfeat(res2.data)
+                setlistfeat2(res2.data)
+                setlistfeat3(res2.data)
                 setpraloadingfeature(false)
             })
     }, [])
@@ -540,7 +540,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                     <div className=" col-span-1 md:col-span-3 flex flex-col p-3">
                         <div className="flex justify-between mb-2 md:mb-5">
                             <h1 className="font-bold text-xl">Module</h1>
-                            <Button type="primary" onClick={() => { rt.push(`/admin/modules/create/module?module=${datamodules.length}`) }}>Tambah</Button>
+                            <Button type="primary" onClick={() => { rt.push(`/admin/modules/create/module?module=${datamodules.length}`); console.log(idmodulemap); console.log(listfeat) }}>Tambah</Button>
                         </div>
                         <div className="mb-2 md:mb-5">
                             <Input style={{ width: `100%` }} placeholder="Cari module" onChange={(e) => {
@@ -562,7 +562,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                 </div>
                                 :
                                 <div className=" mb-2 md:mb-5">
-                                    <Collapse accordion defaultActiveKey={module !== "" || typeof (module) !== 'undefined' ? Number(module) : 0} onChange={(value) => {
+                                    <Collapse accordion defaultActiveKey={module === "" || typeof (module) === 'undefined' ? -1 : Number(module)} onChange={(value) => {
                                         if (typeof (value) === 'undefined') {
                                             setdisplayarrow(false)
                                             setrightstatus(true)
@@ -583,7 +583,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                             setmodulecounter(0)
                                             setfeaturecounter(0)
                                             setdatadeletemodule({ ...datadeletemodule, id: datamodules[value].id })
-                                            datamodules[value].feature ? setidmodulemap(datamodules[value].feature.map((doc, idx) => doc.id)) : setidmodulemap([])
+                                            datamodules[value].features ? setidmodulemap(datamodules[value].features.map((doc, idx) => doc.id)) : setidmodulemap([])
                                             setscrolltrigger(value)
                                         }
                                     }}>
@@ -601,7 +601,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                                             <div className="flex justify-between border-b pb-3 mb-3">
                                                                 <div>
                                                                     {/* <Checkbox checked={checkAll} onChange={(e) => { onCheckedAll(e) }} />  */}
-                                                                    {modulecounter}/{doc.feature ? doc.feature.length : 0} {checkeddatamodules.length > 1 ? "items" : "item"}
+                                                                    {modulecounter}/{doc.features ? doc.features.length : 0} {checkeddatamodules.length > 1 ? "items" : "item"}
                                                                 </div>
                                                                 <div>
                                                                     <strong>Feature yang terdaftar pada - Module {doc.name}</strong>
@@ -619,8 +619,8 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                                                         :
                                                                         <>
                                                                             {
-                                                                                doc.feature ?
-                                                                                    doc.feature.map((doc2, idx2) => {
+                                                                                doc.features ?
+                                                                                    doc.features.map((doc2, idx2) => {
                                                                                         const st = checkeddatamodules.includes(doc2.id)
                                                                                         if (doc2.name.toLowerCase().includes(searchmodulefeature.toLowerCase())) {
                                                                                             return (
@@ -710,12 +710,12 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                                             <div className="overflow-y-auto flex flex-col h-80 mb-5 border-b pb-5">
                                                                 {
                                                                     listfeat.map((doc3, idx3) => {
-                                                                        const st = checkeddatafeatures.includes(doc3.feature_id)
-                                                                        if (!idmodulemap.includes(doc3.feature_id)) {
+                                                                        const st = checkeddatafeatures.includes(doc3.id)
+                                                                        if (!idmodulemap.includes(doc3.id)) {
                                                                             if (doc3.name.toLowerCase().includes(searchfeature.toLowerCase())) {
                                                                                 return (
                                                                                     <div key={idx3} className="flex items-center my-1">
-                                                                                        <Checkbox checked={st} style={{ marginRight: `1rem` }} onChange={(e) => { onChangeUpdateCheckbox3(e, doc3.feature_id, idx3) }} style={{ marginRight: `1rem` }} /> {doc3.name}
+                                                                                        <Checkbox checked={st} style={{ marginRight: `1rem` }} onChange={(e) => { onChangeUpdateCheckbox3(e, doc3.id, idx3) }} style={{ marginRight: `1rem` }} /> {doc3.name}
                                                                                     </div>
                                                                                 )
                                                                             }
@@ -729,7 +729,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                                 }
                                             </Sticky>
                                             :
-                                            <Collapse accordion defaultActiveKey={feature ? Number(feature) : 0} onChange={(value) => {
+                                            <Collapse accordion defaultActiveKey={!feature ? -1 : Number(feature)} onChange={(value) => {
                                                 if (typeof (value) !== 'undefined') {
                                                     setcheckeddatafeatures([])
                                                     setcheckedfeatures(value)
@@ -839,7 +839,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                 visible={modalcreate}
                 onCancel={() => { setloadingcreate(false); setmodalcreate(false) }}
                 onOk={handleAddModuleFeature}
-                okButtonProps={{ disabled: loadiingcreate }}
+                okButtonProps={{ loading: loadiingcreate }}
                 okText="Ya"
                 cancelText="Tidak"
                 style={{ top: `3rem` }}
@@ -856,7 +856,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                                 {
                                     checkeddatafeatures.length > 0 ?
                                         listfeat.map((doc, idx) => {
-                                            if (checkeddatafeatures.includes(doc.feature_id)) {
+                                            if (checkeddatafeatures.includes(doc.id)) {
                                                 return (
                                                     <li key={idx} className="font-semibold">{"-"} {doc.name}</li>
                                                 )
@@ -874,7 +874,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                 visible={modaldeletefeatmodule}
                 onCancel={() => { setloadingdeletefeatmodule(false); setmodaldeletefeatmodule(false) }}
                 onOk={handleDeleteModuleFeature}
-                okButtonProps={{ disabled: loadingdeletefeatmodule }}
+                okButtonProps={{ loading: loadingdeletefeatmodule }}
                 okText="Ya"
                 cancelText="Tidak"
                 style={{ top: `3rem` }}
@@ -889,8 +889,8 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                             :
                             <ol>
                                 {
-                                    checkeddatamodules.length > 0 && datamodules[checkedmodules].feature ?
-                                        datamodules[checkedmodules].feature.map((doc, idx) => {
+                                    checkeddatamodules.length > 0 && datamodules[checkedmodules].features ?
+                                        datamodules[checkedmodules].features.map((doc, idx) => {
                                             if (checkeddatamodules.includes(doc.id)) {
                                                 return (
                                                     <li key={idx} className="font-semibold">- {doc.name}</li>
@@ -911,7 +911,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                 onCancel={() => setmodaldelete(false)}
                 okText="Ya"
                 cancelText="Tidak"
-                okButtonProps={{ disabled: loadiingdelete }}
+                okButtonProps={{ loading: loadiingdelete }}
             >
                 <p>Apakah anda yakin ingin menghapus Module <strong>{datamodules[checkedmodules] > 0 ? datamodules[checkedmodules].name : null}</strong> yang memiliki Feature berikut ini?</p>
                 {
@@ -921,7 +921,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                         <ol>
                             {
                                 datamodules[checkedmodules] ?
-                                    datamodules[checkedmodules].feature.map((doc, idx) => {
+                                    datamodules[checkedmodules].features.map((doc, idx) => {
                                         return (
                                             <li key={idx} className="font-semibold">{idx + 1}. {doc.name}</li>
                                         )
@@ -939,7 +939,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                 onCancel={() => setmodaldelete2(false)}
                 okText="Ya"
                 cancelText="Tidak"
-                okButtonProps={{ disabled: loadiingdelete2 }}
+                okButtonProps={{ loading: loadiingdelete2 }}
             >
                 <p>Apakah Anda yakin untuk menghapus fitur <strong>{listfeat.length > 0 ? listfeat[checkedfeatures].name : null}</strong> yang terdaftar pada modul:</p>
                 {
@@ -950,7 +950,7 @@ const ModulesIndex = ({ initProps, dataProfile, dataListModules, dataListFeature
                             {
                                 datamodules ?
                                     datamodules.map((doc, idx) => {
-                                        const status = doc.feature !== null ? doc.feature.map(doc => doc.id).includes(listfeat[checkedfeatures].feature_id) : false
+                                        const status = doc.features !== null ? doc.features.map(doc => doc.id).includes(listfeat[checkedfeatures].id) : false
                                         if (status) {
                                             return (
                                                 <li key={idx} className="font-semibold">- {doc.name}</li>
@@ -988,7 +988,7 @@ export async function getServerSideProps({ req, res }) {
     }
     initProps = cookiesJSON1.token
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -996,10 +996,10 @@ export async function getServerSideProps({ req, res }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    if (![179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     // const resourcesGM = await fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
     //     method: `POST`,

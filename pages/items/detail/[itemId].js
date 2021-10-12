@@ -789,7 +789,8 @@ const Relationship = ({ initProps, maindata, itemid }) => {
         if (namasearchact) {
             datatemp = datatemp.filter(flt => {
                 return flt.connected_detail_name.toLowerCase().includes(namavalue.toLowerCase())
-            })        }
+            })
+        }
         setdatatable(datatemp)
     }
 
@@ -918,6 +919,9 @@ const Association = () => {
 const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => {
     const [logs, setlogs] = useState([])
     const [praloadinglogs, setpraloadinglogs] = useState(true)
+    const [logs2, setlogs2] = useState([])
+    const [praloadinglogs2, setpraloadinglogs2] = useState(true)
+    const [relationship, setrelationship] = useState([])
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getActivityInventoryLogs?id=${itemid}`, {
             method: `GET`,
@@ -935,9 +939,9 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => 
                     const descusageOld = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.old.status_usage === 1 ? 'In Used' : (doclogs.properties.old.status_usage === 2 ? 'In Stock' : (doclogs.properties.old.status_usage === 3 ? 'Replacement' : null))) : null) : null
                     const descusageBaru = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.attributes.status_usage === 1 ? 'In Used' : (doclogs.properties.attributes.status_usage === 2 ? 'In Stock' : (doclogs.properties.attributes.status_usage === 3 ? 'Replacement' : null))) : null) : null
                     const desc1 = doclogs.description.split(" ")
-                    desc1[0] === 'created' ? descnew = descnew + `Pembuatan Item Baru bernama "${doclogs.properties.attributes.inventory_name}"` : null
-                    desc1[0] === 'note' ? descnew = descnew + `Penambahan Notes` : null
-                    if (desc1[0] === 'updated') {
+                    desc1[0] === 'Created' ? descnew = descnew + `Pembuatan Item Baru bernama "${doclogs.properties.attributes.inventory_name}"` : null
+                    desc1[0] === 'Notes' ? descnew = descnew + `Penambahan Notes` : null
+                    if (desc1[0] === 'Updated') {
                         if (doclogs.properties.attributes.status_condition) {
                             descnew = descnew + `Pengubahan status kondisi dari ${desckondisiOld} ke ${desckondisiBaru}`
                         }
@@ -962,22 +966,57 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => 
                         else if (doclogs.properties.attributes.deskripsi) {
                             descnew = descnew + `Pengubahan Deskripsi Item`
                         }
-                        // else if(doclogs.properties.attributes.model_inventory_column_id){
-                        //     if(doclogs.properties.attributes.value.includes("{\"")){
-                        //         const parsevalueNew = JSON.parse(doclogs.properties.attributes.value)
-                        //         const parsevalueOld = JSON.parse(doclogs.properties.old.value)
-                        //     }
-                        //     descnew = descnew + `Pengubahan ${doclogs.properties.attributes.name} Item dari "${doclogs.properties.old.value}" ke "${doclogs.properties.attributes.value}"`
-                        // }
+                        else {
+                            var prpts = []
+                            for (var prop in doclogs.properties.old) {
+                                prpts.push(prop)
+                                // if(doclogs.properties.old[prop].includes("{\"")){
+                                //     const temp = JSON.parse(doclogs.properties.old[prop])
+                                // }
+                                // propOld.push({
+                                //     attrname: prop,
+                                //     value: doclogs.properties.old[prop]
+                                // })
+                            }
+                            descnew = descnew + `Pengubahan "${prpts.join(", ")}" Item`
+                        }
                     }
                     return {
                         ...doclogs,
                         date: datenew,
-                        description: descnew
+                        description: descnew,
                     }
                 })
                 setlogs(logsmap)
                 setpraloadinglogs(false)
+                return res2
+            })
+            .then(res3 => {
+                fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventory?id=${itemid}&type_id=-4`, {
+                    method: `GET`,
+                    headers: {
+                        'Authorization': JSON.parse(initProps),
+                    }
+                })
+                    .then(res => res.json())
+                    .then(res4 => {
+                        var concatarr = res4.data.from_inverse.concat(res4.data.not_from_inverse)
+                        console.log(concatarr)
+                        var logs2map = res3.data.relationship.map((docrel, idxrel) => {
+                            const datenew2 = moment(docrel.date).locale("id").format('LLL')
+                            var descnew2 = ''
+                            const desc2 = docrel.description.split(" ")
+                            desc2[0] === 'Created' ? descnew2 = descnew2 + `Penambahan Relationship "${concatarr.filter(docfil => docfil.id === docrel.properties.attributes.id)[0].relationship}"` : null
+                            desc2[0] === 'Deleted' ? descnew2 = descnew2 + `Penghapusan Relationship` : null
+                            return {
+                                ...docrel,
+                                date: datenew2,
+                                description: descnew2
+                            }
+                        })
+                        setlogs2(logs2map)
+                        setpraloadinglogs2(false)
+                    })
             })
     }, [itemid])
     return (
@@ -985,27 +1024,53 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => 
             <div className="border-b flex justify-between p-5 mb-8">
                 <h1 className="font-bold text-xl my-auto">Activity</h1>
             </div>
-            <div className="flex flex-col w-6/12">
-                {
-                    praloadinglogs ?
-                        <Spin />
-                        :
-                        <Timeline mode="left">
-                            {
-                                logs.map((doclog, idxlog) => {
-                                    return (
-                                        <Timeline.Item label={doclog.date}>
-                                            <div className="flex flex-col">
-                                                <h1 className="font-semibold text-base mb-1">{doclog.description}</h1>
-                                                <p className="mb-1 text-xs text-gray-500">Oleh {doclog.causer_name}</p>
-                                                <p className="mb-1 text-sm">Notes: {doclog.notes}</p>
-                                            </div>
-                                        </Timeline.Item>
-                                    )
-                                })
-                            }
-                        </Timeline>
-                }
+            <div className="flex">
+                <div className="flex flex-col w-6/12">
+                    <h1 className="font-semibold mx-auto text-lg mb-3">Umum</h1>
+                    {
+                        praloadinglogs ?
+                            <Spin />
+                            :
+                            <Timeline mode="left">
+                                {
+                                    logs.map((doclog, idxlog) => {
+                                        return (
+                                            <Timeline.Item label={doclog.date}>
+                                                <div className="flex flex-col">
+                                                    <h1 className="font-semibold text-base mb-1">{doclog.description}</h1>
+                                                    <p className="mb-1 text-xs text-gray-500">Oleh {doclog.causer_name}</p>
+                                                    <p className="mb-1 text-sm">Notes: {doclog.notes}</p>
+                                                </div>
+                                            </Timeline.Item>
+                                        )
+                                    })
+                                }
+                            </Timeline>
+                    }
+                </div>
+                <div className="flex flex-col w-6/12">
+                    <h1 className="font-semibold mx-auto text-lg mb-3">Relationship</h1>
+                    {
+                        praloadinglogs2 ?
+                            <Spin />
+                            :
+                            <Timeline mode="left">
+                                {
+                                    logs2.map((doclog, idxlog) => {
+                                        return (
+                                            <Timeline.Item label={doclog.date}>
+                                                <div className="flex flex-col">
+                                                    <h1 className="font-semibold text-base mb-1">{doclog.description}</h1>
+                                                    <p className="mb-1 text-xs text-gray-500">Oleh {doclog.causer_name}</p>
+                                                    <p className="mb-1 text-sm">Notes: {doclog.notes}</p>
+                                                </div>
+                                            </Timeline.Item>
+                                        )
+                                    })
+                                }
+                            </Timeline>
+                    }
+                </div>
             </div>
         </div>
     )
@@ -1448,8 +1513,8 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                             <TabPane tab="Association" key={`association`}>
                                 <Association itemid={itemid} initProps={initProps} />
                             </TabPane>
-                            <TabPane /*disabled={praloading2}*/ disabled tab="Activity" key={`activity`}>
-                                <Acitivty itemid={itemid} initProps={initProps} invrelations={invrelations} />
+                            <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
+                                <Acitivty itemid={itemid} initProps={initProps} maindata={maindata} invrelations={invrelations} />
                             </TabPane>
                         </Tabs>
                     </div>
@@ -1467,8 +1532,8 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                             <TabPane tab="Association" key={`association`}>
                                 <Association itemid={itemid} initProps={initProps} />
                             </TabPane>
-                            <TabPane /*disabled={praloading2}*/ disabled tab="Activity" key={`activity`}>
-                                <Acitivty itemid={itemid} initProps={initProps} invrelations={invrelations} />
+                            <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
+                                <Acitivty itemid={itemid} initProps={initProps} maindata={maindata} invrelations={invrelations} />
                             </TabPane>
                         </Tabs>
                     </div>

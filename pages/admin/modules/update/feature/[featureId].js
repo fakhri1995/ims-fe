@@ -4,7 +4,7 @@ import httpcookie from 'cookie'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Form, Input, Button } from 'antd'
+import { Form, Input, Button, notification } from 'antd'
 import st from '../../../../../components/layout-dashboard.module.css'
 
 const FeatureUpdate = ({ initProps, sidemenu, dataProfile, idfeature }) => {
@@ -25,60 +25,65 @@ const FeatureUpdate = ({ initProps, sidemenu, dataProfile, idfeature }) => {
     })
     //2. Create
     const [updatedata, setupdatedata] = useState({
+        id: Number(idfeature),
         name: '',
-        description: '',
-        feature_ids: []
+        description: []
     })
     const [loadingupdate, setloadingupdate] = useState(false)
     const [praloading, setpraloading] = useState(true)
 
     //handleCreate
     const handleUpdateFeature = () => {
-        // setloadingcreate(true)
-        // fetch(`https://boiling-thicket-46501.herokuapp.com/addModule`, {
-        //     method: 'POST',
-        //     headers: {
-        //         'Authorization': JSON.parse(initProps),
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify(newdata)
-        // })
-        //     .then(res => res.json())
-        //     .then(res2 => {
-        //         if (res2.success) {
-        //             notification['success']({
-        //                 message: res2.message,
-        //                 duration: 3
-        //             })
-        //             setTimeout(() => {
-        //                 setloadingcreate(false)
-        //                 rt.push(`/admin/modules?id=`)
-        //             }, 500)
-        //         }
-        //         else if (!res2.success) {
-        //             notification['error']({
-        //                 message: res2.message.errorInfo.status_detail,
-        //                 duration: 3
-        //             })
-        //             setloadingcreate(false)
-        //         }
-        //     })
+        setloadingupdate(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateFeature`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedata)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    notification['success']({
+                        message: 'Fitur berhasil diubah',
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        setloadingupdate(false)
+                        rt.push(`/admin/modules?module=&featuredisplay=&feature=${feature}`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setloadingupdate(false)
+                }
+            })
     }
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getAccessFeature`, {
-            method: `POST`,
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getFeatures`, {
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps)
             }
         })
             .then(res => res.json())
             .then(res2 => {
-                const detaildata = res2.filter(flt => {
+                const detaildata = res2.data.filter(flt => {
                     return flt.id === Number(idfeature)
                 })[0]
                 setdatadisplay(detaildata)
+                setupdatedata({
+                    ...updatedata,
+                    name: detaildata.name,
+                    description: detaildata.description
+                })
                 var pathArr = rt.pathname.split("/").slice(1)
                 pathArr.splice(2, 2)
                 pathArr[pathArr.length - 1] = `Ubah Feature - ${detaildata.name}`
@@ -114,7 +119,7 @@ const FeatureUpdate = ({ initProps, sidemenu, dataProfile, idfeature }) => {
                                     null
                                     :
                                     <div className="p-3 col-span-1 md:col-span-3">
-                                        <Form layout="vertical" form={instanceForm} initialValues={datadisplay} className="createAgentsForm">
+                                        <Form layout="vertical" form={instanceForm} onFinish={handleUpdateFeature} initialValues={datadisplay} className="createAgentsForm">
                                             <Form.Item label="Nama Modul (belum berfungsi)" required name="name"
                                                 rules={[
                                                     {
@@ -176,7 +181,7 @@ export async function getServerSideProps({ req, res, params }) {
     }
     initProps = cookiesJSON1.token
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -184,10 +189,10 @@ export async function getServerSideProps({ req, res, params }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    if (![179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     return {
         props: {

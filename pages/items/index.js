@@ -204,11 +204,12 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
         var datatemp = displaydata1
         if (assettypefilteract) {
             datatemp = datatemp.filter(flt => {
-                return (flt.asset_name.toLowerCase().includes(assettypevalue.toLowerCase())) || (flt.asset_name.replaceAll(/\s+\/\s+/g, "/").split("/")[0] === namaasset)
+                return flt.asset_name.toLowerCase() === assettypevalue.toLowerCase()
+                // return (flt.asset_name.toLowerCase().includes(assettypevalue.toLowerCase())) || (flt.asset_name.replaceAll(/\s+\/\s+/g, "/").split("/")[0] === namaasset)
             })
         }
         if (modelfilteract) {
-            datatemp = datatemp.filter(flt => flt.modelid === modelvalue)
+            datatemp = datatemp.filter(flt => flt.model_id === modelvalue)
         }
         if (kondisifilteract) {
             datatemp = datatemp.filter(flt => flt.status_condition === kondisivalue)
@@ -288,7 +289,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     <div className="flex mb-8">
                         <div className=" w-full mr-1 grid grid-cols-12">
                             <div className="col-span-3 mr-1">
-                                <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Nama Model" onChange={onChangeSearch} allowClear></Input>
+                                <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Nama Item" onChange={onChangeSearch} allowClear></Input>
                             </div>
                             <div className="col-span-3 mr-1">
                                 <TreeSelect allowClear

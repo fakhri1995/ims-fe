@@ -4,7 +4,7 @@ import httpcookie from 'cookie'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Form, Input, Button } from 'antd'
+import { Form, Input, Button, notification } from 'antd'
 import st from '../../../../../components/layout-dashboard.module.css'
 
 const ModuleUpdate = ({ initProps, sidemenu, dataProfile, idmodule }) => {
@@ -27,50 +27,50 @@ const ModuleUpdate = ({ initProps, sidemenu, dataProfile, idmodule }) => {
     })
     //2. Create
     const [updatedata, setupdatedata] = useState({
+        id: Number(idmodule),
         name: '',
         description: '',
-        feature_ids: []
     })
     const [loadingupdate, setloadingupdate] = useState(false)
     const [praloading, setpraloading] = useState(true)
 
     //handleCreate
     const handleUpdateModule = () => {
-        // setloadingcreate(true)
-        // fetch(`https://boiling-thicket-46501.herokuapp.com/addModule`, {
-        //     method: 'POST',
-        //     headers: {
-        //         'Authorization': JSON.parse(initProps),
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify(newdata)
-        // })
-        //     .then(res => res.json())
-        //     .then(res2 => {
-        //         if (res2.success) {
-        //             notification['success']({
-        //                 message: res2.message,
-        //                 duration: 3
-        //             })
-        //             setTimeout(() => {
-        //                 setloadingcreate(false)
-        //                 rt.push(`/admin/modules?id=`)
-        //             }, 500)
-        //         }
-        //         else if (!res2.success) {
-        //             notification['error']({
-        //                 message: res2.message.errorInfo.status_detail,
-        //                 duration: 3
-        //             })
-        //             setloadingcreate(false)
-        //         }
-        //     })
+        setloadingupdate(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateModule`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedata)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    notification['success']({
+                        message: 'Modul berhasil diubah',
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        setloadingupdate(false)
+                        rt.push(`/admin/modules?module=${module}&featuredisplay=1`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setloadingupdate(false)
+                }
+            })
     }
 
     //useEffect
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
-            method: `POST`,
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps)
             }
@@ -89,7 +89,11 @@ const ModuleUpdate = ({ initProps, sidemenu, dataProfile, idmodule }) => {
                     description: detaildata.description,
                     feature: detaildata.feature
                 }
-                setupdatedata(res2.data)
+                setupdatedata({
+                    ...updatedata,
+                    name: detaildata.name,
+                    description: detaildata.description
+                })
                 setdatadisplay(temp)
                 setpraloading(false)
                 var pathArr = rt.pathname.split("/").slice(1)
@@ -188,7 +192,7 @@ export async function getServerSideProps({ req, res, params }) {
     }
     initProps = cookiesJSON1.token
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -196,10 +200,10 @@ export async function getServerSideProps({ req, res, params }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    if (![179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     return {
         props: {
