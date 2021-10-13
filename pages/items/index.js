@@ -219,7 +219,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
         }
         if (namasearchact) {
             datatemp = datatemp.filter(flt => {
-                return flt.model_name.toLowerCase().includes(namavalue.toLowerCase())
+                return flt.inventory_name.toLowerCase().includes(namavalue.toLowerCase())
             })
         }
         setdisplaydata(datatemp)

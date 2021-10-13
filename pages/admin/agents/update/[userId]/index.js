@@ -25,12 +25,11 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
     //     profile_image: dataDetailRequester.data.profile_image === "" ? `/default-users.jpeg` : dataDetailRequester.data.profile_image
     // })
     const [data1, setData1] = useState({
-        id: "",
+        id: Number(userid),
         fullname: "",
         phone_number: "",
         profile_image: `/default-users.jpeg`,
-        company_id: 0,
-        email: ''
+        role_ids: []
     })
     const [datacompanylist, setdatacompanylist] = useState([])
     const [idrole, setidrole] = useState(0)
@@ -38,17 +37,13 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
     const [preloading, setpreloading] = useState(true)
     const [companyid, setcompanyid] = useState(0)
     // const [datarole, setdatarole] = useState({
-    //     account_id: dataDetailRequester.data.user_id,
-    //     role_ids: [dataDetailRequester.data.feature_roles[0]]
+    //     account_id: Number(data1.id),
+    //     role_ids: []
     // })
-    const [datarole, setdatarole] = useState({
-        account_id: Number(data1.id),
-        role_ids: []
-    })
-    const [datapass, setDatapass] = useState({
-        user_id: data1.id,
-        new_password: ''
-    })
+    // const [datapass, setDatapass] = useState({
+    //     user_id: data1.id,
+    //     new_password: ''
+    // })
     const [loadingupdate, setLoadingupdate] = useState(false)
     const [dataraw1, setdataraw1] = useState({ data: [] })
 
@@ -56,11 +51,9 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
         //multiple roles
         // const arr = datarole.role_ids
         //single roles
-        const arr = []
-        arr.push(value)
-        setdatarole({
-            ...datarole,
-            role_ids: arr
+        setData1({
+            ...data1,
+            role_ids: value
         })
     }
     const onChangeEditAgents = (e) => {
@@ -89,18 +82,18 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
     const handleSubmitEditAccount = () => {
         setLoadingupdate(true)
         // if ([133].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/updateFeatureAgent`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': JSON.parse(tok),
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(datarole)
-            })
-                .then(res => res.json())
-                .then(res2 => {
-                    setLoadingupdate(false)
-                })
+            // fetch(`https://boiling-thicket-46501.herokuapp.com/updateFeatureAgent`, {
+            //     method: 'PUT',
+            //     headers: {
+            //         'Authorization': JSON.parse(tok),
+            //         'Content-Type': 'application/json'
+            //     },
+            //     body: JSON.stringify(datarole)
+            // })
+            //     .then(res => res.json())
+            //     .then(res2 => {
+            //         setLoadingupdate(false)
+            //     })
         // }
         // if ([116].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
             fetch(`https://boiling-thicket-46501.herokuapp.com/updateAgentDetail`, {
@@ -125,7 +118,7 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                     }
                     else if (!res2.success) {
                         notification['error']({
-                            message: res2.message.errorInfo.status_detail,
+                            message: res2.message,
                             duration: 3
                         })
                     }
@@ -153,11 +146,11 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                     role: res2.data.role,
                     phone_number: res2.data.phone_number,
                     profile_image: res2.data.profile_image === "" ? `/default-users.jpeg` : res2.data.profile_image,
-                    company_id: res2.data.company_id,
-                    email: res2.data.email
+                    email: res2.data.email,
+                    feature_roles: res2.data.feature_roles
                 }
                 setData1(temp)
-                setdatarole({ ...datarole, account_id: res2.data.user_id })
+                // setdatarole({ ...datarole, account_id: res2.data.user_id })
                 setidrole(res2.data.feature_roles)
                 var pathArr = rt.pathname.split("/").slice(1)
                 pathArr.splice(3, 1)

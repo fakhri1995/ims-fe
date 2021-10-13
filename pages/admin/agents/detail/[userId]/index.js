@@ -170,7 +170,7 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
                 pathArr[pathArr.length - 1] = `Detail Profil Agent - ` + res2.data.fullname
                 setpatharr(pathArr)
                 setorigincomp(res2.data.company.company_name)
-                return res2.data.feature_roles[0]
+                return res2.data.feature_roles
             })
             .then(val => {
                 fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
@@ -182,9 +182,9 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
                     .then(res => res.json())
                     .then(res2 => {
                         const selectedrole = res2.data.filter((dataa) => {
-                            return dataa.id === val
-                        })[0]
-                        setnamarole(selectedrole ? selectedrole.name : "-")
+                            return val.indexOf(dataa.id) !== -1
+                        }).map(docmap => docmap.name)
+                        setnamarole(selectedrole ? selectedrole.join(", ") : "-")
                         setpraloading(false)
                     })
             })
@@ -249,23 +249,23 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
                             <div className=" mr-3 md:mr-5 pt-1">{data1.fullname}</div>
                             {
                                 // [114].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                    <div className="pt-1">
-                                        {
-                                            isenabled ?
-                                                <Switch disabled={praloading} checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
-                                                :
-                                                <Switch disabled={praloading} checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
-                                        }
-                                    </div>
-                                    // :
-                                    // <div className="pt-1">
-                                    //     {
-                                    //         isenabled ?
-                                    //             <Switch disabled checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
-                                    //             :
-                                    //             <Switch disabled checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
-                                    //     }
-                                    // </div>
+                                <div className="pt-1">
+                                    {
+                                        isenabled ?
+                                            <Switch disabled={praloading} checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
+                                            :
+                                            <Switch disabled={praloading} checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
+                                    }
+                                </div>
+                                // :
+                                // <div className="pt-1">
+                                //     {
+                                //         isenabled ?
+                                //             <Switch disabled checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
+                                //             :
+                                //             <Switch disabled checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
+                                //     }
+                                // </div>
                             }
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4">

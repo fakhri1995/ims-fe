@@ -60,7 +60,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                 }
                 else if (!res2.success) {
                     notification['error']({
-                        message: res2.message.errorInfo.status_detail,
+                        message: res2.message,
                         duration: 3
                     })
                 }

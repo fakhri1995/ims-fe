@@ -131,7 +131,7 @@ const ModuleUpdate = ({ initProps, sidemenu, dataProfile, idmodule }) => {
                                     :
                                     <div className="p-3 col-span-1 md:col-span-3">
                                         <Form layout="vertical" form={instanceForm} initialValues={datadisplay} className="createAgentsForm" onFinish={handleUpdateModule}>
-                                            <Form.Item label="Nama Modul (belum berfungsi)" required name="name"
+                                            <Form.Item label="Nama Modul" required name="name"
                                                 rules={[
                                                     {
                                                         required: true,
@@ -145,7 +145,7 @@ const ModuleUpdate = ({ initProps, sidemenu, dataProfile, idmodule }) => {
                                                     })
                                                 }} />
                                             </Form.Item>
-                                            <Form.Item label="Deskripsi (belum berfungsi)" required name="description"
+                                            <Form.Item label="Deskripsi" required name="description"
                                                 rules={[
                                                     {
                                                         required: true,

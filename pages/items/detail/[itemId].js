@@ -921,104 +921,134 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => 
     const [praloadinglogs, setpraloadinglogs] = useState(true)
     const [logs2, setlogs2] = useState([])
     const [praloadinglogs2, setpraloadinglogs2] = useState(true)
-    const [relationship, setrelationship] = useState([])
+    const [inventories, setinventories] = useState([])
+
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getActivityInventoryLogs?id=${itemid}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
-            }
+            },
         })
             .then(res => res.json())
             .then(res2 => {
-                var logsmap = res2.data.inventory.map((doclogs, idxlogs) => {
-                    const datenew = moment(doclogs.date).locale("id").format('LLL')
-                    var descnew = ''
-                    const desckondisiOld = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.old.status_condition === 1 ? 'Good' : (doclogs.properties.old.status_condition === 2 ? 'Grey' : (doclogs.properties.old.status_condition === 3 ? 'Bad' : null))) : null) : null
-                    const desckondisiBaru = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.attributes.status_condition === 1 ? 'Good' : (doclogs.properties.attributes.status_condition === 2 ? 'Grey' : (doclogs.properties.attributes.status_condition === 3 ? 'Bad' : null))) : null) : null
-                    const descusageOld = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.old.status_usage === 1 ? 'In Used' : (doclogs.properties.old.status_usage === 2 ? 'In Stock' : (doclogs.properties.old.status_usage === 3 ? 'Replacement' : null))) : null) : null
-                    const descusageBaru = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.attributes.status_usage === 1 ? 'In Used' : (doclogs.properties.attributes.status_usage === 2 ? 'In Stock' : (doclogs.properties.attributes.status_usage === 3 ? 'Replacement' : null))) : null) : null
-                    const desc1 = doclogs.description.split(" ")
-                    desc1[0] === 'Created' ? descnew = descnew + `Pembuatan Item Baru bernama "${doclogs.properties.attributes.inventory_name}"` : null
-                    desc1[0] === 'Notes' ? descnew = descnew + `Penambahan Notes` : null
-                    if (desc1[0] === 'Updated') {
-                        if (doclogs.properties.attributes.status_condition) {
-                            descnew = descnew + `Pengubahan status kondisi dari ${desckondisiOld} ke ${desckondisiBaru}`
-                        }
-                        else if (doclogs.properties.attributes.status_usage) {
-                            descnew = descnew + `Pengubahan status pemakaian dari ${descusageOld} ke ${descusageBaru}`
-                        }
-                        else if (doclogs.properties.attributes.inventory_name) {
-                            descnew = descnew + `Pengubahan Nama Item dari "${doclogs.properties.old.inventory_name}" ke "${doclogs.properties.attributes.inventory_name}"`
-                        }
-                        else if (doclogs.properties.attributes.serial_number) {
-                            descnew = descnew + `Pengubahan Serial Number Item dari "${doclogs.properties.old.serial_number}" ke "${doclogs.properties.attributes.serial_number}"`
-                        }
-                        else if (doclogs.properties.attributes.location) {
-                            descnew = descnew + `Pengubahan Location Item dari "${invrelations.companies.filter(doc => doc.id === doclogs.properties.old.location)[0].name}" ke "${invrelations.companies.filter(doc => doc.id === doclogs.properties.attributes.location)[0].name}"`
-                        }
-                        else if (doclogs.properties.attributes.vendor_id) {
-                            descnew = descnew + `Pengubahan Vendor Item dari "${invrelations.vendors.filter(doc => doc.id === doclogs.properties.old.vendor_id)[0].name}" ke "${invrelations.vendors.filter(doc => doc.id === doclogs.properties.attributes.vendor_id)[0].name}"`
-                        }
-                        else if (doclogs.properties.attributes.manufacturer_id) {
-                            descnew = descnew + `Pengubahan Manufacturer Item dari "${invrelations.manufacturers.filter(doc => doc.id === doclogs.properties.old.manufacturer_id)[0].name}" ke "${invrelations.manufacturers.filter(doc => doc.id === doclogs.properties.attributes.manufacturer_id)[0].name}"`
-                        }
-                        else if (doclogs.properties.attributes.deskripsi) {
-                            descnew = descnew + `Pengubahan Deskripsi Item`
-                        }
-                        else {
-                            var prpts = []
-                            for (var prop in doclogs.properties.old) {
-                                prpts.push(prop)
-                                // if(doclogs.properties.old[prop].includes("{\"")){
-                                //     const temp = JSON.parse(doclogs.properties.old[prop])
-                                // }
-                                // propOld.push({
-                                //     attrname: prop,
-                                //     value: doclogs.properties.old[prop]
-                                // })
-                            }
-                            descnew = descnew + `Pengubahan "${prpts.join(", ")}" Item`
-                        }
-                    }
-                    return {
-                        ...doclogs,
-                        date: datenew,
-                        description: descnew,
-                    }
-                })
-                setlogs(logsmap)
-                setpraloadinglogs(false)
-                return res2
+                setinventories(res2.data)
+                return res2.data
             })
-            .then(res3 => {
-                fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventory?id=${itemid}&type_id=-4`, {
+            .then(ress => {
+                fetch(`https://boiling-thicket-46501.herokuapp.com/getActivityInventoryLogs?id=${itemid}`, {
                     method: `GET`,
                     headers: {
                         'Authorization': JSON.parse(initProps),
                     }
                 })
                     .then(res => res.json())
-                    .then(res4 => {
-                        var concatarr = res4.data.from_inverse.concat(res4.data.not_from_inverse)
-                        console.log(concatarr)
-                        var logs2map = res3.data.relationship.map((docrel, idxrel) => {
-                            const datenew2 = moment(docrel.date).locale("id").format('LLL')
-                            var descnew2 = ''
-                            const desc2 = docrel.description.split(" ")
-                            desc2[0] === 'Created' ? descnew2 = descnew2 + `Penambahan Relationship "${concatarr.filter(docfil => docfil.id === docrel.properties.attributes.id)[0].relationship}"` : null
-                            desc2[0] === 'Deleted' ? descnew2 = descnew2 + `Penghapusan Relationship` : null
+                    .then(res2 => {
+                        var logsmap = res2.data.inventory.map((doclogs, idxlogs) => {
+                            const datenew = moment(doclogs.date).locale("id").format('LLL')
+                            var descnew = ''
+                            const desckondisiOld = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.old.status_condition === 1 ? 'Good' : (doclogs.properties.old.status_condition === 2 ? 'Grey' : (doclogs.properties.old.status_condition === 3 ? 'Bad' : null))) : null) : null
+                            const desckondisiBaru = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.attributes.status_condition === 1 ? 'Good' : (doclogs.properties.attributes.status_condition === 2 ? 'Grey' : (doclogs.properties.attributes.status_condition === 3 ? 'Bad' : null))) : null) : null
+                            const descusageOld = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.old.status_usage === 1 ? 'In Used' : (doclogs.properties.old.status_usage === 2 ? 'In Stock' : (doclogs.properties.old.status_usage === 3 ? 'Replacement' : null))) : null) : null
+                            const descusageBaru = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.attributes.status_usage === 1 ? 'In Used' : (doclogs.properties.attributes.status_usage === 2 ? 'In Stock' : (doclogs.properties.attributes.status_usage === 3 ? 'Replacement' : null))) : null) : null
+                            const desc1 = doclogs.description.split(" ")
+                            desc1[0] === 'Created' ? descnew = descnew + `Pembuatan Item Baru bernama "${doclogs.properties.attributes.inventory_name}"` : null
+                            desc1[0] === 'Notes' ? descnew = descnew + `Penambahan Notes` : null
+                            if (desc1[0] === 'Updated') {
+                                if (doclogs.properties.attributes.status_condition) {
+                                    descnew = descnew + `Pengubahan status kondisi dari ${desckondisiOld} ke ${desckondisiBaru}`
+                                }
+                                else if (doclogs.properties.attributes.status_usage) {
+                                    descnew = descnew + `Pengubahan status pemakaian dari ${descusageOld} ke ${descusageBaru}`
+                                }
+                                else if (doclogs.properties.attributes.inventory_name) {
+                                    descnew = descnew + `Pengubahan Nama Item dari "${doclogs.properties.old.inventory_name}" ke "${doclogs.properties.attributes.inventory_name}"`
+                                }
+                                else if (doclogs.properties.attributes.serial_number) {
+                                    descnew = descnew + `Pengubahan Serial Number Item dari "${doclogs.properties.old.serial_number}" ke "${doclogs.properties.attributes.serial_number}"`
+                                }
+                                else if (doclogs.properties.attributes.location) {
+                                    descnew = descnew + `Pengubahan Location Item dari "${invrelations.companies.filter(doc => doc.id === doclogs.properties.old.location)[0].name}" ke "${invrelations.companies.filter(doc => doc.id === doclogs.properties.attributes.location)[0].name}"`
+                                }
+                                else if (doclogs.properties.attributes.vendor_id) {
+                                    descnew = descnew + `Pengubahan Vendor Item dari "${invrelations.vendors.filter(doc => doc.id === doclogs.properties.old.vendor_id)[0].name}" ke "${invrelations.vendors.filter(doc => doc.id === doclogs.properties.attributes.vendor_id)[0].name}"`
+                                }
+                                else if (doclogs.properties.attributes.manufacturer_id) {
+                                    descnew = descnew + `Pengubahan Manufacturer Item dari "${invrelations.manufacturers.filter(doc => doc.id === doclogs.properties.old.manufacturer_id)[0].name}" ke "${invrelations.manufacturers.filter(doc => doc.id === doclogs.properties.attributes.manufacturer_id)[0].name}"`
+                                }
+                                else if (doclogs.properties.attributes.deskripsi) {
+                                    descnew = descnew + `Pengubahan Deskripsi Item`
+                                }
+                                else if (doclogs.properties.attributes.list_parts) {
+                                    if (doclogs.notes.split(" ")[1] === "Added") {
+                                        const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.includes(docfil) === false)
+                                        descnew = descnew + `Penambahan Item "${ress.filter(docfil => listpartsnew.includes(docfil.id)).map(docmap => docmap.inventory_name).join(", ")}" menjadi Item Part`
+                                    }
+                                    if (doclogs.notes.split(" ")[1] === "Removed") {
+                                        const listpartsnew = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
+                                        descnew = descnew + `Pengeluaran Item Part "${ress.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
+                                    }
+                                    if (doclogs.notes.split(" ")[1] === "Replaced") {
+                                        const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
+                                        const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.includes(docfil) === false)
+                                        descnew = descnew + `Pergantian Item Part "${ress.filter(docfil => listpartsold.includes(docfil.id))[0].inventory_name}" menjadi Item Part "${ress.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
+                                    }
+                                }
+                                else {
+                                    var prpts = []
+                                    for (var prop in doclogs.properties.old) {
+                                        prpts.push(prop)
+                                        // if(doclogs.properties.old[prop].includes("{\"")){
+                                        //     const temp = JSON.parse(doclogs.properties.old[prop])
+                                        // }
+                                        // propOld.push({
+                                        //     attrname: prop,
+                                        //     value: doclogs.properties.old[prop]
+                                        // })
+                                    }
+                                    descnew = descnew + `Pengubahan "${prpts.join(", ")}" Item`
+                                }
+                            }
                             return {
-                                ...docrel,
-                                date: datenew2,
-                                description: descnew2
+                                ...doclogs,
+                                date: datenew,
+                                description: descnew,
                             }
                         })
-                        setlogs2(logs2map)
-                        setpraloadinglogs2(false)
+                        setlogs(logsmap)
+                        setpraloadinglogs(false)
+                        return res2
+                    })
+                    .then(res3 => {
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventory?id=${itemid}&type_id=-4`, {
+                            method: `GET`,
+                            headers: {
+                                'Authorization': JSON.parse(initProps),
+                            }
+                        })
+                            .then(res => res.json())
+                            .then(res4 => {
+                                var concatarr = res4.data.from_inverse.concat(res4.data.not_from_inverse)
+                                console.log(concatarr)
+                                var logs2map = res3.data.relationship.map((docrel, idxrel) => {
+                                    const datenew2 = moment(docrel.date).locale("id").format('LLL')
+                                    var descnew2 = ''
+                                    const desc2 = docrel.description.split(" ")
+                                    desc2[0] === 'Created' ? descnew2 = descnew2 + `Penambahan Relationship "${concatarr.filter(docfil => docfil.id === docrel.properties.attributes.id)[0].relationship}"` : null
+                                    desc2[0] === 'Deleted' ? descnew2 = descnew2 + `Penghapusan Relationship` : null
+                                    return {
+                                        ...docrel,
+                                        date: datenew2,
+                                        description: descnew2
+                                    }
+                                })
+                                setlogs2(logs2map)
+                                setpraloadinglogs2(false)
+                            })
                     })
             })
     }, [itemid])
+
     return (
         <div className="flex flex-col">
             <div className="border-b flex justify-between p-5 mb-8">
