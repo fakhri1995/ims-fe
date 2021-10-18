@@ -15,7 +15,7 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
     const pathArr = rt.pathname.split("/").slice(1)
     pathArr.splice(2, 1)
     pathArr[pathArr.length - 1] = "Tambah Relationship Item"
-    const { name } = rt.query
+    const { name, asset_id } = rt.query
 
     //useState
     const [newdata, setnewdata] = useState({
@@ -127,7 +127,7 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryRelation`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryRelation?asset_id=${asset_id}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),

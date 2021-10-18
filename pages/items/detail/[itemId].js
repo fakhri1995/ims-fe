@@ -721,6 +721,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
     const [datatrigger, setdatatrigger] = useState(0)
     const [loadingrel, setloadingrel] = useState(false)
     const [praloadingrel, setpraloadingrel] = useState(false)
+    const [dataasset, setdataasset] = useState({})
     //delete
     const [dataApidelete, setdataApidelete] = useState({
         id: "",
@@ -846,11 +847,38 @@ const Relationship = ({ initProps, maindata, itemid }) => {
         }
     }, [datatrigger])
 
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                var selectedAsset = {}
+                const recursiveSearchAsset = (doc, key) => {
+                    for (var i = 0; i < doc.length; i++) {
+                        if (doc[i].title === key) {
+                            selectedAsset = doc[i]
+                        }
+                        else {
+                            if (doc[i].children) {
+                                recursiveSearchAsset(doc[i].children, key)
+                            }
+                        }
+                    }
+                }
+                recursiveSearchAsset(res2.data, maindata.asset_name)
+                setdataasset(selectedAsset)
+            })
+    }, [])
+
     return (
         <div className="flex flex-col">
             <div className="border-b flex justify-between p-5 mb-8">
                 <h1 className="font-bold text-xl my-auto">Relationship</h1>
-                <Button type="primary" size="large" onClick={() => { /*console.log(mainpartdata); console.log(dataremoved)*/ rt.push(`/items/createrelationship/${itemid}?name=${maindata.inventory_name}`) }}>Tambah</Button>
+                <Button type="primary" size="large" onClick={() => { /*console.log(dataasset);*/ rt.push(`/items/createrelationship/${itemid}?name=${maindata.inventory_name}&asset_id=${dataasset.id}`) }}>Tambah</Button>
             </div>
             <div className="flex mb-5">
                 {
@@ -955,14 +983,14 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => 
                             const descusageOld = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.old.status_usage === 1 ? 'In Used' : (doclogs.properties.old.status_usage === 2 ? 'In Stock' : (doclogs.properties.old.status_usage === 3 ? 'Replacement' : null))) : null) : null
                             const descusageBaru = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.attributes.status_usage === 1 ? 'In Used' : (doclogs.properties.attributes.status_usage === 2 ? 'In Stock' : (doclogs.properties.attributes.status_usage === 3 ? 'Replacement' : null))) : null) : null
                             const desc1 = doclogs.description.split(" ")
-                            if(desc1[0] === 'Created'){
-                                if(doclogs.properties.attributes.list_parts){
+                            if (desc1[0] === 'Created') {
+                                if (doclogs.properties.attributes.list_parts) {
                                     descnew = descnew + `Inisialisasi Pembuatan Item Part "${ress.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil.id)).map(docmap => docmap.inventory_name).join(", ")}"`
                                 }
-                                else{
+                                else {
                                     descnew = descnew + `Pembuatan Item Baru bernama "${doclogs.properties.attributes.inventory_name}"`
                                 }
-                            } 
+                            }
                             desc1[0] === 'Notes' ? descnew = descnew + `Penambahan Notes` : null
                             if (desc1[0] === 'Updated') {
                                 if (doclogs.properties.attributes.status_condition) {
@@ -1045,7 +1073,7 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => 
                                     var idlognew = -1
                                     const desc2 = docrel.description.split(" ")
                                     desc2[0] === 'Created' ? idlognew = concatarr.filter(docfil => docfil.id === docrel.properties.attributes.id)[0] : null
-                                    desc2[0] === 'Created' ? descnew2 = descnew2 + `Penambahan Relationship "${typeof(idlognew) === 'undefined' ? "(Sudah Dihapus lagi)" : `${idlognew.relationship}`}"` : null
+                                    desc2[0] === 'Created' ? descnew2 = descnew2 + `Penambahan Relationship "${typeof (idlognew) === 'undefined' ? "(Sudah Dihapus lagi)" : `${idlognew.relationship}`}"` : null
                                     desc2[0] === 'Deleted' ? descnew2 = descnew2 + `Penghapusan Relationship` : null
                                     return {
                                         ...docrel,
@@ -1404,7 +1432,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                         var del_manuf = null
                         res3.manufacturer_id === 0 || res3.manufacturer_id === null ? del_manuf = null : del_manuf = res2.data.manufacturers.filter(docfil => docfil.id === res3.manufacturer_id)[0].deleted_at
                         setmanuf({
-                            name: res3.manufacturer_id === null || res3.manufacturer_id === 0 ?  "-" : res2.data.manufacturers.filter(docfil => docfil.id === res3.manufacturer_id)[0].name,
+                            name: res3.manufacturer_id === null || res3.manufacturer_id === 0 ? "-" : res2.data.manufacturers.filter(docfil => docfil.id === res3.manufacturer_id)[0].name,
                             isnull: del_manuf !== null ? false : true
                         })
                         res3.vendor_id === null || res3.vendor_id === 0 ? setvendor("-") : setvendor(res2.data.vendors.filter(docfil => docfil.id === res3.vendor_id)[0].name)

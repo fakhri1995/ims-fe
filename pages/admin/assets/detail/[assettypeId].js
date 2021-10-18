@@ -358,7 +358,7 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
             })
                 .then(res => res.json())
                 .then(res2 => {
-                    setdetailtipedataadd(res2.data)
+                    dataApiadd.type_id === -3 ? setdetailtipedataadd([res2.data]) : setdetailtipedataadd(res2.data)
                 })
         }
     }, [detailtipeadd])
@@ -553,7 +553,7 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
                                     dataApiadd.type_id === -3 &&
                                     <div className="flex flex-col mb-3">
                                         <p className="mb-0">Detail Tipe</p>
-                                        <Select onChange={(value) => {
+                                        {/* <Select onChange={(value) => {
                                             setdataApiadd({ ...dataApiadd, connected_id: value })
                                         }}>
                                             {
@@ -563,7 +563,10 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
                                                     )
                                                 })
                                             }
-                                        </Select>
+                                        </Select> */}
+                                        <TreeSelect treeDefaultExpandedKeys={[1]} treeData={detailtipedataadd} onChange={(value, label, extra) => {
+                                            setdataApiadd({ ...dataApiadd, connected_id: extra.allCheckedNodes[0].node.props.id })
+                                        }}></TreeSelect>
                                     </div>
                                 }
                                 {
