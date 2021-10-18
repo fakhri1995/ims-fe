@@ -5,7 +5,102 @@ import st from '../../../../../components/layout-dashboard.module.css'
 import httpcookie from 'cookie'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
-import { Modal, Button, notification, Switch } from 'antd'
+import { SearchOutlined } from '@ant-design/icons'
+import { Modal, Button, notification, Switch, Tabs, Table, Input } from 'antd'
+
+const Relationship = ({ userid, initProps }) => {
+    //useState
+    const [praloadingrel, setpraloadingrel] = useState(true)
+    const [datatable, setdatatable] = useState([])
+    const [datatable2, setdatatable2] = useState([])
+    const [datatable3, setdatatable3] = useState([])
+    const [namasearchact, setnamasearchact] = useState(false)
+    const [namavalue, setnamavalue] = useState("")
+
+    //helper
+    const columns = [
+        {
+            title: 'Relationship Type',
+            dataIndex: 'relationship',
+            key: 'relationship',
+        },
+        {
+            title: 'Nama Item',
+            dataIndex: 'connected_detail_name',
+            key: 'connected_detail_name',
+        },
+        {
+            title: 'Tipe',
+            dataIndex: 'type',
+            key: 'type',
+        },
+    ]
+
+    //handler
+    //search nama
+    const onChangeSearch = (e) => {
+        if (e.target.value === "") {
+            setdatatable(datatable3)
+            setnamasearchact(false)
+        }
+        else {
+            setnamasearchact(true)
+            setnamavalue(e.target.value)
+        }
+    }
+    //finalClick
+    const onFinalClick = () => {
+        var datatemp = datatable2
+        if (namasearchact) {
+            datatemp = datatemp.filter(flt => {
+                return flt.connected_detail_name.toLowerCase().includes(namavalue.toLowerCase())
+            })
+        }
+        setdatatable(datatemp)
+    }
+
+    //useEffect
+    useEffect(() => {
+        setpraloadingrel(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventory?id=${userid}&type_id=-2`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatatable(res2.data.from_inverse.concat(res2.data.not_from_inverse))
+                setdatatable2(res2.data.from_inverse.concat(res2.data.not_from_inverse))
+                setdatatable3(res2.data.from_inverse.concat(res2.data.not_from_inverse))
+                setpraloadingrel(false)
+            })
+    }, [])
+
+    return (
+        <div className="flex flex-col">
+            <div className="border-b flex justify-between p-5 mb-8">
+                <h1 className="font-bold text-xl my-auto">Relationship</h1>
+            </div>
+            <div className="flex mb-5">
+                {
+                    praloadingrel ?
+                        null
+                        :
+                        <div className=" w-full mr-1 grid grid-cols-12">
+                            <div className="col-span-11 mr-1">
+                                <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Nama Item" onChange={e => onChangeSearch(e)} allowClear></Input>
+                            </div>
+                            <div className=" col-span-1">
+                                <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
+                            </div>
+                        </div>
+                }
+            </div>
+            <Table loading={praloadingrel} pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={datatable} columns={columns}></Table>
+        </div>
+    )
+}
 
 function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid, sidemenu }) {
     const rt = useRouter()
@@ -324,13 +419,6 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={patharr} sidemenu={sidemenu} dataDetailAccount={data1} st={st}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-                {/* <div className=" col-span-1 md:col-span-1 flex md:hidden flex-col space-y-4 p-4">
-                    <div className="font-semibold text-base">Requesters</div>
-                    <p className="font-normal text-xs">
-                        This page lets you handpick a set of requesters and add them to your help desk. These requesters will have selective privileges to submit requests to your helpdesk. You can restrict access such that only people who have been added here are allowed to login to your self-service portal and access your knowledge base. <br /> <br />
-                        You can fill in the details of each of your new requesters manually or import a list of users from a CSV file. Once you have populated your list, your agents can open up each of your requesters and view their ticket history and contact information.
-                    </p>
-                </div> */}
                 <div className="col-span-1 md:col-span-4">
                     <Sticky containerSelectorFocus="#formAgentsWrapper">
                         <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
@@ -359,35 +447,38 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                         </div>
                     </Sticky>
                 </div>
-                <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
-                    <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-5">
-                        <div className="border-b border-black p-4 font-semibold mb-5 flex">
-                            <div className=" mr-3 md:mr-5 pt-1">{data1.fullname}</div>
-                            {
-                                // [114].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                <div className="pt-1">
-                                    {
-                                        isenabled ?
-                                            <Switch disabled={praloading} checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
-                                            :
-                                            <Switch disabled={praloading} checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
-                                    }
-                                </div>
-                                // :
-                                // <div className="pt-1">
-                                //     {
-                                //         isenabled ?
-                                //             <Switch disabled checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
-                                //             :
-                                //             <Switch disabled checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
-                                //     }
-                                // </div>
-                            }
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-4">
-                            <div className="p-3 col-span-1 md:col-span-1 flex flex-col items-center">
-                                <img src={data1.profile_image} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
-                                {/* {
+                <div className=" col-span-1 md:col-span-4 flex flex-col" id="formAgentsWrapper">
+                    <div className=" hidden md:block">
+                        <Tabs tabPosition={`left`} defaultActiveKey={'overview'}>
+                            <Tabs.TabPane tab="Overview" key={`overview`}>
+                                <div className="shadow-lg flex flex-col rounded-md w-11/12 h-auto p-4 mb-5">
+                                    <div className="border-b border-black p-4 font-semibold mb-5 flex">
+                                        <div className=" mr-3 md:mr-5 pt-1">{data1.fullname}</div>
+                                        {
+                                            // [114].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                            <div className="pt-1">
+                                                {
+                                                    isenabled ?
+                                                        <Switch disabled={praloading} checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
+                                                        :
+                                                        <Switch disabled={praloading} checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
+                                                }
+                                            </div>
+                                            // :
+                                            // <div className="pt-1">
+                                            //     {
+                                            //         isenabled ?
+                                            //             <Switch disabled checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
+                                            //             :
+                                            //             <Switch disabled checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
+                                            //     }
+                                            // </div>
+                                        }
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-4">
+                                        <div className="p-3 col-span-1 md:col-span-1 flex flex-col items-center">
+                                            <img src={data1.profile_image} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
+                                            {/* {
                                     [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <label className="custom-file-upload py-2 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3">
                                         <input type="file" style={{ display: `none` }} name="profile_image" onChange={onChangeEditFoto} />
@@ -395,7 +486,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                                         Ganti Foto
                                     </label>
                                 } */}
-                                {/* {
+                                            {/* {
                                     [115].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <div className="w-full h-auto">
                                         <button className="w-full h-auto py-2 text-center bg-primary hover:bg-secondary text-white rounded-sm" onClick={() => { setVisibleubahpass(true) }}>
@@ -403,14 +494,14 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                                         </button>
                                     </div >
                                 } */}
-                            </div>
-                            <div className="p-3 col-span-1 md:col-span-3">
-                                {/* <Form layout="vertical" initialValues={data1} form={instanceForm} onFinish={handleSubmitEditAccount}> */}
-                                {/* <div className="flex flex-col mb-5">
+                                        </div>
+                                        <div className="p-3 col-span-1 md:col-span-3">
+                                            {/* <Form layout="vertical" initialValues={data1} form={instanceForm} onFinish={handleSubmitEditAccount}> */}
+                                            {/* <div className="flex flex-col mb-5">
                                         <h1 className="text-sm">ID</h1>
                                         <h1 className="text-sm font-semibold">{data1.id}</h1>
                                     </div> */}
-                                {/* <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi" name="fullname" initialValue={data1.fullname}
+                                            {/* <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi" name="fullname" initialValue={data1.fullname}
                                         rules={[
                                             {
                                                 required: true,
@@ -421,17 +512,17 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                                             [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                                 <Input defaultValue={data1.fullname} onChange={onChangeEditAgents} name="fullname" />
                                                 : */}
-                                <div className="col-span-1 flex flex-col mb-5">
-                                    <h1 className="font-semibold text-sm">Nama Lengkap:</h1>
-                                    <h1 className="text-sm font-normal text-black">{data1.fullname}</h1>
-                                </div>
-                                {/* }
+                                            <div className="col-span-1 flex flex-col mb-5">
+                                                <h1 className="font-semibold text-sm">Nama Lengkap:</h1>
+                                                <h1 className="text-sm font-normal text-black">{data1.fullname}</h1>
+                                            </div>
+                                            {/* }
                                     </Form.Item> */}
-                                <div className="col-span-1 flex flex-col mb-5">
-                                    <h1 className="text-sm font-semibold">Email:</h1>
-                                    <h1 className="text-sm font-normal text-black">{dataemail}</h1>
-                                </div>
-                                {/* <Form.Item label="No. Handphone" required tooltip="Wajib diisi" name="phone_number" initialValue={data1.phone_number}
+                                            <div className="col-span-1 flex flex-col mb-5">
+                                                <h1 className="text-sm font-semibold">Email:</h1>
+                                                <h1 className="text-sm font-normal text-black">{dataemail}</h1>
+                                            </div>
+                                            {/* <Form.Item label="No. Handphone" required tooltip="Wajib diisi" name="phone_number" initialValue={data1.phone_number}
                                         rules={[
                                             {
                                                 required: true,
@@ -442,21 +533,21 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                                             [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                                 <Input defaultValue={data1.phone_number} onChange={onChangeEditAgents} name="phone_number" />
                                                 : */}
-                                <div className="col-span-1 flex flex-col mb-5">
-                                    <h1 className="font-semibold text-sm">No. Handphone:</h1>
-                                    <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
-                                </div>
-                                {/* }
+                                            <div className="col-span-1 flex flex-col mb-5">
+                                                <h1 className="font-semibold text-sm">No. Handphone:</h1>
+                                                <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
+                                            </div>
+                                            {/* }
                                     </Form.Item> */}
-                                <div className="col-span-1 flex flex-col mb-5">
-                                    <h1 className="font-semibold text-sm">Role:</h1>
-                                    <h1 className="text-sm font-normal text-black">{namarole}</h1>
-                                </div>
-                                <div className="col-span-1 flex flex-col mb-5">
-                                    <h1 className="font-semibold text-sm">Asal Perusahaan:</h1>
-                                    <h1 className="text-sm font-normal text-black">{origincomp}</h1>
-                                </div>
-                                {/* {
+                                            <div className="col-span-1 flex flex-col mb-5">
+                                                <h1 className="font-semibold text-sm">Role:</h1>
+                                                <h1 className="text-sm font-normal text-black">{namarole}</h1>
+                                            </div>
+                                            <div className="col-span-1 flex flex-col mb-5">
+                                                <h1 className="font-semibold text-sm">Asal Perusahaan:</h1>
+                                                <h1 className="text-sm font-normal text-black">{origincomp}</h1>
+                                            </div>
+                                            {/* {
                                         [133].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                             <Select onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }}>
                                                 {
@@ -478,7 +569,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                                                 }
                                             </Select>
                                     } */}
-                                {/* <Form.Item label="Role" required tooltip="Wajib diisi" name="role" initialValue={data1.role}
+                                            {/* <Form.Item label="Role" required tooltip="Wajib diisi" name="role" initialValue={data1.role}
                                         rules={[
                                             {
                                                 required: true,
@@ -487,9 +578,155 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                                         ]}>
                                         <input type="number" defaultValue={data1.role} name={'role'} onChange={onChangeEditAgents} />
                                     </Form.Item> */}
-                                {/* </Form> */}
-                            </div>
-                        </div>
+                                            {/* </Form> */}
+                                        </div>
+                                    </div>
+                                </div>
+                            </Tabs.TabPane>
+                            <Tabs.TabPane tab="Relationship" key={`relationship`}>
+                                <Relationship userid={userid} initProps={initProps} />
+                            </Tabs.TabPane>
+                        </Tabs>
+                    </div>
+                    <div className="block md:hidden">
+                        <Tabs tabPosition={`top`} defaultActiveKey={'overview'}>
+                            <Tabs.TabPane tab="Overview" key={`overview`}>
+                                <div className="shadow-lg flex flex-col rounded-md w-11/12 h-auto p-4 mb-5">
+                                    <div className="border-b border-black p-4 font-semibold mb-5 flex">
+                                        <div className=" mr-3 md:mr-5 pt-1">{data1.fullname}</div>
+                                        {
+                                            // [114].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                            <div className="pt-1">
+                                                {
+                                                    isenabled ?
+                                                        <Switch disabled={praloading} checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
+                                                        :
+                                                        <Switch disabled={praloading} checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
+                                                }
+                                            </div>
+                                            // :
+                                            // <div className="pt-1">
+                                            //     {
+                                            //         isenabled ?
+                                            //             <Switch disabled checked={true} onChange={() => { setVisible(true) }} checkedChildren={"AKTIF"}></Switch>
+                                            //             :
+                                            //             <Switch disabled checked={false} onChange={() => { setVisiblenon(true) }} unCheckedChildren={"NON-AKTIF"}></Switch>
+                                            //     }
+                                            // </div>
+                                        }
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-4">
+                                        <div className="p-3 col-span-1 md:col-span-1 flex flex-col items-center">
+                                            <img src={data1.profile_image} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
+                                            {/* {
+                                    [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                    <label className="custom-file-upload py-2 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3">
+                                        <input type="file" style={{ display: `none` }} name="profile_image" onChange={onChangeEditFoto} />
+                                        {loadingfoto ? <LoadingOutlined /> : <EditOutlined style={{ fontSize: `1.2rem` }} />}
+                                        Ganti Foto
+                                    </label>
+                                } */}
+                                            {/* {
+                                    [115].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                    <div className="w-full h-auto">
+                                        <button className="w-full h-auto py-2 text-center bg-primary hover:bg-secondary text-white rounded-sm" onClick={() => { setVisibleubahpass(true) }}>
+                                            Ubah Password
+                                        </button>
+                                    </div >
+                                } */}
+                                        </div>
+                                        <div className="p-3 col-span-1 md:col-span-3">
+                                            {/* <Form layout="vertical" initialValues={data1} form={instanceForm} onFinish={handleSubmitEditAccount}> */}
+                                            {/* <div className="flex flex-col mb-5">
+                                        <h1 className="text-sm">ID</h1>
+                                        <h1 className="text-sm font-semibold">{data1.id}</h1>
+                                    </div> */}
+                                            {/* <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi" name="fullname" initialValue={data1.fullname}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Nama Lengkap harus diisi',
+                                            },
+                                        ]}>
+                                        {
+                                            [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                <Input defaultValue={data1.fullname} onChange={onChangeEditAgents} name="fullname" />
+                                                : */}
+                                            <div className="col-span-1 flex flex-col mb-5">
+                                                <h1 className="font-semibold text-sm">Nama Lengkap:</h1>
+                                                <h1 className="text-sm font-normal text-black">{data1.fullname}</h1>
+                                            </div>
+                                            {/* }
+                                    </Form.Item> */}
+                                            <div className="col-span-1 flex flex-col mb-5">
+                                                <h1 className="text-sm font-semibold">Email:</h1>
+                                                <h1 className="text-sm font-normal text-black">{dataemail}</h1>
+                                            </div>
+                                            {/* <Form.Item label="No. Handphone" required tooltip="Wajib diisi" name="phone_number" initialValue={data1.phone_number}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'No. Handphone harus diisi',
+                                            },
+                                        ]}>
+                                        {
+                                            [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                <Input defaultValue={data1.phone_number} onChange={onChangeEditAgents} name="phone_number" />
+                                                : */}
+                                            <div className="col-span-1 flex flex-col mb-5">
+                                                <h1 className="font-semibold text-sm">No. Handphone:</h1>
+                                                <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
+                                            </div>
+                                            {/* }
+                                    </Form.Item> */}
+                                            <div className="col-span-1 flex flex-col mb-5">
+                                                <h1 className="font-semibold text-sm">Role:</h1>
+                                                <h1 className="text-sm font-normal text-black">{namarole}</h1>
+                                            </div>
+                                            <div className="col-span-1 flex flex-col mb-5">
+                                                <h1 className="font-semibold text-sm">Asal Perusahaan:</h1>
+                                                <h1 className="text-sm font-normal text-black">{origincomp}</h1>
+                                            </div>
+                                            {/* {
+                                        [133].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                            <Select onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }}>
+                                                {
+                                                    dataraw1.data.map((doc, idx) => {
+                                                        return (
+                                                            <Option key={idx} value={doc.id}>{doc.name}</Option>
+                                                        )
+                                                    })
+                                                }
+                                            </Select>
+                                            :
+                                            <Select disabled onChange={(value) => { onChangeRole(value) }} defaultValue={datarole.role_ids} style={{ width: `100%` }}>
+                                                {
+                                                    dataraw1.data.map((doc, idx) => {
+                                                        return (
+                                                            <Option key={idx} value={doc.id}>{doc.name}</Option>
+                                                        )
+                                                    })
+                                                }
+                                            </Select>
+                                    } */}
+                                            {/* <Form.Item label="Role" required tooltip="Wajib diisi" name="role" initialValue={data1.role}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Role harus diisi',
+                                            },
+                                        ]}>
+                                        <input type="number" defaultValue={data1.role} name={'role'} onChange={onChangeEditAgents} />
+                                    </Form.Item> */}
+                                            {/* </Form> */}
+                                        </div>
+                                    </div>
+                                </div>
+                            </Tabs.TabPane>
+                            <Tabs.TabPane tab="Relationship" key={`relationship`}>
+                                <Relationship userid={userid} initProps={initProps} />
+                            </Tabs.TabPane>
+                        </Tabs>
                     </div>
                     {/* <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-14">
                         <div className="border-b border-black p-4 font-semibold mb-5">

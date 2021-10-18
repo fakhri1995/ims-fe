@@ -22,15 +22,15 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
     //2.useState
     const [newdata, setnewdata] = useState({
         model_id: 0,
-        vendor_id: 0,
+        vendor_id: null,
         inventory_name: "",
-        status_condition: 0,
-        status_usage: 0,
+        status_condition: null,
+        status_usage: null,
         serial_number: "",
-        location: 0,
+        location: null,
         is_exist: true,
         deskripsi: "",
-        manufacturer_id: 0,
+        manufacturer_id: null,
         mig_id: "",
         notes: "",
         inventory_values: [],
@@ -750,9 +750,9 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                         <div className=" col-span-4 flex justify-between pt-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-semibold py-2">Form Tambah Item</h1>
                             <div className="flex space-x-2">
-                                {/* <Link href={`/items`}> */}
-                                <Button type="default" onClick={() => { console.log(newdata); console.log(columnsmodeldata); console.log(partmodeldata); console.log(emptyfieldpart) }}>Batal</Button>
-                                {/* </Link> */}
+                                <Link href={`/items`}>
+                                    <Button type="default" onClick={() => { /*console.log(newdata); console.log(columnsmodeldata); console.log(partmodeldata); console.log(emptyfieldpart)*/ }}>Batal</Button>
+                                </Link>
                                 <Button disabled={disabledfield} type="primary" onClick={() => {
                                     instanceForm.submit()
                                 }}>Simpan</Button>
@@ -868,14 +868,14 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                             disable_part: level > 0 ? true : false,
                                                             id: item[i].id,
                                                             model_id: item[i].child_id,
-                                                            vendor_id: 0,
+                                                            vendor_id: null,
                                                             inventory_name: "",
-                                                            status_condition: 0,
-                                                            status_usage: 0,
+                                                            status_condition: null,
+                                                            status_usage: null,
                                                             serial_number: "",
                                                             is_exist: true,
                                                             deskripsi: "",
-                                                            manufacturer_id: 0,
+                                                            manufacturer_id: null,
                                                             mig_id: "",
                                                             inventory_values: temp1,
                                                             inventory_parts: item[i].model_parts.length > 0 ? recursivePartModel(item[i].model_parts, level) : []

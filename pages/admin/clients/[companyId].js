@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons'
 import st from '../../../components/layout-dashboard-clients.module.css'
 import { Tabs, Input, Table, Tree, Modal, notification, Button, Switch, Spin, Empty } from 'antd'
 import moment from 'moment'
@@ -754,7 +754,7 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, data1, tok }) 
                 .then(res => res.json())
                 .then(res2 => {
                     res2.data.children ? setdatalocationclient(res2.data.children) : setdatalocationclient([])
-                    const expandkeyArr = res2.data.children.map(doc => doc.key)
+                    const expandkeyArr = res2.data.children ? res2.data.children.map(doc => doc.key) : []
                     res2.data.children ? setExpandedKeys(expandkeyArr) : setExpandedKeys([])
                     setpraloading(false)
                 })
@@ -1451,6 +1451,105 @@ function ClientsDetailBankAccount({ dataProfile, data1, tok, companyId }) {
     )
 }
 
+function ClientsRelationship({ dataProfile, tok, companyid }) {
+    //useState
+    const [praloadingrel, setpraloadingrel] = useState(true)
+    const [datatable, setdatatable] = useState([])
+    const [datatable2, setdatatable2] = useState([])
+    const [datatable3, setdatatable3] = useState([])
+    const [namasearchact, setnamasearchact] = useState(false)
+    const [namavalue, setnamavalue] = useState("")
+
+    //helper
+    const columns = [
+        {
+            title: 'Relationship Type',
+            dataIndex: 'relationship',
+            key: 'relationship',
+        },
+        {
+            title: 'Nama Item',
+            dataIndex: 'connected_detail_name',
+            key: 'connected_detail_name',
+        },
+        {
+            title: 'Tipe',
+            dataIndex: 'type',
+            key: 'type',
+        },
+        {
+            title: 'Lokasi',
+            dataIndex: 'subject_detail_name',
+            key: 'subject_detail_name',
+        },
+    ]
+
+    //handler
+    //search nama
+    const onChangeSearch = (e) => {
+        if (e.target.value === "") {
+            setdatatable(datatable3)
+            setnamasearchact(false)
+        }
+        else {
+            setnamasearchact(true)
+            setnamavalue(e.target.value)
+        }
+    }
+    //finalClick
+    const onFinalClick = () => {
+        var datatemp = datatable2
+        if (namasearchact) {
+            datatemp = datatemp.filter(flt => {
+                return flt.connected_detail_name.toLowerCase().includes(namavalue.toLowerCase())
+            })
+        }
+        setdatatable(datatemp)
+    }
+
+    //useEffect
+    useEffect(() => {
+        setpraloadingrel(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventory?id=${companyid}&type_id=-3`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(tok),
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatatable(res2.data.from_inverse.concat(res2.data.not_from_inverse))
+                setdatatable2(res2.data.from_inverse.concat(res2.data.not_from_inverse))
+                setdatatable3(res2.data.from_inverse.concat(res2.data.not_from_inverse))
+                setpraloadingrel(false)
+            })
+    }, [])
+
+    return (
+        <div className="flex flex-col">
+            <div className="border-b flex justify-between p-5 mb-8">
+                <h1 className="font-bold text-xl my-auto">Relationship</h1>
+            </div>
+            <div className="flex mb-5">
+                {
+                    praloadingrel ?
+                        null
+                        :
+                        <div className=" w-full mr-1 grid grid-cols-12">
+                            <div className="col-span-11 mr-1">
+                                <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Nama Item" onChange={e => onChangeSearch(e)} allowClear></Input>
+                            </div>
+                            <div className=" col-span-1">
+                                <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
+                            </div>
+                        </div>
+                }
+            </div>
+            <Table loading={praloadingrel} pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={datatable} columns={columns}></Table>
+        </div>
+    )
+}
+
 function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, dataGetBanks, companyid }) {
     const rt = useRouter()
     const { TabPane } = Tabs;
@@ -1534,6 +1633,9 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
                     <TabPane tab="Locations" key={`locations`}>
                         <ClientsDetailLocations dataProfile={dataProfile} data1={data1} tok={tok}></ClientsDetailLocations>
                     </TabPane>
+                    <TabPane tab="Relationship" key={`relationship`}>
+                        <ClientsRelationship dataProfile={dataProfile} tok={tok} companyid={companyid}></ClientsRelationship>
+                    </TabPane>
                 </Tabs>
             </div>
             <div className="pt-5 pb-0 bg-white block md:hidden" >
@@ -1552,6 +1654,9 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
                     }
                     <TabPane tab="Locations" key={`locations`}>
                         <ClientsDetailLocations dataProfile={dataProfile} data1={data1} tok={tok}></ClientsDetailLocations>
+                    </TabPane>
+                    <TabPane tab="Relationship" key={`relationship`}>
+                        <ClientsRelationship dataProfile={dataProfile} tok={tok} companyid={companyid}></ClientsRelationship>
                     </TabPane>
                 </Tabs>
             </div>

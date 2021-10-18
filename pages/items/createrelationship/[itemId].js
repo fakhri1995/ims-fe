@@ -43,14 +43,28 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
             key: 'fullname',
         },
         {
-            title: 'Email',
-            dataIndex: 'type',
-            key: 'type',
-        },
-        {
-            title: 'Asal Lokasi',
-            dataIndex: 'company_name',
-            key: 'company_name',
+            title: 'Role',
+            dataIndex: 'role',
+            key: 'role',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                        {
+                            record.role === 1 &&
+                            <p className="mb-0">Admin</p>
+                        }
+                        {
+                            record.role === 2 &&
+                            <p className="mb-0">Client</p>
+                        }
+                        {
+                            record.role === 3 &&
+                            <p className="mb-0">Branch</p>
+                        }
+                        </>
+                }
+            }
         },
     ]
     const columns4 = [
@@ -73,8 +87,8 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
     const columns3 = [
         {
             title: 'Nama Perusahaan',
-            dataIndex: 'name',
-            key: 'name',
+            dataIndex: 'title',
+            key: 'title',
         },
 
     ]
@@ -135,7 +149,7 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
             })
                 .then(res => res.json())
                 .then(res2 => {
-                    setrelitemdata(res2.data)
+                    setrelitemdata([res2.data])
                     setrelitemloading(false)
                 })
         }
@@ -200,7 +214,8 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
                             },
                             checkStrictly: true
                         }}
-                        pagination={{ pageSize: 9 }} rowKey={reltipeitemdata === -1 || reltipeitemdata === -2 ? "user_id" : "id"} scroll={{ x: 200 }} dataSource={relitemdata} columns={reltipeitemdata === -1 || reltipeitemdata === -2 ? columns12 : (reltipeitemdata === -3 ? column3 : columns4)} loading={relitemloading}
+                        defaultExpandedRowKeys={[1]}
+                        pagination={{ pageSize: 9 }} rowKey={reltipeitemdata === -1 || reltipeitemdata === -2 ? "user_id" : "id"} scroll={{ x: 200 }} dataSource={relitemdata} columns={reltipeitemdata === -1 || reltipeitemdata === -2 ? columns12 : (reltipeitemdata === -3 ? columns3 : columns4)} loading={relitemloading}
                     ></Table>
                 </div>
             </div>
@@ -223,7 +238,7 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
                             <h1 className="font-semibold mb-0">Item:</h1>
                             {
                                 selectedrelitemdata.map((doc, idx) => (
-                                    <p className="mb-0">- {reltipeitemdata === -1 || reltipeitemdata === -2 ? doc.fullname : doc.inventory_name}</p>
+                                    <p className="mb-0">- {reltipeitemdata === -1 || reltipeitemdata === -2 ? doc.fullname : (reltipeitemdata === -3 ? doc.title : (reltipeitemdata === -4 ? doc.inventory_name : null))}</p>
                                 ))
                             }
                         </div>

@@ -69,7 +69,7 @@ const Overview = ({ itemid, initProps, maindata, manuf, vendor, praloading }) =>
                         </div>
                         <div className="flex flex-col mb-5">
                             <h1 className=" text-sm font-semibold mb-0">Serial Number:</h1>
-                            <p className="mb-0 text-sm">{maindata.serial_number}</p>
+                            <p className="mb-0 text-sm">{maindata.serial_number === "" ? "-" : maindata.serial_number}</p>
                         </div>
                         <div className="flex flex-col mb-5">
                             <h1 className=" text-sm font-semibold mb-0">Manufacturer:</h1>
@@ -97,12 +97,13 @@ const Overview = ({ itemid, initProps, maindata, manuf, vendor, praloading }) =>
                         </div>
                         <div className="flex flex-col mb-5">
                             <h1 className=" text-sm font-semibold mb-0">Deskripsi:</h1>
-                            <p className="mb-0 text-sm">{maindata.deskripsi}</p>
+                            <p className="mb-0 text-sm">{maindata.deskripsi !== "" ? maindata.deskripsi : "-"}</p>
                         </div>
+                        <hr />
                         {
                             maindata.additional_attributes.map((doccolumns, idxcolumns) => {
                                 return (
-                                    <div key={idxcolumns} className="flex flex-col mb-5">
+                                    <div key={idxcolumns} className={`flex flex-col mb-5 ${idxcolumns === 0 ? `mt-5` : ``}`}>
                                         <h1 className=" text-sm font-semibold mb-0">{doccolumns.name}:</h1>
                                         <p className="mb-0 text-sm">
                                             {
@@ -828,6 +829,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
     //useEffect
     useEffect(() => {
         if (datatrigger !== -1) {
+            setpraloadingrel(true)
             fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventory?id=${itemid}&type_id=-4`, {
                 method: `GET`,
                 headers: {
@@ -839,6 +841,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                     setdatatable(res2.data.from_inverse.concat(res2.data.not_from_inverse))
                     setdatatable2(res2.data.from_inverse.concat(res2.data.not_from_inverse))
                     setdatatable3(res2.data.from_inverse.concat(res2.data.not_from_inverse))
+                    setpraloadingrel(false)
                 })
         }
     }, [datatrigger])
@@ -952,7 +955,14 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => 
                             const descusageOld = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.old.status_usage === 1 ? 'In Used' : (doclogs.properties.old.status_usage === 2 ? 'In Stock' : (doclogs.properties.old.status_usage === 3 ? 'Replacement' : null))) : null) : null
                             const descusageBaru = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.attributes.status_usage === 1 ? 'In Used' : (doclogs.properties.attributes.status_usage === 2 ? 'In Stock' : (doclogs.properties.attributes.status_usage === 3 ? 'Replacement' : null))) : null) : null
                             const desc1 = doclogs.description.split(" ")
-                            desc1[0] === 'Created' ? descnew = descnew + `Pembuatan Item Baru bernama "${doclogs.properties.attributes.inventory_name}"` : null
+                            if(desc1[0] === 'Created'){
+                                if(doclogs.properties.attributes.list_parts){
+                                    descnew = descnew + `Inisialisasi Pembuatan Item Part "${ress.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil.id)).map(docmap => docmap.inventory_name).join(", ")}"`
+                                }
+                                else{
+                                    descnew = descnew + `Pembuatan Item Baru bernama "${doclogs.properties.attributes.inventory_name}"`
+                                }
+                            } 
                             desc1[0] === 'Notes' ? descnew = descnew + `Penambahan Notes` : null
                             if (desc1[0] === 'Updated') {
                                 if (doclogs.properties.attributes.status_condition) {
@@ -1029,12 +1039,13 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => 
                             .then(res => res.json())
                             .then(res4 => {
                                 var concatarr = res4.data.from_inverse.concat(res4.data.not_from_inverse)
-                                console.log(concatarr)
                                 var logs2map = res3.data.relationship.map((docrel, idxrel) => {
                                     const datenew2 = moment(docrel.date).locale("id").format('LLL')
                                     var descnew2 = ''
+                                    var idlognew = -1
                                     const desc2 = docrel.description.split(" ")
-                                    desc2[0] === 'Created' ? descnew2 = descnew2 + `Penambahan Relationship "${concatarr.filter(docfil => docfil.id === docrel.properties.attributes.id)[0].relationship}"` : null
+                                    desc2[0] === 'Created' ? idlognew = concatarr.filter(docfil => docfil.id === docrel.properties.attributes.id)[0] : null
+                                    desc2[0] === 'Created' ? descnew2 = descnew2 + `Penambahan Relationship "${typeof(idlognew) === 'undefined' ? "(Sudah Dihapus lagi)" : `${idlognew.relationship}`}"` : null
                                     desc2[0] === 'Deleted' ? descnew2 = descnew2 + `Penghapusan Relationship` : null
                                     return {
                                         ...docrel,
@@ -1061,21 +1072,26 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => 
                         praloadinglogs ?
                             <Spin />
                             :
-                            <Timeline mode="left">
-                                {
-                                    logs.map((doclog, idxlog) => {
-                                        return (
-                                            <Timeline.Item label={doclog.date}>
-                                                <div className="flex flex-col">
-                                                    <h1 className="font-semibold text-base mb-1">{doclog.description}</h1>
-                                                    <p className="mb-1 text-xs text-gray-500">Oleh {doclog.causer_name}</p>
-                                                    <p className="mb-1 text-sm">Notes: {doclog.notes}</p>
-                                                </div>
-                                            </Timeline.Item>
-                                        )
-                                    })
-                                }
-                            </Timeline>
+                            logs.length < 1 ?
+                                <>
+                                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                </>
+                                :
+                                <Timeline mode="left">
+                                    {
+                                        logs.map((doclog, idxlog) => {
+                                            return (
+                                                <Timeline.Item label={doclog.date}>
+                                                    <div className="flex flex-col">
+                                                        <h1 className="font-semibold text-base mb-1">{doclog.description}</h1>
+                                                        <p className="mb-1 text-xs text-gray-500">Oleh {doclog.causer_name}</p>
+                                                        <p className="mb-1 text-sm">Notes: {doclog.notes}</p>
+                                                    </div>
+                                                </Timeline.Item>
+                                            )
+                                        })
+                                    }
+                                </Timeline>
                     }
                 </div>
                 <div className="flex flex-col w-6/12">
@@ -1084,21 +1100,26 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => 
                         praloadinglogs2 ?
                             <Spin />
                             :
-                            <Timeline mode="left">
-                                {
-                                    logs2.map((doclog, idxlog) => {
-                                        return (
-                                            <Timeline.Item label={doclog.date}>
-                                                <div className="flex flex-col">
-                                                    <h1 className="font-semibold text-base mb-1">{doclog.description}</h1>
-                                                    <p className="mb-1 text-xs text-gray-500">Oleh {doclog.causer_name}</p>
-                                                    <p className="mb-1 text-sm">Notes: {doclog.notes}</p>
-                                                </div>
-                                            </Timeline.Item>
-                                        )
-                                    })
-                                }
-                            </Timeline>
+                            logs2.length < 1 ?
+                                <>
+                                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                </>
+                                :
+                                <Timeline mode="left">
+                                    {
+                                        logs2.map((doclog, idxlog) => {
+                                            return (
+                                                <Timeline.Item label={doclog.date}>
+                                                    <div className="flex flex-col">
+                                                        <h1 className="font-semibold text-base mb-1">{doclog.description}</h1>
+                                                        <p className="mb-1 text-xs text-gray-500">Oleh {doclog.causer_name}</p>
+                                                        <p className="mb-1 text-sm">Notes: {doclog.notes}</p>
+                                                    </div>
+                                                </Timeline.Item>
+                                            )
+                                        })
+                                    }
+                                </Timeline>
                     }
                 </div>
             </div>
@@ -1380,12 +1401,13 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                     .then(res => res.json())
                     .then(res2 => {
                         setinvrelations(res2.data)
-                        const del_manuf = res2.data.manufacturers.filter(docfil => docfil.id === res3.manufacturer_id)[0].deleted_at
+                        var del_manuf = null
+                        res3.manufacturer_id === 0 || res3.manufacturer_id === null ? del_manuf = null : del_manuf = res2.data.manufacturers.filter(docfil => docfil.id === res3.manufacturer_id)[0].deleted_at
                         setmanuf({
-                            name: res2.data.manufacturers.filter(docfil => docfil.id === res3.manufacturer_id)[0].name,
+                            name: res3.manufacturer_id === null || res3.manufacturer_id === 0 ?  "-" : res2.data.manufacturers.filter(docfil => docfil.id === res3.manufacturer_id)[0].name,
                             isnull: del_manuf !== null ? false : true
                         })
-                        setvendor(res2.data.vendors.filter(docfil => docfil.id === res3.vendor_id)[0].name)
+                        res3.vendor_id === null || res3.vendor_id === 0 ? setvendor("-") : setvendor(res2.data.vendors.filter(docfil => docfil.id === res3.vendor_id)[0].name)
                         setpraloading2(false)
                     })
             })
@@ -1462,7 +1484,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                                 <p className="mb-1">Status Pemakaian:</p>
                                                 {
                                                     displayusage ?
-                                                        <Select bordered={false} defaultValue={maindata.status_usage} onChange={(value) => {
+                                                        <Select placeholder="Masukkan Status Pemakaian" bordered={false} defaultValue={maindata.status_usage === 0 || maindata.status_usage === null ? null : maindata.status_usage} onChange={(value) => {
                                                             setdisabledusage(prev => {
                                                                 if (value !== 1) {
                                                                     return false
@@ -1490,7 +1512,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                                 <p className="mb-1">Kondisi:</p>
                                                 {
                                                     displaykondisi ?
-                                                        <Select bordered={false} defaultValue={maindata.status_condition} onChange={(value) => {
+                                                        <Select placeholder="Masukkan Status Kondisi" bordered={false} defaultValue={maindata.status_condition === 0 || maindata.status_condition === null ? null : maindata.status_condition} onChange={(value) => {
                                                             setkondisi(value);
                                                             setmodalkondisi(true)
                                                             setdisplaykondisi(false)
