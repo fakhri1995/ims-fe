@@ -1218,6 +1218,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
         vendors: [],
         companies: []
     })
+    const [relship, setrelship] = useState([])
     const [manuf, setmanuf] = useState("")
     const [vendor, setvendor] = useState("")
     const [praloading, setpraloading] = useState(true)
@@ -1495,6 +1496,18 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                 })
         }
     }, [locationtrigger])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventory?id=${itemid}&type_id=-4`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setrelship(res2.data.from_inverse.concat(res2.data.not_from_inverse))
+            })
+    }, [])
     return (
         <Layout st={st} sidemenu={sidemenu} tok={initProps} pathArr={pathArr} dataProfile={dataProfile}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4" id="createAssetsWrapper">
@@ -1828,6 +1841,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                 cancelText="Tidak"
                 onOk={handleDeleteItem}
                 okButtonProps={{ loading: loadingdelete }}
+                width={720}
             >
                 <div className="flex flex-col mb-5">
                     <div className="flex flex-col mb-4">
@@ -1840,22 +1854,22 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                     <>
                                         {
                                             maindata.inventory_parts.map((docempty, idxempty) => (
-                                                <p key={idxempty}>- <strong>{docempty.model}</strong></p>
+                                                <p key={idxempty}>- <strong>{docempty.inventory_name}</strong></p>
                                             ))
                                         }
                                     </>
                             }
                         </div>
-                        {/* <p className="mb-2 text-xs font-semibold">
+                        <p className="mb-2 text-xs font-semibold">
                             Item ini sedang memiliki hubungan dengan item berikut:
-                        </p> */}
-                        {/* <ul className="mb-2 text-xs">
-                                    {
-                                        maindata.inventory_parts.map((docempty, idxempty) => (
-                                            <li key={idxempty}>- <strong>{docempty}</strong></li>
-                                        ))
-                                    }
-                                </ul> */}
+                        </p>
+                        <ul className="mb-2 text-xs">
+                            {
+                                relship.map((docrel, idxrel) => (
+                                    <li key={idxrel}>- <strong>{docrel.type} - {docrel.connected_detail_name}</strong></li>
+                                ))
+                            }
+                        </ul>
                         <p className="mb-2 text-xs font-semibold text-red-500">
                             Dengan menghapus item ini akan menghilangkan seluruh hubungan dengan item diatas!
                         </p>
