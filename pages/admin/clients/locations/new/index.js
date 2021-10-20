@@ -48,7 +48,7 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
         address: '-',
         phone_number: '-',
         image_logo: '',
-        parent_id: 0
+        parent_id: parent === "list" ? 1 : 0
     })
     const [loadingcreate, setloadingcreate] = useState(false)
     const [loadingupload, setloadingupload] = useState(false)
@@ -120,10 +120,13 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
 
     //Handler
     const handleCreateLocationsClients = () => {
-        setdatanew({
-            ...datanew,
-            parent_id: Number(parent)
-        })
+        parent !== "list" ?
+            setdatanew({
+                ...datanew,
+                parent_id: Number(parent)
+            })
+            :
+            null
         setloadingcreate(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyClient`, {
             method: 'POST',
@@ -185,7 +188,7 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                 const comparr = [res2.data]
                 setdatalocationclient(comparr)
                 setExpandedKeys(comparr[0].key)
-                setdatanew({ ...datanew, parent_id: Number(parent) })
+                setdatanew({ ...datanew, parent_id: parent === "list" ? 1 : Number(parent) })
             })
     }, [tambahdata])
 
@@ -259,23 +262,25 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                                             <>
                                                 {
                                                     parent === "list" ?
-                                                        <Form.Item name="parent_id" label="Induk Lokasi" style={{ marginRight: `1rem` }}
-                                                            rules={[
-                                                                {
-                                                                    required: true,
-                                                                    message: 'Induk Lokasi wajib diisi',
-                                                                },
-                                                            ]}>
-                                                            <TreeSelect
-                                                                allowClear
-                                                                style={{ width: '100%' }}
-                                                                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                                                treeData={datalocationclient}
-                                                                placeholder="Tambah Induk Lokasi"
-                                                                treeDefaultExpandAll
-                                                                onChange={(value) => { setdatanew({ ...datanew, parent_id: value }) }}
-                                                            />
-                                                        </Form.Item> :
+                                                        // <Form.Item name="parent_id" label="Induk Lokasi" style={{ marginRight: `1rem` }}
+                                                        //     rules={[
+                                                        //         {
+                                                        //             required: true,
+                                                        //             message: 'Induk Lokasi wajib diisi',
+                                                        //         },
+                                                        //     ]}>
+                                                        //     <TreeSelect
+                                                        //         allowClear
+                                                        //         style={{ width: '100%' }}
+                                                        //         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                                        //         treeData={datalocationclient}
+                                                        //         placeholder="Tambah Induk Lokasi"
+                                                        //         treeDefaultExpandAll
+                                                        //         onChange={(value) => { setdatanew({ ...datanew, parent_id: value }) }}
+                                                        //     />
+                                                        // </Form.Item> 
+                                                        null
+                                                        :
                                                         <Form.Item name="parent_id" label="Induk Lokasi" style={{ marginRight: `1rem` }}
                                                             rules={[
                                                                 {

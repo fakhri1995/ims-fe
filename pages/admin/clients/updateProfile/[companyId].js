@@ -75,7 +75,7 @@ function ClientUpdateProfile({ initProps, dataProfile, sidemenu, companyid }) {
     const handleEditProfile = () => {
         setloadingbtn(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateCompanyClient`, {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
