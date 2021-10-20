@@ -369,11 +369,11 @@ const RolesDetail = ({ initProps, dataProfile, sidemenu, rolesid }) => {
                                     <Button type="default" size="middle">Batal</Button>
                                 </Link> */}
                                 {
-                                    [174, 177].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                    // [174, 177].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <Button type="primary" size="middle" onClick={() => { rt.push(`/admin/roles/update/${rolesid}`) }}>Ubah</Button>
                                 }
                                 {
-                                    [178].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                    // [178].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <Button type="default" size="middle" onClick={() => { setmodaldelete(true) }} danger>Hapus</Button>
                                 }
                             </div>
@@ -468,7 +468,7 @@ export async function getServerSideProps({ req, res, params }) {
     }
     initProps = cookiesJSON1.token
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -476,10 +476,10 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![173, 174, 175, 176, 177, 178].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![173, 174, 175, 176, 177, 178].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     // const resourcesGR = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
     //     method: `GET`,

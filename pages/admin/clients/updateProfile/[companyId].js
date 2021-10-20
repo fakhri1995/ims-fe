@@ -154,7 +154,7 @@ function ClientUpdateProfile({ initProps, dataProfile, sidemenu, companyid }) {
                         }
                         <>
                             {
-                                [158].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                // [158].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                 <Button type="primary" onClick={instanceForm.submit} loading={loadingbtn}>Simpan</Button>
                             }
                         </>

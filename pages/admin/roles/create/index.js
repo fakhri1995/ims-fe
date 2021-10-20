@@ -109,7 +109,7 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
     //useEffect
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
-            method: `POST`,
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps)
             }
@@ -188,10 +188,10 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
                                                     <TabPane tab={doc.name} key={idx + 1}>
                                                         <div className="mb-5">
                                                             {
-                                                                doc.feature !== null ?
+                                                                doc.features !== null ?
                                                                     <>
                                                                         {
-                                                                            doc.feature.map((doc, idx) => {
+                                                                            doc.features.map((doc, idx) => {
                                                                                 return (
                                                                                     <div key={idx} className="flex items-center hover:bg-gray-300 p-3">
                                                                                         <Checkbox style={{ marginRight: `1rem` }} onChange={(e) => { onChangeCreateCheckbox(e, doc.id) }} /> {doc.name}
@@ -265,7 +265,7 @@ export async function getServerSideProps({ req, res }) {
     }
     initProps = cookiesJSON1.token
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -273,10 +273,10 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![176].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![176].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     // const resourcesGM = await fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
     //     method: `POST`,

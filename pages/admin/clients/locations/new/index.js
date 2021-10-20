@@ -170,7 +170,7 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations${typeof(cancel) === 'undefined' ? "" : `?company_id=${cancel}` }`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations${typeof (cancel) === 'undefined' ? "" : `?company_id=${cancel}`}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -209,13 +209,11 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                                     parent !== "list" ?
                                         <Link href={`/admin/clients/${cancel}?active=locations`}>
                                             <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
-                                            {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-5 rounded-md mx-2">Cancel</button> */}
                                         </Link>
                                         :
-                                        <Link href={`/admin/clients`}>
-                                            <Button type="default" size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
-                                            {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-5 rounded-md mx-2">Cancel</button> */}
-                                        </Link>
+                                        // <Link href={`/admin/clients`}>
+                                        <Button onClick={() => { console.log(datanew) }} type="default" size="middle" style={{ marginRight: `1rem` }}>Batal</Button>
+                                    // </Link>
                                 }
                                 <Button type="primary" size="middle" loading={loadingcreate} onClick={createLocationForm.submit}>Simpan</Button>
                                 {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-5 rounded-md">Save</button> */}
@@ -261,8 +259,23 @@ function NewLocationsClients({ initProps, dataProfile, sidemenu, dataLocations }
                                             <>
                                                 {
                                                     parent === "list" ?
-                                                        null
-                                                        :
+                                                        <Form.Item name="parent_id" label="Induk Lokasi" style={{ marginRight: `1rem` }}
+                                                            rules={[
+                                                                {
+                                                                    required: true,
+                                                                    message: 'Induk Lokasi wajib diisi',
+                                                                },
+                                                            ]}>
+                                                            <TreeSelect
+                                                                allowClear
+                                                                style={{ width: '100%' }}
+                                                                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                                                treeData={datalocationclient}
+                                                                placeholder="Tambah Induk Lokasi"
+                                                                treeDefaultExpandAll
+                                                                onChange={(value) => { setdatanew({ ...datanew, parent_id: value }) }}
+                                                            />
+                                                        </Form.Item> :
                                                         <Form.Item name="parent_id" label="Induk Lokasi" style={{ marginRight: `1rem` }}
                                                             rules={[
                                                                 {

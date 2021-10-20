@@ -254,7 +254,7 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <h1 className="font-semibold text-base w-auto pt-2">Roles</h1>
                                 {
-                                    [176].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                    // [176].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <div className="flex space-x-2">
                                         <Link href="/admin/roles/create">
                                             <Button type="primary" size="large">Tambah</Button>
@@ -265,7 +265,7 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                         </Sticky>
                     </div>
                     {
-                        [173].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                        // [173].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <div className=" col-span-1 md:col-span-4 flex flex-col">
                             <div className="col-span-3 flex flex-col space-y-3">
                                 <Table loading={loadingtable} scroll={{ x: 400 }} pagination={{ pageSize: 5 }} dataSource={maindata} columns={columnsDD}
@@ -276,10 +276,10 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                                             },
                                             onClick: (event) => {
                                                 {
-                                                    [174, 177].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                    // [174, 177].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                                         rt.push(`/admin/roles/detail/${record.id}`)
-                                                        :
-                                                        null
+                                                        // :
+                                                        // null
                                                 }
                                             }
                                         }
@@ -369,7 +369,7 @@ export async function getServerSideProps({ req, res }) {
     }
     initProps = cookiesJSON1.token
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -377,10 +377,10 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![173, 174, 175, 176, 177, 178].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![173, 174, 175, 176, 177, 178].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     // const resourcesGR = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
     //     method: `GET`,

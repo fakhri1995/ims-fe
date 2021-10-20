@@ -178,7 +178,7 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
     }, [])
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
-            method: `POST`,
+            method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps)
             }
@@ -206,7 +206,7 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                                         <Button type="default" size="middle">Batal</Button>
                                     </Link>
                                     {
-                                        [177].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                        // [177].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                         <Button type="primary" size="middle" onClick={instanceForm.submit} loading={loadingupdate}>Simpan</Button>
                                     }
                                 </div>
@@ -230,13 +230,13 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                                             ]}
                                         >
                                             {
-                                                [177].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                // [177].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                                     <Input placeholder="Role Name" name={`name`} onChange={onChangeEditRoles} defaultValue={editroles.name}></Input>
-                                                    :
-                                                    <div className="col-span-1 flex flex-col mb-5">
-                                                        <h1 className="font-semibold text-sm">Role Name:</h1>
-                                                        <h1 className="text-sm font-normal text-black">{editroles.name}</h1>
-                                                    </div>
+                                                    // :
+                                                    // <div className="col-span-1 flex flex-col mb-5">
+                                                    //     <h1 className="font-semibold text-sm">Role Name:</h1>
+                                                    //     <h1 className="text-sm font-normal text-black">{editroles.name}</h1>
+                                                    // </div>
                                             }
                                         </Form.Item>
                                     </div>
@@ -251,13 +251,13 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                                             ]}
                                         >
                                             {
-                                                [177].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                                // [177].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                                     <TextArea placeholder="Description" rows={2} name={`description`} defaultValue={editroles.description} onChange={onChangeEditRoles} />
-                                                    :
-                                                    <div className="col-span-1 flex flex-col mb-5">
-                                                        <h1 className="font-semibold text-sm">Description:</h1>
-                                                        <h1 className="text-sm font-normal text-black">{editroles.description}</h1>
-                                                    </div>
+                                                    // :
+                                                    // <div className="col-span-1 flex flex-col mb-5">
+                                                    //     <h1 className="font-semibold text-sm">Description:</h1>
+                                                    //     <h1 className="text-sm font-normal text-black">{editroles.description}</h1>
+                                                    // </div>
                                             }
                                         </Form.Item>
                                     </div>
@@ -273,7 +273,7 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                                 :
                                 <>
                                     {
-                                        [177].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                        // [177].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                             <>
                                                 <h1 className="font-semibold text-base w-auto p-2">Permissions</h1>
                                                 <Tabs defaultActiveKey="1" tabPosition="left">
@@ -283,10 +283,10 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                                                                 <TabPane tab={doc.name} key={idx + 1}>
                                                                     <div className=" overflow-y-auto h-80 mb-5">
                                                                         {
-                                                                            doc.feature !== null ?
+                                                                            doc.features !== null ?
                                                                                 <>
                                                                                     {
-                                                                                        doc.feature.map((doc, idx) => {
+                                                                                        doc.features.map((doc, idx) => {
                                                                                             const checkedStatus = editroles.feature_ids.includes(doc.id)
                                                                                             return (
                                                                                                 <div key={idx} className="flex items-center hover:bg-gray-300 p-3">
@@ -308,41 +308,41 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
                                                     }
                                                 </Tabs>
                                             </>
-                                            :
-                                            <>
-                                                <h1 className="font-semibold text-base w-auto p-2">Permissions</h1>
-                                                <Tabs defaultActiveKey="1" tabPosition="left">
-                                                    {
-                                                        modules.map((doc, idx) => {
-                                                            return (
-                                                                <TabPane tab={doc.name} key={idx + 1}>
-                                                                    <div className=" overflow-y-auto h-80 mb-5">
-                                                                        {
-                                                                            doc.feature !== null ?
-                                                                                <>
-                                                                                    {
-                                                                                        doc.feature.map((doc, idx) => {
-                                                                                            const checkedStatus = editroles.feature_ids.includes(doc.id)
-                                                                                            return (
-                                                                                                <div key={idx} className="flex items-center hover:bg-gray-300 p-3">
-                                                                                                    <Checkbox disabled style={{ marginRight: `1rem` }} onChange={(e) => { onChangeUpdateCheckbox(e, doc.id) }} defaultChecked={checkedStatus} /> {doc.name}
-                                                                                                </div>
-                                                                                            )
-                                                                                        })
-                                                                                    }
-                                                                                </>
-                                                                                :
-                                                                                <>
-                                                                                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
-                                                                                </>
-                                                                        }
-                                                                    </div>
-                                                                </TabPane>
-                                                            )
-                                                        })
-                                                    }
-                                                </Tabs>
-                                            </>
+                                            // :
+                                            // <>
+                                            //     <h1 className="font-semibold text-base w-auto p-2">Permissions</h1>
+                                            //     <Tabs defaultActiveKey="1" tabPosition="left">
+                                            //         {
+                                            //             modules.map((doc, idx) => {
+                                            //                 return (
+                                            //                     <TabPane tab={doc.name} key={idx + 1}>
+                                            //                         <div className=" overflow-y-auto h-80 mb-5">
+                                            //                             {
+                                            //                                 doc.feature !== null ?
+                                            //                                     <>
+                                            //                                         {
+                                            //                                             doc.feature.map((doc, idx) => {
+                                            //                                                 const checkedStatus = editroles.feature_ids.includes(doc.id)
+                                            //                                                 return (
+                                            //                                                     <div key={idx} className="flex items-center hover:bg-gray-300 p-3">
+                                            //                                                         <Checkbox disabled style={{ marginRight: `1rem` }} onChange={(e) => { onChangeUpdateCheckbox(e, doc.id) }} defaultChecked={checkedStatus} /> {doc.name}
+                                            //                                                     </div>
+                                            //                                                 )
+                                            //                                             })
+                                            //                                         }
+                                            //                                     </>
+                                            //                                     :
+                                            //                                     <>
+                                            //                                         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
+                                            //                                     </>
+                                            //                             }
+                                            //                         </div>
+                                            //                     </TabPane>
+                                            //                 )
+                                            //             })
+                                            //         }
+                                            //     </Tabs>
+                                            // </>
                                     }
                                 </>
                         }
@@ -443,7 +443,7 @@ export async function getServerSideProps({ req, res, params }) {
     }
     initProps = cookiesJSON1.token
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -451,10 +451,10 @@ export async function getServerSideProps({ req, res, params }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![174, 177].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![174, 177].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     // const resourcesGR = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRole?id=${idrole}`, {
     //     method: `GET`,

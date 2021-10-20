@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { SearchOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import { Button, TreeSelect, Table, Input, Select, Tooltip, DatePicker } from 'antd'
 import Layout from '../../components/layout-dashboard2'
+import moment from 'moment'
 import st from '../../components/layout-dashboard.module.css'
 
 const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
@@ -22,11 +23,28 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
         tickets: []
     })
     const [ticketrelations, setticketrelations] = useState({
-        status_ticket: [],
+        status_ticket: [
+            {
+                id: 0,
+                name: ""
+            }
+        ],
         incident_type: [],
-        requesters: [],
+        requesters: [
+            {
+                user_id: 0,
+                fullname: "",
+                company_id: 0
+            },
+        ],
         requester_companies: [],
-        companies: [],
+        companies: [
+            {
+                company_id: 0,
+                company_name: "",
+                parent_id: null
+            },
+        ],
     })
     const [displaydata1, setdisplaydata1] = useState([])
     const [displaydata2, setdisplaydata2] = useState([])
@@ -41,6 +59,118 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
     const [namaasset, setnamaasset] = useState("")
     const [rowstate, setrowstate] = useState(0)
     const [praloading, setpraloading] = useState(true)
+    const [dummies, setdummies] = useState([])
+
+    //declaration
+    const datatableDummies = [
+        {
+            id: 100,
+            ticket_type: 1,
+            raised_by: 1,
+            location_problem: 1,
+            date_raised: "2021-10-19T08:00:46.384Z",
+            assign_to: 2,
+            status: 1
+        },
+        {
+            id: 200,
+            ticket_type: 1,
+            raised_by: 1,
+            location_problem: 1,
+            date_raised: "2021-02-19T16:00:46.384Z",
+            assign_to: 3,
+            status: 2
+        },
+        {
+            id: 300,
+            ticket_type: 1,
+            raised_by: 1,
+            location_problem: 1,
+            date_raised: "2019-11-19T23:00:50.384Z",
+            assign_to: 4,
+            status: 3
+        }
+    ]
+    const columnDummies = [
+        {
+            title: 'No Ticket',
+            dataIndex: 'num',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.ticket_type === 1 && "#INC - "}{record.id}
+                        </>
+                }
+            }
+        },
+        {
+            title: 'Raised By',
+            dataIndex: 'raised_by',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {ticketrelations.requesters.filter(docfil => docfil.user_id === record.raised_by)[0].fullname}
+                        </>
+                }
+            }
+        },
+        {
+            title: 'Lokasi Problem',
+            dataIndex: 'location_problem',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {ticketrelations.companies.filter(docfil => docfil.company_id === record.location_problem)[0].company_name}
+                        </>
+                }
+            }
+        },
+        {
+            title: 'Date Raised',
+            dataIndex: 'date_raised',
+            render: (text, record, index) => {
+                // var hariTerakhir = new Date(new Date(record.tanggal).getTime() + (props.durasi * 24 * 60 * 60 * 1000));
+                var jumlahHari = Math.floor((new Date().getTime() - new Date(record.date_raised).getTime()) / (1000 * 3600 * 24))
+                var jumlahJam = ""
+                if (jumlahHari < 1) {
+                    jumlahJam = Math.floor((new Date().getTime() - new Date(record.date_raised).getTime()) / (1000 * 3600))
+                }
+                return {
+                    children:
+                        <>
+                            {moment(record.date_raised).locale('id').format('L')} ({jumlahHari < 1 ? `${jumlahJam} jam` : `${jumlahHari} hari`} yang lalu)
+                        </>
+                }
+            }
+        },
+        {
+            title: 'Assign To',
+            dataIndex: 'assign_to',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {ticketrelations.requesters.filter(docfil => docfil.user_id === record.assign_to)[0].fullname}
+                        </>
+                }
+            }
+        },
+        {
+            title: 'Status',
+            dataIndex: 'assign_to',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {ticketrelations.status_ticket.filter(docfil => docfil.id === record.status)[0].name}
+                        </>
+                }
+            }
+        },
+    ]
 
     //3.onChange
     //search nama
@@ -122,6 +252,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 setdisplaydata(res2.data)
                 setdisplaydata1(res2.data)
                 setdisplaydata2(res2.data)
+                setpraloading(false)
             })
     }, [])
     useEffect(() => {
@@ -134,7 +265,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
             .then(res => res.json())
             .then(res2 => {
                 setticketrelations(res2.data)
-                setpraloading(false)
+                setdummies(datatableDummies)
             })
     }, [])
 
@@ -142,7 +273,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
         <Layout dataProfile={dataProfile} sidemenu={sidemenu} tok={initProps} st={st} pathArr={pathArr}>
             <div className=" w-full grid grid-cols-1 md:grid-cols-4 border-gray-400 md:border-t md:border-b bg-white mb-5 px-4 py-5">
                 <div className=" col-span-1 md:col-span-3 flex items-center mb-2 md:mb-0">
-                    <div className="font-bold text-2xl w-auto mr-20">Tickets</div>
+                    <div className="font-bold text-2xl w-auto mr-14">Tickets</div>
                     <div className="flex flex-col mr-10">
                         <div className="flex items-center mb-2">
                             <div className="w-2 h-2 rounded-full bg-blue-500 mr-1"></div>
@@ -179,6 +310,16 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     </div>
                 </div>
                 <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
+                    <Link href={'/tickets/histories'}>
+                        <Button size="large" type="primary" style={{ marginRight: `1rem` }}>
+                            History
+                        </Button>
+                    </Link>
+                    <Link href={'/tickets/exporting'}>
+                        <Button style={{ backgroundColor: `gray`, borderColor: `gray`, marginRight: `1rem` }} size="large" type="primary">
+                            Export
+                        </Button>
+                    </Link>
                     <Link href={'/tickets/create'}>
                         <Button size="large" type="primary">
                             Buat Tiket
@@ -245,6 +386,30 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                 <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
                             </div>
                         </div>
+                    </div>
+                    <div className="px-10">
+                        <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dummies} columns={columnDummies} loading={praloading}
+                            onRow={(record, rowIndex) => {
+                                return {
+                                    onMouseOver: (event) => {
+                                        setrowstate(record.id)
+                                    },
+                                    onClick: (event) => {
+                                        // {
+                                        //     [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                                        rt.push(`/tickets/detail/${record.id}`)
+                                        //         :
+                                        //         null
+                                        // }
+                                    }
+                                }
+                            }}
+                            rowClassName={(record, idx) => {
+                                return (
+                                    record.id === rowstate ? `cursor-pointer` : ``
+                                )
+                            }}
+                        ></Table>
                     </div>
                 </div>
             </div>
