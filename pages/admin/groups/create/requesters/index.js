@@ -22,7 +22,8 @@ function GroupsRequestersCreate({ initProps, dataProfile, dataListAccount, sidem
     const [newgroup, setNewgroup] = useState({
         name: '',
         description: '',
-        group_head: dataProfile.data.user_id,
+        // group_head: dataProfile.data.user_id,
+        grup_head: null,
         user_ids: []
     })
     const onChangeCreateGroup = (e) => {
@@ -208,7 +209,7 @@ export async function getServerSideProps({ req, res }) {
     }
 
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -216,18 +217,18 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![140].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![140].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps),
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(reqBodyAccountList)
+        // body: JSON.stringify(reqBodyAccountList)
     })
     const resjsonLA = await resourcesLA.json()
     const dataListAccount = resjsonLA

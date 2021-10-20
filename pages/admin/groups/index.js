@@ -173,7 +173,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                                         variabel === "agents" ?
                                             <>
                                                 {
-                                                    [136, 137].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                                    // [136, 137].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                                     <Button>
                                                         <Link href={{
                                                             pathname: `/admin/groups/update/` + "agents" + `/${record.key}`,
@@ -187,7 +187,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                                             :
                                             <>
                                                 {
-                                                    [141, 142].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                                    // [141, 142].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                                     <Button>
                                                         <Link href={{
                                                             pathname: `/admin/groups/update/` + "requesters" + `/${record.key}`,
@@ -222,7 +222,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                                             ?
                                             <>
                                                 {
-                                                    [138].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                                    // [138].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                                     <Button onClick={() => { onClickModalDeleteGroup(true, record, "agents") }}>
                                                         <a><DeleteOutlined /></a>
                                                     </Button>
@@ -231,7 +231,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                                             :
                                             <>
                                                 {
-                                                    [143].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                                    // [143].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                                     <Button onClick={() => { onClickModalDeleteGroup(true, record, "requesters") }}>
                                                         <a><DeleteOutlined /></a>
                                                     </Button>
@@ -249,7 +249,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
         return (
             <Menu style={{ padding: "10px 5px" }}>
                 {
-                    [135].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                    // [135].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                     <Menu.Item key="0">
                         <Link href={{
                             pathname: '/admin/groups/create/agents',
@@ -257,7 +257,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                     </Menu.Item>
                 }
                 {
-                    [140].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                    // [140].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                     <Menu.Item key="1">
                         <Link href={{
                             pathname: '/admin/groups/create/requesters',
@@ -276,7 +276,7 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                             <div className="flex justify-between p-2 pt-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <h1 className="font-semibold text-base w-auto py-2">Groups</h1>
                                 {
-                                    [135, 140].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                    // [135, 140].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <div className="flex space-x-2">
                                         <Dropdown overlay={menu} placement="bottomCenter" trigger={['click']}>
                                             <Button type="primary" size="large">
@@ -289,18 +289,18 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                         </Sticky>
 
                         {
-                            [134, 139].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                            // [134, 139].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                             <div className="col-span-3 flex flex-col space-y-3">
                                 <Tabs type="card">
                                     {
-                                        [134].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                        // [134].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                         <TabPane tab="Agent Groups" key="1">
                                             <Table showHeader={false} scroll={{ x: 400 }} dataSource={groupsAgents} columns={columns('agents')} onRow={(record, rowIndex) => {
                                             }}></Table>
                                         </TabPane>
                                     }
                                     {
-                                        [139].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                        // [139].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                         <TabPane tab="Requester Groups" key="2">
                                             <Table showHeader={false} scroll={{ x: 400 }} dataSource={groupsRequesters} columns={columns('requesters')} onRow={(record, rowIndex) => {
                                             }}></Table>
@@ -351,7 +351,7 @@ export async function getServerSideProps({ req, res }) {
     }
 
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -359,10 +359,10 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![134, 135, 136, 137, 138, 139, 140, 141, 142, 143].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![134, 135, 136, 137, 138, 139, 140, 141, 142, 143].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     const resourcesGetGroupsAgents = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentGroups`, {
         method: `GET`,

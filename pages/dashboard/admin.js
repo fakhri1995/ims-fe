@@ -29,7 +29,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                             </div>
                             <div className="grid md:grid-cols-5 sm:grid-cols-1">
                                 {
-                                    dataProfile.data.registered_feature.includes(108) ?
+                                    // dataProfile.data.registered_feature.includes(108) ?
                                         <Link href={{
                                             pathname: '/admin/agents',
                                         }}>
@@ -40,11 +40,11 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                                 </div>
                                             </div>
                                         </Link>
-                                        :
-                                        null
+                                        // :
+                                        // null
                                 }
                                 {
-                                    dataProfile.data.registered_feature.includes(119) ?
+                                    // dataProfile.data.registered_feature.includes(119) ?
                                         <Link href={{
                                             pathname: '/admin/requesters',
                                         }}>
@@ -55,11 +55,11 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                                 </div>
                                             </div>
                                         </Link>
-                                        :
-                                        null
+                                        // :
+                                        // null
                                 }
                                 {
-                                    dataProfile.data.registered_feature.includes(134) ?
+                                    // dataProfile.data.registered_feature.includes(134) ?
                                         <Link href={{
                                             pathname: '/admin/groups',
                                             query: {
@@ -73,8 +73,8 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                                 </div>
                                             </div>
                                         </Link>
-                                        :
-                                        null
+                                        // :
+                                        // null
                                 }
                             </div>
                         </div>

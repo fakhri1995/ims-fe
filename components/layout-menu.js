@@ -102,11 +102,11 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                     </Link>
                                 </Menu.Item>
                             }
-                            <Menu.Item key="412" icon={<IconFeatures width={25} height={25} />}>
+                            {/* <Menu.Item key="412" icon={<IconFeatures width={25} height={25} />}>
                                 <Link href="/admin/features">
                                     Features
                                 </Link>
-                            </Menu.Item>
+                            </Menu.Item> */}
                         </SubMenu>
                         {
                             // companyFeat.every(isIncludesFeat) ?
@@ -284,11 +284,11 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                     </Link>
                                 </Menu.Item>
                             }
-                            <Menu.Item key="412" icon={<IconFeatures width={20} height={20} />}>
+                            {/* <Menu.Item key="412" icon={<IconFeatures width={20} height={20} />}>
                                 <Link href="/admin/features">
                                     Features
                                 </Link>
-                            </Menu.Item>
+                            </Menu.Item> */}
                         </SubMenu>
                         {
                             // dataProfile.data.registered_feature.includes(144) && dataProfile.data.registered_feature.includes(155) && dataProfile.data.registered_feature.includes(150) ?

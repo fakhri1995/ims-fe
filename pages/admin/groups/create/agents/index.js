@@ -218,7 +218,7 @@ export async function getServerSideProps({ req, res }) {
     }
 
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -226,18 +226,18 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if(![135].every((curr) => dataProfile.data.registered_feature.includes(curr))){
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if(![135].every((curr) => dataProfile.data.registered_feature.includes(curr))){
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps),
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(reqBodyAccountList)
+        // body: JSON.stringify(reqBodyAccountList)
     })
     const resjsonLA = await resourcesLA.json()
     const dataListAccount = resjsonLA
