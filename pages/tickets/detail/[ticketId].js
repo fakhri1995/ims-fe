@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
 import Link from 'next/link'
 import { ExclamationCircleOutlined, SearchOutlined, CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons'
-import { notification, Button, Spin, Timeline, Empty, Modal, Tooltip, Select, Tabs, Input, TreeSelect, Table, Popover } from 'antd'
+import { notification, Button, Spin, Empty, Modal, Tooltip, Select, Tabs, Input, TreeSelect } from 'antd'
 import Layout from '../../../components/layout-dashboard2'
 import moment from 'moment'
 import st from '../../../components/layout-dashboard.module.css'
@@ -54,11 +54,11 @@ const Overview = ({ ticketid, initProps, praloading, maindata }) => {
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Date Raised Ticket:</h1>
-                                <p className="mb-0 text-sm">{moment(maindata.ticket.created_at).locale('id').format("LL")}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.created_at ? moment(maindata.ticket.created_at).locale('id').format("LL") : "-"}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Date Closed Ticket:</h1>
-                                <p className="mb-0 text-sm">{moment(maindata.ticket.due_to).locale('id').format("LL")}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.due_to ? moment(maindata.ticket.due_to).locale('id').format("LL") : "-"}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Resolved Time:</h1>
@@ -97,11 +97,11 @@ const Overview = ({ ticketid, initProps, praloading, maindata }) => {
                                 <p className="mb-0 text-sm">{maindata.incident.data.incident.incident_time ? moment(maindata.incident.data.incident.incident_time).locale('id').format("L") + moment(maindata.incident.data.incident.incident_time).locale('id').format("LT") : "-"}</p>
                             </div>
                             <div className="flex flex-col mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">Bukti Kejadian:</h1>
-                                <div className="border px-8 py-4 flex justify-between items-center w-9/12 mb-1 relative">
+                                <h1 className=" text-sm font-semibold mb-2">Bukti Kejadian:</h1>
+                                <div className="border px-8 py-4 flex justify-between items-center w-9/12 mb-1 relative cursor-pointer hover:text-blue-500">
                                     <div className="mr-5 flex items-center">
                                         <img src="/image/pdfIcon.png" alt="selected images" className="object-contain w-16 h-16 mr-10" />
-                                        <p className="mb-0 mr-3 cursor-pointer hover:text-blue-500">{maindata.incident.data.incident.files}</p>
+                                        <p className="mb-0 mr-3">{maindata.incident.data.incident.files}</p>
                                     </div>
                                 </div>
                             </div>
@@ -133,9 +133,142 @@ const Overview = ({ ticketid, initProps, praloading, maindata }) => {
     )
 }
 
+const DetailItem = ({ ticketid, initProps }) => {
+    //useState
+    const [connecteditem, setconnecteditem] = useState("")
+    const [modalconnecteditem, setmodalconnecteditem] = useState(false)
+    const [loadingconnecteditem, setloadingconnecteditem] = useState(false)
+    const [disabledconnecteditem, setdisabledconnecteditem] = useState(true)
+    //1.asset
+    const [assetdata, setassetdata] = useState([])
+    const [selectedasset, setselectedasset] = useState(-10)
+    //2. Item
+    const [itemdata, setitemdata] = useState([])
+
+    //useEffect
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setassetdata(res2.data)
+            })
+    }, [])
+    useEffect(() => {
+        if (selectedasset !== -10) {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                },
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    const datafilter = res2.data.filter(docfil => docfil.asset_id === selectedasset)
+                    setitemdata(datafilter)
+                }, [])
+        }
+    }, [selectedasset])
+
+    return (
+        <div className="flex flex-col">
+            <div className="border-b flex justify-between px-5 pb-5 pt-3 mb-8">
+                <h1 className="font-bold text-xl my-auto">Detail Item</h1>
+                {
+                    // praloading ?
+                    //     null
+                    //     :
+                    <div className="flex">
+                        <Button type="default" disabled onClick={(e) => { rt.push(`/items`) }} size="large">Activity Item</Button>
+                        {/* <Button type="primary" className="buttonExport" onClick={(e) => { setmodalexporting(true) }} size="large">Export</Button> */}
+                    </div>
+                }
+            </div>
+            <div className=" border rounded-lg py-10 w-10/12 mx-auto flex flex-col">
+                <Empty description={
+                    <p className="mb-0">
+                        Hubungkan <span className=" text-blue-500">Item</span><span className="connectItem"></span>
+                        <style jsx>
+                            {`
+                                        .connectItem::before{
+                                            content: '*';
+                                            color: red;
+                                        }
+                                    `}
+                        </style>
+                    </p>
+                } image={Empty.PRESENTED_IMAGE_DEFAULT}>
+                    <Button type="primary" onClick={() => { setmodalconnecteditem(true) }}>Pilih Item</Button>
+                </Empty>
+            </div>
+            <Modal title={
+                <div className="flex justify-between p-5 mt-5">
+                    <h1 className="font-bold text-xl">Hubungkan Item ke Ticket</h1>
+                    <div className="flex">
+                        <>
+                            <Button type="default" onClick={() => { setmodalconnecteditem(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
+                            <Button type='primary' disabled={disabledconnecteditem} loading={loadingconnecteditem}>Simpan</Button>
+                        </>
+                    </div>
+                </div>
+            }
+                visible={modalconnecteditem}
+                onCancel={() => { setmodalconnecteditem(false) }}
+                footer={null}
+                width={720}
+            >
+                <div className="flex flex-col mb-5">
+                    <div className="flex flex-col mb-3">
+                        <p className="mb-0">Asset Type <span className="assetitem"></span></p>
+                        <TreeSelect treeDefaultExpandAll treeData={assetdata} onChange={(value, label, extra) => {
+                            setselectedasset(extra.allCheckedNodes[0].node.props.id)
+                        }}></TreeSelect>
+                        <style jsx>
+                            {`
+                                .assetitem::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+                        </style>
+                    </div>
+                    <div className="flex flex-col mb-3">
+                        <p className="mb-0">Item <span className="itemitem"></span></p>
+                        <Select disabled={selectedasset === -10} showSearch optionFilterProp="children" placeholder="Cari Item" filterOption={(input, opt) => (
+                            opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                        )}>
+                            {
+                                itemdata.map((doc, idx) => {
+                                    return (
+                                        <Select.Option value={doc.id}>{doc.inventory_name}</Select.Option>
+                                    )
+                                })
+                            }
+                        </Select>
+                        <style jsx>
+                            {`
+                                .itemitem::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+                        </style>
+                    </div>
+                </div>
+            </Modal>
+        </div>
+    )
+}
+
 const Activity = ({ ticketid, initProps }) => {
     return (
-        <div></div>
+        <>
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Under Development"></Empty>
+        </>
     )
 }
 
@@ -267,7 +400,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                                 <p className="mb-1">Ticket Type:</p>
                                                 {
                                                     // displayusage ?
-                                                    <Select placeholder="Masukkan Status Pemakaian" style={{ width: `10rem` }} bordered={false} defaultValue={1} onChange={(value) => {
+                                                    <Select placeholder="Masukkan Status Pemakaian" style={{ width: `10rem` }} bordered={true} defaultValue={1} onChange={(value) => {
                                                         // setdisabledusage(prev => {
                                                         //     if (value !== 1) {
                                                         //         return false
@@ -299,7 +432,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                                 <p className="mb-1">Status:</p>
                                                 {
                                                     displaystatus ?
-                                                        <Select placeholder="Masukkan Status" style={{ width: `10rem` }} bordered={false} defaultValue={1} onChange={(value, option) => {
+                                                        <Select placeholder="Masukkan Status" style={{ width: `10rem` }} bordered={true} defaultValue={1} onChange={(value, option) => {
                                                             setstatus(value)
                                                             setnamestatus(option.name)
                                                             setmodalstatus(true)
@@ -335,6 +468,16 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                             <TabPane tab="Overview" key={`overview`}>
                                 <Overview ticketid={ticketid} initProps={initProps} praloading={praloading} maindata={maindata} />
                             </TabPane>
+                            <TabPane tab={
+                                <div className="flex items-center">
+                                    <p className="mb-0 mr-2">Detail Item</p>
+                                    <Tooltip placement="right" title="Ticket Incident belum terhubung dengan Item">
+                                        <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
+                                    </Tooltip>
+                                </div>
+                            } key="detailItem">
+                                <DetailItem ticketid={ticketid} initProps={initProps}></DetailItem>
+                            </TabPane>
                             <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
                                 <Activity ticketid={ticketid} initProps={initProps} />
                             </TabPane>
@@ -344,6 +487,16 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                         <Tabs tabPosition={`top`} defaultActiveKey={activeTab}>
                             <TabPane tab="Overview" key={`overview`}>
                                 <Overview ticketid={ticketid} initProps={initProps} praloading={praloading} maindata={maindata} />
+                            </TabPane>
+                            <TabPane tab={
+                                <div className="flex items-center">
+                                    <p className="mb-0 mr-2">Detail Item</p>
+                                    <Tooltip placement="right" title="Ticket Incident belum terhubung dengan Item">
+                                        <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
+                                    </Tooltip>
+                                </div>
+                            } key="detailItem">
+                                <DetailItem ticketid={ticketid} initProps={initProps}></DetailItem>
                             </TabPane>
                             <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
                                 <Activity ticketid={ticketid} initProps={initProps} />

@@ -44,24 +44,13 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
         },
         {
             title: 'Role',
-            dataIndex: 'role',
-            key: 'role',
+            dataIndex: 'roles',
+            key: 'roles',
             render: (text, record, index) => {
                 return {
                     children:
                         <>
-                        {
-                            record.role === 1 &&
-                            <p className="mb-0">Admin</p>
-                        }
-                        {
-                            record.role === 2 &&
-                            <p className="mb-0">Client</p>
-                        }
-                        {
-                            record.role === 3 &&
-                            <p className="mb-0">Branch</p>
-                        }
+                            {record.roles.map(a => a.name).join(", ")}
                         </>
                 }
             }
@@ -149,7 +138,7 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
             })
                 .then(res => res.json())
                 .then(res2 => {
-                    setrelitemdata([res2.data])
+                    reltipeitemdata === -3 ? setrelitemdata([res2.data]) : setrelitemdata(res2.data)
                     setrelitemloading(false)
                 })
         }
@@ -161,7 +150,7 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
                     <div className="font-semibold text-xl w-auto">Form Tambah Relationship - {name}</div>
                 </div>
                 <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
-                    <Button onClick={() => { /*rt.push(`/items/detail/${itemid}?active=relationship`)*/ console.log(newdata) }} style={{ marginRight: `1rem` }} size="middle" type="danger">
+                    <Button onClick={() => { /*rt.push(`/items/detail/${itemid}?active=relationship`)*/ console.log(relitemdatatrigger, reltipeitemdata, relitemdata) }} style={{ marginRight: `1rem` }} size="middle" type="danger">
                         Batal
                     </Button>
                     <Button disabled={disabledrel} onClick={() => { setmodaladd(true) }} size="middle" type="primary">
