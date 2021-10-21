@@ -370,7 +370,7 @@ export async function getServerSideProps({ req, res }) {
             initProps,
             dataProfile,
             // dataCompanyList,
-            sidemenu: "4"
+            sidemenu: "422"
         }
     }
 }

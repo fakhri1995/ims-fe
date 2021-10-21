@@ -223,7 +223,7 @@ export async function getServerSideProps({ req, res, params }) {
             // dataGetBanks,
             // dataLocations,
             // dataBranchList,
-            sidemenu: "4"
+            sidemenu: "441"
         },
     }
 }

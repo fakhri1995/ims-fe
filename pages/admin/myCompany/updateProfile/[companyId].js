@@ -461,7 +461,7 @@ export async function getServerSideProps({ req, res, params }) {
             initProps,
             dataProfile,
             // dataDetailMyCompany,
-            sidemenu: "4"
+            sidemenu: "441"
         }
     }
 }

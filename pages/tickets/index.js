@@ -2,8 +2,8 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
 import Link from 'next/link'
-import { SearchOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
-import { Button, TreeSelect, Table, Input, Select, Tooltip, DatePicker } from 'antd'
+import { SearchOutlined } from '@ant-design/icons'
+import { Button, Table, Input, Select, DatePicker } from 'antd'
 import Layout from '../../components/layout-dashboard2'
 import moment from 'moment'
 import st from '../../components/layout-dashboard.module.css'
@@ -455,7 +455,7 @@ export async function getServerSideProps({ req, res }) {
         props: {
             initProps,
             dataProfile,
-            sidemenu: "3"
+            sidemenu: "21"
         },
     }
 }

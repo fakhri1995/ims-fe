@@ -506,7 +506,7 @@ export async function getServerSideProps({ req, res }) {
             initProps,
             dataProfile,
             // dataListAgent,
-            sidemenu: "4"
+            sidemenu: "421"
         },
     }
 }

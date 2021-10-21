@@ -556,7 +556,7 @@ export async function getServerSideProps({ req, res, params }) {
             dataProfile,
             // dataLocations,
             // dataBranchDetail,
-            sidemenu: "4",
+            sidemenu: "441",
             companyid
         },
     }

@@ -390,7 +390,7 @@ export async function getServerSideProps({ req, res }) {
             dataGroupsAgents,
             dataGroupsRequesters,
             dataDetailGroup,
-            sidemenu: "4"
+            sidemenu: "423"
         },
     }
 }

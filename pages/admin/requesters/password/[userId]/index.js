@@ -185,7 +185,7 @@ export async function getServerSideProps({ req, res, params }) {
             initProps,
             dataProfile,
             // dataCompanyList,
-            sidemenu: "4",
+            sidemenu: "422",
             userid,
         }
     }

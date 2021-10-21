@@ -480,7 +480,7 @@ export async function getServerSideProps({ req, res }) {
             initProps,
             dataProfile,
             // dataAssetsList,
-            sidemenu: "4"
+            sidemenu: "451"
         },
     }
 }

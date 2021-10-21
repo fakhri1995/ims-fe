@@ -39,56 +39,58 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             Dashboard
                         </Link>
                     </Menu.Item>
-                    <Menu.Item key="2" icon={<Icon component={ticketIconSvg} />}>
-                        <Link href="/tickets">
-                            Ticket
-                        </Link>
-                    </Menu.Item>
+                    <SubMenu key="2" icon={<Icon component={ticketIconSvg} />} title="Tickets">
+                        <Menu.Item key="21">
+                            <Link href="/tickets">
+                                Ticket
+                            </Link>
+                        </Menu.Item>
+                    </SubMenu>
                     <SubMenu key="3" icon={<InboxOutlined />} title="Assets">
-                        <Menu.Item key="sub32">
+                        <Menu.Item key="31">
                             <Link href="/items">
                                 Inventory
                             </Link>
                         </Menu.Item>
                     </SubMenu>
                     <SubMenu key="4" icon={<SettingOutlined />} title="Admin">
-                        <Menu.Item key="4" icon={<SettingOutlined />}>
+                        <Menu.Item key="41" icon={<SettingOutlined />}>
                             <Link href="/dashboard/admin">
                                 Admin
                             </Link>
                         </Menu.Item>
                         {
                             // userFeat.every(isIncludesFeat) ?
-                                <SubMenu title="Users Management">
-                                    {/* {[107, 108, 109, 110, 111, 112, 132].every(isIncludesFeat) && */}
-                                        <Menu.Item key="411" icon={<IconAgents width={25} height={25} />}>
-                                            <Link href="/admin/agents">
-                                                Agents
+                            <SubMenu title="Users Management" key="42">
+                                {/* {[107, 108, 109, 110, 111, 112, 132].every(isIncludesFeat) && */}
+                                <Menu.Item key="421" icon={<IconAgents width={25} height={25} />}>
+                                    <Link href="/admin/agents">
+                                        Agents
                                         </Link>
-                                        </Menu.Item>
-                                    {/* // } */}
-                                    {/* {[119, 118, 117, 116, 115, 114, 133].every(isIncludesFeat) && */}
-                                        <Menu.Item key="412" icon={<IconRequesters width={25} height={25} />}>
-                                            <Link href="/admin/requesters">
-                                                Requesters
+                                </Menu.Item>
+                                {/* // } */}
+                                {/* {[119, 118, 117, 116, 115, 114, 133].every(isIncludesFeat) && */}
+                                <Menu.Item key="422" icon={<IconRequesters width={25} height={25} />}>
+                                    <Link href="/admin/requesters">
+                                        Requesters
                                         </Link>
-                                        </Menu.Item>
-                                    {/* // } */}
-                                    {/* {[134, 135, 136, 137, 138, 139, 140, 141, 142, 143].every(isIncludesFeat) && */}
-                                        <Menu.Item key="413" icon={<Icongroups width={25} height={25} />}>
-                                            <Link href="/admin/groups">
-                                                Groups
+                                </Menu.Item>
+                                {/* // } */}
+                                {/* {[134, 135, 136, 137, 138, 139, 140, 141, 142, 143].every(isIncludesFeat) && */}
+                                <Menu.Item key="423" icon={<Icongroups width={25} height={25} />}>
+                                    <Link href="/admin/groups">
+                                        Groups
                                         </Link>
-                                        </Menu.Item>
-                                    {/* // } */}
-                                </SubMenu>
-                                // :
-                                // null
+                                </Menu.Item>
+                                {/* // } */}
+                            </SubMenu>
+                            // :
+                            // null
                         }
-                        <SubMenu title="Features Management">
+                        <SubMenu title="Features Management" key="43">
                             {
                                 // [173, 174, 175, 176, 177, 178].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <Menu.Item key="411" icon={<IconRoles width={25} height={25} />}>
+                                <Menu.Item key="431" icon={<IconRoles width={25} height={25} />}>
                                     <Link href="/admin/roles">
                                         Roles
                                     </Link>
@@ -96,7 +98,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             }
                             {
                                 // [179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <Menu.Item key="412" icon={<IconModules width={25} height={25} />}>
+                                <Menu.Item key="432" icon={<IconModules width={25} height={25} />}>
                                     <Link href="/admin/modules?module=&featuredisplay=">
                                         Modules
                                     </Link>
@@ -110,49 +112,49 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                         </SubMenu>
                         {
                             // companyFeat.every(isIncludesFeat) ?
-                                <SubMenu title="Company Management">
-                                    {
-                                        // [144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                        <Menu.Item key="411" icon={<IconMIGCompany width={25} height={25} />}>
-                                            <Link href="/admin/myCompany">
-                                                My Company
+                            <SubMenu title="Company Management" key="44">
+                                {
+                                    // [144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                    <Menu.Item key="441" icon={<IconMIGCompany width={25} height={25} />}>
+                                        <Link href="/admin/myCompany">
+                                            My Company
                                             </Link>
-                                        </Menu.Item>
-                                    }
-                                    {
-                                        // [155, 156, 157, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                        <Menu.Item key="412" icon={<IconClientsCompany width={25} height={25} />}>
-                                            <Link href="/admin/clients">
-                                                Clients
+                                    </Menu.Item>
+                                }
+                                {
+                                    // [155, 156, 157, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                    <Menu.Item key="442" icon={<IconClientsCompany width={25} height={25} />}>
+                                        <Link href="/admin/clients">
+                                            Clients
                                             </Link>
-                                        </Menu.Item>
-                                    }
-                                </SubMenu>
-                                // :
-                                // null
+                                    </Menu.Item>
+                                }
+                            </SubMenu>
+                            // :
+                            // null
                         }
-                        <SubMenu title="Assets">
-                            <Menu.Item key="411" icon={<IconAssets width={25} height={25} />}>
+                        <SubMenu title="Assets" key="45">
+                            <Menu.Item key="451" icon={<IconAssets width={25} height={25} />}>
                                 <Link href="/admin/assets">
                                     Asset Types
                                 </Link>
                             </Menu.Item>
-                            <Menu.Item key="411" icon={<IconAssets width={25} height={25} />}>
+                            <Menu.Item key="452" icon={<IconAssets width={25} height={25} />}>
                                 <Link href="/admin/models">
                                     Models
                                 </Link>
                             </Menu.Item>
-                            <Menu.Item key="412" icon={<IconVendors width={25} height={25} />}>
+                            <Menu.Item key="453" icon={<IconVendors width={25} height={25} />}>
                                 <Link href="/admin/vendors">
                                     Vendors
                                 </Link>
                             </Menu.Item>
-                            <Menu.Item key="413" icon={<IconVendors width={25} height={25} />}>
+                            <Menu.Item key="454" icon={<IconVendors width={25} height={25} />}>
                                 <Link href="/admin/manufacturers">
                                     Manufacturers
                                 </Link>
                             </Menu.Item>
-                            <Menu.Item key="413" icon={<IconAssets width={25} height={25} />}>
+                            <Menu.Item key="455" icon={<IconAssets width={25} height={25} />}>
                                 <Link href="/admin/relationships">
                                     Relationship Type
                                 </Link>
@@ -160,46 +162,46 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                         </SubMenu>
                         {
                             // serviceFeat.every(isIncludesFeat) ?
-                                <SubMenu title="Service Management">
-                                    {
-                                        // [183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193].every(isIncludesFeat) &&
-                                        <Menu.Item key="411" icon={<IconCatalog width={25} height={25} />}>
-                                            <Link href="/admin/service">
-                                                Service Catalog
+                            <SubMenu title="Service Management" key="46">
+                                {
+                                    // [183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193].every(isIncludesFeat) &&
+                                    <Menu.Item key="461" icon={<IconCatalog width={25} height={25} />}>
+                                        <Link href="/admin/service">
+                                            Service Catalog
                                         </Link>
-                                        </Menu.Item>
-                                    }
-                                    {
-                                        // [194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206].every(isIncludesFeat) &&
-                                        <Menu.Item key="412" icon={<IconContract width={25} height={25} />}>
-                                            <Link href="/admin/contracts">
-                                                Contracts
+                                    </Menu.Item>
+                                }
+                                {
+                                    // [194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206].every(isIncludesFeat) &&
+                                    <Menu.Item key="462" icon={<IconContract width={25} height={25} />}>
+                                        <Link href="/admin/contracts">
+                                            Contracts
                                             </Link>
-                                        </Menu.Item>
-                                    }
-                                </SubMenu>
-                                // :
-                                // null
+                                    </Menu.Item>
+                                }
+                            </SubMenu>
+                            // :
+                            // null
                         }
                         {
                             // depreFeat.every(isIncludesFeat) ?
-                                <SubMenu title="Financial Management">
-                                    <Menu.Item key="411" icon={<IconDepreciation width={25} height={25} />}>
-                                        <Link href="/admin/financial">
-                                            Depreciation
+                            <SubMenu title="Financial Management" key="47">
+                                <Menu.Item key="471" icon={<IconDepreciation width={25} height={25} />}>
+                                    <Link href="/admin/financial">
+                                        Depreciation
                                         </Link>
-                                    </Menu.Item>
-                                </SubMenu>
-                                // :
-                                // null
+                                </Menu.Item>
+                            </SubMenu>
+                            // :
+                            // null
                         }
-                        <SubMenu title="MIG CMS">
-                            <Menu.Item key="411" icon={<IconCareer width={25} height={25} />}>
+                        <SubMenu title="MIG CMS" key="48">
+                            <Menu.Item key="481" icon={<IconCareer width={25} height={25} />}>
                                 <Link href="/admin/careers">
                                     Careers
                                 </Link>
                             </Menu.Item>
-                            <Menu.Item key="412" icon={<IconMessages width={25} height={25} />}>
+                            <Menu.Item key="482" icon={<IconMessages width={25} height={25} />}>
                                 <Link href="/admin/messages">
                                     Messages
                                 </Link>
@@ -216,61 +218,58 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             Dashboard
                         </Link>
                     </Menu.Item>
-                    <Menu.Item key="2" icon={<Icon component={ticketIconSvg} />}>
-                        <Link href="/tickets">
-                            Ticket
-                        </Link>
-                    </Menu.Item>
-                    <SubMenu key="3" icon={<InboxOutlined />} title="Assets">
-                        <Menu.Item key="sub31">
-                            <Link href="/vendors">
-                                Vendor
+                    <SubMenu key="2" icon={<Icon component={ticketIconSvg} />} title="Tickets">
+                        <Menu.Item key="21">
+                            <Link href="/tickets">
+                                Ticket
                             </Link>
                         </Menu.Item>
-                        <Menu.Item key="sub32">
+                    </SubMenu>
+                    <SubMenu key="3" icon={<InboxOutlined />} title="Assets">
+                        <Menu.Item key="31">
                             <Link href="/items">
                                 Inventory
                             </Link>
                         </Menu.Item>
                     </SubMenu>
                     <SubMenu key="4" icon={<SettingOutlined />} title="Assets">
-                        <Menu.Item key="4" icon={<SettingOutlined />}>
+                        <Menu.Item key="41" icon={<SettingOutlined />}>
                             <Link href="/dashboard/admin">
                                 Admin
                             </Link>
                         </Menu.Item>
                         {
                             // userFeat.every(isIncludesFeat) ?
-                                <SubMenu title="Users Management">
-                                    {/* {dataProfile.data.registered_feature.includes(108) && */}
-                                        <Menu.Item key="411" icon={<IconAgents width={20} height={20} />}>
-                                            <Link href="/admin/agents">
-                                                Agents
+                            <SubMenu title="Users Management" key="42">
+                                {/* {dataProfile.data.registered_feature.includes(108) && */}
+                                <Menu.Item key="421" icon={<IconAgents width={20} height={20} />}>
+                                    <Link href="/admin/agents">
+                                        Agents
                                         </Link>
-                                        </Menu.Item>
-                                    {/* // } */}
-                                    {/* {dataProfile.data.registered_feature.includes(119) && */}
-                                        <Menu.Item key="412" icon={<IconRequesters width={20} height={20} />}>
-                                            <Link href="/admin/requesters">
-                                                Requesters
+                                </Menu.Item>
+                                {/* // } */}
+                                {/* {dataProfile.data.registered_feature.includes(119) && */}
+                                <Menu.Item key="422" icon={<IconRequesters width={20} height={20} />}>
+                                    <Link href="/admin/requesters">
+                                        Requesters
                                         </Link>
-                                        </Menu.Item>
-                                    {/* } */}
-                                    {/* {dataProfile.data.registered_feature.includes(134) && */}
-                                        <Menu.Item key="413" icon={<Icongroups width={20} height={20} />}>
-                                            <Link href="/admin/groups">
-                                                Groups
+                                </Menu.Item>
+                                {/* } */}
+                                {/* {dataProfile.data.registered_feature.includes(134) && */}
+                                <Menu.Item key="423" icon={<Icongroups width={20} height={20} />}>
+                                    <Link href="/admin/groups">
+                                        Groups
                                         </Link>
-                                        </Menu.Item>
-                                    {/* // } */}
-                                </SubMenu>
-                                // :
-                                // null
+                                </Menu.Item>
+                                {/* // } */}
+                            </SubMenu>
+                            // :
+                            // null
                         }
-                        <SubMenu title="Features Management">
+                        <SubMenu title="Features Management" key="43">
                             {
                                 // [173, 174, 175, 176, 177, 178].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <Menu.Item key="411" icon={<IconRoles width={20} height={20} />}>
+                                <Menu.Item key="431" icon={<IconRoles width={20} height={20} />}>
                                     <Link href="/admin/roles">
                                         Roles
                                     </Link>
@@ -278,7 +277,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             }
                             {
                                 // [179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                <Menu.Item key="412" icon={<IconModules width={20} height={20} />}>
+                                <Menu.Item key="432" icon={<IconModules width={20} height={20} />}>
                                     <Link href="/admin/modules?module=&featuredisplay=">
                                         Modules
                                     </Link>
@@ -292,49 +291,49 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                         </SubMenu>
                         {
                             // dataProfile.data.registered_feature.includes(144) && dataProfile.data.registered_feature.includes(155) && dataProfile.data.registered_feature.includes(150) ?
-                                <SubMenu title="Company Management">
-                                    {
-                                        // dataProfile.data.registered_feature.includes(144) &&
-                                        <Menu.Item key="411" icon={<IconMIGCompany width={20} height={20} />}>
-                                            <Link href="/admin/myCompany">
-                                                My Company
+                            <SubMenu title="Company Management" key="44">
+                                {
+                                    // dataProfile.data.registered_feature.includes(144) &&
+                                    <Menu.Item key="4141" icon={<IconMIGCompany width={20} height={20} />}>
+                                        <Link href="/admin/myCompany">
+                                            My Company
                                         </Link>
-                                        </Menu.Item>
-                                    }
-                                    {
-                                        // dataProfile.data.registered_feature.includes(155) &&
-                                        <Menu.Item key="412" icon={<IconClientsCompany width={20} height={20} />}>
-                                            <Link href="/admin/clients">
-                                                Clients
+                                    </Menu.Item>
+                                }
+                                {
+                                    // dataProfile.data.registered_feature.includes(155) &&
+                                    <Menu.Item key="442" icon={<IconClientsCompany width={20} height={20} />}>
+                                        <Link href="/admin/clients">
+                                            Clients
                                         </Link>
-                                        </Menu.Item>
-                                    }
-                                </SubMenu>
-                                // :
-                                // null
+                                    </Menu.Item>
+                                }
+                            </SubMenu>
+                            // :
+                            // null
                         }
-                        <SubMenu title="Assets">
-                            <Menu.Item key="411" icon={<IconAssets width={20} height={20} />}>
+                        <SubMenu title="Assets" key="45">
+                            <Menu.Item key="451" icon={<IconAssets width={20} height={20} />}>
                                 <Link href="/admin/assets">
                                     Asset Types
                                 </Link>
                             </Menu.Item>
-                            <Menu.Item key="411" icon={<IconAssets width={20} height={20} />}>
+                            <Menu.Item key="452" icon={<IconAssets width={20} height={20} />}>
                                 <Link href="/admin/models">
                                     Models
                                 </Link>
                             </Menu.Item>
-                            <Menu.Item key="412" icon={<IconVendors width={20} height={20} />}>
+                            <Menu.Item key="453" icon={<IconVendors width={20} height={20} />}>
                                 <Link href="/admin/vendors">
                                     Vendors
                                 </Link>
                             </Menu.Item>
-                            <Menu.Item key="413" icon={<IconVendors width={25} height={25} />}>
+                            <Menu.Item key="454" icon={<IconVendors width={25} height={25} />}>
                                 <Link href="/admin/manufacturers">
                                     Manufacturers
                                 </Link>
                             </Menu.Item>
-                            <Menu.Item key="413" icon={<IconAssets width={25} height={25} />}>
+                            <Menu.Item key="455" icon={<IconAssets width={25} height={25} />}>
                                 <Link href="/admin/relationships">
                                     Relationship Type
                                 </Link>
@@ -342,46 +341,46 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                         </SubMenu>
                         {
                             // serviceFeat.every(isIncludesFeat) ?
-                                <SubMenu title="Service Management">
-                                    {
-                                        // [183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193].every(isIncludesFeat) &&
-                                        <Menu.Item key="411" icon={<IconCatalog width={20} height={20} />}>
-                                            <Link href="/admin/service">
-                                                Service Catalog
+                            <SubMenu title="Service Management" key="46">
+                                {
+                                    // [183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193].every(isIncludesFeat) &&
+                                    <Menu.Item key="461" icon={<IconCatalog width={20} height={20} />}>
+                                        <Link href="/admin/service">
+                                            Service Catalog
                                         </Link>
-                                        </Menu.Item>
-                                    }
-                                    {
-                                        // [194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206].every(isIncludesFeat) &&
-                                        <Menu.Item key="412" icon={<IconContract width={20} height={20} />}>
-                                            <Link href="/admin/contracts">
-                                                Contracts
+                                    </Menu.Item>
+                                }
+                                {
+                                    // [194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206].every(isIncludesFeat) &&
+                                    <Menu.Item key="462" icon={<IconContract width={20} height={20} />}>
+                                        <Link href="/admin/contracts">
+                                            Contracts
                                             </Link>
-                                        </Menu.Item>
-                                    }
-                                </SubMenu>
-                                // :
-                                // null
+                                    </Menu.Item>
+                                }
+                            </SubMenu>
+                            // :
+                            // null
                         }
                         {
                             // depreFeat.every(isIncludesFeat) ?
-                                <SubMenu title="Financial Management">
-                                    <Menu.Item key="411" icon={<IconDepreciation width={20} height={20} />}>
-                                        <Link href="/admin/financial">
-                                            Depreciation
+                            <SubMenu title="Financial Management" key="47">
+                                <Menu.Item key="471" icon={<IconDepreciation width={20} height={20} />}>
+                                    <Link href="/admin/financial">
+                                        Depreciation
                                         </Link>
-                                    </Menu.Item>
-                                </SubMenu>
-                                // :
-                                // null
+                                </Menu.Item>
+                            </SubMenu>
+                            // :
+                            // null
                         }
-                        <SubMenu title="MIG CMS">
-                            <Menu.Item key="411" icon={<IconCareer width={20} height={20} />}>
+                        <SubMenu title="MIG CMS" key="48">
+                            <Menu.Item key="481" icon={<IconCareer width={20} height={20} />}>
                                 <Link href="/admin/careers">
                                     Careers
                                 </Link>
                             </Menu.Item>
-                            <Menu.Item key="412" icon={<IconMessages width={20} height={20} />}>
+                            <Menu.Item key="482" icon={<IconMessages width={20} height={20} />}>
                                 <Link href="/admin/messages">
                                     Messages
                                 </Link>
