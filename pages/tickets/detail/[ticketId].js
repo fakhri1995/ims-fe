@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
 import Link from 'next/link'
-import { ExclamationCircleOutlined, SearchOutlined, CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons'
+import { ExclamationCircleOutlined, DownOutlined } from '@ant-design/icons'
 import { notification, Button, Spin, Empty, Modal, Tooltip, Select, Tabs, Input, TreeSelect } from 'antd'
 import Layout from '../../../components/layout-dashboard2'
 import moment from 'moment'
@@ -364,6 +364,12 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
     const [modalstatus, setmodalstatus] = useState(false)
     const [displaystatus, setdisplaystatus] = useState(true)
     const [loadingstatus, setloadingstatus] = useState(false)
+    //asignto
+    const [to, setto] = useState(-10)
+    const [assignto, setassignto] = useState(null)
+    const [nameassignto, setnameassignto] = useState("")
+    const [modalassignto, setmodalassignto] = useState(false)
+    const [disabledassignto, setdisabledassignto] = useState(true)
 
     //useEffect
     useEffect(() => {
@@ -428,7 +434,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                                     // null
                                                 }
                                             </div>
-                                            <div className="flex flex-col p-2">
+                                            <div className="flex flex-col p-2 mr-7">
                                                 <p className="mb-1">Status:</p>
                                                 {
                                                     displaystatus ?
@@ -451,6 +457,15 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                                         </Select>
                                                         :
                                                         null
+                                                }
+                                            </div>
+                                            <div className="flex flex-col w-40 cursor-pointer" onClick={() => { setmodalassignto(true) }}>
+                                                <p className="mb-1">Assign To:</p>
+                                                {
+                                                    <div className="py-1 px-3 border flex items-center justify-between">
+                                                        <h1 className="font-semibold mb-0">{assignto === null ? 'None' : `${nameassignto}`}</h1>
+                                                        <DownOutlined />
+                                                    </div>
                                                 }
                                             </div>
                                         </>
@@ -560,6 +575,75 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                     <Input.TextArea rows={3} placeholder="Masukkan Notes" onChange={(e => {
                         setnotestatus(e.target.value)
                     })}></Input.TextArea>
+                </div>
+            </Modal>
+            <Modal title={
+                <div className="flex justify-between p-5 mt-5">
+                    <h1 className="font-bold text-xl">Assigned To</h1>
+                    <div className="flex">
+                        <>
+                            <Button type="default" onClick={() => { setmodalassignto(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
+                            <Button type='primary' disabled={disabledassignto}>Simpan</Button>
+                        </>
+                    </div>
+                </div>
+            }
+                visible={modalassignto}
+                onCancel={() => { setmodalassignto(false) }}
+                footer={null}
+                width={720}
+            >
+                <div className="flex flex-col mb-5">
+                    <div className="flex flex-col mb-3">
+                        <p className="mb-0">Assigned To <span className="assto"></span></p>
+                        <Select onChange={(value) => { setto(value) }}>
+                            <Select.Option value={1}>Engineer</Select.Option>
+                            <Select.Option value={2}>Group</Select.Option>
+                        </Select>
+                        <style jsx>
+                            {`
+                                .assto::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+                        </style>
+                    </div>
+                    <div className="flex flex-col mb-3">
+                        <p className="mb-0">Assigned To <span className="engineer"></span></p>
+                        {
+                            to === 1 &&
+                            <Select disabled={to === -10} onChange={(value, option) => { setassignto(value); setdisabledassignto(false); setnameassignto(option.name) }}>
+                                {
+                                    ticketrelations.requesters.map((doc, idx) => {
+                                        return (
+                                            <Select.Option value={doc.user_id} name={doc.fullname}>{doc.fullname}</Select.Option>
+                                        )
+                                    })
+                                }
+                            </Select>
+                        }
+                        {
+                            to === 2 &&
+                            <Select disabled={to === -10} onChange={(value, option) => { setassignto(value); setdisabledassignto(false); setnameassignto(option.name) }}>
+                                {
+                                    ticketrelations.requester_companies.map((doc, idx) => {
+                                        return (
+                                            <Select.Option value={doc.id} name={doc.name}>{doc.name}</Select.Option>
+                                        )
+                                    })
+                                }
+                            </Select>
+                        }
+                        <style jsx>
+                            {`
+                                .engineer::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+                        </style>
+                    </div>
                 </div>
             </Modal>
         </Layout>
