@@ -12,6 +12,8 @@ import Sticky from 'wil-react-sticky'
 const Overview = ({ ticketid, initProps, praloading, maindata }) => {
     //init
     const rt = useRouter()
+    var selisihWaktu = ""
+    maindata.ticket.due_to ? (Math.floor((new Date(maindata.ticket.due_to).getTime() - new Date(maindata.ticket.created_at).getTime()) / (1000 * 3600 * 24)) > 1 ? selisihWaktu = Math.floor((new Date(maindata.ticket.due_to).getTime() - new Date(maindata.ticket.created_at).getTime()) / (1000 * 3600 * 24)) + " hari" : selisihWaktu = Math.floor((new Date(maindata.ticket.due_to).getTime() - new Date(maindata.ticket.created_at).getTime()) / (1000 * 3600)) + " jam") : null
 
     //useState
     //export
@@ -62,7 +64,7 @@ const Overview = ({ ticketid, initProps, praloading, maindata }) => {
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Resolved Time:</h1>
-                                <p className="mb-0 text-sm">-</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.due_to ? `${selisihWaktu}` : "-"}</p>
                             </div>
                         </div>
                         <div className="border shadow-md rounded-md flex flex-col p-5">
@@ -133,17 +135,22 @@ const Overview = ({ ticketid, initProps, praloading, maindata }) => {
     )
 }
 
-const DetailItem = ({ ticketid, initProps }) => {
+const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem }) => {
+    //init
+    const rt = useRouter()
+
     //useState
-    const [connecteditem, setconnecteditem] = useState("")
+    const [itemactivity, setitemactivity] = useState(true)
     const [modalconnecteditem, setmodalconnecteditem] = useState(false)
     const [loadingconnecteditem, setloadingconnecteditem] = useState(false)
     const [disabledconnecteditem, setdisabledconnecteditem] = useState(true)
     //1.asset
     const [assetdata, setassetdata] = useState([])
-    const [selectedasset, setselectedasset] = useState(-10)
+    const [selectedasset, setselectedasset] = useState(null)
+    const [selectedassetcode, setselectedassetcode] = useState("")
     //2. Item
     const [itemdata, setitemdata] = useState([])
+    const [selecteditem, setselecteditem] = useState(null)
 
     //useEffect
     useEffect(() => {
@@ -169,7 +176,7 @@ const DetailItem = ({ ticketid, initProps }) => {
                 .then(res => res.json())
                 .then(res2 => {
                     const datafilter = res2.data.filter(docfil => docfil.asset_id === selectedasset)
-                    setitemdata(datafilter)
+                    setitemdata(datafilter.length === 0 ? res2.data : datafilter)
                 }, [])
         }
     }, [selectedasset])
@@ -183,49 +190,152 @@ const DetailItem = ({ ticketid, initProps }) => {
                     //     null
                     //     :
                     <div className="flex">
-                        <Button type="default" disabled onClick={(e) => { rt.push(`/items`) }} size="large">Activity Item</Button>
+                        <Button type="primary" disabled={itemactivity} onClick={(e) => { rt.push(`/items/detail/${connecteditem.id}?active=activity`) }} size="large">Activity Item</Button>
                         {/* <Button type="primary" className="buttonExport" onClick={(e) => { setmodalexporting(true) }} size="large">Export</Button> */}
                     </div>
                 }
             </div>
-            <div className=" border rounded-lg py-10 w-10/12 mx-auto flex flex-col">
-                <Empty description={
-                    <p className="mb-0">
-                        Hubungkan <span className=" text-blue-500">Item</span><span className="connectItem"></span>
-                        <style jsx>
-                            {`
+            {
+                connecteditem === null ?
+                    <div className=" border rounded-lg py-10 w-10/12 mx-auto flex flex-col">
+                        <Empty description={
+                            <p className="mb-0">
+                                Hubungkan <span className=" text-blue-500">Item</span><span className="connectItem"></span>
+                                <style jsx>
+                                    {`
                                         .connectItem::before{
                                             content: '*';
                                             color: red;
                                         }
                                     `}
-                        </style>
-                    </p>
-                } image={Empty.PRESENTED_IMAGE_DEFAULT}>
-                    <Button type="primary" onClick={() => { setmodalconnecteditem(true) }}>Pilih Item</Button>
-                </Empty>
-            </div>
+                                </style>
+                            </p>
+                        } image={Empty.PRESENTED_IMAGE_DEFAULT}>
+                            <Button type="primary" onClick={() => { setmodalconnecteditem(true) }}>Pilih Item</Button>
+                        </Empty>
+                    </div>
+                    :
+                    <div className="mb-8 mx-5 p-5 w-9/12 flex flex-col">
+                        <div className="border shadow-md rounded-md flex flex-col p-5 mb-3">
+                            <div className="flex justify-between">
+                                <div className="flex flex-col mt-3 mb-5">
+                                    <h1 className=" text-sm font-semibold mb-0">Item:</h1>
+                                    <p className="mb-0 text-sm">{connecteditem.inventory_name ?? ""}</p>
+                                </div>
+                                <div className="flex items-center">
+                                    <Button onClick={() => { setmodalconnecteditem(true) }}>Ganti Item</Button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="border shadow-md rounded-md flex flex-col p-5 mb-5">
+                            <div className="flex flex-col mt-3 mb-5">
+                                <h1 className=" text-sm font-semibold mb-0">Model:</h1>
+                                <p className="mb-0 text-sm">{connecteditem.model_name ?? "-"}</p>
+                            </div>
+                            <div className="flex flex-col mt-3 mb-5">
+                                <h1 className=" text-sm font-semibold mb-0">Asset Type:</h1>
+                                <p className="mb-0 text-sm">{connecteditem.asset_name ?? "-"}</p>
+                            </div>
+                            <div className="flex flex-col mt-3 mb-5">
+                                <h1 className=" text-sm font-semibold mb-0">MIG ID:</h1>
+                                <p className="mb-0 text-sm">{connecteditem.mig_id ?? "-"}</p>
+                            </div>
+                            <div className="flex flex-col mt-3 mb-5">
+                                <h1 className=" text-sm font-semibold mb-2">Status Pemakaian:</h1>
+                                {
+                                    connecteditem.status_usage ?
+                                        <>
+                                            {connecteditem.status_usage === 1 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">In Used</div>}
+                                            {connecteditem.status_usage === 2 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-green-100 border border-green-200 text-green-600">In Stock</div>}
+                                            {connecteditem.status_usage === 3 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">Replacement</div>}
+                                        </>
+                                        :
+                                        "-"
+                                }
+                            </div>
+                            <div className="flex flex-col mt-3 mb-5">
+                                <h1 className=" text-sm font-semibold mb-2">Status Kondisi:</h1>
+                                {
+                                    connecteditem.status_condition ?
+                                        <>
+                                            {
+                                                connecteditem.status_condition === 1 &&
+                                                <div className="p-1 flex w-full items-center">
+                                                    <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
+                                                    <p className="mb-0 font-semibold">Good</p>
+                                                </div>
+                                            }
+                                            {
+                                                connecteditem.status_condition === 2 &&
+                                                <div className="p-1 flex w-full items-center">
+                                                    <div className="w-3 h-3 rounded-full bg-gray-500 mr-1"></div>
+                                                    <p className="mb-0 font-semibold">Grey</p>
+                                                </div>
+                                            }
+                                            {
+                                                connecteditem.status_condition === 3 &&
+                                                <div className="p-1 flex w-full items-center">
+                                                    <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
+                                                    <p className="mb-0 font-semibold">Bad</p>
+                                                </div>
+                                            }
+                                        </>
+                                        :
+                                        "-"
+                                }
+                            </div>
+                            <div className="flex flex-col mt-3 mb-5">
+                                <h1 className=" text-sm font-semibold mb-0">Serial Number:</h1>
+                                <p className="mb-0 text-sm">{connecteditem.serial_number ?? "-"}</p>
+                            </div>
+                            <div className="flex flex-col mt-3 mb-5">
+                                <h1 className=" text-sm font-semibold mb-0">Location:</h1>
+                                <p className="mb-0 text-sm">{connecteditem.location_name ?? "-"}</p>
+                            </div>
+                            <div className="flex flex-col mt-3 mb-5">
+                                <h1 className=" text-sm font-semibold mb-0">Deskripsi:</h1>
+                                <p className="mb-0 text-sm">{connecteditem.deskripsi ?? "-"}</p>
+                            </div>
+                        </div>
+                    </div>
+            }
             <Modal title={
                 <div className="flex justify-between p-5 mt-5">
                     <h1 className="font-bold text-xl">Hubungkan Item ke Ticket</h1>
                     <div className="flex">
                         <>
-                            <Button type="default" onClick={() => { setmodalconnecteditem(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
-                            <Button type='primary' disabled={disabledconnecteditem} loading={loadingconnecteditem}>Simpan</Button>
+                            <Button type="default" onClick={() => { setmodalconnecteditem(false); /*setselectedassetcode(""); setselectedasset(null); setselecteditem(null)*/ }} style={{ marginRight: `1rem` }}>Batal</Button>
+                            <Button type='primary' loading={loadingconnecteditem} disabled={disabledconnecteditem} loading={loadingconnecteditem} onClick={() => {
+                                setloadingconnecteditem(true)
+                                fetch(`https://boiling-thicket-46501.herokuapp.com/getInventory?id=${selecteditem}`, {
+                                    method: `GET`,
+                                    headers: {
+                                        'Authorization': JSON.parse(initProps),
+                                    },
+                                })
+                                    .then(res => res.json())
+                                    .then(res2 => {
+                                        setconnecteditem(res2.data)
+                                        setloadingconnecteditem(false)
+                                        setmodalconnecteditem(false)
+                                        setitemactivity(false)
+                                    }, [])
+                            }}>Simpan</Button>
                         </>
                     </div>
                 </div>
             }
                 visible={modalconnecteditem}
-                onCancel={() => { setmodalconnecteditem(false) }}
+                onCancel={() => { setmodalconnecteditem(false); /*setselectedassetcode(""); setselectedasset(null); setselecteditem(null)*/ }}
                 footer={null}
                 width={720}
             >
                 <div className="flex flex-col mb-5">
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Asset Type <span className="assetitem"></span></p>
-                        <TreeSelect treeDefaultExpandAll treeData={assetdata} onChange={(value, label, extra) => {
+                        <TreeSelect treeDefaultExpandAll value={selectedassetcode} treeData={assetdata} onChange={(value, label, extra) => {
                             setselectedasset(extra.allCheckedNodes[0].node.props.id)
+                            setselectedassetcode(value)
                         }}></TreeSelect>
                         <style jsx>
                             {`
@@ -238,9 +348,9 @@ const DetailItem = ({ ticketid, initProps }) => {
                     </div>
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Item <span className="itemitem"></span></p>
-                        <Select disabled={selectedasset === -10} showSearch optionFilterProp="children" placeholder="Cari Item" filterOption={(input, opt) => (
+                        <Select disabled={selectedasset === null} value={selecteditem} showSearch optionFilterProp="children" placeholder="Cari Item" filterOption={(input, opt) => (
                             opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                        )}>
+                        )} onChange={(value) => { setselecteditem(value); setdisabledconnecteditem(false) }}>
                             {
                                 itemdata.map((doc, idx) => {
                                     return (
@@ -293,8 +403,8 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
             subject_id: 13,
             type: 1,
             status: 4,
-            created_at: "2021-02-19T16:00:46.384Z",
-            due_to: "2021-09-29T13:00:46.384Z",
+            created_at: "2021-09-29T07:23:57.384Z",
+            due_to: "2021-09-29T21:58:46.384Z",
             asign_to: 3,
             asign_to_name: "Bintang Agung Nusantara",
             requester_location: 1,
@@ -370,6 +480,9 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
     const [nameassignto, setnameassignto] = useState("")
     const [modalassignto, setmodalassignto] = useState(false)
     const [disabledassignto, setdisabledassignto] = useState(true)
+    //connected item
+    const [connecteditem, setconnecteditem] = useState(null)
+
 
     //useEffect
     useEffect(() => {
@@ -459,11 +572,11 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                                         null
                                                 }
                                             </div>
-                                            <div className="flex flex-col w-40 cursor-pointer" onClick={() => { setmodalassignto(true) }}>
+                                            <div className="flex flex-col cursor-pointer" onClick={() => { setmodalassignto(true) }}>
                                                 <p className="mb-1">Assign To:</p>
                                                 {
                                                     <div className="py-1 px-3 border flex items-center justify-between">
-                                                        <h1 className="font-semibold mb-0">{assignto === null ? 'None' : `${nameassignto}`}</h1>
+                                                        <h1 className="font-semibold mb-0 mr-5">{assignto === null ? 'None' : `${nameassignto}`}</h1>
                                                         <DownOutlined />
                                                     </div>
                                                 }
@@ -486,12 +599,17 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                             <TabPane tab={
                                 <div className="flex items-center">
                                     <p className="mb-0 mr-2">Detail Item</p>
-                                    <Tooltip placement="right" title="Ticket Incident belum terhubung dengan Item">
-                                        <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
-                                    </Tooltip>
+                                    {
+                                        connecteditem === null ?
+                                            <Tooltip placement="right" title="Ticket Incident belum terhubung dengan Item">
+                                                <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
+                                            </Tooltip>
+                                            :
+                                            null
+                                    }
                                 </div>
                             } key="detailItem">
-                                <DetailItem ticketid={ticketid} initProps={initProps}></DetailItem>
+                                <DetailItem ticketid={ticketid} initProps={initProps} connecteditem={connecteditem} setconnecteditem={setconnecteditem}></DetailItem>
                             </TabPane>
                             <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
                                 <Activity ticketid={ticketid} initProps={initProps} />
@@ -506,12 +624,17 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                             <TabPane tab={
                                 <div className="flex items-center">
                                     <p className="mb-0 mr-2">Detail Item</p>
-                                    <Tooltip placement="right" title="Ticket Incident belum terhubung dengan Item">
-                                        <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
-                                    </Tooltip>
+                                    {
+                                        connecteditem === null ?
+                                            <Tooltip placement="right" title="Ticket Incident belum terhubung dengan Item">
+                                                <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
+                                            </Tooltip>
+                                            :
+                                            null
+                                    }
                                 </div>
                             } key="detailItem">
-                                <DetailItem ticketid={ticketid} initProps={initProps}></DetailItem>
+                                <DetailItem ticketid={ticketid} initProps={initProps} connecteditem={connecteditem} setconnecteditem={setconnecteditem}></DetailItem>
                             </TabPane>
                             <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
                                 <Activity ticketid={ticketid} initProps={initProps} />
@@ -583,7 +706,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                     <div className="flex">
                         <>
                             <Button type="default" onClick={() => { setmodalassignto(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
-                            <Button type='primary' disabled={disabledassignto}>Simpan</Button>
+                            <Button type='primary' disabled={disabledassignto} onClick={() => { setmodalassignto(false) }}>Simpan</Button>
                         </>
                     </div>
                 </div>

@@ -1606,7 +1606,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                             <TabPane tab="Association" key={`association`}>
                                 <Association itemid={itemid} initProps={initProps} />
                             </TabPane>
-                            <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
+                            <TabPane disabled tab="Activity" key={`activity`}>
                                 <Acitivty itemid={itemid} initProps={initProps} maindata={maindata} invrelations={invrelations} />
                             </TabPane>
                         </Tabs>
@@ -1625,7 +1625,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                             <TabPane tab="Association" key={`association`}>
                                 <Association itemid={itemid} initProps={initProps} />
                             </TabPane>
-                            <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
+                            <TabPane disabled tab="Activity" key={`activity`}>
                                 <Acitivty itemid={itemid} initProps={initProps} maindata={maindata} invrelations={invrelations} />
                             </TabPane>
                         </Tabs>

@@ -311,7 +311,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 </div>
                 <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
                     <Link href={'/tickets/histories'}>
-                        <Button size="large" type="primary" style={{ marginRight: `1rem` }}>
+                        <Button size="large" type="primary" style={{ marginRight: `1rem` }} onClick={()=>{rt.push(`/tickets/histories`)}}>
                             History
                         </Button>
                     </Link>
