@@ -99,14 +99,14 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
             setSearchValue(value);
             setAutoExpandParent(true);
         } else {
-            setExpandedKeys([maindata[0].key]);
+            setExpandedKeys(maindata.map(doc => doc.key));
             setSearchValue("");
             setAutoExpandParent(false);
         }
     };
     const filterTreeNode = (node) => {
         const title = node.title.props.children[0].props ? node.title.props.children[0].props.children[2] : node.title.props.children[2];
-        const result = title.indexOf(searchValue) !== -1 ? true : false;
+        const result = title ? (title.indexOf(searchValue) !== -1 ? true : false) : false
         return result;
     };
     const loop = (data) =>
@@ -135,7 +135,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                             {afterStr}
                         </div>
                         <div className={`hidden mx-2`} id={`node${item.key}`}>
-                            <a className="mx-2 py-2 flex items-center" alt="add" onClick={() => { rt.push(`/admin/assets/create?idparent=${item.value}`) /*setNewmodalparent(true); fungsiSetParent(item.value); setParenttitle(item.title)*/ }}>
+                            <a className="mx-2 py-2 flex items-center" alt="add" onClick={() => { rt.push(`/admin/assets/create?idparent=${item.id}&codeparent=${item.value}`) /*setNewmodalparent(true); fungsiSetParent(item.value); setParenttitle(item.title)*/ }}>
                                 <div className="rounded-full bg-black text-white h-5 w-5 flex items-center text-xs justify-center hover:bg-gray-700">+</div>
                             </a>
                             {/* <Link href={`/admin/assets/${item.title}?parent=${prt}&id=${item.id}`}>
@@ -244,7 +244,8 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                 }
                 else {
                     setmaindata(res2.data)
-                    setExpandedKeys([res2.data[0].key])
+                    const defaultexpand = res2.data.map(doc => doc.key)
+                    setExpandedKeys(defaultexpand)
                     setpraloading(false)
                 }
             })
@@ -258,7 +259,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                             <div className="text-xs md:text-sm font-semibold">
                                 <h1 className="mt-2 font-semibold text-xl">Assets Types</h1>
                             </div>
-                            <Button disabled={praloading} type="primary" size="large" onClick={() => { /*setNewmodal(true)*/ rt.push(`/admin/assets/create?idparent=`) }}>Tambah</Button>
+                            <Button disabled={praloading} type="primary" size="large" onClick={() => { /*setNewmodal(true)*/ rt.push(`/admin/assets/create?idparent=&codeparent=`) }}>Tambah</Button>
                             {/* <div className="w-auto h-auto p-2 text-white bg-blue-700 rounded-md cursor-pointer hover:bg-blue-900 text-xs md:text-sm font-semibold" onClick={() => { setNewmodal(true) }}>
                                 New Asset Type
                             </div> */}

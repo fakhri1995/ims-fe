@@ -83,7 +83,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
 
     //5.useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getModels`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?rows=100`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),

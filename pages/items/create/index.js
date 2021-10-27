@@ -605,6 +605,18 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                                 })
                                                             }}></Input>
                                                         }
+                                                        {
+                                                            docvalue.data_type === 'String' &&
+                                                            <Input defaultValue={docvalue.default} onChange={(e) => {
+                                                                var temp = newdata.inventory_parts
+                                                                const selectedpart = changeInventoryValuesPart(temp, doc.model_id, docvalue.id, e.target.value)
+                                                                setnewdata(prev => {
+                                                                    var temp2 = prev
+                                                                    temp2.inventory_parts = selectedpart
+                                                                    return temp2
+                                                                })
+                                                            }}></Input>
+                                                        }
                                                     </>
                                                 </Form.Item>
                                             )
@@ -709,7 +721,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                setmodeldata(res2.data)
+                setmodeldata(res2.data.data)
                 setpraloading(false)
             })
     }, [])
@@ -778,7 +790,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                     const selectedasset = invrelations.assets.filter(docasset => docasset.id === selectedmodel.asset_id)
                                     setassetnameitem(selectedasset[0] ? selectedasset[0].name : "")
                                     const snitemmodel = modeldata.filter(docfilter => docfilter.id === value)
-                                    setsnitem(snitemmodel[0].required_sn)
+                                    setsnitem(snitemmodel.length > 0 ? snitemmodel[0].required_sn : false)
                                     setloadingspec(true)
                                     setmanuffielditem(false)
                                     fetch(`https://boiling-thicket-46501.herokuapp.com/getModel?id=${value}`, {
@@ -817,7 +829,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                     }
                                                 })
                                                 setdisabledfield(prev => {
-                                                    if (temp.filter(doc => doc.required).some(docsome => docsome.default === "" || docsome.default === "-" || docsome.default.default === "-")) {
+                                                    if (temp.filter(doc => doc.required).some(docsome => docsome.default === null || docsome.default === "" || docsome.default === "-" || docsome.default.default === "-")) {
                                                         return true
                                                     }
                                                     else {
@@ -833,7 +845,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                     var temp11 = []
                                                     for (var i = 0; i < item.length; i++) {
                                                         var temp1 = {}
-                                                        temp1 = item[i].model_column.map((doc, idx) => {
+                                                        temp1 = item[i].model_columns.map((doc, idx) => {
                                                             if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
                                                                 return ({
                                                                     ...doc,
@@ -863,11 +875,11 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                         })
                                                         temp11.push({
                                                             model_name: item[i].name,
-                                                            asset_name: item[i].asset_name,
+                                                            asset_name: item[i].asset.name,
                                                             enable_part: false,
                                                             disable_part: level > 0 ? true : false,
                                                             id: item[i].id,
-                                                            model_id: item[i].child_id,
+                                                            model_id: item[i].id,
                                                             vendor_id: null,
                                                             inventory_name: "",
                                                             status_condition: null,
@@ -913,7 +925,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                         })
                                 }}>
                                     {
-                                        modeldata.map((doc, idx) => (
+                                        invrelations.models.map((doc, idx) => (
                                             <Select.Option value={doc.id}>{doc.name}</Select.Option>
                                         ))
                                     }
@@ -1282,6 +1294,31 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                                                 }
                                                                             </>
                                                                         }
+                                                                        {
+                                                                            docinvvalue.data_type === 'String' &&
+                                                                            <>
+                                                                                <Input defaultValue={docinvvalue.default} onChange={(e) => {
+                                                                                    if (e.target.value === "") {
+                                                                                        setdisabledfield(true)
+                                                                                    }
+                                                                                    else {
+                                                                                        setdisabledfield(false)
+                                                                                        setnewdata(prev => {
+                                                                                            var temp = prev
+                                                                                            const idxfield = temp.inventory_values.map(docname => docname.model_inventory_column_id).indexOf(docinvvalue.id)
+                                                                                            temp.inventory_values[idxfield].value = e.target.value
+                                                                                            return temp
+                                                                                        })
+                                                                                    }
+                                                                                }}></Input>
+                                                                                {
+                                                                                    disabledfield ?
+                                                                                        <p className=" text-red-500 mb-0">{docinvvalue.name} harus diisi</p>
+                                                                                        :
+                                                                                        null
+                                                                                }
+                                                                            </>
+                                                                        }
                                                                     </>
                                                                 </Form.Item>
                                                             )
@@ -1368,6 +1405,17 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                                         }
                                                                         {
                                                                             docinvvalue.data_type === 'single' &&
+                                                                            <Input defaultValue={docinvvalue.default} onChange={(e) => {
+                                                                                setnewdata(prev => {
+                                                                                    var temp = prev
+                                                                                    const idxfield = temp.inventory_values.map(docname => docname.model_inventory_column_id).indexOf(docinvvalue.id)
+                                                                                    temp.inventory_values[idxfield].value = e.target.value
+                                                                                    return temp
+                                                                                })
+                                                                            }}></Input>
+                                                                        }
+                                                                        {
+                                                                            docinvvalue.data_type === 'String' &&
                                                                             <Input defaultValue={docinvvalue.default} onChange={(e) => {
                                                                                 setnewdata(prev => {
                                                                                     var temp = prev
@@ -1765,6 +1813,20 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                                                             }
                                                                                             {
                                                                                                 docvalue.data_type === 'single' &&
+                                                                                                <Input defaultValue={docvalue.default} onChange={(e) => {
+                                                                                                    var temp = newdata.inventory_parts
+                                                                                                    const selectedpart = changeInventoryValuesPart(temp, docpart.model_id, docvalue.id, e.target.value)
+                                                                                                    setnewdata(prev => {
+                                                                                                        var temp2 = prev
+                                                                                                        temp2.inventory_parts = selectedpart
+                                                                                                        return temp2
+                                                                                                    })
+                                                                                                    setemptyfieldpartmodel(docpart)
+                                                                                                    setemptyfieldparttrigger(prev => prev + 1)
+                                                                                                }}></Input>
+                                                                                            }
+                                                                                            {
+                                                                                                docvalue.data_type === 'String' &&
                                                                                                 <Input defaultValue={docvalue.default} onChange={(e) => {
                                                                                                     var temp = newdata.inventory_parts
                                                                                                     const selectedpart = changeInventoryValuesPart(temp, docpart.model_id, docvalue.id, e.target.value)

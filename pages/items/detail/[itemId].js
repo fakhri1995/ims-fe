@@ -202,11 +202,27 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
             title: 'Model',
             dataIndex: 'model_name',
             key: 'model_name',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.model_inventory.name}
+                        </>
+                }
+            }
         },
         {
             title: 'Asset Type',
             dataIndex: 'asset_name',
             key: 'asset_name',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.model_inventory.asset.name}
+                        </>
+                }
+            }
         },
         {
             title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
@@ -228,7 +244,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                                             <div className="cursor-pointer hover:bg-gray-300 w-full p-4">Gantikan Part</div> */}
                                         </div>
                                     }>
-                                        <div className="cursor-pointer" onClick={() => setpopover(false)}>
+                                        <div className="cursor-pointer pointer-events-none" onClick={() => setpopover(false)}>
                                             <CloseCircleOutlined style={{ color: `red`, fontSize: `1.5rem` }} />
                                         </div>
                                     </Popover>
@@ -539,7 +555,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                     praloading2 ?
                         null
                         :
-                        <Button type="primary" size="large" onClick={() => { /*console.log(mainpartdata); console.log(dataremoved)*/ rt.push(`/items/createpart/${itemid}?name=${mainpartdata.inventory_name}`) }}>Tambah</Button>
+                        <Button disabled type="primary" size="large" onClick={() => { /*console.log(mainpartdata); console.log(dataremoved)*/ rt.push(`/items/createpart/${itemid}?name=${mainpartdata.inventory_name}`) }}>Tambah</Button>
                 }
             </div>
             <div className="flex mb-5">
@@ -878,7 +894,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
         <div className="flex flex-col">
             <div className="border-b flex justify-between p-5 mb-8">
                 <h1 className="font-bold text-xl my-auto">Relationship</h1>
-                <Button type="primary" size="large" onClick={() => { /*console.log(dataasset);*/ rt.push(`/items/createrelationship/${itemid}?name=${maindata.inventory_name}&asset_id=${dataasset.id}`) }}>Tambah</Button>
+                <Button type="primary" size="large" onClick={() => { /*console.log(dataasset);*/ rt.push(`/items/createrelationship/${itemid}?name=${maindata.inventory_name}&asset_id=${maindata.model_inventory.asset.id}`) }}>Tambah</Button>
             </div>
             <div className="flex mb-5">
                 {

@@ -16,7 +16,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
     pathArr[pathArr.length - 1] = "Tambah Asset Type"
     const [instanceForm] = Form.useForm();
     const [instanceForm2] = Form.useForm();
-    const { idparent } = rt.query
+    const { idparent, codeparent } = rt.query
 
     //helperFunctions
     const searchAsset = (doc, code) => {
@@ -33,7 +33,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
     //useState
     const [newdata, setnewdata] = useState({
         name: "",
-        parent: null,
+        parent: idparent !== "" ? Number(idparent) : null,
         description: "",
         required_sn: false,
         asset_columns: []
@@ -225,7 +225,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                         <span className="judulField1"></span>
                                                         Induk Asset Type
                                                     </p>
-                                                    <TreeSelect style={{ marginRight: `1rem` }} treeData={assetdata} defaultValue={idparent !== "" ? idparent : null} disabled={idparent !== ""}></TreeSelect>
+                                                    <TreeSelect style={{ marginRight: `1rem` }} treeData={assetdata} defaultValue={codeparent !== "" ? codeparent : null} disabled={idparent !== ""}></TreeSelect>
                                                     <style jsx>
                                                         {`
                                                         .judulField1::before{
