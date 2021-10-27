@@ -15,6 +15,24 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     //2.useState
     const [displaydata, setdisplaydata] = useState([])
+    const [displayentiredata, setdisplayentiredata] = useState({
+        success: false,
+        message: "",
+        data: {
+            current_page: 0,
+            data: [],
+            first_page_url: "",
+            from: 0,
+            last_page: 0,
+            last_page_url: "",
+            next_page_url: null,
+            path: "",
+            per_page: "",
+            prev_page_url: "",
+            to: 0,
+            total: 0
+        },
+    })
     const [invrelations, setinvrelations] = useState({
         models: [],
         assets: [],
@@ -242,7 +260,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     //5.useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?rows=100`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -250,6 +268,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
         })
             .then(res => res.json())
             .then(res2 => {
+                setdisplayentiredata(res2)
                 setdisplaydata(res2.data.data)
                 setdisplaydata1(res2.data.data)
                 setdisplaydata2(res2.data.data)
@@ -379,7 +398,25 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                             </div>
                         </div>
                     </div>
-                    <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={displaydata} columns={columnsTable} loading={praloading}
+                    <Table pagination={{
+                        pageSize: 10, total: displayentiredata.data.total, onChange: (page, pageSize) => {
+                            setpraloading(true)
+                            fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?page=${page}&rows=10`, {
+                                method: `GET`,
+                                headers: {
+                                    'Authorization': JSON.parse(initProps),
+                                },
+                            })
+                                .then(res => res.json())
+                                .then(res2 => {
+                                    setdisplayentiredata(res2)
+                                    setdisplaydata(res2.data.data)
+                                    setdisplaydata1(res2.data.data)
+                                    setdisplaydata2(res2.data.data)
+                                    setpraloading(false)
+                                })
+                        }
+                    }} scroll={{ x: 200 }} dataSource={displaydata} columns={columnsTable} loading={praloading}
                         onRow={(record, rowIndex) => {
                             return {
                                 onMouseOver: (event) => {
