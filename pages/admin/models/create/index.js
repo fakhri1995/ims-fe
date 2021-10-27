@@ -44,7 +44,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                     </div>
                                 </div> */}
                                 {
-                                    doc.model_column.map((docmc2, idx) => {
+                                    doc.model_columns.map((docmc2, idx) => {
                                         var default2 = {}
                                         if (docmc2.data_type === 'dropdown' || docmc2.data_type === 'checkbox') {
                                             default2 = JSON.parse(docmc2.default)
@@ -526,7 +526,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                setmodeldata(res2.data)
+                setmodeldata(res2.data.data)
                 setcurrentidmodel(modeltrigger)
                 modeltrigger !== false ? seteditpart(true) : null
             })

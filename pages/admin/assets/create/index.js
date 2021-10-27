@@ -258,32 +258,32 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                 :
                                                 <Form.Item name="parent" label={
                                                     <div className="flex">
-                                                        <span className="judulField"></span> 
+                                                        <span className="judulField"></span>
                                                         <p className="mb-0 ml-1">Induk Asset Type</p>
                                                         <style jsx>
-                                                                    {`
+                                                            {`
                                                                     .judulField::before{
                                                                         content: '*';
                                                                         color: red;
                                                                     }
                                                                 `}
-                                                                </style>
+                                                        </style>
                                                     </div>
                                                 }
-                                                    // rules={[
-                                                    //     {
-                                                    //         required: true,
-                                                    //         message: 'Induk Asset Type wajib diisi',
-                                                    //     },
-                                                    // ]}
-                                                    >
+                                                // rules={[
+                                                //     {
+                                                //         required: true,
+                                                //         message: 'Induk Asset Type wajib diisi',
+                                                //     },
+                                                // ]}
+                                                >
                                                     <TreeSelect
                                                         style={{ marginRight: `1rem` }}
                                                         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                                                         treeData={assetdata}
                                                         placeholder="Pilih parent"
                                                         treeDefaultExpandAll
-                                                        onChange={(value) => { setnewdata({ ...newdata, parent: value }) }}
+                                                        onChange={(value, label, extra) => { setnewdata({ ...newdata, parent: extra.allCheckedNodes[0].node.props.id }) }}
                                                         allowClear
                                                     />
                                                 </Form.Item>
@@ -446,10 +446,10 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                             <Select placeholder="Pilih Tipe Field" onChange={(value) => {
                                                                 setcurrentfield({ ...currentfield, data_type: value })
                                                                 if (value === 'dropdown' || value === 'checkbox') {
-                                                                    if((currentdropdown.every((doca, idxa) => doca !== ""))){
+                                                                    if ((currentdropdown.every((doca, idxa) => doca !== ""))) {
                                                                         setdisabledtambah(false)
                                                                     }
-                                                                    else{
+                                                                    else {
                                                                         setdisabledtambah(true)
                                                                     }
                                                                 }
@@ -496,7 +496,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                                     if ((e.target.value !== "") && (currentdropdown.every((doca, idxa) => doca !== "") && currentfield.name !== "")) {
                                                                                         setdisabledtambah(false)
                                                                                     }
-                                                                                    else if(e.target.value === "" || currentfield.name === ""){
+                                                                                    else if (e.target.value === "" || currentfield.name === "") {
                                                                                         setdisabledtambah(true)
                                                                                     }
                                                                                 }} />
@@ -539,7 +539,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                                                     if ((e.target.value !== "") && (currentdropdown.every((doca, idxa) => doca !== "") && currentfield.name !== "")) {
                                                                                         setdisabledtambah(false)
                                                                                     }
-                                                                                    else if(e.target.value === "" || currentfield.name === ""){
+                                                                                    else if (e.target.value === "" || currentfield.name === "") {
                                                                                         setdisabledtambah(true)
                                                                                     }
                                                                                 }} />

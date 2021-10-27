@@ -1464,8 +1464,8 @@ function ClientsRelationship({ dataProfile, tok, companyid }) {
     const columns = [
         {
             title: 'Relationship Type',
-            dataIndex: 'relationship',
-            key: 'relationship',
+            dataIndex: 'relationship_name',
+            key: 'relationship_name',
         },
         {
             title: 'Nama Item',

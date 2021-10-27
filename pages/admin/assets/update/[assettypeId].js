@@ -16,7 +16,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
     pathArr.splice(3, 1)
     pathArr[pathArr.length - 1] = "Ubah Asset Type"
     const [instanceForm] = Form.useForm();
-    const { idparent } = rt.query
+    const { idparent, codeparent } = rt.query
 
     //useState
     const [displaydata, setdisplaydata] = useState({
@@ -75,6 +75,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
     const [childvalue, setchildvalue] = useState(Number(assettypeid))
     const [childbound, setchildbound] = useState(0)
     const [childtrigger, setchildtrigger] = useState(false)
+    const [idparentstate, setidparentstate] = useState(Number(idparent))
 
     //handle
     const onClickAddField = () => {
@@ -128,9 +129,9 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                     }
                 })
             }
-            // if (prop === "code") {
-            //     t[prop] = idparent
-            // }
+            if (prop === "parent") {
+                t[prop] = idparentstate
+            }
             else {
                 t[prop] = updatedata[prop]
             }
@@ -180,21 +181,21 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                     update_columns: [],
                     add_columns: [],
                     delete_column_ids: [],
-                    parent: idparent
+                    parent: codeparent
                 })
                 setupdatedata({
                     ...res2.data,
                     update_columns: [],
                     add_columns: [],
                     delete_column_ids: [],
-                    parent: idparent
+                    parent: codeparent
                 })
                 const assetcolmap = res2.data.asset_columns.map((doc, idx) => {
                     return ({
                         id: doc.id,
                         name: doc.name,
                         data_type: doc.data_type,
-                        default: doc.default.indexOf("{") !== -1 ? JSON.parse(doc.default) : doc.default,
+                        default: doc.default === null ? doc.default : (doc.default.indexOf("{") !== -1 ? JSON.parse(doc.default) : doc.default),
                         required: doc.required
                     })
                 })
@@ -342,10 +343,11 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                 style={{ marginRight: `1rem` }}
                                                 dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                                                 treeData={assetdata}
-                                                defaultValue={idparent !== "" ? idparent : "-"}
+                                                defaultValue={codeparent !== "" ? codeparent : "-"}
                                                 treeDefaultExpandAll
                                                 allowClear
                                                 onChange={(value, label, extra) => {
+                                                    setidparentstate(extra.allCheckedNodes[0].node.props.id)
                                                     setchildbound(prev => prev + 1)
                                                     setselectedinduk(extra.allCheckedNodes[0].node.props)
                                                     setchildtrigger(prev => !prev)

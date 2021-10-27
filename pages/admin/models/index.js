@@ -91,9 +91,9 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                setdisplaydata(res2.data)
-                setdisplaydata1(res2.data)
-                setdisplaydata2(res2.data)
+                setdisplaydata(res2.data.data)
+                setdisplaydata1(res2.data.data)
+                setdisplaydata2(res2.data.data)
             })
     }, [])
     useEffect(() => {

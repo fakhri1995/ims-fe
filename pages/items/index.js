@@ -53,9 +53,9 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 return {
                     children:
                         <div className="flex items-center">
-                            <p className="mb-0 mr-1">{record.asset_name}</p>
+                            <p className="mb-0 mr-1">{record.model_inventory.asset.name}</p>
                             {
-                                record.asset_deleted_at !== null ?
+                                record.model_inventory.asset.deleted_at !== null ?
                                     <Tooltip placement="right" title="Asset Type telah dihapus, segera lakukan pengubahan Asset Type!">
                                         <ExclamationCircleOutlined style={{ color: `red` }}></ExclamationCircleOutlined>
                                     </Tooltip>
@@ -73,9 +73,9 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 return {
                     children:
                         <div className="flex items-center">
-                            <p className="mb-0 mr-1">{record.model_name}</p>
+                            <p className="mb-0 mr-1">{record.model_inventory.name}</p>
                             {
-                                record.model_deleted_at !== null ?
+                                record.model_inventory.deleted_at !== null ?
                                     <Tooltip placement="right" title="Model telah dihapus, segera lakukan pengubahan Model!">
                                         <ExclamationCircleOutlined style={{ color: `red` }}></ExclamationCircleOutlined>
                                     </Tooltip>
@@ -94,21 +94,21 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     children:
                         <div className="w-full flex">
                             {
-                                record.status_condition === 1 &&
+                                record.status_condition.id === 1 &&
                                 <div className="p-1 flex w-full items-center">
                                     <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
                                     <p className="mb-0">Good</p>
                                 </div>
                             }
                             {
-                                record.status_condition === 2 &&
+                                record.status_condition.id === 2 &&
                                 <div className="p-1 flex w-full items-center">
                                     <div className="w-3 h-3 rounded-full bg-gray-500 mr-1"></div>
                                     <p className="mb-0">Grey</p>
                                 </div>
                             }
                             {
-                                record.status_condition === 3 &&
+                                record.status_condition.id === 3 &&
                                 <div className="p-1 flex w-full items-center">
                                     <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
                                     <p className="mb-0">Bad</p>
@@ -127,15 +127,15 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     children:
                         <div className="justify-center flex">
                             {
-                                record.status_usage === 1 &&
+                                record.status_usage.id === 1 &&
                                 <div className="rounded-md w-7/12 h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">In Used</div>
                             }
                             {
-                                record.status_usage === 2 &&
+                                record.status_usage.id === 2 &&
                                 <div className="rounded-md w-7/12 h-auto px-1 text-center py-1 bg-green-100 border border-green-200 text-green-600">In Stock</div>
                             }
                             {
-                                record.status_usage === 3 &&
+                                record.status_usage.id === 3 &&
                                 <div className="rounded-md w-7/12 h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">Replacement</div>
                             }
                         </div>
@@ -201,28 +201,39 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
         }
     }
     const onFinalClick = () => {
-        var datatemp = displaydata1
-        if (assettypefilteract) {
-            datatemp = datatemp.filter(flt => {
-                return flt.asset_name.toLowerCase() === assettypevalue.toLowerCase()
-                // return (flt.asset_name.toLowerCase().includes(assettypevalue.toLowerCase())) || (flt.asset_name.replaceAll(/\s+\/\s+/g, "/").split("/")[0] === namaasset)
+        // var datatemp = displaydata1
+        // if (assettypefilteract) {
+        //     datatemp = datatemp.filter(flt => {
+        //         return flt.asset_name.toLowerCase() === assettypevalue.toLowerCase()
+        //     })
+        // }
+        // if (modelfilteract) {
+        //     datatemp = datatemp.filter(flt => flt.model_id === modelvalue)
+        // }
+        // if (kondisifilteract) {
+        //     datatemp = datatemp.filter(flt => flt.status_condition.id === kondisivalue)
+        // }
+        // if (pemakaianfilteract) {
+        //     datatemp = datatemp.filter(flt => flt.status_usage.id === pemakaianvalue)
+        // }
+        // if (namasearchact) {
+        //     datatemp = datatemp.filter(flt => {
+        //         return flt.inventory_name.toLowerCase().includes(namavalue.toLowerCase())
+        //     })
+        // }
+        // setdisplaydata(datatemp)
+        setpraloading(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?rows=100&asset_id=${assettypefilteract ? assettypevalue : ""}&model_id=${modelfilteract ? modelvalue : ""}&status_condition=${kondisifilteract ? kondisivalue : ""}&status_usage=${pemakaianfilteract ? pemakaianvalue : ""}&name=${namasearchact ? namavalue : ""}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdisplaydata(res2.data.data)
+                setpraloading(false)
             })
-        }
-        if (modelfilteract) {
-            datatemp = datatemp.filter(flt => flt.model_id === modelvalue)
-        }
-        if (kondisifilteract) {
-            datatemp = datatemp.filter(flt => flt.status_condition === kondisivalue)
-        }
-        if (pemakaianfilteract) {
-            datatemp = datatemp.filter(flt => flt.status_usage === pemakaianvalue)
-        }
-        if (namasearchact) {
-            datatemp = datatemp.filter(flt => {
-                return flt.inventory_name.toLowerCase().includes(namavalue.toLowerCase())
-            })
-        }
-        setdisplaydata(datatemp)
     }
 
 
@@ -231,7 +242,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     //5.useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?rows=100`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -239,9 +250,9 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                setdisplaydata(res2.data)
-                setdisplaydata1(res2.data)
-                setdisplaydata2(res2.data)
+                setdisplaydata(res2.data.data)
+                setdisplaydata1(res2.data.data)
+                setdisplaydata2(res2.data.data)
             })
     }, [])
     useEffect(() => {
@@ -303,7 +314,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                             onChangeAssetType()
                                         }
                                         else {
-                                            onChangeAssetType(extra.allCheckedNodes[0].node.props.title)
+                                            onChangeAssetType(extra.allCheckedNodes[0].node.props.id)
                                             setnamaasset(extra.allCheckedNodes[0].node.props.title)
                                         }
                                     }}

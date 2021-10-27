@@ -36,31 +36,31 @@ const Overview = ({ itemid, initProps, maindata, manuf, vendor, praloading }) =>
                             <h1 className=" text-sm font-semibold mb-0">Model:</h1>
                             {
                                 // invrelations.models.filter(docfil => docfil.id === maindata.model_id)[0].deleted_at !== null
-                                maindata.model_deleted_at !== null
+                                maindata.model_inventory.deleted_at !== null
                                     ?
                                     <div className="flex items-center">
-                                        <p className="mb-0 mr-1">{maindata.model_name}</p>
+                                        <p className="mb-0 mr-1">{maindata.model_inventory.name}</p>
                                         <Tooltip placement="right" title="Model telah dihapus, segera lakukan pengubahan Model!">
                                             <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
                                         </Tooltip>
                                     </div>
                                     :
-                                    <p className="mb-0 text-sm">{maindata.model_name}</p>
+                                    <p className="mb-0 text-sm">{maindata.model_inventory.name}</p>
                             }
                         </div>
                         <div className="flex flex-col mb-5">
                             <h1 className=" text-sm font-semibold mb-0">Asset Type:</h1>
                             {
-                                maindata.asset_deleted_at !== null
+                                maindata.model_inventory.asset.deleted_at !== null
                                     ?
                                     <div className="flex items-center">
-                                        <p className="mb-0 mr-1">{maindata.asset_name}</p>
+                                        <p className="mb-0 mr-1">{maindata.model_inventory.asset.name}</p>
                                         <Tooltip placement="right" title="Asset Type telah dihapus, segera lakukan pengubahan Asset Type!">
                                             <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
                                         </Tooltip>
                                     </div>
                                     :
-                                    <p className="mb-0 text-sm">{maindata.asset_name}</p>
+                                    <p className="mb-0 text-sm">{maindata.model_inventory.asset.name}</p>
                             }
                         </div>
                         <div className="flex flex-col mb-5">
@@ -69,7 +69,7 @@ const Overview = ({ itemid, initProps, maindata, manuf, vendor, praloading }) =>
                         </div>
                         <div className="flex flex-col mb-5">
                             <h1 className=" text-sm font-semibold mb-0">Serial Number:</h1>
-                            <p className="mb-0 text-sm">{maindata.serial_number === "" ? "-" : maindata.serial_number}</p>
+                            <p className="mb-0 text-sm">{maindata.serial_number === "" || maindata.serial_number === null ? "-" : maindata.serial_number}</p>
                         </div>
                         <div className="flex flex-col mb-5">
                             <h1 className=" text-sm font-semibold mb-0">Manufacturer:</h1>
@@ -93,11 +93,11 @@ const Overview = ({ itemid, initProps, maindata, manuf, vendor, praloading }) =>
                         </div>
                         <div className="flex flex-col mb-5">
                             <h1 className=" text-sm font-semibold mb-0">Location:</h1>
-                            <p className="mb-0 text-sm">{maindata.location_name}</p>
+                            <p className="mb-0 text-sm">{maindata.location === null ? "-" : maindata.location_inventory.company_name}</p>
                         </div>
                         <div className="flex flex-col mb-5">
                             <h1 className=" text-sm font-semibold mb-0">Deskripsi:</h1>
-                            <p className="mb-0 text-sm">{maindata.deskripsi !== "" ? maindata.deskripsi : "-"}</p>
+                            <p className="mb-0 text-sm">{maindata.deskripsi !== "" || maindata.deskripsi !== null ? maindata.deskripsi : "-"}</p>
                         </div>
                         <hr />
                         {
@@ -739,8 +739,8 @@ const Relationship = ({ initProps, maindata, itemid }) => {
     const columns = [
         {
             title: 'Relationship Type',
-            dataIndex: 'relationship',
-            key: 'relationship',
+            dataIndex: 'relationship_name',
+            key: 'relationship_name',
         },
         {
             title: 'Nama Item',
@@ -762,7 +762,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                             {
                                 events === record.id ?
                                     <>
-                                        <DeleteOutlined onClick={() => { setdataApidelete({ id: record.id }); setrelationdatadelete({ name: record.relationship, tipe: record.type, koneksi: record.connected_detail_name }); setmodaldelete(true); }} style={{ fontSize: `1.2rem`, color: `red`, cursor: `pointer` }} />
+                                        <DeleteOutlined onClick={() => { setdataApidelete({ id: record.id }); setrelationdatadelete({ name: record.relationship_name, tipe: record.type, koneksi: record.connected_detail_name }); setmodaldelete(true); }} style={{ fontSize: `1.2rem`, color: `red`, cursor: `pointer` }} />
                                     </>
                                     :
                                     null
@@ -859,7 +859,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                 var selectedAsset = {}
                 const recursiveSearchAsset = (doc, key) => {
                     for (var i = 0; i < doc.length; i++) {
-                        if (doc[i].title === key) {
+                        if (doc[i].id === key) {
                             selectedAsset = doc[i]
                         }
                         else {
@@ -869,7 +869,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                         }
                     }
                 }
-                recursiveSearchAsset(res2.data, maindata.asset_name)
+                recursiveSearchAsset(res2.data, maindata.model_inventory.asset_id)
                 setdataasset(selectedAsset)
             })
     }, [])
@@ -1188,6 +1188,21 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
         asset_name: "",
         model_name: "",
         location_name: "",
+        model_inventory: {
+            id: null,
+            name: "",
+            asset_id: null,
+            deleted_at: null,
+            asset: {
+                id: null,
+                name: "",
+                deleted_at: null
+            }
+        },
+        location_inventory: {
+            company_id: null,
+            company_name: ""
+        },
         additional_attributes: [],
         inventory_parts: []
     })

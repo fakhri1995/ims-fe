@@ -45,7 +45,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                     </div>
                                 </div> */}
                                 {
-                                    doc.model_column.map((docmc2, idx) => {
+                                    doc.model_columns.map((docmc2, idx) => {
                                         // var default2 = {}
                                         // if (docmc2.data_type === 'dropdown' || docmc2.data_type === 'checkbox') {
                                         //     default2 = JSON.parse(docmc2.default)
@@ -622,7 +622,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                     var temp11 = []
                     for (var i = 0; i < item.length; i++) {
                         var temp1 = {}
-                        temp1 = item[i].model_column.map((doc, idx) => {
+                        temp1 = item[i].model_columns.map((doc, idx) => {
                             if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
                                 return ({
                                     ...doc,
@@ -637,7 +637,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                         })
                         temp11.push({
                             ...item[i],
-                            model_column: temp1,
+                            model_columns: temp1,
                             model_parts: item[i].model_parts.length > 0 ? recursivePartModel(item[i].model_parts) : []
                         })
                     }
@@ -1960,8 +1960,8 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                         }
                                                                     }
                                                                     if ((defaultdata.model_parts.map(docparts => docparts.id).includes(doc.id) === true) && idxtemp !== -1) {
-                                                                        if (temp.delete_model_ids.indexOf(doc.child_id) === -1) {
-                                                                            temp.delete_model_ids.push(doc.child_id)
+                                                                        if (temp.delete_model_ids.indexOf(doc.id) === -1) {
+                                                                            temp.delete_model_ids.push(doc.id)
                                                                         }
                                                                     }
                                                                     return temp
@@ -1980,7 +1980,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                             </div>
                                                         </div>
                                                         {
-                                                            doc.model_column.map((docmc, idxmc) => {
+                                                            doc.model_columns.map((docmc, idxmc) => {
                                                                 return (
                                                                     <div className="flex flex-col mb-5">
                                                                         <h1 className="font-semibold mb-1">{docmc.name} {docmc.required ? <span className="judulsn"></span> : null} <span className="text-gray-400">{docmc.data_type ? <>({docmc.data_type.charAt(0).toUpperCase() + docmc.data_type.slice(1)})</> : ""}</span></h1>
@@ -2118,7 +2118,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                         var t = {}
                                                         for (var prop in res2.data) {
                                                             if (prop === "model_columns") {
-                                                                t["model_column"] = res2.data[prop].map((doc, idx) => {
+                                                                t["model_columns"] = res2.data[prop].map((doc, idx) => {
                                                                     if (doc.data_type === 'dropdown' || doc.data_type === 'checkbox') {
                                                                         return ({
                                                                             ...doc,
@@ -2132,7 +2132,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                             }
                                                             else {
                                                                 const modelparts = res2.data.model_parts.map(doc2 => {
-                                                                    const map3 = doc2.model_column.map(doc3 => {
+                                                                    const map3 = doc2.model_columns.map(doc3 => {
                                                                         if (doc3.data_type === 'dropdown' || doc3.data_type === 'checkbox') {
                                                                             return {
                                                                                 ...doc3,
@@ -2145,7 +2145,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                     })
                                                                     return {
                                                                         ...doc2,
-                                                                        model_column: map3
+                                                                        model_columns: map3
                                                                     }
                                                                 })
                                                                 t["model_parts"] = modelparts

@@ -8,9 +8,9 @@ import { Modal, Steps, Radio, Button, Tabs, TreeSelect, Empty, notification, Sel
 import { CalendarOutlined, DownOutlined, UpOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import st from '../../../../components/layout-dashboard.module.css'
 
-const Overview = ({ assettypeid, initProps, displaydata, parentcode, praloading }) => {
+const Overview = ({ assettypeid, initProps, displaydata, parentcode, praloading, idparent }) => {
     const rt = useRouter()
-    const parentid = displaydata.code.substring(0, displaydata.code.length - 4)
+    const codeparent = displaydata.code.substring(0, displaydata.code.length - 4)
     return (
         <div className="flex flex-col">
             <div className="border-b flex justify-between p-5 mb-8">
@@ -19,7 +19,7 @@ const Overview = ({ assettypeid, initProps, displaydata, parentcode, praloading 
                     praloading ?
                         null
                         :
-                        <Button type="primary" onClick={() => { rt.push(`/admin/assets/update/${assettypeid}?idparent=${parentid}`) }}>Ubah</Button>
+                        <Button type="primary" onClick={() => { rt.push(`/admin/assets/update/${assettypeid}?codeparent=${codeparent}&idparent=${idparent}`) }}>Ubah</Button>
                 }
             </div>
             <div className="mb-8 mx-5 p-5 border shadow-md rounded-md flex flex-col">
@@ -187,8 +187,8 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
     const columns = [
         {
             title: 'Relationship Type',
-            dataIndex: 'relationship',
-            key: 'relationship',
+            dataIndex: 'relationship_name',
+            key: 'relationship_name',
         },
         {
             title: 'Type',
@@ -210,8 +210,8 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
                             {
                                 events === record.id ?
                                     <>
-                                        <EditOutlined onClick={() => { setdataApiupdate({ ...dataApiupdate, id:record.id, from_inverse: record.from_inverse, is_inverse: record.is_inverse, relationship_id: record.relationship_id, connected_id: record.connected_id }); setrelationnameupdate(record.relationship); setdetailtipeupdate(record.type_id); setmodalupdate(true); setdisabledupdate(false) }} style={{ fontSize: `1.2rem`, color: `rgb(15,146,255)`, cursor: `pointer`, marginRight: `1rem` }} />
-                                        <DeleteOutlined onClick={() => { setdataApidelete({ id: record.id }); setrelationdatadelete({ name: record.relationship, tipe: record.type, koneksi: record.connected_detail_name }); setmodaldelete(true); }} style={{ fontSize: `1.2rem`, color: `red`, cursor: `pointer` }} />
+                                        <EditOutlined onClick={() => { setdataApiupdate({ ...dataApiupdate, id: record.id, from_inverse: record.from_inverse, is_inverse: record.is_inverse, relationship_id: record.relationship_id, connected_id: record.connected_id }); setrelationnameupdate(record.relationship_name); setdetailtipeupdate(record.type_id); setmodalupdate(true); setdisabledupdate(false) }} style={{ fontSize: `1.2rem`, color: `rgb(15,146,255)`, cursor: `pointer`, marginRight: `1rem` }} />
+                                        <DeleteOutlined onClick={() => { setdataApidelete({ id: record.id }); setrelationdatadelete({ name: record.relationship_name, tipe: record.type, koneksi: record.connected_detail_name }); setmodaldelete(true); }} style={{ fontSize: `1.2rem`, color: `red`, cursor: `pointer` }} />
                                     </>
                                     :
                                     null
@@ -822,6 +822,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
     const [newparentmodelcode, setnewparentmodelcode] = useState(null)
     const [childassettype, setchildassettype] = useState([])
     const [parentcode, setparentcode] = useState("")
+    const [parentid, setparentid] = useState(-10)
     const [praloading, setpraloading] = useState(true)
 
     //handle
@@ -902,6 +903,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                         var temp = flattening(ress2.data)
                         var temp3 = temp.filter((doc) => doc.value === res3)[0]
                         setparentcode(temp3)
+                        temp3 ? setparentid(temp3.id) : setparentid(null)
                         setpraloading(false)
                     })
             })
@@ -968,7 +970,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                setmodeldata(res2.data)
+                setmodeldata(res2.data.data)
             })
     }, [])
     useEffect(() => {
@@ -1031,7 +1033,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                     <div className=" hidden md:block">
                         <Tabs tabPosition={`left`}>
                             <TabPane tab="Overview" key={`overview`}>
-                                <Overview assettypeid={assettypeid} initProps={initProps} displaydata={displaydata} parentcode={parentcode} praloading={praloading} />
+                                <Overview assettypeid={assettypeid} initProps={initProps} displaydata={displaydata} parentcode={parentcode} praloading={praloading} idparent={parentid} />
                             </TabPane>
                             <TabPane tab="Relationship" key={`relationship`}>
                                 <Relationship assettypeid={assettypeid} initProps={initProps} maindata={displaydata} />
@@ -1041,7 +1043,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                     <div className=" block md:hidden" >
                         <Tabs tabPosition={`top`}>
                             <TabPane tab="Overview" key={`overview`}>
-                                <Overview assettypeid={assettypeid} initProps={initProps} displaydata={displaydata} parentcode={parentcode} praloading={praloading} />
+                                <Overview assettypeid={assettypeid} initProps={initProps} displaydata={displaydata} parentcode={parentcode} praloading={praloading} idparent={parentid} />
                             </TabPane>
                             <TabPane tab="Relationship" key={`relationship`}>
                                 <Relationship assettypeid={assettypeid} initProps={initProps} maindata={displaydata} />
@@ -1121,7 +1123,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                         </div>
                         <div className="mb-2">
                             <h5 className=" text-xs font-semibold">2. Jika tidak, pilih Asset Type sebagai parent untuk child dari Asset Type "{displaydata.name}"! <span className="hapusField2"></span></h5>
-                            <TreeSelect value={newparentchild} className="step1treeselect" placeholder="Pilih Asset Type" onChange={(value) => { setnewparentchild(value); setnewparentchildradio(true) }} disabled={allchilddelete} treeData={displayassetdata} style={{ width: `70%` }} />
+                            <TreeSelect value={newparentchild} className="step1treeselect" placeholder="Pilih Asset Type" onChange={(value, label, extra) => { setnewparentchild(extra.allCheckedNodes[0].node.props.id); setnewparentchildradio(true) }} disabled={allchilddelete} treeData={displayassetdata} style={{ width: `70%` }} />
                         </div>
                         <style jsx>
                             {`
@@ -1242,7 +1244,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                         </div>
                         <div className="mb-2">
                             <h5 className=" text-xs font-semibold">2. Jika tidak, pilih Asset Type sebagai parent untuk child dari Asset Type "{displaydata.name}"! <span className="hapusField2"></span></h5>
-                            <TreeSelect value={newparentchild} className="step1treeselect" placeholder="Pilih Asset Type" onChange={(value) => { setnewparentchild(value); setnewparentchildradio(true) }} disabled={allchilddelete} treeData={displayassetdata} style={{ width: `70%` }} />
+                            <TreeSelect value={newparentchild} className="step1treeselect" placeholder="Pilih Asset Type" onChange={(value, label, extra) => { setnewparentchild(extra.allCheckedNodes[0].node.props.id); setnewparentchildradio(true) }} disabled={allchilddelete} treeData={displayassetdata} style={{ width: `70%` }} />
                         </div>
                         <style jsx>
                             {`

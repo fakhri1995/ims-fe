@@ -40,7 +40,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                                     </div>
                                 </div> */}
                                 {
-                                    doc.model_column.map((docmc2, idx) => {
+                                    doc.model_columns.map((docmc2, idx) => {
                                         var default2 = {}
                                         if (docmc2.data_type === 'dropdown' || docmc2.data_type === 'checkbox') {
                                             default2 = JSON.parse(docmc2.default)
@@ -266,7 +266,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                         </div>
                         <div className="flex flex-col mb-4">
                             <h1 className="font-semibold mb-1">Jumlah Item:</h1>
-                            <p className="mb-0 text-xs">{displaydata.count}</p>
+                            <p className="mb-0 text-xs">{displaydata.inventories_count}</p>
                         </div>
                         <div className="flex flex-col">
                             <h1 className="font-semibold mb-1">Serial Number:</h1>
@@ -410,7 +410,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                                                                 </div>
                                                             </div>
                                                             {
-                                                                docmp.model_column.map((docmc2, idxmc2) => {
+                                                                docmp.model_columns.map((docmc2, idxmc2) => {
                                                                     if (docmc2.data_type === 'dropdown' || docmc2.data_type === 'checkbox') {
                                                                         default2 = JSON.parse(docmc2.default)
                                                                     }
