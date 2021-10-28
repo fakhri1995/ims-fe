@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
 import Link from 'next/link'
 import { SearchOutlined } from '@ant-design/icons'
-import { Button, Table, Input, Select, DatePicker } from 'antd'
+import { Button, Table, Input, Select, DatePicker, TreeSelect } from 'antd'
 import Layout from '../../components/layout-dashboard2'
 import moment from 'moment'
 import st from '../../components/layout-dashboard.module.css'
@@ -14,14 +14,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
     const pathArr = rt.pathname.split("/").slice(1)
 
     //2.useState
-    const [displaydata, setdisplaydata] = useState({
-        total_tickets: 0,
-        open_tickets_count: 0,
-        on_progress_tickets_count: 0,
-        pending_tickets_count: 0,
-        resolved_tickets_count: 0,
-        tickets: []
-    })
+    const [displaydata, setdisplaydata] = useState([])
     const [ticketrelations, setticketrelations] = useState({
         status_ticket: [
             {
@@ -38,16 +31,42 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
             },
         ],
         requester_companies: [],
-        companies: [
-            {
-                company_id: 0,
-                company_name: "",
-                parent_id: null
-            },
-        ],
+        companies: {
+            data: [
+                {
+                    id: 0,
+                    title: '',
+                    key: '',
+                    value: 0
+                }
+            ]
+        }
     })
     const [displaydata1, setdisplaydata1] = useState([])
     const [displaydata2, setdisplaydata2] = useState([])
+    const [rawdata, setrawdata] = useState({
+        total_tickets: 0,
+        open_tickets_count: 0,
+        on_progress_tickets_count: 0,
+        on_hold_tickets_count: 0,
+        canceled_tickets_count: 0,
+        closed_tickets_count: 0,
+        tickets: {}
+    })
+    const [displayentiredata, setdisplayentiredata] = useState({
+        current_page: 0,
+        data: [],
+        first_page_url: "",
+        from: 0,
+        last_page: 0,
+        last_page_url: "",
+        next_page_url: null,
+        path: "",
+        per_page: "",
+        prev_page_url: "",
+        to: 0,
+        total: 0
+    })
     const [namasearchact, setnamasearchact] = useState(false)
     const [namavalue, setnamavalue] = useState("")
     const [lokasifilteract, setlokasifilteract] = useState(false)
@@ -62,36 +81,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
     const [dummies, setdummies] = useState([])
 
     //declaration
-    const datatableDummies = [
-        {
-            id: 100,
-            ticket_type: 1,
-            raised_by: 1,
-            location_problem: 1,
-            date_raised: "2021-10-19T08:00:46.384Z",
-            assign_to: 2,
-            status: 1
-        },
-        {
-            id: 200,
-            ticket_type: 1,
-            raised_by: 1,
-            location_problem: 1,
-            date_raised: "2021-02-19T16:00:46.384Z",
-            assign_to: 3,
-            status: 2
-        },
-        {
-            id: 300,
-            ticket_type: 1,
-            raised_by: 1,
-            location_problem: 1,
-            date_raised: "2019-11-19T23:00:50.384Z",
-            assign_to: 4,
-            status: 3
-        }
-    ]
-    const columnDummies = [
+    const column = [
         {
             title: 'No Ticket',
             dataIndex: 'num',
@@ -99,7 +89,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 return {
                     children:
                         <>
-                            {record.ticket_type === 1 && "#INC - "}{record.id}
+                            {`#${record.type.code} - `}{record.type.id}
                         </>
                 }
             }
@@ -111,7 +101,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 return {
                     children:
                         <>
-                            {ticketrelations.requesters.filter(docfil => docfil.user_id === record.raised_by)[0].fullname}
+                            {ticketrelations.requesters.filter(docfil => docfil.user_id === record.requester_id)[0].fullname}
                         </>
                 }
             }
@@ -123,7 +113,8 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 return {
                     children:
                         <>
-                            {ticketrelations.companies.filter(docfil => docfil.company_id === record.location_problem)[0].company_name}
+                            {/* {ticketrelations.companies.filter(docfil => docfil.company_id === record.location)[0].company_name} */}
+                            {record.detail.location.company_name}
                         </>
                 }
             }
@@ -133,15 +124,15 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
             dataIndex: 'date_raised',
             render: (text, record, index) => {
                 // var hariTerakhir = new Date(new Date(record.tanggal).getTime() + (props.durasi * 24 * 60 * 60 * 1000));
-                var jumlahHari = Math.floor((new Date().getTime() - new Date(record.date_raised).getTime()) / (1000 * 3600 * 24))
+                var jumlahHari = Math.floor((new Date().getTime() - new Date(record.raised_at).getTime()) / (1000 * 3600 * 24))
                 var jumlahJam = ""
                 if (jumlahHari < 1) {
-                    jumlahJam = Math.floor((new Date().getTime() - new Date(record.date_raised).getTime()) / (1000 * 3600))
+                    jumlahJam = Math.floor((new Date().getTime() - new Date(record.raised_at).getTime()) / (1000 * 3600))
                 }
                 return {
                     children:
                         <>
-                            {moment(record.date_raised).locale('id').format('L')} ({jumlahHari < 1 ? `${jumlahJam} jam` : `${jumlahHari} hari`} yang lalu)
+                            {moment(record.raised_at).locale('id').format('L')} ({jumlahHari < 1 ? `${jumlahJam} jam` : `${jumlahHari} hari`} yang lalu)
                         </>
                 }
             }
@@ -153,7 +144,8 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 return {
                     children:
                         <>
-                            {ticketrelations.requesters.filter(docfil => docfil.user_id === record.assign_to)[0].fullname}
+                            {/* {ticketrelations.requesters.filter(docfil => docfil.user_id === record.assign_to)[0].fullname} */}
+                            {record.asign.fullname}
                         </>
                 }
             }
@@ -165,7 +157,8 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 return {
                     children:
                         <>
-                            {ticketrelations.status_ticket.filter(docfil => docfil.id === record.status)[0].name}
+                            {/* {ticketrelations.status_ticket.filter(docfil => docfil.id === record.status)[0].name} */}
+                            {record.status.name}
                         </>
                 }
             }
@@ -241,7 +234,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     //5.useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getClientTickets`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -249,14 +242,16 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                setdisplaydata(res2.data)
-                setdisplaydata1(res2.data)
-                setdisplaydata2(res2.data)
+                setrawdata(res2.data)
+                setdisplayentiredata(res2.data.tickets)
+                setdisplaydata(res2.data.tickets.data)
+                setdisplaydata1(res2.data.tickets.data)
+                setdisplaydata2(res2.data.tickets.data)
                 setpraloading(false)
             })
     }, [])
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getClientTicketRelation`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -265,7 +260,6 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
             .then(res => res.json())
             .then(res2 => {
                 setticketrelations(res2.data)
-                setdummies(datatableDummies)
             })
     }, [])
 
@@ -279,39 +273,46 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                             <div className="w-2 h-2 rounded-full bg-blue-500 mr-1"></div>
                             <p className="mb-0">Open</p>
                         </div>
-                        <div className=" text-lg text-center">{displaydata.open_tickets_count}</div>
+                        <div className=" text-lg text-center">{rawdata.open_tickets_count}</div>
                     </div>
                     <div className="flex flex-col mr-10">
                         <div className="flex items-center mb-2">
                             <div className="w-2 h-2 rounded-full bg-green-500 mr-1"></div>
                             <p className="mb-0">On Progress</p>
                         </div>
-                        <div className=" text-lg text-center">{displaydata.on_progress_tickets_count}</div>
+                        <div className=" text-lg text-center">{rawdata.on_progress_tickets_count}</div>
+                    </div>
+                    <div className="flex flex-col mr-10">
+                        <div className="flex items-center mb-2">
+                            <div className="w-2 h-2 rounded-full bg-yellow-500 mr-1"></div>
+                            <p className="mb-0">On Hold</p>
+                        </div>
+                        <div className=" text-lg text-center">{rawdata.on_hold_tickets_count}</div>
                     </div>
                     <div className="flex flex-col mr-10">
                         <div className="flex items-center mb-2">
                             <div className="w-2 h-2 rounded-full bg-red-500 mr-1"></div>
                             <p className="mb-0">Cancel</p>
                         </div>
-                        <div className=" text-lg text-center">{displaydata.pending_tickets_count}</div>
+                        <div className=" text-lg text-center">{rawdata.canceled_tickets_count}</div>
                     </div>
                     <div className="flex flex-col mr-12">
                         <div className="flex items-center mb-2">
                             <div className="w-2 h-2 rounded-full bg-gray-500 mr-1"></div>
                             <p className="mb-0">Closed</p>
                         </div>
-                        <div className=" text-lg text-center">{displaydata.total_tickets}</div>
+                        <div className=" text-lg text-center">{rawdata.closed_tickets_count}</div>
                     </div>
                     <div className="flex flex-col">
                         <div className="flex items-center mb-2">
                             <p className="mb-0 font-bold text-lg">Total Tiket</p>
                         </div>
-                        <div className=" font-bold text-xl text-center">{displaydata.resolved_tickets_count}</div>
+                        <div className=" font-bold text-xl text-center">{rawdata.total_tickets}</div>
                     </div>
                 </div>
                 <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
                     <Link href={'/tickets/histories'}>
-                        <Button size="large" type="primary" style={{ marginRight: `1rem` }} onClick={()=>{rt.push(`/tickets/histories`)}}>
+                        <Button size="large" type="primary" style={{ marginRight: `1rem` }} onClick={() => { rt.push(`/tickets/histories`) }}>
                             History
                         </Button>
                     </Link>
@@ -335,7 +336,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                 <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Ticket Number" onChange={onChangeSearch} allowClear></Input>
                             </div>
                             <div className="col-span-3 mr-1">
-                                <Select placeholder="Lokasi Problem" style={{ width: `100%` }} allowClear onChange={(value) => {
+                                {/* <Select placeholder="Lokasi Problem" style={{ width: `100%` }} allowClear onChange={(value) => {
                                     if (typeof (value) === 'undefined') {
                                         onChangeLokasi()
                                     }
@@ -350,7 +351,15 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                             )
                                         })
                                     }
-                                </Select>
+                                </Select> */}
+                                <TreeSelect placeholder="Lokasi Problem" style={{ width: `100%` }} allowClear onChange={(value, label, extra) => {
+                                    if (typeof (value) === 'undefined') {
+                                        onChangeLokasi()
+                                    }
+                                    else {
+                                        onChangeLokasi(extra.allCheckedNodes[0].node.props.id)
+                                    }
+                                }} treeData={[ticketrelations.companies.data]} treeDefaultExpandAll />
                             </div>
                             <div className="col-span-3 mr-1">
                                 <DatePicker.RangePicker placeholder={["Tanggal Awal", "Tanggal Akhir"]} onChange={(date, datestrings) => {
@@ -388,7 +397,26 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                         </div>
                     </div>
                     <div className="px-10">
-                        <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dummies} columns={columnDummies} loading={praloading}
+                        <Table pagination={{
+                            pageSize: 10, total: displayentiredata.data.total, onChange: (page, pageSize) => {
+                                setpraloading(true)
+                                fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${page}&rows=10`, {
+                                    method: `GET`,
+                                    headers: {
+                                        'Authorization': JSON.parse(initProps),
+                                    },
+                                })
+                                    .then(res => res.json())
+                                    .then(res2 => {
+                                        setrawdata(res2.data)
+                                        setdisplayentiredata(res2.data.tickets)
+                                        setdisplaydata(res2.data.tickets.data)
+                                        setdisplaydata1(res2.data.tickets.data)
+                                        setdisplaydata2(res2.data.tickets.data)
+                                        setpraloading(false)
+                                    })
+                            }
+                        }} scroll={{ x: 200 }} dataSource={displaydata} columns={column} loading={praloading}
                             onRow={(record, rowIndex) => {
                                 return {
                                     onMouseOver: (event) => {

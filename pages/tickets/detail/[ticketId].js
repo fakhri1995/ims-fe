@@ -9,11 +9,11 @@ import moment from 'moment'
 import st from '../../../components/layout-dashboard.module.css'
 import Sticky from 'wil-react-sticky'
 
-const Overview = ({ ticketid, initProps, praloading, maindata }) => {
+const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations }) => {
     //init
     const rt = useRouter()
     var selisihWaktu = ""
-    maindata.ticket.due_to ? (Math.floor((new Date(maindata.ticket.due_to).getTime() - new Date(maindata.ticket.created_at).getTime()) / (1000 * 3600 * 24)) > 1 ? selisihWaktu = Math.floor((new Date(maindata.ticket.due_to).getTime() - new Date(maindata.ticket.created_at).getTime()) / (1000 * 3600 * 24)) + " hari" : selisihWaktu = Math.floor((new Date(maindata.ticket.due_to).getTime() - new Date(maindata.ticket.created_at).getTime()) / (1000 * 3600)) + " jam") : null
+    maindata.ticket.closed_at ? (Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.raised_at).getTime()) / (1000 * 3600 * 24)) > 1 ? selisihWaktu = Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.raised_at).getTime()) / (1000 * 3600 * 24)) + " hari" : selisihWaktu = Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.raised_at).getTime()) / (1000 * 3600)) + " jam") : null
 
     //useState
     //export
@@ -48,7 +48,7 @@ const Overview = ({ ticketid, initProps, praloading, maindata }) => {
                             <hr />
                             <div className="flex flex-col mt-3 mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Ticket Raised By:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.requester_name}</p>
+                                <p className="mb-0 text-sm">{ticketrelations.requesters.filter(docfil => docfil.user_id === maindata.ticket.requester_id)[0] ? ticketrelations.requesters.filter(docfil => docfil.user_id === maindata.ticket.requester_id)[0].fullname : ""}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Lokasi Pembuat:</h1>
@@ -56,15 +56,15 @@ const Overview = ({ ticketid, initProps, praloading, maindata }) => {
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Date Raised Ticket:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.created_at ? moment(maindata.ticket.created_at).locale('id').format("LL") : "-"}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.raised_at ? moment(maindata.ticket.raised_at).locale('id').format("LL") : "-"}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Date Closed Ticket:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.due_to ? moment(maindata.ticket.due_to).locale('id').format("LL") : "-"}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.closed_at === null ? "-" : moment(maindata.ticket.closed_at).locale('id').format("LL")}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Resolved Time:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.due_to ? `${selisihWaktu}` : "-"}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.closed_at === null ? "-" : `${selisihWaktu}`}</p>
                             </div>
                         </div>
                         <div className="border shadow-md rounded-md flex flex-col p-5">
@@ -72,49 +72,55 @@ const Overview = ({ ticketid, initProps, praloading, maindata }) => {
                             <hr />
                             <div className="flex flex-col mt-3 mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Jenis Produk:</h1>
-                                <p className="mb-0 text-sm">{maindata.incident.data.incident.product_type === 2 ? "ATM" : "-"}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.full_detail.product_type.name === "" ? "-" : maindata.ticket.full_detail.product_type.name}</p>
                             </div>
                             <div className="flex flex-col mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">{maindata.incident.product_type === 2 ? "Terminal ID" : "ID Produk"}:</h1>
-                                <p className="mb-0 text-sm">{maindata.incident.data.incident.product_id}</p>
+                                <h1 className=" text-sm font-semibold mb-0">{maindata.ticket.full_detail.product_type === 2 ? "Terminal ID" : "ID Produk"}:</h1>
+                                <p className="mb-0 text-sm">{maindata.ticket.full_detail.product_id === "" ? "-" : maindata.ticket.full_detail.product_id}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Nama PIC:</h1>
-                                <p className="mb-0 text-sm">Bintang Agung Nusantara</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.full_detail.pic_name === "" ? "-" : maindata.ticket.full_detail.pic_name}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Kontak PIC:</h1>
-                                <p className="mb-0 text-sm">0829192129</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.full_detail.pic_contact === "" ? "-" : maindata.ticket.full_detail.pic_contact}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Problem:</h1>
-                                <p className="mb-0 text-sm">Card Reader</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.full_detail.problem === "" ? "-" : maindata.ticket.full_detail.problem}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Lokasi Problem:</h1>
-                                <p className="mb-0 text-sm">{maindata.incident.data.incident.incident_place_name}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.full_detail.location.company_name === "" ? "-" : maindata.ticket.full_detail.location.company_name}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Waktu Kejadian:</h1>
-                                <p className="mb-0 text-sm">{maindata.incident.data.incident.incident_time ? moment(maindata.incident.data.incident.incident_time).locale('id').format("L") + moment(maindata.incident.data.incident.incident_time).locale('id').format("LT") : "-"}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.full_detail.incident_time ? moment(maindata.ticket.full_detail.incident_time).locale('id').format("L") + moment(maindata.ticket.full_detail.incident_time).locale('id').format("LT") : "-"}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-2">Bukti Kejadian:</h1>
-                                <div className="border px-8 py-4 flex justify-between items-center w-9/12 mb-1 relative cursor-pointer hover:text-blue-500">
-                                    <div className="mr-5 flex items-center">
-                                        <img src="/image/pdfIcon.png" alt="selected images" className="object-contain w-16 h-16 mr-10" />
-                                        <p className="mb-0 mr-3">{maindata.incident.data.incident.files}</p>
-                                    </div>
-                                </div>
+                                {
+                                    maindata.ticket.full_detail.files.map((doc, idx) => {
+                                        return (
+                                            <div className="border px-8 py-4 flex justify-between items-center w-9/12 mb-1 relative cursor-pointer hover:text-blue-500">
+                                                <div className="mr-5 flex items-center">
+                                                    <img src={doc} alt="selected images" className="object-contain w-16 h-16 mr-10" />
+                                                    {/* <p className="mb-0 mr-3">{maindata.incident.data.incident.files}</p> */}
+                                                </div>
+                                            </div>
+                                        )
+                                    })
+                                }
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Deskripsi Kerusakan:</h1>
-                                <p className="mb-0 text-sm">{maindata.incident.data.incident.description}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.full_detail.description === "" ? "-" : maindata.ticket.full_detail.description}</p>
                             </div>
                         </div>
                     </div>
             }
-            <Modal title={<h1 className="font-semibold">Membuka Dokumen_1.pdf</h1>}
+            {/* <Modal title={<h1 className="font-semibold">Membuka Dokumen_1.pdf</h1>}
                 visible={modalexporting}
                 onCancel={() => { setmodalexporting(false) }}
                 okText="Ya"
@@ -130,7 +136,7 @@ const Overview = ({ ticketid, initProps, praloading, maindata }) => {
                     </div>
                     <hr />
                 </div>
-            </Modal>
+            </Modal> */}
         </div>
     )
 }
@@ -399,38 +405,52 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
     const [maindata, setmaindata] = useState({
         ticket: {
             id: Number(ticketid),
-            sub_id: 10,
-            subject_id: 13,
-            type: 1,
-            status: 4,
-            created_at: "2021-09-29T07:23:57.384Z",
-            due_to: "2021-09-29T21:58:46.384Z",
-            asign_to: 3,
-            asign_to_name: "Bintang Agung Nusantara",
-            requester_location: 1,
-            requester: 1,
-            requester_name: "Narendra Hanif",
-            deleted_at: null,
-            requester_location_name: "mitramas infosys global"
-        },
-        incident: {
-            success: true,
-            data: {
-                incident: {
-                    id: 1,
-                    incident_place_id: 1,
-                    product_type: 2,
-                    product_id: 29012,
-                    asset_id: 4,
-                    inventory_id: 5,
-                    description: "test123",
-                    files: "\"no_file.jpg\"",
-                    incident_time: "2021-01-13T13:00:46.384Z",
-                    deleted_at: null,
-                    incident_place_name: "mitramas infosys global"
+            subject_id: null,
+            type_id: null,
+            status_id: null,
+            raised_at: "",
+            closed_at: "",
+            asign_to: null,
+            requester_id: null,
+            type: {
+                id: null,
+                name: "",
+                code: ""
+            },
+            status: {
+                id: null,
+                name: ""
+            },
+            requester: {
+                user_id: null,
+                fullname: ""
+            },
+            full_detail: {
+                id: null,
+                product_type: {
+                    id: null,
+                    name: ""
                 },
+                product_id: "",
+                pic_name: "",
+                pic_contact: "",
+                location: {
+                    company_id: null,
+                    company_name: ""
+                },
+                problem: "",
+                incident_time: "",
+                files: [
+                    ""
+                ],
+                description: "",
+                deleted_at: null
+            },
+            asign: {
+                id: null,
+                fullname: ""
             }
-        }
+        },
     })
     const [ticketrelations, setticketrelations] = useState({
         status_ticket: [
@@ -439,7 +459,12 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                 name: ""
             }
         ],
-        incident_type: [],
+        ticket_type: [
+            {
+                id: '',
+                name: ''
+            }
+        ],
         requesters: [
             {
                 user_id: 0,
@@ -448,13 +473,16 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
             },
         ],
         requester_companies: [],
-        companies: [
-            {
-                company_id: 0,
-                company_name: "",
-                parent_id: null
-            },
-        ],
+        companies: {
+            data: [
+                {
+                    id: 0,
+                    title: '',
+                    key: '',
+                    value: 0
+                }
+            ]
+        },
     })
     const [manuf, setmanuf] = useState("")
     const [vendor, setvendor] = useState("")
@@ -486,7 +514,19 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getClientTicketRelation`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicket?id=${ticketid}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setmaindata(res2.data)
+            })
+    }, [])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -536,7 +576,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                                         // setdisplayusage(false)
                                                     }}>
                                                         {
-                                                            ticketrelations.incident_type.map((doc, idx) => {
+                                                            ticketrelations.ticket_type.map((doc, idx) => {
                                                                 return (
                                                                     <Select.Option value={doc.id}><strong>{doc.name}</strong></Select.Option>
                                                                 )
@@ -561,7 +601,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                                             // setdisplaykondisi(false)
                                                         }}>
                                                             {
-                                                                ticketrelations.status_ticket.map((doc, idx) => {
+                                                                ticketrelations.ticket_type.map((doc, idx) => {
                                                                     return (
                                                                         <Select.Option value={doc.id} name={doc.name}><strong>{doc.name}</strong></Select.Option>
                                                                     )
@@ -594,7 +634,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                     <div className=" hidden md:block">
                         <Tabs tabPosition={`left`} defaultActiveKey={activeTab}>
                             <TabPane tab="Overview" key={`overview`}>
-                                <Overview ticketid={ticketid} initProps={initProps} praloading={praloading} maindata={maindata} />
+                                <Overview ticketid={ticketid} initProps={initProps} praloading={praloading} maindata={maindata} ticketrelations={ticketrelations} />
                             </TabPane>
                             <TabPane tab={
                                 <div className="flex items-center">
@@ -619,7 +659,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                     <div className=" block md:hidden" >
                         <Tabs tabPosition={`top`} defaultActiveKey={activeTab}>
                             <TabPane tab="Overview" key={`overview`}>
-                                <Overview ticketid={ticketid} initProps={initProps} praloading={praloading} maindata={maindata} />
+                                <Overview ticketid={ticketid} initProps={initProps} praloading={praloading} maindata={maindata} ticketrelations={ticketrelations} />
                             </TabPane>
                             <TabPane tab={
                                 <div className="flex items-center">

@@ -4,7 +4,7 @@ import httpcookie from 'cookie'
 import Link from 'next/link'
 import { LoadingOutlined, UploadOutlined, DeleteOutlined } from '@ant-design/icons'
 import Sticky from 'wil-react-sticky'
-import { Form, Input, notification, Button, Select, DatePicker, Popconfirm } from 'antd'
+import { Form, Input, notification, Button, Select, DatePicker, Popconfirm, TreeSelect } from 'antd'
 import Layout from '../../../components/layout-dashboard2'
 import st from '../../../components/layout-dashboard.module.css'
 
@@ -18,39 +18,34 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
 
     //2.useState
     const [newdata, setnewdata] = useState({
-        type: 1,
-        due_to: null,
-        requester_location: dataProfile.data.company.company_id,
-        requester: dataProfile.data.user_id,
-        incident_place_id: null,
-        asset_id: null,
-        incident_time: null,
-        description: "",
-        files: [],
+        type_id: 1,
         product_type: null,
         product_id: null,
-        pic: null,
-        problem: ""
+        pic_name: "",
+        pic_contact: "",
+        location: null,
+        problem: "",
+        incident_time: null,
+        files: [],
+        description: "",
     })
     const [ticketrelations, setticketrelations] = useState({
         status_ticket: [],
         incident_type: [],
         requesters: [],
         requester_companies: [],
-        companies: [],
+        companies: {
+            data: [
+                {
+                    id: 0,
+                    title: '',
+                    key: '',
+                    value: 0
+                }
+            ]
+        },
     })
     const [filesupload, setfilesupload] = useState([])
-    const [modeldata, setmodeldata] = useState([])
-    const [columnsmodeldata, setcolumnsmodeldata] = useState([])
-    const [partmodeldata, setpartmodeldata] = useState([])
-    const [assetnameitem, setassetnameitem] = useState("")
-    const [snitem, setsnitem] = useState(false)
-    const [disabledfielditem, setdisabledfielditem] = useState(true)
-    const [manuffielditem, setmanuffielditem] = useState(true)
-    const [dynamicfielditem, setdynamicfielditem] = useState([])
-    const [praloading, setpraloading] = useState(true)
-    const [loadingspec, setloadingspec] = useState(false)
-    const [modalfinal, setmodalfinal] = useState(false)
     const [loadingcreate, setloadingcreate] = useState(false)
     const [disabledfield, setdisabledfield] = useState(false)
     const [loadingfoto, setloadingfoto] = useState(false)
@@ -59,34 +54,38 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
 
 
     //handler
-    const onChangeGambar = (e) => {
+    const onChangeGambar = async (e) => {
+        // setloadingfoto(true)
+        // const foto = e.target.files
+        // setuploaddata(foto[0])
+        // setloadingfoto(false)
+        // setfilesupload(prev => {
+        //     var temp = prev
+        //     temp.push(foto[0])
+        //     return temp
+        // })
+        // setuploadtrigger(prev => prev + 1)
         setloadingfoto(true)
         const foto = e.target.files
-        setuploaddata(foto[0])
-        setloadingfoto(false)
+        const formdata = new FormData()
+        formdata.append('file', foto[0])
+        formdata.append('upload_preset', 'migsys')
+        const fetching = await fetch(`https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`, {
+            method: 'POST',
+            body: formdata
+        })
+        const datajson = await fetching.json()
+        setuploaddata(datajson.secure_url)
         setfilesupload(prev => {
             var temp = prev
-            temp.push(foto[0])
+            temp.push({
+                url: datajson.secure_url,
+                name: foto[0].name
+            })
             return temp
         })
         setuploadtrigger(prev => prev + 1)
-        // const formdata = new FormData()
-        // formdata.append('file', foto[0])
-        // const fetching = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_URL, {
-        //     method: 'POST',
-        //     body: formdata
-        // })
-        // const datajson = await fetching.json()
-        // var temp = gambarlistcreate
-        // temp[curridxgambar] = datajson.secure_url
-        // setgambarlistcreate(temp)
-        // setcreatechange({
-        //     ...createchange,
-        //     urlgambarProduct: gambarlistcreate
-        // })
-        // setcurridxgambar(prev => prev + 1)
-        // setcreategambar(true)
-        // setloadingfoto(false)
+        setloadingfoto(false)
     }
 
     const handleCreateTicket = () => {
@@ -107,8 +106,7 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
                         message: "Ticket berhasil ditambahkan",
                         duration: 3
                     })
-                    setmodalfinal(false)
-                    rt.push(`/tickets`)
+                    rt.push(`/tickets/detail/${res2.id}`)
                 }
                 else if (!res2.success) {
                     notification['error']({
@@ -120,7 +118,7 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
     }
 
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getClientTicketRelation`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -129,7 +127,6 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
             .then(res => res.json())
             .then(res2 => {
                 setticketrelations(res2.data)
-                setpraloading(false)
             })
     }, [])
     useEffect(() => {
@@ -150,9 +147,7 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
                         <div className=" col-span-4 flex justify-between pt-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-semibold py-2">Form Tambah Ticket</h1>
                             <div className="flex space-x-2">
-                                <Link href={`/tickets`}>
-                                    <Button type="default" /*onClick={() => { console.log(newdata); console.log(filesupload) }}*/>Batal</Button>
-                                </Link>
+                                <Button type="default" onClick={() => { /*console.log(newdata); console.log(filesupload)*/ rt.push(`/tickets`) }}>Batal</Button>
                                 <Button disabled={disabledfield} loading={loadingcreate} type="primary" onClick={() => {
                                     instanceForm.submit()
                                 }}>Simpan</Button>
@@ -201,36 +196,35 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
                                         required: true,
                                         message: `${newdata.product_type === 2 ? 'Terminal ID' : 'ID Produk'} wajib diisi`,
                                     },
+                                    {
+                                        pattern: /(\-)|(^\d*$)/,
+                                        message: `${newdata.product_type === 2 ? 'Terminal ID' : 'ID Produk'} harus berisi angka`,
+                                    },
                                 ]}>
                                 <Input placeholder={`Masukkan ${newdata.product_type === 2 ? "Terminal ID" : "ID Produk"}`} onChange={(e) => {
-                                    setnewdata({ ...newdata, product_id: e.target.value })
+                                    setnewdata({ ...newdata, product_id: Number(e.target.value) })
                                 }}></Input>
                             </Form.Item>
-                            <Form.Item name="pic" label="Nama PIC">
-                                <Select placeholder="Pilih Nama PIC" onChange={(value) => {
-                                    setnewdata({ ...newdata, pic: value })
-                                }}>
+                            <Form.Item name="pic_name" label="Nama PIC">
+                                <Input placeholder={`Masukkan Problem`} onChange={(e) => {
+                                    setnewdata({ ...newdata, pic_name: e.target.value })
+                                }}></Input>
+                            </Form.Item>
+                            <Form.Item name="pic_contact" label="Kontak PIC"
+                                rules={[
                                     {
-                                        ticketrelations.requesters.map((doc, idx) => {
-                                            return (
-                                                <Select.Option value={doc.user_id}>{doc.fullname}</Select.Option>
-                                            )
-                                        })
-                                    }
-                                </Select>
+                                        pattern: /(\-)|(^\d*$)/,
+                                        message: 'Kontak harus berisi angka',
+                                    },
+                                ]}>
+                                <Input placeholder={`Masukkan Problem`} onChange={(e) => {
+                                    setnewdata({ ...newdata, pic_contact: e.target.value })
+                                }}></Input>
                             </Form.Item>
                             <Form.Item name="incident_place_id" label="Lokasi Problem">
-                                <Select placeholder="Pilih Lokasi Problem" onChange={(value) => {
-                                    setnewdata({ ...newdata, incident_place_id: value })
-                                }}>
-                                    {
-                                        ticketrelations.companies.map((doc, idx) => {
-                                            return (
-                                                <Select.Option value={doc.company_id}>{doc.company_name}</Select.Option>
-                                            )
-                                        })
-                                    }
-                                </Select>
+                                <TreeSelect placeholder="Pilih Lokasi Problem" treeData={[ticketrelations.companies.data]} treeDefaultExpandAll onChange={(value, label, extra) => {
+                                    setnewdata({ ...newdata, location: extra.allCheckedNodes[0].node.props.id })
+                                }} />
                             </Form.Item>
                             <Form.Item name="problem" label="Problem">
                                 <Input placeholder={`Masukkan Problem`} onChange={(e) => {
@@ -250,17 +244,18 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
                                         {loadingfoto ? <LoadingOutlined style={{ marginRight: `1rem` }} /> : <> <UploadOutlined style={{ marginRight: `1rem` }} /></>
                                         }
                                         Unggah File(Max: 25Mb)
-                                        </label>
+                                    </label>
                                     <div className="flex flex-col">
                                         {
                                             filesupload.map((docfile, idxfile) => {
                                                 return (
-                                                    <div key={idxfile} className="border px-8 py-4 flex justify-between items-center w-9/12 mb-1 relative">
+                                                    <div key={idxfile} className="border border-dashed px-8 py-4 flex justify-between items-center w-6/12 mb-1 relative cursor-pointer hover:text-blue-500">
                                                         <div className="mr-5 flex items-center">
-                                                            {docfile.type === "application/pdf" && <img src="/image/pdfIcon.png" alt="selected images" className="object-contain w-16 h-16 mr-10" />}
+                                                            <img src={docfile.url} alt="imageProfile" className=" object-cover w-16 h-16 mr-10" />
+                                                            {/* {docfile.type === "application/pdf" && <img src="/image/pdfIcon.png" alt="selected images" className="object-contain w-16 h-16 mr-10" />}
                                                             {docfile.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && <img src="/image/wordIcon.png" alt="selected image" className="object-contain w-16 h-16 mr-10" />}
-                                                            {docfile.type === "image/jpeg" && <img src={URL.createObjectURL(docfile)} alt="selected image" className="object-contain w-16 h-16 mr-10" />}
-                                                            <p className="mb-0 mr-3 cursor-pointer hover:text-blue-500">{docfile.name}</p>
+                                                            {docfile.type === "image/jpeg" && <img src={URL.createObjectURL(docfile)} alt="selected image" className="object-contain w-16 h-16 mr-10" />} */}
+                                                            <p className="mb-0 mr-3">{docfile.name}</p>
                                                             {/* <div className="w-10 h-10 absolute z-10 left-0 top-0 bg-black opacity-50 flex items-center justify-center">
                                                                 <DeleteOutlined style={{ color: `white`, cursor: `pointer` }} onClick={() => {
                                                                     setnewdata(prev => {
@@ -287,7 +282,7 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                                 okText="Ya"
                                                                 cancelText="Tidak"
                                                             >
-                                                                <DeleteOutlined style={{ color: `red`, cursor: `pointer` }} />
+                                                                <DeleteOutlined style={{ color: `red`, cursor: `pointer`, fontSize:`1.5rem` }} />
                                                             </Popconfirm>
                                                         </div>
                                                     </div>
