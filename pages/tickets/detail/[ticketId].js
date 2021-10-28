@@ -33,7 +33,7 @@ const Overview = ({ ticketid, initProps, praloading, maindata }) => {
                         null
                         :
                         <div className="flex">
-                            <Button type="default" onClick={(e) => { rt.push(`/tickets`) }} style={{ marginRight: `1rem` }} size="large">Edit</Button>
+                            <Button type="default" onClick={(e) => { rt.push(`/tickets/update/${ticketid}`) }} style={{ marginRight: `1rem` }} size="large">Edit</Button>
                             <Button type="primary" className="buttonExport" onClick={(e) => { setmodalexporting(true) }} size="large">Export</Button>
                         </div>
                 }

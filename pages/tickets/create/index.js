@@ -2,21 +2,19 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
 import Link from 'next/link'
-import { QuestionCircleOutlined, LoadingOutlined, UploadOutlined, DeleteOutlined } from '@ant-design/icons'
+import { LoadingOutlined, UploadOutlined, DeleteOutlined } from '@ant-design/icons'
 import Sticky from 'wil-react-sticky'
-import { Form, Input, notification, Button, Modal, Select, Spin, InputNumber, DatePicker, Empty, Popconfirm } from 'antd'
+import { Form, Input, notification, Button, Select, DatePicker, Popconfirm } from 'antd'
 import Layout from '../../../components/layout-dashboard2'
 import st from '../../../components/layout-dashboard.module.css'
-import moment from 'moment'
 
 const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
     // 1.Init
     const rt = useRouter()
     const pathArr = rt.pathname.split("/").slice(1)
     pathArr.splice(3, 1)
-    pathArr[pathArr.length - 1] = "Tambah Item"
+    pathArr[pathArr.length - 1] = "Tambah Ticket"
     const [instanceForm] = Form.useForm();
-    const [instanceForm2] = Form.useForm();
 
     //2.useState
     const [newdata, setnewdata] = useState({

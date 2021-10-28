@@ -37,7 +37,9 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
         description: "",
         update_columns: [],
         add_columns: [],
-        delete_column_ids: []
+        delete_column_ids: [],
+        action: false,
+        is_deleted: false
     })
     const [assetdata, setassetdata] = useState([])
     const [fielddata, setfielddata] = useState([])
@@ -70,11 +72,10 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
     const [modalubahinduk, setmodalubahinduk] = useState(false)
     const [loadingmodalchild, setloadingmodalchild] = useState(false)
     const [selectedinduk, setselectedinduk] = useState(0)
-    const [movedchild, setmovedchild] = useState("")
+    const [disabledchild, setdisabledchild] = useState(true)
     const [childassettype, setchildassettype] = useState([])
     const [childvalue, setchildvalue] = useState(Number(assettypeid))
     const [childbound, setchildbound] = useState(0)
-    const [childtrigger, setchildtrigger] = useState(false)
     const [idparentstate, setidparentstate] = useState(Number(idparent))
 
     //handle
@@ -312,7 +313,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                     setloadingmodalchild(false)
                 })
         }
-    }, [childtrigger])
+    }, [childbound])
 
     return (
         <Layout tok={initProps} sidemenu={sidemenu} pathArr={pathArr} st={st} dataProfile={dataProfile}>
@@ -350,7 +351,6 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                                                     setidparentstate(extra.allCheckedNodes[0].node.props.id)
                                                     setchildbound(prev => prev + 1)
                                                     setselectedinduk(extra.allCheckedNodes[0].node.props)
-                                                    setchildtrigger(prev => !prev)
                                                 }}
                                             />
                                         </Form.Item>
@@ -832,7 +832,16 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                 cancelText={"Batal"}
                 onCancel={() => { setmodalubahinduk(false) }}
                 width={600}
-                onOk={() => { setchildvalue(selectedinduk.id); setmodalubahinduk(false) }}
+                onOk={() => {
+                    setchildvalue(selectedinduk.id);
+                    setupdatedata(prev => {
+                        var temp = prev
+                        temp.parent = idparentstate
+                        return temp
+                    });
+                    setmodalubahinduk(false)
+                }}
+                okButtonProps={{ disabled: disabledchild }}
             >
                 <div className="flex flex-col p-5">
                     <div id="step1" className="rounded border bg-gray-50 p-5 flex flex-col">
@@ -862,10 +871,20 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                             <h5 className=" text-xs font-semibold">Apakah anda ingin membawa seluruh Child dari asset type "{displaydata.name}"?</h5>
                             <Radio.Group className="step1radio" onChange={(e) => {
                                 if (e.target.value === true) {
-                                    setmovedchild(true)
+                                    setdisabledchild(false)
+                                    setupdatedata(prev => {
+                                        var temp = prev
+                                        temp.action = true; temp.is_deleted = false
+                                        return temp
+                                    })
                                 }
                                 else {
-                                    setmovedchild(null)
+                                    setdisabledchild(false)
+                                    setupdatedata(prev => {
+                                        var temp = prev
+                                        temp.action = true; temp.is_deleted = true
+                                        return temp
+                                    })
                                 }
                             }}>
                                 <div className="flex flex-col">

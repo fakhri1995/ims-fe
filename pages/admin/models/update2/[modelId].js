@@ -242,6 +242,8 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
     const [cdparttrigger, setcdparttrigger] = useState(false)
     const [changeasset, setchangeasset] = useState([])
     const [defaultasset, setdefaultasset] = useState([])
+    const [fetchingpart, setfetchingpart] = useState(false)
+    const [page, setpage] = useState(1)
 
     //3.onChange
     const onClickAddField = () => {
@@ -678,7 +680,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                setmodeldata(res2.data)
+                setmodeldata(res2.data.data)
                 setcurrentidmodel(modeltrigger)
                 modeltrigger !== false ? seteditpart(true) : null
             })
@@ -1488,7 +1490,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                             <Checkbox checked={currentfield.required} style={{ marginRight: `0.5rem` }} onChange={(e) => {
                                                                                 setcurrentfield({ ...currentfield, required: e.target.checked })
                                                                             }} /> Required
-                                                                    </div>
+                                                                        </div>
                                                                         <Button disabled={disabledtambah} type="primary" onClick={() => {
                                                                             if (currentfield.data_type === 'dropdown' || currentfield.data_type === 'checkbox') {
                                                                                 setidxdropdowntrigger(idx)
@@ -1878,7 +1880,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                             <Checkbox checked={currentfield.required} style={{ marginRight: `0.5rem` }} onChange={(e) => {
                                                                 setcurrentfield({ ...currentfield, required: e.target.checked })
                                                             }} /> Required
-                                                    </div>
+                                                        </div>
                                                         <Button disabled={disabledtambah} type="primary" onClick={() => {
                                                             if (currentfield.data_type === 'dropdown' || currentfield.data_type === 'checkbox') {
                                                                 setidxdropdowntrigger1(idx)
@@ -2082,9 +2084,39 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                             message: 'Nama Model wajib diisi',
                                                         },
                                                     ]}>
-                                                    <Select defaultValue={currentidmodel} showSearch optionFilterProp="children" placeholder="Masukkan atau cari nama modul" onChange={(value) => { setcurrentidmodel(value) }} name="id" filterOption={(input, opt) => (
+                                                    <Select defaultValue={currentidmodel} notFoundContent={fetchingpart ? <Spin size="small" /> : null} onSearch={(value) => {
+                                                        setfetchingpart(true)
+                                                        fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?rows=10&name=${value !== "" ? value : ""}`, {
+                                                            method: `GET`,
+                                                            headers: {
+                                                                'Authorization': JSON.parse(initProps),
+                                                            },
+                                                        })
+                                                            .then(res => res.json())
+                                                            .then(res2 => {
+                                                                res2.data.length === 0 ? setmodeldata([]) : setmodeldata(res2.data.data)
+                                                                setfetchingpart(false)
+                                                            })
+                                                    }} showSearch optionFilterProp="children" placeholder="Masukkan atau cari nama modul" onChange={(value) => { setcurrentidmodel(value) }} name="id" filterOption={(input, opt) => (
                                                         opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                                    )}>
+                                                    )}
+                                                        // onPopupScroll={(event) => {
+                                                        //     if (event.target.scrollTop + event.target.offsetHeight === event.target.scrollHeight) {
+                                                        //         setpage(prev => prev + 1)
+                                                        //         fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?page=${page}&rows=10`, {
+                                                        //             method: `GET`,
+                                                        //             headers: {
+                                                        //                 'Authorization': JSON.parse(initProps),
+                                                        //             },
+                                                        //         })
+                                                        //             .then(res => res.json())
+                                                        //             .then(res2 => {
+                                                        //                 event.target.scrollTo(0, event.target.scrollHeight)
+                                                        //                 res2.data.to >= res2.data.total ? setmodeldata([...modeldata, res2.data.data]) : setmodeldata([...modeldata, res2.data.data, <Spin size="small" />])
+                                                        //             })
+                                                        //     }
+                                                        // }}
+                                                    >
                                                         {
                                                             modeldata.map((doc, idx) => {
                                                                 return (
@@ -2752,7 +2784,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                                         <Checkbox checked={currentfield2.required} style={{ marginRight: `0.5rem` }} onChange={(e) => {
                                                                             setcurrentfield2({ ...currentfield2, required: e.target.checked })
                                                                         }} /> Required
-                                                            </div>
+                                                                    </div>
                                                                     <Button disabled={disabledtambah2} type="primary" onClick={() => {
                                                                         if (currentfield2.data_type === 'dropdown' || currentfield2.data_type === 'checkbox') {
                                                                             setidxdropdowntrigger3(idx)
@@ -3121,7 +3153,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                             <Checkbox checked={currentfield2.required} style={{ marginRight: `0.5rem` }} onChange={(e) => {
                                                                 setcurrentfield2({ ...currentfield2, required: e.target.checked })
                                                             }} /> Required
-                                                                        </div>
+                                                        </div>
                                                         <Button type="primary" disabled={disabledtambah2} onClick={() => {
                                                             if (currentfield2.data_type === 'dropdown' || currentfield2.data_type === 'checkbox') {
                                                                 setidxdropdowntrigger2(idx)

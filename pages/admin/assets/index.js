@@ -369,7 +369,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                             </Modal>
                         </div>
                         <div className="flex mb-2 md:mb-5">
-                            <Input placeholder="Masukkan Nama Asset Type" style={{ width: `70%` }} onChange={onChangeFilterAsset} allowClear />
+                            <Input placeholder="Masukkan Nama Asset Type" style={{ width: `75%` }} onChange={onChangeFilterAsset} allowClear />
                         </div>
                         {
                             praloading ?
@@ -377,7 +377,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                     <Spin></Spin>
                                 </div>
                                 :
-                                <div className="p-2 md:p-5 w-full md:w-8/12">
+                                <div className="p-2 md:p-5 w-full md:w-9/12 border rounded-md shadow-md">
                                     {
                                         maindata.length === 0 ?
                                             <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
@@ -388,6 +388,9 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                                 autoExpandParent={autoExpandParent}
                                                 treeData={loop(maindata)}
                                                 filterTreeNode={filterTreeNode}
+                                                showLine={{
+                                                    showLeafIcon:false
+                                                }}
                                                 titleRender={(nodeData) => {
                                                     return (
                                                         <>

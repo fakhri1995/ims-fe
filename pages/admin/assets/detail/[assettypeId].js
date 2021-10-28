@@ -817,6 +817,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
     const [allmodeldelete, setallmodeldelete] = useState(true)
     const [newparentchildradio, setnewparentchildradio] = useState(null)
     const [newparentchild, setnewparentchild] = useState(null)
+    const [newparentchildcode, setnewparentchildcode] = useState(null)
     const [newparentmodelradio, setnewparentmodelradio] = useState(null)
     const [newparentmodel, setnewparentmodel] = useState(null)
     const [newparentmodelcode, setnewparentmodelcode] = useState(null)
@@ -1123,7 +1124,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                         </div>
                         <div className="mb-2">
                             <h5 className=" text-xs font-semibold">2. Jika tidak, pilih Asset Type sebagai parent untuk child dari Asset Type "{displaydata.name}"! <span className="hapusField2"></span></h5>
-                            <TreeSelect value={newparentchild} className="step1treeselect" placeholder="Pilih Asset Type" onChange={(value, label, extra) => { setnewparentchild(extra.allCheckedNodes[0].node.props.id); setnewparentchildradio(true) }} disabled={allchilddelete} treeData={displayassetdata} style={{ width: `70%` }} />
+                            <TreeSelect value={newparentchildcode} className="step1treeselect" placeholder="Pilih Asset Type" onChange={(value, label, extra) => { setnewparentchild(extra.allCheckedNodes[0].node.props.id); setnewparentchildcode(value); setnewparentchildradio(true) }} disabled={allchilddelete} treeData={displayassetdata} style={{ width: `70%` }} />
                         </div>
                         <style jsx>
                             {`
@@ -1244,7 +1245,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                         </div>
                         <div className="mb-2">
                             <h5 className=" text-xs font-semibold">2. Jika tidak, pilih Asset Type sebagai parent untuk child dari Asset Type "{displaydata.name}"! <span className="hapusField2"></span></h5>
-                            <TreeSelect value={newparentchild} className="step1treeselect" placeholder="Pilih Asset Type" onChange={(value, label, extra) => { setnewparentchild(extra.allCheckedNodes[0].node.props.id); setnewparentchildradio(true) }} disabled={allchilddelete} treeData={displayassetdata} style={{ width: `70%` }} />
+                            <TreeSelect value={newparentchildcode} className="step1treeselect" placeholder="Pilih Asset Type" onChange={(value, label, extra) => { setnewparentchild(extra.allCheckedNodes[0].node.props.id); setnewparentchildcode(value); setnewparentchildradio(true) }} disabled={allchilddelete} treeData={displayassetdata} style={{ width: `70%` }} />
                         </div>
                         <style jsx>
                             {`
