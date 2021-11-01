@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
 import Link from 'next/link'
 import { ExclamationCircleOutlined, DownOutlined } from '@ant-design/icons'
-import { notification, Button, Spin, Empty, Modal, Tooltip, Select, Tabs, Input, TreeSelect } from 'antd'
+import { notification, Button, Spin, Empty, Modal, Tooltip, Select, Tabs, Input, TreeSelect, Alert } from 'antd'
 import Layout from '../../../components/layout-dashboard2'
 import moment from 'moment'
 import st from '../../../components/layout-dashboard.module.css'
@@ -129,7 +129,7 @@ const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations }
     )
 }
 
-const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem }) => {
+const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, maindata }) => {
     //init
     const rt = useRouter()
 
@@ -291,6 +291,20 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem }) =>
                 }
             </div>
             {
+                maindata.ticket.status.id === 5 &&
+                <div className=" mb-5 w-10/12">
+                    <Alert
+                        style={{padding:`0.5rem`}}
+                        message=""
+                        description={
+                            <p className="mb-0">Berikut ini tampilan detail item yang di  <strong>closed</strong> pada <strong>{maindata.ticket.closed_at === null ? "" : moment(maindata.ticket.closed_at).locale('id').format("LL")}</strong> </p>
+                        }
+                        type="info"
+                        showIcon
+                    />
+                </div>
+            }
+            {
                 praloadingconnected ?
                     <>
                         <Spin />
@@ -315,7 +329,7 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem }) =>
                             </Empty>
                         </div>
                         :
-                        <div className="mb-8 mx-5 p-5 w-9/12 flex flex-col">
+                        <div className="mb-8 w-10/12 flex flex-col">
                             <div className="border shadow-md rounded-md flex flex-col p-5 mb-3">
                                 <div className="flex justify-between">
                                     <div className="flex flex-col mt-3 mb-5">
@@ -809,7 +823,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                     }
                                 </div>
                             } key="detailItem">
-                                <DetailItem ticketid={ticketid} initProps={initProps} connecteditem={connecteditem} setconnecteditem={setconnecteditem}></DetailItem>
+                                <DetailItem ticketid={ticketid} initProps={initProps} connecteditem={connecteditem} setconnecteditem={setconnecteditem} maindata={maindata}></DetailItem>
                             </TabPane>
                             <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
                                 <Activity ticketid={ticketid} initProps={initProps} />
@@ -834,7 +848,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                     }
                                 </div>
                             } key="detailItem">
-                                <DetailItem ticketid={ticketid} initProps={initProps} connecteditem={connecteditem} setconnecteditem={setconnecteditem}></DetailItem>
+                                <DetailItem ticketid={ticketid} initProps={initProps} connecteditem={connecteditem} setconnecteditem={setconnecteditem} maindata={maindata}></DetailItem>
                             </TabPane>
                             <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
                                 <Activity ticketid={ticketid} initProps={initProps} />

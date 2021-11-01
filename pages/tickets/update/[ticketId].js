@@ -296,7 +296,7 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                             {/* <span className="raisedBy"></span> */}
                                             <p className="mb-0 ml-1">Date Closed Ticket</p>
                                         </div>
-                                        <DatePicker value={updatedata.closed_at} defaultValue={moment(updatedata.raised_at)} placeholder="Masukkan Date Closed" showTime allowClear style={{ width: `100%` }} onChange={(date, datestring) => {
+                                        <DatePicker disabledDate={(curr) => { return curr < moment(updatedata.raised_at) }} value={updatedata.closed_at === null ? null : moment(updatedata.closed_at)} defaultValue={updatedata.closed_at === null ? null : moment(updatedata.closed_at)} placeholder="Masukkan Date Closed" showTime allowClear style={{ width: `100%` }} onChange={(date, datestring) => {
                                             datestring === "" ? (setupdatedata({ ...updatedata, closed_at: "" }), setdisabledfield(true)) : (setupdatedata({ ...updatedata, closed_at: datestring }), setdisabledfield(false))
                                         }}></DatePicker>
                                         {/* <style jsx>

@@ -2,8 +2,8 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
 import Link from 'next/link'
-import { SearchOutlined } from '@ant-design/icons'
-import { Button, Table, Input, Select, DatePicker, TreeSelect } from 'antd'
+import { SearchOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
+import { Button, Table, Input, Select, DatePicker, TreeSelect, Tooltip } from 'antd'
 import Layout from '../../components/layout-dashboard2'
 import moment from 'moment'
 import st from '../../components/layout-dashboard.module.css'
@@ -115,7 +115,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     children:
                         <>
                             {/* {ticketrelations.companies.filter(docfil => docfil.company_id === record.location)[0].company_name} */}
-                            {record.ticketable.location.company_name}
+                            {record.ticketable.location === null ? "-" : record.ticketable.location.company_name}
                         </>
                 }
             }
@@ -146,7 +146,16 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     children:
                         <>
                             {/* {ticketrelations.requesters.filter(docfil => docfil.user_id === record.assign_to)[0].fullname} */}
-                            {record.assignable.fullname}
+                            {record.assignable.id === 0 ?
+                                <div className="flex items-center">
+                                    <p className='mb-0 mr-2'>None</p>
+                                    <Tooltip placement="right" title="Ticket Belum di assign ke engineer">
+                                        <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
+                                    </Tooltip>
+                                </div>
+                                :
+                                record.assignable.fullname
+                            }
                         </>
                 }
             }
@@ -161,24 +170,24 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                         <>
                             {/* {ticketrelations.status_ticket.filter(docfil => docfil.id === record.status)[0].name} */}
                             {
-                            record.status.id === 1 &&
-                            <div className="rounded-md h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">{record.status.name}</div>
+                                record.status.id === 1 &&
+                                <div className="rounded-md h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">{record.status.name}</div>
                             }
                             {
-                            record.status.id === 2 &&
-                            <div className="rounded-md h-auto px-1 text-center py-1 bg-green-100 border border-green-200 text-green-600">{record.status.name}</div>
+                                record.status.id === 2 &&
+                                <div className="rounded-md h-auto px-1 text-center py-1 bg-green-100 border border-green-200 text-green-600">{record.status.name}</div>
                             }
                             {
-                            record.status.id === 3 &&
-                            <div className="rounded-md h-auto px-1 text-center py-1 bg-yellow-100 border border-yellow-200 text-yellow-600">{record.status.name}</div>
+                                record.status.id === 3 &&
+                                <div className="rounded-md h-auto px-1 text-center py-1 bg-yellow-100 border border-yellow-200 text-yellow-600">{record.status.name}</div>
                             }
                             {
-                            record.status.id === 4 &&
-                            <div className="rounded-md h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">{record.status.name}</div>
+                                record.status.id === 4 &&
+                                <div className="rounded-md h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">{record.status.name}</div>
                             }
                             {
-                            record.status.id === 5 &&
-                            <div className="rounded-md h-auto px-1 text-center py-1 bg-gray-100 border border-gray-200 text-gray-600">{record.status.name}</div>
+                                record.status.id === 5 &&
+                                <div className="rounded-md h-auto px-1 text-center py-1 bg-gray-100 border border-gray-200 text-gray-600">{record.status.name}</div>
                             }
                         </>
                 }
