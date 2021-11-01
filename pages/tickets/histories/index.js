@@ -16,14 +16,7 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
 
     //useState
     //2.useState
-    const [displaydata, setdisplaydata] = useState({
-        total_tickets: 0,
-        open_tickets_count: 0,
-        on_progress_tickets_count: 0,
-        pending_tickets_count: 0,
-        resolved_tickets_count: 0,
-        tickets: []
-    })
+    const [displaydata, setdisplaydata] = useState([])
     const [ticketrelations, setticketrelations] = useState({
         status_ticket: [
             {
@@ -50,6 +43,29 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
     })
     const [displaydata1, setdisplaydata1] = useState([])
     const [displaydata2, setdisplaydata2] = useState([])
+    const [rawdata, setrawdata] = useState({
+        total_tickets: 0,
+        open_tickets_count: 0,
+        on_progress_tickets_count: 0,
+        on_hold_tickets_count: 0,
+        canceled_tickets_count: 0,
+        closed_tickets_count: 0,
+        tickets: {}
+    })
+    const [displayentiredata, setdisplayentiredata] = useState({
+        current_page: 0,
+        data: [],
+        first_page_url: "",
+        from: 0,
+        last_page: 0,
+        last_page_url: "",
+        next_page_url: null,
+        path: "",
+        per_page: "",
+        prev_page_url: "",
+        to: 0,
+        total: 0
+    })
     const [namasearchact, setnamasearchact] = useState(false)
     const [namavalue, setnamavalue] = useState("")
     const [rowstate, setrowstate] = useState(0)
@@ -87,15 +103,15 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
             status: 3
         }
     ]
-    const columnDummies = [
+    const column = [
         {
             title: 'No Ticket',
-            dataIndex: 'num',
+            dataIndex: 'ticket_type',
             render: (text, record, index) => {
                 return {
                     children:
                         <>
-                            {record.ticket_type === 1 && "#INC - "}{record.id}
+                            {record.type.id === 1 && `#${record.type.code} - `}{record.ticketable.id}
                         </>
                 }
             }
@@ -107,7 +123,8 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
                 return {
                     children:
                         <>
-                            {ticketrelations.requesters.filter(docfil => docfil.user_id === record.raised_by)[0].fullname}
+                            {/* {ticketrelations.requesters.filter(docfil => docfil.user_id === record.raised_by)[0].fullname} */}
+                            {record.requester.fullname}
                         </>
                 }
             }
@@ -119,7 +136,8 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
                 return {
                     children:
                         <>
-                            {ticketrelations.companies.filter(docfil => docfil.company_id === record.location_problem)[0].company_name}
+                            {/* {ticketrelations.companies.filter(docfil => docfil.company_id === record.location_problem)[0].company_name} */}
+                            {record.ticketable.location.company_name}
                         </>
                 }
             }
@@ -128,16 +146,16 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
             title: 'Date Raised',
             dataIndex: 'date_raised',
             render: (text, record, index) => {
-                // var hariTerakhir = new Date(new Date(record.tanggal).getTime() + (props.durasi * 24 * 60 * 60 * 1000));
-                var jumlahHari = Math.floor((new Date().getTime() - new Date(record.date_raised).getTime()) / (1000 * 3600 * 24))
-                var jumlahJam = ""
-                if (jumlahHari < 1) {
-                    jumlahJam = Math.floor((new Date().getTime() - new Date(record.date_raised).getTime()) / (1000 * 3600))
-                }
+                // var jumlahHari = Math.floor((new Date().getTime() - new Date(record.date_raised).getTime()) / (1000 * 3600 * 24))
+                // var jumlahJam = ""
+                // if (jumlahHari < 1) {
+                //     jumlahJam = Math.floor((new Date().getTime() - new Date(record.date_raised).getTime()) / (1000 * 3600))
+                // }
                 return {
                     children:
                         <>
-                            {moment(record.date_raised).locale('id').format('L')} ({jumlahHari < 1 ? `${jumlahJam} jam` : `${jumlahHari} hari`} yang lalu)
+                            {/* {moment(record.date_raised).locale('id').format('L')} ({jumlahHari < 1 ? `${jumlahJam} jam` : `${jumlahHari} hari`} yang lalu) */}
+                            {record.raised_at}
                         </>
                 }
             }
@@ -149,7 +167,8 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
                 return {
                     children:
                         <>
-                            {ticketrelations.requesters.filter(docfil => docfil.user_id === record.assign_to)[0].fullname}
+                            {/* {ticketrelations.requesters.filter(docfil => docfil.user_id === record.assign_to)[0].fullname} */}
+                            {record.assignable.fullname}
                         </>
                 }
             }
@@ -169,18 +188,15 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
         }
     }
     const onFinalClick = () => {
-        var datatemp = displaydata1
-        if (namasearchact) {
-            datatemp = datatemp.filter(flt => {
-                return flt.id === namavalue
-            })
-        }
-        setdisplaydata(datatemp)
-    }
-
-    //5.useEffect
-    useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getClientTickets`, {
+        // var datatemp = displaydata1
+        // if (namasearchact) {
+        //     datatemp = datatemp.filter(flt => {
+        //         return flt.id === namavalue
+        //     })
+        // }
+        // setdisplaydata(datatemp)
+        setpraloading(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getClosedTickets?ticket_id=${namasearchact ? namavalue : ""}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -188,23 +204,40 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                setdisplaydata(res2.data)
-                setdisplaydata1(res2.data)
-                setdisplaydata2(res2.data)
+                res2.data.tickets.data.length === 0 ? setdisplaydata([]) : setdisplaydata(res2.data.tickets.data)
                 setpraloading(false)
             })
-    }, [])
+    }
+
+    //5.useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getClientTicketRelation`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getClosedTickets`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
-            }
+            },
         })
             .then(res => res.json())
             .then(res2 => {
-                setticketrelations(res2.data)
-                setdummies(datatableDummies)
+                setrawdata(res2.data)
+                setdisplayentiredata(res2.data.tickets)
+                setdisplaydata(res2.data.tickets.data)
+                setdisplaydata1(res2.data.tickets.data)
+                setdisplaydata2(res2.data.tickets.data)
+                setpraloading(false)
+            })
+            .then(() => {
+                fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
+                    method: `GET`,
+                    headers: {
+                        'Authorization': JSON.parse(initProps),
+                    }
+                })
+                    .then(res => res.json())
+                    .then(res2 => {
+                        setticketrelations(res2.data)
+                        setpraloading(false)
+                    })
             })
     }, [])
 
@@ -235,7 +268,28 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
                         </div>
                     </div>
                     <div className="px-10">
-                        <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dummies} columns={columnDummies} loading={praloading}
+                        <Table
+                            // pagination={{
+                            //     pageSize: 10, total: displayentiredata.data.total, onChange: (page, pageSize) => {
+                            //         setpraloading(true)
+                            //         fetch(`https://boiling-thicket-46501.herokuapp.com/getClosedTickets?page=${page}&rows=10`, {
+                            //             method: `GET`,
+                            //             headers: {
+                            //                 'Authorization': JSON.parse(initProps),
+                            //             },
+                            //         })
+                            //             .then(res => res.json())
+                            //             .then(res2 => {
+                            //                 setrawdata(res2.data)
+                            //                 setdisplayentiredata(res2.data.tickets)
+                            //                 setdisplaydata(res2.data.tickets.data)
+                            //                 setdisplaydata1(res2.data.tickets.data)
+                            //                 setdisplaydata2(res2.data.tickets.data)
+                            //                 setpraloading(false)
+                            //             })
+                            //     }
+                            // }} 
+                            scroll={{ x: 200 }} dataSource={displaydata} columns={column} loading={praloading}
                             onRow={(record, rowIndex) => {
                                 return {
                                     onMouseOver: (event) => {

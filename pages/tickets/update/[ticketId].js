@@ -213,9 +213,9 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                         <div className=" col-span-4 flex justify-between pt-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-semibold py-2">Form Ubah Ticket</h1>
                             <div className="flex space-x-2">
-                                {/* <Link href={`/tickets/detail/${ticketid}`}> */}
-                                <Button type="default" onClick={() => { console.log(updatedata); console.log(filesupload) }}>Batal</Button>
-                                {/* </Link> */}
+                                <Link href={`/tickets/detail/${ticketid}`}>
+                                    <Button type="default" /*onClick={() => { console.log(updatedata); console.log(filesupload) }}*/>Batal</Button>
+                                </Link>
                                 <Button disabled={disabledfield} loading={loadingupdate} type="primary" onClick={() => {
                                     instanceForm.submit()
                                 }}>Simpan</Button>

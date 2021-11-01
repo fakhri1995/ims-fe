@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
 import Link from 'next/link'
 import { ExclamationCircleOutlined, DownOutlined } from '@ant-design/icons'
-import { notification, Button, Spin, Empty, Modal, Tooltip, Select, Tabs, Input, TreeSelect, Alert } from 'antd'
+import { notification, Button, Spin, Empty, Modal, Tooltip, Select, Tabs, Input, TreeSelect, Alert, Timeline } from 'antd'
 import Layout from '../../../components/layout-dashboard2'
 import moment from 'moment'
 import st from '../../../components/layout-dashboard.module.css'
@@ -273,6 +273,7 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
         }
         else {
             setconnecteditemdata(null)
+            setpraloadingconnected(false)
         }
     }, [])
 
@@ -294,7 +295,7 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
                 maindata.ticket.status.id === 5 &&
                 <div className=" mb-5 w-10/12">
                     <Alert
-                        style={{padding:`0.5rem`}}
+                        style={{ padding: `0.5rem` }}
                         message=""
                         description={
                             <p className="mb-0">Berikut ini tampilan detail item yang di  <strong>closed</strong> pada <strong>{maindata.ticket.closed_at === null ? "" : moment(maindata.ticket.closed_at).locale('id').format("LL")}</strong> </p>
@@ -473,11 +474,60 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
     )
 }
 
-const Activity = ({ ticketid, initProps }) => {
+const Activity = ({ ticketid, initProps, activitytrigger }) => {
+    //useState
+    const [logs, setlogs] = useState([])
+    const [praloadinglogs, setpraloadinglogs] = useState(true)
+
+    //useEffect
+    useEffect(() => {
+        setpraloadinglogs(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketLog?id=${ticketid}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
+            .then(res => res.json())
+            .then((res2) => {
+                setlogs(res2.data)
+                setpraloadinglogs(false)
+            })
+    }, [activitytrigger])
+
     return (
-        <>
-            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Under Development"></Empty>
-        </>
+        <div className="flex flex-col">
+            <div className="border-b flex justify-between p-5 mb-8">
+                <h1 className="font-bold text-xl my-auto">Activity</h1>
+            </div>
+            <div className="flex flex-col w-6/12">
+                {
+                    praloadinglogs ?
+                        <Spin />
+                        :
+                        logs.length < 1 ?
+                            <>
+                                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                            </>
+                            :
+                            <Timeline mode="left">
+                                {
+                                    logs.map((doclog, idxlog) => {
+                                        return (
+                                            <Timeline.Item label={moment(doclog.created_at).locale('id').format('LL') + " " + moment(doclog.created_at).locale('id').format('LT')}>
+                                                <div className="flex flex-col">
+                                                    <h1 className="font-semibold text-base mb-1">{doclog.log_name}</h1>
+                                                    <p className="mb-1 text-xs text-gray-500">Oleh {doclog.causer.fullname}</p>
+                                                    <p className="mb-1 text-sm">Notes: {doclog.description === null ? "-" : doclog.description}</p>
+                                                </div>
+                                            </Timeline.Item>
+                                        )
+                                    })
+                                }
+                            </Timeline>
+                }
+            </div>
+        </div>
     )
 }
 
@@ -595,6 +645,8 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
     const [displayassignto, setdisplayassignto] = useState(true)
     //connected item
     const [connecteditem, setconnecteditem] = useState(null)
+    //activity
+    const [activitytrigger, setactivitytrigger] = useState(0)
 
     //handler
     const handleSetStatus = () => {
@@ -632,7 +684,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
     }
     const handleNotes = () => {
         setloadingnotes(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/addInventoryNotes`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addNoteTicket`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -646,13 +698,13 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
             .then(res => res.json())
             .then(res2 => {
                 setloadingnotes(false)
+                setmodalnotes(false)
                 if (res2.success) {
                     notification['success']({
-                        message: "Notes berhasil ditambahkan",
+                        message: "Note berhasil ditambahkan",
                         duration: 3
                     })
-                    setmodalnotes(false)
-                    window.location.href = `/items/detail/${itemid}?active=activity`
+                    rt.push(`/tickets/detail/${ticketid}`)
                 }
                 else if (!res2.success) {
                     notification['error']({
@@ -783,7 +835,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                                         null
                                                 }
                                             </div>
-                                            <div className="flex flex-col cursor-pointer" onClick={() => { setmodalassignto(true); setdisplayassignto(false) }}>
+                                            <div className="flex flex-col cursor-pointer w-40" onClick={() => { setmodalassignto(true); setdisplayassignto(false) }}>
                                                 <p className="mb-1">Assign To:</p>
                                                 {
                                                     displayassignto ?
@@ -806,7 +858,11 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                 </div>
                 <div className="col-span-1 md:col-span-4 mb-8">
                     <div className=" hidden md:block">
-                        <Tabs tabPosition={`left`} defaultActiveKey={activeTab}>
+                        <Tabs tabPosition={`left`} defaultActiveKey={activeTab} onTabClick={(key, e) => {
+                            if (key === "activity") {
+                                setactivitytrigger(prev => prev + 1)
+                            }
+                        }}>
                             <TabPane tab="Overview" key={`overview`}>
                                 <Overview ticketid={ticketid} initProps={initProps} praloading={praloading} maindata={maindata} ticketrelations={ticketrelations} />
                             </TabPane>
@@ -826,12 +882,16 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                 <DetailItem ticketid={ticketid} initProps={initProps} connecteditem={connecteditem} setconnecteditem={setconnecteditem} maindata={maindata}></DetailItem>
                             </TabPane>
                             <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
-                                <Activity ticketid={ticketid} initProps={initProps} />
+                                <Activity ticketid={ticketid} initProps={initProps} activitytrigger={activitytrigger} />
                             </TabPane>
                         </Tabs>
                     </div>
                     <div className=" block md:hidden" >
-                        <Tabs tabPosition={`top`} defaultActiveKey={activeTab}>
+                        <Tabs tabPosition={`top`} defaultActiveKey={activeTab} onTabClick={(key, e) => {
+                            if (key === "activity") {
+                                setactivitytrigger(prev => prev + 1)
+                            }
+                        }}>
                             <TabPane tab="Overview" key={`overview`}>
                                 <Overview ticketid={ticketid} initProps={initProps} praloading={praloading} maindata={maindata} ticketrelations={ticketrelations} />
                             </TabPane>
@@ -851,7 +911,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                 <DetailItem ticketid={ticketid} initProps={initProps} connecteditem={connecteditem} setconnecteditem={setconnecteditem} maindata={maindata}></DetailItem>
                             </TabPane>
                             <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
-                                <Activity ticketid={ticketid} initProps={initProps} />
+                                <Activity ticketid={ticketid} initProps={initProps} activitytrigger={activitytrigger} />
                             </TabPane>
                         </Tabs>
                     </div>
@@ -859,11 +919,11 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
             </div>
             <Modal title={
                 <div className="flex justify-between p-5 mt-5">
-                    <h1 className="font-bold text-xl">Form Tambah Notes ticket #INC-{maindata.ticket.id}</h1>
+                    <h1 className="font-bold text-xl">Form Tambah Notes ticket #{maindata.ticket.type.code}-{maindata.ticket.type.id}</h1>
                     <div className="flex">
                         <>
                             <Button type="default" onClick={() => { setmodalnotes(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
-                            <Button type='primary' disabled={notes === ""} loading={loadingnotes}>Simpan</Button>
+                            <Button type='primary' disabled={notes === ""} loading={loadingnotes} onClick={handleNotes}>Simpan</Button>
                         </>
                     </div>
                 </div>

@@ -72,13 +72,12 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
     const [lokasifilteract, setlokasifilteract] = useState(false)
     const [lokasivalue, setlokasivalue] = useState("")
     const [rangedatefilteract, setrangedatefilteract] = useState(false)
-    const [rangedatevalue, setrangedatevalue] = useState("")
+    const [rangedatevalue, setrangedatevalue] = useState([])
     const [statusfilteract, setstatusfilteract] = useState(false)
     const [statusvalue, setstatusvalue] = useState("")
     const [namaasset, setnamaasset] = useState("")
     const [rowstate, setrowstate] = useState(0)
     const [praloading, setpraloading] = useState(true)
-    const [dummies, setdummies] = useState([])
 
     //declaration
     const column = [
@@ -89,7 +88,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 return {
                     children:
                         <>
-                            <strong>{`#${record.type.code} - `}{record.type.id}</strong>
+                            <strong>{`#${record.type.code} - `}{record.ticketable.id}</strong>
                         </>
                 }
             }
@@ -241,25 +240,37 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
         }
     }
     const onFinalClick = () => {
-        var datatemp = displaydata1
-        if (rangedatefilteract) {
-            datatemp = datatemp.filter(flt => {
-                return flt.asset_name.toLowerCase() === rangedatevalue.toLowerCase()
-                // return (flt.asset_name.toLowerCase().includes(assettypevalue.toLowerCase())) || (flt.asset_name.replaceAll(/\s+\/\s+/g, "/").split("/")[0] === namaasset)
+        // var datatemp = displaydata1
+        // if (rangedatefilteract) {
+        //     datatemp = datatemp.filter(flt => {
+        //         return flt.asset_name.toLowerCase() === rangedatevalue.toLowerCase()
+        //         // return (flt.asset_name.toLowerCase().includes(assettypevalue.toLowerCase())) || (flt.asset_name.replaceAll(/\s+\/\s+/g, "/").split("/")[0] === namaasset)
+        //     })
+        // }
+        // if (lokasifilteract) {
+        //     datatemp = datatemp.filter(flt => flt.model_id === lokasivalue)
+        // }
+        // if (statusfilteract) {
+        //     datatemp = datatemp.filter(flt => flt.status_condition === statusvalue)
+        // }
+        // if (namasearchact) {
+        //     datatemp = datatemp.filter(flt => {
+        //         return flt.inventory_name.toLowerCase().includes(namavalue.toLowerCase())
+        //     })
+        // }
+        // setdisplaydata(datatemp)
+        setpraloading(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?ticket_id=${namasearchact ? namavalue : ""}&location_id=${lokasifilteract ? lokasivalue : ""}&status_id=${statusfilteract ? statusvalue : ""}&from=${rangedatefilteract ? moment(rangedatevalue[0]).locale('id').format('YYYY-MM-DD') : ""}&to=${rangedatefilteract ? moment(rangedatevalue[1]).locale('id').format('YYYY-MM-DD') : ""}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                res2.data.tickets.data.length === 0 ? setdisplaydata([]) : setdisplaydata(res2.data.tickets.data)
+                setpraloading(false)
             })
-        }
-        if (lokasifilteract) {
-            datatemp = datatemp.filter(flt => flt.model_id === lokasivalue)
-        }
-        if (statusfilteract) {
-            datatemp = datatemp.filter(flt => flt.status_condition === statusvalue)
-        }
-        if (namasearchact) {
-            datatemp = datatemp.filter(flt => {
-                return flt.inventory_name.toLowerCase().includes(namavalue.toLowerCase())
-            })
-        }
-        setdisplaydata(datatemp)
     }
 
     //5.useEffect
@@ -392,8 +403,8 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                 }} treeData={[ticketrelations.companies.data]} treeDefaultExpandAll />
                             </div>
                             <div className="col-span-3 mr-1">
-                                <DatePicker.RangePicker placeholder={["Tanggal Awal", "Tanggal Akhir"]} onChange={(date, datestrings) => {
-                                    if (datestrings === '') {
+                                <DatePicker.RangePicker placeholder={["Tanggal Awal", "Tanggal Akhir"]} onChange={(dates, datestrings) => {
+                                    if (datestrings[0] === '' && datestrings[1] === '') {
                                         onChangeRangeDate()
                                     }
                                     else {
