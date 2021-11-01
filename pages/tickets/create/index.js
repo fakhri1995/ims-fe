@@ -23,7 +23,7 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
         product_id: null,
         pic_name: "",
         pic_contact: "",
-        location: null,
+        location_id: null,
         problem: "",
         incident_time: null,
         files: [],
@@ -46,6 +46,7 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
         },
     })
     const [filesupload, setfilesupload] = useState([])
+    const [disabledupload, setdisabledupload] = useState("")
     const [loadingcreate, setloadingcreate] = useState(false)
     const [disabledfield, setdisabledfield] = useState(false)
     const [loadingfoto, setloadingfoto] = useState(false)
@@ -66,6 +67,7 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
         // })
         // setuploadtrigger(prev => prev + 1)
         setloadingfoto(true)
+        setdisabledupload("pointer-events-none")
         const foto = e.target.files
         const formdata = new FormData()
         formdata.append('file', foto[0])
@@ -86,6 +88,7 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
         })
         setuploadtrigger(prev => prev + 1)
         setloadingfoto(false)
+        setdisabledupload("")
     }
 
     const handleCreateTicket = () => {
@@ -221,9 +224,9 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
                                     setnewdata({ ...newdata, pic_contact: e.target.value })
                                 }}></Input>
                             </Form.Item>
-                            <Form.Item name="incident_place_id" label="Lokasi Problem">
+                            <Form.Item name="location_id" label="Lokasi Problem">
                                 <TreeSelect placeholder="Pilih Lokasi Problem" treeData={[ticketrelations.companies.data]} treeDefaultExpandAll onChange={(value, label, extra) => {
-                                    setnewdata({ ...newdata, location: extra.allCheckedNodes[0].node.props.id })
+                                    setnewdata({ ...newdata, location_id: extra.allCheckedNodes[0].node.props.id })
                                 }} />
                             </Form.Item>
                             <Form.Item name="problem" label="Problem">
@@ -232,14 +235,14 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
                                 }}></Input>
                             </Form.Item>
                             <Form.Item name="incident_time" label="Waktu Kejadian">
-                                <DatePicker placeholder="Masukkan Waktu Kejadian" style={{ width: `100%` }} onChange={(date, datestring) => {
+                                <DatePicker showTime placeholder="Masukkan Waktu Kejadian" style={{ width: `100%` }} onChange={(date, datestring) => {
                                     setnewdata({ ...newdata, incident_time: datestring })
                                 }}></DatePicker>
                             </Form.Item>
                             <Form.Item>
                                 <div className="flex flex-col">
                                     <p className="mb-2 ml-1">Bukti Incident (Support File: PNG/JPEG, PDF, dan Word)</p>
-                                    <label className="custom-file-upload py-2 w-52 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3">
+                                    <label className={`custom-file-upload py-2 w-52 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3 ${disabledupload}`}>
                                         <input type="file" style={{ display: `none` }} name="urlgambarProduct" onChange={onChangeGambar} />
                                         {loadingfoto ? <LoadingOutlined style={{ marginRight: `1rem` }} /> : <> <UploadOutlined style={{ marginRight: `1rem` }} /></>
                                         }

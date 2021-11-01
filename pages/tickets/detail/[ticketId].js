@@ -13,7 +13,7 @@ const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations }
     //init
     const rt = useRouter()
     var selisihWaktu = ""
-    maindata.ticket.closed_at ? (Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.raised_at).getTime()) / (1000 * 3600 * 24)) > 1 ? selisihWaktu = Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.raised_at).getTime()) / (1000 * 3600 * 24)) + " hari" : selisihWaktu = Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.raised_at).getTime()) / (1000 * 3600)) + " jam") : null
+    maindata.ticket.closed_at ? (Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.original_raised_at).getTime()) / (1000 * 3600 * 24)) > 1 ? selisihWaktu = Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.original_raised_at).getTime()) / (1000 * 3600 * 24)) + " hari" : selisihWaktu = Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.original_raised_at).getTime()) / (1000 * 3600)) + " jam") : null
 
     //useState
     //export
@@ -48,15 +48,16 @@ const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations }
                             <hr />
                             <div className="flex flex-col mt-3 mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Ticket Raised By:</h1>
-                                <p className="mb-0 text-sm">{ticketrelations.requesters.filter(docfil => docfil.user_id === maindata.ticket.requester_id)[0] ? ticketrelations.requesters.filter(docfil => docfil.user_id === maindata.ticket.requester_id)[0].fullname : ""}</p>
+                                {/* <p className="mb-0 text-sm">{ticketrelations.requesters.filter(docfil => docfil.user_id === maindata.ticket.requester_id)[0] ? ticketrelations.requesters.filter(docfil => docfil.user_id === maindata.ticket.requester_id)[0].fullname : ""}</p> */}
+                                <p className="mb-0 text-sm">{maindata.ticket.requester.fullname}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Lokasi Pembuat:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.requester_location_name}</p>
+                                <p className="mb-0 text-sm">Belum ada</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Date Raised Ticket:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.raised_at ? moment(maindata.ticket.raised_at).locale('id').format("LL") : "-"}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.original_raised_at ? moment(maindata.ticket.original_raised_at).locale('id').format("LL") : "-"}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Date Closed Ticket:</h1>
@@ -72,36 +73,40 @@ const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations }
                             <hr />
                             <div className="flex flex-col mt-3 mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Jenis Produk:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.full_detail.product_type.name === "" ? "-" : maindata.ticket.full_detail.product_type.name}</p>
+                                <p className="mb-0 text-sm">
+                                    {maindata.ticket.ticketable.product_type === 1 && "UPS"}
+                                    {maindata.ticket.ticketable.product_type === 2 && "ATM"}
+                                    {maindata.ticket.ticketable.product_type === 3 && "PC"}
+                                </p>
                             </div>
                             <div className="flex flex-col mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">{maindata.ticket.full_detail.product_type === 2 ? "Terminal ID" : "ID Produk"}:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.full_detail.product_id === "" ? "-" : maindata.ticket.full_detail.product_id}</p>
+                                <h1 className=" text-sm font-semibold mb-0">{maindata.ticket.ticketable.product_type === 2 ? "Terminal ID" : "ID Produk"}:</h1>
+                                <p className="mb-0 text-sm">{maindata.ticket.ticketable.product_id === "" ? "-" : maindata.ticket.ticketable.product_id}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Nama PIC:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.full_detail.pic_name === "" ? "-" : maindata.ticket.full_detail.pic_name}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.ticketable.pic_name === "" ? "-" : maindata.ticket.ticketable.pic_name}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Kontak PIC:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.full_detail.pic_contact === "" ? "-" : maindata.ticket.full_detail.pic_contact}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.ticketable.pic_contact === "" ? "-" : maindata.ticket.ticketable.pic_contact}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Problem:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.full_detail.problem === "" ? "-" : maindata.ticket.full_detail.problem}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.ticketable.problem === "" ? "-" : maindata.ticket.ticketable.problem}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Lokasi Problem:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.full_detail.location.company_name === "" ? "-" : maindata.ticket.full_detail.location.company_name}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.ticketable.location.company_name === "" ? "-" : maindata.ticket.ticketable.location.company_name}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Waktu Kejadian:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.full_detail.incident_time ? moment(maindata.ticket.full_detail.incident_time).locale('id').format("L") + moment(maindata.ticket.full_detail.incident_time).locale('id').format("LT") : "-"}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.ticketable.incident_time ? moment(maindata.ticket.ticketable.incident_time).locale('id').format("L") + moment(maindata.ticket.ticketable.incident_time).locale('id').format("LT") : "-"}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-2">Bukti Kejadian:</h1>
                                 {
-                                    maindata.ticket.full_detail.files.map((doc, idx) => {
+                                    maindata.ticket.ticketable.files.map((doc, idx) => {
                                         return (
                                             <div className="border px-8 py-4 flex justify-between items-center w-9/12 mb-1 relative cursor-pointer hover:text-blue-500">
                                                 <div className="mr-5 flex items-center">
@@ -115,28 +120,11 @@ const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations }
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Deskripsi Kerusakan:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.full_detail.description === "" ? "-" : maindata.ticket.full_detail.description}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.ticketable.description === "" ? "-" : maindata.ticket.ticketable.description}</p>
                             </div>
                         </div>
                     </div>
             }
-            {/* <Modal title={<h1 className="font-semibold">Membuka Dokumen_1.pdf</h1>}
-                visible={modalexporting}
-                onCancel={() => { setmodalexporting(false) }}
-                okText="Ya"
-                cancelText="Tidak"
-                okButtonProps={{ loading: loadingexporting }}
-            >
-                <div className="flex flex-col mb-5">
-                    <div className="flex flex-col mb-4">
-                        <p className="mb-2 text-xs font-semibold">Kamu memilih untuk membuka:</p>
-                        <div className="mb-2 text-xs flex flex-col">
-
-                        </div>
-                    </div>
-                    <hr />
-                </div>
-            </Modal> */}
         </div>
     )
 }
@@ -146,6 +134,52 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem }) =>
     const rt = useRouter()
 
     //useState
+    const [praloadingconnected, setpraloadingconnected] = useState(true)
+    const [connecteditemdata, setconnecteditemdata] = useState({
+        id: null,
+        model_id: null,
+        vendor_id: null,
+        inventory_name: "",
+        status_condition: null,
+        status_usage: null,
+        location: null,
+        is_exist: null,
+        deskripsi: null,
+        manufacturer_id: null,
+        mig_id: "",
+        serial_number: null,
+        created_at: "",
+        updated_at: "",
+        deleted_at: null,
+        model_inventory: {
+            id: null,
+            name: "",
+            asset_id: null,
+            deleted_at: null,
+            asset: {
+                id: null,
+                name: "",
+                deleted_at: null
+            }
+        },
+        location_inventory: {
+            company_id: null,
+            company_name: ""
+        },
+        additional_attributes: [
+            {
+                id: null,
+                name: "",
+                value: ""
+            },
+            {
+                id: null,
+                name: "",
+                value: ""
+            }
+        ],
+        inventory_parts: []
+    })
     const [itemactivity, setitemactivity] = useState(true)
     const [modalconnecteditem, setmodalconnecteditem] = useState(false)
     const [loadingconnecteditem, setloadingconnecteditem] = useState(false)
@@ -157,6 +191,40 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem }) =>
     //2. Item
     const [itemdata, setitemdata] = useState([])
     const [selecteditem, setselecteditem] = useState(null)
+
+    //handler
+    const handleSetItem = () => {
+        setloadingconnecteditem(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/setItemTicket`, {
+            method: `PUT`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: Number(ticketid),
+                inventory_id: selecteditem
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingconnecteditem(false)
+                setmodalconnecteditem(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    window.location.href = `/tickets/detail/${ticketid}`
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
 
     //useEffect
     useEffect(() => {
@@ -172,8 +240,8 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem }) =>
             })
     }, [])
     useEffect(() => {
-        if (selectedasset !== -10) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories`, {
+        if (selectedasset !== null) {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?asset_id=${selectedasset === null ? "" : selectedasset}`, {
                 method: `GET`,
                 headers: {
                     'Authorization': JSON.parse(initProps),
@@ -181,11 +249,32 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem }) =>
             })
                 .then(res => res.json())
                 .then(res2 => {
-                    const datafilter = res2.data.filter(docfil => docfil.asset_id === selectedasset)
-                    setitemdata(datafilter.length === 0 ? res2.data : datafilter)
+                    // const datafilter = res2.data.filter(docfil => docfil.asset_id === selectedasset)
+                    // setitemdata(datafilter.length === 0 ? res2.data : datafilter)
+                    setitemdata(res2.data.data)
                 }, [])
         }
     }, [selectedasset])
+    useEffect(() => {
+        if (connecteditem !== null) {
+            setpraloadingconnected(true)
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getInventory?id=${connecteditem}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                },
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    setconnecteditemdata(res2.data)
+                    setpraloadingconnected(false)
+                    setitemactivity(false)
+                }, [])
+        }
+        else {
+            setconnecteditemdata(null)
+        }
+    }, [])
 
     return (
         <div className="flex flex-col">
@@ -196,143 +285,133 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem }) =>
                     //     null
                     //     :
                     <div className="flex">
-                        <Button type="primary" disabled={itemactivity} onClick={(e) => { rt.push(`/items/detail/${connecteditem.id}?active=activity`) }} size="large">Activity Item</Button>
+                        <Button type="primary" disabled={itemactivity} onClick={(e) => { rt.push(`/items/detail/${connecteditemdata.id}?active=activity`) }} size="large">Activity Item</Button>
                         {/* <Button type="primary" className="buttonExport" onClick={(e) => { setmodalexporting(true) }} size="large">Export</Button> */}
                     </div>
                 }
             </div>
             {
-                connecteditem === null ?
-                    <div className=" border rounded-lg py-10 w-10/12 mx-auto flex flex-col">
-                        <Empty description={
-                            <p className="mb-0">
-                                Hubungkan <span className=" text-blue-500">Item</span><span className="connectItem"></span>
-                                <style jsx>
-                                    {`
+                praloadingconnected ?
+                    <>
+                        <Spin />
+                    </>
+                    :
+                    connecteditemdata === null ?
+                        <div className=" border rounded-lg py-10 w-10/12 mx-auto flex flex-col">
+                            <Empty description={
+                                <p className="mb-0">
+                                    Hubungkan <span className=" text-blue-500">Item</span><span className="connectItem"></span>
+                                    <style jsx>
+                                        {`
                                         .connectItem::before{
                                             content: '*';
                                             color: red;
                                         }
                                     `}
-                                </style>
-                            </p>
-                        } image={Empty.PRESENTED_IMAGE_DEFAULT}>
-                            <Button type="primary" onClick={() => { setmodalconnecteditem(true) }}>Pilih Item</Button>
-                        </Empty>
-                    </div>
-                    :
-                    <div className="mb-8 mx-5 p-5 w-9/12 flex flex-col">
-                        <div className="border shadow-md rounded-md flex flex-col p-5 mb-3">
-                            <div className="flex justify-between">
+                                    </style>
+                                </p>
+                            } image={Empty.PRESENTED_IMAGE_DEFAULT}>
+                                <Button type="primary" onClick={() => { setmodalconnecteditem(true) }}>Pilih Item</Button>
+                            </Empty>
+                        </div>
+                        :
+                        <div className="mb-8 mx-5 p-5 w-9/12 flex flex-col">
+                            <div className="border shadow-md rounded-md flex flex-col p-5 mb-3">
+                                <div className="flex justify-between">
+                                    <div className="flex flex-col mt-3 mb-5">
+                                        <h1 className=" text-sm font-semibold mb-0">Item:</h1>
+                                        <p className="mb-0 text-sm">{connecteditemdata.inventory_name ?? ""}</p>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Button onClick={() => { setmodalconnecteditem(true) }}>Ganti Item</Button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="border shadow-md rounded-md flex flex-col p-5 mb-5">
                                 <div className="flex flex-col mt-3 mb-5">
-                                    <h1 className=" text-sm font-semibold mb-0">Item:</h1>
-                                    <p className="mb-0 text-sm">{connecteditem.inventory_name ?? ""}</p>
+                                    <h1 className=" text-sm font-semibold mb-0">Model:</h1>
+                                    <p className="mb-0 text-sm">{connecteditemdata.model_name ?? "-"}</p>
                                 </div>
-                                <div className="flex items-center">
-                                    <Button onClick={() => { setmodalconnecteditem(true) }}>Ganti Item</Button>
+                                <div className="flex flex-col mt-3 mb-5">
+                                    <h1 className=" text-sm font-semibold mb-0">Asset Type:</h1>
+                                    <p className="mb-0 text-sm">{connecteditemdata.asset_name ?? "-"}</p>
+                                </div>
+                                <div className="flex flex-col mt-3 mb-5">
+                                    <h1 className=" text-sm font-semibold mb-0">MIG ID:</h1>
+                                    <p className="mb-0 text-sm">{connecteditemdata.mig_id ?? "-"}</p>
+                                </div>
+                                <div className="flex flex-col mt-3 mb-5">
+                                    <h1 className=" text-sm font-semibold mb-2">Status Pemakaian:</h1>
+                                    {
+                                        connecteditemdata.status_usage ?
+                                            <>
+                                                {connecteditemdata.status_usage === 1 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">In Used</div>}
+                                                {connecteditemdata.status_usage === 2 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-green-100 border border-green-200 text-green-600">In Stock</div>}
+                                                {connecteditemdata.status_usage === 3 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">Replacement</div>}
+                                            </>
+                                            :
+                                            "-"
+                                    }
+                                </div>
+                                <div className="flex flex-col mt-3 mb-5">
+                                    <h1 className=" text-sm font-semibold mb-2">Status Kondisi:</h1>
+                                    {
+                                        connecteditemdata.status_condition ?
+                                            <>
+                                                {
+                                                    connecteditemdata.status_condition === 1 &&
+                                                    <div className="p-1 flex w-full items-center">
+                                                        <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
+                                                        <p className="mb-0 font-semibold">Good</p>
+                                                    </div>
+                                                }
+                                                {
+                                                    connecteditemdata.status_condition === 2 &&
+                                                    <div className="p-1 flex w-full items-center">
+                                                        <div className="w-3 h-3 rounded-full bg-gray-500 mr-1"></div>
+                                                        <p className="mb-0 font-semibold">Grey</p>
+                                                    </div>
+                                                }
+                                                {
+                                                    connecteditemdata.status_condition === 3 &&
+                                                    <div className="p-1 flex w-full items-center">
+                                                        <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
+                                                        <p className="mb-0 font-semibold">Bad</p>
+                                                    </div>
+                                                }
+                                            </>
+                                            :
+                                            "-"
+                                    }
+                                </div>
+                                <div className="flex flex-col mt-3 mb-5">
+                                    <h1 className=" text-sm font-semibold mb-0">Serial Number:</h1>
+                                    <p className="mb-0 text-sm">{connecteditemdata.serial_number ?? "-"}</p>
+                                </div>
+                                <div className="flex flex-col mt-3 mb-5">
+                                    <h1 className=" text-sm font-semibold mb-0">Location:</h1>
+                                    <p className="mb-0 text-sm">{connecteditemdata.location_name ?? "-"}</p>
+                                </div>
+                                <div className="flex flex-col mt-3 mb-5">
+                                    <h1 className=" text-sm font-semibold mb-0">Deskripsi:</h1>
+                                    <p className="mb-0 text-sm">{connecteditemdata.deskripsi ?? "-"}</p>
                                 </div>
                             </div>
                         </div>
-                        <div className="border shadow-md rounded-md flex flex-col p-5 mb-5">
-                            <div className="flex flex-col mt-3 mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">Model:</h1>
-                                <p className="mb-0 text-sm">{connecteditem.model_name ?? "-"}</p>
-                            </div>
-                            <div className="flex flex-col mt-3 mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">Asset Type:</h1>
-                                <p className="mb-0 text-sm">{connecteditem.asset_name ?? "-"}</p>
-                            </div>
-                            <div className="flex flex-col mt-3 mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">MIG ID:</h1>
-                                <p className="mb-0 text-sm">{connecteditem.mig_id ?? "-"}</p>
-                            </div>
-                            <div className="flex flex-col mt-3 mb-5">
-                                <h1 className=" text-sm font-semibold mb-2">Status Pemakaian:</h1>
-                                {
-                                    connecteditem.status_usage ?
-                                        <>
-                                            {connecteditem.status_usage === 1 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">In Used</div>}
-                                            {connecteditem.status_usage === 2 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-green-100 border border-green-200 text-green-600">In Stock</div>}
-                                            {connecteditem.status_usage === 3 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">Replacement</div>}
-                                        </>
-                                        :
-                                        "-"
-                                }
-                            </div>
-                            <div className="flex flex-col mt-3 mb-5">
-                                <h1 className=" text-sm font-semibold mb-2">Status Kondisi:</h1>
-                                {
-                                    connecteditem.status_condition ?
-                                        <>
-                                            {
-                                                connecteditem.status_condition === 1 &&
-                                                <div className="p-1 flex w-full items-center">
-                                                    <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
-                                                    <p className="mb-0 font-semibold">Good</p>
-                                                </div>
-                                            }
-                                            {
-                                                connecteditem.status_condition === 2 &&
-                                                <div className="p-1 flex w-full items-center">
-                                                    <div className="w-3 h-3 rounded-full bg-gray-500 mr-1"></div>
-                                                    <p className="mb-0 font-semibold">Grey</p>
-                                                </div>
-                                            }
-                                            {
-                                                connecteditem.status_condition === 3 &&
-                                                <div className="p-1 flex w-full items-center">
-                                                    <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
-                                                    <p className="mb-0 font-semibold">Bad</p>
-                                                </div>
-                                            }
-                                        </>
-                                        :
-                                        "-"
-                                }
-                            </div>
-                            <div className="flex flex-col mt-3 mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">Serial Number:</h1>
-                                <p className="mb-0 text-sm">{connecteditem.serial_number ?? "-"}</p>
-                            </div>
-                            <div className="flex flex-col mt-3 mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">Location:</h1>
-                                <p className="mb-0 text-sm">{connecteditem.location_name ?? "-"}</p>
-                            </div>
-                            <div className="flex flex-col mt-3 mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">Deskripsi:</h1>
-                                <p className="mb-0 text-sm">{connecteditem.deskripsi ?? "-"}</p>
-                            </div>
-                        </div>
-                    </div>
             }
             <Modal title={
                 <div className="flex justify-between p-5 mt-5">
                     <h1 className="font-bold text-xl">Hubungkan Item ke Ticket</h1>
                     <div className="flex">
                         <>
-                            <Button type="default" onClick={() => { setmodalconnecteditem(false); /*setselectedassetcode(""); setselectedasset(null); setselecteditem(null)*/ }} style={{ marginRight: `1rem` }}>Batal</Button>
-                            <Button type='primary' loading={loadingconnecteditem} disabled={disabledconnecteditem} loading={loadingconnecteditem} onClick={() => {
-                                setloadingconnecteditem(true)
-                                fetch(`https://boiling-thicket-46501.herokuapp.com/getInventory?id=${selecteditem}`, {
-                                    method: `GET`,
-                                    headers: {
-                                        'Authorization': JSON.parse(initProps),
-                                    },
-                                })
-                                    .then(res => res.json())
-                                    .then(res2 => {
-                                        setconnecteditem(res2.data)
-                                        setloadingconnecteditem(false)
-                                        setmodalconnecteditem(false)
-                                        setitemactivity(false)
-                                    }, [])
-                            }}>Simpan</Button>
+                            <Button type="default" onClick={() => { setmodalconnecteditem(false); setselectedassetcode(""); setselectedasset(null); setselecteditem(null) }} style={{ marginRight: `1rem` }}>Batal</Button>
+                            <Button type='primary' loading={loadingconnecteditem} disabled={disabledconnecteditem} loading={loadingconnecteditem} onClick={handleSetItem}>Simpan</Button>
                         </>
                     </div>
                 </div>
             }
                 visible={modalconnecteditem}
-                onCancel={() => { setmodalconnecteditem(false); /*setselectedassetcode(""); setselectedasset(null); setselecteditem(null)*/ }}
+                onCancel={() => { setmodalconnecteditem(false); setselectedassetcode(""); setselectedasset(null); setselecteditem(null) }}
                 footer={null}
                 width={720}
             >
@@ -405,13 +484,10 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
     const [maindata, setmaindata] = useState({
         ticket: {
             id: Number(ticketid),
-            subject_id: null,
-            type_id: null,
-            status_id: null,
             raised_at: "",
             closed_at: "",
-            asign_to: null,
-            requester_id: null,
+            original_closed_at: "",
+            resolve_time: "",
             type: {
                 id: null,
                 name: "",
@@ -425,15 +501,14 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                 user_id: null,
                 fullname: ""
             },
-            full_detail: {
+            ticketable: {
                 id: null,
-                product_type: {
-                    id: null,
-                    name: ""
-                },
+                product_type: null,
                 product_id: "",
                 pic_name: "",
                 pic_contact: "",
+                location_id: null,
+                inventory_id: null,
                 location: {
                     company_id: null,
                     company_name: ""
@@ -446,9 +521,9 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                 description: "",
                 deleted_at: null
             },
-            asign: {
+            assignable: {
                 id: null,
-                fullname: ""
+                name: ""
             }
         },
     })
@@ -459,7 +534,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                 name: ""
             }
         ],
-        ticket_type: [
+        ticket_types: [
             {
                 id: '',
                 name: ''
@@ -472,7 +547,6 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                 company_id: 0
             },
         ],
-        requester_companies: [],
         companies: {
             data: [
                 {
@@ -484,17 +558,11 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
             ]
         },
     })
-    const [manuf, setmanuf] = useState("")
-    const [vendor, setvendor] = useState("")
     const [praloading, setpraloading] = useState(true)
-    const [praloading2, setpraloading2] = useState(true)
     //notes
     const [notes, setnotes] = useState("")
     const [modalnotes, setmodalnotes] = useState(false)
     const [loadingnotes, setloadingnotes] = useState(false)
-    //delete
-    const [modaldelete, setmodaldelete] = useState(false)
-    const [loadingdelete, setloadingdelete] = useState(false)
     //status
     const [status, setstatus] = useState("")
     const [namestatus, setnamestatus] = useState("")
@@ -503,13 +571,116 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
     const [displaystatus, setdisplaystatus] = useState(true)
     const [loadingstatus, setloadingstatus] = useState(false)
     //asignto
-    const [to, setto] = useState(-10)
+    const [to, setto] = useState(null)
     const [assignto, setassignto] = useState(null)
     const [nameassignto, setnameassignto] = useState("")
+    const [defaultnameassignto, setdefaultnameassignto] = useState("")
     const [modalassignto, setmodalassignto] = useState(false)
+    const [loadingassignto, setloadingassignto] = useState(false)
     const [disabledassignto, setdisabledassignto] = useState(true)
+    const [displayassignto, setdisplayassignto] = useState(true)
     //connected item
     const [connecteditem, setconnecteditem] = useState(null)
+
+    //handler
+    const handleSetStatus = () => {
+        setloadingstatus(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/changeStatusTicket`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: Number(ticketid),
+                notes: notestatus,
+                status_id: status
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingstatus(false)
+                setmodalstatus(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: "Status berhasil diubah",
+                        duration: 2
+                    })
+                    window.location.href = `/tickets/detail/${ticketid}`
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
+    const handleNotes = () => {
+        setloadingnotes(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addInventoryNotes`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: Number(ticketid),
+                notes: notes
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingnotes(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: "Notes berhasil ditambahkan",
+                        duration: 3
+                    })
+                    setmodalnotes(false)
+                    window.location.href = `/items/detail/${itemid}?active=activity`
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
+    const handleAssignTo = () => {
+        setloadingassignto(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/assignTicket`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: Number(ticketid),
+                assignable_type: to,
+                assignable_id: assignto
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingassignto(false)
+                setmodalassignto(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: "Assign To berhasil diubah",
+                        duration: 3
+                    })
+                    window.location.href = `/tickets/detail/${ticketid}`
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
 
 
     //useEffect
@@ -523,19 +694,22 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
             .then(res => res.json())
             .then(res2 => {
                 setmaindata(res2.data)
+                setstatus(res2.data.ticket.status.id)
+                res2.data.ticket.assignable.user_id ? (setassignto(res2.data.ticket.assignable.user_id), setnameassignto(res2.data.ticket.assignable.fullname), setdefaultnameassignto(res2.data.ticket.assignable.fullname)) : setassignto(null)
+                res2.data.ticket.ticketable.inventory_id === null ? setconnecteditem(null) : setconnecteditem(res2.data.ticket.ticketable.inventory_id)
             })
-    }, [])
-    useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
-            method: `GET`,
-            headers: {
-                'Authorization': JSON.parse(initProps),
-            }
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setticketrelations(res2.data)
-                setpraloading(false)
+            .then(() => {
+                fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
+                    method: `GET`,
+                    headers: {
+                        'Authorization': JSON.parse(initProps),
+                    }
+                })
+                    .then(res => res.json())
+                    .then(res2 => {
+                        setticketrelations(res2.data)
+                        setpraloading(false)
+                    })
             })
     }, [])
 
@@ -559,24 +733,10 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                                 <p className="mb-1">Ticket Type:</p>
                                                 {
                                                     // displayusage ?
-                                                    <Select placeholder="Masukkan Status Pemakaian" style={{ width: `10rem` }} bordered={true} defaultValue={1} onChange={(value) => {
-                                                        // setdisabledusage(prev => {
-                                                        //     if (value !== 1) {
-                                                        //         return false
-                                                        //     }
-                                                        //     else {
-                                                        //         return true
-                                                        //     }
-                                                        // })
-                                                        // setchangeusage({
-                                                        //     ...changeusage,
-                                                        //     status_usage: value
-                                                        // });
-                                                        // setmodalusage(true)
-                                                        // setdisplayusage(false)
+                                                    <Select defaultValue={maindata.ticket.type.id} placeholder="Masukkan Tipe Ticket" style={{ width: `10rem` }} bordered={true} defaultValue={1} onChange={(value) => {
                                                     }}>
                                                         {
-                                                            ticketrelations.ticket_type.map((doc, idx) => {
+                                                            ticketrelations.ticket_types.map((doc, idx) => {
                                                                 return (
                                                                     <Select.Option value={doc.id}><strong>{doc.name}</strong></Select.Option>
                                                                 )
@@ -591,19 +751,16 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                                 <p className="mb-1">Status:</p>
                                                 {
                                                     displaystatus ?
-                                                        <Select placeholder="Masukkan Status" style={{ width: `10rem` }} bordered={true} defaultValue={1} onChange={(value, option) => {
+                                                        <Select defaultValue={maindata.ticket.status.id} value={status} placeholder="Masukkan Status" style={{ width: `10rem` }} bordered={true} defaultValue={1} onChange={(value, option) => {
                                                             setstatus(value)
                                                             setnamestatus(option.name)
                                                             setmodalstatus(true)
                                                             setdisplaystatus(false)
-                                                            // setkondisi(value);
-                                                            // setmodalkondisi(true)
-                                                            // setdisplaykondisi(false)
                                                         }}>
                                                             {
-                                                                ticketrelations.ticket_type.map((doc, idx) => {
+                                                                ticketrelations.status_ticket.map((doc, idx) => {
                                                                     return (
-                                                                        <Select.Option value={doc.id} name={doc.name}><strong>{doc.name}</strong></Select.Option>
+                                                                        <Select.Option key={idx} value={doc.id} name={doc.name}><strong>{doc.name}</strong></Select.Option>
                                                                     )
                                                                 })
                                                             }
@@ -612,13 +769,16 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                                         null
                                                 }
                                             </div>
-                                            <div className="flex flex-col cursor-pointer" onClick={() => { setmodalassignto(true) }}>
+                                            <div className="flex flex-col cursor-pointer" onClick={() => { setmodalassignto(true); setdisplayassignto(false) }}>
                                                 <p className="mb-1">Assign To:</p>
                                                 {
-                                                    <div className="py-1 px-3 border flex items-center justify-between">
-                                                        <h1 className="font-semibold mb-0 mr-5">{assignto === null ? 'None' : `${nameassignto}`}</h1>
-                                                        <DownOutlined />
-                                                    </div>
+                                                    displayassignto ?
+                                                        <div className="py-1 px-3 border flex items-center justify-between">
+                                                            <h1 className="font-semibold mb-0 mr-5">{assignto === null ? 'None' : `${nameassignto}`}</h1>
+                                                            <DownOutlined />
+                                                        </div>
+                                                        :
+                                                        null
                                                 }
                                             </div>
                                         </>
@@ -712,7 +872,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                     <div className="flex">
                         <>
                             <Button type="default" onClick={() => { setmodalstatus(false); setdisplaystatus(true) }} style={{ marginRight: `1rem` }}>Batal</Button>
-                            <Button type='primary' disabled={status === ""} loading={loadingstatus}>Simpan</Button>
+                            <Button type='primary' disabled={status === ""} loading={loadingstatus} onClick={handleSetStatus}>Simpan</Button>
                         </>
                     </div>
                 </div>
@@ -745,14 +905,14 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                     <h1 className="font-bold text-xl">Assigned To</h1>
                     <div className="flex">
                         <>
-                            <Button type="default" onClick={() => { setmodalassignto(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
-                            <Button type='primary' disabled={disabledassignto} onClick={() => { setmodalassignto(false) }}>Simpan</Button>
+                            <Button type="default" onClick={() => { setmodalassignto(false); setdisplayassignto(true); setnameassignto(defaultnameassignto) }} style={{ marginRight: `1rem` }}>Batal</Button>
+                            <Button type='primary' disabled={disabledassignto} onClick={handleAssignTo} loading={loadingassignto}>Simpan</Button>
                         </>
                     </div>
                 </div>
             }
                 visible={modalassignto}
-                onCancel={() => { setmodalassignto(false) }}
+                onCancel={() => { setmodalassignto(false); setdisplayassignto(true); setnameassignto(defaultnameassignto) }}
                 footer={null}
                 width={720}
             >
@@ -760,8 +920,8 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Assigned To <span className="assto"></span></p>
                         <Select onChange={(value) => { setto(value) }}>
-                            <Select.Option value={1}>Engineer</Select.Option>
-                            <Select.Option value={2}>Group</Select.Option>
+                            <Select.Option value={true}>Engineer</Select.Option>
+                            <Select.Option value={false}>Group</Select.Option>
                         </Select>
                         <style jsx>
                             {`
@@ -775,8 +935,8 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Assigned To <span className="engineer"></span></p>
                         {
-                            to === 1 &&
-                            <Select disabled={to === -10} onChange={(value, option) => { setassignto(value); setdisabledassignto(false); setnameassignto(option.name) }}>
+                            to === true &&
+                            <Select disabled={to === null} onChange={(value, option) => { setassignto(value); setdisabledassignto(false); setnameassignto(option.name) }}>
                                 {
                                     ticketrelations.requesters.map((doc, idx) => {
                                         return (
@@ -787,12 +947,12 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                             </Select>
                         }
                         {
-                            to === 2 &&
-                            <Select disabled={to === -10} onChange={(value, option) => { setassignto(value); setdisabledassignto(false); setnameassignto(option.name) }}>
+                            to === false &&
+                            <Select disabled={to === null} onChange={(value, option) => { setassignto(value); setdisabledassignto(false); setnameassignto(option.name) }}>
                                 {
-                                    ticketrelations.requester_companies.map((doc, idx) => {
+                                    ticketrelations.requesters.map((doc, idx) => {
                                         return (
-                                            <Select.Option value={doc.id} name={doc.name}>{doc.name}</Select.Option>
+                                            <Select.Option value={doc.user_id} name={doc.fullname}>{doc.fullname}</Select.Option>
                                         )
                                     })
                                 }

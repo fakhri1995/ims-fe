@@ -89,7 +89,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 return {
                     children:
                         <>
-                            {`#${record.type.code} - `}{record.type.id}
+                            <strong>{`#${record.type.code} - `}{record.type.id}</strong>
                         </>
                 }
             }
@@ -101,7 +101,8 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 return {
                     children:
                         <>
-                            {ticketrelations.requesters.filter(docfil => docfil.user_id === record.requester_id)[0].fullname}
+                            {/* {ticketrelations.requesters.filter(docfil => docfil.user_id === record.requester.user_id)[0].fullname} */}
+                            {record.requester.fullname}
                         </>
                 }
             }
@@ -114,7 +115,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     children:
                         <>
                             {/* {ticketrelations.companies.filter(docfil => docfil.company_id === record.location)[0].company_name} */}
-                            {record.detail.location.company_name}
+                            {record.ticketable.location.company_name}
                         </>
                 }
             }
@@ -123,16 +124,16 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
             title: 'Date Raised',
             dataIndex: 'date_raised',
             render: (text, record, index) => {
-                // var hariTerakhir = new Date(new Date(record.tanggal).getTime() + (props.durasi * 24 * 60 * 60 * 1000));
-                var jumlahHari = Math.floor((new Date().getTime() - new Date(record.raised_at).getTime()) / (1000 * 3600 * 24))
-                var jumlahJam = ""
-                if (jumlahHari < 1) {
-                    jumlahJam = Math.floor((new Date().getTime() - new Date(record.raised_at).getTime()) / (1000 * 3600))
-                }
+                // var jumlahHari = Math.floor((new Date().getTime() - new Date(record.raised_at).getTime()) / (1000 * 3600 * 24))
+                // var jumlahJam = ""
+                // if (jumlahHari < 1) {
+                //     jumlahJam = Math.floor((new Date().getTime() - new Date(record.raised_at).getTime()) / (1000 * 3600))
+                // }
                 return {
                     children:
                         <>
-                            {moment(record.raised_at).locale('id').format('L')} ({jumlahHari < 1 ? `${jumlahJam} jam` : `${jumlahHari} hari`} yang lalu)
+                            {/* {moment(record.raised_at).locale('id').format('L')} ({jumlahHari < 1 ? `${jumlahJam} jam` : `${jumlahHari} hari`} yang lalu) */}
+                            {record.raised_at}
                         </>
                 }
             }
@@ -145,20 +146,40 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     children:
                         <>
                             {/* {ticketrelations.requesters.filter(docfil => docfil.user_id === record.assign_to)[0].fullname} */}
-                            {record.asign.fullname}
+                            {record.assignable.fullname}
                         </>
                 }
             }
         },
         {
             title: 'Status',
-            dataIndex: 'assign_to',
+            dataIndex: 'status',
+            align: `center`,
             render: (text, record, index) => {
                 return {
                     children:
                         <>
                             {/* {ticketrelations.status_ticket.filter(docfil => docfil.id === record.status)[0].name} */}
-                            {record.status.name}
+                            {
+                            record.status.id === 1 &&
+                            <div className="rounded-md h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">{record.status.name}</div>
+                            }
+                            {
+                            record.status.id === 2 &&
+                            <div className="rounded-md h-auto px-1 text-center py-1 bg-green-100 border border-green-200 text-green-600">{record.status.name}</div>
+                            }
+                            {
+                            record.status.id === 3 &&
+                            <div className="rounded-md h-auto px-1 text-center py-1 bg-yellow-100 border border-yellow-200 text-yellow-600">{record.status.name}</div>
+                            }
+                            {
+                            record.status.id === 4 &&
+                            <div className="rounded-md h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">{record.status.name}</div>
+                            }
+                            {
+                            record.status.id === 5 &&
+                            <div className="rounded-md h-auto px-1 text-center py-1 bg-gray-100 border border-gray-200 text-gray-600">{record.status.name}</div>
+                            }
                         </>
                 }
             }
@@ -370,7 +391,6 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                         onChangeRangeDate(datestrings)
                                     }
                                 }}>
-
                                 </DatePicker.RangePicker>
                             </div>
                             <div className="col-span-1 mr-1">
@@ -396,7 +416,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                             </div>
                         </div>
                     </div>
-                    <div className="px-10">
+                    <div className="px-6">
                         <Table pagination={{
                             pageSize: 10, total: displayentiredata.data.total, onChange: (page, pageSize) => {
                                 setpraloading(true)
