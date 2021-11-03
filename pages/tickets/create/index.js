@@ -23,7 +23,7 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
         product_id: null,
         pic_name: "",
         pic_contact: "",
-        location_id: null,
+        location_id: 0,
         problem: "",
         incident_time: null,
         files: [],

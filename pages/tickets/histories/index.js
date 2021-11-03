@@ -43,15 +43,6 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
     })
     const [displaydata1, setdisplaydata1] = useState([])
     const [displaydata2, setdisplaydata2] = useState([])
-    const [rawdata, setrawdata] = useState({
-        total_tickets: 0,
-        open_tickets_count: 0,
-        on_progress_tickets_count: 0,
-        on_hold_tickets_count: 0,
-        canceled_tickets_count: 0,
-        closed_tickets_count: 0,
-        tickets: {}
-    })
     const [displayentiredata, setdisplayentiredata] = useState({
         current_page: 0,
         data: [],
@@ -219,7 +210,6 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                setrawdata(res2.data)
                 setdisplayentiredata(res2.data.tickets)
                 setdisplaydata(res2.data.tickets.data)
                 setdisplaydata1(res2.data.tickets.data)
@@ -269,26 +259,25 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
                     </div>
                     <div className="px-10">
                         <Table
-                            // pagination={{
-                            //     pageSize: 10, total: displayentiredata.data.total, onChange: (page, pageSize) => {
-                            //         setpraloading(true)
-                            //         fetch(`https://boiling-thicket-46501.herokuapp.com/getClosedTickets?page=${page}&rows=10`, {
-                            //             method: `GET`,
-                            //             headers: {
-                            //                 'Authorization': JSON.parse(initProps),
-                            //             },
-                            //         })
-                            //             .then(res => res.json())
-                            //             .then(res2 => {
-                            //                 setrawdata(res2.data)
-                            //                 setdisplayentiredata(res2.data.tickets)
-                            //                 setdisplaydata(res2.data.tickets.data)
-                            //                 setdisplaydata1(res2.data.tickets.data)
-                            //                 setdisplaydata2(res2.data.tickets.data)
-                            //                 setpraloading(false)
-                            //             })
-                            //     }
-                            // }} 
+                            pagination={{
+                                pageSize: 10, total: displayentiredata.total, onChange: (page, pageSize) => {
+                                    setpraloading(true)
+                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getClosedTickets?page=${page}&rows=10`, {
+                                        method: `GET`,
+                                        headers: {
+                                            'Authorization': JSON.parse(initProps),
+                                        },
+                                    })
+                                        .then(res => res.json())
+                                        .then(res2 => {
+                                            setdisplayentiredata(res2.data.tickets)
+                                            setdisplaydata(res2.data.tickets.data)
+                                            setdisplaydata1(res2.data.tickets.data)
+                                            setdisplaydata2(res2.data.tickets.data)
+                                            setpraloading(false)
+                                        })
+                                }
+                            }} 
                             scroll={{ x: 200 }} dataSource={displaydata} columns={column} loading={praloading}
                             onRow={(record, rowIndex) => {
                                 return {

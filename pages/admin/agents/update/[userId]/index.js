@@ -5,7 +5,7 @@ import st from '../../../../../components/layout-dashboard.module.css'
 import httpcookie from 'cookie'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
-import {EditOutlined, LoadingOutlined} from '@ant-design/icons'
+import { EditOutlined, LoadingOutlined } from '@ant-design/icons'
 import { Form, Input, Button, notification, Select, TreeSelect } from 'antd'
 
 function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, sidemenu, userid }) {
@@ -82,47 +82,47 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
     const handleSubmitEditAccount = () => {
         setLoadingupdate(true)
         // if ([133].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-            // fetch(`https://boiling-thicket-46501.herokuapp.com/updateFeatureAgent`, {
-            //     method: 'PUT',
-            //     headers: {
-            //         'Authorization': JSON.parse(tok),
-            //         'Content-Type': 'application/json'
-            //     },
-            //     body: JSON.stringify(datarole)
-            // })
-            //     .then(res => res.json())
-            //     .then(res2 => {
-            //         setLoadingupdate(false)
-            //     })
+        // fetch(`https://boiling-thicket-46501.herokuapp.com/updateFeatureAgent`, {
+        //     method: 'PUT',
+        //     headers: {
+        //         'Authorization': JSON.parse(tok),
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify(datarole)
+        // })
+        //     .then(res => res.json())
+        //     .then(res2 => {
+        //         setLoadingupdate(false)
+        //     })
         // }
         // if ([116].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/updateAgentDetail`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': JSON.parse(tok),
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data1)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateAgentDetail`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(tok),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data1)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setLoadingupdate(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/admin/agents/detail/${data1.id}`)
+                    }, 300)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
             })
-                .then(res => res.json())
-                .then(res2 => {
-                    setLoadingupdate(false)
-                    if (res2.success) {
-                        notification['success']({
-                            message: res2.message,
-                            duration: 3
-                        })
-                        setTimeout(() => {
-                            rt.push(`/admin/agents/detail/${data1.id}`)
-                        }, 300)
-                    }
-                    else if (!res2.success) {
-                        notification['error']({
-                            message: res2.message,
-                            duration: 3
-                        })
-                    }
-                })
         // }
     }
 
@@ -200,9 +200,9 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                         <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
                             <h1 className="font-semibold py-2">Ubah Profil Agent</h1>
                             <div className="flex space-x-2">
-                                <Link href={`/admin/agents/detail/${data1.id}`}>
-                                    <Button disabled={preloading} type="default">Batal</Button>
-                                </Link>
+                                {/* <Link href={`/admin/agents/detail/${data1.id}`}> */}
+                                <Button disabled={preloading} onClick={() => { console.log(data1) }} type="default">Batal</Button>
+                                {/* </Link> */}
                                 {
                                     // [116, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <Button disabled={preloading} type="primary" loading={loadingupdate} onClick={instanceForm.submit}>Simpan</Button>
@@ -262,13 +262,20 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                                     :
                                     <div className="p-3 col-span-1 md:col-span-3">
                                         <Form layout="vertical" initialValues={data1} form={instanceForm} onFinish={handleSubmitEditAccount}>
-                                            <Form.Item label="Asal Lokasi" name="company_id"
-                                                rules={[
-                                                    {
-                                                        required: true,
-                                                        message: 'Asal lokasi wajib diisi',
-                                                    },
-                                                ]}>
+                                            {/* <Form.Item label="Asal Lokasi" name="company_id"> */}
+                                            <div className="flex flex-col mb-5">
+                                                <div className="flex mb-2">
+                                                    <span className="asal"></span>
+                                                    <p className="mb-0 ml-1">Asal Lokasi</p>
+                                                    <style jsx>
+                                                        {`
+                                                            .asal::before{
+                                                                content: '*';
+                                                                color: red;
+                                                            }
+                                                        `}
+                                                    </style>
+                                                </div>
                                                 <TreeSelect allowClear
                                                     dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                                                     treeData={datacompanylist}
@@ -278,7 +285,8 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                                                     disabled
                                                 /*onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }}*/
                                                 />
-                                            </Form.Item>
+                                            </div>
+                                            {/* </Form.Item> */}
                                             <Form.Item label="Nama Lengkap" required name="fullname"
                                                 rules={[
                                                     {
@@ -288,12 +296,12 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                                                 ]}>
                                                 {
                                                     // [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                                        <Input defaultValue={data1.fullname} onChange={onChangeEditAgents} name="fullname" />
-                                                        // :
-                                                        // <div className="col-span-1 flex flex-col mb-5">
-                                                        //     <h1 className="font-semibold text-sm">Nama Lengkap:</h1>
-                                                        //     <h1 className="text-sm font-normal text-black">{data1.fullname}</h1>
-                                                        // </div>
+                                                    <Input defaultValue={data1.fullname} onChange={onChangeEditAgents} name="fullname" />
+                                                    // :
+                                                    // <div className="col-span-1 flex flex-col mb-5">
+                                                    //     <h1 className="font-semibold text-sm">Nama Lengkap:</h1>
+                                                    //     <h1 className="text-sm font-normal text-black">{data1.fullname}</h1>
+                                                    // </div>
                                                 }
                                             </Form.Item>
                                             <Form.Item label="Email" required name="email"
@@ -322,36 +330,36 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                                                 ]}>
                                                 {
                                                     // [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                                        <Input defaultValue={data1.phone_number} onChange={onChangeEditAgents} name="phone_number" />
-                                                        // :
-                                                        // <div className="col-span-1 flex flex-col mb-5">
-                                                        //     <h1 className="font-semibold text-sm">Nomor Telepon:</h1>
-                                                        //     <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
-                                                        // </div>
+                                                    <Input defaultValue={data1.phone_number} onChange={onChangeEditAgents} name="phone_number" />
+                                                    // :
+                                                    // <div className="col-span-1 flex flex-col mb-5">
+                                                    //     <h1 className="font-semibold text-sm">Nomor Telepon:</h1>
+                                                    //     <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
+                                                    // </div>
                                                 }
                                             </Form.Item>
                                             <h1 className="text-sm">Role:</h1>
                                             {
                                                 // [133].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                                    <Select mode="multiple" placeholder="Pilih Role" onChange={(value) => { onChangeRole(value) }} defaultValue={idrole} style={{ width: `100%` }}>
-                                                        {
-                                                            dataraw1.data.map((doc, idx) => {
-                                                                return (
-                                                                    <Option key={idx} value={doc.id}>{doc.name}</Option>
-                                                                )
-                                                            })
-                                                        }
-                                                    </Select>
-                                                    // :
-                                                    // <Select disabled onChange={(value) => { onChangeRole(value) }} defaultValue={idrole} style={{ width: `100%` }}>
-                                                    //     {
-                                                    //         dataraw1.data.map((doc, idx) => {
-                                                    //             return (
-                                                    //                 <Option key={idx} value={doc.id}>{doc.name}</Option>
-                                                    //             )
-                                                    //         })
-                                                    //     }
-                                                    // </Select>
+                                                <Select mode="multiple" placeholder="Pilih Role" onChange={(value) => { onChangeRole(value) }} defaultValue={idrole} style={{ width: `100%` }}>
+                                                    {
+                                                        dataraw1.data.map((doc, idx) => {
+                                                            return (
+                                                                <Option key={idx} value={doc.id}>{doc.name}</Option>
+                                                            )
+                                                        })
+                                                    }
+                                                </Select>
+                                                // :
+                                                // <Select disabled onChange={(value) => { onChangeRole(value) }} defaultValue={idrole} style={{ width: `100%` }}>
+                                                //     {
+                                                //         dataraw1.data.map((doc, idx) => {
+                                                //             return (
+                                                //                 <Option key={idx} value={doc.id}>{doc.name}</Option>
+                                                //             )
+                                                //         })
+                                                //     }
+                                                // </Select>
                                             }
                                             {/* <Form.Item label="Role" required tooltip="Wajib diisi" name="role" initialValue={data1.role}
                                         rules={[

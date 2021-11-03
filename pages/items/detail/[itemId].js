@@ -960,7 +960,14 @@ const Relationship = ({ initProps, maindata, itemid }) => {
 }
 const Association = () => {
     return (
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
+        <div className="flex flex-col">
+            <div className="border-b flex justify-between p-5 mb-8">
+                <h1 className="font-bold text-xl my-auto">Association</h1>
+            </div>
+            <div className="flex flex-col px-5">
+                <div></div>
+            </div>
+        </div>
     )
 }
 const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => {

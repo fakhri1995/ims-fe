@@ -104,6 +104,7 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
     const [loadingfoto, setloadingfoto] = useState(false)
     const [uploadtrigger, setuploadtrigger] = useState(-1)
     const [uploaddata, setuploaddata] = useState(null)
+    const [idreqlocation, setidreqlocation] = useState(0)
 
     //handler
     const onChangeGambar = async (e) => {
@@ -132,7 +133,10 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(updatedata)
+            body: JSON.stringify({
+                ...updatedata,
+                ['location_id']: updatedata.location_id === null ? 0 : updatedata.location_id,
+            })
         })
             .then(res => res.json())
             .then(res2 => {
@@ -142,7 +146,7 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                         message: "Ticket berhasil diubah",
                         duration: 3
                     })
-                    rt.push(`/tickets`)
+                    rt.push(`/tickets/detail/${ticketid}`)
                 }
                 else if (!res2.success) {
                     notification['error']({
@@ -174,11 +178,12 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                     pic_contact: res2.data.ticket.ticketable.pic_contact,
                     location_id: res2.data.ticket.ticketable.location_id,
                     problem: res2.data.ticket.ticketable.problem,
-                    incident_time: res2.data.ticket.ticketable.incident_time,
+                    incident_time: res2.data.ticket.ticketable.incident_time === null ? null : res2.data.ticket.ticketable.incident_time,
                     files: res2.data.ticket.ticketable.files,
                     description: res2.data.ticket.ticketable.description
                 }
                 setupdatedata(updata)
+                setidreqlocation(res2.data.ticket.requester.company_id)
                 setfilesupload(res2.data.ticket.ticketable.files)
             })
             .then(() => {
@@ -213,9 +218,9 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                         <div className=" col-span-4 flex justify-between pt-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-semibold py-2">Form Ubah Ticket</h1>
                             <div className="flex space-x-2">
-                                <Link href={`/tickets/detail/${ticketid}`}>
-                                    <Button type="default" /*onClick={() => { console.log(updatedata); console.log(filesupload) }}*/>Batal</Button>
-                                </Link>
+                                {/* <Link href={`/tickets/detail/${ticketid}`}> */}
+                                    <Button type="default" onClick={() => { console.log(updatedata); console.log(filesupload) }}>Batal</Button>
+                                {/* </Link> */}
                                 <Button disabled={disabledfield} loading={loadingupdate} type="primary" onClick={() => {
                                     instanceForm.submit()
                                 }}>Simpan</Button>
@@ -243,7 +248,7 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                             {
                                                 ticketrelations.requesters.map((doc, idx) => {
                                                     return (
-                                                        <Select.Option key={idx} value={doc.id}>{doc.fullname}</Select.Option>
+                                                        <Select.Option key={idx} value={doc.user_id}>{doc.fullname}</Select.Option>
                                                     )
                                                 })
                                             }
@@ -262,7 +267,7 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                             <span className="raisedBy"></span>
                                             <p className="mb-0 ml-1">Lokasi Pembuat</p>
                                         </div>
-                                        <TreeSelect placeholder="Lokasi Pembuat" treeData={[ticketrelations.companies.data]} treeDefaultExpandAll onChange={(value, label, extra) => {
+                                        <TreeSelect placeholder="Lokasi Pembuat" treeData={[ticketrelations.companies.data]} defaultValue={idreqlocation} treeDefaultExpandAll onChange={(value, label, extra) => {
                                             //belum diisi
                                         }} />
                                         <style jsx>
@@ -372,7 +377,7 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                             <div className="flex mb-2">
                                                 <p className="mb-0 ml-1">Waktu Kejadian</p>
                                             </div>
-                                            <DatePicker defaultValue={moment(updatedata.incident_time)} name="incident_time" showTime placeholder="Masukkan Waktu Kejadian" style={{ width: `100%` }} onChange={(date, datestring) => {
+                                            <DatePicker defaultValue={updatedata.incident_time === null ? null : moment(updatedata.incident_time)} name="incident_time" showTime placeholder="Masukkan Waktu Kejadian" style={{ width: `100%` }} onChange={(date, datestring) => {
                                                 setupdatedata({ ...updatedata, incident_time: datestring })
                                             }}></DatePicker>
                                         </div>

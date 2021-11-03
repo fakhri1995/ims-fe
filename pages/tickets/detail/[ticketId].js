@@ -9,11 +9,21 @@ import moment from 'moment'
 import st from '../../../components/layout-dashboard.module.css'
 import Sticky from 'wil-react-sticky'
 
-const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations }) => {
+const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations, dataProfile }) => {
     //init
     const rt = useRouter()
     var selisihWaktu = ""
-    maindata.ticket.closed_at ? (Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.original_raised_at).getTime()) / (1000 * 3600 * 24)) > 1 ? selisihWaktu = Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.original_raised_at).getTime()) / (1000 * 3600 * 24)) + " hari" : selisihWaktu = Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.original_raised_at).getTime()) / (1000 * 3600)) + " jam") : null
+    maindata.ticket.closed_at ? (Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.original_raised_at).getTime()) / (1000 * 3600 * 24)) > 1 ?
+        selisihWaktu =
+        Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.original_raised_at).getTime()) / (1000 * 3600 * 24)) + " hari "
+        + Math.floor((Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.original_raised_at).getTime()) % (1000 * 3600 * 24))) / (1000 * 3600)) + " jam "
+        + Math.floor(Math.floor(Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.original_raised_at).getTime()) % (1000 * 3600 * 24)) % (1000 * 3600)) / (60000)) + " menit"
+        :
+        selisihWaktu =
+        Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.original_raised_at).getTime()) / (1000 * 3600)) + " jam "
+        + Math.floor(Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.original_raised_at).getTime()) % (1000 * 3600)) / (60000)) + " menit")
+        :
+        null
 
     //useState
     //export
@@ -53,15 +63,15 @@ const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations }
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Lokasi Pembuat:</h1>
-                                <p className="mb-0 text-sm">Belum ada</p>
+                                <p className="mb-0 text-sm">{dataProfile.data.company.company_name}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Date Raised Ticket:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.original_raised_at ? moment(maindata.ticket.original_raised_at).locale('id').format("LL") : "-"}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.original_raised_at ? moment(maindata.ticket.original_raised_at).locale('id').format("LL") + " pukul " + moment(maindata.ticket.original_raised_at).locale('id').format("LT") : "-"}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Date Closed Ticket:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.closed_at === null ? "-" : moment(maindata.ticket.closed_at).locale('id').format("LL")}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.closed_at === null ? "-" : moment(maindata.ticket.closed_at).locale('id').format("LL") + " pukul " + moment(maindata.ticket.closed_at).locale('id').format("LT")}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Resolved Time:</h1>
@@ -97,25 +107,28 @@ const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations }
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Lokasi Problem:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.ticketable.location.company_name === "" ? "-" : maindata.ticket.ticketable.location.company_name}</p>
+                                <p className="mb-0 mr-2 text-sm">{maindata.ticket.ticketable.location.company_id === 0 ? "-" : maindata.ticket.ticketable.location.company_name}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Waktu Kejadian:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.ticketable.incident_time ? moment(maindata.ticket.ticketable.incident_time).locale('id').format("L") + moment(maindata.ticket.ticketable.incident_time).locale('id').format("LT") : "-"}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.ticketable.incident_time ? moment(maindata.ticket.ticketable.incident_time).locale('id').format("LL") + " - " + moment(maindata.ticket.ticketable.incident_time).locale('id').format("LT") : "-"}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-2">Bukti Kejadian:</h1>
                                 {
-                                    maindata.ticket.ticketable.files.map((doc, idx) => {
-                                        return (
-                                            <div className="border px-8 py-4 flex justify-between items-center w-9/12 mb-1 relative cursor-pointer hover:text-blue-500">
-                                                <div className="mr-5 flex items-center">
-                                                    <img src={doc} alt="selected images" className="object-contain w-16 h-16 mr-10" />
-                                                    {/* <p className="mb-0 mr-3">{maindata.incident.data.incident.files}</p> */}
-                                                </div>
-                                            </div>
-                                        )
-                                    })
+                                    maindata.ticket.ticketable.files.length === 0 ?
+                                        "-"
+                                        :
+                                        maindata.ticket.ticketable.files.map((doc, idx) => {
+                                            return (
+                                                <a href={doc} target="_blank">
+                                                    <div className="border border-dashed px-4 py-2 flex justify-between items-center w-9/12 mb-1 relative cursor-pointer hover:text-blue-500">
+                                                        <img src={doc} alt="selected images" className="object-contain w-16 h-16 mr-10" />
+                                                        {/* <p className="mb-0 mr-3">{maindata.incident.data.incident.files}</p> */}
+                                                    </div>
+                                                </a>
+                                            )
+                                        })
                                 }
                             </div>
                             <div className="flex flex-col mb-5">
@@ -191,6 +204,7 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
     //2. Item
     const [itemdata, setitemdata] = useState([])
     const [selecteditem, setselecteditem] = useState(null)
+    const [fetchingpart, setfetchingpart] = useState(false)
 
     //handler
     const handleSetItem = () => {
@@ -212,10 +226,10 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
                 setmodalconnecteditem(false)
                 if (res2.success) {
                     notification['success']({
-                        message: res2.message,
+                        message: "Tiket berhasil dihubungkan dengan Item",
                         duration: 3
                     })
-                    window.location.href = `/tickets/detail/${ticketid}`
+                    window.location.href = `/tickets/detail/${ticketid}?active=detailItem`
                 }
                 else if (!res2.success) {
                     notification['error']({
@@ -256,25 +270,33 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
         }
     }, [selectedasset])
     useEffect(() => {
-        if (connecteditem !== null) {
-            setpraloadingconnected(true)
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getInventory?id=${connecteditem}`, {
-                method: `GET`,
-                headers: {
-                    'Authorization': JSON.parse(initProps),
-                },
+        // if (connecteditem !== null) {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicket?id=${ticketid}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setpraloadingconnected(true)
+                fetch(`https://boiling-thicket-46501.herokuapp.com/getInventory?id=${res2.data.ticket.ticketable.inventory_id}`, {
+                    method: `GET`,
+                    headers: {
+                        'Authorization': JSON.parse(initProps),
+                    },
+                })
+                    .then(res => res.json())
+                    .then(res2 => {
+                        setconnecteditemdata(res2.data)
+                        setpraloadingconnected(false)
+                        setitemactivity(false)
+                    }, [])
             })
-                .then(res => res.json())
-                .then(res2 => {
-                    setconnecteditemdata(res2.data)
-                    setpraloadingconnected(false)
-                    setitemactivity(false)
-                }, [])
-        }
-        else {
-            setconnecteditemdata(null)
-            setpraloadingconnected(false)
-        }
+        // else {
+        //     setconnecteditemdata(null)
+        //     setpraloadingconnected(false)
+        // }
     }, [])
 
     return (
@@ -448,7 +470,20 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
                     </div>
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Item <span className="itemitem"></span></p>
-                        <Select disabled={selectedasset === null} value={selecteditem} showSearch optionFilterProp="children" placeholder="Cari Item" filterOption={(input, opt) => (
+                        <Select disabled={selectedasset === null} value={selecteditem} notFoundContent={fetchingpart ? <Spin size="small" /> : null} onSearch={(value) => {
+                            setfetchingpart(true)
+                            fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?rows=50&asset_id=${selectedasset === null ? "" : selectedasset}&name=${value !== "" ? value : ""}`, {
+                                method: `GET`,
+                                headers: {
+                                    'Authorization': JSON.parse(initProps),
+                                },
+                            })
+                                .then(res => res.json())
+                                .then(res2 => {
+                                    res2.data.data.length === 0 ? setitemdata([]) : setitemdata(res2.data.data)
+                                    setfetchingpart(false)
+                                })
+                        }} showSearch optionFilterProp="children" placeholder="Cari Item" filterOption={(input, opt) => (
                             opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                         )} onChange={(value) => { setselecteditem(value); setdisabledconnecteditem(false) }}>
                             {
@@ -647,6 +682,8 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
     const [connecteditem, setconnecteditem] = useState(null)
     //activity
     const [activitytrigger, setactivitytrigger] = useState(0)
+    //groups
+    const [agentgroup, setagentgroup] = useState([])
 
     //handler
     const handleSetStatus = () => {
@@ -704,7 +741,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                         message: "Note berhasil ditambahkan",
                         duration: 3
                     })
-                    rt.push(`/tickets/detail/${ticketid}`)
+                    window.location.href = `/tickets/detail/${ticketid}?active=activity`
                 }
                 else if (!res2.success) {
                     notification['error']({
@@ -778,6 +815,18 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                     })
             })
     }, [])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentGroups`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps)
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setagentgroup(res2.data)
+            })
+    }, [])
 
     return (
         <Layout st={st} sidemenu={sidemenu} tok={initProps} pathArr={pathArr} dataProfile={dataProfile}>
@@ -788,7 +837,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                             <div className="flex items-center">
                                 <div className="flex flex-col">
                                     <p className=" text-gray-400 mb-0">Ticket Number:</p>
-                                    <h1 className="font-semibold py-2 text-2xl mb-0 mr-20">#INC-{ticketid}</h1>
+                                    <h1 className="font-semibold py-2 text-2xl mb-0 mr-20">#INC-{maindata.ticket.ticketable.id}</h1>
                                 </div>
                                 {
                                     praloading ?
@@ -864,7 +913,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                             }
                         }}>
                             <TabPane tab="Overview" key={`overview`}>
-                                <Overview ticketid={ticketid} initProps={initProps} praloading={praloading} maindata={maindata} ticketrelations={ticketrelations} />
+                                <Overview ticketid={ticketid} initProps={initProps} praloading={praloading} maindata={maindata} ticketrelations={ticketrelations} dataProfile={dataProfile} />
                             </TabPane>
                             <TabPane tab={
                                 <div className="flex items-center">
@@ -893,7 +942,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                             }
                         }}>
                             <TabPane tab="Overview" key={`overview`}>
-                                <Overview ticketid={ticketid} initProps={initProps} praloading={praloading} maindata={maindata} ticketrelations={ticketrelations} />
+                                <Overview ticketid={ticketid} initProps={initProps} praloading={praloading} maindata={maindata} ticketrelations={ticketrelations} dataProfile={dataProfile} />
                             </TabPane>
                             <TabPane tab={
                                 <div className="flex items-center">
@@ -934,10 +983,18 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                 width={720}
             >
                 <div className="flex flex-col mb-5">
-                    <p className="mb-0">Notes</p>
+                    <p className="mb-2">Notes <span className="notes"></span></p>
                     <Input.TextArea rows={3} placeholder="Masukkan Notes" onChange={(e => {
                         setnotes(e.target.value)
                     })}></Input.TextArea>
+                    <style jsx>
+                        {`
+                            .notes::before{
+                                content: '*';
+                                color: red;
+                            }
+                        `}
+                    </style>
                 </div>
             </Modal>
             <Modal title={
@@ -1006,41 +1063,46 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                             `}
                         </style>
                     </div>
-                    <div className="flex flex-col mb-3">
-                        <p className="mb-0">Assigned To <span className="engineer"></span></p>
-                        {
-                            to === true &&
-                            <Select disabled={to === null} onChange={(value, option) => { setassignto(value); setdisabledassignto(false); setnameassignto(option.name) }}>
+                    {
+                        to === null ?
+                            null
+                            :
+                            <div className="flex flex-col mb-3">
+                                <p className="mb-0">{to === true ? "Engineer" : "Group"} <span className="engineer"></span></p>
                                 {
-                                    ticketrelations.requesters.map((doc, idx) => {
-                                        return (
-                                            <Select.Option value={doc.user_id} name={doc.fullname}>{doc.fullname}</Select.Option>
-                                        )
-                                    })
+                                    to === true &&
+                                    <Select disabled={to === null} onChange={(value, option) => { setassignto(value); setdisabledassignto(false); setnameassignto(option.name) }}>
+                                        {
+                                            ticketrelations.requesters.map((doc, idx) => {
+                                                return (
+                                                    <Select.Option value={doc.user_id} name={doc.fullname}>{doc.fullname}</Select.Option>
+                                                )
+                                            })
+                                        }
+                                    </Select>
                                 }
-                            </Select>
-                        }
-                        {
-                            to === false &&
-                            <Select disabled={to === null} onChange={(value, option) => { setassignto(value); setdisabledassignto(false); setnameassignto(option.name) }}>
                                 {
-                                    ticketrelations.requesters.map((doc, idx) => {
-                                        return (
-                                            <Select.Option value={doc.user_id} name={doc.fullname}>{doc.fullname}</Select.Option>
-                                        )
-                                    })
+                                    to === false &&
+                                    <Select disabled={to === null} onChange={(value, option) => { setassignto(value); setdisabledassignto(false); setnameassignto(option.name) }}>
+                                        {
+                                            agentgroup.map((doc, idx) => {
+                                                return (
+                                                    <Select.Option value={doc.id} name={doc.name}>{doc.name}</Select.Option>
+                                                )
+                                            })
+                                        }
+                                    </Select>
                                 }
-                            </Select>
-                        }
-                        <style jsx>
-                            {`
+                                <style jsx>
+                                    {`
                                 .engineer::before{
                                     content: '*';
                                     color: red;
                                 }
                             `}
-                        </style>
-                    </div>
+                                </style>
+                            </div>
+                    }
                 </div>
             </Modal>
         </Layout>

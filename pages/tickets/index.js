@@ -373,7 +373,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <div className="md:col-span-5 col-span-1 flex flex-col py-3">
                     <div className="flex mb-8">
                         <div className=" w-full mr-1 grid grid-cols-12">
-                            <div className="col-span-4 mr-1">
+                            <div className="col-span-3 mr-1">
                                 <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Ticket Number" onChange={onChangeSearch} allowClear></Input>
                             </div>
                             <div className="col-span-3 mr-1">
@@ -413,7 +413,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                 }}>
                                 </DatePicker.RangePicker>
                             </div>
-                            <div className="col-span-1 mr-1">
+                            <div className="col-span-2 mr-1">
                                 <Select placeholder="Status" style={{ width: `100%` }} allowClear onChange={(value) => {
                                     if (typeof (value) === 'undefined') {
                                         onChangeStatus()
@@ -438,7 +438,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     </div>
                     <div className="px-6">
                         <Table pagination={{
-                            pageSize: 10, total: displayentiredata.data.total, onChange: (page, pageSize) => {
+                            pageSize: 10, total: displayentiredata.total, onChange: (page, pageSize) => {
                                 setpraloading(true)
                                 fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${page}&rows=10`, {
                                     method: `GET`,
@@ -448,7 +448,6 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                 })
                                     .then(res => res.json())
                                     .then(res2 => {
-                                        setrawdata(res2.data)
                                         setdisplayentiredata(res2.data.tickets)
                                         setdisplaydata(res2.data.tickets.data)
                                         setdisplaydata1(res2.data.tickets.data)
