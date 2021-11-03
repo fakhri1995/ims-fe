@@ -403,7 +403,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                 }} treeData={[ticketrelations.companies.data]} treeDefaultExpandAll />
                             </div>
                             <div className="col-span-3 mr-1">
-                                <DatePicker.RangePicker placeholder={["Tanggal Awal", "Tanggal Akhir"]} onChange={(dates, datestrings) => {
+                                <DatePicker.RangePicker style={{ width: `100%` }} placeholder={["Tanggal Awal", "Tanggal Akhir"]} onChange={(dates, datestrings) => {
                                     if (datestrings[0] === '' && datestrings[1] === '') {
                                         onChangeRangeDate()
                                     }

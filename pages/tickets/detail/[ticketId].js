@@ -280,18 +280,22 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
             .then(res => res.json())
             .then(res2 => {
                 setpraloadingconnected(true)
-                fetch(`https://boiling-thicket-46501.herokuapp.com/getInventory?id=${res2.data.ticket.ticketable.inventory_id}`, {
-                    method: `GET`,
-                    headers: {
-                        'Authorization': JSON.parse(initProps),
-                    },
-                })
-                    .then(res => res.json())
-                    .then(res2 => {
-                        setconnecteditemdata(res2.data)
-                        setpraloadingconnected(false)
-                        setitemactivity(false)
-                    }, [])
+                res2.data.ticket.ticketable.inventory_id !== null ?
+                    fetch(`https://boiling-thicket-46501.herokuapp.com/getInventory?id=${res2.data.ticket.ticketable.inventory_id}`, {
+                        method: `GET`,
+                        headers: {
+                            'Authorization': JSON.parse(initProps),
+                        },
+                    })
+                        .then(res => res.json())
+                        .then(res3 => {
+                            setconnecteditemdata(res3.data)
+                            setpraloadingconnected(false)
+                            setitemactivity(false)
+                        }, [])
+                    :
+                    setconnecteditemdata(null)
+                    setpraloadingconnected(false)
             })
         // else {
         //     setconnecteditemdata(null)

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
 import Link from 'next/link'
 import { SearchOutlined } from '@ant-design/icons'
-import { Button, Table, Input, DatePicker, Select, Checkbox } from 'antd'
+import { Button, DatePicker, Select, Checkbox } from 'antd'
 import Layout from '../../../components/layout-dashboard2'
 import moment from 'moment'
 import st from '../../../components/layout-dashboard.module.css'
@@ -41,7 +41,7 @@ const TicketExporting = ({ initProps, dataProfile, sidemenu }) => {
     })
 
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getClientTicketRelation`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -71,13 +71,13 @@ const TicketExporting = ({ initProps, dataProfile, sidemenu }) => {
             <div className="h-auto w-full grid grid-cols-1 md:grid-cols-5 mb-5 bg-white rounded-md">
                 <div className="md:col-span-5 col-span-1 flex flex-col py-3">
                     <h1 className="font-semibold text-base mb-3">Filter Ticket by</h1>
-                    <div className="border shadow-md rounded-md flex flex-col p-5 mb-9 w-9/12">
-                        <div className="flex flex-col mb-3">
-                            <h1 className="text-sm font-semibold mb-0">Item</h1>
+                    <div className="border-2 shadow-md rounded-md flex flex-col py-5 px-10 mb-9 w-9/12">
+                        <div className="flex flex-col mb-5">
+                            <h1 className="text-sm font-semibold mb-2">Item</h1>
                             <DatePicker.RangePicker></DatePicker.RangePicker>
                         </div>
-                        <div className="flex flex-col mb-3">
-                            <p className="mb-0 font-semibold text-sm">Group</p>
+                        <div className="flex flex-col mb-5">
+                            <p className="mb-2 font-semibold text-sm">Group</p>
                             <Select onChange={(value) => { setto(value) }}>
                                 {
                                     ticketrelations.requesters.map((doc, idx) => {
@@ -88,8 +88,8 @@ const TicketExporting = ({ initProps, dataProfile, sidemenu }) => {
                                 }
                             </Select>
                         </div>
-                        <div className="flex flex-col mb-3">
-                            <p className="mb-0 font-semibold text-sm">Engineer</p>
+                        <div className="flex flex-col mb-5">
+                            <p className="mb-2 font-semibold text-sm">Engineer</p>
                             <Select onChange={(value) => { setto(value) }}>
                                 {
                                     ticketrelations.requesters.map((doc, idx) => {
@@ -104,8 +104,12 @@ const TicketExporting = ({ initProps, dataProfile, sidemenu }) => {
                 </div>
                 <div className="md:col-span-5 col-span-1 flex flex-col py-3">
                     <h1 className="font-semibold text-base mb-3">Export Field</h1>
-                    <Checkbox style={{marginBottom:`0.5rem`}}>
-                        Select All Field
+                    <Select placeholder="Pilih Jenis Ticket" style={{ marginBottom: `1rem`, width: `25%` }}>
+                        <Select.Option>Incident</Select.Option>
+                        <Select.Option>Service Request</Select.Option>
+                    </Select>
+                    <Checkbox style={{ marginBottom: `0.5rem` }}>
+                        <strong>Select All Field</strong>
                     </Checkbox>
                     <Checkbox.Group>
                         <div className=" w-9/12 grid grid-cols-1 md:grid-cols-3">
