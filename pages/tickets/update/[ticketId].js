@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
 import Link from 'next/link'
-import { LoadingOutlined, UploadOutlined, DeleteOutlined } from '@ant-design/icons'
+import { LoadingOutlined, UploadOutlined, DeleteOutlined, DownOutlined } from '@ant-design/icons'
 import Sticky from 'wil-react-sticky'
 import { Form, Input, notification, Button, Select, DatePicker, TreeSelect, Popconfirm, Spin } from 'antd'
 import moment from 'moment'
@@ -13,7 +13,7 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
     // 1.Init
     const rt = useRouter()
     const pathArr = rt.pathname.split("/").slice(1)
-    pathArr.splice(3, 1)
+    pathArr.splice(1, 1)
     pathArr[pathArr.length - 1] = "Ubah Ticket"
     const [instanceForm] = Form.useForm();
 
@@ -104,7 +104,8 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
     const [loadingfoto, setloadingfoto] = useState(false)
     const [uploadtrigger, setuploadtrigger] = useState(-1)
     const [uploaddata, setuploaddata] = useState(null)
-    const [idreqlocation, setidreqlocation] = useState(0)
+    const [reqlocation, setreqlocation] = useState(0)
+    const [notclosed, setnotclosed] = useState(false)
 
     //handler
     const onChangeGambar = async (e) => {
@@ -171,22 +172,23 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                     id: Number(ticketid),
                     requester_id: res2.data.ticket.requester.user_id === 0 ? null : res2.data.ticket.requester.user_id,
                     raised_at: res2.data.ticket.original_raised_at,
-                    closed_at: res2.data.ticket.closed_at === null ? null : res2.data.ticket.closed_at,
+                    closed_at: res2.data.ticket.closed_at,
                     product_type: res2.data.ticket.ticketable.product_type,
                     product_id: res2.data.ticket.ticketable.product_id,
                     pic_name: res2.data.ticket.ticketable.pic_name,
                     pic_contact: res2.data.ticket.ticketable.pic_contact,
-                    location_id: res2.data.ticket.ticketable.location_id,
+                    location_id: res2.data.ticket.ticketable.location_id === 0 ? null : res2.data.ticket.ticketable.location_id,
                     problem: res2.data.ticket.ticketable.problem,
-                    incident_time: res2.data.ticket.ticketable.incident_time === null ? null : res2.data.ticket.ticketable.incident_time,
+                    incident_time: res2.data.ticket.ticketable.incident_time,
                     files: res2.data.ticket.ticketable.files,
                     description: res2.data.ticket.ticketable.description
                 }
                 setupdatedata(updata)
-                setidreqlocation(res2.data.ticket.requester.company_id)
                 setfilesupload(res2.data.ticket.ticketable.files)
+                setnotclosed(res2.data.ticket.closed_at === null ? true : false)
+                return res2.data.ticket.requester.company_id
             })
-            .then(() => {
+            .then((res3) => {
                 fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
                     method: `GET`,
                     headers: {
@@ -196,6 +198,21 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                     .then(res => res.json())
                     .then(res2 => {
                         setticketrelations(res2.data)
+                        var lokasiPembuat = {}
+                        const recursiveSearchLokasiPembuat = (doc, key) => {
+                            for (var i = 0; i < doc.length; i++) {
+                                if (doc[i].id === key) {
+                                    lokasiPembuat = doc[i]
+                                }
+                                else {
+                                    if (doc[i].children) {
+                                        recursiveSearchLokasiPembuat(doc[i].children, key)
+                                    }
+                                }
+                            }
+                        }
+                        recursiveSearchLokasiPembuat([res2.data.companies.data], res3)
+                        setreqlocation(lokasiPembuat.title)
                         setpraloading(false)
                     })
             })
@@ -218,9 +235,9 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                         <div className=" col-span-4 flex justify-between pt-4 border-t-2 border-b-2 bg-white">
                             <h1 className="font-semibold py-2">Form Ubah Ticket</h1>
                             <div className="flex space-x-2">
-                                {/* <Link href={`/tickets/detail/${ticketid}`}> */}
-                                    <Button type="default" onClick={() => { console.log(updatedata); console.log(filesupload) }}>Batal</Button>
-                                {/* </Link> */}
+                                <Link href={`/tickets/detail/${ticketid}`}>
+                                    <Button type="default" /*onClick={() => { console.log(updatedata); console.log(filesupload) }}*/>Batal</Button>
+                                </Link>
                                 <Button disabled={disabledfield} loading={loadingupdate} type="primary" onClick={() => {
                                     instanceForm.submit()
                                 }}>Simpan</Button>
@@ -242,13 +259,14 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                             <span className="raisedBy"></span>
                                             <p className="mb-0 ml-1">Ticket Raised By</p>
                                         </div>
-                                        <Select placeholder="Pilih Raised By" defaultValue={updatedata.requester_id} onChange={(value, label, extra) => {
+                                        <Select placeholder="Pilih Raised By" defaultValue={updatedata.requester_id} onChange={(value, option) => {
                                             setupdatedata({ ...updatedata, requester_id: Number(value) })
+                                            setreqlocation(option.company_name)
                                         }}>
                                             {
                                                 ticketrelations.requesters.map((doc, idx) => {
                                                     return (
-                                                        <Select.Option key={idx} value={doc.user_id}>{doc.fullname}</Select.Option>
+                                                        <Select.Option key={idx} value={doc.user_id} company_name={doc.company === null ? "-" : doc.company.company_name}>{doc.fullname}</Select.Option>
                                                     )
                                                 })
                                             }
@@ -267,9 +285,12 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                             <span className="raisedBy"></span>
                                             <p className="mb-0 ml-1">Lokasi Pembuat</p>
                                         </div>
-                                        <TreeSelect placeholder="Lokasi Pembuat" treeData={[ticketrelations.companies.data]} defaultValue={idreqlocation} treeDefaultExpandAll onChange={(value, label, extra) => {
-                                            //belum diisi
-                                        }} />
+                                        {/* <TreeSelect disabled placeholder="Lokasi Pembuat" treeData={[ticketrelations.companies.data]} value={reqlocation} defaultValue={reqlocation} treeDefaultExpandAll onChange={(value, label, extra) => {
+                                        }} /> */}
+                                        <div className="w-full rounded-sm flex items-center justify-between bg-gray-100 border p-2 h-8">
+                                            <p className="mb-0">{reqlocation}</p>
+                                            <DownOutlined style={{ color: `rgb(213,214,196)` }} />
+                                        </div>
                                         <style jsx>
                                             {`
                                                 .raisedBy::before{
@@ -284,7 +305,7 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                             <span className="raisedBy"></span>
                                             <p className="mb-0 ml-1">Date Raised Ticket</p>
                                         </div>
-                                        <DatePicker value={moment(updatedata.raised_at)} defaultValue={moment(updatedata.raised_at)} showTime style={{ width: `100%` }} onChange={(date, datestring) => {
+                                        <DatePicker allowClear={false} value={updatedata.raised_at === "" ? null : moment(updatedata.raised_at)} defaultValue={moment(updatedata.raised_at)} showTime style={{ width: `100%` }} onChange={(date, datestring) => {
                                             setupdatedata({ ...updatedata, raised_at: datestring })
                                         }}></DatePicker>
                                         <style jsx>
@@ -298,20 +319,26 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                     </div>
                                     <div className="flex flex-col mb-5">
                                         <div className="flex mb-2">
-                                            {/* <span className="raisedBy"></span> */}
+                                            <span className="closedBy"></span>
                                             <p className="mb-0 ml-1">Date Closed Ticket</p>
                                         </div>
-                                        <DatePicker disabledDate={(curr) => { return curr < moment(updatedata.raised_at) }} value={updatedata.closed_at === null ? null : moment(updatedata.closed_at)} defaultValue={updatedata.closed_at === null ? null : moment(updatedata.closed_at)} placeholder="Masukkan Date Closed" showTime allowClear style={{ width: `100%` }} onChange={(date, datestring) => {
+                                        <DatePicker disabled={notclosed} disabledDate={(curr) => { return curr < moment(updatedata.raised_at) }} value={updatedata.closed_at === null || updatedata.closed_at === "" ? null : moment(updatedata.closed_at)} defaultValue={updatedata.closed_at === null ? null : moment(updatedata.closed_at)} placeholder="Masukkan Date Closed" showTime allowClear={false} style={{ width: `100%` }} onChange={(date, datestring) => {
                                             datestring === "" ? (setupdatedata({ ...updatedata, closed_at: "" }), setdisabledfield(true)) : (setupdatedata({ ...updatedata, closed_at: datestring }), setdisabledfield(false))
                                         }}></DatePicker>
-                                        {/* <style jsx>
+                                        {
+                                            notclosed ?
+                                                <p className="mb-0 text-red-500">Date closed dapat dirubah jika status ticket telah <strong>closed</strong></p>
+                                                :
+                                                null
+                                        }
+                                        <style jsx>
                                             {`
-                                                .raisedBy::before{
+                                                .closedBy::before{
                                                     content: '*';
                                                     color: red;
                                                 }
                                             `}
-                                        </style> */}
+                                        </style>
                                     </div>
                                 </div>
                                 <div className="shadow-md border py-5 px-10 flex flex-col rounded-md mb-5">
@@ -378,7 +405,7 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                                 <p className="mb-0 ml-1">Waktu Kejadian</p>
                                             </div>
                                             <DatePicker defaultValue={updatedata.incident_time === null ? null : moment(updatedata.incident_time)} name="incident_time" showTime placeholder="Masukkan Waktu Kejadian" style={{ width: `100%` }} onChange={(date, datestring) => {
-                                                setupdatedata({ ...updatedata, incident_time: datestring })
+                                                setupdatedata({ ...updatedata, incident_time: datestring === "" ? null : datestring })
                                             }}></DatePicker>
                                         </div>
                                         {/* </Form.Item> */}
