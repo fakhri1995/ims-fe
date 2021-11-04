@@ -11,6 +11,14 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
     // 1.Init
     const rt = useRouter()
     const pathArr = rt.pathname.split("/").slice(1)
+    var asset_id1 = "", name1 = ""
+    const { asset_id, name } = rt.query
+    if (asset_id) {
+        asset_id1 = asset_id
+    }
+    if (name) {
+        name1 = name
+    }
 
     //2.useState
     const [displayentiredata, setdisplayentiredata] = useState({
@@ -35,11 +43,12 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
     const [assetdata, setassetdata] = useState([])
     const [displaydata1, setdisplaydata1] = useState([])
     const [displaydata2, setdisplaydata2] = useState([])
-    const [namasearchact, setnamasearchact] = useState(false)
+    const [namasearchact, setnamasearchact] = useState(name1 === "" ? false : true)
     const [namavalue, setnamavalue] = useState("")
-    const [assettypefilteract, setassettypefilteract] = useState(false)
+    const [assettypefilteract, setassettypefilteract] = useState(asset_id1 === "" ? false : true)
     const [assettypevalue, setassettypevalue] = useState("")
-    const [namaasset, setnamaasset] = useState("")
+    const [namaasset, setnamaasset] = useState(asset_id1)
+    const [defasset, setdefasset] = useState(null)
     const [rowstate, setrowstate] = useState(0)
     const [praloading, setpraloading] = useState(true)
 
@@ -62,7 +71,8 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
     //3.onChange
     const onChangeSearch = (e) => {
         if (e.target.value === "") {
-            setdisplaydata(displaydata2)
+            // setdisplaydata(displaydata2)
+            window.location.href = `/admin/models?asset_id=${assettypefilteract ? asset_id1 : ""}&name=`
             setnamasearchact(false)
         }
         else {
@@ -72,7 +82,8 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
     const onChangeAssetType = (id) => {
         if (typeof (id) === 'undefined') {
-            setdisplaydata(displaydata2)
+            // setdisplaydata(displaydata2)
+            window.location.href = `/admin/models?asset_id=&name=${namasearchact ? name1 : ""}`
             setassettypefilteract(false)
         }
         else {
@@ -81,18 +92,19 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
         }
     }
     const onFinalClick = () => {
-        var datatemp = displaydata1
-        if (assettypefilteract) {
-            datatemp = datatemp.filter(flt => {
-                return (flt.asset_id === Number(assettypevalue)) || (flt.asset_name.replaceAll(/\s+\/\s+/g, "/").split("/")[0] === namaasset)
-            })
-        }
-        if (namasearchact) {
-            datatemp = datatemp.filter(flt => {
-                return flt.name.toLowerCase().includes(namavalue.toLowerCase())
-            })
-        }
-        setdisplaydata(datatemp)
+        // var datatemp = displaydata1
+        // if (assettypefilteract) {
+        //     datatemp = datatemp.filter(flt => {
+        //         return (flt.asset_id === Number(assettypevalue)) || (flt.asset_name.replaceAll(/\s+\/\s+/g, "/").split("/")[0] === namaasset)
+        //     })
+        // }
+        // if (namasearchact) {
+        //     datatemp = datatemp.filter(flt => {
+        //         return flt.name.toLowerCase().includes(namavalue.toLowerCase())
+        //     })
+        // }
+        // setdisplaydata(datatemp)
+        window.location.href = `/admin/models?asset_id=${assettypefilteract ? (asset_id1 === "" ? assettypevalue : asset_id1) : ""}&name=${namasearchact ? (name1 === "" ? namavalue : name1) : ""}`
     }
 
 
@@ -101,7 +113,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
 
     //5.useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getModels`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?asset_id=${asset_id1}&name=${name1}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -113,6 +125,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
                 setdisplaydata(res2.data.data)
                 setdisplaydata1(res2.data.data)
                 setdisplaydata2(res2.data.data)
+                console.log(assettypefilteract,namasearchact)
             })
     }, [])
     useEffect(() => {
@@ -124,6 +137,21 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
         })
             .then(res => res.json())
             .then(res2 => {
+                var selectedAsset = {}
+                const recursiveSearchAsset = (doc, key) => {
+                    for (var i = 0; i < doc.length; i++) {
+                        if (doc[i].id === key) {
+                            selectedAsset = doc[i]
+                        }
+                        else {
+                            if (doc[i].children) {
+                                recursiveSearchAsset(doc[i].children, key)
+                            }
+                        }
+                    }
+                }
+                recursiveSearchAsset(res2.data, Number(namaasset))
+                setdefasset(selectedAsset.key)
                 setassetdata(res2.data)
                 setpraloading(false)
             })
@@ -145,38 +173,44 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
             </div>
             <div className="h-auto w-full grid grid-cols-1 md:grid-cols-5 mb-5 bg-white rounded-md">
                 <div className="md:col-span-5 col-span-1 flex flex-col py-3">
-                    <div className="flex mb-8">
-                        <div className=" w-10/12 mr-1 grid grid-cols-6">
-                            <div className="col-span-4 mr-1">
-                                <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Nama Model" onChange={onChangeSearch} allowClear></Input>
+                    {
+                        praloading ?
+                            null
+                            :
+                            <div className="flex mb-8">
+                                <div className=" w-10/12 mr-1 grid grid-cols-6">
+                                    <div className="col-span-4 mr-1">
+                                        <Input style={{ width: `100%`, marginRight: `0.5rem` }} defaultValue={name1} placeholder="Cari Nama Model" onChange={onChangeSearch} allowClear></Input>
+                                    </div>
+                                    <div className="col-span-2 mr-1">
+                                        <TreeSelect allowClear
+                                            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                            defaultValue={namaasset === "" ? null : defasset}
+                                            treeData={assetdata}
+                                            placeholder="Cari Asset Type"
+                                            treeDefaultExpandAll
+                                            style={{ width: `100%`, marginRight: `0.5rem` }}
+                                            onChange={(value, label, extra) => {
+                                                if (typeof (value) === 'undefined') {
+                                                    onChangeAssetType()
+                                                }
+                                                else {
+                                                    onChangeAssetType(extra.allCheckedNodes[0].node.props.id)
+                                                    setnamaasset(extra.allCheckedNodes[0].node.props.title)
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="w-2/12">
+                                    <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
+                                </div>
                             </div>
-                            <div className="col-span-2 mr-1">
-                                <TreeSelect allowClear
-                                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                    treeData={assetdata}
-                                    placeholder="Cari Asset Type"
-                                    treeDefaultExpandAll
-                                    style={{ width: `100%`, marginRight: `0.5rem` }}
-                                    onChange={(value, label, extra) => {
-                                        if (typeof (value) === 'undefined') {
-                                            onChangeAssetType()
-                                        }
-                                        else {
-                                            onChangeAssetType(extra.allCheckedNodes[0].node.props.id)
-                                            setnamaasset(extra.allCheckedNodes[0].node.props.title)
-                                        }
-                                    }}
-                                />
-                            </div>
-                        </div>
-                        <div className="w-2/12">
-                            <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
-                        </div>
-                    </div>
+                    }
                     <Table pagination={{
                         pageSize: 10, total: displayentiredata.data.total, onChange: (page, pageSize) => {
                             setpraloading(true)
-                            fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?page=${page}&rows=10`, {
+                            fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?page=${page}&rows=10&asset_id=${asset_id1}&name=${name1}`, {
                                 method: `GET`,
                                 headers: {
                                     'Authorization': JSON.parse(initProps),

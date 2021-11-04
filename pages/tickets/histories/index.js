@@ -233,7 +233,7 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
 
     return (
         <Layout dataProfile={dataProfile} sidemenu={sidemenu} tok={initProps} st={st} pathArr={pathArr}>
-            <div className=" w-full grid grid-cols-1 md:grid-cols-4 border-gray-400 bg-white mb-5 px-4 py-5">
+            <div className=" w-full grid grid-cols-1 md:grid-cols-4 border-t border-b bg-white mb-5 px-4 py-5">
                 <div className=" col-span-1 md:col-span-3 flex items-center mb-2 md:mb-0">
                     <div className="font-bold text-2xl w-auto mr-14">History Tickets Closed</div>
                 </div>
