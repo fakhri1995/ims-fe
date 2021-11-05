@@ -12,6 +12,23 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
     // 1.Init
     const rt = useRouter()
     const pathArr = rt.pathname.split("/").slice(1)
+    var ticketid1 = "", locationid1 = "", from1 = "", to1 = "", statusid1 = ""
+    const { ticket_id, location_id, from, to, status_id } = rt.query
+    if (ticket_id) {
+        ticketid1 = ticket_id
+    }
+    if (location_id) {
+        locationid1 = location_id
+    }
+    if (status_id) {
+        statusid1 = status_id
+    }
+    if (from) {
+        from1 = from
+    }
+    if (to) {
+        to1 = to
+    }
 
     //2.useState
     const [displaydata, setdisplaydata] = useState([])
@@ -67,15 +84,20 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
         to: 0,
         total: 0
     })
-    const [namasearchact, setnamasearchact] = useState(false)
+    const [namasearchact, setnamasearchact] = useState(ticketid1 === "" ? false : true)
     const [namavalue, setnamavalue] = useState("")
-    const [lokasifilteract, setlokasifilteract] = useState(false)
+    const [lokasifilteract, setlokasifilteract] = useState(locationid1 === "" ? false : true)
     const [lokasivalue, setlokasivalue] = useState("")
     const [rangedatefilteract, setrangedatefilteract] = useState(false)
     const [rangedatevalue, setrangedatevalue] = useState([])
-    const [statusfilteract, setstatusfilteract] = useState(false)
+    const [fromact, setfromact] = useState(from1 === "" ? false : true)
+    const [fromvalue, setfromvalue] = useState("")
+    const [toact, settoact] = useState(to1 === "" ? false : true)
+    const [tovalue, settovalue] = useState("")
+    const [statusfilteract, setstatusfilteract] = useState(statusid1 === "" ? false : true)
     const [statusvalue, setstatusvalue] = useState("")
-    const [namaasset, setnamaasset] = useState("")
+    const [namaasset, setnamaasset] = useState(locationid1)
+    const [defasset, setdefasset] = useState(null)
     const [rowstate, setrowstate] = useState(0)
     const [praloading, setpraloading] = useState(true)
 
@@ -198,7 +220,8 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
     //search nama
     const onChangeSearch = (e) => {
         if (e.target.value === "") {
-            setdisplaydata(displaydata2)
+            // setdisplaydata(displaydata2)
+            window.location.href = `/tickets?ticket_id=&location_id=${lokasifilteract ? locationid1 : ""}&status_id=${statusfilteract ? statusid1 : ""}&from=${fromact ? from1 : ""}&to=${toact ? to1 : ""}`
             setnamasearchact(false)
         }
         else {
@@ -209,7 +232,8 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
     //search lokasi
     const onChangeLokasi = (idlokasi) => {
         if (typeof (idlokasi) === 'undefined') {
-            setdisplaydata(displaydata2)
+            // setdisplaydata(displaydata2)
+            window.location.href = `/tickets?ticket_id=${namasearchact ? ticketid1 : ""}&location_id=&status_id=${statusfilteract ? statusid1 : ""}&from=${fromact ? from1 : ""}&to=${toact ? to1 : ""}`
             setlokasifilteract(false)
         }
         else {
@@ -220,18 +244,26 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
     //search range date
     const onChangeRangeDate = (datestrings) => {
         if (typeof (datestrings) === 'undefined') {
-            setdisplaydata(displaydata2)
+            // setdisplaydata(displaydata2)
+            window.location.href = `/tickets?ticket_id=${namasearchact ? ticketid1 : ""}&location_id=${lokasifilteract ? locationid1 : ""}&status_id=${statusfilteract ? statusid1 : ""}&from=&to=`
             setrangedatefilteract(false)
+            setfromact(false)
+            settoact(false)
         }
         else {
             setrangedatefilteract(true)
+            setfromact(true)
+            settoact(true)
             setrangedatevalue(datestrings)
+            setfromvalue(moment(datestrings[0]).locale('id').format('YYYY-MM-DD'))
+            settovalue(moment(datestrings[1]).locale('id').format('YYYY-MM-DD'))
         }
     }
     //search status
     const onChangeStatus = (idstatus) => {
         if (typeof (idstatus) === 'undefined') {
-            setdisplaydata(displaydata2)
+            // setdisplaydata(displaydata2)
+            window.location.href = `/tickets?ticket_id=${namasearchact ? ticketid1 : ""}&location_id=${lokasifilteract ? locationid1 : ""}&status_id=&from=${fromact ? from1 : ""}&to=${toact ? to1 : ""}`
             setstatusfilteract(false)
         }
         else {
@@ -259,23 +291,24 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
         //     })
         // }
         // setdisplaydata(datatemp)
-        setpraloading(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?ticket_id=${namasearchact ? namavalue : ""}&location_id=${lokasifilteract ? lokasivalue : ""}&status_id=${statusfilteract ? statusvalue : ""}&from=${rangedatefilteract ? moment(rangedatevalue[0]).locale('id').format('YYYY-MM-DD') : ""}&to=${rangedatefilteract ? moment(rangedatevalue[1]).locale('id').format('YYYY-MM-DD') : ""}`, {
-            method: `GET`,
-            headers: {
-                'Authorization': JSON.parse(initProps),
-            },
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                res2.data.tickets.data.length === 0 ? setdisplaydata([]) : setdisplaydata(res2.data.tickets.data)
-                setpraloading(false)
-            })
+        window.location.href = `/tickets?ticket_id=${namasearchact ? (ticketid1 === "" ? namavalue : ticketid1) : ""}&location_id=${lokasifilteract ? (locationid1 === "" ? lokasivalue : locationid1) : ""}&status=${statusfilteract ? (statusid1 === "" ? statusvalue : statusid1) : ""}&from=${fromact ? (from1 === "" ? fromvalue : from1) : ""}&to=${toact ? (to1 === "" ? tovalue : to1) : ""}`
+        // setpraloading(true)
+        // fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?ticket_id=${namasearchact ? namavalue : ""}&location_id=${lokasifilteract ? lokasivalue : ""}&status_id=${statusfilteract ? statusvalue : ""}&from=${rangedatefilteract ? moment(rangedatevalue[0]).locale('id').format('YYYY-MM-DD') : ""}&to=${rangedatefilteract ? moment(rangedatevalue[1]).locale('id').format('YYYY-MM-DD') : ""}`, {
+        //     method: `GET`,
+        //     headers: {
+        //         'Authorization': JSON.parse(initProps),
+        //     },
+        // })
+        //     .then(res => res.json())
+        //     .then(res2 => {
+        //         res2.data.tickets.data.length === 0 ? setdisplaydata([]) : setdisplaydata(res2.data.tickets.data)
+        //         setpraloading(false)
+        //     })
     }
 
     //5.useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?ticket_id=${ticketid1}&location_id=${locationid1}&status_id=${statusid1}&from=${from1}&to=${to1}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -288,7 +321,6 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 setdisplaydata(res2.data.tickets.data)
                 setdisplaydata1(res2.data.tickets.data)
                 setdisplaydata2(res2.data.tickets.data)
-                setpraloading(false)
             })
     }, [])
     useEffect(() => {
@@ -301,6 +333,22 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
             .then(res => res.json())
             .then(res2 => {
                 setticketrelations(res2.data)
+                var selectedLocation = {}
+                const recursiveSearchLocation = (doc, key) => {
+                    for (var i = 0; i < doc.length; i++) {
+                        if (doc[i].id === key) {
+                            selectedLocation = doc[i]
+                        }
+                        else {
+                            if (doc[i].children) {
+                                recursiveSearchLocation(doc[i].children, key)
+                            }
+                        }
+                    }
+                }
+                recursiveSearchLocation([res2.data.companies.data], Number(namaasset))
+                setdefasset(selectedLocation.key)
+                setpraloading(false)
             })
     }, [])
 
@@ -371,76 +419,65 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
             <div className="h-auto w-full grid grid-cols-1 md:grid-cols-5 mb-5 bg-white rounded-md">
                 <div className="md:col-span-5 col-span-1 flex flex-col py-3">
-                    <div className="flex mb-8">
-                        <div className=" w-full mr-1 grid grid-cols-12">
-                            <div className="col-span-3 mr-1">
-                                <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Ticket Number" onChange={onChangeSearch} allowClear></Input>
+                    {
+                        praloading ?
+                            null
+                            :
+                            <div className="flex mb-8">
+                                <div className=" w-full mr-1 grid grid-cols-12">
+                                    <div className="col-span-3 mr-1">
+                                        <Input defaultValue={ticketid1} style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Ticket Number" onChange={onChangeSearch} allowClear></Input>
+                                    </div>
+                                    <div className="col-span-3 mr-1">
+                                        <TreeSelect defaultValue={namaasset === "" ? null : defasset} placeholder="Lokasi Problem" style={{ width: `100%` }} allowClear onChange={(value, label, extra) => {
+                                            if (typeof (value) === 'undefined') {
+                                                onChangeLokasi()
+                                            }
+                                            else {
+                                                onChangeLokasi(extra.allCheckedNodes[0].node.props.id)
+                                            }
+                                        }} treeData={[ticketrelations.companies.data]} treeDefaultExpandAll />
+                                    </div>
+                                    <div className="col-span-3 mr-1">
+                                        <DatePicker.RangePicker defaultValue={from1 === "" && to1 === "" ? null : [moment(from1), moment(to1)]} style={{ width: `100%` }} placeholder={["Tanggal Awal", "Tanggal Akhir"]} onChange={(dates, datestrings) => {
+                                            if (datestrings[0] === '' && datestrings[1] === '') {
+                                                onChangeRangeDate()
+                                            }
+                                            else {
+                                                onChangeRangeDate(datestrings)
+                                            }
+                                        }}>
+                                        </DatePicker.RangePicker>
+                                    </div>
+                                    <div className="col-span-2 mr-1">
+                                        <Select defaultValue={statusid1 === "" ? null : Number(statusid1)} placeholder="Status" style={{ width: `100%` }} allowClear onChange={(value) => {
+                                            if (typeof (value) === 'undefined') {
+                                                onChangeStatus()
+                                            }
+                                            else {
+                                                onChangeStatus(value)
+                                            }
+                                        }}>
+                                            {
+                                                ticketrelations.status_ticket.map((docconds, idxconds) => {
+                                                    return (
+                                                        <Select.Option value={docconds.id}>{docconds.name}</Select.Option>
+                                                    )
+                                                })
+                                            }
+                                        </Select>
+                                    </div>
+                                    <div className=" col-span-1">
+                                        <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="col-span-3 mr-1">
-                                {/* <Select placeholder="Lokasi Problem" style={{ width: `100%` }} allowClear onChange={(value) => {
-                                    if (typeof (value) === 'undefined') {
-                                        onChangeLokasi()
-                                    }
-                                    else {
-                                        onChangeLokasi(value)
-                                    }
-                                }}>
-                                    {
-                                        ticketrelations.companies.map((docmodels, idxmodels) => {
-                                            return (
-                                                <Select.Option value={docmodels.company_id}>{docmodels.company_name}</Select.Option>
-                                            )
-                                        })
-                                    }
-                                </Select> */}
-                                <TreeSelect placeholder="Lokasi Problem" style={{ width: `100%` }} allowClear onChange={(value, label, extra) => {
-                                    if (typeof (value) === 'undefined') {
-                                        onChangeLokasi()
-                                    }
-                                    else {
-                                        onChangeLokasi(extra.allCheckedNodes[0].node.props.id)
-                                    }
-                                }} treeData={[ticketrelations.companies.data]} treeDefaultExpandAll />
-                            </div>
-                            <div className="col-span-3 mr-1">
-                                <DatePicker.RangePicker style={{ width: `100%` }} placeholder={["Tanggal Awal", "Tanggal Akhir"]} onChange={(dates, datestrings) => {
-                                    if (datestrings[0] === '' && datestrings[1] === '') {
-                                        onChangeRangeDate()
-                                    }
-                                    else {
-                                        onChangeRangeDate(datestrings)
-                                    }
-                                }}>
-                                </DatePicker.RangePicker>
-                            </div>
-                            <div className="col-span-2 mr-1">
-                                <Select placeholder="Status" style={{ width: `100%` }} allowClear onChange={(value) => {
-                                    if (typeof (value) === 'undefined') {
-                                        onChangeStatus()
-                                    }
-                                    else {
-                                        onChangeStatus(value)
-                                    }
-                                }}>
-                                    {
-                                        ticketrelations.status_ticket.map((docconds, idxconds) => {
-                                            return (
-                                                <Select.Option value={docconds.id}>{docconds.name}</Select.Option>
-                                            )
-                                        })
-                                    }
-                                </Select>
-                            </div>
-                            <div className=" col-span-1">
-                                <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
-                            </div>
-                        </div>
-                    </div>
+                    }
                     <div className="px-6">
                         <Table pagination={{
                             pageSize: 10, total: displayentiredata.total, onChange: (page, pageSize) => {
                                 setpraloading(true)
-                                fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${page}&rows=10`, {
+                                fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${page}&rows=10&ticket_id=${ticketid1}&location_id=${locationid1}&status_id=${statusid1}&from=${from1}&to=${to1}`, {
                                     method: `GET`,
                                     headers: {
                                         'Authorization': JSON.parse(initProps),

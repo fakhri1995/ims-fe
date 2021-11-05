@@ -296,7 +296,6 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 setdisplaydata(res2.data.data)
                 setdisplaydata1(res2.data.data)
                 setdisplaydata2(res2.data.data)
-                console.log(assettypefilteract, modelfilteract, kondisifilteract, pemakaianfilteract, namasearchact)
             })
     }, [])
     useEffect(() => {
