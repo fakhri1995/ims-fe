@@ -59,11 +59,11 @@ const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations, 
                             <div className="flex flex-col mt-3 mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Ticket Raised By:</h1>
                                 {/* <p className="mb-0 text-sm">{ticketrelations.requesters.filter(docfil => docfil.user_id === maindata.ticket.requester_id)[0] ? ticketrelations.requesters.filter(docfil => docfil.user_id === maindata.ticket.requester_id)[0].fullname : ""}</p> */}
-                                <p className="mb-0 text-sm">{maindata.ticket.requester.fullname}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.requester.name}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Lokasi Pembuat:</h1>
-                                <p className="mb-0 text-sm">{dataProfile.data.company.company_name}</p>
+                                <p className="mb-0 text-sm">{dataProfile.data.company.name}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Date Raised Ticket:</h1>
@@ -107,7 +107,7 @@ const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations, 
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Lokasi Problem:</h1>
-                                <p className="mb-0 mr-2 text-sm">{maindata.ticket.ticketable.location.company_id === 0 ? "-" : maindata.ticket.ticketable.location.company_name}</p>
+                                <p className="mb-0 mr-2 text-sm">{maindata.ticket.ticketable.location.id === 0 ? "-" : maindata.ticket.ticketable.location.name}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Waktu Kejadian:</h1>
@@ -295,7 +295,7 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
                         }, [])
                     :
                     setconnecteditemdata(null)
-                    setpraloadingconnected(false)
+                setpraloadingconnected(false)
             })
         // else {
         //     setconnecteditemdata(null)
@@ -686,8 +686,9 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
     const [connecteditem, setconnecteditem] = useState(null)
     //activity
     const [activitytrigger, setactivitytrigger] = useState(0)
-    //groups
-    const [agentgroup, setagentgroup] = useState([])
+    //groups/engineer
+    const [engineergroup, setengineergroup] = useState([])
+    const [engineergrouptrigger, setengineergrouptrigger] = useState(-1)
 
     //handler
     const handleSetStatus = () => {
@@ -802,7 +803,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
             .then(res2 => {
                 setmaindata(res2.data)
                 setstatus(res2.data.ticket.status.id)
-                res2.data.ticket.assignable.user_id ? (setassignto(res2.data.ticket.assignable.user_id), setnameassignto(res2.data.ticket.assignable.fullname), setdefaultnameassignto(res2.data.ticket.assignable.fullname)) : setassignto(null)
+                res2.data.ticket.assignable.id ? (setassignto(res2.data.ticket.assignable.id), setnameassignto(res2.data.ticket.assignable.name), setdefaultnameassignto(res2.data.ticket.assignable.name)) : setassignto(null)
                 res2.data.ticket.ticketable.inventory_id === null ? setconnecteditem(null) : setconnecteditem(res2.data.ticket.ticketable.inventory_id)
             })
             .then(() => {
@@ -820,17 +821,19 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
             })
     }, [])
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentGroups`, {
-            method: `GET`,
-            headers: {
-                'Authorization': JSON.parse(initProps)
-            }
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setagentgroup(res2.data)
+        if (engineergrouptrigger !== -1) {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getAssignToList?assignable_type=${to === true ? 1 : 2}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps)
+                }
             })
-    }, [])
+                .then(res => res.json())
+                .then(res2 => {
+                    setengineergroup(res2.data)
+                })
+        }
+    }, [engineergrouptrigger])
 
     return (
         <Layout st={st} sidemenu={sidemenu} tok={initProps} pathArr={pathArr} dataProfile={dataProfile}>
@@ -870,7 +873,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                                 <p className="mb-1">Status:</p>
                                                 {
                                                     displaystatus ?
-                                                        <Select defaultValue={maindata.ticket.status.id} value={status} placeholder="Masukkan Status" style={{ width: `10rem` }} bordered={true} defaultValue={1} onChange={(value, option) => {
+                                                        <Select disabled={status === 5} defaultValue={maindata.ticket.status.id} value={status} placeholder="Masukkan Status" style={{ width: `10rem` }} bordered={true} defaultValue={1} onChange={(value, option) => {
                                                             setstatus(value)
                                                             setnamestatus(option.name)
                                                             setmodalstatus(true)
@@ -1054,7 +1057,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                 <div className="flex flex-col mb-5">
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Assigned To <span className="assto"></span></p>
-                        <Select onChange={(value) => { setto(value) }}>
+                        <Select onChange={(value) => { setto(value); setengineergrouptrigger(prev => prev + 1) }}>
                             <Select.Option value={true}>Engineer</Select.Option>
                             <Select.Option value={false}>Group</Select.Option>
                         </Select>
@@ -1074,18 +1077,18 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                             <div className="flex flex-col mb-3">
                                 <p className="mb-0">{to === true ? "Engineer" : "Group"} <span className="engineer"></span></p>
                                 {
-                                    to === true &&
+                                    // to === true &&
                                     <Select disabled={to === null} onChange={(value, option) => { setassignto(value); setdisabledassignto(false); setnameassignto(option.name) }}>
                                         {
-                                            ticketrelations.requesters.map((doc, idx) => {
+                                            engineergroup.map((doc, idx) => {
                                                 return (
-                                                    <Select.Option value={doc.user_id} name={doc.fullname}>{doc.fullname}</Select.Option>
+                                                    <Select.Option value={doc.id} name={doc.name}>{doc.name}</Select.Option>
                                                 )
                                             })
                                         }
                                     </Select>
                                 }
-                                {
+                                {/* {
                                     to === false &&
                                     <Select disabled={to === null} onChange={(value, option) => { setassignto(value); setdisabledassignto(false); setnameassignto(option.name) }}>
                                         {
@@ -1096,7 +1099,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                             })
                                         }
                                     </Select>
-                                }
+                                } */}
                                 <style jsx>
                                     {`
                                 .engineer::before{

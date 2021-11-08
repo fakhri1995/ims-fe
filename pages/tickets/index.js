@@ -85,17 +85,17 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
         total: 0
     })
     const [namasearchact, setnamasearchact] = useState(ticketid1 === "" ? false : true)
-    const [namavalue, setnamavalue] = useState("")
+    const [namavalue, setnamavalue] = useState(null)
     const [lokasifilteract, setlokasifilteract] = useState(locationid1 === "" ? false : true)
-    const [lokasivalue, setlokasivalue] = useState("")
+    const [lokasivalue, setlokasivalue] = useState(null)
     const [rangedatefilteract, setrangedatefilteract] = useState(false)
     const [rangedatevalue, setrangedatevalue] = useState([])
     const [fromact, setfromact] = useState(from1 === "" ? false : true)
-    const [fromvalue, setfromvalue] = useState("")
+    const [fromvalue, setfromvalue] = useState(null)
     const [toact, settoact] = useState(to1 === "" ? false : true)
-    const [tovalue, settovalue] = useState("")
+    const [tovalue, settovalue] = useState(null)
     const [statusfilteract, setstatusfilteract] = useState(statusid1 === "" ? false : true)
-    const [statusvalue, setstatusvalue] = useState("")
+    const [statusvalue, setstatusvalue] = useState(null)
     const [namaasset, setnamaasset] = useState(locationid1)
     const [defasset, setdefasset] = useState(null)
     const [rowstate, setrowstate] = useState(0)
@@ -123,7 +123,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     children:
                         <>
                             {/* {ticketrelations.requesters.filter(docfil => docfil.user_id === record.requester.user_id)[0].fullname} */}
-                            {record.requester.fullname}
+                            {record.requester.name}
                         </>
                 }
             }
@@ -136,7 +136,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     children:
                         <>
                             {/* {ticketrelations.companies.filter(docfil => docfil.company_id === record.location)[0].company_name} */}
-                            {record.ticketable.location === null ? "-" : record.ticketable.location.company_name}
+                            {record.ticketable.location === null ? "-" : record.ticketable.location.name}
                         </>
                 }
             }
@@ -175,7 +175,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                     </Tooltip>
                                 </div>
                                 :
-                                record.assignable.fullname
+                                record.assignable.name
                             }
                         </>
                 }
@@ -291,7 +291,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
         //     })
         // }
         // setdisplaydata(datatemp)
-        window.location.href = `/tickets?ticket_id=${namasearchact ? (ticketid1 === "" ? namavalue : ticketid1) : ""}&location_id=${lokasifilteract ? (locationid1 === "" ? lokasivalue : locationid1) : ""}&status=${statusfilteract ? (statusid1 === "" ? statusvalue : statusid1) : ""}&from=${fromact ? (from1 === "" ? fromvalue : from1) : ""}&to=${toact ? (to1 === "" ? tovalue : to1) : ""}`
+        window.location.href = `/tickets?ticket_id=${namasearchact ? (namavalue === null ? ticketid1 : namavalue) : ""}&location_id=${lokasifilteract ? (lokasivalue === null ? locationid1 : lokasivalue) : ""}&status=${statusfilteract ? (statusvalue === null ? statusid1 : statusvalue) : ""}&from=${fromact ? (fromvalue === null ? from1 : fromvalue) : ""}&to=${toact ? (tovalue === null ? to1 : tovalue) : ""}`
         // setpraloading(true)
         // fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?ticket_id=${namasearchact ? namavalue : ""}&location_id=${lokasifilteract ? lokasivalue : ""}&status_id=${statusfilteract ? statusvalue : ""}&from=${rangedatefilteract ? moment(rangedatevalue[0]).locale('id').format('YYYY-MM-DD') : ""}&to=${rangedatefilteract ? moment(rangedatevalue[1]).locale('id').format('YYYY-MM-DD') : ""}`, {
         //     method: `GET`,

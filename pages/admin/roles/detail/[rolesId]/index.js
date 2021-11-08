@@ -334,13 +334,13 @@ const RolesDetail = ({ initProps, dataProfile, sidemenu, rolesid }) => {
             .then(res => res.json())
             .then(res2 => {
                 setdetaildata({
-                    id: res2.data.role_detail.id,
-                    name: res2.data.role_detail.name,
-                    desc: res2.data.role_detail.description
+                    id: res2.data.id,
+                    name: res2.data.name,
+                    desc: res2.data.description
                 })
                 var pathArr = rt.pathname.split("/").slice(1)
                 pathArr.splice(2, 1)
-                pathArr[pathArr.length - 1] = `Detail Role - ` + res2.data.role_detail.name
+                pathArr[pathArr.length - 1] = `Detail Role - ` + res2.data.name
                 setpatharr(pathArr)
                 setloadingdata(false)
             })

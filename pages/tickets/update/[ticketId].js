@@ -50,8 +50,27 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                 name: ""
             },
             requester: {
-                user_id: null,
-                fullname: ""
+                id: null,
+                name: "",
+                company_id: null,
+                company: {
+                    id: null,
+                    parent_id: null,
+                    name: "",
+                    image_logo: "-",
+                    phone_number: "-",
+                    address: "-",
+                    role: null,
+                    is_enabled: true,
+                    singkatan: "-",
+                    tanggal_pkp: "",
+                    penanggung_jawab: "-",
+                    npwp: "-",
+                    fax: "-",
+                    email: "-",
+                    website: "-",
+                    deleted_at: null
+                }
             },
             ticketable: {
                 id: null,
@@ -170,7 +189,7 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
             .then(res2 => {
                 const updata = {
                     id: Number(ticketid),
-                    requester_id: res2.data.ticket.requester.user_id === 0 ? null : res2.data.ticket.requester.user_id,
+                    requester_id: res2.data.ticket.requester.id === 0 ? null : res2.data.ticket.requester.id,
                     raised_at: res2.data.ticket.original_raised_at,
                     closed_at: res2.data.ticket.closed_at,
                     product_type: res2.data.ticket.ticketable.product_type,
@@ -186,7 +205,7 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                 setupdatedata(updata)
                 setfilesupload(res2.data.ticket.ticketable.files)
                 setnotclosed(res2.data.ticket.closed_at === null ? true : false)
-                return res2.data.ticket.requester.company_id
+                return res2.data.ticket.requester.company.id
             })
             .then((res3) => {
                 fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
@@ -266,7 +285,7 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                             {
                                                 ticketrelations.requesters.map((doc, idx) => {
                                                     return (
-                                                        <Select.Option key={idx} value={doc.user_id} company_name={doc.company === null ? "-" : doc.company.company_name}>{doc.fullname}</Select.Option>
+                                                        <Select.Option key={idx} value={doc.id} company_name={doc.company === null ? "-" : doc.company.name}>{doc.name}</Select.Option>
                                                     )
                                                 })
                                             }

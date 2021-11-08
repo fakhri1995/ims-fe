@@ -115,7 +115,7 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
                     children:
                         <>
                             {/* {ticketrelations.requesters.filter(docfil => docfil.user_id === record.raised_by)[0].fullname} */}
-                            {record.requester.fullname}
+                            {record.requester.name}
                         </>
                 }
             }
@@ -128,7 +128,7 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
                     children:
                         <>
                             {/* {ticketrelations.companies.filter(docfil => docfil.company_id === record.location_problem)[0].company_name} */}
-                            {record.ticketable.location.company_name}
+                            {record.ticketable.location.name}
                         </>
                 }
             }
@@ -159,7 +159,7 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
                     children:
                         <>
                             {/* {ticketrelations.requesters.filter(docfil => docfil.user_id === record.assign_to)[0].fullname} */}
-                            {record.assignable.fullname}
+                            {record.assignable.name}
                         </>
                 }
             }

@@ -163,15 +163,15 @@ function RolesUpdate({ initProps, dataProfile, sidemenu, dataRolesDetail, dataLi
             .then(res => res.json())
             .then(res2 => {
                 var temp = {
-                    id: res2.data.role_detail.id,
-                    name: res2.data.role_detail.name,
-                    description: res2.data.role_detail.description,
-                    feature_ids: res2.data.role_features.map((doc) => (doc.feature_id))
+                    id: res2.data.id,
+                    name: res2.data.name,
+                    description: res2.data.description,
+                    feature_ids: res2.data.features.length === 0 ? [] :res2.data.features.map((doc) => (doc.id))
                 }
                 setEditroles(temp)
                 var pathArr = rt.pathname.split("/").slice(1)
                 pathArr.splice(2, 1)
-                pathArr[pathArr.length - 1] = `Update Role - ` + res2.data.role_detail.name
+                pathArr[pathArr.length - 1] = `Update Role - ` + res2.data.name
                 setpatharr(pathArr)
                 setpraloading1(false)
             })
