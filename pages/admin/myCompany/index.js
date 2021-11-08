@@ -121,10 +121,10 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
             .then(res => res.json())
             .then(res2 => {
                 setData1({
-                    company_name: res2.data.company_name,
+                    company_name: res2.data.name,
                     address: res2.data.address,
                     phone_number: res2.data.phone_number,
-                    image_logo: res2.data.image_logo,
+                    image_logo: res2.data.image_logo === "-" || res2.data.image_logo === '' ? `/default-users.jpeg` : res2.data.image_logo,
                     singkatan: res2.data.singkatan,
                     tanggal_pkp: moment(res2.data.tanggal_pkp),
                     penanggung_jawab: res2.data.penanggung_jawab,
@@ -134,7 +134,7 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
                     website: res2.data.website
                 })
                 setisenabled(res2.data.is_enabled)
-                setid(res2.data.company_id)
+                setid(res2.data.id)
             })
     }, [])
     return (
@@ -1383,7 +1383,7 @@ function MigIndex({ initProps, dataProfile, sidemenu, dataDetailCompany, dataBra
             .then(res => res.json())
             .then(res2 => {
                 var temp2 = rt.pathname.split("/").slice(1)
-                temp2[temp2.length - 1] = res2.data.company_name
+                temp2[temp2.length - 1] = res2.data.name
                 setpatharr(temp2)
             })
     }, [])

@@ -46,7 +46,7 @@ function UpdateLocations({ initProps, dataProfile, sidemenu, dataBranchDetail, c
     }
     const [dataupdate, setdataupdate] = useState({
         id: parseInt(companyid),
-        company_name: dataBranchDetail.data.company_name,
+        company_name: dataBranchDetail.data.name,
         address: dataBranchDetail.data.address,
         phone_number: dataBranchDetail.data.phone_number,
         image_logo: dataBranchDetail.data.image_logo,

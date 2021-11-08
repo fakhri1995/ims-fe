@@ -48,7 +48,7 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail2, 
     // }
     // const [dataupdate, setdataupdate] = useState({
     //     id: parseInt(companyid),
-    //     company_name: dataBranchDetail.data.company_name,
+    //     name: dataBranchDetail.data.name,
     //     address: dataBranchDetail.data.address,
     //     phone_number: dataBranchDetail.data.phone_number,
     //     image_logo: dataBranchDetail.data.image_logo,
@@ -62,7 +62,7 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail2, 
     // })
     const [dataupdate, setdataupdate] = useState({
         id: parseInt(companyid),
-        company_name: "",
+        name: "",
         address: "",
         phone_number: "",
         image_logo: "",
@@ -197,7 +197,7 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail2, 
             .then(dataBranchDetail => {
                 const temp = {
                     id: parseInt(companyid),
-                    company_name: dataBranchDetail.data.company_name,
+                    name: dataBranchDetail.data.name,
                     address: dataBranchDetail.data.address,
                     phone_number: dataBranchDetail.data.phone_number,
                     image_logo: dataBranchDetail.data.image_logo === "" ? '/default-users.jpeg' : dataBranchDetail.data.image_logo,
@@ -211,7 +211,7 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail2, 
                 }
                 setdataupdate(temp)
                 setpraloading(false)
-                const pathArr = ['admin', 'myCompany', `Update Branch - ${dataBranchDetail.data.company_name}`]
+                const pathArr = ['admin', 'myCompany', `Update Branch - ${dataBranchDetail.data.name}`]
                 setpatharr(pathArr)
             })
     }, [])
@@ -227,7 +227,7 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail2, 
                         <div className="p-2 md:p-5 border-b flex mb-5 justify-between">
                             <div>
                                 <h1 className="mt-2 text-sm font-bold">{editable ? "Update" : "Detail"} Location</h1>
-                                <h1 className="mt-2 text-xs font-medium">{dataupdate.company_name}</h1>
+                                <h1 className="mt-2 text-xs font-medium">{dataupdate.name}</h1>
                             </div>
                             <div className="flex items-center mx-2">
                                 {
@@ -272,7 +272,7 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail2, 
                                         <div className="grid grid-cols-1 md:grid-cols-2 mb-5">
                                             {
                                                 editable ?
-                                                    <Form.Item name="company_name" style={{ marginRight: `1rem` }} label="Nama Perusahaan"
+                                                    <Form.Item name="name" style={{ marginRight: `1rem` }} label="Nama Perusahaan"
                                                         rules={[
                                                             {
                                                                 required: true,
@@ -280,13 +280,13 @@ function DetailLocations({ initProps, dataProfile, sidemenu, dataBranchDetail2, 
                                                             },
                                                         ]}
                                                     >
-                                                        <Input defaultValue={dataupdate.company_name} name="company_name" id="company_name" allowClear onChange={onChangeForm} />
+                                                        <Input defaultValue={dataupdate.name} name="name" id="name" allowClear onChange={onChangeForm} />
                                                     </Form.Item>
                                                     :
                                                     <>
                                                         <div className="col-span-1 flex flex-col mb-5">
                                                             <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
-                                                            <h1 className="text-sm font-normal text-black">{dataupdate.company_name}</h1>
+                                                            <h1 className="text-sm font-normal text-black">{dataupdate.name}</h1>
                                                         </div>
                                                     </>
                                             }

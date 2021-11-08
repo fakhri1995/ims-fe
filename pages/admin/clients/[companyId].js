@@ -184,11 +184,11 @@ function ClientsDetailProfile({ dataProfile, tok, companyid }) {
             .then(res => res.json())
             .then(res2 => {
                 const temp = {
-                    id: res2.data.company_id,
-                    company_name: res2.data.company_name,
+                    id: res2.data.id,
+                    company_name: res2.data.name,
                     address: res2.data.address,
                     phone_number: res2.data.phone_number,
-                    image_logo: res2.data.image_logo === "" ? '/default-users.jpeg' : res2.data.image_logo,
+                    image_logo: res2.data.image_logo === "" || res2.data.image_logo === "-" ? '/default-users.jpeg' : res2.data.image_logo,
                     singkatan: res2.data.singkatan,
                     tanggal_pkp: res2.data.tanggal_pkp === null ? moment(new Date()) : res2.data.tanggal_pkp,
                     penanggung_jawab: res2.data.penanggung_jawab,
@@ -1596,11 +1596,11 @@ function DetailClients({ initProps, dataProfile, sidemenu, dataDetailCompany, da
             .then(res => res.json())
             .then(res2 => {
                 const temp = {
-                    id: res2.data.company_id,
-                    company_name: res2.data.company_name,
+                    id: res2.data.id,
+                    company_name: res2.data.name,
                     address: res2.data.address,
                     phone_number: res2.data.phone_number,
-                    image_logo: res2.data.image_logo === "" ? '/default-users.jpeg' : res2.data.image_logo,
+                    image_logo: res2.data.image_logo === "" || res2.data.image_logo === "-" ? '/default-users.jpeg' : res2.data.image_logo,
                     singkatan: res2.data.singkatan,
                     tanggal_pkp: res2.data.tanggal_pkp === null ? moment(new Date()) : res2.data.tanggal_pkp,
                     penanggung_jawab: res2.data.penanggung_jawab,

@@ -283,7 +283,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                         treeData={assetdata}
                                                         placeholder="Pilih parent"
                                                         treeDefaultExpandAll
-                                                        onChange={(value, label, extra) => { setnewdata({ ...newdata, parent: extra.allCheckedNodes[0].node.props.id }) }}
+                                                        onChange={(value, label, extra) => { typeof (value) === 'undefined' ? setnewdata({ ...newdata, parent: null }) : setnewdata({ ...newdata, parent: extra.allCheckedNodes[0].node.props.id }) }}
                                                         allowClear
                                                     />
                                                 </Form.Item>

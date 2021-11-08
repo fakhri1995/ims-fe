@@ -44,9 +44,9 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
     const [displaydata1, setdisplaydata1] = useState([])
     const [displaydata2, setdisplaydata2] = useState([])
     const [namasearchact, setnamasearchact] = useState(name1 === "" ? false : true)
-    const [namavalue, setnamavalue] = useState("")
+    const [namavalue, setnamavalue] = useState(null)
     const [assettypefilteract, setassettypefilteract] = useState(asset_id1 === "" ? false : true)
-    const [assettypevalue, setassettypevalue] = useState("")
+    const [assettypevalue, setassettypevalue] = useState(null)
     const [namaasset, setnamaasset] = useState(asset_id1)
     const [defasset, setdefasset] = useState(null)
     const [rowstate, setrowstate] = useState(0)
@@ -104,7 +104,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
         //     })
         // }
         // setdisplaydata(datatemp)
-        window.location.href = `/admin/models?asset_id=${assettypefilteract ? (asset_id1 === "" ? assettypevalue : asset_id1) : ""}&name=${namasearchact ? (name1 === "" ? namavalue : name1) : ""}`
+        window.location.href = `/admin/models?asset_id=${assettypefilteract ? (assettypevalue === null ? asset_id1 : assettypevalue) : ""}&name=${namasearchact ? (namavalue === null ? name1 : namavalue) : ""}`
     }
 
 

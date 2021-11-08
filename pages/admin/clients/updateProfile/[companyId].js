@@ -28,7 +28,7 @@ function ClientUpdateProfile({ initProps, dataProfile, sidemenu, companyid }) {
     // }
     const [data1, setData1] = useState({
         id: "",
-        company_name: "",
+        name: "",
         address: "",
         phone_number: "",
         image_logo: "",
@@ -118,11 +118,11 @@ function ClientUpdateProfile({ initProps, dataProfile, sidemenu, companyid }) {
             .then(res => res.json())
             .then(res2 => {
                 const temp = {
-                    id: res2.data.company_id,
-                    company_name: res2.data.company_name,
+                    id: res2.data.id,
+                    name: res2.data.name,
                     address: res2.data.address,
                     phone_number: res2.data.phone_number,
-                    image_logo: res2.data.image_logo === "" ? '/default-users.jpeg' : res2.data.image_logo,
+                    image_logo: res2.data.image_logo === "" || res2.data.image_logo === "-" ? '/default-users.jpeg' : res2.data.image_logo,
                     singkatan: res2.data.singkatan,
                     tanggal_pkp: res2.data.tanggal_pkp === null ? moment(new Date()) : moment(res2.data.tanggal_pkp),
                     penanggung_jawab: res2.data.penanggung_jawab,
@@ -135,7 +135,7 @@ function ClientUpdateProfile({ initProps, dataProfile, sidemenu, companyid }) {
                 setpraloading(false)
                 var temp2 = rt.pathname.split("/").slice(1)
                 temp2.splice(3, 1)
-                temp2[temp2.length - 1] = res2.data.company_name
+                temp2[temp2.length - 1] = res2.data.name
                 setpatharr(temp2)
             })
     }, [])
@@ -161,7 +161,7 @@ function ClientUpdateProfile({ initProps, dataProfile, sidemenu, companyid }) {
                     </div>
                 </div>
                 <div className=" mb-2 md:mb-4 flex md:flex-row flex-col">
-                    <h1 className="font-semibold text-base mr-3 pt-1">{data1.company_name}</h1>
+                    <h1 className="font-semibold text-base mr-3 pt-1">{data1.name}</h1>
                 </div>
                 {
                     praloading ?
@@ -188,19 +188,19 @@ function ClientUpdateProfile({ initProps, dataProfile, sidemenu, companyid }) {
                                         <div className="md:m-5 mb-5 md:mb-0">
                                             {
                                                 editable ?
-                                                    <Form.Item name="company_name" label="Nama Perusahaan"
+                                                    <Form.Item name="name" label="Nama Perusahaan"
                                                         rules={[
                                                             {
                                                                 required: true,
                                                                 message: 'Nama Perusahaan wajib diisi',
                                                             },
                                                         ]}>
-                                                        <Input defaultValue={data1.company_name} name="company_name" onChange={onChangeEditProfile}></Input>
+                                                        <Input defaultValue={data1.name} name="name" onChange={onChangeEditProfile}></Input>
                                                     </Form.Item>
                                                     :
                                                     <>
                                                         <h1 className="font-semibold text-sm">Nama Perusahaan:</h1>
-                                                        <h1 className="text-sm font-normal text-black">{data1.company_name}</h1>
+                                                        <h1 className="text-sm font-normal text-black">{data1.name}</h1>
                                                     </>
 
                                             }
