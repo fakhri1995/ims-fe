@@ -87,10 +87,10 @@ function GroupsAgentsDetail({ initProps, dataProfile, dataListAccount, dataDetai
     //------------------------------------------
 
     //------------populate list account-------------
-    const dataDD = dataListAccount.data.map((doc, idx) => {
+    const dataDD = dataListAccount.data.data.map((doc, idx) => {
         return ({
-            value: doc.user_id,
-            label: doc.fullname,
+            value: doc.id,
+            label: doc.name,
         })
     })
 

@@ -22,7 +22,7 @@ function GroupsAgentsCreate({ initProps, dataProfile, dataListAccount, sidemenu 
     const [newgroup, setNewgroup] = useState({
         name: '',
         description: '',
-        group_head: dataProfile.data.user_id,
+        group_head: dataProfile.data.id,
         user_ids: []
     })
     const onChangeCreateGroup = (e) => {
@@ -92,10 +92,10 @@ function GroupsAgentsCreate({ initProps, dataProfile, dataListAccount, sidemenu 
     //------------------------------------------
 
     //------------populate list account-------------
-    const dataDD = dataListAccount.data.map((doc, idx) => {
+    const dataDD = dataListAccount.data.data.map((doc, idx) => {
         return ({
-            value: doc.user_id,
-            label: doc.fullname,
+            value: doc.id,
+            label: doc.name,
         })
     })
     // console.log(dataDD)
