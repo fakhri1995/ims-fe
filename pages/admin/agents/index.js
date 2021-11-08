@@ -43,9 +43,9 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
     const [namasearchact, setnamasearchact] = useState(name1 === "" ? false : true)
     const [asallokasifilteract, setasallokasifilteract] = useState(location_id1 === "" ? false : true)
     const [statusfilteract, setstatusfilteract] = useState(is_enabled1 === "" ? false : true)
-    const [namavalue, setnamavalue] = useState("")
-    const [asallokasivalue, setasallokasivalue] = useState("")
-    const [statusvalue, setstatusvalue] = useState("")
+    const [namavalue, setnamavalue] = useState(null)
+    const [asallokasivalue, setasallokasivalue] = useState(null)
+    const [statusvalue, setstatusvalue] = useState(null)
     const [namaasset, setnamaasset] = useState(location_id1)
     const [defasset, setdefasset] = useState(null)
     // const FilterAll = () => {
@@ -267,7 +267,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         //     })
         // }
         // setDataSource(datatemp)
-        window.location.href = `/admin/agents?name=${namasearchact ? (name1 === "" ? namavalue : name1) : ""}&location_id=${asallokasifilteract ? (location_id1 === "" ? asallokasivalue : location_id1) : ""}&is_enabled=${statusfilteract ? (is_enabled1 === "" ? statusvalue : is_enabled1) : ""}`
+        window.location.href = `/admin/agents?name=${namasearchact ? (namavalue === null ? name1 : namavalue) : ""}&location_id=${asallokasifilteract ? (asallokasivalue === null ? location_id1 : asallokasivalue) : ""}&is_enabled=${statusfilteract ? (statusvalue === "" ? is_enabled1 : statusvalue) : ""}`
     }
 
     //useEffect
@@ -339,8 +339,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                         }
                     }
                 }
-                recursiveSearchBranchCompany(res2.data.children, Number(namaasset))
-                console.log(selectedBranchCompany)
+                recursiveSearchBranchCompany([res2.data], Number(namaasset))
                 setdefasset(selectedBranchCompany.key)
                 setdatalokasi([res2.data])
                 setdatarawloading(false)

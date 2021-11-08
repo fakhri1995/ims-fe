@@ -70,10 +70,10 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
     const [asallokasitrigger, setasallokasitrigger] = useState(-1)
     const [statusfilteract, setstatusfilteract] = useState(is_enabled1 === "" ? false : true)
     //state value
-    const [namavalue, setnamavalue] = useState("")
+    const [namavalue, setnamavalue] = useState(null)
     const [asallokasivalue, setasallokasivalue] = useState(null)
     const [asalcompanyvalue, setasalcompanyvalue] = useState(null)
-    const [statusvalue, setstatusvalue] = useState("")
+    const [statusvalue, setstatusvalue] = useState(null)
     const [loadinglokasi, setloadinglokasi] = useState(true)
     const [namaasset, setnamaasset] = useState(location_id1)
     const [defasset, setdefasset] = useState(null)
@@ -165,7 +165,7 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
         //     })
         // }
         // setDataSource(datatemp)
-        window.location.href = `/admin/requesters?name=${namasearchact ? (name1 === "" ? namavalue : name1) : ""}&location_id=${asallokasifilteract ? (location_id1 === "" ? asallokasivalue : location_id1) : ""}&is_enabled=${statusfilteract ? (is_enabled1 === "" ? statusvalue : is_enabled1) : ""}&company_id=${asalcompanyfilteract ? (company_id1 === "" ? asalcompanyvalue : company_id1) : ""}`
+        window.location.href = `/admin/requesters?name=${namasearchact ? (namavalue === null ? name1 : namavalue) : ""}&location_id=${asallokasifilteract ? (asallokasivalue === null ? location_id1 : asallokasivalue) : ""}&is_enabled=${statusfilteract ? (statusvalue === null ? is_enabled1 : statusvalue) : ""}&company_id=${asalcompanyfilteract ? (asalcompanyvalue === null ? company_id1 : asalcompanyvalue) : ""}`
     }
 
     const FilterAll = () => {
@@ -500,13 +500,13 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                     {
                         // [117].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
-                            {/* <Link href={{
+                            <Link href={{
                                 pathname: '/admin/requesters/create',
-                            }}> */}
-                            <Button onClick={() => { console.log(asalcompanyfilteract, company_id1, asalcompanyvalue); console.log(asallokasifilteract, location_id1, asallokasivalue); }} size="large" type="primary">
-                                Tambah
-                            </Button>
-                            {/* </Link> */}
+                            }}>
+                                <Button /*onClick={() => { console.log(asalcompanyfilteract, company_id1, asalcompanyvalue); console.log(asallokasifilteract, location_id1, asallokasivalue) }}*/ size="large" type="primary">
+                                    Tambah
+                                </Button>
+                            </Link>
                         </div>
                     }
                 </div>

@@ -93,11 +93,11 @@ const Overview = ({ itemid, initProps, maindata, manuf, vendor, praloading }) =>
                         </div>
                         <div className="flex flex-col mb-5">
                             <h1 className=" text-sm font-semibold mb-0">Location:</h1>
-                            <p className="mb-0 text-sm">{maindata.location === null ? "-" : maindata.location_inventory.company_name}</p>
+                            <p className="mb-0 text-sm">{maindata.location === null ? "-" : maindata.location_inventory.name}</p>
                         </div>
                         <div className="flex flex-col mb-5">
                             <h1 className=" text-sm font-semibold mb-0">Deskripsi:</h1>
-                            <p className="mb-0 text-sm">{maindata.deskripsi !== "" || maindata.deskripsi !== null ? maindata.deskripsi : "-"}</p>
+                            <p className="mb-0 text-sm">{maindata.deskripsi === "" || maindata.deskripsi === null ? "-" : maindata.deskripsi}</p>
                         </div>
                         <hr />
                         {
@@ -580,7 +580,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                     praloading2 ?
                         null
                         :
-                        <Button type="primary" size="large" onClick={() => { /*console.log(mainpartdata); console.log(dataremoved)*/ rt.push(`/items/createpart/${itemid}?name=${mainpartdata.inventory_name}`) }}>Tambah</Button>
+                        <Button type="primary" size="large" onClick={() => { /*console.log(mainpartdata); console.log(dataremoved)*/ rt.push(`/items/createpart/${itemid}?nama=${mainpartdata.inventory_name}`) }}>Tambah</Button>
                 }
             </div>
             <div className="flex mb-5">

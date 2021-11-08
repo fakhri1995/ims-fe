@@ -39,8 +39,8 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
     const columns12 = [
         {
             title: 'Nama',
-            dataIndex: 'fullname',
-            key: 'fullname',
+            dataIndex: 'name',
+            key: 'name',
         },
         {
             title: 'Role',
@@ -124,7 +124,7 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
         })
             .then(res => res.json())
             .then(res2 => {
-                setdisplaydatarelations(res2.data)
+                !res2.success ? setdisplaydatarelations([]) : setdisplaydatarelations(res2.data)
             })
     }, [])
     useEffect(() => {
@@ -180,6 +180,7 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
                                 })
                             }
                         </Select>
+                        <p className="text-red-500 text-sm">Data Relationship Type kosong, silahkan tambah data melalui <Link href={`/admin/assets/detail/${asset_id}?active=relationship`}>Asset Ini</Link></p>
                         <style jsx>
                             {`
                                 .relitemtambah::before{
@@ -199,12 +200,12 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
                                     setdisabledrel(true)
                                 }
                                 setselectedrelitemdata(selectedRows)
-                                setnewdata({ ...newdata, connected_ids: reltipeitemdata === -1 || reltipeitemdata === -2 ? selectedRows.map(doc => doc.user_id) : selectedRows.map(doc => doc.id) })
+                                setnewdata({ ...newdata, connected_ids: reltipeitemdata === -1 || reltipeitemdata === -2 ? selectedRows.map(doc => doc.id) : selectedRows.map(doc => doc.id) })
                             },
                             checkStrictly: true
                         }}
                         defaultExpandedRowKeys={[1]}
-                        pagination={{ pageSize: 9 }} rowKey={reltipeitemdata === -1 || reltipeitemdata === -2 ? "user_id" : "id"} scroll={{ x: 200 }} dataSource={relitemdata} columns={reltipeitemdata === -1 || reltipeitemdata === -2 ? columns12 : (reltipeitemdata === -3 ? columns3 : columns4)} loading={relitemloading}
+                        pagination={{ pageSize: 9 }} rowKey={reltipeitemdata === -1 || reltipeitemdata === -2 ? "id" : "id"} scroll={{ x: 200 }} dataSource={relitemdata} columns={reltipeitemdata === -1 || reltipeitemdata === -2 ? columns12 : (reltipeitemdata === -3 ? columns3 : columns4)} loading={relitemloading}
                     ></Table>
                 </div>
             </div>
@@ -227,7 +228,7 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
                             <h1 className="font-semibold mb-0">Item:</h1>
                             {
                                 selectedrelitemdata.map((doc, idx) => (
-                                    <p className="mb-0">- {reltipeitemdata === -1 || reltipeitemdata === -2 ? doc.fullname : (reltipeitemdata === -3 ? doc.title : (reltipeitemdata === -4 ? doc.inventory_name : null))}</p>
+                                    <p className="mb-0">- {reltipeitemdata === -1 || reltipeitemdata === -2 ? doc.name : (reltipeitemdata === -3 ? doc.title : (reltipeitemdata === -4 ? doc.inventory_name : null))}</p>
                                 ))
                             }
                         </div>

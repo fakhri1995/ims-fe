@@ -62,15 +62,15 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     const [displaydata1, setdisplaydata1] = useState([])
     const [displaydata2, setdisplaydata2] = useState([])
     const [namasearchact, setnamasearchact] = useState(name1 === "" ? false : true)
-    const [namavalue, setnamavalue] = useState("")
+    const [namavalue, setnamavalue] = useState(null)
     const [assettypefilteract, setassettypefilteract] = useState(asset_id1 === "" ? false : true)
-    const [assettypevalue, setassettypevalue] = useState("")
+    const [assettypevalue, setassettypevalue] = useState(null)
     const [modelfilteract, setmodelfilteract] = useState(model_id1 === "" ? false : true)
     const [modelvalue, setmodelvalue] = useState(null)
     const [kondisifilteract, setkondisifilteract] = useState(status_condition1 === "" ? false : true)
-    const [kondisivalue, setkondisivalue] = useState("")
+    const [kondisivalue, setkondisivalue] = useState(null)
     const [pemakaianfilteract, setpemakaianfilteract] = useState(status_usage1 === "" ? false : true)
-    const [pemakaianvalue, setpemakaianvalue] = useState("")
+    const [pemakaianvalue, setpemakaianvalue] = useState(null)
     const [namaasset, setnamaasset] = useState(asset_id1)
     const [defasset, setdefasset] = useState(null)
     const [rowstate, setrowstate] = useState(0)
@@ -264,7 +264,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
         //     })
         // }
         // setdisplaydata(datatemp)
-        window.location.href = `/items?asset_id=${assettypefilteract ? (asset_id1 === "" ? assettypevalue : asset_id1) : ""}&model_id=${modelfilteract ? (model_id1 === "" ? modelvalue : model_id1) : ""}&status_condition=${kondisifilteract ? (status_condition1 === "" ? kondisivalue : status_condition1) : ""}&status_usage=${pemakaianfilteract ? (status_usage1 === "" ? pemakaianvalue : status_usage1) : ""}&name=${namasearchact ? (name1 === "" ? namavalue : name1) : ""}`
+        window.location.href = `/items?asset_id=${assettypefilteract ? (assettypevalue === null ? asset_id1 : assettypevalue) : ""}&model_id=${modelfilteract ? (modelvalue === null ? model_id1 : modelvalue) : ""}&status_condition=${kondisifilteract ? (kondisivalue === "" ? status_condition1 : kondisivalue) : ""}&status_usage=${pemakaianfilteract ? (pemakaianvalue === "" ? status_usage1 : pemakaianvalue) : ""}&name=${namasearchact ? (namavalue === "" ? name1 : namavalue) : ""}`
         // setpraloading(true)
         // fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?rows=100&asset_id=${assettypefilteract ? assettypevalue : ""}&model_id=${modelfilteract ? modelvalue : ""}&status_condition=${kondisifilteract ? kondisivalue : ""}&status_usage=${pemakaianfilteract ? pemakaianvalue : ""}&name=${namasearchact ? namavalue : ""}`, {
         //     method: `GET`,

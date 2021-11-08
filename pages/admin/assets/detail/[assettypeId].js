@@ -525,7 +525,7 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
                                             {
                                                 detailtipedataadd.map((doc, idx) => {
                                                     return (
-                                                        <Select.Option value={doc.user_id}>{doc.fullname}</Select.Option>
+                                                        <Select.Option value={doc.id}>{doc.name}</Select.Option>
                                                     )
                                                 })
                                             }
@@ -542,7 +542,7 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
                                             {
                                                 detailtipedataadd.map((doc, idx) => {
                                                     return (
-                                                        <Select.Option value={doc.user_id}>{doc.fullname}</Select.Option>
+                                                        <Select.Option value={doc.id}>{doc.name}</Select.Option>
                                                     )
                                                 })
                                             }
@@ -684,7 +684,7 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
                                             {
                                                 detailtipedataupdate.map((doc, idx) => {
                                                     return (
-                                                        <Select.Option value={doc.user_id}>{doc.fullname}</Select.Option>
+                                                        <Select.Option value={doc.id}>{doc.name}</Select.Option>
                                                     )
                                                 })
                                             }
@@ -701,7 +701,7 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
                                             {
                                                 detailtipedataupdate.map((doc, idx) => {
                                                     return (
-                                                        <Select.Option value={doc.user_id}>{doc.fullname}</Select.Option>
+                                                        <Select.Option value={doc.id}>{doc.name}</Select.Option>
                                                     )
                                                 })
                                             }
@@ -784,6 +784,11 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
     pathArr[pathArr.length - 1] = "Detail Asset Type"
     const { TabPane } = Tabs
     const { Step } = Steps;
+    var activeTab = "overview"
+    const { active } = rt.query
+    if (active) {
+        activeTab = active
+    }
 
     //flattening array of object
     function flattening(array) {
@@ -1032,7 +1037,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                 </div>
                 <div className="col-span-1 md:col-span-4 mb-8 pt-5">
                     <div className=" hidden md:block">
-                        <Tabs tabPosition={`left`}>
+                        <Tabs tabPosition={`left`} defaultActiveKey={active}>
                             <TabPane tab="Overview" key={`overview`}>
                                 <Overview assettypeid={assettypeid} initProps={initProps} displaydata={displaydata} parentcode={parentcode} praloading={praloading} idparent={parentid} />
                             </TabPane>
@@ -1042,7 +1047,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                         </Tabs>
                     </div>
                     <div className=" block md:hidden" >
-                        <Tabs tabPosition={`top`}>
+                        <Tabs tabPosition={`top`} defaultActiveKey={active}>
                             <TabPane tab="Overview" key={`overview`}>
                                 <Overview assettypeid={assettypeid} initProps={initProps} displaydata={displaydata} parentcode={parentcode} praloading={praloading} idparent={parentid} />
                             </TabPane>

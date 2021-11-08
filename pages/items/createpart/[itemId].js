@@ -15,7 +15,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
     pathArr.splice(2, 1)
     pathArr[pathArr.length - 1] = "Tambah Item Part"
     var asset_id1 = "", model_id1 = "", name1 = ""
-    const { asset_id, model_id, name } = rt.query
+    const { asset_id, model_id, name, nama } = rt.query
     if (asset_id) {
         asset_id1 = asset_id
     }
@@ -78,11 +78,11 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
     })
     const [listselectedpart, setlistselectedpart] = useState([])
     const [namasearchact, setnamasearchact] = useState(name1 === "" ? false : true)
-    const [namavalue, setnamavalue] = useState("")
+    const [namavalue, setnamavalue] = useState(null)
     const [assettypefilteract, setassettypefilteract] = useState(asset_id1 === "" ? false : true)
-    const [assettypevalue, setassettypevalue] = useState("")
+    const [assettypevalue, setassettypevalue] = useState(null)
     const [modelfilteract, setmodelfilteract] = useState(model_id1 === "" ? false : true)
-    const [modelvalue, setmodelvalue] = useState("")
+    const [modelvalue, setmodelvalue] = useState(null)
     const [namaasset, setnamaasset] = useState(asset_id1)
     const [defasset, setdefasset] = useState(null)
     const [assetdata, setassetdata] = useState([])
@@ -265,7 +265,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
     const onChangeSearch = (e) => {
         if (e.target.value === "") {
             // setdisplaydata(displaydata3)
-            window.location.href = `/items/createpart/${itemid}?asset_id=${assettypefilteract ? asset_id1 : ""}&model_id=${modelfilteract ? model_id1 : ""}&name=`
+            window.location.href = `/items/createpart/${itemid}?asset_id=${assettypefilteract ? asset_id1 : ""}&model_id=${modelfilteract ? model_id1 : ""}&name=&nama=${nama}`
             setnamasearchact(false)
         }
         else {
@@ -277,7 +277,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
     const onChangeAssetType = (id) => {
         if (typeof (id) === 'undefined') {
             // setdisplaydata(displaydata3)
-            window.location.href = `/items/createpart/${itemid}?asset_id=&model_id=${modelfilteract ? model_id1 : ""}&name=${namasearchact ? name1 : ""}`
+            window.location.href = `/items/createpart/${itemid}?asset_id=&model_id=${modelfilteract ? model_id1 : ""}&name=${namasearchact ? name1 : ""}&nama=${nama}`
             setassettypefilteract(false)
         }
         else {
@@ -289,7 +289,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
     const onChangeModel = (idmodel) => {
         if (typeof (idmodel) === 'undefined') {
             // setdisplaydata(displaydata3)
-            window.location.href = `/items/createpart/${itemid}?asset_id=${assettypefilteract ? asset_id1 : ""}&model_id=&name=${namasearchact ? name1 : ""}`
+            window.location.href = `/items/createpart/${itemid}?asset_id=${assettypefilteract ? asset_id1 : ""}&model_id=&name=${namasearchact ? name1 : ""}&nama=${nama}`
             setmodelfilteract(false)
         }
         else {
@@ -312,7 +312,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
         //     datatemp = namePart
         // }
         // setdisplaydata(datatemp)
-        window.location.href = `/items/createpart/${itemid}?asset_id=${assettypefilteract ? (asset_id1 === "" ? assettypevalue : asset_id1) : ""}&model_id=${modelfilteract ? (model_id1 === "" ? modelvalue : model_id1) : ""}&name=${namasearchact ? (name1 === "" ? namavalue : name1) : ""}`
+        window.location.href = `/items/createpart/${itemid}?asset_id=${assettypefilteract ? (assettypevalue === null ? asset_id1 : assettypevalue) : ""}&model_id=${modelfilteract ? (modelvalue === null ? model_id1 : modelvalue) : ""}&name=${namasearchact ? (namavalue === null ? name1 : namavalue) : ""}&nama=${nama}`
     }
     const handleAddItemPart = () => {
         setloadingadd(true)
@@ -427,7 +427,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
         <Layout dataProfile={dataProfile} sidemenu={sidemenu} tok={initProps} st={st} pathArr={pathArr}>
             <div className="h-20 w-full grid grid-cols-1 md:grid-cols-3 bg-white mb-5 p-4">
                 <div className=" col-span-1 md:col-span-2 flex items-center mb-2 md:mb-0">
-                    <div className="font-semibold text-xl w-auto">Form Tambah Item Part "{name}"</div>
+                    <div className="font-semibold text-xl w-auto">Form Tambah Item Part "{nama}"</div>
                 </div>
                 <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
                     <Button onClick={() => { rt.push(`/items/detail/${itemid}?active=konfigurasiPart`) /*console.log(listselectedpart)*/ }} style={{ marginRight: `1rem` }} size="middle" type="danger">

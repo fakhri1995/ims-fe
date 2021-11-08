@@ -84,6 +84,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
             .then(res => res.json())
             .then(res2 => {
                 setloadingupdate(false)
+                setmodalupdate(false)
                 if (res2.success) {
                     notification['success']({
                         message: "Item berhasil diubah",
@@ -147,7 +148,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                 return res2.data.model_id
             })
             .then(res3 => {
-                fetch(`https://boiling-thicket-46501.herokuapp.com/getModels`, {
+                fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?`, {
                     method: `GET`,
                     headers: {
                         'Authorization': JSON.parse(initProps),
@@ -155,9 +156,8 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                 })
                     .then(res => res.json())
                     .then(res2 => {
-                        const snitemmodel = res2.data.filter(docfilter => docfilter.id === Number(res3))
-                        setmodeldata(res2.data)
-                        setsnitem(snitemmodel[0].required_sn)
+                        setmodeldata(res2.data.data)
+                        setsnitem(res2.data.data.serial_number === null ? false : true)
                     })
             })
     }, [])
@@ -228,7 +228,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                             </style>
                                         </div>
                                     }>
-                                        <div className="w-full rounded-sm flex items-center bg-gray-100 border p-2 h-8">{updatedata.asset_name}</div>
+                                        <div className="w-full rounded-sm flex items-center bg-gray-100 border p-2 h-8">{updatedata.model_inventory.asset.name}</div>
                                     </Form.Item>
                                     <Form.Item name="inventory_name" label="Nama Item"
                                         rules={[
