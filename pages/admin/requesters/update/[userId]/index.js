@@ -10,9 +10,9 @@ import { Form, Input, Button, notification, Select, TreeSelect } from 'antd'
 
 function modifData(dataa) {
     for (var i = 0; i < dataa.length; i++) {
-        dataa[i]['key'] = dataa[i].company_id
-        dataa[i]['value'] = dataa[i].company_id
-        dataa[i]['title'] = dataa[i].company_name
+        dataa[i]['key'] = dataa[i].id
+        dataa[i]['value'] = dataa[i].id
+        dataa[i]['title'] = dataa[i].name
         dataa[i]['children'] = dataa[i].members
         delete dataa[i].members
         if (dataa[i].children) [
@@ -45,7 +45,8 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
         phone_number: "",
         profile_image: `/default-users.jpeg`,
         company_id: 0,
-        email: ''
+        email: '',
+        role_ids: []
     })
     const [idrole, setidrole] = useState(0)
     const [patharr, setpatharr] = useState([])
@@ -68,15 +69,13 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
     const [dataraw1, setdataraw1] = useState({ data: [] })
 
     const onChangeRole = (value) => {
-        //multiple roles
-        // const arr = datarole.role_ids
-        //single roles
-        const arr = []
-        arr.push(value)
-        setdatarole({
-            ...datarole,
-            role_ids: arr
-        })
+        // const arr = []
+        // arr.push(value)
+        // setdatarole({
+        //     ...datarole,
+        //     role_ids: arr
+        // })
+        setData1({...data1, role_ids: value})
     }
     const onChangeEditAgents = (e) => {
         setData1({
@@ -104,18 +103,18 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
     const handleSubmitEditAccount = () => {
         setLoadingupdate(true)
         // if ([133].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/updateFeatureRequester`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': JSON.parse(tok),
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(datarole)
-            })
-                .then(res => res.json())
-                .then(res2 => {
-                    setLoadingupdate(false)
-                })
+            // fetch(`https://boiling-thicket-46501.herokuapp.com/updateFeatureRequester`, {
+            //     method: 'PUT',
+            //     headers: {
+            //         'Authorization': JSON.parse(tok),
+            //         'Content-Type': 'application/json'
+            //     },
+            //     body: JSON.stringify(datarole)
+            // })
+            //     .then(res => res.json())
+            //     .then(res2 => {
+            //         setLoadingupdate(false)
+            //     })
         // }
         // if ([116].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
             fetch(`https://boiling-thicket-46501.herokuapp.com/updateRequesterDetail`, {
@@ -245,20 +244,21 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
             .then(res => res.json())
             .then(res2 => {
                 var temp = {
-                    id: res2.data.user_id,
-                    fullname: res2.data.fullname,
+                    id: res2.data.id,
+                    fullname: res2.data.name,
                     role: res2.data.role,
                     phone_number: res2.data.phone_number,
                     profile_image: res2.data.profile_image === "" ? `/default-users.jpeg` : res2.data.profile_image,
                     company_id: res2.data.company_id,
-                    email: res2.data.email
+                    email: res2.data.email,
+                    role_ids: res2.data.roles.map(docmap => docmap.id)
                 }
                 setData1(temp)
-                setdatarole({ ...datarole, account_id: res2.data.user_id })
-                setidrole(res2.data.feature_roles)
+                setdatarole({ ...datarole, account_id: res2.data.id })
+                setidrole(res2.data.roles.map(docmap => docmap.id))
                 var pathArr = rt.pathname.split("/").slice(1)
                 pathArr.splice(3, 1)
-                pathArr[pathArr.length - 1] = `Ubah Profil Requester - ` + res2.data.fullname
+                pathArr[pathArr.length - 1] = `Ubah Profil Requester - ` + res2.data.name
                 setpatharr(pathArr)
                 setcompanyid(res2.data.company_id)
             })
@@ -287,7 +287,7 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
         })
             .then(res => res.json())
             .then(res2 => {
-                const c = [res2.data]
+                const c = res2.data.members
                 const d = modifData(c)
                 setdatacompanylist(d)
             })

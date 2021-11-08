@@ -11,9 +11,9 @@ import { Form, Upload, TreeSelect, Input, Button, notification, Select } from 'a
 
 function modifData(dataa) {
     for (var i = 0; i < dataa.length; i++) {
-        dataa[i]['key'] = dataa[i].company_id
-        dataa[i]['value'] = dataa[i].company_id
-        dataa[i]['title'] = dataa[i].company_name
+        dataa[i]['key'] = dataa[i].id
+        dataa[i]['value'] = dataa[i].id
+        dataa[i]['title'] = dataa[i].name
         dataa[i]['children'] = dataa[i].members
         delete dataa[i].members
         if (dataa[i].children) [

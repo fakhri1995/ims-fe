@@ -131,7 +131,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
         asset_id: "",
         name: "",
         description: "",
-        manufacturer_id: "",
+        manufacturer_id: null,
         required_sn: false,
         model_columns: [],
         model_parts: []
@@ -221,6 +221,14 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
     const [cdpartidx, setcdpartidx] = useState(-1)
     const [cdparttrigger, setcdparttrigger] = useState(false)
     const [fetchingpart, setfetchingpart] = useState(false)
+    //create manufacturer
+    const [modalmanuf, setmodalmanuf] = useState(false)
+    const [loadingmanuf, setloadingmanuf] = useState(false)
+    const [disabledmanuf, setdisabledmanuf] = useState(true)
+    const [triggermanuf, settriggermanuf] = useState(-1)
+    const [datamanuf, setdatamanuf] = useState({
+        name: ""
+    })
 
 
     //3.onChange
@@ -491,6 +499,39 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                 }
             })
     }
+    const handleAddManufacturer = () => {
+        setloadingmanuf(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addManufacturer`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datamanuf)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingmanuf(false)
+                setmodalmanuf(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: "Manufacturer berhasil ditambahkan",
+                        duration: 2
+                    })
+                    setdatamanuf({
+                        ...datamanuf,
+                        name: ""
+                    })
+                    settriggermanuf(prev => prev + 1)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
 
     //5.useEffect
     useEffect(() => {
@@ -518,7 +559,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                 setmanufdata(res2.data)
                 setpraloading(false)
             })
-    }, [])
+    }, [triggermanuf])
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getModels`, {
             method: `GET`,
@@ -763,23 +804,24 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                             <Input name="name" onChange={(e) => { setnewdata({ ...newdata, name: e.target.value }) }} />
                                         </Form.Item>
                                     </div>
-                                    <Form.Item name="manufacturer_id" label="Manufacturer"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Manufacturer wajib diisi',
-                                            },
-                                        ]}>
-                                        <Select placeholder="Pilih Manufacturer" onChange={(value) => { setnewdata({ ...newdata, manufacturer_id: value }) }} name="manufacturer_id">
-                                            {
-                                                manufdata.map((doc, idx) => {
-                                                    return (
-                                                        <Select.Option key={idx} value={doc.id}>{doc.name}</Select.Option>
-                                                    )
-                                                })
-                                            }
-                                        </Select>
-                                    </Form.Item>
+                                    <div className="flex mb-2">
+                                        <div className="w-11/12 mr-2">
+                                            <Form.Item name="manufacturer_id" label="Manufacturer">
+                                                <Select loading={loadingmanuf} placeholder="Pilih Manufacturer" onChange={(value) => { setnewdata({ ...newdata, manufacturer_id: value }) }} name="manufacturer_id">
+                                                    {
+                                                        manufdata.map((doc, idx) => {
+                                                            return (
+                                                                <Select.Option key={idx} value={doc.id}>{doc.name}</Select.Option>
+                                                            )
+                                                        })
+                                                    }
+                                                </Select>
+                                            </Form.Item>
+                                        </div>
+                                        <div className="w-1/12 flex pt-2 my-auto items-center justify-center cursor-pointer" onClick={() => { setmodalmanuf(true) }}>
+                                            <PlusSquareTwoTone style={{ fontSize: `1.5rem` }} />
+                                        </div>
+                                    </div>
                                     <Form.Item name="description" label="Deskripsi">
                                         <Input.TextArea rows={4} name="description" onChange={(e) => { setnewdata({ ...newdata, description: e.target.value }) }} />
                                     </Form.Item>
@@ -2879,6 +2921,39 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                     }
                     <div className="w-full flex justify-center mt-5">
                         <Button type="dashed" disabled={disabledaddfield2} style={{ width: `80%`, height: `4rem` }} onClick={onClickAddField2}>+ Tambah Spesifikasi Model</Button>
+                    </div>
+                </div>
+            </Modal>
+            <Modal
+                title={
+                    <div className="flex justify-between p-5 mt-5">
+                        <h1 className="font-bold text-xl">Form Tambah Manufacturer</h1>
+                        <div className="flex">
+                            <Button type="default" onClick={() => { setmodalcreatemodel(false) /*console.log(newdata2)*/ }} style={{ marginRight: `1rem` }}>Batal</Button>
+                            <Button type='primary' disabled={disabledmanuf} onClick={handleAddManufacturer} loading={loadingmanuf}>Simpan</Button>
+                        </div>
+                    </div>
+                }
+                visible={modalmanuf}
+                footer={null}
+                onCancel={() => { setmodalmanuf(false) }}
+                width={900}
+            >
+                <div className="flex flex-col mb-3">
+                    <div className="flex flex-col mb-3">
+                        <p className="mb-0">Nama Manufacturer <span className="namamanu"></span></p>
+                        <Input value={datamanuf.name} placeholder="Masukkan Nama Manufacturer" onChange={(e => {
+                            e.target.value === "" ? setdisabledmanuf(true) : setdisabledmanuf(false)
+                            setdatamanuf({ name: e.target.value })
+                        })}></Input>
+                        <style jsx>
+                            {`
+                                .namamanu::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+                        </style>
                     </div>
                 </div>
             </Modal>

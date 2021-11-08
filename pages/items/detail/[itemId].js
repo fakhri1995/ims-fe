@@ -167,7 +167,32 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
     const [datareplacements, setdatareplacements] = useState([])
     const [popover, setpopover] = useState(false)
     //changed
-    const [datachanged, setdatachanged] = useState(-1)
+    const [datachanged, setdatachanged] = useState({
+        id: null,
+        model_id: null,
+        inventory_name: "",
+        mig_id: "",
+        status_condition: {
+            id: null,
+            name: ""
+        },
+        status_usage: {
+            id: null,
+            name: ""
+        },
+        deleted_at: null,
+        model_inventory: {
+            id: null,
+            name: "",
+            asset_id: null,
+            deleted_at: null,
+            asset: {
+                id: null,
+                name: "",
+                deleted_at: ""
+            }
+        },
+    })
     const [dataApichanged, setdataApichanged] = useState({
         id: 0,
         replacement_id: 0,
@@ -176,6 +201,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
     const [modalchanged, setmodalchanged] = useState(false)
     const [disabledchanged, setdisabledchanged] = useState(true)
     const [loadingchanged, setloadingchanged] = useState(false)
+    const [triggerchanged, settriggerchanged] = useState(-1)
     //removed
     const [dataremoved, setdataremoved] = useState(-1)
     const [dataApiremoved, setdataApiremoved] = useState({
@@ -239,12 +265,12 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                                                 <CloseCircleOutlined style={{ color: `red`, fontSize: `1.1rem` }} />
                                             </div>
                                             <Button type="text" style={{ width: `100%` }} onClick={() => { setdataremoved(record); setdataApiremoved({ ...dataApiremoved, id: mainpartdata.id, inventory_part_id: record.id, }); setmodalremoved(true); setpopover(false) }}>Keluarkan Part</Button>
-                                            <Button type="text" style={{ width: `100%` }} onClick={() => { setdatachanged(record); setmodalchanged(true); setpopover(false) }}>Gantikan Part</Button>
+                                            <Button type="text" style={{ width: `100%` }} onClick={() => { setdatachanged(record); setmodalchanged(true); setpopover(false); settriggerchanged(prev => prev + 1) }}>Gantikan Part</Button>
                                             {/* <div className="cursor-pointer hover:bg-gray-300 w-full p-4">Keluarkan Part</div>
                                             <div className="cursor-pointer hover:bg-gray-300 w-full p-4">Gantikan Part</div> */}
                                         </div>
                                     }>
-                                        <div className="cursor-pointer pointer-events-none" onClick={() => setpopover(false)}>
+                                        <div className="cursor-pointer" onClick={() => setpopover(false)}>
                                             <CloseCircleOutlined style={{ color: `red`, fontSize: `1.5rem` }} />
                                         </div>
                                     </Popover>
@@ -274,8 +300,8 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
             dataa[i]['key'] = dataa[i].id
             dataa[i]['value'] = dataa[i].id
             dataa[i]['title'] = dataa[i].inventory_name
-            dataa[i]['children'] = dataa[i].inventory_parts
-            delete dataa[i].inventory_parts
+            dataa[i]['children'] = dataa[i].inventory_replacement_parts
+            delete dataa[i].inventory_replacement_parts
             if (dataa[i].children.length > 0) {
                 recursiveModifData(dataa[i].children)
             }
@@ -288,7 +314,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
     const recursiveSearchPartFromAsset = (doc, assetid) => {
         var arr = []
         for (var i = 0; i < doc.length; i++) {
-            if (doc[i].asset_id === Number(assetid)) {
+            if (doc[i].model_inventory.asset.id === Number(assetid)) {
                 // continue
                 assetPart.push(doc[i])
             }
@@ -457,7 +483,6 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
             recursiveSearchPartFromAsset(datatemp, assettypevalue)
             datatemp = assetPart
         }
-        console.log(datatemp, modelvalue)
         if (modelfilteract) {
             // const t = recursiveSearchPartFromModel(datatemp, modelvalue)
             recursiveSearchPartFromModel(datatemp, modelvalue)
@@ -517,8 +542,8 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
             })
     }, [datatrigger])
     useEffect(() => {
-        if (datachanged !== -1) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryReplacements?id=${datachanged.asset_id}`, {
+        if (triggerchanged !== -1) {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryReplacements?id=${datachanged.model_inventory.asset_id}`, {
                 method: `GET`,
                 headers: {
                     'Authorization': JSON.parse(initProps),
@@ -533,7 +558,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                     }
                 })
         }
-    }, [datachanged])
+    }, [triggerchanged])
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
             method: `GET`,
@@ -555,7 +580,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                     praloading2 ?
                         null
                         :
-                        <Button disabled type="primary" size="large" onClick={() => { /*console.log(mainpartdata); console.log(dataremoved)*/ rt.push(`/items/createpart/${itemid}?name=${mainpartdata.inventory_name}`) }}>Tambah</Button>
+                        <Button type="primary" size="large" onClick={() => { /*console.log(mainpartdata); console.log(dataremoved)*/ rt.push(`/items/createpart/${itemid}?name=${mainpartdata.inventory_name}`) }}>Tambah</Button>
                 }
             </div>
             <div className="flex mb-5">
@@ -651,7 +676,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                     </div>
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Asset Type dari Item Part yang ingin diganti <span className="namapart"></span></p>
-                        <div className="w-full rounded-sm flex items-center bg-gray-100 border p-2 h-8">{datachanged.asset_name}</div>
+                        <div className="w-full rounded-sm flex items-center bg-gray-100 border p-2 h-8">{datachanged.model_inventory.asset.name}</div>
                         <style jsx>
                             {`
                                 .namapart::before{
@@ -664,7 +689,6 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Nama Item Part Pengganti <span className="namapart"></span></p>
                         <TreeSelect
-                            value={dataApichanged.replacement_id}
                             onChange={(value) => {
                                 setdisabledchanged(false)
                                 setdataApichanged({

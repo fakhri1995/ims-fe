@@ -9,9 +9,9 @@ import { Table, notification, Button, Input, TreeSelect, Select } from 'antd'
 
 function modifData(dataa) {
     for (var i = 0; i < dataa.length; i++) {
-        dataa[i]['key'] = dataa[i].company_id
-        dataa[i]['value'] = dataa[i].company_id
-        dataa[i]['title'] = dataa[i].company_name
+        dataa[i]['key'] = dataa[i].id
+        dataa[i]['value'] = dataa[i].id
+        dataa[i]['title'] = dataa[i].name
         dataa[i]['children'] = dataa[i].members
         delete dataa[i].members
         if (dataa[i].children) {
@@ -26,26 +26,58 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
+    var location_id1 = "", name1 = "", is_enabled1 = "", company_id1 = ""
+    const { location_id, name, is_enabled, company_id } = rt.query
+    if (location_id) {
+        location_id1 = location_id
+    }
+    if (name) {
+        name1 = name
+    }
+    if (is_enabled) {
+        is_enabled1 = is_enabled
+    }
+    if (company_id) {
+        company_id1 = company_id
+    }
+    const [rawdata, setrawdata] = useState({
+        current_page: "",
+        data: [],
+        first_page_url: "",
+        from: null,
+        last_page: null,
+        last_page_url: "",
+        next_page_url: "",
+        path: "",
+        per_page: null,
+        prev_page_url: null,
+        to: null,
+        total: null
+    })
 
     //useState
     const [dataraw, setdataraw] = useState([])
     const [datarawloading, setdatarawloading] = useState(false)
+    const [datarawloading2, setdatarawloading2] = useState(false)
     const [dataKK, setDataSource] = useState([]);
     const [rowstate, setrowstate] = useState(0)
     const [datacompany, setdatacompany] = useState([])
     const [datalokasi, setdatalokasi] = useState([])
     //state order
-    const [namasearchact, setnamasearchact] = useState(false)
-    const [asalcompanyfilteract, setasalcompanyfilteract] = useState(false)
-    const [asallokasifilteract, setasallokasifilteract] = useState(false)
-    const [asallokasitrigger, setasallokasitrigger] = useState(false)
-    const [statusfilteract, setstatusfilteract] = useState(false)
+    const [namasearchact, setnamasearchact] = useState(name1 === "" ? false : true)
+    const [asalcompanyfilteract, setasalcompanyfilteract] = useState(company_id1 === "" ? false : true)
+    const [asallokasifilteract, setasallokasifilteract] = useState(location_id1 === "" ? false : true)
+    const [asallokasitrigger, setasallokasitrigger] = useState(-1)
+    const [statusfilteract, setstatusfilteract] = useState(is_enabled1 === "" ? false : true)
     //state value
     const [namavalue, setnamavalue] = useState("")
     const [asallokasivalue, setasallokasivalue] = useState(null)
     const [asalcompanyvalue, setasalcompanyvalue] = useState(null)
     const [statusvalue, setstatusvalue] = useState("")
     const [loadinglokasi, setloadinglokasi] = useState(true)
+    const [namaasset, setnamaasset] = useState(location_id1)
+    const [defasset, setdefasset] = useState(null)
+    const [defasset2, setdefasset2] = useState(null)
 
     //function
     var temp = []
@@ -61,7 +93,8 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
     //filtering
     const onChangeSearch = (e) => {
         if (e.target.value === "") {
-            setDataSource(dataraw)
+            // setDataSource(dataraw)
+            window.location.href = `/admin/requesters?name=&location_id=${asallokasifilteract ? location_id1 : ""}&is_enabled=${statusfilteract ? is_enabled1 : ""}&company_id=${asalcompanyfilteract ? company_id1 : ""}`
             setnamasearchact(false)
         }
         else {
@@ -71,34 +104,37 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
     }
     const onChangeAsalCompany = (value) => {
         if (typeof (value) === 'undefined') {
-            setDataSource(dataraw)
-            setasalcompanyfilteract(false)
-            setasalcompanyvalue(null)
-            setdatalokasi([])
-            setloadinglokasi(true)
+            // setDataSource(dataraw)
+            window.location.href = `/admin/requesters?name=${namasearchact ? name1 : ""}&location_id=&is_enabled=${statusfilteract ? is_enabled1 : ""}&company_id=`
+            // setasalcompanyfilteract(false)
+            // setasalcompanyvalue(null)
+            // setdatalokasi([])
+            // setloadinglokasi(true)
         }
         else {
             setasalcompanyfilteract(true)
             setasalcompanyvalue(value)
-            setasallokasitrigger(prev => !prev)
+            setasallokasitrigger(prev => prev + 1)
         }
     }
     const onChangeAsalLokasi = (value) => {
         if (typeof (value) === 'undefined') {
-            setDataSource(dataraw)
-            setasallokasifilteract(false)
-            setasalcompanyfilteract(true)
-            setasallokasivalue(null)
+            // setDataSource(dataraw)
+            window.location.href = `/admin/requesters?name=${namasearchact ? name1 : ""}&location_id=&is_enabled=${statusfilteract ? is_enabled1 : ""}&company_id=${asalcompanyfilteract ? company_id1 : ""}`
+            // setasallokasifilteract(false)
+            // setasalcompanyfilteract(true)
+            // setasallokasivalue(null)
         }
         else {
             setasallokasifilteract(true)
-            setasalcompanyfilteract(false)
+            setasalcompanyfilteract(true)
             setasallokasivalue(value)
         }
     }
     const onChangeStatus = (value) => {
         if (typeof (value) === 'undefined') {
-            setDataSource(dataraw)
+            // setDataSource(dataraw)
+            window.location.href = `/admin/requesters?name=${namasearchact ? name1 : ""}&location_id=&is_enabled=&company_id=${asalcompanyfilteract ? company_id1 : ""}`
             setstatusfilteract(false)
         }
         else {
@@ -107,28 +143,29 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
         }
     }
     const onFinalClick = () => {
-        var datatemp = dataraw
-        if (asalcompanyfilteract) {
-            datatemp = datatemp.filter(flt => {
-                return flt.company_id === asalcompanyvalue
-            })
-        }
-        if (asallokasifilteract) {
-            datatemp = datatemp.filter(flt => {
-                return flt.company_id === asallokasivalue
-            })
-        }
-        if (namasearchact) {
-            datatemp = datatemp.filter(flt => {
-                return flt.fullname.toLowerCase().includes(namavalue.toLowerCase())
-            })
-        }
-        if (statusfilteract) {
-            datatemp = datatemp.filter(flt => {
-                return flt.status === statusvalue
-            })
-        }
-        setDataSource(datatemp)
+        // var datatemp = dataraw
+        // if (asalcompanyfilteract) {
+        //     datatemp = datatemp.filter(flt => {
+        //         return flt.company_id === asalcompanyvalue
+        //     })
+        // }
+        // if (asallokasifilteract) {
+        //     datatemp = datatemp.filter(flt => {
+        //         return flt.company_id === asallokasivalue
+        //     })
+        // }
+        // if (namasearchact) {
+        //     datatemp = datatemp.filter(flt => {
+        //         return flt.fullname.toLowerCase().includes(namavalue.toLowerCase())
+        //     })
+        // }
+        // if (statusfilteract) {
+        //     datatemp = datatemp.filter(flt => {
+        //         return flt.status === statusvalue
+        //     })
+        // }
+        // setDataSource(datatemp)
+        window.location.href = `/admin/requesters?name=${namasearchact ? (name1 === "" ? namavalue : name1) : ""}&location_id=${asallokasifilteract ? (location_id1 === "" ? asallokasivalue : location_id1) : ""}&is_enabled=${statusfilteract ? (is_enabled1 === "" ? statusvalue : is_enabled1) : ""}&company_id=${asalcompanyfilteract ? (company_id1 === "" ? asalcompanyvalue : company_id1) : ""}`
     }
 
     const FilterAll = () => {
@@ -197,7 +234,7 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
         // },
         {
             title: 'Nama',
-            dataIndex: 'fullname',
+            dataIndex: 'name',
             // sorter: (a, b) => a.fullname.localeCompare(b.fullname),
             // sortDirections: ['descend', 'ascend'],
             render: (text, record, index) => {
@@ -207,7 +244,7 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                     // },
                     children:
                         <>
-                            {record.fullname}
+                            {record.name}
                         </>
                 }
             }
@@ -259,13 +296,13 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
         },
         {
             title: 'Status',
-            dataIndex: 'status',
+            dataIndex: 'is_enabled',
             render: (text, record, index) => {
                 return {
                     children:
                         <>
                             {
-                                record.status ?
+                                record.is_enabled ?
                                     <div className="rounded-md w-auto h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">Aktif</div>
                                     :
                                     <div className="rounded-md w-auto h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">Non-aktif</div>
@@ -322,7 +359,9 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
     //useEffect
     useEffect(() => {
         setdatarawloading(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
+        setdatarawloading2(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList?name=${name1}&company_id=${location_id1 === "" && company_id1 === "null" ? "" : (location_id1 === "" ? company_id1 : location_id1)}${is_enabled1 === "" ? "" : `&is_enabled=${is_enabled1}`}`, {
+            // fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -336,7 +375,7 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
         })
             .then(res => res.json())
             .then(res2 => {
-                setdatarawloading(false)
+                setrawdata(res2.data)
                 var dataDD = []
                 if (!res2) {
                     dataDD = []
@@ -347,16 +386,16 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                     rt.push('/dashboard/admin')
                 }
                 else {
-                    dataDD = res2.data.map((doc, idx) => {
+                    dataDD = res2.data.data.map((doc, idx) => {
                         return ({
-                            user_id: doc.user_id,
-                            profile_image: doc.profile_image === "" ? `/default-users.jpeg` : doc.profile_image,
-                            fullname: doc.fullname,
+                            id: doc.id,
+                            profile_image: doc.profile_image === "" || doc.profile_image === "-" ? `/default-users.jpeg` : doc.profile_image,
+                            name: doc.name,
                             email: doc.email,
                             phone_number: doc.phone_number,
                             company_id: doc.company_id,
                             company_name: doc.company_name,
-                            status: doc.is_enabled
+                            is_enabled: doc.is_enabled
                         })
                     })
                 }
@@ -373,34 +412,84 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
         })
             .then(res => res.json())
             .then(res2 => {
-                const c = res2.data.members
+                const c = modifData(res2.data.members)
+                var selectedClient = {}
+                const recursiveSearchClient = (doc, key) => {
+                    for (var i = 0; i < doc.length; i++) {
+                        if (doc[i].id === key) {
+                            selectedClient = doc[i]
+                        }
+                        else {
+                            if (doc[i].children) {
+                                recursiveSearchClient(doc[i].children, key)
+                            }
+                        }
+                    }
+                }
+                recursiveSearchClient(c, Number(company_id1))
+                setdefasset(selectedClient.key)
                 setdatacompany(c)
+                setdatarawloading(false)
             })
     }, [])
     useEffect(() => {
         setloadinglokasi(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations${asalcompanyvalue !== null ? `?company_id=${asalcompanyvalue}` : ``}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations${location_id1 !== "" ? `?company_id=${company_id1}` : ``}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
-                // 'Content-Type': 'application/json'
             },
-            // body: JSON.stringify({
-            //     company_id: Number(asalcompanyvalue)
-            // })
         })
             .then(res => res.json())
             .then(res2 => {
-                if (asalcompanyvalue !== null) {
+                if (location_id1 !== "") {
                     res2.data.children ? setdatalokasi(res2.data.children) : setdatalokasi([])
                     setloadinglokasi(false)
+                    var selectedBranchClient = {}
+                    const recursiveSearchBranchClient = (doc, key) => {
+                        for (var i = 0; i < doc.length; i++) {
+                            if (doc[i].id === key) {
+                                selectedBranchClient = doc[i]
+                            }
+                            else {
+                                if (doc[i].children) {
+                                    recursiveSearchBranchClient(doc[i].children, key)
+                                }
+                            }
+                        }
+                    }
+                    res2.data.children ? recursiveSearchBranchClient(res2.data.children, Number(location_id1)) : selectedBranchClient = null
+                    res2.data.children ? setdefasset2(selectedBranchClient.key) : setdefasset2(null)
                 }
                 else {
                     setdatalokasi([])
+                    company_id1 === "" ? setloadinglokasi(true) : setloadinglokasi(false)
                 }
+                setdatarawloading2(false)
             })
+    }, [])
+    useEffect(() => {
+        if (asallokasitrigger !== -1) {
+            setloadinglokasi(true)
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations${asalcompanyvalue !== null ? `?company_id=${asalcompanyvalue}` : ``}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                },
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    if (asalcompanyvalue !== null) {
+                        res2.data.children ? setdatalokasi(res2.data.children) : setdatalokasi([])
+                        setloadinglokasi(false)
+                    }
+                    else {
+                        setdatalokasi([])
+                        setloadinglokasi(false)
+                    }
+                })
+        }
     }, [asallokasitrigger])
-
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
             <>
@@ -411,13 +500,13 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                     {
                         // [117].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                         <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
-                            <Link href={{
+                            {/* <Link href={{
                                 pathname: '/admin/requesters/create',
-                            }}>
-                                <Button size="large" type="primary">
-                                    Tambah
-                                </Button>
-                            </Link>
+                            }}> */}
+                            <Button onClick={() => { console.log(asalcompanyfilteract, company_id1, asalcompanyvalue); console.log(asallokasifilteract, location_id1, asallokasivalue); }} size="large" type="primary">
+                                Tambah
+                            </Button>
+                            {/* </Link> */}
                         </div>
                     }
                 </div>
@@ -427,53 +516,105 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                         <div className="md:col-span-5 col-span-1 flex flex-col py-3">
                             <div className="flex mb-8">
                                 <div className=" w-10/12 mr-1 grid grid-cols-9">
-                                    <div className="col-span-3 mr-1">
-                                        <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari nama requester" onChange={onChangeSearch} allowClear></Input>
-                                    </div>
-                                    <div className="col-span-2 mr-1">
-                                        <Select placeholder="Pilih asal perusahaan requester" style={{ width: `100%`, marginRight: `0.5rem` }} onChange={onChangeAsalCompany} allowClear>
-                                            {
-                                                datacompany.map((doc, idx) => {
-                                                    return (
-                                                        <Select.Option value={doc.company_id}>{doc.company_name}</Select.Option>
-                                                    )
-                                                })
-                                            }
-                                        </Select>
-                                    </div>
-                                    <div className="col-span-2 mr-1">
-                                        <TreeSelect allowClear
-                                            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                            treeData={datalokasi}
-                                            placeholder="Cari asal lokasi requester"
-                                            treeDefaultExpandAll
-                                            style={{ width: `100%`, marginRight: `0.5rem` }}
-                                            onChange={onChangeAsalLokasi}
-                                            disabled={loadinglokasi}
-                                        />
-                                    </div>
-                                    <div className="col-span-2 mr-1">
-                                        <Select placeholder="Pilih status requester" style={{ width: `100%`, marginRight: `0.5rem` }} onChange={onChangeStatus} allowClear>
-                                            <Select.Option value={true}>Aktif</Select.Option>
-                                            <Select.Option value={false}>Non Aktif</Select.Option>
-                                        </Select>
-                                    </div>
+                                    {
+                                        datarawloading ?
+                                            null
+                                            :
+                                            <div className="col-span-3 mr-1">
+                                                <Input defaultValue={name1} style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari nama requester" onChange={onChangeSearch} allowClear></Input>
+                                            </div>
+                                    }
+                                    {
+                                        datarawloading ?
+                                            null
+                                            :
+                                            <div className="col-span-2 mr-1">
+                                                {/* <Select defaultValue={company_id1 === "null" ? null : Number(defasset)} placeholder="Pilih asal perusahaan requester" style={{ width: `100%`, marginRight: `0.5rem` }} onChange={onChangeAsalCompany} allowClear>
+                                                    {
+                                                        datacompany.map((doc, idx) => {
+                                                            return (
+                                                                <Select.Option value={doc.company_id}>{doc.company_name}</Select.Option>
+                                                            )
+                                                        })
+                                                    }
+                                                </Select> */}
+                                                <TreeSelect defaultValue={company_id1 === "null" || company_id1 === "" ? null : Number(defasset)} allowClear
+                                                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                                    treeData={datacompany}
+                                                    placeholder="Cari asal perusahaan requester"
+                                                    treeDefaultExpandAll
+                                                    style={{ width: `100%`, marginRight: `0.5rem` }}
+                                                    onChange={onChangeAsalCompany}
+                                                />
+                                            </div>
+                                    }
+                                    {
+                                        datarawloading2 ?
+                                            null
+                                            :
+                                            <div className="col-span-2 mr-1">
+                                                <TreeSelect defaultValue={location_id1 === "" ? null : (defasset2 === null ? defasset2 : Number(defasset2))} allowClear
+                                                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                                    treeData={datalokasi}
+                                                    placeholder="Cari asal lokasi requester"
+                                                    treeDefaultExpandAll
+                                                    style={{ width: `100%`, marginRight: `0.5rem` }}
+                                                    onChange={onChangeAsalLokasi}
+                                                    disabled={loadinglokasi}
+                                                />
+                                            </div>
+                                    }
+                                    {
+                                        datarawloading ?
+                                            null
+                                            :
+                                            <div className="col-span-2 mr-1">
+                                                <Select defaultValue={is_enabled1 === "" ? null : (is_enabled1 === "true" ? true : false)} placeholder="Pilih status requester" style={{ width: `100%`, marginRight: `0.5rem` }} onChange={onChangeStatus} allowClear>
+                                                    <Select.Option value={true}>Aktif</Select.Option>
+                                                    <Select.Option value={false}>Non Aktif</Select.Option>
+                                                </Select>
+                                            </div>
+                                    }
                                 </div>
-                                <div className="w-2/12">
-                                    <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
-                                    {/* <Button style={{ width: `40%` }} onClick={() => { setDataSource(dataraw) }}>Reset</Button> */}
-                                </div>
+                                {
+                                    datarawloading ?
+                                        null
+                                        :
+                                        <div className="w-2/12">
+                                            <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
+                                            {/* <Button style={{ width: `40%` }} onClick={() => { setDataSource(dataraw) }}>Reset</Button> */}
+                                        </div>
+                                }
                             </div>
-                            <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} loading={datarawloading}
+                            <Table pagination={{
+                                pageSize: 10, total: rawdata.total, onChange: (page, pageSize) => {
+                                    setpraloading(true)
+                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList?page=${page}&rows=10&name=${name1}&company_id=${location_id1 === "" ? company_id1 : location_id1}${is_enabled1 === "" ? "" : `&is_enabled=${is_enabled1}`}`, {
+                                        // fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
+                                        method: `GET`,
+                                        headers: {
+                                            'Authorization': JSON.parse(initProps),
+                                        },
+                                    })
+                                        .then(res => res.json())
+                                        .then(res2 => {
+                                            setrawdata(res2.data)
+                                            setdisplaydata(res2.data.data)
+                                            setdisplaydata2(res2.data.data)
+                                            setdisplaydata3(res2.data.data)
+                                            setpraloading(false)
+                                        })
+                                }
+                            }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} loading={datarawloading}
                                 onRow={(record, rowIndex) => {
                                     return {
                                         onMouseOver: (event) => {
-                                            setrowstate(record.user_id)
+                                            setrowstate(record.id)
                                         },
                                         onClick: (event) => {
                                             {
                                                 // [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                                rt.push(`/admin/requesters/detail/${record.user_id}`)
+                                                rt.push(`/admin/requesters/detail/${record.id}`)
                                                 // :
                                                 // null
                                             }
@@ -482,7 +623,7 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                                 }}
                                 rowClassName={(record, idx) => {
                                     return (
-                                        record.user_id === rowstate ? `cursor-pointer` : ``
+                                        record.id === rowstate ? `cursor-pointer` : ``
                                     )
                                 }}
                             // onRow={(record, rowIndex) => {

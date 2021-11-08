@@ -120,13 +120,12 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
     // })
     const [data1, setData1] = useState({
         id: "",
-        fullname: "",
+        name: "",
         role: "",
         phone_number: "",
         profile_image: `/default-users.jpeg`
     })
     const [dataemail, setdataemail] = useState("")
-    const [idrole, setidrole] = useState(0)
     const [namarole, setnamarole] = useState("")
     const [patharr, setpatharr] = useState([])
     const [isenabled, setisenabled] = useState(false)
@@ -366,22 +365,21 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
             .then(res => res.json())
             .then(res2 => {
                 var temp = {
-                    id: res2.data.user_id,
-                    fullname: res2.data.fullname,
-                    role: res2.data.role,
+                    id: res2.data.id,
+                    name: res2.data.name,
+                    role: res2.data.roles,
                     phone_number: res2.data.phone_number,
-                    profile_image: res2.data.profile_image === "" ? `/default-users.jpeg` : res2.data.profile_image
+                    profile_image: res2.data.profile_image === "" || res2.data.profile_image === "-" ? `/default-users.jpeg` : res2.data.profile_image
                 }
                 setisenabled(res2.data.is_enabled)
                 setData1(temp)
                 setdataemail(res2.data.email)
-                setidrole(res2.data.feature_roles[0])
                 var pathArr = rt.pathname.split("/").slice(1)
                 pathArr.splice(2, 1)
-                pathArr[pathArr.length - 1] = `Detail Profil Requester - ` + res2.data.fullname
+                pathArr[pathArr.length - 1] = `Detail Profil Requester - ` + res2.data.name
                 setpatharr(pathArr)
-                setorigincomp(res2.data.company.company_name)
-                return res2.data.feature_roles[0]
+                setorigincomp(res2.data.company.name)
+                return res2.data.roles
             })
             .then(val => {
                 fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
@@ -393,9 +391,9 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                     .then(res => res.json())
                     .then(res2 => {
                         const selectedrole = res2.data.filter((dataa) => {
-                            return dataa.id === val
-                        })[0]
-                        setnamarole(selectedrole ? selectedrole.name : "-")
+                            return val.map(docmap => docmap.id).indexOf(dataa.id) !== -1
+                        }).map(docmap => docmap.name)
+                        setnamarole(selectedrole ? selectedrole.join(", ") : "-")
                         setpraloading(false)
                     })
             })
@@ -435,7 +433,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                                 {
                                     // [115].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <div className="w-full h-auto">
-                                        <Button disabled={praloading} type="primary" onClick={() => { rt.push(`/admin/requesters/password/${data1.id}?name=${data1.fullname}`) }}>Ubah Password</Button>
+                                        <Button disabled={praloading} type="primary" onClick={() => { rt.push(`/admin/requesters/password/${data1.id}?name=${data1.name}`) }}>Ubah Password</Button>
                                     </div >
                                 }
                                 {
@@ -453,7 +451,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                             <Tabs.TabPane tab="Overview" key={`overview`}>
                                 <div className="shadow-lg flex flex-col rounded-md w-11/12 h-auto p-4 mb-5">
                                     <div className="border-b border-black p-4 font-semibold mb-5 flex">
-                                        <div className=" mr-3 md:mr-5 pt-1">{data1.fullname}</div>
+                                        <div className=" mr-3 md:mr-5 pt-1">{data1.name}</div>
                                         {
                                             // [114].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                             <div className="pt-1">
@@ -514,7 +512,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                                                 : */}
                                             <div className="col-span-1 flex flex-col mb-5">
                                                 <h1 className="font-semibold text-sm">Nama Lengkap:</h1>
-                                                <h1 className="text-sm font-normal text-black">{data1.fullname}</h1>
+                                                <h1 className="text-sm font-normal text-black">{data1.name}</h1>
                                             </div>
                                             {/* }
                                     </Form.Item> */}
@@ -593,7 +591,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                             <Tabs.TabPane tab="Overview" key={`overview`}>
                                 <div className="shadow-lg flex flex-col rounded-md w-11/12 h-auto p-4 mb-5">
                                     <div className="border-b border-black p-4 font-semibold mb-5 flex">
-                                        <div className=" mr-3 md:mr-5 pt-1">{data1.fullname}</div>
+                                        <div className=" mr-3 md:mr-5 pt-1">{data1.name}</div>
                                         {
                                             // [114].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                             <div className="pt-1">
@@ -654,7 +652,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                                                 : */}
                                             <div className="col-span-1 flex flex-col mb-5">
                                                 <h1 className="font-semibold text-sm">Nama Lengkap:</h1>
-                                                <h1 className="text-sm font-normal text-black">{data1.fullname}</h1>
+                                                <h1 className="text-sm font-normal text-black">{data1.name}</h1>
                                             </div>
                                             {/* }
                                     </Form.Item> */}
@@ -769,7 +767,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                         cancelText="Tidak"
                         okButtonProps={{ loading: loadingubahaktif }}
                     >
-                        Apakah anda yakin ingin menon-aktifkan akun requester <strong>{data1.fullname}</strong>?
+                        Apakah anda yakin ingin menon-aktifkan akun requester <strong>{data1.name}</strong>?
                     </Modal>
                     <Modal
                         title="Konfirmasi untuk mengakaktifkan akun"
@@ -780,7 +778,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                         cancelText="Tidak"
                         okButtonProps={{ loading: loadingubahnonaktif }}
                     >
-                        Apakah anda yakin ingin mengaktifkan akun requester <strong>{data1.fullname}</strong>?`
+                        Apakah anda yakin ingin mengaktifkan akun requester <strong>{data1.name}</strong>?`
                     </Modal>
                     <Modal
                         title="Konfirmasi untuk menghapus akun Requester"
@@ -791,7 +789,7 @@ function RequestersDetail({ initProps, dataProfile, dataDetailRequester, userid,
                         cancelText="Tidak"
                         okButtonProps={{ loading: loadinghapus }}
                     >
-                        Apakah anda yakin ingin menghapus akun requester <strong>{data1.fullname}</strong>?`
+                        Apakah anda yakin ingin menghapus akun requester <strong>{data1.name}</strong>?`
                     </Modal>
                     {/* <Modal
                         title="Ubah Password"

@@ -141,20 +141,20 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
             .then(res => res.json())
             .then(res2 => {
                 var temp = {
-                    id: res2.data.user_id,
-                    fullname: res2.data.fullname,
+                    id: res2.data.id,
+                    fullname: res2.data.name,
                     role: res2.data.role,
                     phone_number: res2.data.phone_number,
-                    profile_image: res2.data.profile_image === "" ? `/default-users.jpeg` : res2.data.profile_image,
+                    profile_image: res2.data.profile_image === "" || res2.data.profile_image === "-" ? `/default-users.jpeg` : res2.data.profile_image,
                     email: res2.data.email,
-                    feature_roles: res2.data.feature_roles
+                    role_ids: res2.data.roles.map(docmap => docmap.id)
                 }
                 setData1(temp)
                 // setdatarole({ ...datarole, account_id: res2.data.user_id })
-                setidrole(res2.data.feature_roles)
+                setidrole(res2.data.roles.map(docmap => docmap.id))
                 var pathArr = rt.pathname.split("/").slice(1)
                 pathArr.splice(3, 1)
-                pathArr[pathArr.length - 1] = `Ubah Profil Agent - ` + res2.data.fullname
+                pathArr[pathArr.length - 1] = `Ubah Profil Agent - ` + res2.data.name
                 setpatharr(pathArr)
                 setcompanyid(res2.data.company_id)
                 setpreloading(false)

@@ -8,18 +8,46 @@ import { SearchOutlined } from '@ant-design/icons'
 import { Table, notification, Button, Input, Select, TreeSelect } from 'antd'
 
 function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
+    const rt = useRouter()
+    var location_id1 = "", name1 = "", is_enabled1 = ""
+    const { location_id, name, is_enabled } = rt.query
+    if (location_id) {
+        location_id1 = location_id
+    }
+    if (name) {
+        name1 = name
+    }
+    if (is_enabled) {
+        is_enabled1 = is_enabled
+    }
+    const [rawdata, setrawdata] = useState({
+        current_page: "",
+        data: [],
+        first_page_url: "",
+        from: null,
+        last_page: null,
+        last_page_url: "",
+        next_page_url: "",
+        path: "",
+        per_page: null,
+        prev_page_url: null,
+        to: null,
+        total: null
+    })
     const [dataraw, setdataraw] = useState([])
     // const [dataraw2, setdataraw2] = useState([])
     const [datalokasi, setdatalokasi] = useState([])
     const [datarawloading, setdatarawloading] = useState(false)
     const [dataKK, setDataSource] = useState([]);
     const [rowstate, setrowstate] = useState(0)
-    const [namasearchact, setnamasearchact] = useState(false)
-    const [asallokasifilteract, setasallokasifilteract] = useState(false)
-    const [statusfilteract, setstatusfilteract] = useState(false)
+    const [namasearchact, setnamasearchact] = useState(name1 === "" ? false : true)
+    const [asallokasifilteract, setasallokasifilteract] = useState(location_id1 === "" ? false : true)
+    const [statusfilteract, setstatusfilteract] = useState(is_enabled1 === "" ? false : true)
     const [namavalue, setnamavalue] = useState("")
     const [asallokasivalue, setasallokasivalue] = useState("")
     const [statusvalue, setstatusvalue] = useState("")
+    const [namaasset, setnamaasset] = useState(location_id1)
+    const [defasset, setdefasset] = useState(null)
     // const FilterAll = () => {
     //     setDataSource(dataraw)
     // }
@@ -33,7 +61,6 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
     //     );
     //     setDataSource(filteredData);
     // };
-    const rt = useRouter()
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
@@ -87,7 +114,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         // },
         {
             title: 'Nama',
-            dataIndex: 'fullname',
+            dataIndex: 'name',
             // sorter: (a, b) => a.fullname.localeCompare(b.fullname),
             // sortDirections: ['descend', 'ascend'],
             // render: (text, record, index) => {
@@ -149,13 +176,13 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         },
         {
             title: 'Status',
-            dataIndex: 'status',
+            dataIndex: 'is_enabled',
             render: (text, record, index) => {
                 return {
                     children:
                         <>
                             {
-                                record.status ?
+                                record.is_enabled ?
                                     <div className="rounded-md w-auto h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">Aktif</div>
                                     :
                                     <div className="rounded-md w-auto h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">{"Non-aktif"}</div>
@@ -191,7 +218,8 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
     //filtering
     const onChangeSearch = (e) => {
         if (e.target.value === "") {
-            setDataSource(dataraw)
+            // setDataSource(dataraw)
+            window.location.href = `/admin/agents?name=&location_id=${asallokasifilteract ? location_id1 : ""}&is_enabled=${statusfilteract ? is_enabled1 : ""}`
             setnamasearchact(false)
         }
         else {
@@ -201,7 +229,8 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
     }
     const onChangeAsalLokasi = (value) => {
         if (typeof (value) === 'undefined') {
-            setDataSource(dataraw)
+            // setDataSource(dataraw)
+            window.location.href = `/admin/agents?name=${namasearchact ? name1 : ""}&location_id=&is_enabled=${statusfilteract ? is_enabled1 : ""}`
             setasallokasifilteract(false)
         }
         else {
@@ -211,7 +240,8 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
     }
     const onChangeStatus = (value) => {
         if (typeof (value) === 'undefined') {
-            setDataSource(dataraw)
+            // setDataSource(dataraw)
+            window.location.href = `/admin/agents?name=${namasearchact ? name1 : ""}&location_id=${asallokasifilteract ? location_id1 : ""}&is_enabled=`
             setstatusfilteract(false)
         }
         else {
@@ -220,29 +250,30 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         }
     }
     const onFinalClick = () => {
-        var datatemp = dataraw
-        if (asallokasifilteract) {
-            datatemp = datatemp.filter(flt => {
-                return flt.company_id === asallokasivalue
-            })
-        }
-        if (namasearchact) {
-            datatemp = datatemp.filter(flt => {
-                return flt.fullname.toLowerCase().includes(namavalue.toLowerCase())
-            })
-        }
-        if (statusfilteract) {
-            datatemp = datatemp.filter(flt => {
-                return flt.status === statusvalue
-            })
-        }
-        setDataSource(datatemp)
+        // var datatemp = dataraw
+        // if (asallokasifilteract) {
+        //     datatemp = datatemp.filter(flt => {
+        //         return flt.company_id === asallokasivalue
+        //     })
+        // }
+        // if (namasearchact) {
+        //     datatemp = datatemp.filter(flt => {
+        //         return flt.fullname.toLowerCase().includes(namavalue.toLowerCase())
+        //     })
+        // }
+        // if (statusfilteract) {
+        //     datatemp = datatemp.filter(flt => {
+        //         return flt.status === statusvalue
+        //     })
+        // }
+        // setDataSource(datatemp)
+        window.location.href = `/admin/agents?name=${namasearchact ? (name1 === "" ? namavalue : name1) : ""}&location_id=${asallokasifilteract ? (location_id1 === "" ? asallokasivalue : location_id1) : ""}&is_enabled=${statusfilteract ? (is_enabled1 === "" ? statusvalue : is_enabled1) : ""}`
     }
 
     //useEffect
     useEffect(() => {
         setdatarawloading(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList?name=${name1}&company_id=${location_id1}${is_enabled1 === "" ? "" : `&is_enabled=${is_enabled1}`}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -256,7 +287,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         })
             .then(res => res.json())
             .then(res2 => {
-                setdatarawloading(false)
+                setrawdata(res2.data)
                 var dataDD = []
                 if (!res2) {
                     dataDD = []
@@ -267,16 +298,16 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                     rt.push('/dashboard/admin')
                 }
                 else {
-                    dataDD = res2.data.map((doc, idx) => {
+                    dataDD = res2.data.data.map((doc, idx) => {
                         return ({
                             nomor: idx + 1,
-                            user_id: doc.user_id,
-                            profile_image: doc.profile_image === "" ? `/default-users.jpeg` : doc.profile_image,
-                            fullname: doc.fullname,
+                            id: doc.id,
+                            profile_image: doc.profile_image === "-" || doc.profile_image === "" ? `/default-users.jpeg` : doc.profile_image,
+                            name: doc.name,
                             email: doc.email,
                             phone_number: doc.phone_number,
                             company_name: doc.company_name,
-                            status: doc.is_enabled,
+                            is_enabled: doc.is_enabled,
                             company_id: doc.company_id
                         })
                     })
@@ -295,7 +326,24 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         })
             .then(res => res.json())
             .then(res2 => {
+                var selectedBranchCompany = {}
+                const recursiveSearchBranchCompany = (doc, key) => {
+                    for (var i = 0; i < doc.length; i++) {
+                        if (doc[i].id === key) {
+                            selectedBranchCompany = doc[i]
+                        }
+                        else {
+                            if (doc[i].children) {
+                                recursiveSearchBranchCompany(doc[i].children, key)
+                            }
+                        }
+                    }
+                }
+                recursiveSearchBranchCompany(res2.data.children, Number(namaasset))
+                console.log(selectedBranchCompany)
+                setdefasset(selectedBranchCompany.key)
                 setdatalokasi([res2.data])
+                setdatarawloading(false)
             })
     }, [])
     return (
@@ -313,7 +361,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                             }}>
                                 <Button size="large" type="primary">
                                     Tambah
-                            </Button>
+                                </Button>
                             </Link>
                         </div>
                     }
@@ -405,52 +453,75 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                                     Z
                             </button>
                             </div> */}
-                            <div className="flex mb-8">
-                                <div className=" w-10/12 mr-1 grid grid-cols-6">
-                                    <div className="col-span-3 mr-1">
-                                        <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari nama agent" onChange={onChangeSearch} allowClear></Input>
+                            {
+                                datarawloading ?
+                                    null
+                                    :
+                                    <div className="flex mb-8">
+                                        <div className=" w-10/12 mr-1 grid grid-cols-6">
+                                            <div className="col-span-3 mr-1">
+                                                <Input defaultValue={name1} style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari nama agent" onChange={onChangeSearch} allowClear></Input>
+                                            </div>
+                                            <div className="col-span-2 mr-1">
+                                                <TreeSelect defaultValue={location_id1 === "" ? null : Number(defasset)} allowClear
+                                                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                                    treeData={datalokasi}
+                                                    placeholder="Cari asal lokasi agent"
+                                                    treeDefaultExpandAll
+                                                    style={{ width: `100%`, marginRight: `0.5rem` }}
+                                                    onChange={onChangeAsalLokasi}
+                                                />
+                                            </div>
+                                            <div className="col-span-1 mr-1">
+                                                <Select defaultValue={is_enabled1 === "" ? null : (is_enabled1 === "true" ? true : false)} placeholder="Pilih status agent" style={{ width: `100%`, marginRight: `0.5rem` }} onChange={onChangeStatus} allowClear>
+                                                    <Select.Option value={true}>Aktif</Select.Option>
+                                                    <Select.Option value={false}>Non Aktif</Select.Option>
+                                                </Select>
+                                            </div>
+                                        </div>
+                                        <div className="w-2/12">
+                                            <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
+                                            {/* <Button style={{ width: `40%` }} onClick={() => { setDataSource(dataraw) }}>Reset</Button> */}
+                                        </div>
                                     </div>
-                                    <div className="col-span-2 mr-1">
-                                        <TreeSelect allowClear
-                                            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                            treeData={datalokasi}
-                                            placeholder="Cari asal lokasi agent"
-                                            treeDefaultExpandAll
-                                            style={{ width: `100%`, marginRight: `0.5rem` }}
-                                            onChange={onChangeAsalLokasi}
-                                        />
-                                    </div>
-                                    <div className="col-span-1 mr-1">
-                                        <Select placeholder="Pilih status agent" style={{ width: `100%`, marginRight: `0.5rem` }} onChange={onChangeStatus} allowClear>
-                                            <Select.Option value={true}>Aktif</Select.Option>
-                                            <Select.Option value={false}>Non Aktif</Select.Option>
-                                        </Select>
-                                    </div>
-                                </div>
-                                <div className="w-2/12">
-                                    <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
-                                    {/* <Button style={{ width: `40%` }} onClick={() => { setDataSource(dataraw) }}>Reset</Button> */}
-                                </div>
-                            </div>
-                            <Table pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} loading={datarawloading}
+                            }
+                            <Table pagination={{
+                                pageSize: 10, total: rawdata.total, onChange: (page, pageSize) => {
+                                    setpraloading(true)
+                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList?page=${page}&rows=10&name=${name1}&company_id=${location_id1}${is_enabled1 === "" ? "" : `&is_enabled=${is_enabled1}`}}`, {
+                                        method: `GET`,
+                                        headers: {
+                                            'Authorization': JSON.parse(initProps),
+                                        },
+                                    })
+                                        .then(res => res.json())
+                                        .then(res2 => {
+                                            setrawdata(res2.data)
+                                            setdisplaydata(res2.data.data)
+                                            setdisplaydata2(res2.data.data)
+                                            setdisplaydata3(res2.data.data)
+                                            setpraloading(false)
+                                        })
+                                }
+                            }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} loading={datarawloading}
                                 onRow={(record, rowIndex) => {
                                     return {
                                         onMouseOver: (event) => {
-                                            setrowstate(record.user_id)
+                                            setrowstate(record.id)
                                         },
                                         onClick: (event) => {
                                             {
                                                 // [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                                    rt.push(`/admin/agents/detail/${record.user_id}`)
-                                                    // :
-                                                    // null
+                                                rt.push(`/admin/agents/detail/${record.id}`)
+                                                // :
+                                                // null
                                             }
                                         }
                                     }
                                 }}
                                 rowClassName={(record, idx) => {
                                     return (
-                                        record.user_id === rowstate ? `cursor-pointer` : ``
+                                        record.id === rowstate ? `cursor-pointer` : ``
                                     )
                                 }}
                             ></Table>

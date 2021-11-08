@@ -96,8 +96,8 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
         },
         {
             title: 'Jumlah Anggota',
-            dataIndex: 'member',
-            key: 'member',
+            dataIndex: 'users_count',
+            key: 'users_count',
             align: `center`,
             // render(text, record, index) {
             //     return {

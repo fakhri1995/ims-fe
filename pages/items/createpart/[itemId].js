@@ -14,9 +14,33 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
     const pathArr = rt.pathname.split("/").slice(1)
     pathArr.splice(2, 1)
     pathArr[pathArr.length - 1] = "Tambah Item Part"
-    const { name } = rt.query
+    var asset_id1 = "", model_id1 = "", name1 = ""
+    const { asset_id, model_id, name } = rt.query
+    if (asset_id) {
+        asset_id1 = asset_id
+    }
+    if (model_id) {
+        model_id1 = model_id
+    }
+    if (name) {
+        name1 = name
+    }
 
     //useState
+    const [rawdata, setrawdata] = useState({
+        current_page: "",
+        data: [],
+        first_page_url: "",
+        from: null,
+        last_page: null,
+        last_page_url: "",
+        next_page_url: "",
+        path: "",
+        per_page: null,
+        prev_page_url: null,
+        to: null,
+        total: null
+    })
     const [displaydata, setdisplaydata] = useState([])
     const [displaydata2, setdisplaydata2] = useState([])
     const [displaydata3, setdisplaydata3] = useState([])
@@ -53,13 +77,14 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
         companies: []
     })
     const [listselectedpart, setlistselectedpart] = useState([])
-    const [namasearchact, setnamasearchact] = useState(false)
+    const [namasearchact, setnamasearchact] = useState(name1 === "" ? false : true)
     const [namavalue, setnamavalue] = useState("")
-    const [assettypefilteract, setassettypefilteract] = useState(false)
+    const [assettypefilteract, setassettypefilteract] = useState(asset_id1 === "" ? false : true)
     const [assettypevalue, setassettypevalue] = useState("")
-    const [namaasset, setnamaasset] = useState("")
-    const [modelfilteract, setmodelfilteract] = useState(false)
+    const [modelfilteract, setmodelfilteract] = useState(model_id1 === "" ? false : true)
     const [modelvalue, setmodelvalue] = useState("")
+    const [namaasset, setnamaasset] = useState(asset_id1)
+    const [defasset, setdefasset] = useState(null)
     const [assetdata, setassetdata] = useState([])
     const [rowstate, setrowstate] = useState(0)
     const [praloading, setpraloading] = useState(true)
@@ -83,11 +108,27 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
             title: 'Model',
             dataIndex: 'model_name',
             key: 'model_name',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.model_inventory.name}
+                        </>
+                }
+            }
         },
         {
             title: 'Asset Type',
             dataIndex: 'asset_name',
             key: 'asset_name',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.model_inventory.asset.name}
+                        </>
+                }
+            }
         },
     ]
     const recursiveGetParentId = (id, tree) => {
@@ -223,7 +264,8 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
     //search nama
     const onChangeSearch = (e) => {
         if (e.target.value === "") {
-            setdisplaydata(displaydata3)
+            // setdisplaydata(displaydata3)
+            window.location.href = `/items/createpart/${itemid}?asset_id=${assettypefilteract ? asset_id1 : ""}&model_id=${modelfilteract ? model_id1 : ""}&name=`
             setnamasearchact(false)
         }
         else {
@@ -234,7 +276,8 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
     //search asset type
     const onChangeAssetType = (id) => {
         if (typeof (id) === 'undefined') {
-            setdisplaydata(displaydata3)
+            // setdisplaydata(displaydata3)
+            window.location.href = `/items/createpart/${itemid}?asset_id=&model_id=${modelfilteract ? model_id1 : ""}&name=${namasearchact ? name1 : ""}`
             setassettypefilteract(false)
         }
         else {
@@ -245,7 +288,8 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
     //search model
     const onChangeModel = (idmodel) => {
         if (typeof (idmodel) === 'undefined') {
-            setdisplaydata(displaydata3)
+            // setdisplaydata(displaydata3)
+            window.location.href = `/items/createpart/${itemid}?asset_id=${assettypefilteract ? asset_id1 : ""}&model_id=&name=${namasearchact ? name1 : ""}`
             setmodelfilteract(false)
         }
         else {
@@ -254,23 +298,21 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
         }
     }
     const onFinalClick = () => {
-        var datatemp = displaydata2
-        if (assettypefilteract) {
-            // const t = recursiveSearchPartFromAsset(datatemp, assettypevalue)
-            recursiveSearchPartFromAsset(datatemp, assettypevalue)
-            datatemp = assetPart
-        }
-        if (modelfilteract) {
-            // const t = recursiveSearchPartFromModel(datatemp, modelvalue)
-            recursiveSearchPartFromModel(datatemp, modelvalue)
-            datatemp = modelPart
-        }
-        if (namasearchact) {
-            // const t = recursiveSearchPartFromName(datatemp, namavalue)
-            recursiveSearchPartFromName(datatemp, namavalue)
-            datatemp = namePart
-        }
-        setdisplaydata(datatemp)
+        // var datatemp = displaydata2
+        // if (assettypefilteract) {
+        //     recursiveSearchPartFromAsset(datatemp, assettypevalue)
+        //     datatemp = assetPart
+        // }
+        // if (modelfilteract) {
+        //     recursiveSearchPartFromModel(datatemp, modelvalue)
+        //     datatemp = modelPart
+        // }
+        // if (namasearchact) {
+        //     recursiveSearchPartFromName(datatemp, namavalue)
+        //     datatemp = namePart
+        // }
+        // setdisplaydata(datatemp)
+        window.location.href = `/items/createpart/${itemid}?asset_id=${assettypefilteract ? (asset_id1 === "" ? assettypevalue : asset_id1) : ""}&model_id=${modelfilteract ? (model_id1 === "" ? modelvalue : model_id1) : ""}&name=${namasearchact ? (name1 === "" ? namavalue : name1) : ""}`
     }
     const handleAddItemPart = () => {
         setloadingadd(true)
@@ -304,7 +346,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryAddable`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryAddable?asset_id=${asset_id1}&model_id=${model_id1}&name=${name1}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -312,13 +354,14 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
         })
             .then(res => res.json())
             .then(res2 => {
+                setrawdata(res2.data)
                 const recursiveChangetoChildren = (rsc) => {
                     var res = []
                     for (var i = 0; i < rsc.length; i++) {
                         rsc[i].key = rsc[i].id
                         rsc[i].title = rsc[i].inventory_name
-                        rsc[i].children = rsc[i].inventory_parts
-                        delete rsc[i].inventory_parts
+                        rsc[i].children = rsc[i].inventory_addable_parts
+                        delete rsc[i].inventory_addable_parts
                         if (rsc[i].children.length !== 0) {
                             res.push({
                                 ...rsc[i],
@@ -334,7 +377,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                     }
                     return res
                 }
-                const t = recursiveChangetoChildren(res2.data)
+                const t = recursiveChangetoChildren(res2.data.data)
                 setdisplaydata(t)
                 setdisplaydata2(t)
                 setdisplaydata3(t)
@@ -350,6 +393,21 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
         })
             .then(res => res.json())
             .then(res2 => {
+                var selectedAsset = {}
+                const recursiveSearchAsset = (doc, key) => {
+                    for (var i = 0; i < doc.length; i++) {
+                        if (doc[i].id === key) {
+                            selectedAsset = doc[i]
+                        }
+                        else {
+                            if (doc[i].children) {
+                                recursiveSearchAsset(doc[i].children, key)
+                            }
+                        }
+                    }
+                }
+                recursiveSearchAsset(res2.data, Number(namaasset))
+                setdefasset(selectedAsset.key)
                 setassetdata(res2.data)
             })
     }, [])
@@ -385,10 +443,10 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                     <div className="flex mb-8">
                         <div className=" w-full mr-1 grid grid-cols-12">
                             <div className="col-span-5 mr-1">
-                                <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Nama Model" onChange={onChangeSearch} allowClear></Input>
+                                <Input defaultValue={name1} style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Nama Model" onChange={onChangeSearch} allowClear></Input>
                             </div>
                             <div className="col-span-3 mr-1">
-                                <Select placeholder="Model" style={{ width: `100%` }} allowClear onChange={(value) => {
+                                <Select defaultValue={model_id1 === "" ? null : Number(model_id1)} placeholder="Model" style={{ width: `100%` }} allowClear onChange={(value) => {
                                     if (typeof (value) === 'undefined') {
                                         onChangeModel()
                                     }
@@ -406,7 +464,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                                 </Select>
                             </div>
                             <div className="col-span-3 mr-1">
-                                <TreeSelect allowClear
+                                <TreeSelect defaultValue={namaasset === "" ? null : Number(defasset)} allowClear
                                     dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                                     treeData={assetdata}
                                     placeholder="Cari Asset Type"
@@ -456,7 +514,48 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                             },
                             checkStrictly: true
                         }}
-                        pagination={{ pageSize: 9 }} scroll={{ x: 200 }} dataSource={displaydata} columns={columnsTable} loading={praloading}
+                        pagination={{
+                            pageSize: 10, total: rawdata.total, onChange: (page, pageSize) => {
+                                setpraloading(true)
+                                fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryAddable?page=${page}&rows=10&asset_id=${asset_id1}&model_id=${model_id1}&name=${name1}`, {
+                                    method: `GET`,
+                                    headers: {
+                                        'Authorization': JSON.parse(initProps),
+                                    },
+                                })
+                                    .then(res => res.json())
+                                    .then(res2 => {
+                                        setrawdata(res2.data)
+                                        const recursiveChangetoChildren = (rsc) => {
+                                            var res = []
+                                            for (var i = 0; i < rsc.length; i++) {
+                                                rsc[i].key = rsc[i].id
+                                                rsc[i].title = rsc[i].inventory_name
+                                                rsc[i].children = rsc[i].inventory_addable_parts
+                                                delete rsc[i].inventory_addable_parts
+                                                if (rsc[i].children.length !== 0) {
+                                                    res.push({
+                                                        ...rsc[i],
+                                                        children: recursiveChangetoChildren(rsc[i].children)
+                                                    })
+                                                }
+                                                else {
+                                                    delete rsc[i].children
+                                                    res.push({
+                                                        ...rsc[i],
+                                                    })
+                                                }
+                                            }
+                                            return res
+                                        }
+                                        const t = recursiveChangetoChildren(res2.data.data)
+                                        setdisplaydata(t)
+                                        setdisplaydata2(t)
+                                        setdisplaydata3(t)
+                                        setpraloading(false)
+                                    })
+                            }
+                        }} scroll={{ x: 200 }} dataSource={displaydata} columns={columnsTable} loading={praloading}
                         // onRow={(record, rowIndex) => {
                         //     return {
                         //         onMouseOver: (event) => {

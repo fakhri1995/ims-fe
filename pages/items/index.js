@@ -66,7 +66,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     const [assettypefilteract, setassettypefilteract] = useState(asset_id1 === "" ? false : true)
     const [assettypevalue, setassettypevalue] = useState("")
     const [modelfilteract, setmodelfilteract] = useState(model_id1 === "" ? false : true)
-    const [modelvalue, setmodelvalue] = useState("")
+    const [modelvalue, setmodelvalue] = useState(null)
     const [kondisifilteract, setkondisifilteract] = useState(status_condition1 === "" ? false : true)
     const [kondisivalue, setkondisivalue] = useState("")
     const [pemakaianfilteract, setpemakaianfilteract] = useState(status_usage1 === "" ? false : true)
@@ -75,6 +75,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     const [defasset, setdefasset] = useState(null)
     const [rowstate, setrowstate] = useState(0)
     const [praloading, setpraloading] = useState(true)
+    const [modelfilter, setmodelfilter] = useState([])
 
     //3.Define
     const columnsTable = [
@@ -308,6 +309,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
             .then(res => res.json())
             .then(res2 => {
                 setinvrelations(res2.data)
+                setmodelfilter(res2.data.models)
                 setpraloading(false)
             })
     }, [])
@@ -379,12 +381,16 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                                 else {
                                                     onChangeAssetType(extra.allCheckedNodes[0].node.props.id)
                                                     setnamaasset(extra.allCheckedNodes[0].node.props.title)
+                                                    setmodelfilter(prev => {
+                                                        return invrelations.models.filter(docfil => docfil.asset_id === extra.allCheckedNodes[0].node.props.id)
+                                                    })
+                                                    modelvalue !== null ? setmodelvalue(null) : null
                                                 }
                                             }}
                                         />
                                     </div>
                                     <div className="col-span-2 mr-1">
-                                        <Select placeholder="Model" style={{ width: `100%` }} defaultValue={model_id1 === "" ? null : Number(model_id1)} allowClear onChange={(value) => {
+                                        <Select placeholder="Cari Model" style={{ width: `100%` }} value={modelvalue} defaultValue={model_id1 === "" ? null : Number(model_id1)} allowClear onChange={(value) => {
                                             if (typeof (value) === 'undefined') {
                                                 onChangeModel()
                                             }
@@ -393,7 +399,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                             }
                                         }}>
                                             {
-                                                invrelations.models.map((docmodels, idxmodels) => {
+                                                modelfilter.map((docmodels, idxmodels) => {
                                                     return (
                                                         <Select.Option value={docmodels.id}>{docmodels.name}</Select.Option>
                                                     )

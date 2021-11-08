@@ -133,7 +133,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
         asset_id: "",
         name: "",
         description: "",
-        manufacturer_id: "",
+        manufacturer_id: null,
         required_sn: false,
         model_columns: [],
         model_parts: [],
@@ -244,6 +244,14 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
     const [defaultasset, setdefaultasset] = useState([])
     const [fetchingpart, setfetchingpart] = useState(false)
     const [page, setpage] = useState(1)
+    //create manufacturer
+    const [modalmanuf, setmodalmanuf] = useState(false)
+    const [loadingmanuf, setloadingmanuf] = useState(false)
+    const [disabledmanuf, setdisabledmanuf] = useState(true)
+    const [triggermanuf, settriggermanuf] = useState(-1)
+    const [datamanuf, setdatamanuf] = useState({
+        name: ""
+    })
 
     //3.onChange
     const onClickAddField = () => {
@@ -571,6 +579,39 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                 }
             })
     }
+    const handleAddManufacturer = () => {
+        setloadingmanuf(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addManufacturer`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datamanuf)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingmanuf(false)
+                setmodalmanuf(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: "Manufacturer berhasil ditambahkan",
+                        duration: 2
+                    })
+                    setdatamanuf({
+                        ...datamanuf,
+                        name: ""
+                    })
+                    settriggermanuf(prev => prev + 1)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
 
     //5.useEffect
     useEffect(() => {
@@ -596,7 +637,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
             .then(res2 => {
                 setmanufdata(res2.data)
             })
-    }, [])
+    }, [triggermanuf])
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getModel?id=${modelid}`, {
             method: `GET`,
@@ -1089,23 +1130,24 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                             <Input name="name" onChange={(e) => { setnewdata({ ...newdata, name: e.target.value }) }} />
                                         </Form.Item>
                                     </div>
-                                    <Form.Item name="manufacturer_id" label="Manufacturer"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Manufacturer wajib diisi',
-                                            },
-                                        ]}>
-                                        <Select placeholder="Pilih Manufacturer" onChange={(value) => { setnewdata({ ...newdata, manufacturer_id: value }) }} name="manufacturer_id">
-                                            {
-                                                manufdata.map((doc, idx) => {
-                                                    return (
-                                                        <Select.Option key={idx} value={doc.id}>{doc.name}</Select.Option>
-                                                    )
-                                                })
-                                            }
-                                        </Select>
-                                    </Form.Item>
+                                    <div className="flex mb-2">
+                                        <div className=" w-11/12 mr-2">
+                                            <Form.Item name="manufacturer_id" label="Manufacturer">
+                                                <Select placeholder="Pilih Manufacturer" onChange={(value) => { setnewdata({ ...newdata, manufacturer_id: value }) }} name="manufacturer_id">
+                                                    {
+                                                        manufdata.map((doc, idx) => {
+                                                            return (
+                                                                <Select.Option key={idx} value={doc.id}>{doc.name}</Select.Option>
+                                                            )
+                                                        })
+                                                    }
+                                                </Select>
+                                            </Form.Item>
+                                        </div>
+                                        <div className="w-1/12 flex pt-2 my-auto items-center justify-center cursor-pointer" onClick={() => { setmodalmanuf(true) }}>
+                                            <PlusSquareTwoTone style={{ fontSize: `1.5rem` }} />
+                                        </div>
+                                    </div>
                                     <Form.Item name="description" label="Deskripsi">
                                         <Input.TextArea rows={4} name="description" onChange={(e) => { setnewdata({ ...newdata, description: e.target.value }) }} />
                                     </Form.Item>
@@ -2100,22 +2142,22 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                                     }} showSearch optionFilterProp="children" placeholder="Masukkan atau cari nama modul" onChange={(value) => { setcurrentidmodel(value) }} name="id" filterOption={(input, opt) => (
                                                         opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                                     )}
-                                                        // onPopupScroll={(event) => {
-                                                        //     if (event.target.scrollTop + event.target.offsetHeight === event.target.scrollHeight) {
-                                                        //         setpage(prev => prev + 1)
-                                                        //         fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?page=${page}&rows=10`, {
-                                                        //             method: `GET`,
-                                                        //             headers: {
-                                                        //                 'Authorization': JSON.parse(initProps),
-                                                        //             },
-                                                        //         })
-                                                        //             .then(res => res.json())
-                                                        //             .then(res2 => {
-                                                        //                 event.target.scrollTo(0, event.target.scrollHeight)
-                                                        //                 res2.data.to >= res2.data.total ? setmodeldata([...modeldata, res2.data.data]) : setmodeldata([...modeldata, res2.data.data, <Spin size="small" />])
-                                                        //             })
-                                                        //     }
-                                                        // }}
+                                                    // onPopupScroll={(event) => {
+                                                    //     if (event.target.scrollTop + event.target.offsetHeight === event.target.scrollHeight) {
+                                                    //         setpage(prev => prev + 1)
+                                                    //         fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?page=${page}&rows=10`, {
+                                                    //             method: `GET`,
+                                                    //             headers: {
+                                                    //                 'Authorization': JSON.parse(initProps),
+                                                    //             },
+                                                    //         })
+                                                    //             .then(res => res.json())
+                                                    //             .then(res2 => {
+                                                    //                 event.target.scrollTo(0, event.target.scrollHeight)
+                                                    //                 res2.data.to >= res2.data.total ? setmodeldata([...modeldata, res2.data.data]) : setmodeldata([...modeldata, res2.data.data, <Spin size="small" />])
+                                                    //             })
+                                                    //     }
+                                                    // }}
                                                     >
                                                         {
                                                             modeldata.map((doc, idx) => {
@@ -3179,6 +3221,39 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                     }
                     <div className="w-full flex justify-center mt-5">
                         <Button type="dashed" disabled={disabledaddfield2} style={{ width: `80%`, height: `4rem` }} onClick={onClickAddField2}>+ Tambah Spesifikasi Model</Button>
+                    </div>
+                </div>
+            </Modal>
+            <Modal
+                title={
+                    <div className="flex justify-between p-5 mt-5">
+                        <h1 className="font-bold text-xl">Form Tambah Manufacturer</h1>
+                        <div className="flex">
+                            <Button type="default" onClick={() => { setmodalcreatemodel(false) /*console.log(newdata2)*/ }} style={{ marginRight: `1rem` }}>Batal</Button>
+                            <Button type='primary' disabled={disabledmanuf} onClick={handleAddManufacturer} loading={loadingmanuf}>Simpan</Button>
+                        </div>
+                    </div>
+                }
+                visible={modalmanuf}
+                footer={null}
+                onCancel={() => { setmodalmanuf(false) }}
+                width={900}
+            >
+                <div className="flex flex-col mb-3">
+                    <div className="flex flex-col mb-3">
+                        <p className="mb-0">Nama Manufacturer <span className="namamanu"></span></p>
+                        <Input value={datamanuf.name} placeholder="Masukkan Nama Manufacturer" onChange={(e => {
+                            e.target.value === "" ? setdisabledmanuf(true) : setdisabledmanuf(false)
+                            setdatamanuf({ name: e.target.value })
+                        })}></Input>
+                        <style jsx>
+                            {`
+                                .namamanu::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+                        </style>
                     </div>
                 </div>
             </Modal>
