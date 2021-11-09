@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
 import Link from 'next/link'
 import { SearchOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
-import { Button, TreeSelect, Table, Input, Select, Tooltip } from 'antd'
+import { Button, TreeSelect, Table, Input, Select, Tooltip, Spin } from 'antd'
 import Layout from '../../components/layout-dashboard2'
 import st from '../../components/layout-dashboard.module.css'
 
@@ -66,7 +66,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     const [assettypefilteract, setassettypefilteract] = useState(asset_id1 === "" ? false : true)
     const [assettypevalue, setassettypevalue] = useState(null)
     const [modelfilteract, setmodelfilteract] = useState(model_id1 === "" ? false : true)
-    const [modelvalue, setmodelvalue] = useState(null)
+    const [modelvalue, setmodelvalue] = useState(model_id1 === "" ? null : Number(model_id1))
     const [kondisifilteract, setkondisifilteract] = useState(status_condition1 === "" ? false : true)
     const [kondisivalue, setkondisivalue] = useState(null)
     const [pemakaianfilteract, setpemakaianfilteract] = useState(status_usage1 === "" ? false : true)
@@ -75,6 +75,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     const [defasset, setdefasset] = useState(null)
     const [rowstate, setrowstate] = useState(0)
     const [praloading, setpraloading] = useState(true)
+    const [praloading2, setpraloading2] = useState(true)
     const [modelfilter, setmodelfilter] = useState([])
 
     //3.Define
@@ -198,10 +199,20 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     const onChangeAssetType = (id) => {
         if (typeof (id) === 'undefined') {
             // setdisplaydata(displaydata2)
-            window.location.href = `items?asset_id=&model_id=${modelfilteract ? model_id1 : ""}&status_condition=${kondisifilteract ? status_condition1 : ""}&status_usage=${pemakaianfilteract ? status_usage1 : ""}&name=${namasearchact ? name1 : ""}`
+            window.location.href = `items?asset_id=&model_id=&status_condition=${kondisifilteract ? status_condition1 : ""}&status_usage=${pemakaianfilteract ? status_usage1 : ""}&name=${namasearchact ? name1 : ""}`
             setassettypefilteract(false)
         }
         else {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?asset_id=${id}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                }
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    res2.data.length === 0 ? setmodelfilter([]) : setmodelfilter(res2.data.data)
+                })
             setassettypefilteract(true)
             setassettypevalue(id)
         }
@@ -309,8 +320,21 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
             .then(res => res.json())
             .then(res2 => {
                 setinvrelations(res2.data)
-                setmodelfilter(res2.data.models)
+                // setmodelfilter(res2.data.models)
                 setpraloading(false)
+            })
+    }, [])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?asset_id=${asset_id1 === "" ? "" : asset_id1}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                res2.data.length === 0 ? setmodelfilter([]) : setmodelfilter(res2.data.data)
+                setpraloading2(false)
             })
     }, [])
     useEffect(() => {
@@ -338,7 +362,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 recursiveSearchAsset(res2.data, Number(namaasset))
                 setdefasset(selectedAsset.key)
                 setassetdata(res2.data)
-                setpraloading(false)
+                // setpraloading(false)
             })
     }, [])
     return (
@@ -369,7 +393,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                     <div className="col-span-3 mr-1">
                                         <TreeSelect allowClear
                                             dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                            defaultValue={namaasset === "" ? null : defasset}
+                                            defaultValue={asset_id1 === "" ? null : defasset}
                                             treeData={assetdata}
                                             placeholder="Cari Asset Type"
                                             treeDefaultExpandAll
@@ -381,32 +405,40 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                                 else {
                                                     onChangeAssetType(extra.allCheckedNodes[0].node.props.id)
                                                     setnamaasset(extra.allCheckedNodes[0].node.props.title)
-                                                    setmodelfilter(prev => {
-                                                        return invrelations.models.filter(docfil => docfil.asset_id === extra.allCheckedNodes[0].node.props.id)
-                                                    })
+                                                    // setmodelfilter(prev => {
+                                                    //     return invrelations.models.filter(docfil => docfil.asset_id === extra.allCheckedNodes[0].node.props.id)
+                                                    // })
                                                     modelvalue !== null ? setmodelvalue(null) : null
                                                 }
                                             }}
                                         />
                                     </div>
-                                    <div className="col-span-2 mr-1">
-                                        <Select placeholder="Cari Model" style={{ width: `100%` }} value={modelvalue} defaultValue={model_id1 === "" ? null : Number(model_id1)} allowClear onChange={(value) => {
-                                            if (typeof (value) === 'undefined') {
-                                                onChangeModel()
-                                            }
-                                            else {
-                                                onChangeModel(value)
-                                            }
-                                        }}>
-                                            {
-                                                modelfilter.map((docmodels, idxmodels) => {
-                                                    return (
-                                                        <Select.Option value={docmodels.id}>{docmodels.name}</Select.Option>
-                                                    )
-                                                })
-                                            }
-                                        </Select>
-                                    </div>
+                                    {
+                                        praloading2 ?
+                                            <>
+                                                <Spin />
+                                            </>
+                                            :
+                                            <div className="col-span-2 mr-1 flex flex-col">
+                                                <Select disabled={modelfilter.length === 0} placeholder="Cari Model" style={{ width: `100%` }} defaultValue={model_id1 === "" || asset_id1 === "" ? null : Number(model_id1)} allowClear onChange={(value) => {
+                                                    if (typeof (value) === 'undefined') {
+                                                        onChangeModel()
+                                                    }
+                                                    else {
+                                                        onChangeModel(value)
+                                                    }
+                                                }}>
+                                                    {
+                                                        modelfilter.map((docmodels, idxmodels) => {
+                                                            return (
+                                                                <Select.Option value={docmodels.id}>{docmodels.name}</Select.Option>
+                                                            )
+                                                        })
+                                                    }
+                                                </Select>
+                                                {modelfilter.length === 0 && <p className="mb-0 text-red-500 text-sm">Model kosong</p>}
+                                            </div>
+                                    }
                                     <div className="col-span-1 mr-1">
                                         <Select placeholder="Kondisi" style={{ width: `100%` }} defaultValue={status_condition1 === "" ? null : Number(status_condition1)} allowClear onChange={(value) => {
                                             if (typeof (value) === 'undefined') {

@@ -74,6 +74,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
     const [modalfinal, setmodalfinal] = useState(false)
     const [loadingcreate, setloadingcreate] = useState(false)
     const [disabledfield, setdisabledfield] = useState(true)
+    const [fetchingmodel, setfetchingmodel] = useState(false)
+    const [modelfilter, setmodelfilter] = useState([])
     //2.1trigger
     const [emptyfieldpart, setemptyfieldpart] = useState([])
     const [emptyfieldpartmodel, setemptyfieldpartmodel] = useState(0)
@@ -739,6 +741,19 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
             })
     }, [])
     useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterModels`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setmodelfilter(res2.data)
+                setpraloading(false)
+            })
+    },[])
+    useEffect(() => {
         if (emptyfieldparttrigger !== 0) {
             if (emptyfieldpartmodel.enable_part === true) {
                 const bool = searchPart(newdata.inventory_parts, emptyfieldpartmodel.model_id)
@@ -782,15 +797,29 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                         message: 'Model wajib dipilih',
                                     },
                                 ]}>
-                                <Select showSearch optionFilterProp="children" placeholder="Pilih Nama Model" filterOption={(input, opt) => (
+                                <Select showSearch optionFilterProp="children" placeholder="Pilih Nama Model" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
+                                    setfetchingmodel(true)
+                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterModels?name=${value !== "" ? value : ""}`, {
+                                        method: `GET`,
+                                        headers: {
+                                            'Authorization': JSON.parse(initProps),
+                                        },
+                                    })
+                                        .then(res => res.json())
+                                        .then(res2 => {
+                                            setmodelfilter(res2.data)
+                                            setfetchingmodel(false)
+                                        })
+                                }} filterOption={(input, opt) => (
                                     opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                )} onChange={(value) => {
+                                )} onChange={(value, option) => {
                                     setnewdata({ ...newdata, model_id: value })
-                                    const selectedmodel = invrelations.models.filter(docmodel => docmodel.id === value)[0]
-                                    const selectedasset = invrelations.assets.filter(docasset => docasset.id === selectedmodel.asset_id)
-                                    setassetnameitem(selectedasset[0] ? selectedasset[0].name : "")
-                                    const snitemmodel = modeldata.filter(docfilter => docfilter.id === value)
-                                    setsnitem(snitemmodel.length > 0 ? snitemmodel[0].required_sn : false)
+                                    // const selectedmodel = invrelations.models.filter(docmodel => docmodel.id === value)[0]
+                                    // const selectedasset = invrelations.assets.filter(docasset => docasset.id === selectedmodel.asset_id)
+                                    setassetnameitem(option.asset_name)
+                                    // const snitemmodel = modeldata.filter(docfilter => docfilter.id === value)
+                                    // setsnitem(snitemmodel.length > 0 ? snitemmodel[0].required_sn : false)
+                                    setsnitem(option.required_sn)
                                     setloadingspec(true)
                                     setmanuffielditem(false)
                                     fetch(`https://boiling-thicket-46501.herokuapp.com/getModel?id=${value}`, {
@@ -925,8 +954,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                         })
                                 }}>
                                     {
-                                        invrelations.models.map((doc, idx) => (
-                                            <Select.Option value={doc.id}>{doc.name}</Select.Option>
+                                        modelfilter.map((doc, idx) => (
+                                            <Select.Option value={doc.id} asset_name={doc.asset.name} required_sn={doc.required_sn}>{doc.name}</Select.Option>
                                         ))
                                     }
                                 </Select>

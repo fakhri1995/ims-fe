@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
 import Link from 'next/link'
 import { SearchOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
-import { Button, TreeSelect, Table, Input, Select, Modal, notification } from 'antd'
+import { Button, TreeSelect, Table, Input, Select, Modal, notification, Spin } from 'antd'
 import Layout from '../../../components/layout-dashboard'
 import st from '../../../components/layout-dashboard.module.css'
 
@@ -88,9 +88,12 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
     const [assetdata, setassetdata] = useState([])
     const [rowstate, setrowstate] = useState(0)
     const [praloading, setpraloading] = useState(true)
+    const [praloading2, setpraloading2] = useState(true)
     const [modaladd, setmodaladd] = useState(false)
     const [loadingadd, setloadingadd] = useState(false)
     const [disabledadd, setdisabledadd] = useState(true)
+    const [fetchingmodel, setfetchingmodel] = useState(false)
+    const [modelfilter, setmodelfilter] = useState([])
 
     //3.Define
     const columnsTable = [
@@ -179,8 +182,8 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
             if (doc[i].key === key) {
                 selectedPart = doc[i]
             }
-            else{
-                if(doc[i].children){
+            else {
+                if (doc[i].children) {
                     recursiveSearchPart(doc[i].children, key)
                 }
             }
@@ -277,10 +280,20 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
     const onChangeAssetType = (id) => {
         if (typeof (id) === 'undefined') {
             // setdisplaydata(displaydata3)
-            window.location.href = `/items/createpart/${itemid}?asset_id=&model_id=${modelfilteract ? model_id1 : ""}&name=${namasearchact ? name1 : ""}&nama=${nama}`
+            window.location.href = `/items/createpart/${itemid}?asset_id=&model_id=&name=${namasearchact ? name1 : ""}&nama=${nama}`
             setassettypefilteract(false)
         }
         else {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?asset_id=${id}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                }
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    res2.data.length === 0 ? setmodelfilter([]) : setmodelfilter(res2.data.data)
+                })
             setassettypefilteract(true)
             setassettypevalue(id)
         }
@@ -385,6 +398,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
             })
     }, [])
     useEffect(() => {
+        setpraloading2(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
             method: `GET`,
             headers: {
@@ -407,8 +421,10 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                     }
                 }
                 recursiveSearchAsset(res2.data, Number(namaasset))
+                console.log(selectedAsset)
                 setdefasset(selectedAsset.key)
                 setassetdata(res2.data)
+                setpraloading2(false)
             })
     }, [])
     useEffect(() => {
@@ -423,6 +439,18 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                 setinvrelations(res2.data)
             })
     }, [])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterModels`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setmodelfilter(res2.data)
+            })
+    }, [])
     return (
         <Layout dataProfile={dataProfile} sidemenu={sidemenu} tok={initProps} st={st} pathArr={pathArr}>
             <div className="h-20 w-full grid grid-cols-1 md:grid-cols-3 bg-white mb-5 p-4">
@@ -433,7 +461,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                     <Button onClick={() => { rt.push(`/items/detail/${itemid}?active=konfigurasiPart`) /*console.log(listselectedpart)*/ }} style={{ marginRight: `1rem` }} size="middle" type="danger">
                         Batal
                     </Button>
-                    <Button disabled={disabledadd} onClick={()=>{setmodaladd(true)}} size="middle" type="primary">
+                    <Button disabled={disabledadd} onClick={() => { setmodaladd(true) }} size="middle" type="primary">
                         Simpan
                     </Button>
                 </div>
@@ -445,8 +473,48 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                             <div className="col-span-5 mr-1">
                                 <Input defaultValue={name1} style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Nama Model" onChange={onChangeSearch} allowClear></Input>
                             </div>
+                            {
+                                praloading2 ?
+                                    <>
+                                        <Spin />
+                                    </>
+                                    :
+                                    <div className="col-span-3 mr-1">
+                                        <TreeSelect defaultValue={namaasset === "" ? null : defasset} allowClear
+                                            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                            treeData={assetdata}
+                                            placeholder="Cari Asset Type"
+                                            treeDefaultExpandAll
+                                            style={{ width: `100%` }}
+                                            onChange={(value, label, extra) => {
+                                                if (typeof (value) === 'undefined') {
+                                                    onChangeAssetType()
+                                                }
+                                                else {
+                                                    onChangeAssetType(extra.allCheckedNodes[0].node.props.id)
+                                                    setnamaasset(extra.allCheckedNodes[0].node.props.title)
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                            }
                             <div className="col-span-3 mr-1">
-                                <Select defaultValue={model_id1 === "" ? null : Number(model_id1)} placeholder="Model" style={{ width: `100%` }} allowClear onChange={(value) => {
+                                <Select showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
+                                    setfetchingmodel(true)
+                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterModels?name=${value !== "" ? value : ""}`, {
+                                        method: `GET`,
+                                        headers: {
+                                            'Authorization': JSON.parse(initProps),
+                                        },
+                                    })
+                                        .then(res => res.json())
+                                        .then(res2 => {
+                                            setmodelfilter(res2.data)
+                                            setfetchingmodel(false)
+                                        })
+                                }} filterOption={(input, opt) => (
+                                    opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                )} defaultValue={model_id1 === "" ? null : Number(model_id1)} placeholder="Model" style={{ width: `100%` }} allowClear onChange={(value) => {
                                     if (typeof (value) === 'undefined') {
                                         onChangeModel()
                                     }
@@ -455,31 +523,13 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                                     }
                                 }}>
                                     {
-                                        invrelations.models.map((docmodels, idxmodels) => {
+                                        modelfilter.map((docmodels, idxmodels) => {
                                             return (
                                                 <Select.Option value={docmodels.id}>{docmodels.name}</Select.Option>
                                             )
                                         })
                                     }
                                 </Select>
-                            </div>
-                            <div className="col-span-3 mr-1">
-                                <TreeSelect defaultValue={namaasset === "" ? null : Number(defasset)} allowClear
-                                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                    treeData={assetdata}
-                                    placeholder="Cari Asset Type"
-                                    treeDefaultExpandAll
-                                    style={{ width: `100%` }}
-                                    onChange={(value, label, extra) => {
-                                        if (typeof (value) === 'undefined') {
-                                            onChangeAssetType()
-                                        }
-                                        else {
-                                            onChangeAssetType(extra.allCheckedNodes[0].node.props.id)
-                                            setnamaasset(extra.allCheckedNodes[0].node.props.title)
-                                        }
-                                    }}
-                                />
                             </div>
                             <div className=" col-span-1">
                                 <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
@@ -489,21 +539,21 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                     <Table
                         rowSelection={{
                             onChange: (selectedRowKeys, selectedRows) => {
-                                if(selectedRows.length > 0){
+                                if (selectedRows.length > 0) {
                                     setdisabledadd(false)
                                 }
-                                else{
+                                else {
                                     setdisabledadd(true)
                                 }
-                                setnewpartdata({...newpartdata, inventory_part_ids: selectedRows.map(doc=>doc.id)})
+                                setnewpartdata({ ...newpartdata, inventory_part_ids: selectedRows.map(doc => doc.id) })
                                 var listarr = []
                                 selectedRows.forEach((doc, idx) => {
                                     const a = recursiveGetParentKey(doc.key, displaydata3)
-                                    if(typeof(a) !== 'undefined'){
+                                    if (typeof (a) !== 'undefined') {
                                         recursiveSearchPart(displaydata3, a)
                                         listarr.push({ name: doc.inventory_name, parent: selectedPart })
                                     }
-                                    else{
+                                    else {
                                         listarr.push({ name: doc.inventory_name, parent: "" })
                                     }
                                 })
@@ -556,30 +606,30 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                                     })
                             }
                         }} scroll={{ x: 200 }} dataSource={displaydata} columns={columnsTable} loading={praloading}
-                        // onRow={(record, rowIndex) => {
-                        //     return {
-                        //         onMouseOver: (event) => {
-                        //             setrowstate(record.id)
-                        //         },
-                        //         onClick: (event) => {
-                        //             // {
-                        //             //     [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                        //             // rt.push(`/items/detail/${record.id}`)
-                        //             //         :
-                        //             //         null
-                        //             // }
-                        //         }
-                        //     }
-                        // }}
-                        // rowClassName={(record, idx) => {
-                        //     return (
-                        //         record.id === rowstate ? `cursor-pointer` : ``
-                        //     )
-                        // }}
+                    // onRow={(record, rowIndex) => {
+                    //     return {
+                    //         onMouseOver: (event) => {
+                    //             setrowstate(record.id)
+                    //         },
+                    //         onClick: (event) => {
+                    //             // {
+                    //             //     [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                    //             // rt.push(`/items/detail/${record.id}`)
+                    //             //         :
+                    //             //         null
+                    //             // }
+                    //         }
+                    //     }
+                    // }}
+                    // rowClassName={(record, idx) => {
+                    //     return (
+                    //         record.id === rowstate ? `cursor-pointer` : ``
+                    //     )
+                    // }}
                     ></Table>
                 </div>
             </div>
-            <Modal title={<h1 className="font-semibold">Apakah anda yakin untuk menambahkan Item berikut ini menjadi Item Part "{name}"?</h1>}
+            <Modal title={<h1 className="font-semibold">Apakah anda yakin untuk menambahkan Item berikut ini menjadi Item Part "{nama}"?</h1>}
                 visible={modaladd}
                 onCancel={() => { setmodaladd(false) }}
                 okText="Ya"
@@ -591,14 +641,14 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                 <div className="flex flex-col">
                     <div className="flex flex-col mb-4">
                         {
-                            listselectedpart.map((doc,idx)=>{
-                                if(doc.parent !== ""){
-                                    return(
+                            listselectedpart.map((doc, idx) => {
+                                if (doc.parent !== "") {
+                                    return (
                                         <p className="mb-0 text-xs font-semibold">- {doc.name}, sedang menjadi Item Part dari "{doc.parent.inventory_name}"</p>
                                     )
                                 }
-                                else{
-                                    return(
+                                else {
+                                    return (
                                         <p className="mb-0 text-xs font-semibold">- {doc.name}</p>
                                     )
                                 }
@@ -608,8 +658,8 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                     {
                         listselectedpart.some(doc2 => doc2.parent !== "") &&
                         <div className="flex flex-col mb-3">
-                        <p className="text-red-500 mb-0">Dengan menyetujui hal ini, anda akan mengeluarkan item part diatas dari item utama-nya!</p>
-                    </div>
+                            <p className="text-red-500 mb-0">Dengan menyetujui hal ini, anda akan mengeluarkan item part diatas dari item utama-nya!</p>
+                        </div>
                     }
                     <div className="flex flex-col">
                         <p className="mb-0">Notes</p>

@@ -145,7 +145,7 @@ const Overview = ({ itemid, initProps, maindata, manuf, vendor, praloading }) =>
         </div>
     )
 }
-const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading2 }) => {
+const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading2, models, setmodels }) => {
     const rt = useRouter()
 
     //usestate
@@ -212,6 +212,8 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
     const [modalremoved, setmodalremoved] = useState(false)
     const [disabledremoved, setdisabledremoved] = useState(true)
     const [loadingremoved, setloadingremoved] = useState(false)
+    const [fetchingmodel, setfetchingmodel] = useState(false)
+    const [backupmodels, setbackupmodels] = useState(models)
 
     const columns = [
         {
@@ -458,8 +460,19 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
         if (typeof (id) === 'undefined') {
             setdatatable(datatable3)
             setassettypefilteract(false)
+            setmodels(backupmodels)
         }
         else {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?asset_id=${id}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                }
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    res2.data.length === 0 ? setmodels([]) : setmodels(res2.data.data)
+                })
             setassettypefilteract(true)
             setassettypevalue(id)
         }
@@ -593,24 +606,6 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                                 <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Nama Item" onChange={e => onChangeSearch(e)} allowClear></Input>
                             </div>
                             <div className="col-span-3 mr-1">
-                                <Select placeholder="Model" style={{ width: `100%` }} allowClear onChange={(value) => {
-                                    if (typeof (value) === 'undefined') {
-                                        onChangeModel()
-                                    }
-                                    else {
-                                        onChangeModel(value)
-                                    }
-                                }}>
-                                    {
-                                        invrelations.models.map((docmodels, idxmodels) => {
-                                            return (
-                                                <Select.Option value={docmodels.id}>{docmodels.name}</Select.Option>
-                                            )
-                                        })
-                                    }
-                                </Select>
-                            </div>
-                            <div className="col-span-3 mr-1">
                                 <TreeSelect allowClear
                                     dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                                     treeData={assetdata}
@@ -626,6 +621,39 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                                         }
                                     }}
                                 />
+                            </div>
+                            <div className="col-span-3 mr-1">
+                                <Select showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
+                                    setfetchingmodel(true)
+                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterModels?name=${value !== "" ? value : ""}`, {
+                                        method: `GET`,
+                                        headers: {
+                                            'Authorization': JSON.parse(initProps),
+                                        },
+                                    })
+                                        .then(res => res.json())
+                                        .then(res2 => {
+                                            setmodels(res2.data)
+                                            setfetchingmodel(false)
+                                        })
+                                }} filterOption={(input, opt) => (
+                                    opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                )} placeholder="Model" style={{ width: `100%` }} allowClear onChange={(value) => {
+                                    if (typeof (value) === 'undefined') {
+                                        onChangeModel()
+                                    }
+                                    else {
+                                        onChangeModel(value)
+                                    }
+                                }}>
+                                    {
+                                        models.map((docmodels, idxmodels) => {
+                                            return (
+                                                <Select.Option value={docmodels.id}>{docmodels.name}</Select.Option>
+                                            )
+                                        })
+                                    }
+                                </Select>
                             </div>
                             <div className=" col-span-1">
                                 <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
@@ -994,14 +1022,15 @@ const Association = () => {
         </div>
     )
 }
-const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => {
-    const [logs, setlogs] = useState([])
+const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading, activitytrigger }) => {
+    const [daylogs, setdaylogs] = useState([])
+    const [weeklogs, setweeklogs] = useState([])
+    const [morelogs, setmorelogs] = useState([])
     const [praloadinglogs, setpraloadinglogs] = useState(true)
-    const [logs2, setlogs2] = useState([])
-    const [praloadinglogs2, setpraloadinglogs2] = useState(true)
     const [inventories, setinventories] = useState([])
 
     useEffect(() => {
+        setpraloadinglogs(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories`, {
             method: `GET`,
             headers: {
@@ -1011,7 +1040,7 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => 
             .then(res => res.json())
             .then(res2 => {
                 setinventories(res2.data)
-                return res2.data
+                return res2.data.data
             })
             .then(ress => {
                 fetch(`https://boiling-thicket-46501.herokuapp.com/getActivityInventoryLogs?id=${itemid}`, {
@@ -1022,7 +1051,91 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => 
                 })
                     .then(res => res.json())
                     .then(res2 => {
-                        var logsmap = res2.data.inventory.map((doclogs, idxlogs) => {
+                        var daylogsmap = res2.data.day_logs.map((doclogs, idxlogs) => {
+                            const datenew = moment(doclogs.date).locale("id").format('LLL')
+                            var descnew = ''
+                            const desckondisiOld = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.old.status_condition === 1 ? 'Good' : (doclogs.properties.old.status_condition === 2 ? 'Grey' : (doclogs.properties.old.status_condition === 3 ? 'Bad' : null))) : null) : null
+                            const desckondisiBaru = doclogs.properties ? (doclogs.properties.attributes ? (doclogs.properties.attributes.status_condition === 1 ? 'Good' : (doclogs.properties.attributes.status_condition === 2 ? 'Grey' : (doclogs.properties.attributes.status_condition === 3 ? 'Bad' : null))) : null) : null
+                            const descusageOld = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.old.status_usage === 1 ? 'In Used' : (doclogs.properties.old.status_usage === 2 ? 'In Stock' : (doclogs.properties.old.status_usage === 3 ? 'Replacement' : null))) : null) : null
+                            const descusageBaru = doclogs.properties ? (doclogs.properties.attributes ? (doclogs.properties.attributes.status_usage === 1 ? 'In Used' : (doclogs.properties.attributes.status_usage === 2 ? 'In Stock' : (doclogs.properties.attributes.status_usage === 3 ? 'Replacement' : null))) : null) : null
+                            const desc1 = doclogs.description.split(" ")
+                            if (desc1[0] === 'Created') {
+                                if (desc1[2] === "Relationship") {
+                                    desc1[0] === 'Created' ? descnew = descnew + `Penambahan Relationship "${doclogs.properties.attributes.relationship}"` : null
+                                    desc1[0] === 'Deleted' ? descnew = descnew + `Penghapusan Relationship "${doclogs.properties.old.relationship}"` : null
+                                }
+                                else if (doclogs.properties.attributes.list_parts) {
+                                    descnew = descnew + `Inisialisasi Pembuatan Item Part "${ress.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil.id)).map(docmap => docmap.inventory_name).join(", ")}"`
+                                }
+                                else {
+                                    descnew = descnew + `Pembuatan Item Baru bernama "${doclogs.properties.attributes.inventory_name}"`
+                                }
+                            }
+                            desc1[0] === 'Notes' ? descnew = descnew + `Penambahan Notes` : null
+                            if (desc1[0] === 'Updated') {
+                                if (doclogs.properties.attributes.status_condition) {
+                                    descnew = descnew + `Pengubahan status kondisi dari ${desckondisiOld} ke ${desckondisiBaru}`
+                                }
+                                else if (doclogs.properties.attributes.status_usage) {
+                                    descnew = descnew + `Pengubahan status pemakaian dari ${descusageOld} ke ${descusageBaru}`
+                                }
+                                else if (doclogs.properties.attributes.inventory_name) {
+                                    descnew = descnew + `Pengubahan Nama Item dari "${doclogs.properties.old.inventory_name}" ke "${doclogs.properties.attributes.inventory_name}"`
+                                }
+                                else if (doclogs.properties.attributes.serial_number) {
+                                    descnew = descnew + `Pengubahan Serial Number Item dari "${doclogs.properties.old.serial_number}" ke "${doclogs.properties.attributes.serial_number}"`
+                                }
+                                else if (doclogs.properties.attributes.location) {
+                                    descnew = descnew + `Pengubahan Location Item dari "${invrelations.companies.filter(doc => doc.id === doclogs.properties.old.location)[0].name}" ke "${invrelations.companies.filter(doc => doc.id === doclogs.properties.attributes.location)[0].name}"`
+                                }
+                                else if (doclogs.properties.attributes.vendor_id) {
+                                    descnew = descnew + `Pengubahan Vendor Item dari "${invrelations.vendors.filter(doc => doc.id === doclogs.properties.old.vendor_id)[0].name}" ke "${invrelations.vendors.filter(doc => doc.id === doclogs.properties.attributes.vendor_id)[0].name}"`
+                                }
+                                else if (doclogs.properties.attributes.manufacturer_id) {
+                                    descnew = descnew + `Pengubahan Manufacturer Item dari "${invrelations.manufacturers.filter(doc => doc.id === doclogs.properties.old.manufacturer_id)[0].name}" ke "${invrelations.manufacturers.filter(doc => doc.id === doclogs.properties.attributes.manufacturer_id)[0].name}"`
+                                }
+                                else if (doclogs.properties.attributes.deskripsi) {
+                                    descnew = descnew + `Pengubahan Deskripsi Item`
+                                }
+                                else if (doclogs.properties.attributes.list_parts) {
+                                    if (doclogs.notes.split(" ")[1] === "Added") {
+                                        const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.includes(docfil) === false)
+                                        //harusnya make yg ini // descnew = descnew + `Penambahan Item "${ress.filter(docfil => listpartsnew.includes(docfil.id)).map(docmap => docmap.inventory_name).join(", ")}" menjadi Item Part`
+                                        descnew = descnew + `Penambahan Item Part`
+                                    }
+                                    if (doclogs.notes.split(" ")[1] === "Removed") {
+                                        const listpartsnew = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
+                                        //harusnya make yg ini // descnew = descnew + `Pengeluaran Item Part "${ress.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
+                                        descnew = descnew + `Pengeluaran Item Part`
+                                    }
+                                    if (doclogs.notes.split(" ")[1] === "Replaced") {
+                                        const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
+                                        const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.includes(docfil) === false)
+                                        //harusnya make yg ini // descnew = descnew + `Pergantian Item Part "${ress.filter(docfil => listpartsold.includes(docfil.id))[0].inventory_name}" menjadi Item Part "${ress.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
+                                        descnew = descnew + `Pergantian Item Part`
+                                    }
+                                }
+                                else {
+                                    var prpts = []
+                                    for (var prop in doclogs.properties.old) {
+                                        prpts.push(prop)
+                                    }
+                                    descnew = descnew + `Pengubahan "${prpts.join(", ")}" Item`
+                                }
+                            }
+                            if(desc1[0] === "Deleted"){
+                                if (desc1[2] === "Relationship") {
+                                    desc1[0] === 'Created' ? descnew = descnew + `Penambahan Relationship "${doclogs.properties.attributes.relationship}"` : null
+                                    desc1[0] === 'Deleted' ? descnew = descnew + `Penghapusan Relationship "${doclogs.properties.old.relationship}"` : null
+                                }
+                            }
+                            return {
+                                ...doclogs,
+                                date: datenew,
+                                description: descnew,
+                            }
+                        })
+                        var weeklogsmap = res2.data.week_logs.map((doclogs, idxlogs) => {
                             const datenew = moment(doclogs.date).locale("id").format('LLL')
                             var descnew = ''
                             const desckondisiOld = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.old.status_condition === 1 ? 'Good' : (doclogs.properties.old.status_condition === 2 ? 'Grey' : (doclogs.properties.old.status_condition === 3 ? 'Bad' : null))) : null) : null
@@ -1083,16 +1196,13 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => 
                                     var prpts = []
                                     for (var prop in doclogs.properties.old) {
                                         prpts.push(prop)
-                                        // if(doclogs.properties.old[prop].includes("{\"")){
-                                        //     const temp = JSON.parse(doclogs.properties.old[prop])
-                                        // }
-                                        // propOld.push({
-                                        //     attrname: prop,
-                                        //     value: doclogs.properties.old[prop]
-                                        // })
                                     }
                                     descnew = descnew + `Pengubahan "${prpts.join(", ")}" Item`
                                 }
+                            }
+                            if (desc1[2] === "Relationship") {
+                                desc1[0] === 'Created' ? descnew = descnew + `Penambahan Relationship "${doclogs.properties.attributes.relationship}"` : null
+                                desc1[0] === 'Deleted' ? descnew = descnew + `Penghapusan Relationship "${doclogs.properties.old.relationship}"` : null
                             }
                             return {
                                 ...doclogs,
@@ -1100,40 +1210,115 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => 
                                 description: descnew,
                             }
                         })
-                        setlogs(logsmap)
-                        setpraloadinglogs(false)
-                        return res2
-                    })
-                    .then(res3 => {
-                        fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventory?id=${itemid}&type_id=-4`, {
-                            method: `GET`,
-                            headers: {
-                                'Authorization': JSON.parse(initProps),
+                        var morelogsmap = res2.data.else_logs.map((doclogs, idxlogs) => {
+                            const datenew = moment(doclogs.date).locale("id").format('LLL')
+                            var descnew = ''
+                            const desckondisiOld = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.old.status_condition === 1 ? 'Good' : (doclogs.properties.old.status_condition === 2 ? 'Grey' : (doclogs.properties.old.status_condition === 3 ? 'Bad' : null))) : null) : null
+                            const desckondisiBaru = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.attributes.status_condition === 1 ? 'Good' : (doclogs.properties.attributes.status_condition === 2 ? 'Grey' : (doclogs.properties.attributes.status_condition === 3 ? 'Bad' : null))) : null) : null
+                            const descusageOld = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.old.status_usage === 1 ? 'In Used' : (doclogs.properties.old.status_usage === 2 ? 'In Stock' : (doclogs.properties.old.status_usage === 3 ? 'Replacement' : null))) : null) : null
+                            const descusageBaru = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.attributes.status_usage === 1 ? 'In Used' : (doclogs.properties.attributes.status_usage === 2 ? 'In Stock' : (doclogs.properties.attributes.status_usage === 3 ? 'Replacement' : null))) : null) : null
+                            const desc1 = doclogs.description.split(" ")
+                            if (desc1[0] === 'Created') {
+                                if (doclogs.properties.attributes.list_parts) {
+                                    descnew = descnew + `Inisialisasi Pembuatan Item Part "${ress.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil.id)).map(docmap => docmap.inventory_name).join(", ")}"`
+                                }
+                                else {
+                                    descnew = descnew + `Pembuatan Item Baru bernama "${doclogs.properties.attributes.inventory_name}"`
+                                }
+                            }
+                            desc1[0] === 'Notes' ? descnew = descnew + `Penambahan Notes` : null
+                            if (desc1[0] === 'Updated') {
+                                if (doclogs.properties.attributes.status_condition) {
+                                    descnew = descnew + `Pengubahan status kondisi dari ${desckondisiOld} ke ${desckondisiBaru}`
+                                }
+                                else if (doclogs.properties.attributes.status_usage) {
+                                    descnew = descnew + `Pengubahan status pemakaian dari ${descusageOld} ke ${descusageBaru}`
+                                }
+                                else if (doclogs.properties.attributes.inventory_name) {
+                                    descnew = descnew + `Pengubahan Nama Item dari "${doclogs.properties.old.inventory_name}" ke "${doclogs.properties.attributes.inventory_name}"`
+                                }
+                                else if (doclogs.properties.attributes.serial_number) {
+                                    descnew = descnew + `Pengubahan Serial Number Item dari "${doclogs.properties.old.serial_number}" ke "${doclogs.properties.attributes.serial_number}"`
+                                }
+                                else if (doclogs.properties.attributes.location) {
+                                    descnew = descnew + `Pengubahan Location Item dari "${invrelations.companies.filter(doc => doc.id === doclogs.properties.old.location)[0].name}" ke "${invrelations.companies.filter(doc => doc.id === doclogs.properties.attributes.location)[0].name}"`
+                                }
+                                else if (doclogs.properties.attributes.vendor_id) {
+                                    descnew = descnew + `Pengubahan Vendor Item dari "${invrelations.vendors.filter(doc => doc.id === doclogs.properties.old.vendor_id)[0].name}" ke "${invrelations.vendors.filter(doc => doc.id === doclogs.properties.attributes.vendor_id)[0].name}"`
+                                }
+                                else if (doclogs.properties.attributes.manufacturer_id) {
+                                    descnew = descnew + `Pengubahan Manufacturer Item dari "${invrelations.manufacturers.filter(doc => doc.id === doclogs.properties.old.manufacturer_id)[0].name}" ke "${invrelations.manufacturers.filter(doc => doc.id === doclogs.properties.attributes.manufacturer_id)[0].name}"`
+                                }
+                                else if (doclogs.properties.attributes.deskripsi) {
+                                    descnew = descnew + `Pengubahan Deskripsi Item`
+                                }
+                                else if (doclogs.properties.attributes.list_parts) {
+                                    if (doclogs.notes.split(" ")[1] === "Added") {
+                                        const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.includes(docfil) === false)
+                                        descnew = descnew + `Penambahan Item "${ress.filter(docfil => listpartsnew.includes(docfil.id)).map(docmap => docmap.inventory_name).join(", ")}" menjadi Item Part`
+                                    }
+                                    if (doclogs.notes.split(" ")[1] === "Removed") {
+                                        const listpartsnew = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
+                                        descnew = descnew + `Pengeluaran Item Part "${ress.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
+                                    }
+                                    if (doclogs.notes.split(" ")[1] === "Replaced") {
+                                        const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
+                                        const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.includes(docfil) === false)
+                                        descnew = descnew + `Pergantian Item Part "${ress.filter(docfil => listpartsold.includes(docfil.id))[0].inventory_name}" menjadi Item Part "${ress.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
+                                    }
+                                }
+                                else {
+                                    var prpts = []
+                                    for (var prop in doclogs.properties.old) {
+                                        prpts.push(prop)
+                                    }
+                                    descnew = descnew + `Pengubahan "${prpts.join(", ")}" Item`
+                                }
+                            }
+                            if (desc1[2] === "Relationship") {
+                                desc1[0] === 'Created' ? descnew = descnew + `Penambahan Relationship "${doclogs.properties.attributes.relationship}"` : null
+                                desc1[0] === 'Deleted' ? descnew = descnew + `Penghapusan Relationship "${doclogs.properties.old.relationship}"` : null
+                            }
+                            return {
+                                ...doclogs,
+                                date: datenew,
+                                description: descnew,
                             }
                         })
-                            .then(res => res.json())
-                            .then(res4 => {
-                                var concatarr = res4.data.from_inverse.concat(res4.data.not_from_inverse)
-                                var logs2map = res3.data.relationship.map((docrel, idxrel) => {
-                                    const datenew2 = moment(docrel.date).locale("id").format('LLL')
-                                    var descnew2 = ''
-                                    var idlognew = -1
-                                    const desc2 = docrel.description.split(" ")
-                                    desc2[0] === 'Created' ? idlognew = concatarr.filter(docfil => docfil.id === docrel.properties.attributes.id)[0] : null
-                                    desc2[0] === 'Created' ? descnew2 = descnew2 + `Penambahan Relationship "${typeof (idlognew) === 'undefined' ? "(Sudah Dihapus lagi)" : `${idlognew.relationship}`}"` : null
-                                    desc2[0] === 'Deleted' ? descnew2 = descnew2 + `Penghapusan Relationship` : null
-                                    return {
-                                        ...docrel,
-                                        date: datenew2,
-                                        description: descnew2
-                                    }
-                                })
-                                setlogs2(logs2map)
-                                setpraloadinglogs2(false)
-                            })
+                        setdaylogs(daylogsmap); setweeklogs(weeklogsmap); setmorelogs(morelogsmap)
+                        setpraloadinglogs(false)
                     })
+                // .then(res3 => {
+                //     fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventory?id=${itemid}&type_id=-4`, {
+                //         method: `GET`,
+                //         headers: {
+                //             'Authorization': JSON.parse(initProps),
+                //         }
+                //     })
+                //         .then(res => res.json())
+                //         .then(res4 => {
+                //             var concatarr = res4.data.from_inverse.concat(res4.data.not_from_inverse)
+
+                //             var logs2map = res3.data.relationship.map((docrel, idxrel) => {
+                //                 const datenew2 = moment(docrel.date).locale("id").format('LLL')
+                //                 var descnew2 = ''
+                //                 var idlognew = -1
+                //                 const desc2 = docrel.description.split(" ")
+                //                 desc2[0] === 'Created' ? idlognew = concatarr.filter(docfil => docfil.id === docrel.properties.attributes.id)[0] : null
+                //                 desc2[0] === 'Created' ? descnew2 = descnew2 + `Penambahan Relationship "${typeof (idlognew) === 'undefined' ? "(Sudah Dihapus lagi)" : `${idlognew.relationship}`}"` : null
+                //                 desc2[0] === 'Deleted' ? descnew2 = descnew2 + `Penghapusan Relationship` : null
+                //                 return {
+                //                     ...docrel,
+                //                     date: datenew2,
+                //                     description: descnew2
+                //                 }
+                //             })
+                //             setlogs2(logs2map)
+                //             setpraloadinglogs2(false)
+                //         })
+                // })
             })
-    }, [itemid])
+    }, [activitytrigger])
 
     return (
         <div className="flex flex-col">
@@ -1142,47 +1327,77 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading }) => 
             </div>
             <div className="flex">
                 <div className="flex flex-col w-6/12">
-                    <h1 className="font-semibold mx-auto text-lg mb-3">Umum</h1>
+                    <div className="flex flex-col mb-5">
+                        <h1 className="font-semibold mx-auto text-xl mb-3">Hari Ini</h1>
+                        {
+                            praloadinglogs ?
+                                <Spin />
+                                :
+                                daylogs.length < 1 ?
+                                    <>
+                                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                    </>
+                                    :
+                                    <Timeline mode="left">
+                                        {
+                                            daylogs.map((doclog, idxlog) => {
+                                                return (
+                                                    <Timeline.Item label={doclog.date}>
+                                                        <div className="flex flex-col">
+                                                            <h1 className="font-semibold text-base mb-1">{doclog.description}</h1>
+                                                            <p className="mb-1 text-xs text-gray-500">Oleh {doclog.causer_name}</p>
+                                                            <p className="mb-1 text-sm">Notes: {doclog.notes}</p>
+                                                        </div>
+                                                    </Timeline.Item>
+                                                )
+                                            })
+                                        }
+                                    </Timeline>
+                        }
+                    </div>
+                    <div className="flex flex-col mb-5">
+                        <h1 className="font-semibold mx-auto text-xl mb-3">Minggu Ini</h1>
+                        {
+                            praloadinglogs ?
+                                <Spin />
+                                :
+                                weeklogs.length < 1 ?
+                                    <>
+                                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                    </>
+                                    :
+                                    <Timeline mode="left">
+                                        {
+                                            weeklogs.map((doclog, idxlog) => {
+                                                return (
+                                                    <Timeline.Item label={doclog.date}>
+                                                        <div className="flex flex-col">
+                                                            <h1 className="font-semibold text-base mb-1">{doclog.description}</h1>
+                                                            <p className="mb-1 text-xs text-gray-500">Oleh {doclog.causer_name}</p>
+                                                            <p className="mb-1 text-sm">Notes: {doclog.notes}</p>
+                                                        </div>
+                                                    </Timeline.Item>
+                                                )
+                                            })
+                                        }
+                                    </Timeline>
+                        }
+                    </div>
+                </div>
+                <div className="flex flex-col w-6/12">
+                    <h1 className="font-semibold mx-auto text-xl mb-3">Minggu Lalu</h1>
                     {
                         praloadinglogs ?
                             <Spin />
                             :
-                            logs.length < 1 ?
+                            morelogs.length < 1 ?
                                 <>
                                     <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                                 </>
                                 :
                                 <Timeline mode="left">
                                     {
-                                        logs.map((doclog, idxlog) => {
-                                            return (
-                                                <Timeline.Item label={doclog.date}>
-                                                    <div className="flex flex-col">
-                                                        <h1 className="font-semibold text-base mb-1">{doclog.description}</h1>
-                                                        <p className="mb-1 text-xs text-gray-500">Oleh {doclog.causer_name}</p>
-                                                        <p className="mb-1 text-sm">Notes: {doclog.notes}</p>
-                                                    </div>
-                                                </Timeline.Item>
-                                            )
-                                        })
-                                    }
-                                </Timeline>
-                    }
-                </div>
-                <div className="flex flex-col w-6/12">
-                    <h1 className="font-semibold mx-auto text-lg mb-3">Relationship</h1>
-                    {
-                        praloadinglogs2 ?
-                            <Spin />
-                            :
-                            logs2.length < 1 ?
-                                <>
-                                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                                </>
-                                :
-                                <Timeline mode="left">
-                                    {
-                                        logs2.map((doclog, idxlog) => {
+                                        morelogs.map((doclog, idxlog) => {
                                             return (
                                                 <Timeline.Item label={doclog.date}>
                                                     <div className="flex flex-col">
@@ -1278,7 +1493,10 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
         status_condition: [],
         status_usage: [],
         vendors: [],
-        companies: []
+        companies: [],
+        tree_companies: {
+            children: []
+        }
     })
     const [relship, setrelship] = useState([])
     const [manuf, setmanuf] = useState("")
@@ -1314,9 +1532,11 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
     const [loadingusage, setloadingusage] = useState(false)
     const [agents, setagents] = useState([])
     const [requesters, setrequesters] = useState([])
+    const [models, setmodels] = useState([])
     const [locations, setlocations] = useState([])
     const [locationsdisplay, setlocationsdisplay] = useState(false)
     const [locationtrigger, setlocationtrigger] = useState(-1)
+    const [activitytrigger, setactivitytrigger] = useState(0)
 
     //helper
 
@@ -1504,17 +1724,25 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
             })
     }, [])
     useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterModels`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setmodels(res2.data)
+            })
+    }, [])
+    useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
-            // body: {
-            //     page: 1,
-            //     rows: 50,
-            //     order_by: "asc"
-            // }
         })
             .then(res => res.json())
             .then(res2 => {
@@ -1527,11 +1755,6 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
             headers: {
                 'Authorization': JSON.parse(initProps),
             },
-            // body: {
-            //     page: 1,
-            //     rows: 50,
-            //     order_by: "asc"
-            // }
         })
             .then(res => res.json())
             .then(res2 => {
@@ -1583,11 +1806,11 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                         null
                                         :
                                         <>
-                                            <div className="flex flex-col mr-7 rounded border p-2">
+                                            <div className="flex flex-col mr-7 p-2">
                                                 <p className="mb-1">Status Pemakaian:</p>
                                                 {
                                                     displayusage ?
-                                                        <Select placeholder="Masukkan Status Pemakaian" bordered={false} defaultValue={maindata.status_usage === 0 || maindata.status_usage === null ? null : maindata.status_usage} onChange={(value) => {
+                                                        <Select style={{ width: `10rem` }} placeholder="Masukkan Status Pemakaian" defaultValue={maindata.status_usage === 0 || maindata.status_usage === null ? null : maindata.status_usage} onChange={(value) => {
                                                             setdisabledusage(prev => {
                                                                 if (value !== 1) {
                                                                     return false
@@ -1611,11 +1834,11 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                                         null
                                                 }
                                             </div>
-                                            <div className="flex flex-col rounded border p-2">
+                                            <div className="flex flex-col p-2">
                                                 <p className="mb-1">Kondisi:</p>
                                                 {
                                                     displaykondisi ?
-                                                        <Select placeholder="Masukkan Status Kondisi" bordered={false} defaultValue={maindata.status_condition === 0 || maindata.status_condition === null ? null : maindata.status_condition} onChange={(value) => {
+                                                        <Select style={{ width: `10rem` }} placeholder="Masukkan Status Kondisi" defaultValue={maindata.status_condition === 0 || maindata.status_condition === null ? null : maindata.status_condition} onChange={(value) => {
                                                             setkondisi(value);
                                                             setmodalkondisi(true)
                                                             setdisplaykondisi(false)
@@ -1655,12 +1878,16 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                 </div>
                 <div className="col-span-1 md:col-span-4 mb-8">
                     <div className=" hidden md:block">
-                        <Tabs tabPosition={`left`} defaultActiveKey={activeTab}>
+                        <Tabs tabPosition={`left`} defaultActiveKey={activeTab} onTabClick={(key, e) => {
+                            if (key === "activity") {
+                                setactivitytrigger(prev => prev + 1)
+                            }
+                        }}>
                             <TabPane tab="Overview" key={`overview`}>
                                 <Overview itemid={itemid} initProps={initProps} maindata={maindata} manuf={manuf} vendor={vendor} praloading={praloading} />
                             </TabPane>
                             <TabPane tab="Konfigurasi Part" key={`konfigurasiPart`}>
-                                <KonfigurasiPart itemid={itemid} initProps={initProps} maindata={maindata} invrelations={invrelations} praloading2={praloading2} />
+                                <KonfigurasiPart itemid={itemid} initProps={initProps} maindata={maindata} invrelations={invrelations} praloading2={praloading2} models={models} setmodels={setmodels} />
                             </TabPane>
                             <TabPane tab="Relationship" key={`relationship`}>
                                 <Relationship itemid={itemid} initProps={initProps} maindata={maindata} />
@@ -1668,8 +1895,8 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                             <TabPane tab="Association" key={`association`}>
                                 <Association itemid={itemid} initProps={initProps} />
                             </TabPane>
-                            <TabPane disabled tab="Activity" key={`activity`}>
-                                <Acitivty itemid={itemid} initProps={initProps} maindata={maindata} invrelations={invrelations} />
+                            <TabPane tab="Activity" key={`activity`}>
+                                <Acitivty itemid={itemid} initProps={initProps} maindata={maindata} invrelations={invrelations} activitytrigger={activitytrigger} />
                             </TabPane>
                         </Tabs>
                     </div>
@@ -1679,7 +1906,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                 <Overview itemid={itemid} initProps={initProps} maindata={maindata} manuf={manuf} vendor={vendor} praloading={praloading} />
                             </TabPane>
                             <TabPane tab="Konfigurasi Part" key={`konfigurasiPart`}>
-                                <KonfigurasiPart itemid={itemid} initProps={initProps} maindata={maindata} invrelations={invrelations} praloading2={praloading2} />
+                                <KonfigurasiPart itemid={itemid} initProps={initProps} maindata={maindata} invrelations={invrelations} praloading2={praloading2} models={models} setmodels={setmodels} />
                             </TabPane>
                             <TabPane tab="Relationship" key={`relationship`}>
                                 <Relationship itemid={itemid} initProps={initProps} maindata={maindata} />
@@ -1687,8 +1914,8 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                             <TabPane tab="Association" key={`association`}>
                                 <Association itemid={itemid} initProps={initProps} />
                             </TabPane>
-                            <TabPane disabled tab="Activity" key={`activity`}>
-                                <Acitivty itemid={itemid} initProps={initProps} maindata={maindata} invrelations={invrelations} />
+                            <TabPane tab="Activity" key={`activity`}>
+                                <Acitivty itemid={itemid} initProps={initProps} maindata={maindata} invrelations={invrelations} activitytrigger={activitytrigger} />
                             </TabPane>
                         </Tabs>
                     </div>
