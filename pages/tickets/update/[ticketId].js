@@ -192,7 +192,7 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                     requester_id: res2.data.ticket.requester.id === 0 ? null : res2.data.ticket.requester.id,
                     raised_at: res2.data.ticket.original_raised_at,
                     closed_at: res2.data.ticket.closed_at,
-                    product_type: res2.data.ticket.ticketable.product_type,
+                    product_type: res2.data.ticket.ticketable.product_type.id,
                     product_id: res2.data.ticket.ticketable.product_id,
                     pic_name: res2.data.ticket.ticketable.pic_name,
                     pic_contact: res2.data.ticket.ticketable.pic_contact,
@@ -304,8 +304,6 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                             <span className="raisedBy"></span>
                                             <p className="mb-0 ml-1">Lokasi Pembuat</p>
                                         </div>
-                                        {/* <TreeSelect disabled placeholder="Lokasi Pembuat" treeData={[ticketrelations.companies.data]} value={reqlocation} defaultValue={reqlocation} treeDefaultExpandAll onChange={(value, label, extra) => {
-                                        }} /> */}
                                         <div className="w-full rounded-sm flex items-center justify-between bg-gray-100 border p-2 h-8">
                                             <p className="mb-0">{reqlocation}</p>
                                             <DownOutlined style={{ color: `rgb(213,214,196)` }} />
