@@ -19,7 +19,7 @@ function AgentPassword({ initProps, dataProfile, sidemenu, userid }) {
 
     //useState
     const [datapass, setdatapass] = useState({
-        user_id: Number(userid),
+        id: Number(userid),
         new_password: ''
     })
     const [loadingubahpass, setloadingubahpass] = useState(false)
@@ -37,7 +37,7 @@ function AgentPassword({ initProps, dataProfile, sidemenu, userid }) {
         else {
             setloadingubahpass(true)
             fetch(`https://boiling-thicket-46501.herokuapp.com/changeAgentPassword`, {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Authorization': JSON.parse(tok),
                     'Content-Type': 'application/json'
@@ -46,20 +46,19 @@ function AgentPassword({ initProps, dataProfile, sidemenu, userid }) {
             })
                 .then(res => res.json())
                 .then(res2 => {
+                    setloadingubahpass(false)
                     if (res2.success) {
                         notification['success']({
                             message: res2.message,
                             duration: 3
                         })
                         setTimeout(() => {
-                            setloadingubahpass(false)
                             rt.push(`/admin/agents/detail/${userid}`)
                         }, 500)
                     }
                     else if (!res2.success) {
-                        setVisibleubahpass(false)
                         notification['error']({
-                            message: res2.message.errorInfo.status_detail,
+                            message: res2.message,
                             duration: 3
                         })
                     }

@@ -77,6 +77,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     const [praloading, setpraloading] = useState(true)
     const [praloading2, setpraloading2] = useState(true)
     const [modelfilter, setmodelfilter] = useState([])
+    const [fetchingmodel, setfetchingmodel] = useState(false)
 
     //3.Define
     const columnsTable = [
@@ -203,7 +204,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
             setassettypefilteract(false)
         }
         else {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?asset_id=${id}`, {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?rows=100&asset_id=${id}`, {
                 method: `GET`,
                 headers: {
                     'Authorization': JSON.parse(initProps),
@@ -325,7 +326,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
             })
     }, [])
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?asset_id=${asset_id1 === "" ? "" : asset_id1}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?rows=50&asset_id=${asset_id1 === "" ? "" : asset_id1}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -420,7 +421,22 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                             </>
                                             :
                                             <div className="col-span-2 mr-1 flex flex-col">
-                                                <Select disabled={modelfilter.length === 0} placeholder="Cari Model" style={{ width: `100%` }} defaultValue={model_id1 === "" || asset_id1 === "" ? null : Number(model_id1)} allowClear onChange={(value) => {
+                                                <Select showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
+                                                    setfetchingmodel(true)
+                                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterModels?name=${value !== "" ? value : ""}`, {
+                                                        method: `GET`,
+                                                        headers: {
+                                                            'Authorization': JSON.parse(initProps),
+                                                        },
+                                                    })
+                                                        .then(res => res.json())
+                                                        .then(res2 => {
+                                                            setmodelfilter(res2.data)
+                                                            setfetchingmodel(false)
+                                                        })
+                                                }} filterOption={(input, opt) => (
+                                                    opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                                )} disabled={modelfilter.length === 0} placeholder="Cari Model" style={{ width: `100%` }} defaultValue={model_id1 === "" || asset_id1 === "" ? null : Number(model_id1)} allowClear onChange={(value) => {
                                                     if (typeof (value) === 'undefined') {
                                                         onChangeModel()
                                                     }

@@ -19,7 +19,7 @@ function RequestersPassword({ initProps, dataProfile, sidemenu, userid }) {
 
     //useState
     const [datapass, setdatapass] = useState({
-        user_id: Number(userid),
+        id: Number(userid),
         new_password: ''
     })
     const [loadingubahpass, setloadingubahpass] = useState(false)

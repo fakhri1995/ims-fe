@@ -463,7 +463,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
             setmodels(backupmodels)
         }
         else {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?asset_id=${id}`, {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?rows=100&asset_id=${id}`, {
                 method: `GET`,
                 headers: {
                     'Authorization': JSON.parse(initProps),
@@ -638,7 +638,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                                         })
                                 }} filterOption={(input, opt) => (
                                     opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                )} placeholder="Model" style={{ width: `100%` }} allowClear onChange={(value) => {
+                                )} placeholder="Cari Model" style={{ width: `100%` }} allowClear onChange={(value) => {
                                     if (typeof (value) === 'undefined') {
                                         onChangeModel()
                                     }
