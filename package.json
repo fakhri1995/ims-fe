@@ -13,6 +13,7 @@
     "axios": "^0.21.1",
     "babel-plugin-import": "^1.13.3",
     "cookie": "^0.4.1",
+    "daisyui": "^1.16.2",
     "flickity": "^2.2.2",
     "js-cookie": "^2.2.1",
     "moment": "^2.29.1",

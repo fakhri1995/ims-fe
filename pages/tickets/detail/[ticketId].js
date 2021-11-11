@@ -44,7 +44,28 @@ const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations, 
                         :
                         <div className="flex">
                             <Button type="default" onClick={(e) => { rt.push(`/tickets/update/${ticketid}`) }} style={{ marginRight: `1rem` }} size="large">Edit</Button>
-                            <Button type="primary" className="buttonExport" onClick={(e) => { setmodalexporting(true) }} size="large">Export</Button>
+                            <Button type="primary" loading={loadingexporting} className="buttonExport" onClick={(e) => {
+                                setloadingexporting(true)
+                                fetch(`https://boiling-thicket-46501.herokuapp.com/downloadTicket?id=${ticketid}`, {
+                                    method: `GET`,
+                                    headers: {
+                                        'Authorization': JSON.parse(initProps)
+                                    }
+                                })
+                                    .then(res => res.blob())
+                                    .then(res2 => {
+                                        var newBlob = new Blob([res2], { type: "application/pdf" })
+                                        const data = window.URL.createObjectURL(newBlob);
+                                        var link = document.createElement('a');
+                                        link.href = data;
+                                        link.download = "file.pdf";
+                                        link.click();
+                                        setTimeout(function () {
+                                            window.URL.revokeObjectURL(data);
+                                        })
+                                        setloadingexporting(false)
+                                    })
+                            }} size="large">Export</Button>
                         </div>
                 }
             </div>
@@ -107,7 +128,7 @@ const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations, 
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Lokasi Problem:</h1>
-                                <p className="mb-0 mr-2 text-sm">{maindata.ticket.ticketable.location.id === 0 ? "-" : maindata.ticket.ticketable.location.name}</p>
+                                <p className="mb-0 mr-2 text-sm">{maindata.ticket.ticketable.location.id === 0 ? "-" : maindata.ticket.ticketable.location.full_name}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Waktu Kejadian:</h1>
@@ -822,7 +843,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
     }, [])
     useEffect(() => {
         if (engineergrouptrigger !== -1) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getAssignToList?assignable_type=${to === true ? 1 : 2}`, {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getAssignToList?assignable_type=${to === true ? 1 : 0}`, {
                 method: `GET`,
                 headers: {
                     'Authorization': JSON.parse(initProps)

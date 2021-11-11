@@ -136,7 +136,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     children:
                         <>
                             {/* {ticketrelations.companies.filter(docfil => docfil.company_id === record.location)[0].company_name} */}
-                            {record.ticketable.location === null ? "-" : record.ticketable.location.name}
+                            {record.ticketable.location === null ? "-" : record.ticketable.location.full_name}
                         </>
                 }
             }

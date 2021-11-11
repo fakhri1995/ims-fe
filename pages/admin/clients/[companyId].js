@@ -247,7 +247,7 @@ function ClientsDetailProfile({ dataProfile, tok, companyid }) {
                     // </div>
                 }
             </div>
-            <div className="grid grid-cols-1 sm:grid-col-3 md:grid-cols-5 mb-4">
+            <div className=" w-9/12 p-5 grid grid-cols-1 sm:grid-col-3 md:grid-cols-5 mb-4 rounded-md shadow-md border">
                 <div className="p-3 relative col-span-1 sm:col-span-1 md:col-span-1 flex flex-col items-center">
                     <img src={data1.image_logo} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
                     {editable ?
@@ -255,7 +255,7 @@ function ClientsDetailProfile({ dataProfile, tok, companyid }) {
                             <label className="custom-file-upload py-2 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3">
                                 <input type="file" style={{ display: `none` }} name="profile_image" onChange={onChangeEditProfileFoto} />
                                 {loadingfoto ? <LoadingOutlined /> : <EditOutlined style={{ fontSize: `1.2rem` }} />}
-                                    Ganti Foto
+                                Ganti Foto
                             </label>
                         </>
                         :
@@ -763,7 +763,7 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, data1, tok }) 
     }, [data1, hapustrigger])
     return (
         <div id="locationsDetailMigWrapper">
-            <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-8">
+            <div className="flex justify-start md:justify-end md:p-3 md:border-t-2 md:border-b-2 bg-white my-4 md:mb-5">
                 <div className="flex space-x-2">
                     {/* <Link href={`/admin/company/locations/new?parent=&companyId=${dataDetailCompany.data.company_id}`}> */}
                     {/* <Button type="primary" size="middle" onClick={() => { setdrawablecreate(true); setfrominduk(false) }}>Tambah</Button> */}
@@ -772,8 +772,8 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, data1, tok }) 
                 </div>
             </div>
             <div className="p-5">
-                <h1 className="text-sm font-semibold">Pilih Parent terakhir</h1>
-                <Input style={{ marginBottom: 8 }} placeholder="Cari Lokasi" onChange={onChangeFilterLoc} allowClear />
+                {/* <h1 className="text-sm font-semibold">Pilih Parent terakhir</h1> */}
+                <Input style={{ marginBottom: `1.25rem` }} placeholder="Cari Lokasi" onChange={onChangeFilterLoc} allowClear />
                 {
                     praloading ?
                         <>
@@ -785,53 +785,58 @@ function ClientsDetailLocations({ dataProfile, dataDetailCompany, data1, tok }) 
                                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                             </>
                             :
-                            <Tree
-                                onExpand={onExpand}
-                                expandedKeys={expandedKeys}
-                                autoExpandParent={autoExpandParent}
-                                treeData={loop(datalocationclient)}
-                                filterTreeNode={filterTreeNode}
-                                titleRender={(nodeData) => (
-                                    <>
-                                        <div className={`flex justify-between hover:bg-blue-100 text-black`}
-                                        // onMouseOver={() => {
-                                        //     var d = document.getElementById(`node${nodeData.key}`)
-                                        //     d.classList.add("flex")
-                                        //     d.classList.remove("hidden")
-                                        // }}
-                                        // onMouseLeave={() => {
-                                        //     var e = document.getElementById(`node${nodeData.key}`)
-                                        //     e.classList.add("hidden")
-                                        //     e.classList.remove("flex")
-                                        // }}
-                                        >
-                                            <div className=" w-full">
-                                                {nodeData.title}
-                                            </div>
-                                            {/* <div className={`hidden mx-2`} id={`node${nodeData.key}`}> */}
-                                            {/* <Link href={`/admin/company/locations/new?parent=${nodeData.id}&companyId=${dataDetailCompany.data.company_id}`}> */}
-                                            {
-                                                // [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                                                //                                                 <a className="mx-2 pb-1" onClick={(e) => { rt.push(`/admin/company/clients/locations/new?parent=${nodeData.id}&frominduk=1`) }} alt="add"><PlusOutlined /></a>
-                                                // <a className="mx-2 pb-1" onClick={(e) => { setdrawablecreate(true); setdefvalparent(nodeData.id); setfrominduk(true) }} alt="add"><PlusOutlined /></a>
-                                            }
-                                            {/* </Link> */}
-                                            {/* {
+                            <div className="w-9/12 border rounded-md shadow-md p-5">
+                                <Tree
+                                    showLine={{
+                                        showLeafIcon: false
+                                    }}
+                                    onExpand={onExpand}
+                                    expandedKeys={expandedKeys}
+                                    autoExpandParent={autoExpandParent}
+                                    treeData={loop(datalocationclient)}
+                                    filterTreeNode={filterTreeNode}
+                                    titleRender={(nodeData) => (
+                                        <>
+                                            <div className={`flex justify-between hover:bg-blue-100 text-black`}
+                                            // onMouseOver={() => {
+                                            //     var d = document.getElementById(`node${nodeData.key}`)
+                                            //     d.classList.add("flex")
+                                            //     d.classList.remove("hidden")
+                                            // }}
+                                            // onMouseLeave={() => {
+                                            //     var e = document.getElementById(`node${nodeData.key}`)
+                                            //     e.classList.add("hidden")
+                                            //     e.classList.remove("flex")
+                                            // }}
+                                            >
+                                                <div className=" w-full">
+                                                    {nodeData.title}
+                                                </div>
+                                                {/* <div className={`hidden mx-2`} id={`node${nodeData.key}`}> */}
+                                                {/* <Link href={`/admin/company/locations/new?parent=${nodeData.id}&companyId=${dataDetailCompany.data.company_id}`}> */}
+                                                {
+                                                    // [152].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                                    //                                                 <a className="mx-2 pb-1" onClick={(e) => { rt.push(`/admin/company/clients/locations/new?parent=${nodeData.id}&frominduk=1`) }} alt="add"><PlusOutlined /></a>
+                                                    // <a className="mx-2 pb-1" onClick={(e) => { setdrawablecreate(true); setdefvalparent(nodeData.id); setfrominduk(true) }} alt="add"><PlusOutlined /></a>
+                                                }
+                                                {/* </Link> */}
+                                                {/* {
                                                 [151, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                                 <Link href={`/admin/company/clients/locations/${nodeData.id}?parent=${nodeData.title}&edit=1&cancel=${dataDetailCompany.data.company_id}`}>
                                                     <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
                                                 </Link>
                                             } */}
-                                            {/* <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("API is not available") }} onCancel={() => { message.error("Gagal dihapus") }}>
+                                                {/* <Popconfirm title="Yakin hapus lokasi?" onConfirm={() => { message.success("API is not available") }} onCancel={() => { message.error("Gagal dihapus") }}>
                                         <a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a>
                                     </Popconfirm> */}
-                                            {/* </div> */}
-                                        </div>
-                                    </>
-                                )
-                                }
-                                blockNode={true}
-                            />
+                                                {/* </div> */}
+                                            </div>
+                                        </>
+                                    )
+                                    }
+                                    blockNode={true}
+                                />
+                            </div>
                 }
             </div>
             <Modal
