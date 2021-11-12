@@ -1025,7 +1025,7 @@ export async function getServerSideProps({ req, res }) {
             dataProfile,
             // dataListModules,
             // dataListFeatures,
-            sidemenu: "432"
+            sidemenu: "72"
         },
     }
 }

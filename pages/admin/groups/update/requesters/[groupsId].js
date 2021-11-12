@@ -291,7 +291,7 @@ export async function getServerSideProps({ req, res, params }) {
             dataProfile,
             dataListAccount,
             dataDetailGroup,
-            sidemenu: "423"
+            sidemenu: "63"
         },
     }
 }

@@ -1,0 +1,52 @@
+/* MENU */
+/* selected menu bg */
+.ant-menu-item-selected{
+    background-color: #d8e8da !important;
+}
+
+/* selected menu title */
+.ant-menu-item-selected a  {
+    color:  #35763B !important;
+}
+
+/* selected menu title hover */
+.ant-menu-item-selected a:hover{
+    color: #65976a !important;
+}
+
+/* menu title hover */
+.ant-menu-light .ant-menu-item a:hover{
+    color: #65976a;
+}
+
+/* after menu */
+.ant-menu-inline .ant-menu-item::after{
+    border-right: 3px solid #35763B;
+}
+
+
+
+/* SUBMENU */
+/* submenu bg dan submenu title */
+.ant-menu-submenu-selected{
+    color: #35763B;
+    background-color: #d8e8da;
+}
+
+/* submenu title hover */
+.ant-menu-submenu-active, .ant-menu-light .ant-menu-submenu-title:hover {
+    color: #65976a;
+}
+
+/* arrow */
+.ant-menu-submenu-arrow{
+    color: #35763B;
+}
+
+/* arrow hover */
+.ant-menu-submenu:hover > .ant-menu-submenu-title > .ant-menu-submenu-arrow{
+    color: #65976a;
+}
+
+
+

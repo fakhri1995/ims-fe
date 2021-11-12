@@ -934,7 +934,7 @@ export async function getServerSideProps({ req, params }) {
         props: {
             initProps,
             dataProfile,
-            sidemenu: "451",
+            sidemenu: "81",
             assettypeid
         },
     }

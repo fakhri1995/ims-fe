@@ -4,7 +4,7 @@ import Link from 'next/link'
 import UserOutlined from '@ant-design/icons/UserOutlined'
 import PlusCircleTwoTone from '@ant-design/icons/PlusCircleTwoTone'
 import SelectOutlined from '@ant-design/icons/SelectOutlined'
-import { TicketIconSvg, ContractIconSvg, IconBroadcast, Iconquestion } from './icon'
+import { TicketIconSvg, ContractIconSvg, IconBroadcast, Iconquestion, SearchIconSvg, NotifIconSvg } from './icon'
 import { useRouter } from 'next/router'
 
 function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
@@ -17,7 +17,7 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
                         <img src={dataProfile.data.profile_image === "-" ? "/default-users.jpeg" : dataProfile.data.profile_image} alt="imageProfile" className=" object-cover w-full h-full" />
                     </div>
                     <div className="flex flex-col">
-                        <h2 className="text-lg font-semibold mb-1">{dataProfile.data.fullname}</h2>
+                        <h2 className="text-lg font-semibold mb-1">{dataProfile.data.name}</h2>
                         <h2 className="text-sm font-normal mb-1">{dataProfile.data.email}</h2>
                         <Linkheader href={`/profile`} ref="noreferrer">Profile Settings</Linkheader>
                     </div>
@@ -35,7 +35,6 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
         return (
             <div style={{ fontSize: '14px' }} className="w-48 h-auto grid grid-cols-1 md:grid-cols-1 shadow-md rounded bg-white">
                 {/* yang awal*/}
-                {/* <div style={{ fontSize: '14px' }} className="w-auto h-auto grid grid-cols-1 md:grid-cols-3 shadow-md rounded bg-white"> */}
                 <div className=" col-span-1 md:col-span-1 text-xs md:text-sm m-3 md:m-2 h-auto">
                     <Link href={`/incidents/create?originPath=Tickets`}>
                         <div className="flex justify-start pt-2 cursor-pointer hover:bg-gray-200" >
@@ -47,41 +46,13 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
                             <ContractIconSvg className={"pt-1"} /> &nbsp; &nbsp; <p className="p-1">Contract</p>
                         </div>
                     </Link>
-                    {/* <div className="flex justify-center">
-                        <p><AlertOutlined className="p-2" />Release</p>
-                    </div>
-                    <div className="flex justify-center">
-                        <p><AlertOutlined className="p-2" />Project</p>
-                    </div>
-                    <div className="flex justify-center">
-                        <p><AlertOutlined className="p-2" />Project</p>
-                    </div> */}
                 </div>
-                {/* <div className=" col-span-1 md:col-span-1 text-xs md:text-sm m-3 md:m-2 space-y-3 px-8">
-                    <div className="flex justify-center">
-                        <p><AlertOutlined className="p-2" />Incident</p>
-                    </div>
-                    <div className="flex justify-center">
-                        <p><AlertOutlined className="p-2" />Release</p>
-                    </div>
-                    <div className="flex justify-center">
-                        <p><AlertOutlined className="p-2" />Project</p>
-                    </div>
-                    <div className="flex justify-center">
-                        <p><AlertOutlined className="p-2" />Project</p>
-                    </div>
-                </div>
-                <div className=" col-span-1 md:col-span-1 text-xs md:text-sm m-3 md:m-2 space-y-3 px-8">
-                    <div className="flex justify-center">
-                        <p><AlertOutlined className="p-2" />Incident</p>
-                    </div>
-                </div> */}
             </div>
         )
     }
     return (
         <div className={`hidden md:flex md:w-auto w-full ${st.menu} md:justify-end`}>
-            <div className="md:mr-12 mr-4 flex items-center">
+            {/* <div className="md:mr-12 mr-4 flex items-center">
                 <a target="_blank" href="/" >
                     <Button type="primary">
                         <SelectOutlined style={{ marginRight: `0.2rem`, marginTop: `0.1rem` }} /> Go To Website
@@ -98,8 +69,14 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
             </div>
             <div className="md:mr-12 mr-4 cursor-pointer">
                 <IconBroadcast width={20} height={20} />
+            </div> */}
+            <div className="md:mr-8 mr-4 cursor-pointer">
+                <SearchIconSvg />
             </div>
-            <div className="md:mr-12 mr-4 mt-4">
+            <div className="md:mr-8 mr-4 cursor-pointer">
+                <NotifIconSvg />
+            </div>
+            <div className=" md:mr-12 mr-4 mt-2 flex items-center">
                 <Dropdown overlay={menuProfile2} trigger={['click']}>
                     {
                         dataProfile.data.profile_image !== "-" ?
@@ -108,6 +85,10 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
                             <img src="/default-users.jpeg" alt="ava" className="w-8 h-8 rounded-full object-cover cursor-pointer" />
                     }
                 </Dropdown>
+                <div className="flex flex-col ml-1">
+                    <h1 className="font-semibold text-sm mb-0">{dataProfile.data.name}</h1>
+                    <p className="mb-0 text-xs font-light">{dataProfile.data.role === 1 ? "Super Admin" : dataProfile.data.company.name}</p>
+                </div>
             </div>
         </div>
     )

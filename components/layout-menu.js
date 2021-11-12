@@ -5,6 +5,7 @@ import lm from '../components/layout-menu.module.css'
 import { UserOutlined, SettingOutlined, InboxOutlined, DashboardTwoTone, TeamOutlined } from '@ant-design/icons'
 import Icon from '@ant-design/icons'
 import Link from 'next/link'
+import { DashboardIconSvg, TicketIconSvg, TaskIconSvg, ItemIconSvg, CompanyIconSvg, UserIconSvg, FiturIconSvg, AsetIconSvg } from './icon'
 import { IconRoles, IconModules, IconFeatures, IconAgents, IconRequesters, Icongroups, IconMIGCompany, IconClientsCompany, IconAssets, IconVendors, IconCatalog, IconContract, IconDepreciation, IconCareer, IconMessages } from '../components/icon-admin'
 
 const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmall }) => {
@@ -31,25 +32,134 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
     return (
         <div>
             <div className={`${lm.modal}`} hidden={collsmall} onClick={handleCollSmall}></div>
-            <Sider collapsible collapsed={coll} trigger={null} width={250} theme="light" className={`${st.siderLayout} sider`} style={{ borderRight: `1px solid #f0f0f0`, height: '100%' }}>
-                <div className="logo" style={{ height: `32px`, margin: `16px`, background: `gray` }}></div>
+            <Sider collapsible collapsed={coll} trigger={null} width={230} theme="light" className={`${st.siderLayout} sider`} style={{ borderRight: `1px solid #f0f0f0`, height: '100%' }}>
+                <div className="logo flex items-center justify-center my-5">
+                    <img src="/image/Brand.png" alt="brand" className={`object-contain w-12 h-12 ${!coll && "mr-0"}`} />
+                    {
+                        !coll &&
+                        <h1 className="text-sm mb-0"><span className="font-bold text-2xl mb-0">MIG</span> sys</h1>
+                    }
+                </div>
                 <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]} triggerSubMenuAction="hover">
-                    <Menu.Item key="1" icon={<DashboardTwoTone />}>
+                    {!coll && <p className={`mb-2 ${coll ? "text-xs" : "text-sm"} font-sans text-gray-400 md:pl-6`}>MENU SITUS</p>}
+                    <Menu.Item key="1" icon={<DashboardIconSvg />} title="Dashboard">
                         <Link href="/dashboard/home">
                             Dashboard
                         </Link>
                     </Menu.Item>
-                    <SubMenu key="2" icon={<Icon component={ticketIconSvg} />} title="Tickets">
-                        <Menu.Item key="21">
-                            <Link href="/tickets">
-                                Ticket
+                    <Menu.Item key="2" icon={<TicketIconSvg />} title="Tickets">
+                        {/* <Menu.Item key="21"> */}
+                        <Link href="/tickets">
+                            Ticket
+                        </Link>
+                        {/* </Menu.Item> */}
+                    </Menu.Item>
+                    <Menu.Item key="20" icon={<TaskIconSvg />} title="Task">
+                        <Link href="#">
+                            Task
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="3" icon={<ItemIconSvg />} title="Items">
+                        {/* <Menu.Item key="31"> */}
+                        <Link href="/items">
+                            Inventori
+                        </Link>
+                        {/* </Menu.Item> */}
+                    </Menu.Item>
+                    <SubMenu style={{ marginBottom: `1.5rem` }} title="Perusahaan" key="5" icon={<CompanyIconSvg />}>
+                        {
+                            // [144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                            <Menu.Item key="51">
+                                <Link href="/company/myCompany">
+                                    Profil Perusahaan
+                                </Link>
+                            </Menu.Item>
+                        }
+                        {
+                            // [155, 156, 157, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                            <Menu.Item key="52">
+                                <Link href="/company/clients">
+                                    Klien
+                                </Link>
+                            </Menu.Item>
+                        }
+                    </SubMenu>
+                    {!coll && <p className={`mb-2 ${coll ? "text-xs" : "text-sm"} font-sans text-gray-400 md:pl-6`}>MANAJEMEN</p>}
+                    {
+                        // userFeat.every(isIncludesFeat) ?
+                        <SubMenu title="Pengguna" key="6" icon={<UserIconSvg />}>
+                            {/* {[107, 108, 109, 110, 111, 112, 132].every(isIncludesFeat) && */}
+                            <Menu.Item key="61">
+                                <Link href="/admin/agents">
+                                    Agents
+                                </Link>
+                            </Menu.Item>
+                            {/* // } */}
+                            {/* {[119, 118, 117, 116, 115, 114, 133].every(isIncludesFeat) && */}
+                            <Menu.Item key="62">
+                                <Link href="/admin/requesters">
+                                    Requesters
+                                </Link>
+                            </Menu.Item>
+                            {/* // } */}
+                            {/* {[134, 135, 136, 137, 138, 139, 140, 141, 142, 143].every(isIncludesFeat) && */}
+                            <Menu.Item key="63">
+                                <Link href="/admin/groups">
+                                    Groups
+                                </Link>
+                            </Menu.Item>
+                            {/* // } */}
+                        </SubMenu>
+                        // :
+                        // null
+                    }
+                    <SubMenu title="Fitur" key="7" icon={<FiturIconSvg />}>
+                        {
+                            // [173, 174, 175, 176, 177, 178].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                            <Menu.Item key="71">
+                                <Link href="/admin/roles">
+                                    Roles
+                                </Link>
+                            </Menu.Item>
+                        }
+                        {
+                            // [179, 180, 181, 182].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                            <Menu.Item key="72">
+                                <Link href="/admin/modules?module=&featuredisplay=">
+                                    Modules
+                                </Link>
+                            </Menu.Item>
+                        }
+                        {/* <Menu.Item key="412" icon={<IconFeatures width={25} height={25} />}>
+                                <Link href="/admin/features">
+                                    Features
+                                </Link>
+                            </Menu.Item> */}
+                    </SubMenu>
+                    <SubMenu title="Aset" key="8" icon={<AsetIconSvg />}>
+                        <Menu.Item key="81">
+                            <Link href="/admin/assets">
+                                Asset Types
                             </Link>
                         </Menu.Item>
-                    </SubMenu>
-                    <SubMenu key="3" icon={<InboxOutlined />} title="Assets">
-                        <Menu.Item key="31">
-                            <Link href="/items">
-                                Inventory
+                        <Menu.Item key="82">
+                            <Link href="/admin/models">
+                                Models
+                            </Link>
+                        </Menu.Item>
+                        <Menu.Item key="83">
+                            <Link href="/admin/vendors">
+                                Vendors
+                            </Link>
+                        </Menu.Item>
+                        <Menu.Item key="84">
+                            <Link href="/admin/manufacturers">
+                                Manufacturers
+                            </Link>
+                        </Menu.Item>
+                        <Menu.Item key="85">
+                            <Link href="/admin/relationships">
+                                Relationship Type
                             </Link>
                         </Menu.Item>
                     </SubMenu>
@@ -66,21 +176,21 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                 <Menu.Item key="421" icon={<IconAgents width={25} height={25} />}>
                                     <Link href="/admin/agents">
                                         Agents
-                                        </Link>
+                                    </Link>
                                 </Menu.Item>
                                 {/* // } */}
                                 {/* {[119, 118, 117, 116, 115, 114, 133].every(isIncludesFeat) && */}
                                 <Menu.Item key="422" icon={<IconRequesters width={25} height={25} />}>
                                     <Link href="/admin/requesters">
                                         Requesters
-                                        </Link>
+                                    </Link>
                                 </Menu.Item>
                                 {/* // } */}
                                 {/* {[134, 135, 136, 137, 138, 139, 140, 141, 142, 143].every(isIncludesFeat) && */}
                                 <Menu.Item key="423" icon={<Icongroups width={25} height={25} />}>
                                     <Link href="/admin/groups">
                                         Groups
-                                        </Link>
+                                    </Link>
                                 </Menu.Item>
                                 {/* // } */}
                             </SubMenu>
@@ -118,7 +228,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                     <Menu.Item key="441" icon={<IconMIGCompany width={25} height={25} />}>
                                         <Link href="/admin/myCompany">
                                             My Company
-                                            </Link>
+                                        </Link>
                                     </Menu.Item>
                                 }
                                 {
@@ -126,7 +236,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                     <Menu.Item key="442" icon={<IconClientsCompany width={25} height={25} />}>
                                         <Link href="/admin/clients">
                                             Clients
-                                            </Link>
+                                        </Link>
                                     </Menu.Item>
                                 }
                             </SubMenu>
@@ -176,7 +286,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                     <Menu.Item key="462" icon={<IconContract width={25} height={25} />}>
                                         <Link href="/admin/contracts">
                                             Contracts
-                                            </Link>
+                                        </Link>
                                     </Menu.Item>
                                 }
                             </SubMenu>
@@ -189,7 +299,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                 <Menu.Item key="471" icon={<IconDepreciation width={25} height={25} />}>
                                     <Link href="/admin/financial">
                                         Depreciation
-                                        </Link>
+                                    </Link>
                                 </Menu.Item>
                             </SubMenu>
                             // :
@@ -245,21 +355,21 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                 <Menu.Item key="421" icon={<IconAgents width={20} height={20} />}>
                                     <Link href="/admin/agents">
                                         Agents
-                                        </Link>
+                                    </Link>
                                 </Menu.Item>
                                 {/* // } */}
                                 {/* {dataProfile.data.registered_feature.includes(119) && */}
                                 <Menu.Item key="422" icon={<IconRequesters width={20} height={20} />}>
                                     <Link href="/admin/requesters">
                                         Requesters
-                                        </Link>
+                                    </Link>
                                 </Menu.Item>
                                 {/* } */}
                                 {/* {dataProfile.data.registered_feature.includes(134) && */}
                                 <Menu.Item key="423" icon={<Icongroups width={20} height={20} />}>
                                     <Link href="/admin/groups">
                                         Groups
-                                        </Link>
+                                    </Link>
                                 </Menu.Item>
                                 {/* // } */}
                             </SubMenu>
@@ -355,7 +465,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                     <Menu.Item key="462" icon={<IconContract width={20} height={20} />}>
                                         <Link href="/admin/contracts">
                                             Contracts
-                                            </Link>
+                                        </Link>
                                     </Menu.Item>
                                 }
                             </SubMenu>
@@ -368,7 +478,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                 <Menu.Item key="471" icon={<IconDepreciation width={20} height={20} />}>
                                     <Link href="/admin/financial">
                                         Depreciation
-                                        </Link>
+                                    </Link>
                                 </Menu.Item>
                             </SubMenu>
                             // :

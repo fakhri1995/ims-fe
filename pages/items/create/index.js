@@ -1991,7 +1991,7 @@ export async function getServerSideProps({ req, res }) {
         props: {
             initProps,
             dataProfile,
-            sidemenu: "31"
+            sidemenu: "3"
         },
     }
 }

@@ -1139,12 +1139,16 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading, activ
                             const datenew = moment(doclogs.date).locale("id").format('LLL')
                             var descnew = ''
                             const desckondisiOld = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.old.status_condition === 1 ? 'Good' : (doclogs.properties.old.status_condition === 2 ? 'Grey' : (doclogs.properties.old.status_condition === 3 ? 'Bad' : null))) : null) : null
-                            const desckondisiBaru = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.attributes.status_condition === 1 ? 'Good' : (doclogs.properties.attributes.status_condition === 2 ? 'Grey' : (doclogs.properties.attributes.status_condition === 3 ? 'Bad' : null))) : null) : null
+                            const desckondisiBaru = doclogs.properties ? (doclogs.properties.attributes ? (doclogs.properties.attributes.status_condition === 1 ? 'Good' : (doclogs.properties.attributes.status_condition === 2 ? 'Grey' : (doclogs.properties.attributes.status_condition === 3 ? 'Bad' : null))) : null) : null
                             const descusageOld = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.old.status_usage === 1 ? 'In Used' : (doclogs.properties.old.status_usage === 2 ? 'In Stock' : (doclogs.properties.old.status_usage === 3 ? 'Replacement' : null))) : null) : null
-                            const descusageBaru = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.attributes.status_usage === 1 ? 'In Used' : (doclogs.properties.attributes.status_usage === 2 ? 'In Stock' : (doclogs.properties.attributes.status_usage === 3 ? 'Replacement' : null))) : null) : null
+                            const descusageBaru = doclogs.properties ? (doclogs.properties.attributes ? (doclogs.properties.attributes.status_usage === 1 ? 'In Used' : (doclogs.properties.attributes.status_usage === 2 ? 'In Stock' : (doclogs.properties.attributes.status_usage === 3 ? 'Replacement' : null))) : null) : null
                             const desc1 = doclogs.description.split(" ")
                             if (desc1[0] === 'Created') {
-                                if (doclogs.properties.attributes.list_parts) {
+                                if (desc1[2] === "Relationship") {
+                                    desc1[0] === 'Created' ? descnew = descnew + `Penambahan Relationship "${doclogs.properties.attributes.relationship}"` : null
+                                    desc1[0] === 'Deleted' ? descnew = descnew + `Penghapusan Relationship "${doclogs.properties.old.relationship}"` : null
+                                }
+                                else if (doclogs.properties.attributes.list_parts) {
                                     descnew = descnew + `Inisialisasi Pembuatan Item Part "${ress.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil.id)).map(docmap => docmap.inventory_name).join(", ")}"`
                                 }
                                 else {
@@ -1200,9 +1204,11 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading, activ
                                     descnew = descnew + `Pengubahan "${prpts.join(", ")}" Item`
                                 }
                             }
-                            if (desc1[2] === "Relationship") {
-                                desc1[0] === 'Created' ? descnew = descnew + `Penambahan Relationship "${doclogs.properties.attributes.relationship}"` : null
-                                desc1[0] === 'Deleted' ? descnew = descnew + `Penghapusan Relationship "${doclogs.properties.old.relationship}"` : null
+                            if(desc1[0] === "Deleted"){
+                                if (desc1[2] === "Relationship") {
+                                    desc1[0] === 'Created' ? descnew = descnew + `Penambahan Relationship "${doclogs.properties.attributes.relationship}"` : null
+                                    desc1[0] === 'Deleted' ? descnew = descnew + `Penghapusan Relationship "${doclogs.properties.old.relationship}"` : null
+                                }
                             }
                             return {
                                 ...doclogs,
@@ -1214,12 +1220,16 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading, activ
                             const datenew = moment(doclogs.date).locale("id").format('LLL')
                             var descnew = ''
                             const desckondisiOld = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.old.status_condition === 1 ? 'Good' : (doclogs.properties.old.status_condition === 2 ? 'Grey' : (doclogs.properties.old.status_condition === 3 ? 'Bad' : null))) : null) : null
-                            const desckondisiBaru = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.attributes.status_condition === 1 ? 'Good' : (doclogs.properties.attributes.status_condition === 2 ? 'Grey' : (doclogs.properties.attributes.status_condition === 3 ? 'Bad' : null))) : null) : null
+                            const desckondisiBaru = doclogs.properties ? (doclogs.properties.attributes ? (doclogs.properties.attributes.status_condition === 1 ? 'Good' : (doclogs.properties.attributes.status_condition === 2 ? 'Grey' : (doclogs.properties.attributes.status_condition === 3 ? 'Bad' : null))) : null) : null
                             const descusageOld = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.old.status_usage === 1 ? 'In Used' : (doclogs.properties.old.status_usage === 2 ? 'In Stock' : (doclogs.properties.old.status_usage === 3 ? 'Replacement' : null))) : null) : null
-                            const descusageBaru = doclogs.properties ? (doclogs.properties.old ? (doclogs.properties.attributes.status_usage === 1 ? 'In Used' : (doclogs.properties.attributes.status_usage === 2 ? 'In Stock' : (doclogs.properties.attributes.status_usage === 3 ? 'Replacement' : null))) : null) : null
+                            const descusageBaru = doclogs.properties ? (doclogs.properties.attributes ? (doclogs.properties.attributes.status_usage === 1 ? 'In Used' : (doclogs.properties.attributes.status_usage === 2 ? 'In Stock' : (doclogs.properties.attributes.status_usage === 3 ? 'Replacement' : null))) : null) : null
                             const desc1 = doclogs.description.split(" ")
                             if (desc1[0] === 'Created') {
-                                if (doclogs.properties.attributes.list_parts) {
+                                if (desc1[2] === "Relationship") {
+                                    desc1[0] === 'Created' ? descnew = descnew + `Penambahan Relationship "${doclogs.properties.attributes.relationship}"` : null
+                                    desc1[0] === 'Deleted' ? descnew = descnew + `Penghapusan Relationship "${doclogs.properties.old.relationship}"` : null
+                                }
+                                else if (doclogs.properties.attributes.list_parts) {
                                     descnew = descnew + `Inisialisasi Pembuatan Item Part "${ress.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil.id)).map(docmap => docmap.inventory_name).join(", ")}"`
                                 }
                                 else {
@@ -1275,9 +1285,11 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading, activ
                                     descnew = descnew + `Pengubahan "${prpts.join(", ")}" Item`
                                 }
                             }
-                            if (desc1[2] === "Relationship") {
-                                desc1[0] === 'Created' ? descnew = descnew + `Penambahan Relationship "${doclogs.properties.attributes.relationship}"` : null
-                                desc1[0] === 'Deleted' ? descnew = descnew + `Penghapusan Relationship "${doclogs.properties.old.relationship}"` : null
+                            if(desc1[0] === 'Deleted'){
+                                if (desc1[2] === "Relationship") {
+                                    desc1[0] === 'Created' ? descnew = descnew + `Penambahan Relationship "${doclogs.properties.attributes.relationship}"` : null
+                                    desc1[0] === 'Deleted' ? descnew = descnew + `Penghapusan Relationship "${doclogs.properties.old.relationship}"` : null
+                                }
                             }
                             return {
                                 ...doclogs,
@@ -2209,7 +2221,7 @@ export async function getServerSideProps({ req, res, params }) {
         props: {
             initProps,
             dataProfile,
-            sidemenu: "31",
+            sidemenu: "3",
             itemid
         },
     }

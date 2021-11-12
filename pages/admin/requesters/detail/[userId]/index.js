@@ -881,7 +881,7 @@ export async function getServerSideProps({ req, res, params }) {
             // dataDetailRequester,
             dataProfile,
             // dataRoles,
-            sidemenu: "422",
+            sidemenu: "62",
             userid
         },
     }

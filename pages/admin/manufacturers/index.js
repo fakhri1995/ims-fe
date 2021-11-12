@@ -369,7 +369,7 @@ export async function getServerSideProps({ req, res }) {
         props: {
             initProps,
             dataProfile,
-            sidemenu: "454"
+            sidemenu: "84"
         },
     }
 }

@@ -176,7 +176,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, st }) 
                                 null
                         }
                     </Header>
-                    <main className="slb" style={{ padding: 24, height: `auto` }}>
+                    <main className="slb min-h-screen bg-white" style={{ padding: 24 }}>
                         {children}
                     </main>
                 </div>

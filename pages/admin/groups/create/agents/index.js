@@ -247,7 +247,7 @@ export async function getServerSideProps({ req, res }) {
             initProps,
             dataProfile,
             dataListAccount,
-            sidemenu: "423"
+            sidemenu: "63"
         },
     }
 }

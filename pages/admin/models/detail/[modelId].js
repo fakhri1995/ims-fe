@@ -553,7 +553,7 @@ export async function getServerSideProps({ req, res, params }) {
         props: {
             initProps,
             dataProfile,
-            sidemenu: "452",
+            sidemenu: "82",
             modelid
         },
     }

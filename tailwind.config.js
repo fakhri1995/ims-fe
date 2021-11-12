@@ -14,9 +14,22 @@ module.exports = {
         mont: ['Montserrat']
       },
       backgroundColor: theme => ({
-        'primary': '#1890ff',
-        'secondary': '#60A5FA',
-        'ternary': `rgb(230,247,255)`
+        // 'primary': '#1890ff',
+        // 'secondary': '#60A5FA',
+        // 'ternary': `rgb(230,247,255)`,
+        'primary100': '#35763B',
+        'primary75': '#65976a',
+        'primary50': '#95b898',
+        'primary25': '#c4d8c7',
+        'primary10': '#d8e8da',
+        'mono30': `#4D4D4D`,
+        'mono50': `#808080`,
+        'mono80': `#CCCCCC`,
+        'mono90': `#E5E5E5`,
+        'state1': `#BF4A40`,
+        'state2': `#DDB44A`,
+        'bgPrimary': `#edf3ee`,
+        'bgSecondary': `#ebf1eb`
       }),
       borderColor: theme =>({
         'primary': '#1890ff',
@@ -27,5 +40,7 @@ module.exports = {
   variants: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    require('daisyui'),
+  ],
 }

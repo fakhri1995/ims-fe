@@ -481,7 +481,7 @@ export async function getServerSideProps({ req, res, params }) {
             // dataRolesDetail,
             // dataListModules,
             idrole,
-            sidemenu: "431"
+            sidemenu: "71"
         },
     }
 }
