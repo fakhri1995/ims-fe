@@ -84,7 +84,7 @@ const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations, 
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Lokasi Pembuat:</h1>
-                                <p className="mb-0 text-sm">{dataProfile.data.company.name}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.requester.company.full_name}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Date Raised Ticket:</h1>
@@ -358,7 +358,7 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
                         <Spin />
                     </>
                     :
-                    connecteditemdata === null ?
+                    connecteditem === null ?
                         <div className=" border rounded-lg py-10 w-10/12 mx-auto flex flex-col">
                             <Empty description={
                                 <p className="mb-0">
@@ -382,7 +382,7 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
                                 <div className="flex justify-between">
                                     <div className="flex flex-col mt-3 mb-5">
                                         <h1 className=" text-sm font-semibold mb-0">Item:</h1>
-                                        <p className="mb-0 text-sm">{connecteditemdata.inventory_name ?? ""}</p>
+                                        <p className="mb-0 text-sm">{connecteditem.inventory_name ?? ""}</p>
                                     </div>
                                     <div className="flex items-center">
                                         <Button onClick={() => { setmodalconnecteditem(true) }}>Ganti Item</Button>
@@ -392,24 +392,24 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
                             <div className="border shadow-md rounded-md flex flex-col p-5 mb-5">
                                 <div className="flex flex-col mt-3 mb-5">
                                     <h1 className=" text-sm font-semibold mb-0">Model:</h1>
-                                    <p className="mb-0 text-sm">{connecteditemdata.model_name ?? "-"}</p>
+                                    <p className="mb-0 text-sm">{connecteditem.model_name ?? "-"}</p>
                                 </div>
                                 <div className="flex flex-col mt-3 mb-5">
                                     <h1 className=" text-sm font-semibold mb-0">Asset Type:</h1>
-                                    <p className="mb-0 text-sm">{connecteditemdata.asset_name ?? "-"}</p>
+                                    <p className="mb-0 text-sm">{connecteditem.asset_name ?? "-"}</p>
                                 </div>
                                 <div className="flex flex-col mt-3 mb-5">
                                     <h1 className=" text-sm font-semibold mb-0">MIG ID:</h1>
-                                    <p className="mb-0 text-sm">{connecteditemdata.mig_id ?? "-"}</p>
+                                    <p className="mb-0 text-sm">{connecteditem.mig_id ?? "-"}</p>
                                 </div>
                                 <div className="flex flex-col mt-3 mb-5">
                                     <h1 className=" text-sm font-semibold mb-2">Status Pemakaian:</h1>
                                     {
-                                        connecteditemdata.status_usage ?
+                                        connecteditem.status_usage ?
                                             <>
-                                                {connecteditemdata.status_usage === 1 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">In Used</div>}
-                                                {connecteditemdata.status_usage === 2 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-green-100 border border-green-200 text-green-600">In Stock</div>}
-                                                {connecteditemdata.status_usage === 3 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">Replacement</div>}
+                                                {connecteditem.status_usage === 1 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">In Used</div>}
+                                                {connecteditem.status_usage === 2 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-green-100 border border-green-200 text-green-600">In Stock</div>}
+                                                {connecteditem.status_usage === 3 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">Replacement</div>}
                                             </>
                                             :
                                             "-"
@@ -418,24 +418,24 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
                                 <div className="flex flex-col mt-3 mb-5">
                                     <h1 className=" text-sm font-semibold mb-2">Status Kondisi:</h1>
                                     {
-                                        connecteditemdata.status_condition ?
+                                        connecteditem.status_condition ?
                                             <>
                                                 {
-                                                    connecteditemdata.status_condition === 1 &&
+                                                    connecteditem.status_condition === 1 &&
                                                     <div className="p-1 flex w-full items-center">
                                                         <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
                                                         <p className="mb-0 font-semibold">Good</p>
                                                     </div>
                                                 }
                                                 {
-                                                    connecteditemdata.status_condition === 2 &&
+                                                    connecteditem.status_condition === 2 &&
                                                     <div className="p-1 flex w-full items-center">
                                                         <div className="w-3 h-3 rounded-full bg-gray-500 mr-1"></div>
                                                         <p className="mb-0 font-semibold">Grey</p>
                                                     </div>
                                                 }
                                                 {
-                                                    connecteditemdata.status_condition === 3 &&
+                                                    connecteditem.status_condition === 3 &&
                                                     <div className="p-1 flex w-full items-center">
                                                         <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
                                                         <p className="mb-0 font-semibold">Bad</p>
@@ -448,15 +448,15 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
                                 </div>
                                 <div className="flex flex-col mt-3 mb-5">
                                     <h1 className=" text-sm font-semibold mb-0">Serial Number:</h1>
-                                    <p className="mb-0 text-sm">{connecteditemdata.serial_number ?? "-"}</p>
+                                    <p className="mb-0 text-sm">{connecteditem.serial_number ?? "-"}</p>
                                 </div>
                                 <div className="flex flex-col mt-3 mb-5">
                                     <h1 className=" text-sm font-semibold mb-0">Location:</h1>
-                                    <p className="mb-0 text-sm">{connecteditemdata.location_name ?? "-"}</p>
+                                    <p className="mb-0 text-sm">{connecteditem.location_name ?? "-"}</p>
                                 </div>
                                 <div className="flex flex-col mt-3 mb-5">
                                     <h1 className=" text-sm font-semibold mb-0">Deskripsi:</h1>
-                                    <p className="mb-0 text-sm">{connecteditemdata.deskripsi ?? "-"}</p>
+                                    <p className="mb-0 text-sm">{connecteditem.deskripsi ?? "-"}</p>
                                 </div>
                             </div>
                         </div>
@@ -825,7 +825,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                 setmaindata(res2.data)
                 setstatus(res2.data.ticket.status.id)
                 res2.data.ticket.assignable.id ? (setassignto(res2.data.ticket.assignable.id), setnameassignto(res2.data.ticket.assignable.name), setdefaultnameassignto(res2.data.ticket.assignable.name)) : setassignto(null)
-                res2.data.ticket.ticketable.inventory_id === null ? setconnecteditem(null) : setconnecteditem(res2.data.ticket.ticketable.inventory_id)
+                res2.data.ticket.ticketable.inventory === null ? setconnecteditem(null) : setconnecteditem(res2.data.ticket.ticketable.inventory)
             })
             .then(() => {
                 fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
