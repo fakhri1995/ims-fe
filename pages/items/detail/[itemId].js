@@ -1033,7 +1033,7 @@ const Association = ({ initProps, itemid, maindata, praloading }) => {
                                 {
                                     maindata.associations.map((doc, idx) => {
                                         return (
-                                            <div className="rounded-md shadow-md py-4 px-5 border mb-4 flex justify-between w-10/12 cursor-pointer" /*onClick={() => { rt.push(`/tickets/detail/${doc.id}`) }}*/>
+                                            <div className="rounded-md shadow-md py-4 px-5 border mb-4 flex justify-between w-10/12 cursor-pointer" onClick={() => { rt.push(`/tickets/detail/${doc.ticket.id}`) }}>
                                                 <div className="flex flex-col">
                                                     <p className="mb-0 font-semibold">Ticket Number</p>
                                                     <p className="mb-0">#{doc.ticket.type.code} - {doc.id}</p>
@@ -1163,6 +1163,9 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading, activ
                         if (desc1[2] === "Relationship") {
                             desc1[0] === 'Created' ? descnew = descnew + `Penambahan Relationship "${doclogs.properties.attributes.relationship}"` : null
                             desc1[0] === 'Deleted' ? descnew = descnew + `Penghapusan Relationship "${doclogs.properties.old.relationship}"` : null
+                        }
+                        else if(desc1[1] === 'Association'){
+                            descnew = descnew + `Association Dihapus: ${doclogs.properties}`
                         }
                     }
                     return {

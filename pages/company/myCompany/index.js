@@ -173,7 +173,7 @@ function MigIndexProfile({ dataProfile, dataDetailCompany, tok }) {
             </div>
             <div className=" w-9/12 p-5 grid grid-cols-1 sm:grid-col-3 md:grid-cols-5 mb-4 rounded-md shadow-md border">
                 <div className="p-3 relative col-span-1 sm:col-span-1 md:col-span-1 flex flex-col items-center">
-                    <img src={data1.image_logo} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
+                    <img src={data1.image_logo} alt="imageProfile" className=" object-contain w-32 h-32 rounded-full mb-4" />
                     {editable ?
                         <div>
                             <label className="custom-file-upload py-2 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3">

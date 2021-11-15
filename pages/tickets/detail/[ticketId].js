@@ -88,11 +88,11 @@ const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations, 
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Date Raised Ticket:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.original_raised_at ? moment(maindata.ticket.original_raised_at).locale('id').format("LL") + " - " + moment(maindata.ticket.original_raised_at).locale('id').format("LT") : "-"}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.original_raised_at ? moment(maindata.ticket.original_raised_at).locale('id').format("LL") + " - " + moment(maindata.ticket.original_raised_at).locale('id').format("LT") + " WIB" : "-"}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Date Closed Ticket:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.closed_at === null ? "-" : moment(maindata.ticket.closed_at).locale('id').format("LL") + " - " + moment(maindata.ticket.closed_at).locale('id').format("LT")}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.closed_at === null ? "-" : moment(maindata.ticket.closed_at).locale('id').format("LL") + " - " + moment(maindata.ticket.closed_at).locale('id').format("LT") + " WIB"}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Resolved Time:</h1>
@@ -132,7 +132,7 @@ const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations, 
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Waktu Kejadian:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.ticketable.incident_time ? moment(maindata.ticket.ticketable.incident_time).locale('id').format("LL") + " - " + moment(maindata.ticket.ticketable.incident_time).locale('id').format("LT") : "-"}</p>
+                                <p className="mb-0 text-sm">{maindata.ticket.ticketable.incident_time ? moment(maindata.ticket.ticketable.incident_time).locale('id').format("LL") + " - " + moment(maindata.ticket.ticketable.incident_time).locale('id').format("LT") + " WIB" : "-"}</p>
                             </div>
                             <div className="flex flex-col mb-5">
                                 <h1 className=" text-sm font-semibold mb-2">Bukti Kejadian:</h1>
