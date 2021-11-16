@@ -4,7 +4,7 @@ import httpcookie from 'cookie'
 import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Modal, Steps, Radio, Button, Tabs, TreeSelect, Empty, notification, Select, Checkbox, Table, Input } from 'antd'
+import { Modal, Steps, Radio, Button, Tabs, TreeSelect, Empty, notification, Select, Checkbox, Table, Input, Spin } from 'antd'
 import { CalendarOutlined, DownOutlined, UpOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import st from '../../../../components/layout-dashboard.module.css'
 
@@ -156,6 +156,7 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
     const [modaladd, setmodaladd] = useState(false)
     const [disabledadd, setdisabledadd] = useState(true)
     const [loadingadd, setloadingadd] = useState(false)
+    const [fetchingmodel, setfetchingmodel] = useState(false)
     //Ubah
     const [dataApiupdate, setdataApiupdate] = useState({
         id: null,
@@ -519,7 +520,22 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
                                     dataApiadd.type_id === -1 &&
                                     <div className="flex flex-col mb-3">
                                         <p className="mb-0">Detail Tipe</p>
-                                        <Select onChange={(value) => {
+                                        <Select showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
+                                            setfetchingmodel(true)
+                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipAssetDetailList?type_id=${detailtipeadd}&name=${value !== "" ? value : ""}`, {
+                                                method: `GET`,
+                                                headers: {
+                                                    'Authorization': JSON.parse(initProps),
+                                                },
+                                            })
+                                                .then(res => res.json())
+                                                .then(res2 => {
+                                                    setdetailtipedataadd(res2.data)
+                                                    setfetchingmodel(false)
+                                                })
+                                        }} filterOption={(input, opt) => (
+                                            opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        )} onChange={(value) => {
                                             setdataApiadd({ ...dataApiadd, connected_id: value })
                                         }}>
                                             {
@@ -536,7 +552,22 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
                                     dataApiadd.type_id === -2 &&
                                     <div className="flex flex-col mb-3">
                                         <p className="mb-0">Detail Tipe</p>
-                                        <Select onChange={(value) => {
+                                        <Select showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
+                                            setfetchingmodel(true)
+                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipAssetDetailList?type_id=${detailtipeadd}&name=${value !== "" ? value : ""}`, {
+                                                method: `GET`,
+                                                headers: {
+                                                    'Authorization': JSON.parse(initProps),
+                                                },
+                                            })
+                                                .then(res => res.json())
+                                                .then(res2 => {
+                                                    setdetailtipedataadd(res2.data)
+                                                    setfetchingmodel(false)
+                                                })
+                                        }} filterOption={(input, opt) => (
+                                            opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        )} onChange={(value) => {
                                             setdataApiadd({ ...dataApiadd, connected_id: value })
                                         }}>
                                             {
@@ -678,7 +709,22 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
                                     detailtipeupdate === -1 &&
                                     <div className="flex flex-col mb-3">
                                         <p className="mb-0">Detail Tipe</p>
-                                        <Select defaultValue={dataApiupdate.connected_id} onChange={(value) => {
+                                        <Select showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
+                                            setfetchingmodel(true)
+                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipAssetDetailList?type_id=${detailtipeupdate}&name=${value !== "" ? value : ""}`, {
+                                                method: `GET`,
+                                                headers: {
+                                                    'Authorization': JSON.parse(initProps),
+                                                },
+                                            })
+                                                .then(res => res.json())
+                                                .then(res2 => {
+                                                    setdetailtipedataupdate(res2.data)
+                                                    setfetchingmodel(false)
+                                                })
+                                        }} filterOption={(input, opt) => (
+                                            opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        )} defaultValue={dataApiupdate.connected_id} onChange={(value) => {
                                             setdataApiupdate({ ...dataApiupdate, connected_id: value })
                                         }}>
                                             {
@@ -695,7 +741,22 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
                                     detailtipeupdate === -2 &&
                                     <div className="flex flex-col mb-3">
                                         <p className="mb-0">Detail Tipe</p>
-                                        <Select defaultValue={dataApiupdate.connected_id} onChange={(value) => {
+                                        <Select showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
+                                            setfetchingmodel(true)
+                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipAssetDetailList?type_id=${detailtipeupdate}&name=${value !== "" ? value : ""}`, {
+                                                method: `GET`,
+                                                headers: {
+                                                    'Authorization': JSON.parse(initProps),
+                                                },
+                                            })
+                                                .then(res => res.json())
+                                                .then(res2 => {
+                                                    setdetailtipedataupdate(res2.data)
+                                                    setfetchingmodel(false)
+                                                })
+                                        }} filterOption={(input, opt) => (
+                                            opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        )} defaultValue={dataApiupdate.connected_id} onChange={(value) => {
                                             setdataApiupdate({ ...dataApiupdate, connected_id: value })
                                         }}>
                                             {

@@ -945,8 +945,18 @@ const Relationship = ({ initProps, maindata, itemid }) => {
     return (
         <div className="flex flex-col">
             <div className="border-b flex justify-between p-5 mb-8">
-                <h1 className="font-bold text-xl my-auto">Relationship</h1>
-                <Button type="primary" size="large" onClick={() => { /*console.log(dataasset);*/ rt.push(`/items/createrelationship/${itemid}?name=${maindata.inventory_name}&asset_id=${maindata.model_inventory.asset.id}`) }}>Tambah</Button>
+                <div className="flex items-center">
+                    <h1 className="font-bold text-xl my-auto mr-1">Relationship</h1>
+                    {
+                        maindata.model_inventory.asset.deleted_at !== null ?
+                            <Tooltip placement="right" title="Asset Type telah dihapus, segera lakukan pengubahan Asset Type!">
+                                <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
+                            </Tooltip>
+                            :
+                            null
+                    }
+                </div>
+                <Button type="primary" size="large" onClick={() => { /*console.log(dataasset);*/ rt.push(`/items/createrelationship/${itemid}?nama=${maindata.inventory_name}&asset_id=${maindata.model_inventory.asset.id}`) }}>Tambah</Button>
             </div>
             <div className="flex mb-5">
                 {
@@ -1100,7 +1110,7 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading, activ
                             desc1[0] === 'Created' ? descnew = descnew + `Penambahan Relationship "${doclogs.properties.attributes.relationship}"` : null
                             desc1[0] === 'Deleted' ? descnew = descnew + `Penghapusan Relationship "${doclogs.properties.old.relationship}"` : null
                         }
-                        else if(desc1[1] === 'Association'){
+                        else if (desc1[1] === 'Association') {
                             descnew = descnew + `Association Baru: ${doclogs.properties}`
                         }
                         else if (doclogs.properties.attributes?.list_parts) {
@@ -1164,7 +1174,7 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading, activ
                             desc1[0] === 'Created' ? descnew = descnew + `Penambahan Relationship "${doclogs.properties.attributes.relationship}"` : null
                             desc1[0] === 'Deleted' ? descnew = descnew + `Penghapusan Relationship "${doclogs.properties.old.relationship}"` : null
                         }
-                        else if(desc1[1] === 'Association'){
+                        else if (desc1[1] === 'Association') {
                             descnew = descnew + `Association Dihapus: ${doclogs.properties}`
                         }
                     }
@@ -1188,7 +1198,7 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading, activ
                             desc1[0] === 'Created' ? descnew = descnew + `Penambahan Relationship "${doclogs.properties.attributes.relationship}"` : null
                             desc1[0] === 'Deleted' ? descnew = descnew + `Penghapusan Relationship "${doclogs.properties.old.relationship}"` : null
                         }
-                        else if(desc1[1] === 'Association'){
+                        else if (desc1[1] === 'Association') {
                             descnew = descnew + `Association Baru: ${doclogs.properties}`
                         }
                         else if (doclogs.properties.attributes?.list_parts) {
@@ -1273,7 +1283,7 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading, activ
                             desc1[0] === 'Created' ? descnew = descnew + `Penambahan Relationship "${doclogs.properties.attributes.relationship}"` : null
                             desc1[0] === 'Deleted' ? descnew = descnew + `Penghapusan Relationship "${doclogs.properties.old.relationship}"` : null
                         }
-                        else if(desc1[1] === 'Association'){
+                        else if (desc1[1] === 'Association') {
                             descnew = descnew + `Association Baru: ${doclogs.properties}`
                         }
                         else if (doclogs.properties.attributes?.list_parts) {

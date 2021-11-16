@@ -25,6 +25,7 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
         is_inverse: null
     })
     const [relitemdata, setrelitemdata] = useState([])
+    const [relitemdata2, setrelitemdata2] = useState([])
     const [reltipeitemdata, setreltipeitemdata] = useState(-10)
     const [reldetailitemdata, setreldetailitemdata] = useState("")
     const [relitemdatatrigger, setrelitemdatatrigger] = useState(-1)
@@ -34,6 +35,8 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
     const [disabledrel, setdisabledrel] = useState(true)
     const [modaladd, setmodaladd] = useState(false)
     const [loadingadd, setloadingadd] = useState(false)
+    const [namasearchact, setnamasearchact] = useState(false)
+    const [namavalue, setnamavalue] = useState("")
 
     //declaration
     const columns12 = [
@@ -81,6 +84,29 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
         },
 
     ]
+
+    //handler
+    //search nama
+    const onChangeSearch = (e) => {
+        if (e.target.value === "") {
+            setrelitemdata(relitemdata2)
+            setnamasearchact(false)
+        }
+        else {
+            setnamasearchact(true)
+            setnamavalue(e.target.value)
+        }
+    }
+    //finalClick
+    const onFinalClick = () => {
+        var datatemp = relitemdata2
+        if (namasearchact) {
+            datatemp = datatemp.filter(flt => {
+                return flt.name.toLowerCase().includes(namavalue.toLowerCase())
+            })
+        }
+        setrelitemdata(datatemp)
+    }
 
 
     //handler
@@ -138,7 +164,8 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
             })
                 .then(res => res.json())
                 .then(res2 => {
-                    reltipeitemdata === -3 ? setrelitemdata([res2.data]) : (reltipeitemdata === -4 ? setrelitemdata(res2.data.data) : setrelitemdata(res2.data))
+                    reltipeitemdata === -3 ? setrelitemdata([res2.data]) : (reltipeitemdata === -4 ? setrelitemdata(res2.data.data) : null)
+                    reltipeitemdata === -1 || reltipeitemdata === -2 ? (setrelitemdata(res2.data), setrelitemdata2(res2.data)) : null
                     setrelitemloading(false)
                 })
         }
@@ -180,7 +207,7 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
                                 })
                             }
                         </Select>
-                        <p className="text-red-500 text-sm">Data Relationship Type kosong, silahkan tambah data melalui <Link href={`/admin/assets/detail/${asset_id}?active=relationship`}>Asset Ini</Link></p>
+                        {displaydatarelations.length < 1 && <p className="text-red-500 text-sm">Data Relationship Type kosong, silahkan tambah data melalui <Link href={`/admin/assets/detail/${asset_id}?active=relationship`}>Asset Ini</Link></p>}
                         <style jsx>
                             {`
                                 .relitemtambah::before{
@@ -190,6 +217,21 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
                             `}
                         </style>
                     </div>
+                    {
+                        reltipeitemdata === -1 || reltipeitemdata === -2 ?
+                            <div className="flex mb-5">
+                                <div className=" w-full mr-1 grid grid-cols-12">
+                                    <div className="col-span-11 mr-1">
+                                        <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Nama Item" onChange={e => onChangeSearch(e)} allowClear></Input>
+                                    </div>
+                                    <div className=" col-span-1">
+                                        <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
+                                    </div>
+                                </div>
+                            </div>
+                            :
+                            null
+                    }
                     <Table
                         rowSelection={{
                             onChange: (selectedRowKeys, selectedRows) => {
