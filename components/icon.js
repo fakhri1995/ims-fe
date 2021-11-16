@@ -187,6 +187,80 @@ const WebIconSvg = ({ size }) => {
         <Icon component={webIconSvg}></Icon>
     )
 }
+const LocationIconSvg = ({ size, color }) => {
+    const locationIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-building-community" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M8 9l5 5v7h-5v-4m0 4h-5v-7l5 -5m1 1v-6a1 1 0 0 1 1 -1h10a1 1 0 0 1 1 1v17h-8" />
+            <line x1={13} y1={7} x2={13} y2="7.01" />
+            <line x1={17} y1={7} x2={17} y2="7.01" />
+            <line x1={17} y1={11} x2={17} y2="11.01" />
+            <line x1={17} y1={15} x2={17} y2="15.01" />
+        </svg>
+    )
+    return (
+        <Icon component={locationIconSvg}></Icon>
+    )
+}
+const SubLocationIconSvg = ({ size, color }) => {
+    const sublocationIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-building" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <line x1={3} y1={21} x2={21} y2={21} />
+            <line x1={9} y1={8} x2={10} y2={8} />
+            <line x1={9} y1={12} x2={10} y2={12} />
+            <line x1={9} y1={16} x2={10} y2={16} />
+            <line x1={14} y1={8} x2={15} y2={8} />
+            <line x1={14} y1={12} x2={15} y2={12} />
+            <line x1={14} y1={16} x2={15} y2={16} />
+            <path d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16" />
+        </svg>
+    )
+    return (
+        <Icon component={sublocationIconSvg}></Icon>
+    )
+}
+const ShareIconSvg = ({ size, color }) => {
+    const shareIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-share" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <circle cx={6} cy={12} r={3} />
+            <circle cx={18} cy={6} r={3} />
+            <circle cx={18} cy={18} r={3} />
+            <line x1="8.7" y1="10.7" x2="15.3" y2="7.3" />
+            <line x1="8.7" y1="13.3" x2="15.3" y2="16.7" />
+        </svg>
+    )
+    return (
+        <Icon component={shareIconSvg}></Icon>
+    )
+}
+const TrashIconSvg = ({ size, color }) => {
+    const trashIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-trash" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <line x1={4} y1={7} x2={20} y2={7} />
+            <line x1={10} y1={11} x2={10} y2={17} />
+            <line x1={14} y1={11} x2={14} y2={17} />
+            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+        </svg>
+    )
+    return (
+        <Icon component={trashIconSvg}></Icon>
+    )
+}
+const CheckIconSvg = ({ size, color }) => {
+    const checkIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-check" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M5 12l5 5l10 -10" />
+        </svg>
+    )
+    return (
+        <Icon component={checkIconSvg}></Icon>
+    )
+}
 // const TicketIconSvg = () => {
 //     const ticketIconSvg = () => (
 //         <svg width="2em" height="2em" id="icon-alarm" viewBox="0 0 32 32">
@@ -304,5 +378,5 @@ const Iconquestion = (props) => {
 }
 
 export {
-    DashboardIconSvg, TicketIconSvg, TaskIconSvg, ItemIconSvg, CompanyIconSvg, UserIconSvg, FiturIconSvg, AsetIconSvg, SearchIconSvg, NotifIconSvg, EditIconSvg, EmailIconSvg, PhoneIconSvg, WebIconSvg, ContractIconSvg, IconBroadcast, Iconquestion
+    DashboardIconSvg, TicketIconSvg, TaskIconSvg, ItemIconSvg, CompanyIconSvg, UserIconSvg, FiturIconSvg, AsetIconSvg, SearchIconSvg, NotifIconSvg, EditIconSvg, EmailIconSvg, PhoneIconSvg, WebIconSvg, LocationIconSvg, SubLocationIconSvg, ShareIconSvg, TrashIconSvg, CheckIconSvg, ContractIconSvg, IconBroadcast, Iconquestion
 }

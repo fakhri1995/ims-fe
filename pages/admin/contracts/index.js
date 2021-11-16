@@ -161,15 +161,11 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                     children:
                         <>
                             {
-                                [195, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                     <div><Link href={{
                                         pathname: `/admin/contracts/${record.key}`,
                                     }}><a>{record.nomor_kontrak}</a></Link>
                                     </div>
-                                    :
-                                    <>
-                                        {record.nomor_kontrak}
-                                    </>
+
 
                             }
                         </>
@@ -244,7 +240,6 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                     children:
                         <>
                             {
-                                [197].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                 <Button>
                                     <Link href={{
                                         pathname: `/admin/contracts/update/${record.key}`,
@@ -270,7 +265,6 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                     children:
                         <>
                             {
-                                [198].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                 <Button onClick={() => { onClickModalDeleteContract(true, record) }}>
                                     <a><DeleteOutlined /></a>
                                 </Button>
@@ -291,7 +285,7 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                                 <h1 className="font-semibold text-base w-auto pt-2">Contracts</h1>
                                 {
-                                    [196].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                    // [196].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <div className="flex space-x-2">
                                         <Link href={`/admin/contracts/create`}>
                                             <Button type="primary" size="large">Add New</Button>
@@ -346,7 +340,7 @@ export async function getServerSideProps({ req, res }) {
     }
 
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -354,10 +348,10 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     const resourcesGetContracts = await fetch(`https://boiling-thicket-46501.herokuapp.com/getContracts`, {
         method: `GET`,

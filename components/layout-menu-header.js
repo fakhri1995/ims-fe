@@ -87,7 +87,7 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
                 </Dropdown>
                 <div className="flex flex-col ml-1">
                     <h1 className="font-semibold text-sm mb-0">{dataProfile.data.name}</h1>
-                    <p className="mb-0 text-xs font-light">{dataProfile.data.role === 1 ? "Super Admin" : dataProfile.data.company.name}</p>
+                    <p className="mb-0 text-xs">{dataProfile.data.role === 1 ? "Super Admin" : dataProfile.data.company.name}</p>
                 </div>
             </div>
         </div>

@@ -49,4 +49,33 @@
 }
 
 
+/* checked switch */
+.ant-switch-checked{
+    background-color: #35763B;
+}
+
+.ant-input, .ant-input-affix-wrapper, .ant-picker{
+border-color: #35763B;
+border-radius: 5px;
+}
+
+.ant-input:hover, .ant-input-affix-wrapper:hover{
+    border-color: #65976a;
+}
+
+.ant-input:focus {
+    border-color: #35763B;
+    outline: 0;
+    -webkit-box-shadow: 0 0 0 1px #35763B;
+    box-shadow: 0 0 0 1px #35763B;
+}
+
+.ant-input-affix-wrapper-focused, .ant-picker:hover .ant-picker-focused{
+    border-color: #65976a;
+    outline: 0;
+    -webkit-box-shadow: 0 0 0 1px #35763B;
+    box-shadow: 0 0 0 1px #35763B;
+}
+
+
 

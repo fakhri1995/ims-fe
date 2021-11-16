@@ -29,6 +29,8 @@ module.exports = {
         'mono90': `#E5E5E5`,
         'state1': `#BF4A40`,
         'state2': `#DDB44A`,
+        'state3': `#5495B9`,
+        'state4': `#AD6DBD`,
         'bgPrimary': `#edf3ee`,
         'bgSecondary': `#ebf1eb`
       }),
@@ -47,6 +49,8 @@ module.exports = {
         'mono90': `#E5E5E5`,
         'state1': `#BF4A40`,
         'state2': `#DDB44A`,
+        'state3': `#5495B9`,
+        'state4': `#AD6DBD`,
         'bgPrimary': `#edf3ee`,
         'bgSecondary': `#ebf1eb`
       }),
@@ -63,7 +67,15 @@ module.exports = {
         'mono90': `#E5E5E5`,
         'state1': `#BF4A40`,
         'state2': `#DDB44A`,
-      }
+        'state3': `#5495B9`,
+        'state4': `#AD6DBD`,
+      },
+      gradientColorStops: theme => ({
+          'state1': `#799F0C`,
+          'state2': `#FFE000`,
+          'state3': `#6DD5ED`,
+          'state4': `#2193B0`,
+      })
     },
   },
   variants: {
