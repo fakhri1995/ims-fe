@@ -14,6 +14,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
     const serviceFeat = [183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206]
     const companyFeat = [144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163]
     const depreFeat = [169, 170, 171, 172]
+    const ticketFeat = [107, 108, 109, 110, 111, 112, 113]
     // const isIncludesFeat = (curr) => dataProfile.data.registered_feature.includes(curr);
     const { SubMenu } = Menu;
     const { Sider } = Layout
@@ -47,13 +48,29 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             Dashboard
                         </Link>
                     </Menu.Item>
-                    <Menu.Item key="2" icon={<TicketIconSvg />} title="Tickets">
-                        {/* <Menu.Item key="21"> */}
-                        <Link href="/tickets">
-                            Ticket
-                        </Link>
-                        {/* </Menu.Item> */}
-                    </Menu.Item>
+                    {
+                        dataProfile.data.role === 1 ?
+                            <Menu.Item key="2" icon={<TicketIconSvg />} title="Tickets">
+                                {/* <Menu.Item key="21"> */}
+                                <Link href="/tickets">
+                                    Ticket
+                                </Link>
+                                {/* </Menu.Item> */}
+                            </Menu.Item>
+                            :
+                            <>
+                                {
+                                    dataProfile.data.features.includes(117) &&
+                                    <Menu.Item key="2" icon={<TicketIconSvg />} title="Tickets">
+                                        {/* <Menu.Item key="21"> */}
+                                        <Link href="/tickets">
+                                            Ticket
+                                        </Link>
+                                        {/* </Menu.Item> */}
+                                    </Menu.Item>
+                                }
+                            </>
+                    }
                     <Menu.Item key="20" icon={<TaskIconSvg />} title="Task">
                         <Link href="#">
                             Task

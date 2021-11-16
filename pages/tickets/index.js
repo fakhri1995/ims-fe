@@ -308,7 +308,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     //5.useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?ticket_id=${ticketid1}&location_id=${locationid1}&status_id=${statusid1}&from=${from1}&to=${to1}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getTickets" : "getClientTickets"}?ticket_id=${ticketid1}&location_id=${locationid1}&status_id=${statusid1}&from=${from1}&to=${to1}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -324,7 +324,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
             })
     }, [])
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getTicketRelation" : "getClientTicketRelation"}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -364,20 +364,27 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                         </div>
                         <div className=" text-lg text-center">{rawdata.open_tickets_count}</div>
                     </div>
-                    <div className="flex flex-col mr-10">
-                        <div className="flex items-center mb-2">
-                            <div className="w-2 h-2 rounded-full bg-green-500 mr-1"></div>
-                            <p className="mb-0">On Progress</p>
+                    {
+                        dataProfile.data.role === 1 &&
+                        <div className="flex flex-col mr-10">
+                            <div className="flex items-center mb-2">
+                                <div className="w-2 h-2 rounded-full bg-green-500 mr-1"></div>
+                                <p className="mb-0">On Progress</p>
+                            </div>
+                            <div className=" text-lg text-center">{rawdata.on_progress_tickets_count}</div>
                         </div>
-                        <div className=" text-lg text-center">{rawdata.on_progress_tickets_count}</div>
-                    </div>
-                    <div className="flex flex-col mr-10">
-                        <div className="flex items-center mb-2">
-                            <div className="w-2 h-2 rounded-full bg-yellow-500 mr-1"></div>
-                            <p className="mb-0">On Hold</p>
+                    }
+                    {
+                        dataProfile.data.role === 1 &&
+                        <div className="flex flex-col mr-10">
+                            <div className="flex items-center mb-2">
+                                <div className="w-2 h-2 rounded-full bg-yellow-500 mr-1"></div>
+                                <p className="mb-0">On Hold</p>
+                            </div>
+                            <div className=" text-lg text-center">{rawdata.on_hold_tickets_count}</div>
                         </div>
-                        <div className=" text-lg text-center">{rawdata.on_hold_tickets_count}</div>
-                    </div>
+                    }
+
                     <div className="flex flex-col mr-10">
                         <div className="flex items-center mb-2">
                             <div className="w-2 h-2 rounded-full bg-red-500 mr-1"></div>
@@ -400,16 +407,33 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     </div>
                 </div>
                 <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
-                    <Link href={'/tickets/histories'}>
-                        <Button size="large" type="primary" style={{ marginRight: `1rem` }} onClick={() => { rt.push(`/tickets/histories`) }}>
-                            History
-                        </Button>
-                    </Link>
-                    <Link href={'/tickets/exporting'}>
-                        <Button style={{ backgroundColor: `gray`, borderColor: `gray`, marginRight: `1rem` }} size="large" type="primary">
-                            Export
-                        </Button>
-                    </Link>
+                    {
+                        dataProfile.data.role === 1 ?
+                            <Link href={'/tickets/histories'}>
+                                <Button size="large" type="primary" style={{ marginRight: `1rem` }} onClick={() => { rt.push(`/tickets/histories`) }}>
+                                    History
+                                </Button>
+                            </Link>
+                            :
+                            <>
+                                {
+                                    dataProfile.data.features.includes(108) &&
+                                    <Link href={'/tickets/histories'}>
+                                        <Button size="large" type="primary" style={{ marginRight: `1rem` }} onClick={() => { rt.push(`/tickets/histories`) }}>
+                                            History
+                                        </Button>
+                                    </Link>
+                                }
+                            </>
+                    }
+                    {
+                        dataProfile.data.role === 1 &&
+                            <Link href={'/tickets/exporting'}>
+                                <Button style={{ backgroundColor: `gray`, borderColor: `gray`, marginRight: `1rem` }} size="large" type="primary">
+                                    Export
+                                </Button>
+                            </Link>
+                    }
                     <Link href={'/tickets/create'}>
                         <Button size="large" type="primary">
                             Buat Tiket
@@ -477,7 +501,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                         <Table pagination={{
                             pageSize: 10, total: displayentiredata.total, onChange: (page, pageSize) => {
                                 setpraloading(true)
-                                fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${page}&rows=10&ticket_id=${ticketid1}&location_id=${locationid1}&status_id=${statusid1}&from=${from1}&to=${to1}`, {
+                                fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getTickets" : "getClientTickets"}?page=${page}&rows=10&ticket_id=${ticketid1}&location_id=${locationid1}&status_id=${statusid1}&from=${from1}&to=${to1}`, {
                                     method: `GET`,
                                     headers: {
                                         'Authorization': JSON.parse(initProps),
@@ -501,7 +525,12 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                     onClick: (event) => {
                                         // {
                                         //     [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                        rt.push(`/tickets/detail/${record.id}`)
+                                        dataProfile.data.role === 1 ?
+                                            rt.push(`/tickets/detail/${record.id}`)
+                                            :
+                                            (
+                                                dataProfile.data.features.includes(109) && rt.push(`/tickets/detail/${record.id}`)
+                                            )
                                         //         :
                                         //         null
                                         // }

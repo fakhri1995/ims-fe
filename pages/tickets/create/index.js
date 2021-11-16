@@ -121,7 +121,7 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
     }
 
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getTicketRelation" : "getClientTicketRelation"}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),

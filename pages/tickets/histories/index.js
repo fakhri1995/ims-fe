@@ -187,7 +187,7 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
         // }
         // setdisplaydata(datatemp)
         setpraloading(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getClosedTickets?ticket_id=${namasearchact ? namavalue : ""}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getClosedTickets" : "getClientClosedTickets"}?ticket_id=${namasearchact ? namavalue : ""}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -202,7 +202,7 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
 
     //5.useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getClosedTickets`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getClosedTickets" : "getClientClosedTickets"}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -217,7 +217,7 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
                 setpraloading(false)
             })
             .then(() => {
-                fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
+                fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getTicketRelation" : "getClientTicketRelation"}`, {
                     method: `GET`,
                     headers: {
                         'Authorization': JSON.parse(initProps),
@@ -262,7 +262,7 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
                             pagination={{
                                 pageSize: 10, total: displayentiredata.total, onChange: (page, pageSize) => {
                                     setpraloading(true)
-                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getClosedTickets?page=${page}&rows=10`, {
+                                    fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getClosedTickets" : "getClientClosedTickets"}?page=${page}&rows=10`, {
                                         method: `GET`,
                                         headers: {
                                             'Authorization': JSON.parse(initProps),

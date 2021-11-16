@@ -43,29 +43,63 @@ const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations, 
                         null
                         :
                         <div className="flex">
-                            <Button type="default" onClick={(e) => { rt.push(`/tickets/update/${ticketid}`) }} style={{ marginRight: `1rem` }} size="large">Edit</Button>
-                            <Button type="primary" loading={loadingexporting} className="buttonExport" onClick={(e) => {
-                                setloadingexporting(true)
-                                fetch(`https://boiling-thicket-46501.herokuapp.com/downloadTicket?id=${ticketid}`, {
-                                    method: `GET`,
-                                    headers: {
-                                        'Authorization': JSON.parse(initProps)
-                                    }
-                                })
-                                    .then(res => res.blob())
-                                    .then(res2 => {
-                                        var newBlob = new Blob([res2], { type: "application/pdf" })
-                                        const data = window.URL.createObjectURL(newBlob);
-                                        var link = document.createElement('a');
-                                        link.href = data;
-                                        link.download = "file.pdf";
-                                        link.click();
-                                        setTimeout(function () {
-                                            window.URL.revokeObjectURL(data);
+                            {
+                                dataProfile.data.role === 1 &&
+                                <Button type="default" onClick={(e) => { rt.push(`/tickets/update/${ticketid}`) }} style={{ marginRight: `1rem` }} size="large">Edit</Button>
+                            }
+                            {
+                                dataProfile.data.role === 1 ?
+                                    <Button type="primary" loading={loadingexporting} className="buttonExport" onClick={(e) => {
+                                        setloadingexporting(true)
+                                        fetch(`https://boiling-thicket-46501.herokuapp.com/ticketExport?id=${ticketid}`, {
+                                            method: `GET`,
+                                            headers: {
+                                                'Authorization': JSON.parse(initProps)
+                                            }
                                         })
-                                        setloadingexporting(false)
-                                    })
-                            }} size="large">Export</Button>
+                                            .then(res => res.blob())
+                                            .then(res2 => {
+                                                var newBlob = new Blob([res2], { type: "application/pdf" })
+                                                const data = window.URL.createObjectURL(newBlob);
+                                                var link = document.createElement('a');
+                                                link.href = data;
+                                                link.download = "file.pdf";
+                                                link.click();
+                                                setTimeout(function () {
+                                                    window.URL.revokeObjectURL(data);
+                                                })
+                                                setloadingexporting(false)
+                                            })
+                                    }} size="large">Export</Button>
+                                    :
+                                    <>
+                                        {
+                                            dataProfile.data.features.includes(113) &&
+                                            <Button type="primary" loading={loadingexporting} className="buttonExport" onClick={(e) => {
+                                                setloadingexporting(true)
+                                                fetch(`https://boiling-thicket-46501.herokuapp.com/clientTicketExport?id=${ticketid}`, {
+                                                    method: `GET`,
+                                                    headers: {
+                                                        'Authorization': JSON.parse(initProps)
+                                                    }
+                                                })
+                                                    .then(res => res.blob())
+                                                    .then(res2 => {
+                                                        var newBlob = new Blob([res2], { type: "application/pdf" })
+                                                        const data = window.URL.createObjectURL(newBlob);
+                                                        var link = document.createElement('a');
+                                                        link.href = data;
+                                                        link.download = "file.pdf";
+                                                        link.click();
+                                                        setTimeout(function () {
+                                                            window.URL.revokeObjectURL(data);
+                                                        })
+                                                        setloadingexporting(false)
+                                                    })
+                                            }} size="large">Export</Button>
+                                        }
+                                    </>
+                            }
                         </div>
                 }
             </div>
@@ -534,7 +568,7 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
     )
 }
 
-const Activity = ({ ticketid, initProps, activitytrigger }) => {
+const Activity = ({ ticketid, initProps, activitytrigger, dataProfile }) => {
     //useState
     const [logs, setlogs] = useState([])
     const [praloadinglogs, setpraloadinglogs] = useState(true)
@@ -542,7 +576,7 @@ const Activity = ({ ticketid, initProps, activitytrigger }) => {
     //useEffect
     useEffect(() => {
         setpraloadinglogs(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketLog?id=${ticketid}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getTicketLog" : "getClientTicketLog"}?id=${ticketid}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -745,9 +779,41 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                 }
             })
     }
+    const handleSetStatusClient = () => {
+        setloadingstatus(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/cancelClientTicket`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: Number(ticketid),
+                notes: notestatus,
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingstatus(false)
+                setmodalstatus(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: "Status berhasil diubah",
+                        duration: 2
+                    })
+                    window.location.href = `/tickets/detail/${ticketid}`
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
     const handleNotes = () => {
         setloadingnotes(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/addNoteTicket`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "addNoteTicket" : "clientAddNoteTicket"}`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -814,7 +880,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicket?id=${ticketid}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getTicket" : "getClientTicket"}?id=${ticketid}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -828,7 +894,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                 res2.data.ticket.ticketable.inventory === null ? setconnecteditem(null) : setconnecteditem(res2.data.ticket.ticketable.inventory)
             })
             .then(() => {
-                fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
+                fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getTicketRelation" : "getClientTicketRelation"}`, {
                     method: `GET`,
                     headers: {
                         'Authorization': JSON.parse(initProps),
@@ -901,35 +967,60 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                                             setdisplaystatus(false)
                                                         }}>
                                                             {
-                                                                ticketrelations.status_ticket.map((doc, idx) => {
-                                                                    return (
-                                                                        <Select.Option key={idx} value={doc.id} name={doc.name}><strong>{doc.name}</strong></Select.Option>
-                                                                    )
-                                                                })
+                                                                dataProfile.data.role === 1 ?
+                                                                    ticketrelations.status_ticket.map((doc, idx) => {
+                                                                        return (
+                                                                            <Select.Option key={idx} value={doc.id} name={doc.name}><strong>{doc.name}</strong></Select.Option>
+                                                                        )
+                                                                    })
+                                                                    :
+                                                                    dataProfile.data.features.includes(110) &&
+                                                                    ticketrelations.status_ticket.map((doc, idx) => {
+                                                                        if (doc.id === 1 || doc.id === 4) {
+                                                                            return (
+                                                                                <Select.Option key={idx} value={doc.id} name={doc.name}><strong>{doc.name}</strong></Select.Option>
+                                                                            )
+                                                                        }
+                                                                    })
                                                             }
                                                         </Select>
                                                         :
                                                         null
                                                 }
                                             </div>
-                                            <div className="flex flex-col cursor-pointer w-40" onClick={() => { setmodalassignto(true); setdisplayassignto(false) }}>
-                                                <p className="mb-1">Assign To:</p>
-                                                {
-                                                    displayassignto ?
-                                                        <div className="py-1 px-3 border flex items-center justify-between">
-                                                            <h1 className="font-semibold mb-0 mr-5">{assignto === null ? 'None' : `${nameassignto}`}</h1>
-                                                            <DownOutlined />
-                                                        </div>
-                                                        :
-                                                        null
-                                                }
-                                            </div>
+                                            {
+                                                dataProfile.data.role === 1 &&
+                                                <div className="flex flex-col cursor-pointer w-40" onClick={() => { setmodalassignto(true); setdisplayassignto(false) }}>
+                                                    <p className="mb-1">Assign To:</p>
+                                                    {
+                                                        displayassignto ?
+                                                            <div className="py-1 px-3 border flex items-center justify-between">
+                                                                <h1 className="font-semibold mb-0 mr-5">{assignto === null ? 'None' : `${nameassignto}`}</h1>
+                                                                <DownOutlined />
+                                                            </div>
+                                                            :
+                                                            null
+                                                    }
+                                                </div>
+                                            }
                                         </>
                                 }
                             </div>
-                            <div className="flex items-center">
-                                <Button onClick={() => { setmodalnotes(true) }} size="large">Tambah Notes</Button>
-                            </div>
+                            {
+                                dataProfile.data.role === 1 ?
+                                    <div className="flex items-center">
+                                        <Button onClick={() => { setmodalnotes(true) }} size="large">Tambah Notes</Button>
+                                    </div>
+                                    :
+                                    <>
+                                        {
+                                            dataProfile.data.features.includes(112) &&
+                                            <div className="flex items-center">
+                                                <Button onClick={() => { setmodalnotes(true) }} size="large">Tambah Notes</Button>
+                                            </div>
+                                        }
+                                    </>
+                            }
                         </div>
                     </Sticky>
                 </div>
@@ -943,24 +1034,35 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                             <TabPane tab="Overview" key={`overview`}>
                                 <Overview ticketid={ticketid} initProps={initProps} praloading={praloading} maindata={maindata} ticketrelations={ticketrelations} dataProfile={dataProfile} />
                             </TabPane>
-                            <TabPane tab={
-                                <div className="flex items-center">
-                                    <p className="mb-0 mr-2">Detail Item</p>
-                                    {
-                                        connecteditem === null ?
-                                            <Tooltip placement="right" title="Ticket Incident belum terhubung dengan Item">
-                                                <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
-                                            </Tooltip>
-                                            :
-                                            null
-                                    }
-                                </div>
-                            } key="detailItem">
-                                <DetailItem ticketid={ticketid} initProps={initProps} connecteditem={connecteditem} setconnecteditem={setconnecteditem} maindata={maindata}></DetailItem>
-                            </TabPane>
-                            <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
-                                <Activity ticketid={ticketid} initProps={initProps} activitytrigger={activitytrigger} />
-                            </TabPane>
+                            {
+                                dataProfile.data.role === 1 &&
+                                <TabPane tab={
+                                    <div className="flex items-center">
+                                        <p className="mb-0 mr-2">Detail Item</p>
+                                        {
+                                            connecteditem === null ?
+                                                <Tooltip placement="right" title="Ticket Incident belum terhubung dengan Item">
+                                                    <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
+                                                </Tooltip>
+                                                :
+                                                null
+                                        }
+                                    </div>
+                                } key="detailItem">
+                                    <DetailItem ticketid={ticketid} initProps={initProps} connecteditem={connecteditem} setconnecteditem={setconnecteditem} maindata={maindata}></DetailItem>
+                                </TabPane>
+                            }
+                            {
+                                dataProfile.data.role === 1 ?
+                                    <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
+                                        <Activity dataProfile={dataProfile} ticketid={ticketid} initProps={initProps} activitytrigger={activitytrigger} />
+                                    </TabPane>
+                                    :
+                                    dataProfile.data.features.includes(111) &&
+                                    <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
+                                        <Activity dataProfile={dataProfile} ticketid={ticketid} initProps={initProps} activitytrigger={activitytrigger} />
+                                    </TabPane>
+                            }
                         </Tabs>
                     </div>
                     <div className=" block md:hidden" >
@@ -972,24 +1074,35 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                             <TabPane tab="Overview" key={`overview`}>
                                 <Overview ticketid={ticketid} initProps={initProps} praloading={praloading} maindata={maindata} ticketrelations={ticketrelations} dataProfile={dataProfile} />
                             </TabPane>
-                            <TabPane tab={
-                                <div className="flex items-center">
-                                    <p className="mb-0 mr-2">Detail Item</p>
-                                    {
-                                        connecteditem === null ?
-                                            <Tooltip placement="right" title="Ticket Incident belum terhubung dengan Item">
-                                                <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
-                                            </Tooltip>
-                                            :
-                                            null
-                                    }
-                                </div>
-                            } key="detailItem">
-                                <DetailItem ticketid={ticketid} initProps={initProps} connecteditem={connecteditem} setconnecteditem={setconnecteditem} maindata={maindata}></DetailItem>
-                            </TabPane>
-                            <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
-                                <Activity ticketid={ticketid} initProps={initProps} activitytrigger={activitytrigger} />
-                            </TabPane>
+                            {
+                                dataProfile.data.role === 1 &&
+                                <TabPane tab={
+                                    <div className="flex items-center">
+                                        <p className="mb-0 mr-2">Detail Item</p>
+                                        {
+                                            connecteditem === null ?
+                                                <Tooltip placement="right" title="Ticket Incident belum terhubung dengan Item">
+                                                    <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
+                                                </Tooltip>
+                                                :
+                                                null
+                                        }
+                                    </div>
+                                } key="detailItem">
+                                    <DetailItem ticketid={ticketid} initProps={initProps} connecteditem={connecteditem} setconnecteditem={setconnecteditem} maindata={maindata}></DetailItem>
+                                </TabPane>
+                            }
+                            {
+                                dataProfile.data.role === 1 ?
+                                    <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
+                                        <Activity dataProfile={dataProfile} ticketid={ticketid} initProps={initProps} activitytrigger={activitytrigger} />
+                                    </TabPane>
+                                    :
+                                    dataProfile.data.features.includes(111) &&
+                                    <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
+                                        <Activity dataProfile={dataProfile} ticketid={ticketid} initProps={initProps} activitytrigger={activitytrigger} />
+                                    </TabPane>
+                            }
                         </Tabs>
                     </div>
                 </div>
@@ -1031,7 +1144,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                     <div className="flex">
                         <>
                             <Button type="default" onClick={() => { setmodalstatus(false); setdisplaystatus(true) }} style={{ marginRight: `1rem` }}>Batal</Button>
-                            <Button type='primary' disabled={status === ""} loading={loadingstatus} onClick={handleSetStatus}>Simpan</Button>
+                            <Button type='primary' disabled={status === ""} loading={loadingstatus} onClick={dataProfile.data.role === 1 ? handleSetStatus : handleSetStatusClient}>Simpan</Button>
                         </>
                     </div>
                 </div>

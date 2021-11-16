@@ -72,7 +72,7 @@ const TicketExporting = ({ initProps, dataProfile, sidemenu }) => {
     };
     const handleExport = () => {
         // console.log(`https://boiling-thicket-46501.herokuapp.com/downloadTickets?group=${attr.group === null ? "" : attr.group}&engineer=${attr.engineer === null ? "" : attr.engineer}&type=${attr.type === null ? null : attr.type}&from=${attr.from}&to=${attr.to}&core_attributes=[${attr.core_attributes}]&secondary_attributes=[${attr.secondary_attributes}]`)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/downloadTickets?group=${attr.group === null ? "" : attr.group}&engineer=${attr.engineer === null ? "" : attr.engineer}&type=${attr.type === null ? null : attr.type}&from=${attr.from}&to=${attr.to}&core_attributes=[${attr.core_attributes}]&secondary_attributes=[${attr.secondary_attributes}]`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/ticketsExport?group=${attr.group === null ? "" : attr.group}&engineer=${attr.engineer === null ? "" : attr.engineer}&type=${attr.type === null ? null : attr.type}&from=${attr.from}&to=${attr.to}&core_attributes=[${attr.core_attributes}]&secondary_attributes=[${attr.secondary_attributes}]`, {
             method: 'GET',
             headers: {
                 'Authorization': JSON.parse(initProps)

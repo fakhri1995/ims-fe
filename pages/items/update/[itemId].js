@@ -148,7 +148,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                 return res2.data.model_id
             })
             .then(res3 => {
-                fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?`, {
+                fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?rows=50`, {
                     method: `GET`,
                     headers: {
                         'Authorization': JSON.parse(initProps),
@@ -199,7 +199,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                 <Spin />
                                 :
                                 <Form form={instanceForm} layout="vertical" onFinish={() => { setmodalupdate(true) }} initialValues={updatedata}>
-                                    <Form.Item name="model_id" label="Nama Model"
+                                    {/* <Form.Item name="model_id" label="Nama Model"
                                         rules={[
                                             {
                                                 required: true,
@@ -208,11 +208,27 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                         ]}>
                                         <Select disabled defaultValue={updatedata.model_id}>
                                             {
-                                                invrelations.models.map((doc, idx) => (
+                                                modeldata.map((doc, idx) => (
                                                     <Select.Option value={doc.id}>{doc.name}</Select.Option>
                                                 ))
                                             }
                                         </Select>
+                                    </Form.Item> */}
+                                    <Form.Item name="model_id" label={
+                                        <div className="flex">
+                                            <span className="judulModel"></span>
+                                            <p className="mb-0 ml-1">Nama Model</p>
+                                            <style jsx>
+                                                {`
+                                            .judulModel::before{
+                                                content: '*';
+                                                color: red;
+                                            }
+                                        `}
+                                            </style>
+                                        </div>
+                                    }>
+                                        <div className="w-full rounded-sm flex items-center bg-gray-100 border p-2 h-8">{updatedata.model_inventory.name}</div>
                                     </Form.Item>
                                     <Form.Item name="model_id" label={
                                         <div className="flex">
@@ -643,6 +659,40 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                                                                 }
                                                                             </>
                                                                         }
+                                                                        {
+                                                                            docinvvalue.data_type === 'String' &&
+                                                                            <>
+                                                                                <Input defaultValue={docinvvalue.value} onChange={(e) => {
+                                                                                    if (e.target.value === "") {
+                                                                                        setdisabledfield(true)
+                                                                                    }
+                                                                                    else {
+                                                                                        setdisabledfield(false)
+                                                                                        setupdatedata(prev => {
+                                                                                            var temp = prev
+                                                                                            const idxfield = temp.inventory_values.map(docname => docname.id).indexOf(docinvvalue.id)
+                                                                                            if (idxfield === -1) {
+                                                                                                temp.inventory_values.push({
+                                                                                                    id: docinvvalue.id,
+                                                                                                    data_type: docinvvalue.data_type,
+                                                                                                    value: e.target.value
+                                                                                                })
+                                                                                            }
+                                                                                            else {
+                                                                                                temp.inventory_values[idxfield].value = e.target.value
+                                                                                            }
+                                                                                            return temp
+                                                                                        })
+                                                                                    }
+                                                                                }}></Input>
+                                                                                {
+                                                                                    disabledfield ?
+                                                                                        <p className=" text-red-500 mb-0">{docinvvalue.name} harus diisi</p>
+                                                                                        :
+                                                                                        null
+                                                                                }
+                                                                            </>
+                                                                        }
                                                                     </>
                                                                 </Form.Item>
                                                             )
@@ -808,6 +858,26 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                                                         }
                                                                         {
                                                                             docinvvalue.data_type === 'single' &&
+                                                                            <Input defaultValue={docinvvalue.value} onChange={(e) => {
+                                                                                setupdatedata(prev => {
+                                                                                    var temp = prev
+                                                                                    const idxfield = temp.inventory_values.map(docname => docname.id).indexOf(docinvvalue.id)
+                                                                                    if (idxfield === -1) {
+                                                                                        temp.inventory_values.push({
+                                                                                            id: docinvvalue.id,
+                                                                                            data_type: docinvvalue.data_type,
+                                                                                            value: e.target.value
+                                                                                        })
+                                                                                    }
+                                                                                    else {
+                                                                                        temp.inventory_values[idxfield].value = e.target.value
+                                                                                    }
+                                                                                    return temp
+                                                                                })
+                                                                            }}></Input>
+                                                                        }
+                                                                        {
+                                                                            docinvvalue.data_type === 'String' &&
                                                                             <Input defaultValue={docinvvalue.value} onChange={(e) => {
                                                                                 setupdatedata(prev => {
                                                                                     var temp = prev

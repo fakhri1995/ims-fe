@@ -114,6 +114,7 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
             ]
         },
     })
+    const [users, setusers] = useState([])
     const [praloading, setpraloading] = useState(true)
     const [disabledfield, setdisabledfield] = useState(false)
     const [loadingupdate, setloadingupdate] = useState(false)
@@ -236,6 +237,18 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                     })
             })
     }, [])
+    useEffect(()=>{
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterUsers`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setusers(res2.data)
+            })
+    },[])
     useEffect(() => {
         if (uploadtrigger !== -1) {
             setupdatedata(prev => {
@@ -283,7 +296,7 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                             setreqlocation(option.company_name)
                                         }}>
                                             {
-                                                ticketrelations.requesters.map((doc, idx) => {
+                                                users.map((doc, idx) => {
                                                     return (
                                                         <Select.Option key={idx} value={doc.id} company_name={doc.company === null ? "-" : doc.company.name}>{doc.name}</Select.Option>
                                                     )

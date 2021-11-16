@@ -136,6 +136,57 @@ const NotifIconSvg = () => {
         <Icon component={notifIconSvg}></Icon>
     )
 }
+const EditIconSvg = ({ size }) => {
+    const editIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-pencil" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke="#35763B" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+            <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+        </svg>
+    )
+    return (
+        <Icon component={editIconSvg}></Icon>
+    )
+}
+const EmailIconSvg = ({ size }) => {
+    const emailIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-mail" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke="#35763B" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <rect x={3} y={5} width={18} height={14} rx={2} />
+            <polyline points="3 7 12 13 21 7" />
+        </svg>
+    )
+    return (
+        <Icon component={emailIconSvg}></Icon>
+    )
+}
+const PhoneIconSvg = ({ size }) => {
+    const phoneIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-mail" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke="#35763B" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <rect x={3} y={5} width={18} height={14} rx={2} />
+            <polyline points="3 7 12 13 21 7" />
+        </svg>
+    )
+    return (
+        <Icon component={phoneIconSvg}></Icon>
+    )
+}
+const WebIconSvg = ({ size }) => {
+    const webIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-world" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke="#35763B" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <circle cx={12} cy={12} r={9} />
+            <line x1="3.6" y1={9} x2="20.4" y2={9} />
+            <line x1="3.6" y1={15} x2="20.4" y2={15} />
+            <path d="M11.5 3a17 17 0 0 0 0 18" />
+            <path d="M12.5 3a17 17 0 0 1 0 18" />
+        </svg>
+    )
+    return (
+        <Icon component={webIconSvg}></Icon>
+    )
+}
 // const TicketIconSvg = () => {
 //     const ticketIconSvg = () => (
 //         <svg width="2em" height="2em" id="icon-alarm" viewBox="0 0 32 32">
@@ -253,5 +304,5 @@ const Iconquestion = (props) => {
 }
 
 export {
-    DashboardIconSvg, TicketIconSvg, TaskIconSvg, ItemIconSvg, CompanyIconSvg, UserIconSvg, FiturIconSvg, AsetIconSvg, SearchIconSvg, NotifIconSvg, ContractIconSvg, IconBroadcast, Iconquestion
+    DashboardIconSvg, TicketIconSvg, TaskIconSvg, ItemIconSvg, CompanyIconSvg, UserIconSvg, FiturIconSvg, AsetIconSvg, SearchIconSvg, NotifIconSvg, EditIconSvg, EmailIconSvg, PhoneIconSvg, WebIconSvg, ContractIconSvg, IconBroadcast, Iconquestion
 }
