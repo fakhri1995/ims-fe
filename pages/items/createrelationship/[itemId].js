@@ -15,7 +15,7 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
     const pathArr = rt.pathname.split("/").slice(1)
     pathArr.splice(2, 1)
     pathArr[pathArr.length - 1] = "Tambah Relationship Item"
-    const { name, asset_id } = rt.query
+    const { name, asset_id, nama } = rt.query
 
     //useState
     const [newdata, setnewdata] = useState({
@@ -174,7 +174,7 @@ const CreateRelationshipItem = ({ initProps, dataProfile, sidemenu, itemid }) =>
         <Layout dataProfile={dataProfile} sidemenu={sidemenu} tok={initProps} st={st} pathArr={pathArr}>
             <div className="h-20 w-full grid grid-cols-1 md:grid-cols-3 bg-white mb-5 px-8 py-4">
                 <div className=" col-span-1 md:col-span-2 flex items-center mb-2 md:mb-0">
-                    <div className="font-semibold text-xl w-auto">Form Tambah Relationship - {name}</div>
+                    <div className="font-semibold text-xl w-auto">Form Tambah Relationship - {nama}</div>
                 </div>
                 <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
                     <Button onClick={() => { rt.push(`/items/detail/${itemid}?active=relationship`); console.log(relitemdatatrigger, reltipeitemdata, relitemdata) }} style={{ marginRight: `1rem` }} size="middle" type="danger">

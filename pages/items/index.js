@@ -12,8 +12,8 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     // 1.Init
     const rt = useRouter()
     const pathArr = rt.pathname.split("/").slice(1)
-    var asset_id1 = "", model_id1 = "", status_condition1 = "", status_usage1 = "", name1 = ""
-    const { asset_id, model_id, status_condition, status_usage, name } = rt.query
+    var asset_id1 = "", model_id1 = "", status_condition1 = "", status_usage1 = "", name1 = "", migid1 = "", location_id1 = ""
+    const { asset_id, model_id, status_condition, status_usage, name, mig_id, location_id, sort_by, sort_type } = rt.query
     if (asset_id) {
         asset_id1 = asset_id
     }
@@ -28,6 +28,12 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     }
     if (name) {
         name1 = name
+    }
+    if (mig_id) {
+        migid1 = mig_id
+    }
+    if (location_id) {
+        location_id1 = location_id
     }
 
     //2.useState
@@ -63,6 +69,10 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     const [displaydata2, setdisplaydata2] = useState([])
     const [namasearchact, setnamasearchact] = useState(name1 === "" ? false : true)
     const [namavalue, setnamavalue] = useState(null)
+    const [migidact, setmigidact] = useState(migid1 === "" ? false : true)
+    const [migidvalue, setmigidvalue] = useState(null)
+    const [locationact, setlocationact] = useState(location_id1 === "" ? false : true)
+    const [locationvalue, setlocationvalue] = useState(null)
     const [assettypefilteract, setassettypefilteract] = useState(asset_id1 === "" ? false : true)
     const [assettypevalue, setassettypevalue] = useState(null)
     const [modelfilteract, setmodelfilteract] = useState(model_id1 === "" ? false : true)
@@ -82,8 +92,10 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     //3.Define
     const columnsTable = [
         {
-            title: 'Nama Item',
-            dataIndex: 'inventory_name',
+            title: 'MIG ID',
+            dataIndex: 'mig_id',
+            sorter: (a, b) => a.mig_id.length - b.mig_id.length,
+            defaultSortOrder: `${sort_type && sort_by === 'mig_id' ? (sort_type === "asc" ? "ascend" : "descend") : null}`,
         },
         {
             title: 'Asset Type',
@@ -92,7 +104,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 return {
                     children:
                         <div className="flex items-center">
-                            <p className="mb-0 mr-1">{record.model_inventory.asset.name}</p>
+                            <p className="mb-0 mr-1">{record.model_inventory.asset.asset_name}</p>
                             {
                                 record.model_inventory.asset.deleted_at !== null ?
                                     <Tooltip placement="right" title="Asset Type telah dihapus, segera lakukan pengubahan Asset Type!">
@@ -126,6 +138,18 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
             }
         },
         {
+            title: 'Lokasi',
+            dataIndex: 'location',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <div className="flex items-center">
+                            <p className="mb-0 mr-1">{record.location_inventory.id === 0 ? "-" : record.location_inventory.name}</p>
+                        </div>
+                }
+            },
+        },
+        {
             title: 'Kondisi',
             dataIndex: 'status_condition',
             render: (text, record, index) => {
@@ -155,7 +179,9 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                             }
                         </div>
                 }
-            }
+            },
+            sorter: (a, b) => a.status_condition.id - b.status_condition.id,
+            defaultSortOrder: `${sort_type && sort_by === 'status_condition' ? (sort_type === "asc" ? "ascend" : "descend") : null}`,
         },
         {
             title: 'Status Pemakaian',
@@ -179,7 +205,9 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                             }
                         </div>
                 }
-            }
+            },
+            sorter: (a, b) => a.status_usage.id - b.status_usage.id,
+            defaultSortOrder: `${sort_type && sort_by === 'mig_id' ? (sort_type === "asc" ? "ascend" : "descend") : null}`,
         },
     ]
 
@@ -188,7 +216,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     const onChangeSearch = (e) => {
         if (e.target.value === "") {
             // setdisplaydata(displaydata2)
-            window.location.href = `items?asset_id=${assettypefilteract ? asset_id1 : ""}&model_id=${modelfilteract ? model_id1 : ""}&status_condition=${kondisifilteract ? status_condition1 : ""}&status_usage=${pemakaianfilteract ? status_usage1 : ""}&name=`
+            window.location.href = `items?asset_id=${assettypefilteract ? asset_id1 : ""}&model_id=${modelfilteract ? model_id1 : ""}&status_condition=${kondisifilteract ? status_condition1 : ""}&status_usage=${pemakaianfilteract ? status_usage1 : ""}&name=&mig_id=${migidact ? migid1 : ""}&location_id=${locationact ? location_id1 : ""}&sort_by=${sort_by}&sort_type=${sort_type}`
             setnamasearchact(false)
         }
         else {
@@ -196,11 +224,35 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
             setnamavalue(e.target.value)
         }
     }
+    //search mig id
+    const onChangeMigid = (e) => {
+        if (e.target.value === "") {
+            // setdisplaydata(displaydata2)
+            window.location.href = `items?asset_id=${assettypefilteract ? asset_id1 : ""}&model_id=${modelfilteract ? model_id1 : ""}&status_condition=${kondisifilteract ? status_condition1 : ""}&status_usage=${pemakaianfilteract ? status_usage1 : ""}&name=${namasearchact ? name1 : ""}&mig_id=&location_id=${locationact ? location_id1 : ""}&sort_by=${sort_by}&sort_type=${sort_type}`
+            setmigidact(false)
+        }
+        else {
+            setmigidact(true)
+            setmigidvalue(e.target.value)
+        }
+    }
+    //search location
+    const onChangeLocation = (id) => {
+        if (e.target.value === "") {
+            // setdisplaydata(displaydata2)
+            window.location.href = `items?asset_id=${assettypefilteract ? asset_id1 : ""}&model_id=${modelfilteract ? model_id1 : ""}&status_condition=${kondisifilteract ? status_condition1 : ""}&status_usage=${pemakaianfilteract ? status_usage1 : ""}&name=${namasearchact ? name1 : ""}&mig_id=${migidact ? migid1 : ""}&location_id=&sort_by=${sort_by}&sort_type=${sort_type}`
+            setlocationact(false)
+        }
+        else {
+            setlocationact(true)
+            setlocationvalue(id)
+        }
+    }
     //search asset type
     const onChangeAssetType = (id) => {
         if (typeof (id) === 'undefined') {
             // setdisplaydata(displaydata2)
-            window.location.href = `items?asset_id=&model_id=&status_condition=${kondisifilteract ? status_condition1 : ""}&status_usage=${pemakaianfilteract ? status_usage1 : ""}&name=${namasearchact ? name1 : ""}`
+            window.location.href = `items?asset_id=&model_id=&status_condition=${kondisifilteract ? status_condition1 : ""}&status_usage=${pemakaianfilteract ? status_usage1 : ""}&name=${namasearchact ? name1 : ""}&mig_id=${migidact ? migid1 : ""}&mig_id=${migidact ? migid1 : ""}&location_id=${locationact ? location_id1 : ""}&sort_by=${sort_by}&sort_type=${sort_type}`
             setassettypefilteract(false)
         }
         else {
@@ -222,7 +274,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     const onChangeModel = (idmodel) => {
         if (typeof (idmodel) === 'undefined') {
             // setdisplaydata(displaydata2)
-            window.location.href = `items?asset_id=${assettypefilteract ? asset_id1 : ""}&model_id=&status_condition=${kondisifilteract ? status_condition1 : ""}&status_usage=${pemakaianfilteract ? status_usage1 : ""}&name=${namasearchact ? name1 : ""}`
+            window.location.href = `items?asset_id=${assettypefilteract ? asset_id1 : ""}&model_id=&status_condition=${kondisifilteract ? status_condition1 : ""}&status_usage=${pemakaianfilteract ? status_usage1 : ""}&name=${namasearchact ? name1 : ""}&mig_id=${migidact ? migid1 : ""}&location_id=${locationact ? location_id1 : ""}&sort_by=${sort_by}&sort_type=${sort_type}`
             setmodelfilteract(false)
         }
         else {
@@ -234,7 +286,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     const onChangeKondisi = (idkondisi) => {
         if (typeof (idkondisi) === 'undefined') {
             // setdisplaydata(displaydata2)
-            window.location.href = `items?asset_id=${assettypefilteract ? asset_id1 : ""}&model_id=${modelfilteract ? model_id1 : ""}&status_condition=&status_usage=${pemakaianfilteract ? status_usage1 : ""}&name=${namasearchact ? name1 : ""}`
+            window.location.href = `items?asset_id=${assettypefilteract ? asset_id1 : ""}&model_id=${modelfilteract ? model_id1 : ""}&status_condition=&status_usage=${pemakaianfilteract ? status_usage1 : ""}&name=${namasearchact ? name1 : ""}&mig_id=${migidact ? migid1 : ""}&location_id=${locationact ? location_id1 : ""}&sort_by=${sort_by}&sort_type=${sort_type}`
             setkondisifilteract(false)
         }
         else {
@@ -246,7 +298,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     const onChangePemakaian = (idpemakaian) => {
         if (typeof (idpemakaian) === 'undefined') {
             // setdisplaydata(displaydata2)
-            window.location.href = `items?asset_id=${assettypefilteract ? asset_id1 : ""}&model_id=${modelfilteract ? model_id1 : ""}&status_condition=${kondisifilteract ? status_condition1 : ""}&status_usage=&name=${namasearchact ? name1 : ""}`
+            window.location.href = `items?asset_id=${assettypefilteract ? asset_id1 : ""}&model_id=${modelfilteract ? model_id1 : ""}&status_condition=${kondisifilteract ? status_condition1 : ""}&status_usage=&name=${namasearchact ? name1 : ""}&mig_id=${migidact ? migid1 : ""}&sort_by=${sort_by}&sort_type=${sort_type}`
             setpemakaianfilteract(false)
         }
         else {
@@ -276,7 +328,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
         //     })
         // }
         // setdisplaydata(datatemp)
-        window.location.href = `/items?asset_id=${assettypefilteract ? (assettypevalue === null ? asset_id1 : assettypevalue) : ""}&model_id=${modelfilteract ? (modelvalue === null ? model_id1 : modelvalue) : ""}&status_condition=${kondisifilteract ? (kondisivalue === "" ? status_condition1 : kondisivalue) : ""}&status_usage=${pemakaianfilteract ? (pemakaianvalue === "" ? status_usage1 : pemakaianvalue) : ""}&name=${namasearchact ? (namavalue === "" ? name1 : namavalue) : ""}`
+        window.location.href = `/items?asset_id=${assettypefilteract ? (assettypevalue === null ? asset_id1 : assettypevalue) : ""}&model_id=${modelfilteract ? (modelvalue === null ? model_id1 : modelvalue) : ""}&status_condition=${kondisifilteract ? (kondisivalue === "" ? status_condition1 : kondisivalue) : ""}&status_usage=${pemakaianfilteract ? (pemakaianvalue === "" ? status_usage1 : pemakaianvalue) : ""}&name=${namasearchact ? (namavalue === "" ? name1 : namavalue) : ""}&mig_id=${migidact ? (migidvalue === "" ? migid1 : migidvalue) : ""}&location_id=${locationact ? (locationvalue === "" ? location_id1 : locationvalue) : ""}&sort_by=${sort_by}&sort_type=${sort_type}`
         // setpraloading(true)
         // fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?rows=100&asset_id=${assettypefilteract ? assettypevalue : ""}&model_id=${modelfilteract ? modelvalue : ""}&status_condition=${kondisifilteract ? kondisivalue : ""}&status_usage=${pemakaianfilteract ? pemakaianvalue : ""}&name=${namasearchact ? namavalue : ""}`, {
         //     method: `GET`,
@@ -297,7 +349,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     //5.useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?asset_id=${asset_id1}&model_id=${model_id1}&status_condition=${status_condition1}&status_usage=${status_usage1}&name=${name1}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?asset_id=${asset_id1}&model_id=${model_id1}&status_condition=${status_condition1}&status_usage=${status_usage1}&name=${name1}&mig_id=${migid1}&location_id=${location_id1}&sort_by=${sort_by}&sort_type=${sort_type}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -388,10 +440,10 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                             :
                             <div className="flex mb-8">
                                 <div className=" w-full mr-1 grid grid-cols-12">
-                                    <div className="col-span-3 mr-1">
-                                        <Input style={{ width: `100%`, marginRight: `0.5rem` }} defaultValue={name1} placeholder="Cari Nama Item" onChange={onChangeSearch} allowClear></Input>
+                                    <div className="col-span-2 mr-1">
+                                        <Input style={{ width: `100%`, marginRight: `0.5rem` }} defaultValue={migid1} placeholder="Cari MIG ID" onChange={onChangeMigid} allowClear></Input>
                                     </div>
-                                    <div className="col-span-3 mr-1">
+                                    <div className="col-span-2 mr-1">
                                         <TreeSelect allowClear
                                             dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                                             defaultValue={asset_id1 === "" ? null : defasset}
@@ -455,6 +507,25 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                                 {modelfilter.length === 0 && <p className="mb-0 text-red-500 text-sm">Model kosong</p>}
                                             </div>
                                     }
+                                    <div className="col-span-2 mr-1">
+                                        <TreeSelect allowClear
+                                            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                            defaultValue={location_id1 === "" ? null : Number(location_id1)}
+                                            treeData={[invrelations.tree_companies]}
+                                            placeholder="Cari Lokasi"
+                                            treeDefaultExpandAll
+                                            style={{ width: `100%` }}
+                                            onChange={(value, label, extra) => {
+                                                if (typeof (value) === 'undefined') {
+                                                    onChangeAssetType()
+                                                }
+                                                else {
+                                                    onChangeAssetType(extra.allCheckedNodes[0].node.props.id)
+                                                    setnamaasset(extra.allCheckedNodes[0].node.props.title)
+                                                }
+                                            }}
+                                        />
+                                    </div>
                                     <div className="col-span-1 mr-1">
                                         <Select placeholder="Kondisi" style={{ width: `100%` }} defaultValue={status_condition1 === "" ? null : Number(status_condition1)} allowClear onChange={(value) => {
                                             if (typeof (value) === 'undefined') {
@@ -500,7 +571,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     <Table pagination={{
                         pageSize: 10, total: displayentiredata.data.total, onChange: (page, pageSize) => {
                             setpraloading(true)
-                            fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?page=${page}&rows=10&asset_id=${asset_id1}&model_id=${model_id1}&status_condition=${status_condition1}&status_usage=${status_usage1}&name=${name1}`, {
+                            fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?page=${page}&rows=10&asset_id=${asset_id1}&model_id=${model_id1}&status_condition=${status_condition1}&status_usage=${status_usage1}&name=${name1}&mig_id=${migid1}&location_id=${location_id1}&sort_by=${sort_by}&sort_type=${sort_type}`, {
                                 method: `GET`,
                                 headers: {
                                     'Authorization': JSON.parse(initProps),
@@ -535,6 +606,28 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                             return (
                                 record.id === rowstate ? `cursor-pointer` : ``
                             )
+                        }}
+                        onChange={(pagination, filters, sorter, extra) => {
+                            // console.log('params', pagination, filters, sorter, extra);
+                            if (extra.action === "sort") {
+                                if (sorter.column) {
+                                    if (sorter.column.dataIndex === "mig_id") {
+                                        window.location.href = `/items?asset_id=${assettypefilteract ? (assettypevalue === null ? asset_id1 : assettypevalue) : ""}&model_id=${modelfilteract ? (modelvalue === null ? model_id1 : modelvalue) : ""}&status_condition=${kondisifilteract ? (kondisivalue === "" ? status_condition1 : kondisivalue) : ""}&status_usage=${pemakaianfilteract ? (pemakaianvalue === "" ? status_usage1 : pemakaianvalue) : ""}&name=${namasearchact ? (namavalue === "" ? name1 : namavalue) : ""}&mig_id=${migidact ? (migidvalue === "" ? migid1 : migidvalue) : ""}&location_id=${locationact ? (locationvalue === "" ? location_id1 : locationvalue) : ""}&sort_by=mig_id&sort_type=${sorter.order === "ascend" ? "asc" : "desc"}`
+                                    }
+                                    else if (sorter.column.dataIndex === "status_usage") {
+                                        window.location.href = `/items?asset_id=${assettypefilteract ? (assettypevalue === null ? asset_id1 : assettypevalue) : ""}&model_id=${modelfilteract ? (modelvalue === null ? model_id1 : modelvalue) : ""}&status_condition=${kondisifilteract ? (kondisivalue === "" ? status_condition1 : kondisivalue) : ""}&status_usage=${pemakaianfilteract ? (pemakaianvalue === "" ? status_usage1 : pemakaianvalue) : ""}&name=${namasearchact ? (namavalue === "" ? name1 : namavalue) : ""}&mig_id=${migidact ? (migidvalue === "" ? migid1 : migidvalue) : ""}&location_id=${locationact ? (locationvalue === "" ? location_id1 : locationvalue) : ""}&sort_by=status_usage&sort_type=${sorter.order === "ascend" ? "asc" : "desc"}`
+                                    }
+                                    else if (sorter.column.dataIndex === "status_condition") {
+                                        window.location.href = `/items?asset_id=${assettypefilteract ? (assettypevalue === null ? asset_id1 : assettypevalue) : ""}&model_id=${modelfilteract ? (modelvalue === null ? model_id1 : modelvalue) : ""}&status_condition=${kondisifilteract ? (kondisivalue === "" ? status_condition1 : kondisivalue) : ""}&status_usage=${pemakaianfilteract ? (pemakaianvalue === "" ? status_usage1 : pemakaianvalue) : ""}&name=${namasearchact ? (namavalue === "" ? name1 : namavalue) : ""}&mig_id=${migidact ? (migidvalue === "" ? migid1 : migidvalue) : ""}&location_id=${locationact ? (locationvalue === "" ? location_id1 : locationvalue) : ""}&sort_by=status_condition&sort_type=${sorter.order === "ascend" ? "asc" : "desc"}`
+                                    }
+                                    else if (sorter.column.dataIndex === "name") {
+                                        window.location.href = `/items?asset_id=${assettypefilteract ? (assettypevalue === null ? asset_id1 : assettypevalue) : ""}&model_id=${modelfilteract ? (modelvalue === null ? model_id1 : modelvalue) : ""}&status_condition=${kondisifilteract ? (kondisivalue === "" ? status_condition1 : kondisivalue) : ""}&status_usage=${pemakaianfilteract ? (pemakaianvalue === "" ? status_usage1 : pemakaianvalue) : ""}&name=${namasearchact ? (namavalue === "" ? name1 : namavalue) : ""}&mig_id=${migidact ? (migidvalue === "" ? migid1 : migidvalue) : ""}&location_id=${locationact ? (locationvalue === "" ? location_id1 : locationvalue) : ""}&sort_by=name&sort_type=${sorter.order === "ascend" ? "asc" : "desc"}`
+                                    }
+                                }
+                                else {
+                                    window.location.href = `/items?asset_id=${assettypefilteract ? (assettypevalue === null ? asset_id1 : assettypevalue) : ""}&model_id=${modelfilteract ? (modelvalue === null ? model_id1 : modelvalue) : ""}&status_condition=${kondisifilteract ? (kondisivalue === "" ? status_condition1 : kondisivalue) : ""}&status_usage=${pemakaianfilteract ? (pemakaianvalue === "" ? status_usage1 : pemakaianvalue) : ""}&name=${namasearchact ? (namavalue === "" ? name1 : namavalue) : ""}&mig_id=${migidact ? (migidvalue === "" ? migid1 : migidvalue) : ""}&location_id=${locationact ? (locationvalue === "" ? location_id1 : locationvalue) : ""}&sort_by=&sort_type=`
+                                }
+                            }
                         }}
                     ></Table>
                 </div>

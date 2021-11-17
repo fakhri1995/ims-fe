@@ -359,7 +359,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryAddable?asset_id=${asset_id1}&model_id=${model_id1}&name=${name1}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryAddable?rows=10&page=1&asset_id=${asset_id1}&model_id=${model_id1}&name=${name1}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -370,12 +370,12 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                 setrawdata(res2.data)
                 const recursiveChangetoChildren = (rsc) => {
                     var res = []
-                    for (var i = 0; i < rsc.length; i++) {
+                    for (var i = 0; i < rsc?.length; i++) {
                         rsc[i].key = rsc[i].id
                         rsc[i].title = rsc[i].inventory_name
-                        rsc[i].children = rsc[i].inventory_addable_parts
-                        delete rsc[i].inventory_addable_parts
-                        if (rsc[i].children.length !== 0) {
+                        rsc[i].children = rsc[i].inventory_parts
+                        delete rsc[i].inventory_parts
+                        if (rsc[i].children) {
                             res.push({
                                 ...rsc[i],
                                 children: recursiveChangetoChildren(rsc[i].children)
@@ -578,12 +578,12 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                                         setrawdata(res2.data)
                                         const recursiveChangetoChildren = (rsc) => {
                                             var res = []
-                                            for (var i = 0; i < rsc.length; i++) {
+                                            for (var i = 0; i < rsc?.length; i++) {
                                                 rsc[i].key = rsc[i].id
                                                 rsc[i].title = rsc[i].inventory_name
-                                                rsc[i].children = rsc[i].inventory_addable_parts
-                                                delete rsc[i].inventory_addable_parts
-                                                if (rsc[i].children.length !== 0) {
+                                                rsc[i].children = rsc[i].inventory_parts
+                                                delete rsc[i].inventory_parts
+                                                if (rsc[i].children) {
                                                     res.push({
                                                         ...rsc[i],
                                                         children: recursiveChangetoChildren(rsc[i].children)

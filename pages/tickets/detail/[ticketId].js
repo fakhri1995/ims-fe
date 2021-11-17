@@ -426,11 +426,11 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
                             <div className="border shadow-md rounded-md flex flex-col p-5 mb-5">
                                 <div className="flex flex-col mt-3 mb-5">
                                     <h1 className=" text-sm font-semibold mb-0">Model:</h1>
-                                    <p className="mb-0 text-sm">{connecteditem.model_name ?? "-"}</p>
+                                    <p className="mb-0 text-sm">{connecteditem.model_inventory.name ?? "-"}</p>
                                 </div>
                                 <div className="flex flex-col mt-3 mb-5">
                                     <h1 className=" text-sm font-semibold mb-0">Asset Type:</h1>
-                                    <p className="mb-0 text-sm">{connecteditem.asset_name ?? "-"}</p>
+                                    <p className="mb-0 text-sm">{connecteditem.model_inventory.asset.full_name ?? "-"}</p>
                                 </div>
                                 <div className="flex flex-col mt-3 mb-5">
                                     <h1 className=" text-sm font-semibold mb-0">MIG ID:</h1>
@@ -441,9 +441,9 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
                                     {
                                         connecteditem.status_usage ?
                                             <>
-                                                {connecteditem.status_usage === 1 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">In Used</div>}
-                                                {connecteditem.status_usage === 2 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-green-100 border border-green-200 text-green-600">In Stock</div>}
-                                                {connecteditem.status_usage === 3 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">Replacement</div>}
+                                                {connecteditem.status_usage.id === 1 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">In Used</div>}
+                                                {connecteditem.status_usage.id === 2 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-green-100 border border-green-200 text-green-600">In Stock</div>}
+                                                {connecteditem.status_usage.id === 3 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">Replacement</div>}
                                             </>
                                             :
                                             "-"
@@ -455,21 +455,21 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
                                         connecteditem.status_condition ?
                                             <>
                                                 {
-                                                    connecteditem.status_condition === 1 &&
+                                                    connecteditem.status_condition.id === 1 &&
                                                     <div className="p-1 flex w-full items-center">
                                                         <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
                                                         <p className="mb-0 font-semibold">Good</p>
                                                     </div>
                                                 }
                                                 {
-                                                    connecteditem.status_condition === 2 &&
+                                                    connecteditem.status_condition.id === 2 &&
                                                     <div className="p-1 flex w-full items-center">
                                                         <div className="w-3 h-3 rounded-full bg-gray-500 mr-1"></div>
                                                         <p className="mb-0 font-semibold">Grey</p>
                                                     </div>
                                                 }
                                                 {
-                                                    connecteditem.status_condition === 3 &&
+                                                    connecteditem.status_condition.id === 3 &&
                                                     <div className="p-1 flex w-full items-center">
                                                         <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
                                                         <p className="mb-0 font-semibold">Bad</p>
@@ -482,15 +482,15 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
                                 </div>
                                 <div className="flex flex-col mt-3 mb-5">
                                     <h1 className=" text-sm font-semibold mb-0">Serial Number:</h1>
-                                    <p className="mb-0 text-sm">{connecteditem.serial_number ?? "-"}</p>
+                                    <p className="mb-0 text-sm">{connecteditem.serial_number === "" ? "-" : connecteditem.serial_number}</p>
                                 </div>
                                 <div className="flex flex-col mt-3 mb-5">
                                     <h1 className=" text-sm font-semibold mb-0">Location:</h1>
-                                    <p className="mb-0 text-sm">{connecteditem.location_name ?? "-"}</p>
+                                    <p className="mb-0 text-sm">{connecteditem.location_inventory.full_name ?? "-"}</p>
                                 </div>
                                 <div className="flex flex-col mt-3 mb-5">
                                     <h1 className=" text-sm font-semibold mb-0">Deskripsi:</h1>
-                                    <p className="mb-0 text-sm">{connecteditem.deskripsi ?? "-"}</p>
+                                    <p className="mb-0 text-sm">{connecteditem.deskripsi === "" ? "-" : connecteditem.deskripsi}</p>
                                 </div>
                             </div>
                         </div>

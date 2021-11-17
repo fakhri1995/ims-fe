@@ -227,6 +227,19 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
             key: 'mig_id',
         },
         {
+            title: 'Serial Number',
+            dataIndex: 'serial_number',
+            key: 'serial_number',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.serial_number === null ? "-" : record.serial_number}
+                        </>
+                }
+            }
+        },
+        {
             title: 'Model',
             dataIndex: 'model_name',
             key: 'model_name',
@@ -247,7 +260,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                 return {
                     children:
                         <>
-                            {record.model_inventory.asset.name}
+                            {record.model_inventory.asset.asset_name}
                         </>
                 }
             }
@@ -1147,18 +1160,20 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading, activ
                             descnew = descnew + `Pengubahan Deskripsi Item`
                         }
                         else if (doclogs.properties.attributes?.list_parts) {
-                            if (doclogs.notes.split(" ")[1] === "Added") {
+                            if (doclogs.properties.attributes.list_parts.length > doclogs.properties.old.list_parts.length) {
                                 const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.includes(docfil) === false)
                                 descnew = descnew + `Penambahan Item "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id)).map(docmap => docmap.inventory_name).join(", ")}" menjadi Item Part`
                             }
                             if (doclogs.notes.split(" ")[1] === "Removed") {
                                 const listpartsnew = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
-                                descnew = descnew + `Pengeluaran Item Part "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
+                                // descnew = descnew + `Pengeluaran Item Part "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
+                                descnew = descnew + `Pengeluaran Item Part`
                             }
                             if (doclogs.notes.split(" ")[1] === "Replaced") {
-                                const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
+                                // const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
                                 const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.includes(docfil) === false)
-                                descnew = descnew + `Pergantian Item Part "${maindata.inventory_parts.filter(docfil => listpartsold.includes(docfil.id))[0].inventory_name}" menjadi Item Part "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
+                                // descnew = descnew + `Pergantian Item Part "${maindata.inventory_parts.filter(docfil => listpartsold.includes(docfil.id))[0].inventory_name}" menjadi Item Part "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
+                                descnew = descnew + `Pergantian Item Part menjadi "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
                             }
                         }
                         else {
@@ -1235,18 +1250,20 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading, activ
                             descnew = descnew + `Pengubahan Deskripsi Item`
                         }
                         else if (doclogs.properties.attributes?.list_parts) {
-                            if (doclogs.notes.split(" ")[1] === "Added") {
+                            if (doclogs.properties.attributes.list_parts.length > doclogs.properties.old.list_parts.length) {
                                 const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.includes(docfil) === false)
                                 descnew = descnew + `Penambahan Item "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id)).map(docmap => docmap.inventory_name).join(", ")}" menjadi Item Part`
                             }
                             if (doclogs.notes.split(" ")[1] === "Removed") {
-                                const listpartsnew = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
-                                descnew = descnew + `Pengeluaran Item Part "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
+                                const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
+                                // descnew = descnew + `Pengeluaran Item Part "${maindata.inventory_parts.filter(docfil => listpartsold.includes(docfil.id))[0].inventory_name}"`
+                                descnew = descnew + `Pengeluaran Item Part`
                             }
                             if (doclogs.notes.split(" ")[1] === "Replaced") {
-                                const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
+                                // const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
                                 const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.includes(docfil) === false)
-                                descnew = descnew + `Pergantian Item Part "${maindata.inventory_parts.filter(docfil => listpartsold.includes(docfil.id))[0].inventory_name}" menjadi Item Part "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
+                                // descnew = descnew + `Pergantian Item Part "${maindata.inventory_parts.filter(docfil => listpartsold.includes(docfil.id))[0].inventory_name}" menjadi Item Part "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
+                                descnew = descnew + `Pergantian Item Part menjadi "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
                             }
                         }
                         else {
@@ -1319,19 +1336,21 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading, activ
                         else if (doclogs.properties.attributes.deskripsi) {
                             descnew = descnew + `Pengubahan Deskripsi Item`
                         }
-                        else if (doclogs.properties.attributes?.list_parts) {
+                        else if (doclogs.properties.attributes.list_parts.length > doclogs.properties.old.list_parts.length) {
                             if (doclogs.notes.split(" ")[1] === "Added") {
                                 const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.includes(docfil) === false)
                                 descnew = descnew + `Penambahan Item "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id)).map(docmap => docmap.inventory_name).join(", ")}" menjadi Item Part`
                             }
                             if (doclogs.notes.split(" ")[1] === "Removed") {
                                 const listpartsnew = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
-                                descnew = descnew + `Pengeluaran Item Part "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
+                                // descnew = descnew + `Pengeluaran Item Part "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
+                                descnew = descnew + `Pengeluaran Item Part`
                             }
                             if (doclogs.notes.split(" ")[1] === "Replaced") {
-                                const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
+                                // const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
                                 const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.includes(docfil) === false)
-                                descnew = descnew + `Pergantian Item Part "${maindata.inventory_parts.filter(docfil => listpartsold.includes(docfil.id))[0].inventory_name}" menjadi Item Part "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
+                                // descnew = descnew + `Pergantian Item Part "${maindata.inventory_parts.filter(docfil => listpartsold.includes(docfil.id))[0].inventory_name}" menjadi Item Part "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
+                                descnew = descnew + `Pergantian Item Part menjadi "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
                             }
                         }
                         else {

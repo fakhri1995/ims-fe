@@ -131,12 +131,13 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
         {
             title: 'Lokasi Problem',
             dataIndex: 'location_problem',
+            align: `center`,
             render: (text, record, index) => {
                 return {
                     children:
                         <>
                             {/* {ticketrelations.companies.filter(docfil => docfil.company_id === record.location)[0].company_name} */}
-                            {record.ticketable.location === null ? "-" : record.ticketable.location.full_name}
+                            {record.ticketable.location.id === 0 ? "-" : record.ticketable.location.full_name}
                         </>
                 }
             }
