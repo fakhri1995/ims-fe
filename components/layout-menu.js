@@ -60,7 +60,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             :
                             <>
                                 {
-                                    dataProfile.data.features.includes(117) &&
+                                    dataProfile.data.features.includes(107) &&
                                     <Menu.Item key="2" icon={<TicketIconSvg />} title="Tickets">
                                         {/* <Menu.Item key="21"> */}
                                         <Link href="/tickets">

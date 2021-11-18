@@ -333,7 +333,19 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                setticketrelations(res2.data)
+                var status_ticket_map = []
+                if(dataProfile.data.role !== 1){
+                    for(var attr in res2.data.status_ticket){
+                        status_ticket_map.push(res2.data.status_ticket[attr])
+                    }
+                    setticketrelations({
+                        ...res2.data,
+                        status_ticket: status_ticket_map
+                    })
+                }
+                else{
+                    setticketrelations(res2.data)
+                }
                 var selectedLocation = {}
                 const recursiveSearchLocation = (doc, key) => {
                     for (var i = 0; i < doc.length; i++) {

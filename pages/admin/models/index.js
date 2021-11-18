@@ -12,7 +12,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
     const rt = useRouter()
     const pathArr = rt.pathname.split("/").slice(1)
     var asset_id1 = "", name1 = ""
-    const { asset_id, name } = rt.query
+    const { asset_id, name, sort_by, sort_type } = rt.query
     if (asset_id) {
         asset_id1 = asset_id
     }
@@ -57,6 +57,8 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
         {
             title: 'Nama',
             dataIndex: 'name',
+            sorter: (a, b) => a.name.length - b.name.length,
+            defaultSortOrder: `${sort_type && sort_by === 'name' ? (sort_type === "asc" ? "ascend" : "descend") : null}`,
         },
         {
             title: 'Asset Type',
@@ -65,6 +67,8 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
         {
             title: 'Jumlah Item',
             dataIndex: 'count',
+            sorter: (a, b) => a.count - b.count,
+            defaultSortOrder: `${sort_type && sort_by === 'count' ? (sort_type === "asc" ? "ascend" : "descend") : null}`,
         },
     ]
 
@@ -72,7 +76,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
     const onChangeSearch = (e) => {
         if (e.target.value === "") {
             // setdisplaydata(displaydata2)
-            window.location.href = `/admin/models?asset_id=${assettypefilteract ? asset_id1 : ""}&name=`
+            window.location.href = `/admin/models?asset_id=${assettypefilteract ? asset_id1 : ""}&name=&sort_by=${sort_by}&sort_type=${sort_type}`
             setnamasearchact(false)
         }
         else {
@@ -83,7 +87,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
     const onChangeAssetType = (id) => {
         if (typeof (id) === 'undefined') {
             // setdisplaydata(displaydata2)
-            window.location.href = `/admin/models?asset_id=&name=${namasearchact ? name1 : ""}`
+            window.location.href = `/admin/models?asset_id=&name=${namasearchact ? name1 : ""}&sort_by=${sort_by}&sort_type=${sort_type}`
             setassettypefilteract(false)
         }
         else {
@@ -104,7 +108,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
         //     })
         // }
         // setdisplaydata(datatemp)
-        window.location.href = `/admin/models?asset_id=${assettypefilteract ? (assettypevalue === null ? asset_id1 : assettypevalue) : ""}&name=${namasearchact ? (namavalue === null ? name1 : namavalue) : ""}`
+        window.location.href = `/admin/models?asset_id=${assettypefilteract ? (assettypevalue === null ? asset_id1 : assettypevalue) : ""}&name=${namasearchact ? (namavalue === null ? name1 : namavalue) : ""}&sort_by=${sort_by}&sort_type=${sort_type}`
     }
 
 
@@ -113,7 +117,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
 
     //5.useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?asset_id=${asset_id1}&name=${name1}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?asset_id=${asset_id1}&name=${name1}&sort_by=${sort_by}&sort_type=${sort_type}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -210,7 +214,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
                     <Table pagination={{
                         pageSize: 10, total: displayentiredata.data.total, onChange: (page, pageSize) => {
                             setpraloading(true)
-                            fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?page=${page}&rows=10&asset_id=${asset_id1}&name=${name1}`, {
+                            fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?page=${page}&rows=10&asset_id=${asset_id1}&name=${name1}&sort_by=${sort_by}&sort_type=${sort_type}`, {
                                 method: `GET`,
                                 headers: {
                                     'Authorization': JSON.parse(initProps),
@@ -245,6 +249,22 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
                             return (
                                 record.id === rowstate ? `cursor-pointer` : ``
                             )
+                        }}
+                        onChange={(pagination, filters, sorter, extra) => {
+                            // console.log('params', pagination, filters, sorter, extra);
+                            if (extra.action === "sort") {
+                                if (sorter.column) {
+                                    if (sorter.column.dataIndex === "name") {
+                                        window.location.href = `/admin/models?asset_id=${assettypefilteract ? (assettypevalue === null ? asset_id1 : assettypevalue) : ""}&name=${namasearchact ? (namavalue === "" ? name1 : namavalue) : ""}&sort_by=name&sort_type=${sorter.order === "ascend" ? "asc" : "desc"}`
+                                    }
+                                    else if (sorter.column.dataIndex === "count") {
+                                        window.location.href = `/admin/models?asset_id=${assettypefilteract ? (assettypevalue === null ? asset_id1 : assettypevalue) : ""}&name=${namasearchact ? (namavalue === "" ? name1 : namavalue) : ""}&sort_by=count&sort_type=${sorter.order === "ascend" ? "asc" : "desc"}`
+                                    }
+                                }
+                                else {
+                                    window.location.href = `/admin/models?asset_id=${assettypefilteract ? (assettypevalue === null ? asset_id1 : assettypevalue) : ""}&name=${namasearchact ? (namavalue === "" ? name1 : namavalue) : ""}&sort_by=&sort_type=`
+                                }
+                            }
                         }}
                     ></Table>
                 </div>
