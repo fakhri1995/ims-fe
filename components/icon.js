@@ -261,6 +261,17 @@ const CheckIconSvg = ({ size, color }) => {
         <Icon component={checkIconSvg}></Icon>
     )
 }
+const BackIconSvg = ({ size, color }) => {
+    const backIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-arrow-back-up" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M9 13l-4 -4l4 -4m-4 4h11a4 4 0 0 1 0 8h-1" />
+        </svg>
+    )
+    return (
+        <Icon component={backIconSvg}></Icon>
+    )
+}
 // const TicketIconSvg = () => {
 //     const ticketIconSvg = () => (
 //         <svg width="2em" height="2em" id="icon-alarm" viewBox="0 0 32 32">
@@ -378,5 +389,5 @@ const Iconquestion = (props) => {
 }
 
 export {
-    DashboardIconSvg, TicketIconSvg, TaskIconSvg, ItemIconSvg, CompanyIconSvg, UserIconSvg, FiturIconSvg, AsetIconSvg, SearchIconSvg, NotifIconSvg, EditIconSvg, EmailIconSvg, PhoneIconSvg, WebIconSvg, LocationIconSvg, SubLocationIconSvg, ShareIconSvg, TrashIconSvg, CheckIconSvg, ContractIconSvg, IconBroadcast, Iconquestion
+    DashboardIconSvg, TicketIconSvg, TaskIconSvg, ItemIconSvg, CompanyIconSvg, UserIconSvg, FiturIconSvg, AsetIconSvg, SearchIconSvg, NotifIconSvg, EditIconSvg, EmailIconSvg, PhoneIconSvg, WebIconSvg, LocationIconSvg, SubLocationIconSvg, ShareIconSvg, TrashIconSvg, CheckIconSvg, BackIconSvg, ContractIconSvg, IconBroadcast, Iconquestion
 }

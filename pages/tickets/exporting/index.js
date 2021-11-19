@@ -14,6 +14,7 @@ const TicketExporting = ({ initProps, dataProfile, sidemenu }) => {
     const rt = useRouter()
     const pathArr = rt.pathname.split("/").slice(1)
     const CheckboxGroup = Checkbox.Group;
+    const { closed } = rt.query
 
     //useState
     const [displaydata, setdisplaydata] = useState({
@@ -72,7 +73,7 @@ const TicketExporting = ({ initProps, dataProfile, sidemenu }) => {
     };
     const handleExport = () => {
         // console.log(`https://boiling-thicket-46501.herokuapp.com/downloadTickets?group=${attr.group === null ? "" : attr.group}&engineer=${attr.engineer === null ? "" : attr.engineer}&type=${attr.type === null ? null : attr.type}&from=${attr.from}&to=${attr.to}&core_attributes=[${attr.core_attributes}]&secondary_attributes=[${attr.secondary_attributes}]`)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/ticketsExport?group=${attr.group === null ? "" : attr.group}&engineer=${attr.engineer === null ? "" : attr.engineer}&type=${attr.type === null ? null : attr.type}&from=${attr.from}&to=${attr.to}&core_attributes=[${attr.core_attributes}]&secondary_attributes=[${attr.secondary_attributes}]`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/ticketsExport?group=${attr.group === null ? "" : attr.group}&engineer=${attr.engineer === null ? "" : attr.engineer}&type=${attr.type === null ? null : attr.type}&from=${attr.from}&to=${attr.to}&core_attributes=[${attr.core_attributes}]&secondary_attributes=[${attr.secondary_attributes}]${closed === "1" ? `&is_history=1` : `&is_history=0`}`, {
             method: 'GET',
             headers: {
                 'Authorization': JSON.parse(initProps)
@@ -122,7 +123,7 @@ const TicketExporting = ({ initProps, dataProfile, sidemenu }) => {
         <Layout dataProfile={dataProfile} sidemenu={sidemenu} tok={initProps} st={st} pathArr={pathArr}>
             <div className=" w-full grid grid-cols-1 md:grid-cols-4 border-gray-400 bg-white mb-5 px-4 py-5">
                 <div className=" col-span-1 md:col-span-3 flex items-center mb-2 md:mb-0">
-                    <div className="font-bold text-2xl w-auto">Export Tickets</div>
+                    <div className="font-bold text-2xl w-auto">Export Tickets {closed === "1" && `(Closed)`}</div>
                 </div>
                 <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
                     <Button size="large" onClick={() => { console.log(attr, displaydata) }} type="default" style={{ marginRight: `1rem` }}>

@@ -1,3 +1,22 @@
+/* Button */
+.btn{
+    text-transform: none !important;
+}
+
+/* Spin */
+.ant-spin-dot-item, .ant-spin-text {
+    background-color: #35763B;
+  }
+
+  /* Radio */
+  .ant-radio-checked .ant-radio-inner{
+      border-color: #35763B;
+  }
+  .ant-radio-inner::after{
+      background-color: #35763B;
+  }
+
+
 /* MENU */
 /* selected menu bg */
 .ant-menu-item-selected{

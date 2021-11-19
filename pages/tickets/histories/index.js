@@ -238,7 +238,7 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
                     <div className="font-bold text-2xl w-auto mr-14">History Tickets Closed</div>
                 </div>
                 <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
-                    <Link href={'/tickets/histories'}>
+                    <Link href={'/tickets/exporting?closed=1'}>
                         <Button size="large" type="primary" style={{ marginRight: `1rem` }}>
                             Export
                         </Button>

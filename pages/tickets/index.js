@@ -441,7 +441,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     }
                     {
                         dataProfile.data.role === 1 &&
-                            <Link href={'/tickets/exporting'}>
+                            <Link href={'/tickets/exporting?closed=0'}>
                                 <Button style={{ backgroundColor: `gray`, borderColor: `gray`, marginRight: `1rem` }} size="large" type="primary">
                                     Export
                                 </Button>
