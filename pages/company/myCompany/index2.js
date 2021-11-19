@@ -50,7 +50,8 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
         account_number: '',
         owner: '',
         currency: '',
-        preset: 1,
+        color_first: "from-state1",
+        color_second: "to-state2"
     })
     const [isenabled, setisenabled] = useState(false)
     //edit
@@ -537,16 +538,13 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                     <Spin spinning={bankloadingedit}>
                                         <div className="flex flex-col">
                                             <div className="flex justify-center items-center mb-5">
-                                                {editbankdata.preset === 1 && <AtmBank from="from-state1" to="to-state2"></AtmBank>}
-                                                {editbankdata.preset === 2 && <AtmBank from="from-state3" to="to-state4"></AtmBank>}
-                                                {editbankdata.preset === 3 && <AtmBank from="from-red-200" to="to-red-600"></AtmBank>}
-                                                {editbankdata.preset === 4 && <AtmBank from="from-purple-600" to="to-pink-600"></AtmBank>}
+                                                <AtmBank from={editbankdata.color_first} to={editbankdata.color_second}></AtmBank>
                                             </div>
                                             <div className="flex justify-center mb-10">
-                                                <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state1 to-state2 border cursor-pointer ${editbankdata.preset === 1 && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, preset: 1 }) }}></div>
-                                                <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state3 to-state4 border cursor-pointer ${editbankdata.preset === 2 && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, preset: 2 }) }}></div>
-                                                <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-red-200 to-red-600 border cursor-pointer ${editbankdata.preset === 3 && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, preset: 3 }) }}></div>
-                                                <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-purple-200 to-pink-600 border cursor-pointer ${editbankdata.preset === 4 && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, preset: 4 }) }}></div>
+                                                <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state1 to-state2 border cursor-pointer ${editbankdata.color_first === "from-state1" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-state1", color_second:"to-state2" }) }}></div>
+                                                <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state3 to-state4 border cursor-pointer ${editbankdata.color_first === "from-state3" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-state3", color_second:"to-state4" }) }}></div>
+                                                <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-red-200 to-red-600 border cursor-pointer ${editbankdata.color_first === "from-red-200" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-red-200", color_second:"to-red-600" }) }}></div>
+                                                <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-purple-600 to-pink-600 border cursor-pointer ${editbankdata.color_first === "from-purple-600" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-purple-600", color_second:"to-pink-600" }) }}></div>
                                             </div>
                                             <div className="flex flex-col ">
                                                 <InputRequired name="name" defaultValue={editbankdata.name} onChangeInput={onChangeInputBankEdit} label="Nama Bank"></InputRequired>

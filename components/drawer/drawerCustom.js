@@ -12,7 +12,8 @@ const DrawerBank = ({ title, visible, onClose, children, buttonOkText, initProps
         account_number: '',
         owner: '',
         currency: '',
-        preset: 1,
+        color_first: "from-state1",
+        color_second: "to-state2"
     })
     const [bankloading, setbankloading] = useState(false)
     const onChangeInput = (e) => {
@@ -27,7 +28,7 @@ const DrawerBank = ({ title, visible, onClose, children, buttonOkText, initProps
             [e.target.name]: e.target.value
         })
     }
-    const handleCreateBank = ()=>{
+    const handleCreateBank = () => {
         setbankloading(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/addMainBank`, {
             method: 'POST',
@@ -46,8 +47,9 @@ const DrawerBank = ({ title, visible, onClose, children, buttonOkText, initProps
                         name: '',
                         account_number: '',
                         owner: '',
-                        currency: '', 
-                        preset: 1
+                        currency: '',
+                        color_first: "from-state1",
+                        color_second: "to-state2"
                     })
                     notification['success']({
                         message: res2.message,
@@ -77,16 +79,17 @@ const DrawerBank = ({ title, visible, onClose, children, buttonOkText, initProps
             <Spin spinning={bankloading}>
                 <div className="flex flex-col">
                     <div className="flex justify-center items-center mb-5">
-                        {createdata.preset === 1 && <AtmBank from="from-state1" to="to-state2"></AtmBank>}
+                        <AtmBank from={createdata.color_first} to={createdata.color_second}></AtmBank>
+                        {/* {createdata.preset === 1 && <AtmBank from="from-state1" to="to-state2"></AtmBank>}
                         {createdata.preset === 2 && <AtmBank from="from-state3" to="to-state4"></AtmBank>}
                         {createdata.preset === 3 && <AtmBank from="from-red-200" to="to-red-600"></AtmBank>}
-                        {createdata.preset === 4 && <AtmBank from="from-purple-600" to="to-pink-600"></AtmBank>}
+                        {createdata.preset === 4 && <AtmBank from="from-purple-600" to="to-pink-600"></AtmBank>} */}
                     </div>
                     <div className="flex justify-center mb-10">
-                        <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state1 to-state2 border cursor-pointer ${createdata.preset === 1 && "border-primary100"} mx-2`} onClick={() => { setcreatedata({ ...createdata, preset: 1 }) }}></div>
-                        <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state3 to-state4 border cursor-pointer ${createdata.preset === 2 && "border-primary100"} mx-2`} onClick={() => { setcreatedata({ ...createdata, preset: 2 }) }}></div>
-                        <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-red-200 to-red-600 border cursor-pointer ${createdata.preset === 3 && "border-primary100"} mx-2`} onClick={() => { setcreatedata({ ...createdata, preset: 3 }) }}></div>
-                        <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-purple-200 to-pink-600 border cursor-pointer ${createdata.preset === 4 && "border-primary100"} mx-2`} onClick={() => { setcreatedata({ ...createdata, preset: 4 }) }}></div>
+                        <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state1 to-state2 border cursor-pointer ${createdata.color_first === "from-state1" && "border-primary100"} mx-2`} onClick={() => { setcreatedata({ ...createdata, color_first: "from-state1", color_second:"to-state2" }) }}></div>
+                        <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state3 to-state4 border cursor-pointer ${createdata.color_first === "from-state3" && "border-primary100"} mx-2`} onClick={() => { setcreatedata({ ...createdata, color_first: "from-state3", color_second:"to-state4" }) }}></div>
+                        <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-red-200 to-red-600 border cursor-pointer ${createdata.color_first === "from-red-200" && "border-primary100"} mx-2`} onClick={() => { setcreatedata({ ...createdata, color_first: "from-red-200", color_second:"to-red-600" }) }}></div>
+                        <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-purple-600 to-pink-600 border cursor-pointer ${createdata.color_first === "from-purple-600" && "border-primary100"} mx-2`} onClick={() => { setcreatedata({ ...createdata, color_first: "from-purple-600", color_second:"to-pink-600" }) }}></div>
                     </div>
                     <div className="flex flex-col ">
                         <InputRequired name="name" value={createdata.name} onChangeInput={onChangeInput} label="Nama Bank"></InputRequired>
