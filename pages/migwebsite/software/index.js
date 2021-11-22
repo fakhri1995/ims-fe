@@ -88,13 +88,13 @@ function Software({ }) {
                         </ul>
                     </div>
                         <div className={'flex-col w-1/2 my-auto'}>
-                            <img src="/image/hardware/Hardware-Solution.png"></img>
+                            <img src="/image/landingpage/Software.png"></img>
                         </div>
                 </div>
                 <div className={'block md:hidden'}>
                     <div className={'my-auto'}>
                         <div className={'my-auto'}>
-                            <img src="/image/hardware/Hardware-Solution.png"></img>
+                            <img src="/image/landingpage/Software.png"></img>
                         </div>
                         <p className={'text-2xl pb-4 gilroy-bold'}>Manual business processes <span style={{borderBottom:'solid 3px #188E4D',paddingBottom:'2.5px'}}>hamper</span> performance</p>
                         <p className={'pb-4 pt-2 gilroy-medium text-xl'}>High competition, need transformation, and slow operations force you to be more effective and efficient in order to grow rapidly.</p>
