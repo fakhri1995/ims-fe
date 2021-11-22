@@ -14,6 +14,8 @@ import { DrawerBank } from '../../../components/drawer/drawerCustom'
 import DrawerCore from '../../../components/drawer/drawerCore'
 import { InputRequired, RadioRequired } from '../../../components/input'
 import { AtmMain, AtmBank } from '../../../components/atm'
+import CountUp from 'react-countup'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 
 const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
@@ -28,7 +30,26 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
 
     //useState
     const [patharr, setpatharr] = useState([])
+    const [rawdata, setrawdata] = useState({
+        id: "",
+        name: "",
+        address: "",
+        phone_number: "",
+        image_logo: "",
+        singkatan: "",
+        tanggal_pkp: moment(new Date()),
+        penanggung_jawab: "",
+        npwp: "",
+        fax: "",
+        email: "",
+        website: "",
+        role: "",
+        induk_level_1_count: "",
+        induk_level_2_count: "",
+        induk_level_3_count: ""
+    })
     const [displaydata, setdisplaydata] = useState({
+        id: "",
         name: "",
         address: "",
         phone_number: "",
@@ -54,11 +75,29 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
         color_second: "to-state2"
     })
     const [isenabled, setisenabled] = useState(false)
-    //edit
+    //EDIT PROFILE
     const [editable, seteditable] = useState(false)
     const [modaledit, setmodaledit] = useState(false)
     const [praloadingedit, setpraloadingedit] = useState(true)
     const [editloading, seteditloading] = useState(false)
+    //ACTIVITY
+    const [rawlogs, setrawlogs] = useState({
+        current_page: "",
+        data: [],
+        first_page_url: "",
+        from: null,
+        last_page: null,
+        last_page_url: "",
+        next_page_url: "",
+        path: "",
+        per_page: null,
+        prev_page_url: null,
+        to: null,
+        total: null
+    })
+    const [logs, setlogs] = useState([])
+    const [hasmore, sethasmore] = useState(true)
+    const [page, setpage] = useState(1)
     //BANKS
     const [banks, setbanks] = useState([])
     //create
@@ -88,6 +127,24 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
             ...editbankdata,
             [e.target.name]: e.target.value
         })
+    }
+    const fetchDataMoreLogs = () => {
+        if (logs.length >= rawlogs.total) {
+            sethasmore(false)
+        }
+        else {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyLog?id=${displaydata.id}&page=${page}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(tok),
+                },
+            })
+                .then(res4 => res4.json())
+                .then(res5 => {
+                    setlogs(prev => prev.concat(res5.data.data))
+                    setpage(prev => prev + 1)
+                })
+        }
     }
     const handleEdit = () => {
         if (displaydata.address === "") {
@@ -207,6 +264,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                 var temp2 = rt.pathname.split("/").slice(1)
                 temp2[temp2.length - 1] = res2.data.name
                 setpatharr(temp2)
+                setrawdata(res2.data)
                 setdisplaydata({
                     id: res2.data.id,
                     name: res2.data.name,
@@ -219,10 +277,25 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                     npwp: res2.data.npwp,
                     fax: res2.data.fax,
                     email: res2.data.email,
-                    website: res2.data.website
+                    website: res2.data.website,
                 })
                 setisenabled(res2.data.is_enabled)
                 setpraloadingedit(false)
+                return res2.data.id
+            })
+            .then((res3) => {
+                fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyLog?id=${res3}&page=${page}`, {
+                    method: `GET`,
+                    headers: {
+                        'Authorization': JSON.parse(tok),
+                    },
+                })
+                    .then(res4 => res4.json())
+                    .then(res5 => {
+                        setrawlogs(res5.data)
+                        setlogs(res5.data.data)
+                        setpage(prev => prev + 1)
+                    })
             })
     }, [])
     useEffect(() => {
@@ -301,7 +374,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                             :
                                             <div className="mt-5 flex justify-center items-center cursor-pointer" onClick={() => { seteditable(true) }}>
                                                 <div className="mr-1 mb-1">
-                                                    <EditIconSvg size={20} />
+                                                    <EditIconSvg size={20} color={`#35763B`} />
                                                 </div>
                                                 <Label color="green">Sunting Profil</Label>
                                             </div>
@@ -454,23 +527,23 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                         </div>
                         <div className="flex mt-5">
                             <div className="w-4/12 p-5 rounded-md bg-state2 flex justify-between items-center mx-2">
-                                <LocationIconSvg size={30} color={"#FFFFFF"} />
-                                <div className="flex flex-col">
-                                    <p className="text-2xl text-white font-bold mb-0">20</p>
+                                <LocationIconSvg size={50} color={"#FFFFFF"} />
+                                <div className="flex flex-col items-center">
+                                    <p className="text-2xl text-white font-bold mb-0"><CountUp end={rawdata.induk_level_1_count} /></p>
                                     <p className="text-sm text-white mb-0">Induk</p>
                                 </div>
                             </div>
                             <div className="w-4/12 p-5 rounded-md bg-state3 flex justify-between items-center mx-2">
-                                <SubLocationIconSvg size={30} color={"#FFFFFF"} />
-                                <div className="flex flex-col">
-                                    <p className="text-2xl text-white font-bold mb-0">300</p>
+                                <SubLocationIconSvg size={50} color={"#FFFFFF"} />
+                                <div className="flex flex-col items-center">
+                                    <p className="text-2xl text-white font-bold mb-0"><CountUp end={rawdata.induk_level_2_count} /></p>
                                     <p className="text-sm text-white mb-0">Sub Induk 1</p>
                                 </div>
                             </div>
                             <div className="w-4/12 p-5 rounded-md bg-state4 flex justify-between items-center mx-2">
-                                <SubLocationIconSvg size={30} color={"#FFFFFF"} />
-                                <div className="flex flex-col">
-                                    <p className="text-2xl text-white font-bold mb-0">1795</p>
+                                <SubLocationIconSvg size={50} color={"#FFFFFF"} />
+                                <div className="flex flex-col items-center">
+                                    <p className="text-2xl text-white font-bold mb-0"><CountUp end={rawdata.induk_level_3_count} /></p>
                                     <p className="text-sm text-white mb-0">Sub Lokasi Induk 1</p>
                                 </div>
                             </div>
@@ -492,23 +565,17 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                     banks.map((doc, idx) => {
                                         return (
                                             <div className="flex mt-5">
-                                                <AtmMain idx={idx}></AtmMain>
+                                                <AtmMain idx={idx} from={doc.color_first} to={doc.color_second}></AtmMain>
                                                 <div className="w-7/12 flex flex-col justify-between">
                                                     <div className="flex justify-between w-full items-center">
                                                         <H2>{doc.name ?? "-"}</H2>
-                                                        <div className="dropdown dropdown-end">
-                                                            <div tabIndex={0} className="cursor-pointer font-bold text-xl flex">...</div>
-                                                            <ul tabIndex={0} className="p-2 shadow menu dropdown-content bg-white rounded w-52">
-                                                                <li className="hover:bg-gray-50" onClick={() => { sethapusbankdata({ ...hapusbankdata, id: doc.id }); setbankmodalhapus(true) }}>
-                                                                    <a>Hapus</a>
-                                                                </li>
-                                                                <li className="hover:bg-gray-50">
-                                                                    <a>Ubah Warna Kartu</a>
-                                                                </li>
-                                                                <li className="hover:bg-gray-50" onClick={() => { seteditbankdata({ ...doc, preset: 4 }); setbankdraweredit(true) }}>
-                                                                    <a>Ubah Informasi</a>
-                                                                </li>
-                                                            </ul>
+                                                        <div className="flex">
+                                                            <div className="mx-1 cursor-pointer" onClick={() => { seteditbankdata({ ...doc }); setbankdraweredit(true) }}>
+                                                                <EditIconSvg size={15} color={`#35763B`} />
+                                                            </div>
+                                                            <div className="mx-1 cursor-pointer" onClick={() => { sethapusbankdata({ ...hapusbankdata, id: doc.id }); setbankmodalhapus(true) }}>
+                                                                <TrashIconSvg size={15} color={`#BF4A40`} />
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div className=" flex flex-col">
@@ -541,10 +608,10 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                                 <AtmBank from={editbankdata.color_first} to={editbankdata.color_second}></AtmBank>
                                             </div>
                                             <div className="flex justify-center mb-10">
-                                                <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state1 to-state2 border cursor-pointer ${editbankdata.color_first === "from-state1" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-state1", color_second:"to-state2" }) }}></div>
-                                                <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state3 to-state4 border cursor-pointer ${editbankdata.color_first === "from-state3" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-state3", color_second:"to-state4" }) }}></div>
-                                                <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-red-200 to-red-600 border cursor-pointer ${editbankdata.color_first === "from-red-200" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-red-200", color_second:"to-red-600" }) }}></div>
-                                                <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-purple-600 to-pink-600 border cursor-pointer ${editbankdata.color_first === "from-purple-600" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-purple-600", color_second:"to-pink-600" }) }}></div>
+                                                <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state1 to-state2 border cursor-pointer ${editbankdata.color_first === "from-state1" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-state1", color_second: "to-state2" }) }}></div>
+                                                <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state3 to-state4 border cursor-pointer ${editbankdata.color_first === "from-state3" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-state3", color_second: "to-state4" }) }}></div>
+                                                <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-red-200 to-red-600 border cursor-pointer ${editbankdata.color_first === "from-red-200" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-red-200", color_second: "to-red-600" }) }}></div>
+                                                <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-purple-600 to-pink-600 border cursor-pointer ${editbankdata.color_first === "from-purple-600" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-purple-600", color_second: "to-pink-600" }) }}></div>
                                             </div>
                                             <div className="flex flex-col ">
                                                 <InputRequired name="name" defaultValue={editbankdata.name} onChangeInput={onChangeInputBankEdit} label="Nama Bank"></InputRequired>
@@ -621,17 +688,74 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                             <div className="mb-8">
                                 <H1>Aktivitas</H1>
                             </div>
-                            <div className="flex flex-col mb-5">
-                                <p className="mb-0">
-                                    Yusron baru saja menambahkan lokasi baru Kantor Cabang Jagakarsa
-                                </p>
-                                <Label>Hari ini, 16:00</Label>
-                            </div>
-                            <div className="flex flex-col mb-5">
-                                <p className="mb-0">
-                                    Yusron baru saja menambahkan lokasi baru Kantor Cabang Jagakarsa
-                                </p>
-                                <Label>Hari ini, 16:00</Label>
+                            <div className="h-screen overflow-auto">
+                                <InfiniteScroll
+                                    dataLength={logs.length}
+                                    next={fetchDataMoreLogs}
+                                    hasMore={hasmore}
+                                    loader={
+                                        <>
+                                            <Spin />
+                                        </>
+                                    }
+                                    endMessage={
+                                        <div className="flex justify-center text-center">
+                                            <Label>Sudah Semua</Label>
+                                        </div>
+                                    }
+                                >
+                                    {
+                                        logs.map((doc, idx) => {
+                                            var tanggalan = (new Date() - new Date(doc.created_at)) / (1000 * 60 * 60 * 24)
+                                            var aksi = ''
+                                            const type = doc.subjectable_type.split("\\")
+                                            if (type[1] === "Company") {
+                                                if (doc.log_name === 'Updated') {
+                                                    return (
+                                                        <div className="flex flex-col mb-5">
+                                                            <p className="mb-0">
+                                                                {doc.causer.name} <strong>mengubah</strong>  informasi profil perusahaan
+                                                            </p>
+                                                            <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
+                                                        </div>
+                                                    )
+                                                }
+                                            }
+                                            else if (type[1] === "Bank") {
+                                                if (doc.log_name === 'Created') {
+                                                    return (
+                                                        <div className="flex flex-col mb-5">
+                                                            <p className="mb-0">
+                                                                {doc.causer.name} <strong>menambahkan</strong> akun <strong>{doc.subjectable.name}</strong>
+                                                            </p>
+                                                            <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
+                                                        </div>
+                                                    )
+                                                }
+                                                else if (doc.log_name === 'Updated') {
+                                                    return (
+                                                        <div className="flex flex-col mb-5">
+                                                            <p className="mb-0">
+                                                                {doc.causer.name} <strong>mengubah</strong> informasi akun <strong>{doc.subjectable.name}</strong>
+                                                            </p>
+                                                            <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
+                                                        </div>
+                                                    )
+                                                }
+                                                else if (doc.log_name === 'Deleted') {
+                                                    return (
+                                                        <div className="flex flex-col mb-5">
+                                                            <p className="mb-0">
+                                                                {doc.causer.name} <strong>menghapus</strong> akun <strong>{doc.subjectable.name}</strong>
+                                                            </p>
+                                                            <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
+                                                        </div>
+                                                    )
+                                                }
+                                            }
+                                        })
+                                    }
+                                </InfiniteScroll>
                             </div>
                         </div>
                     </div>
