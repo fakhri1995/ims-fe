@@ -521,9 +521,9 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                     <div className="flex flex-col shadow-md rounded-md bg-white p-8 mb-5 mx-2">
                         <div className="flex justify-between items-center">
                             <H1>Lokasi</H1>
-                            <Link href="/company/myCompany">
+                            <div onClick={() => { rt.push(`/company/myCompany/index3`) }}>
                                 <Label color="green" cursor="pointer">Lihat Semua</Label>
-                            </Link>
+                            </div>
                         </div>
                         <div className="flex mt-5">
                             <div className="w-4/12 p-5 rounded-md bg-state2 flex justify-between items-center mx-2">

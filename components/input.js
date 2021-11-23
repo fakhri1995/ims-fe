@@ -1,5 +1,5 @@
 import React from 'react'
-import { Input, Radio } from 'antd'
+import { DatePicker, Input, Radio, Select, TreeSelect } from 'antd'
 import { Label } from './typography'
 
 const InputRequired = ({ label, name, defaultValue, onChangeInput, value }) => {
@@ -18,6 +18,70 @@ const InputRequired = ({ label, name, defaultValue, onChangeInput, value }) => {
                 </style>
             </div>
             <Input name={name} defaultValue={defaultValue} value={value} onChange={onChangeInput}></Input>
+        </div>
+    )
+}
+
+const TreeSelectRequired = ({ label, name, defaultValue, onChangeTreeselect, value, treeData }) => {
+    return (
+        <div className="flex flex-col mb-5 px-3">
+            <div className="flex">
+                <Label>{label}</Label>
+                <span className="namaField"></span>
+                <style jsx>
+                    {`
+                        .namaField::before{
+                            content: '*';
+                            color: red;
+                        }
+                    `}
+                </style>
+            </div>
+            <TreeSelect name={name} treeDefaultExpandedKeys={[1]} defaultValue={defaultValue} value={value} onChange={onChangeTreeselect} treeData={treeData}></TreeSelect>
+        </div>
+    )
+}
+
+const SelectRequired = ({ label, name, defaultValue, onChangeSelect, value, children }) => {
+    return (
+        <div className="flex flex-col mb-5 px-3">
+            <div className="flex">
+                <Label>{label}</Label>
+                <span className="namaField"></span>
+                <style jsx>
+                    {`
+                        .namaField::before{
+                            content: '*';
+                            color: red;
+                        }
+                    `}
+                </style>
+            </div>
+            <Select name={name} defaultValue={defaultValue} value={value} onChange={onChangeSelect}>
+                {children}
+            </Select>
+        </div>
+    )
+}
+
+const DateRequired = ({ label, name, defaultValue, onChangeDate, value, children }) => {
+    return (
+        <div className="flex flex-col mb-5 px-3">
+            <div className="flex">
+                <Label>{label}</Label>
+                <span className="namaField"></span>
+                <style jsx>
+                    {`
+                        .namaField::before{
+                            content: '*';
+                            color: red;
+                        }
+                    `}
+                </style>
+            </div>
+            <DatePicker name={name} defaultValue={defaultValue} value={value} onChange={onChangeDate}>
+                {children}
+            </DatePicker>
         </div>
     )
 }
@@ -54,5 +118,5 @@ const RadioRequired = ({ label, name, onChangeRadio, options, value, defaultValu
 }
 
 export {
-    InputRequired, RadioRequired
+    InputRequired, RadioRequired, SelectRequired, TreeSelectRequired, DateRequired
 }

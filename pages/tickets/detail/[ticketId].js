@@ -63,7 +63,7 @@ const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations, 
                                                 const data = window.URL.createObjectURL(newBlob);
                                                 var link = document.createElement('a');
                                                 link.href = data;
-                                                link.download = "file.pdf";
+                                                link.download = `${maindata.ticket.type.name}-${maindata.ticket.ticketable.id}.pdf`;
                                                 link.click();
                                                 setTimeout(function () {
                                                     window.URL.revokeObjectURL(data);

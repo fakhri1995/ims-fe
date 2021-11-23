@@ -62,13 +62,6 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
     //         })
     //     })
     // }
-    const eventsArr = []
-    for (var i = 0; i < datatable.length; i++) {
-        eventsArr.push(false)
-    }
-    const [events, setEvents] = useState(eventsArr)
-    const [event, setEvent] = useState(false)
-    const [colorhover, setColorhover] = useState("")
     const columnsTable = [
         {
             title: 'Logo',
@@ -339,17 +332,8 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
         })
             .then(res => res.json())
             .then(res2 => {
-                // const temp = [res2.data].map((doc, idx) => {
-                //     return ({
-                //         image_logo: doc.image_logo,
-                //         company_id: doc.company_id,
-                //         company_name: doc.company_name,
-                //         is_enabled: doc.is_enabled
-                //     })
-                // })
-                console.log(res2.data.members)
-                setdatatable(res2.data.members)
-                setdatatable2(res2.data.members)
+                setdatatable(res2.data)
+                setdatatable2(res2.data)
                 setloaddatatable(false)
             })
     }, [])
@@ -366,7 +350,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
                 </div>
             </div>
             <div className="p-5 mt-5 flex flex-col space-y-5 rounded-md w-full h-auto bg-white">
-                <Input style={{ width: `50%` }} onChange={(e) => { onChangeSearch(e) }} placeholder="Cari Nama Client" />
+                {/* <Input style={{ width: `50%` }} onChange={(e) => { onChangeSearch(e) }} placeholder="Cari Nama Client" /> */}
                 <Table
                     pagination={{ pageSize: 6 }}
                     scroll={{ x: 200 }}

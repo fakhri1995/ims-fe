@@ -85,7 +85,7 @@ const TicketExporting = ({ initProps, dataProfile, sidemenu }) => {
                 const data = window.URL.createObjectURL(newBlob);
                 var link = document.createElement('a');
                 link.href = data;
-                link.download = "file.xlsx";
+                link.download = `${moment(new Date()).locale('id').format("L")}-${moment(new Date()).locale('id').format('LT')}.xlsx`;
                 link.click();
                 setTimeout(function () {
                     window.URL.revokeObjectURL(data);
@@ -126,7 +126,7 @@ const TicketExporting = ({ initProps, dataProfile, sidemenu }) => {
                     <div className="font-bold text-2xl w-auto">Export Tickets {closed === "1" && `(Closed)`}</div>
                 </div>
                 <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
-                    <Button size="large" onClick={() => { console.log(attr, displaydata) }} type="default" style={{ marginRight: `1rem` }}>
+                    <Button size="large" onClick={() => { rt.push(`/tickets`) }} type="default" style={{ marginRight: `1rem` }}>
                         Batal
                     </Button>
                     {/* <a href={`https://boiling-thicket-46501.herokuapp.com/downloadTickets`}> */}

@@ -130,23 +130,16 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
-            // body: JSON.stringify({
-            //     page: 1,
-            //     rows: 50,
-            //     order_by: "asc"
-            // })
         })
             .then(res => res.json())
             .then(res2 => {
-                const c = res2.data.members
-                const d = modifData(c)
-                setdatacompanylist(d)
+                setdatacompanylist(res2.data.children)
                 setpraloading(false)
             })
     }, [])
@@ -200,32 +193,22 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                                 </Upload>
                             </div>
                             <div className="p-3 col-span-1 md:col-span-3">
-                                <Form.Item label="Asal Lokasi" name="company_id"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Asal Lokasi wajib diisi',
-                                        },
-                                    ]}>
-                                    <TreeSelect allowClear
-                                        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                        treeData={datacompanylist}
-                                        placeholder="Pilih Asal Lokasi"
-                                        treeDefaultExpandAll
-                                        onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }}
-                                    />
-                                    {/* <Select onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }} name={`company_id`} allowClear>
-                                            <Select.Option >Choose company</Select.Option>
-                                            {
-                                                datacompanylist.map((doc, idx) => {
-                                                    return (
-                                                        <Select.Option title={doc.company_name} key={idx} value={doc.company_id}>{doc.company_name}</Select.Option>
-                                                    )
-                                                })
-                                            }
-                                        </Select> */}
-                                </Form.Item>
                                 <Form layout="vertical" className="createAgentsForm" onFinish={handleCreateAgents} form={instanceForm}>
+                                    <Form.Item label="Asal Lokasi" name="company_id"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Asal Lokasi wajib diisi',
+                                            },
+                                        ]}>
+                                        <TreeSelect allowClear
+                                            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                            treeData={datacompanylist}
+                                            placeholder="Pilih Asal Lokasi"
+                                            treeDefaultExpandAll
+                                            onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }}
+                                        />
+                                    </Form.Item>
                                     <Form.Item label="Nama Lengkap" required name="fullname"
                                         rules={[
                                             {

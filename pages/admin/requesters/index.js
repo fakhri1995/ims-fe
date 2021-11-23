@@ -361,17 +361,11 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
         setdatarawloading(true)
         setdatarawloading2(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList?name=${name1}&company_id=${location_id1 === "" && company_id1 === "null" ? "" : (location_id1 === "" ? company_id1 : location_id1)}${is_enabled1 === "" ? "" : `&is_enabled=${is_enabled1}`}`, {
-            // fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
-            // body: JSON.stringify({
-            //     page: 1,
-            //     rows: 50,
-            //     order_by: "asc"
-            // })
         })
             .then(res => res.json())
             .then(res2 => {
@@ -412,23 +406,7 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
         })
             .then(res => res.json())
             .then(res2 => {
-                const c = modifData(res2.data.members)
-                var selectedClient = {}
-                const recursiveSearchClient = (doc, key) => {
-                    for (var i = 0; i < doc.length; i++) {
-                        if (doc[i].id === key) {
-                            selectedClient = doc[i]
-                        }
-                        else {
-                            if (doc[i].children) {
-                                recursiveSearchClient(doc[i].children, key)
-                            }
-                        }
-                    }
-                }
-                recursiveSearchClient(c, Number(company_id1))
-                setdefasset(selectedClient.key)
-                setdatacompany(c)
+                setdatacompany(res2.data)
                 setdatarawloading(false)
             })
     }, [])
@@ -529,23 +507,23 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                                             null
                                             :
                                             <div className="col-span-2 mr-1">
-                                                {/* <Select defaultValue={company_id1 === "null" ? null : Number(defasset)} placeholder="Pilih asal perusahaan requester" style={{ width: `100%`, marginRight: `0.5rem` }} onChange={onChangeAsalCompany} allowClear>
+                                                <Select defaultValue={company_id1 === "" ? null : Number(company_id1)} placeholder="Pilih asal perusahaan requester" style={{ width: `100%`, marginRight: `0.5rem` }} onChange={onChangeAsalCompany} allowClear>
                                                     {
                                                         datacompany.map((doc, idx) => {
                                                             return (
-                                                                <Select.Option value={doc.company_id}>{doc.company_name}</Select.Option>
+                                                                <Select.Option value={doc.id}>{doc.name}</Select.Option>
                                                             )
                                                         })
                                                     }
-                                                </Select> */}
-                                                <TreeSelect defaultValue={company_id1 === "null" || company_id1 === "" ? null : Number(defasset)} allowClear
+                                                </Select>
+                                                {/* <TreeSelect defaultValue={company_id1 === "null" || company_id1 === "" ? null : Number(defasset)} allowClear
                                                     dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                                                     treeData={datacompany}
                                                     placeholder="Cari asal perusahaan requester"
                                                     treeDefaultExpandAll
                                                     style={{ width: `100%`, marginRight: `0.5rem` }}
                                                     onChange={onChangeAsalCompany}
-                                                />
+                                                /> */}
                                             </div>
                                     }
                                     {
@@ -582,7 +560,6 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                                         :
                                         <div className="w-2/12">
                                             <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
-                                            {/* <Button style={{ width: `40%` }} onClick={() => { setDataSource(dataraw) }}>Reset</Button> */}
                                         </div>
                                 }
                             </div>

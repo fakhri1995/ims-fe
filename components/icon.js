@@ -148,9 +148,9 @@ const EditIconSvg = ({ size, color }) => {
         <Icon component={editIconSvg}></Icon>
     )
 }
-const EmailIconSvg = ({ size }) => {
+const EmailIconSvg = ({ size, color }) => {
     const emailIconSvg = () => (
-        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-mail" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke="#35763B" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-mail" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <rect x={3} y={5} width={18} height={14} rx={2} />
             <polyline points="3 7 12 13 21 7" />
@@ -160,21 +160,20 @@ const EmailIconSvg = ({ size }) => {
         <Icon component={emailIconSvg}></Icon>
     )
 }
-const PhoneIconSvg = ({ size }) => {
+const PhoneIconSvg = ({ size, color }) => {
     const phoneIconSvg = () => (
-        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-mail" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke="#35763B" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-phone" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <rect x={3} y={5} width={18} height={14} rx={2} />
-            <polyline points="3 7 12 13 21 7" />
+            <path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2" />
         </svg>
     )
     return (
         <Icon component={phoneIconSvg}></Icon>
     )
 }
-const WebIconSvg = ({ size }) => {
+const WebIconSvg = ({ size, color }) => {
     const webIconSvg = () => (
-        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-world" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke="#35763B" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-world" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <circle cx={12} cy={12} r={9} />
             <line x1="3.6" y1={9} x2="20.4" y2={9} />
@@ -187,7 +186,7 @@ const WebIconSvg = ({ size }) => {
         <Icon component={webIconSvg}></Icon>
     )
 }
-const LocationIconSvg = ({ size, color }) => {
+const LocationIconSvg = ({ size, color, id }) => {
     const locationIconSvg = () => (
         <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-building-community" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -199,7 +198,7 @@ const LocationIconSvg = ({ size, color }) => {
         </svg>
     )
     return (
-        <Icon component={locationIconSvg}></Icon>
+        <Icon id={id} component={locationIconSvg}></Icon>
     )
 }
 const SubLocationIconSvg = ({ size, color }) => {
@@ -272,34 +271,122 @@ const BackIconSvg = ({ size, color }) => {
         <Icon component={backIconSvg}></Icon>
     )
 }
-// const TicketIconSvg = () => {
-//     const ticketIconSvg = () => (
-//         <svg width="2em" height="2em" id="icon-alarm" viewBox="0 0 32 32">
-//             <path fill="#686c83" style={{ fill: 'var(--color1, #686c83)' }} d="M25.595 31.375h-19.191l1.567-4.625h16.056z" />
-//             <path fill="#ff5d5d" style={{ fill: 'var(--color2, #ff5d5d)' }} d="M23.312 26.75h-14.625v-9.688c0-4.038 3.274-7.312 7.312-7.312v0c4.038 0 7.312 3.274 7.312 7.312v9.688z" />
-//             <path fill="#fff" style={{ fill: 'var(--color3, #fff)' }} d="M16 19.188v0c-0.69 0-1.25-0.56-1.25-1.25v-3c0-0.69 0.56-1.25 1.25-1.25v0c0.69 0 1.25 0.56 1.25 1.25v3c0 0.69-0.56 1.25-1.25 1.25z" />
-//             <path fill="#fff" style={{ fill: 'var(--color3, #fff)' }} d="M16 24.188v0c-0.69 0-1.25-0.56-1.25-1.25v0c0-0.69 0.56-1.25 1.25-1.25v0c0.69 0 1.25 0.56 1.25 1.25v0c0 0.69-0.56 1.25-1.25 1.25z" />
-//             <path fill="#000" style={{ fill: 'var(--color4, #000)' }} d="M24.62 26.55c-0.086-0.254-0.324-0.424-0.592-0.424h-0.091v-9.063c0-4.377-3.561-7.937-7.937-7.937s-7.937 3.561-7.937 7.937v9.063h-0.091c-0.268 0-0.506 0.171-0.592 0.424l-1.567 4.625c-0.065 0.191-0.033 0.401 0.084 0.565s0.306 0.261 0.508 0.261h19.191c0.201 0 0.391-0.097 0.508-0.261s0.149-0.374 0.084-0.565l-1.567-4.625zM9.313 17.062c0-3.687 3-6.687 6.687-6.687s6.687 3 6.687 6.687v9.063h-13.375v-9.063zM7.276 30.75l1.144-3.375h15.16l1.144 3.375h-17.447z" />
-//             <path fill="#000" style={{ fill: 'var(--color4, #000)' }} d="M16 5c0.345 0 0.625-0.28 0.625-0.625v-3.75c0-0.345-0.28-0.625-0.625-0.625s-0.625 0.28-0.625 0.625v3.75c0 0.345 0.28 0.625 0.625 0.625z" />
-//             <path fill="#000" style={{ fill: 'var(--color4, #000)' }} d="M16 7.435c0.164 0 0.326-0.066 0.442-0.183s0.183-0.277 0.183-0.442c0-0.165-0.067-0.326-0.183-0.442s-0.277-0.183-0.442-0.183-0.326 0.066-0.442 0.183c-0.116 0.117-0.183 0.277-0.183 0.442s0.067 0.325 0.183 0.442c0.116 0.116 0.277 0.183 0.442 0.183z" />
-//             <path fill="#000" style={{ fill: 'var(--color4, #000)' }} d="M6.594 17.354c0-0.345-0.28-0.625-0.625-0.625h-2.87c-0.345 0-0.625 0.28-0.625 0.625s0.28 0.625 0.625 0.625h2.87c0.345 0 0.625-0.28 0.625-0.625z" />
-//             <path fill="#000" style={{ fill: 'var(--color4, #000)' }} d="M0.625 16.729c-0.164 0-0.326 0.067-0.442 0.183s-0.183 0.277-0.183 0.442c0 0.164 0.067 0.326 0.183 0.442s0.278 0.183 0.442 0.183 0.326-0.067 0.442-0.183c0.116-0.116 0.183-0.277 0.183-0.442s-0.067-0.326-0.183-0.442c-0.116-0.116-0.277-0.183-0.442-0.183z" />
-//             <path fill="#000" style={{ fill: 'var(--color4, #000)' }} d="M10.637 6.040c0.1 0.241 0.332 0.386 0.578 0.386 0.080 0 0.161-0.015 0.239-0.048 0.319-0.132 0.47-0.498 0.338-0.817l-0.847-2.045c-0.132-0.319-0.498-0.47-0.817-0.338s-0.47 0.498-0.338 0.817l0.847 2.045z" />
-//             <path fill="#000" style={{ fill: 'var(--color4, #000)' }} d="M4.447 13.194c0.245 0 0.478-0.145 0.578-0.386 0.132-0.319-0.019-0.684-0.338-0.817l-2.045-0.847c-0.319-0.132-0.684 0.019-0.817 0.338s0.019 0.684 0.338 0.817l2.045 0.847c0.078 0.032 0.159 0.048 0.239 0.048z" />
-//             <path fill="#000" style={{ fill: 'var(--color4, #000)' }} d="M29.161 16.729h-2.87c-0.345 0-0.625 0.28-0.625 0.625s0.28 0.625 0.625 0.625h2.87c0.345 0 0.625-0.28 0.625-0.625s-0.28-0.625-0.625-0.625z" />
-//             <path fill="#000" style={{ fill: 'var(--color4, #000)' }} d="M31.816 16.912c-0.116-0.116-0.277-0.183-0.442-0.183s-0.326 0.067-0.442 0.183c-0.116 0.116-0.183 0.277-0.183 0.442s0.067 0.326 0.183 0.442c0.116 0.116 0.277 0.183 0.442 0.183s0.326-0.067 0.442-0.183c0.116-0.116 0.183-0.277 0.183-0.442s-0.067-0.326-0.183-0.442z" />
-//             <path fill="#000" style={{ fill: 'var(--color4, #000)' }} d="M24.842 9.136c0.16 0 0.32-0.061 0.442-0.183l3.075-3.075c0.244-0.244 0.244-0.64 0-0.884s-0.64-0.244-0.884 0l-3.075 3.075c-0.244 0.244-0.244 0.64 0 0.884 0.122 0.122 0.282 0.183 0.442 0.183z" />
-//             <path fill="#000" style={{ fill: 'var(--color4, #000)' }} d="M6.716 8.954c0.122 0.122 0.282 0.183 0.442 0.183s0.32-0.061 0.442-0.183c0.244-0.244 0.244-0.64 0-0.884l-3.075-3.075c-0.244-0.244-0.64-0.244-0.884 0s-0.244 0.64 0 0.884l3.075 3.075z" />
-//             <path fill="#000" style={{ fill: 'var(--color4, #000)' }} d="M20.546 6.378c0.078 0.032 0.159 0.048 0.239 0.048 0.245 0 0.478-0.145 0.578-0.386l0.847-2.045c0.132-0.319-0.019-0.684-0.338-0.817s-0.684 0.019-0.817 0.338l-0.847 2.045c-0.132 0.319 0.019 0.684 0.338 0.817z" />
-//             <path fill="#000" style={{ fill: 'var(--color4, #000)' }} d="M29.359 11.144l-2.045 0.847c-0.319 0.132-0.47 0.498-0.338 0.817 0.1 0.241 0.332 0.386 0.578 0.386 0.080 0 0.161-0.015 0.239-0.048l2.045-0.847c0.319-0.132 0.47-0.498 0.338-0.817s-0.498-0.47-0.817-0.338z" />
-//             <path fill="#000" style={{ fill: 'var(--color4, #000)' }} d="M16 13.063c-1.034 0-1.875 0.841-1.875 1.875v3c0 1.034 0.841 1.875 1.875 1.875s1.875-0.841 1.875-1.875v-3c0-1.034-0.841-1.875-1.875-1.875zM16.625 17.938c0 0.345-0.28 0.625-0.625 0.625s-0.625-0.28-0.625-0.625v-3c0-0.345 0.28-0.625 0.625-0.625s0.625 0.28 0.625 0.625v3z" />
-//             <path fill="#000" style={{ fill: 'var(--color4, #000)' }} d="M16 21.063c-1.034 0-1.875 0.841-1.875 1.875s0.841 1.875 1.875 1.875 1.875-0.841 1.875-1.875c0-1.034-0.841-1.875-1.875-1.875zM16 23.563c-0.345 0-0.625-0.28-0.625-0.625s0.28-0.625 0.625-0.625c0.345 0 0.625 0.28 0.625 0.625s-0.28 0.625-0.625 0.625z" />
-//         </svg>
-//     )
-//     return (
-//         <Icon component={ticketIconSvg}></Icon>
-//     )
-// }
+const SortingIconSvg = ({ size, color }) => {
+    const sortingIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-sort-ascending-letters" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M15 10v-5c0 -1.38 .62 -2 2 -2s2 .62 2 2v5m0 -3h-4" />
+            <path d="M19 21h-4l4 -7h-4" />
+            <path d="M4 15l3 3l3 -3" />
+            <path d="M7 6v12" />
+        </svg>
+    )
+    return (
+        <Icon component={sortingIconSvg}></Icon>
+    )
+}
+const DownIconSvg = ({ size, color }) => {
+    const downIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-chevron-down" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <polyline points="6 9 12 15 18 9" />
+        </svg>
+    )
+    return (
+        <Icon component={downIconSvg}></Icon>
+    )
+}
+const ExternalLinkIconSvg = ({ size, color }) => {
+    const externallinkIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-external-link" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M11 7h-5a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-5" />
+            <line x1={10} y1={14} x2={20} y2={4} />
+            <polyline points="15 4 20 4 20 9" />
+        </svg>
+    )
+    return (
+        <Icon component={externallinkIconSvg}></Icon>
+    )
+}
+const CameraIconSvg = ({ size, color }) => {
+    const cameraIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-camera" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2" />
+            <circle cx={12} cy={13} r={3} />
+        </svg>
+    )
+    return (
+        <Icon component={cameraIconSvg}></Icon>
+    )
+}
+const RefreshIconSvg = ({ size, color }) => {
+    const refreshIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-refresh" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" />
+            <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
+        </svg>
+    )
+    return (
+        <Icon component={refreshIconSvg}></Icon>
+    )
+}
+const SquarePlusIconSvg = ({ size, color }) => {
+    const squareplusIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-square-plus" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <rect x={4} y={4} width={16} height={16} rx={2} />
+            <line x1={9} y1={12} x2={15} y2={12} />
+            <line x1={12} y1={9} x2={12} y2={15} />
+        </svg>
+    )
+    return (
+        <Icon component={squareplusIconSvg}></Icon>
+    )
+}
+const NotesIconSvg = ({ size, color }) => {
+    const notesIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-notes" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <rect x={5} y={3} width={14} height={18} rx={2} />
+            <line x1={9} y1={7} x2={15} y2={7} />
+            <line x1={9} y1={11} x2={15} y2={11} />
+            <line x1={9} y1={15} x2={13} y2={15} />
+        </svg>
+    )
+    return (
+        <Icon component={notesIconSvg}></Icon>
+    )
+}
+const FaxIconSvg = ({ size, color }) => {
+    const faxIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-printer" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M17 17h2a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-14a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h2" />
+            <path d="M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4" />
+            <rect x={7} y={13} width={10} height={8} rx={2} />
+        </svg>
+    )
+    return (
+        <Icon component={faxIconSvg}></Icon>
+    )
+}
+const PkpIconSvg = ({ size, color }) => {
+    const pkpIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-receipt-tax" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <line x1={9} y1={14} x2={15} y2={8} />
+            <circle cx="9.5" cy="8.5" r=".5" fill="currentColor" />
+            <circle cx="14.5" cy="13.5" r=".5" fill="currentColor" />
+            <path d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16l-3 -2l-2 2l-2 -2l-2 2l-2 -2l-3 2" />
+        </svg>
+    )
+    return (
+        <Icon component={pkpIconSvg}></Icon>
+    )
+}
 const ContractIconSvg = () => {
     const contractIconSvg = () => (
         <svg width="2em" height="2em" id="icon-contract" viewBox="0 0 32 32">
@@ -389,5 +476,36 @@ const Iconquestion = (props) => {
 }
 
 export {
-    DashboardIconSvg, TicketIconSvg, TaskIconSvg, ItemIconSvg, CompanyIconSvg, UserIconSvg, FiturIconSvg, AsetIconSvg, SearchIconSvg, NotifIconSvg, EditIconSvg, EmailIconSvg, PhoneIconSvg, WebIconSvg, LocationIconSvg, SubLocationIconSvg, ShareIconSvg, TrashIconSvg, CheckIconSvg, BackIconSvg, ContractIconSvg, IconBroadcast, Iconquestion
+    DashboardIconSvg,
+    TicketIconSvg,
+    TaskIconSvg,
+    ItemIconSvg,
+    CompanyIconSvg,
+    UserIconSvg,
+    FiturIconSvg,
+    AsetIconSvg,
+    SearchIconSvg,
+    NotifIconSvg,
+    EditIconSvg,
+    EmailIconSvg,
+    PhoneIconSvg,
+    WebIconSvg,
+    LocationIconSvg,
+    SubLocationIconSvg,
+    ShareIconSvg,
+    TrashIconSvg,
+    CheckIconSvg,
+    BackIconSvg,
+    SortingIconSvg,
+    DownIconSvg,
+    ExternalLinkIconSvg,
+    CameraIconSvg,
+    RefreshIconSvg,
+    SquarePlusIconSvg,
+    ContractIconSvg,
+    IconBroadcast,
+    Iconquestion,
+    NotesIconSvg,
+    FaxIconSvg,
+    PkpIconSvg
 }

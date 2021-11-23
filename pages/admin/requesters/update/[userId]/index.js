@@ -260,7 +260,7 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
                 pathArr.splice(3, 1)
                 pathArr[pathArr.length - 1] = `Ubah Profil Requester - ` + res2.data.name
                 setpatharr(pathArr)
-                setcompanyid(res2.data.company_id)
+                setcompanyid(res2.data.company.id)
             })
             .then(() => {
                 fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
@@ -272,14 +272,12 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
                     .then(res => res.json())
                     .then(res2 => {
                         setdataraw1(res2)
-                        console.log(idrole)
-                        console.log(res2)
                         setpreloading(false)
                     })
             })
     }, [])
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -287,22 +285,13 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
         })
             .then(res => res.json())
             .then(res2 => {
-                const c = res2.data.members
-                const d = modifData(c)
-                setdatacompanylist(d)
+                setdatacompanylist(res2.data.children)
             })
     }, [])
 
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={patharr} sidemenu={sidemenu} dataDetailAccount={data1} st={st}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-                {/* <div className=" col-span-1 md:col-span-1 flex md:hidden flex-col space-y-4 p-4">
-                    <div className="font-semibold text-base">Requesters</div>
-                    <p className="font-normal text-xs">
-                        This page lets you handpick a set of requesters and add them to your help desk. These requesters will have selective privileges to submit requests to your helpdesk. You can restrict access such that only people who have been added here are allowed to login to your self-service portal and access your knowledge base. <br /> <br />
-                        You can fill in the details of each of your new requesters manually or import a list of users from a CSV file. Once you have populated your list, your agents can open up each of your requesters and view their ticket history and contact information.
-                    </p>
-                </div> */}
                 <div className="col-span-1 md:col-span-4">
                     <Sticky containerSelectorFocus="#formAgentsWrapper">
                         <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
@@ -384,7 +373,6 @@ function RequestersUpdate({ initProps, dataProfile, dataDetailRequester, dataRol
                                                     treeDefaultExpandAll
                                                     defaultValue={companyid}
                                                     disabled
-                                                /*onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }}*/
                                                 />
                                             </Form.Item>
                                             <Form.Item label="Nama Lengkap" required tooltip="Wajib diisi" name="fullname"
