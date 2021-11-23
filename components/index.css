@@ -128,5 +128,14 @@ border-radius: 5px;
     background-color: #d8e8da;
 }
 
-
-
+.slick-dots li button:before {
+    color: green!important;
+}
+.slick-slide {
+	padding: 0 10px;
+	box-sizing: border-box;
+ }
+ .slick-prev:before,
+ .slick-next:before {
+   color: black!important;
+ }
