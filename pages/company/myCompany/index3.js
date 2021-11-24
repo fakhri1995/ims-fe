@@ -279,7 +279,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                                                 </a>
                                             </div>
                                             <div className="flex">
-                                                <Label>{selecteddata.parent.name}</Label>
+                                                <Label>{selecteddata.singkatan}</Label>
                                             </div>
                                             <div className="h-full flex items-end text-primary100">
                                                 <div className="mr-1">
