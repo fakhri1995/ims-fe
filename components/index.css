@@ -142,3 +142,14 @@ border-radius: 5px;
 
 
 
+.slick-dots li button:before {
+    color: green!important;
+}
+.slick-slide {
+	padding: 0 10px;
+	box-sizing: border-box;
+ }
+ .slick-prev:before,
+ .slick-next:before {
+   color: black!important;
+ }
