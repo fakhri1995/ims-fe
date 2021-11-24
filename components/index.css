@@ -80,6 +80,10 @@ border-color: #35763B;
 border-radius: 5px;
 }
 
+.ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover{
+    border-color: #35763B;
+}
+
 .ant-input:hover, .ant-input-affix-wrapper:hover{
     border-color: #65976a;
 }
@@ -126,6 +130,14 @@ border-radius: 5px;
 }
 .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected{
     background-color: #d8e8da;
+}
+
+/* PAGINATION */
+.ant-pagination-item-active{
+    border-color: #35763B;
+}
+.ant-pagination-item-active a{
+    color: #35763B;
 }
 
 

@@ -346,21 +346,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 else{
                     setticketrelations(res2.data)
                 }
-                var selectedLocation = {}
-                const recursiveSearchLocation = (doc, key) => {
-                    for (var i = 0; i < doc.length; i++) {
-                        if (doc[i].id === key) {
-                            selectedLocation = doc[i]
-                        }
-                        else {
-                            if (doc[i].children) {
-                                recursiveSearchLocation(doc[i].children, key)
-                            }
-                        }
-                    }
-                }
-                recursiveSearchLocation([res2.data.companies.data], Number(namaasset))
-                setdefasset(selectedLocation.key)
+                setdefasset(namaasset)
                 setpraloading(false)
             })
     }, [])
@@ -466,14 +452,14 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                         <Input defaultValue={ticketid1} style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Ticket Number" onChange={onChangeSearch} allowClear></Input>
                                     </div>
                                     <div className="col-span-3 mr-1">
-                                        <TreeSelect defaultValue={namaasset === "" ? null : defasset} placeholder="Lokasi Problem" style={{ width: `100%` }} allowClear onChange={(value, label, extra) => {
+                                        <TreeSelect defaultValue={namaasset === "" ? null : Number(defasset)} placeholder="Lokasi Problem" style={{ width: `100%` }} allowClear onChange={(value, label, extra) => {
                                             if (typeof (value) === 'undefined') {
                                                 onChangeLokasi()
                                             }
                                             else {
-                                                onChangeLokasi(extra.allCheckedNodes[0].node.props.id)
+                                                onChangeLokasi(value)
                                             }
-                                        }} treeData={[ticketrelations.companies.data]} treeDefaultExpandAll />
+                                        }} treeData={dataProfile.data.role === 1 ? [ticketrelations.companies] : [ticketrelations.companies.data]} treeDefaultExpandAll />
                                     </div>
                                     <div className="col-span-3 mr-1">
                                         <DatePicker.RangePicker defaultValue={from1 === "" && to1 === "" ? null : [moment(from1), moment(to1)]} style={{ width: `100%` }} placeholder={["Tanggal Awal", "Tanggal Akhir"]} onChange={(dates, datestrings) => {

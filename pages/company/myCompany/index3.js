@@ -4,35 +4,18 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import st from '../../../components/layout-dashboard-mig.module.css'
 import Link from 'next/link'
-import { Tree, Input, Form, Empty, Spin, Progress, } from 'antd'
+import { Tree, Input, Empty, Spin, Progress, } from 'antd'
 import Buttonsys from '../../../components/button'
 import { H1, H2, Label } from '../../../components/typography'
 import { SortingIconSvg, LocationIconSvg, ExternalLinkIconSvg, PhoneIconSvg, EmailIconSvg } from '../../../components/icon'
-import { DownOutlined, HomeOutlined } from '@ant-design/icons'
+import { DownOutlined } from '@ant-design/icons'
 import moment from 'moment'
-import { ModalEdit, ModalHapus } from '../../../components/modal/modalCustom'
 import { DrawerBank, DrawerLokasi } from '../../../components/drawer/drawerCustom'
-import DrawerCore from '../../../components/drawer/drawerCore'
-import { InputRequired, RadioRequired } from '../../../components/input'
-import { AtmMain, AtmBank } from '../../../components/atm'
-import CountUp from 'react-countup'
-import InfiniteScroll from 'react-infinite-scroll-component'
-
-function modifData(dataa) {
-    for (var i = 0; i < dataa.length; i++) {
-        // dataa[i]['icon'] = <LocationIconSvg size={15} color={`#35763B`} />
-        if (dataa[i].children) [
-            modifData(dataa[i].children)
-        ]
-    }
-    return dataa
-}
 
 const Index3 = ({ initProps, dataProfile, sidemenu }) => {
     const rt = useRouter()
-    const [instanceForm] = Form.useForm();
     var activeTab = "profile"
-    const { active } = rt.query
+    const { active, id } = rt.query
 
     if (active) {
         activeTab = active
@@ -98,6 +81,9 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
         fax: "-",
         email: "",
         website: "-",
+        parent: {
+            name: ""
+        }
     })
     const [lokasidrawer, setlokasidrawer] = useState(false)
 
@@ -119,7 +105,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
     }, [sortedinit])
 
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getMainCompanyDetail`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyDetail?id=${id}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -149,7 +135,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
             })
     }, [])
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.company.role !== 2 ? `getBranchCompanyList` : `getLocations?company_id=${dataProfile.data.company.company_id}`}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.company.role !== 2 ? `getMainLocations` : `getLocations?company_id=${dataProfile.data.company.company_id}`}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -166,7 +152,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
     }, [])
     useEffect(() => {
         if (selected === true) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyBranchDetail?id=${idselected}`, {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getSubCompanyProfile?id=${idselected}`, {
                 method: `GET`,
                 headers: {
                     'Authorization': JSON.parse(initProps),
@@ -174,14 +160,14 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                 },
             })
                 .then(res => res.json())
-                .then(dataBranchDetail => {
-                    const temp = {
-                        ...dataBranchDetail.data,
-                        id: dataBranchDetail.data.id,
-                        image_logo: dataBranchDetail.data.image_logo === "" ? '/default-users.jpeg' : dataBranchDetail.data.image_logo,
-                        tanggal_pkp: dataBranchDetail.data.tanggal_pkp === null ? moment(new Date()) : moment(dataBranchDetail.data.tanggal_pkp),
-                    }
-                    setselecteddata(temp)
+                .then(res2 => {
+                    // const temp = {
+                    //     ...res2.data,
+                    //     id: res2.data.id,
+                    //     image_logo: res2.data.image_logo === "" ? '/default-users.jpeg' : res2.data.image_logo,
+                    //     tanggal_pkp: res2.data.tanggal_pkp === null ? moment(new Date()) : moment(res2.data.tanggal_pkp),
+                    // }
+                    setselecteddata(res2.data)
                     setloadingselected(false)
                 })
         }
@@ -196,9 +182,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                         </div>
                         <div className="mx-0">
                             <Buttonsys type="ghost" selected={sorted === true ? false : true} onClick={() => {
-                                // setsorted(prev => !prev)
                                 setsortedinit(prev => prev + 1)
-                                // setsortednum(prev => prev + 1)
                             }}>
                                 <SortingIconSvg size={12} color={`#35763B`} />
                                 Urutkan: A-Z
@@ -217,50 +201,55 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                                     <Spin />
                                 </>
                                 :
-                                <Tree
-                                    showIcon
-                                    autoExpandParent={true}
-                                    defaultExpandedKeys={expandedkeys}
-                                    treeData={branchdata}
-                                    switcherIcon={<DownOutlined />}
-                                    style={{ backgroundColor: `transparent` }}
-                                    titleRender={(nodeData) => (
-                                        <>
-                                            <div
-                                                id={`wrap${nodeData.key}`}
-                                                className={`flex items-start w-full py-3 rounded-md px-2`}
-                                                onMouseOver={() => {
-                                                    var d = document.getElementById(`text${nodeData.key}`)
-                                                    d.classList.add("text-primary100"); d.classList.remove("text-gray-400")
-                                                    var dd = document.getElementById(`wrap${nodeData.key}`)
-                                                    dd.classList.add("bg-primary10");
-                                                    var ddd = document.getElementById(`badge${nodeData.key}`)
-                                                    ddd.classList.add("bg-primary100"); ddd.classList.remove("bg-gray-300");
-                                                }}
-                                                onMouseLeave={() => {
-                                                    var e = document.getElementById(`text${nodeData.key}`)
-                                                    e.classList.add("text-gray-400"); e.classList.remove("text-primary100")
-                                                    var ee = document.getElementById(`wrap${nodeData.key}`)
-                                                    ee.classList.remove("bg-primary10");
-                                                    var eee = document.getElementById(`badge${nodeData.key}`)
-                                                    eee.classList.add("bg-gray-300"); eee.classList.remove("bg-primary100");
-                                                }}
-                                                onClick={() => { setidselected(nodeData.id); setselected(true); setloadingselected(true) }}
-                                            >
-                                                <div className="mr-3 flex items-start">
-                                                    <LocationIconSvg id={`icon${nodeData.key}`} size={15} color={`#808080`} />
+                                branchdata.length === 0 ?
+                                    <>
+                                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
+                                    </>
+                                    :
+                                    <Tree
+                                        showIcon
+                                        autoExpandParent={true}
+                                        defaultExpandedKeys={expandedkeys}
+                                        treeData={branchdata}
+                                        switcherIcon={<DownOutlined />}
+                                        style={{ backgroundColor: `transparent` }}
+                                        titleRender={(nodeData) => (
+                                            <>
+                                                <div
+                                                    id={`wrap${nodeData.key}`}
+                                                    className={`flex items-start w-full py-3 rounded-md px-2`}
+                                                    onMouseOver={() => {
+                                                        var d = document.getElementById(`text${nodeData.key}`)
+                                                        d.classList.add("text-primary100"); d.classList.remove("text-gray-400")
+                                                        var dd = document.getElementById(`wrap${nodeData.key}`)
+                                                        dd.classList.add("bg-primary10");
+                                                        var ddd = document.getElementById(`badge${nodeData.key}`)
+                                                        ddd.classList.add("bg-primary100"); ddd.classList.remove("bg-gray-300");
+                                                    }}
+                                                    onMouseLeave={() => {
+                                                        var e = document.getElementById(`text${nodeData.key}`)
+                                                        e.classList.add("text-gray-400"); e.classList.remove("text-primary100")
+                                                        var ee = document.getElementById(`wrap${nodeData.key}`)
+                                                        ee.classList.remove("bg-primary10");
+                                                        var eee = document.getElementById(`badge${nodeData.key}`)
+                                                        eee.classList.add("bg-gray-300"); eee.classList.remove("bg-primary100");
+                                                    }}
+                                                    onClick={() => { setidselected(nodeData.id); setselected(true); setloadingselected(true) }}
+                                                >
+                                                    <div className="mr-3 flex items-start">
+                                                        <LocationIconSvg id={`icon${nodeData.key}`} size={15} color={`#808080`} />
+                                                    </div>
+                                                    <div className="mr-3">
+                                                        <Label id={`text${nodeData.key}`}>{nodeData.title}</Label>
+                                                    </div>
+                                                    <div id={`badge${nodeData.key}`} className="w-5 h-5 rounded-full bg-gray-300 text-white text-2xs flex items-center justify-center">{nodeData.children_count}</div>
                                                 </div>
-                                                <div className="mr-3">
-                                                    <Label id={`text${nodeData.key}`}>{nodeData.title}</Label>
-                                                </div>
-                                                <div id={`badge${nodeData.key}`} className="w-5 h-5 rounded-full bg-gray-300 text-white text-2xs flex items-center justify-center">{nodeData.children_count}</div>
-                                            </div>
-                                        </>
-                                    )
-                                    }
-                                    blockNode={true}
-                                >
-                                </Tree>
+                                            </>
+                                        )
+                                        }
+                                        blockNode={true}
+                                    >
+                                    </Tree>
                         }
                     </div>
                 </div>
@@ -280,7 +269,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                                         <div className="flex flex-col w-9/12">
                                             <div className="flex justify-between items-center">
                                                 <H1>{selecteddata.name}</H1>
-                                                <a href={`/company/myCompany/index2`} target="_blank">
+                                                <a href={`/company/myCompany/detail/${selecteddata.id}`} target="_blank">
                                                     <div className="flex items-center">
                                                         <div className="mr-2">
                                                             <Label color="green" cursor="pointer">Lihat Detail</Label>
@@ -290,7 +279,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                                                 </a>
                                             </div>
                                             <div className="flex">
-                                                <Label>{selecteddata.singkatan}</Label>
+                                                <Label>{selecteddata.parent.name}</Label>
                                             </div>
                                             <div className="h-full flex items-end text-primary100">
                                                 <div className="mr-1">
@@ -308,28 +297,28 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                                             <div className="w-6/12 flex-col flex items-center">
                                                 <Progress
                                                     type="dashboard"
-                                                    percent={75}
+                                                    percent={selecteddata.used_inventory_percentage}
                                                     strokeColor={{
                                                         from: `#60A5FA`,
                                                         to: `#1890ff`
                                                     }}
                                                 />
                                                 <div className="flex flex-col items-center">
-                                                    <H2>390/600</H2>
+                                                    <H2>{selecteddata.used_inventory_count}/{selecteddata.inventory_count}</H2>
                                                     <Label>Sedang digunakan</Label>
                                                 </div>
                                             </div>
                                             <div className="w-6/12 flex-col flex items-center">
                                                 <Progress
                                                     type="dashboard"
-                                                    percent={99}
+                                                    percent={selecteddata.good_inventory_percentage}
                                                     strokeColor={{
                                                         from: `#65976a`,
                                                         to: `#35763B`
                                                     }}
                                                 />
                                                 <div className="flex flex-col items-center">
-                                                    <H2>599/600</H2>
+                                                    <H2>{selecteddata.good_inventory_count}/{selecteddata.inventory_count}</H2>
                                                     <Label>Aset dalam kondisi baik</Label>
                                                 </div>
                                             </div>

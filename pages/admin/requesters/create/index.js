@@ -165,7 +165,7 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                             <h1 className="font-semibold py-2">Buat Akun Requester</h1>
                             <div className="flex space-x-2">
                                 {/* <Link href="/admin/requesters"> */}
-                                <Button disabled={praloading} onClick={() => { console.log(newuserrequesters) }} type="default">Batal</Button>
+                                <Button disabled={praloading} onClick={() => { rt.push(`/admin/requesters`) }} type="default">Batal</Button>
                                 {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button> */}
                                 {/* </Link> */}
                                 <Button disabled={praloading} loading={loadingcreate} onClick={instanceForm.submit} type="primary">Simpan</Button>

@@ -225,7 +225,7 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
                                 }}></Input>
                             </Form.Item>
                             <Form.Item name="location_id" label="Lokasi Problem">
-                                <TreeSelect placeholder="Pilih Lokasi Problem" treeData={[ticketrelations.companies.data]} treeDefaultExpandAll onChange={(value, label, extra) => {
+                                <TreeSelect placeholder="Pilih Lokasi Problem" treeData={dataProfile.data.role === 1 ? [ticketrelations.companies] : [ticketrelations.companies.data]} treeDefaultExpandAll onChange={(value, label, extra) => {
                                     setnewdata({ ...newdata, location_id: extra.allCheckedNodes[0].node.props.id })
                                 }} />
                             </Form.Item>

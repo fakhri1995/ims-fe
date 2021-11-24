@@ -206,6 +206,7 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                 setupdatedata(updata)
                 setfilesupload(res2.data.ticket.ticketable.files)
                 setnotclosed(res2.data.ticket.closed_at === null ? true : false)
+                setreqlocation(res2.data.ticket.requester.company.full_name)
                 return res2.data.ticket.requester.company.id
             })
             .then((res3) => {
@@ -218,21 +219,6 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                     .then(res => res.json())
                     .then(res2 => {
                         setticketrelations(res2.data)
-                        var lokasiPembuat = {}
-                        const recursiveSearchLokasiPembuat = (doc, key) => {
-                            for (var i = 0; i < doc.length; i++) {
-                                if (doc[i].id === key) {
-                                    lokasiPembuat = doc[i]
-                                }
-                                else {
-                                    if (doc[i].children) {
-                                        recursiveSearchLokasiPembuat(doc[i].children, key)
-                                    }
-                                }
-                            }
-                        }
-                        recursiveSearchLokasiPembuat([res2.data.companies.data], res3)
-                        setreqlocation(lokasiPembuat.title)
                         setpraloading(false)
                     })
             })
@@ -420,7 +406,7 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                             }}></Input>
                                         </Form.Item>
                                         <Form.Item name="location_id" label="Lokasi Problem">
-                                            <TreeSelect value={updatedata.location_id} defaultValue={updatedata.location_id} placeholder="Pilih Lokasi Problem" treeData={[ticketrelations.companies.data]} treeDefaultExpandAll onChange={(value, label, extra) => {
+                                            <TreeSelect value={updatedata.location_id} defaultValue={updatedata.location_id} placeholder="Pilih Lokasi Problem" treeData={[ticketrelations.companies]} treeDefaultExpandAll onChange={(value, label, extra) => {
                                                 setupdatedata({ ...updatedata, location_id: extra.allCheckedNodes[0].node.props.id })
                                             }} />
                                         </Form.Item>
