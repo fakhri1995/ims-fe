@@ -3,7 +3,6 @@ import Link from 'next/link'
 import Layout from '../../../components/migwebsite/layout.js'
 import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
 import {Button} from 'antd'
-import CountUp from 'react-countup'
 
 function AboutUs({ }) {
 
@@ -12,66 +11,93 @@ function AboutUs({ }) {
             
             <section className={'section2people px-4 md:px-20 lg:px-28 xl:px-40 py-8 md:py-32 text-center justify-center '}>
                 <div className={'pb-8'}>
-                    <p className={'text-2xl md:text-3xl font-bold'} style={{letterSpacing:'1.5px'}}>Operate your business , more efficient and more agile</p>
+                    <p className={'text-2xl md:text-3xl font-bold'}>Operate your business , more efficient and more agile</p>
                 </div>
                 <div className={'pb-12'}>
-                    <p className={'text-base w-full font-bold'} style={{letterSpacing:'1.5px'}}>Mitramas Infosys global is supporting you staff augmentation &  delivering software and hardware managed services. We have served multiple industries, bringing the best solutions to financial service companies, start ups, as well as government agencies.</p>
-                </div>
-            </section>
-            <section className={'section3landingpage static md:relative'} style={{backgroundColor:'#188E4D'}}>
-                <div className={'h-auto block md:flex justify-between pb-12 pt-4 md:pt-10 container mx-auto'} >
-                    <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto w-52'}>
-                        <p className={'text-3xl md:text-5xl text-center text-white gilroy-regular '}><CountUp end={45}/>+</p>
-                        <p className={'text-lg md:text-xl text-center text-white gilroy-regular'}>cities</p>
-                    </div>
-                    <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto w-52'}>
-                        <p className={'text-3xl md:text-5xl text-center text-white gilroy-regular '}><CountUp end={9000}/>+</p>
-                        <p className={'hidden md:block text-lg md:text-xl text-center text-white gilroy-regular'}>managed and leased devices</p>
-                        <p className={'block md:hidden text-lg md:text-xl text-center text-white gilroy-regular'}>devices</p>
-                    </div>
-                    <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto w-52'}>
-                        <p className={'text-3xl md:text-5xl text-center text-white gilroy-regular '}><CountUp end={100}/>+</p>
-                        <p className={'hidden md:block text-lg md:text-xl text-center text-white gilroy-regular'}>IT projects</p>
-                        <p className={'block md:hidden text-lg md:text-xl text-center text-white gilroy-regular'}>projects</p>
-                    </div>
-                    <div className={'flex-col text-black p-1 md:px-4 md:py-2 mx-auto w-52'}>
-                        <p className={'text-3xl md:text-5xl text-center text-white gilroy-regular '}><CountUp end={15}/>+</p>
-                        <p className={'hidden md:block text-lg md:text-xl text-center text-white gilroy-regular'}>years experienced</p>
-                        <p className={'block md:hidden text-lg md:text-xl text-center text-white gilroy-regular'}>years</p>
-                    </div>
+                    <p className={'text-base w-full font-bold'}>Mitramas Infosys global is supporting you staff augmentation &  delivering software and hardware managed services. We have served multiple industries, bringing the best solutions to financial service companies, start ups, as well as government agencies.</p>
                 </div>
             </section>
             <section className={'block md:flex px-4 md:px-20 lg:px-28 xl:px-40'}>
-                <div className={'flex-col w-full md:w-3/4 py-4 md:py-4 pr-0 md:pr-10 m-auto'}>
+                <div className={'flex-col w-full py-4 md:py-4 pr-0 md:pr-10 m-auto'}>
                     <p className={'font-bold text-center md:text-left pb-0 md:pb-8 text-xl'}>Who are we</p>
-                    <div className={'block md:hidden flex-col w-1/2 py-4 md:py-4 m-auto'}>
+                    {/* <div className={'block md:hidden flex-col py-4 md:py-4 m-auto'}>
                         <img src="/image-aboutus.png" className={'block'} style={{width:'400px',height:'auto',margin:'0 auto'}}></img>
-                    </div>
+                    </div> */}
                     <p className={'pb-8 font-bold'}>
                     Founded in 2003, Mitramas Infosys Global (MIG)  directly partner with global  providers and collaborate with local IT talents to offer you a seamless technology experience. Experienced  across archipelago for more than decade we have a plethora of experience in the business. With integrity as our core principle, we collaborate with our clients to increase their efficiency and reach long-term business goals.
                     </p>
-                    <Link href="/advantages">
-                    <p className={'pb-8 cursor-pointer font-bold text-green-500 underline'}>
-                    Our services help you operate your business agile and cost efficient
+                    
+                    <p className={'pb-8'}>
+                    <Link href="joinourteam"><em className={'cursor-pointer text-green-500 underline'}>Careers</em></Link> <em>at MIG</em> offer meaningful work to be better together 
                     </p>
-                    </Link>
-                    <Link href="careers">
-                    <p className={'pb-8 cursor-pointer font-bold text-green-500 underline'}>
-                    Careers at MIG offer bla bla bla to be better together 
-                    </p>
-                    </Link>
-                </div>
-                <div className={'hidden md:flex flex-col w-1/4 py-4 md:py-4'}>
-                    <img src="/image-aboutus.png" className={''} style={{width:'300px', height:'auto'}}></img>
                 </div>
             </section>
+            <section className={'py-8 px-4 lg:px-28 xl:px-40'}>
+                <div className={'pb-4'}>
+                    <p className={'text-2xl md:text-3xl font-bold'}>Support your business efficiently</p>
+                </div>
+                <div>
+                    <p className={'text-base w-full md:w-2/5 font-bold'}>One stop  seamless technology solution to help you achieve business goals and optimize your cost </p>
+                </div>
+                <div className={'grid md:flex my-4 justify-center md:justify-between'}>
+                    <div className={'flex-col flex bg-white mr-0 md:mr-10 p-4 w-full md:w-96'}>
+                        <div className={'min-h-full relative pb-8'} style={{}}>
+                            <img style={{height:'50px', width:'auto'}} src="/image/navbar/hardware.png"></img>
+                            <p className={'text-left py-3 font-bold '}>
+                                Hardware
+                            </p>
+                            <p>
+                                Optimize your cost by leasing and maintenances variety of electronic equipments   
+                            </p>
+                            <div className={'absolute bottom-0'}>
+                                <Link href={{pathname: '/hardware'}}><button className={'pt-4 font-bold text-green-800'}>
+                                    Get yours&nbsp; <ArrowRightOutlined className={'relative'} style={{top:'-2.5px'}}/>
+                                </button></Link> 
+                            </div>
+                        </div>
+                    </div>
+                    <div className={'flex-col bg-white my-5 md:my-0 mx-0 md:mx-10 p-4 w-full md:w-96'}>
+                        <div className={'min-h-full relative pb-8'} style={{}}>
+                            <img style={{height:'50px', width:'auto', position:'relative', left:'-25px'}} src="/image/navbar/software.png"></img>
+                            <p className={'text-left py-3 font-bold '}>Software
+                            </p>
+                            <p>
+                                We support your companies to simplify and automate the process through digitalization
+                            </p>
+                            <div className={'absolute bottom-0'}>
+                                <Link href={{pathname: '/software'}}><button className={'pt-4 font-bold text-green-800'}>
+                                    Build now&nbsp; <ArrowRightOutlined className={'relative'} style={{top:'-2.5px'}}/>
+                                </button></Link>
+                            </div>
+                        </div>
+                    </div>
+                    <div className={'flex-col bg-white mdl-0 md:ml-10 p-4 w-full md:w-96'}>
+                        <div className={'min-h-full relative pb-8'} style={{}}>
+                            <img style={{height:'50px', width:'auto', position:'relative', left:'-10px'}} src="/image/navbar/talents.png"></img>
+                            <p className={'text-left py-3 font-bold '}>People
+                            </p>
+                            <p>
+                                We help you reduce complexity in talent sourcing and management
+                            </p>
+                            <div className={'absolute bottom-0'}>
+                                <Link href={{pathname: '/talents'}}><button className={'pt-4 font-bold text-green-800'}>
+                                    Setup your team&nbsp; <ArrowRightOutlined className={'relative'} style={{top:'-2.5px'}}/>
+                                </button></Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
             <section className={'px-4 md:px-20 lg:px-28 xl:px-40 py-8 md:py-16'} style={{background:'#F8F8F8'}}>
                 <div>
                     <p className={'font-bold text-2xl md:text-3xl pb-4'}>MIG Locations</p>
                     <p className={'font-bold pb-4'}>Headquarters</p>
                     <p className={'font-bold'}>Tebet raya  no. 42</p>
                     <p className={'pb-4 font-bold'}>South Jakarta, DKI Jakarta,12820</p>
-                    <Button className={''} style={{backgroundColor:'#F8F8F8',paddingLeft:'2rem',paddingRight:'2rem'}}>Contact Us</Button>
+                    <Link href={{pathname: '/contactus'}}>
+                    <Button className={'hover:text-white hover:bg-black'} style={{paddingLeft:'2rem',paddingRight:'2rem'}}>Contact Us</Button>
+                    </Link>
                     <p className={'font-bold py-4'}>Coverages</p>
                     <div className={'bg-white p-4'} style={{boxShadow:'0 10px 20px rgb(0 0 0 / 20%)'}}>
                         <ul className={'coverage-list'}>

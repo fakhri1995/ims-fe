@@ -4,23 +4,24 @@ import Link from 'next/link'
 import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
 import { Button, Collapse } from 'antd'
 import Flickity from 'react-flickity-component'
+import { Link as Linkk } from "react-scroll";
 
-function JoinOurTeam({dataCareers}) {
+function JoinOurTeam({ dataCareers }) {
     console.log(dataCareers)
     const careers = dataCareers.data ?? []
-    const flickityOption1={
+    const flickityOption1 = {
         prevNextButtons: false,
         pageDots: true,
         draggable: true,
         initialIndex: 0,
     }
-    const flickityOption2={
+    const flickityOption2 = {
         prevNextButtons: true,
         pageDots: false,
         draggable: true,
         initialIndex: 0,
     }
-    const flickityOption3={
+    const flickityOption3 = {
         prevNextButtons: false,
     }
     const { Panel } = Collapse;
@@ -31,39 +32,52 @@ function JoinOurTeam({dataCareers}) {
                     <div className={'flex-col m-auto'}>
                         <div className={''}>
                             <p className={'text-3xl md:text-4xl pb-6 text-center md:text-left'} style={{ fontWeight: 'bold' }}>Careers at MIG
-                                </p>
+                            </p>
                             <div className={'flex-col block md:hidden pb-6'}>
                                 <img style={{ width: '1000px', height: 'auto' }} src='/image-careers.png' />
                             </div>
-                            <p className={' text-sm md:text-base font-bold pb-4'}>We are currently looking to expand our team! Our team comprises of highly motivated, positive and hardworking individuals.
-                                </p>
-                            <Button type="text" className={'button-hover px-4 border-green-800 text-white'} style={{backgroundColor:'#188E4D', color:'white', fontWeight:'600'}} key="3"><p>See open positions</p></Button>
+                            <p className={'text-sm md:text-base font-bold pb-4'}>We are currently looking to expand our team! Our team comprises of highly motivated, positive and hardworking individuals.
+                            </p>
+                            <Linkk
+                                className={'flex-col md:center'}
+                                activeClass="active"
+                                to="section7careers"
+                                spy={true}
+                                smooth={true}
+                                offset={-120}
+                                duration={500}
+                            >
+
+                                <p className={'text-black text-xl text-left'}>See open position!</p>
+                                <img className={'mt-5 ml-10 animate-bounce'} style={{ width: '60px' }} src='/image/landingpage/arrow-down.png' />
+                            </Linkk>
                         </div>
                     </div>
                     <div className={'flex-col hidden md:flex ml-4'}>
                         <img style={{ width: '1000px', height: 'auto' }} src='/image-careers.png' />
                     </div>
                 </div>
+
             </section>
-            <section className={'section2careers hidden md:block px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 z-50'} style={{background:'#F4F4F4'}}>
+            <section className={'section2careers hidden md:block px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 z-50'} style={{ background: '#F4F4F4' }}>
                 <div className={'block md:flex'}>
                     <div className={'flex py-4'}>
                         <Link href='/careers/#ourvalues'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Our Values
-                            </p></Link>
+                        </p></Link>
                         <Link href='/careers/#lifeatmig'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Life at MIG
-                            </p></Link>
+                        </p></Link>
                         <Link href='/careers/#employeestories'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Employee Stories
-                            </p></Link>
+                        </p></Link>
                         <Link href='/careers/#benefits'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Benefits
-                            </p></Link>
+                        </p></Link>
                         <Link href='/careers/#vacancies'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Vacancies
-                            </p></Link>
+                        </p></Link>
                     </div>
                 </div>
             </section>
             <section className={'h-8 hidden md:block'}></section>
-            <section className={'section3careers py-10 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'} style={{background:'#F4F4F4'}}>
-                <span className={'relative'} style={{top:'-140px'}} id='ourvalues'></span>
+            <section className={'section3careers py-10 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'} style={{ background: '#F4F4F4' }}>
+                <span className={'relative'} style={{ top: '-140px' }} id='ourvalues'></span>
                 <div>
                     <p className={'text-2xl font-bold'}>Our Values</p>
                 </div>
@@ -96,141 +110,27 @@ function JoinOurTeam({dataCareers}) {
                         </div>
                     </div>
                 </div>
-                <Flickity
-                className={'block md:hidden carousel'}
-                options={flickityOption1}
-                elementType={'div'}
-                disableImagesLoaded={false} 
-                reloadOnUpdate 
-                static
-                >
-                    <div className={'w-full'}>
-                        <div className={'py-8'}>
-                            <img className={'block m-auto'} src={'/avatar.png'}></img>
-                        </div>
-                        <div className={'pb-4'}>
-                            <p className={'text-xl pb-4 text-center'}>Agility</p>
-                            <p className={'text-left'}>We are adapting to fast-changing environments.</p>
-                        </div>
-                    </div>
-                    <div className={'w-full'}>
-                        <div className={'py-8'}>
-                            <img className={'block m-auto'} src={'/avatar.png'}></img>
-                        </div>
-                        <div  className={'pb-4'}className={''}>
-                            <p className={'text-xl pb-4 text-center'}>Perseverance</p>
-                            <p className={'text-left'}>We aim high and constantly strive for excellence.</p>
-                        </div>
-                    </div>
-                    <div className={'w-full'}>
-                        <div className={'py-8'}>
-                            <img className={'block m-auto'} src={'/avatar.png'}></img>
-                        </div>
-                        <div className={'pb-4'}>
-                            <p className={'text-xl pb-4 text-center'}>Integrity</p>
-                            <p className={'text-left'}>We are dedicated to adhering to positive ethical values.</p>
-                        </div>
-                    </div>
-                </Flickity>
             </section>
-            <section className={'section4careers py-10 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 h-auto'} style={{scrollPaddingTop:'80px'}} >
-                <span className={'relative'} style={{top:'-140px'}} id="lifeatmig"></span>
-                <div>
-                    <p className={'text-2xl font-bold text-center pb-8'}>What is it like to work at Mitramas Solusi?</p>
-                    <Flickity
-                    className={'carousel section4careersflickity'}
-                    options={flickityOption2}
-                    elementType={'div'}
-                    disableImagesLoaded={false} 
-                    reloadOnUpdate 
-                    static
-                    >
-                        <div className={'w-full px-0 md:overflow-hidden'}>
-                            <div className={' -bottom-40 md:bottom-0 bg-white z-10 p-8 w-72 md:w-96 h-64 md:h-96 m-auto md:my-10 md:mx-3 text-center relative '} style={{boxShadow:'0 0px 20px rgb(0 0 0 / 20%)'}}>
-                                <p className={'text-2xl font-bold pb-4'}>Rapid Advancement in the Tech Industry</p>
-                                <p>With a growing client base, we are constantly looking for new opportunities to excel in the tech world.</p>
-                            </div>
-                            <div className={'z-0 top-0 left-0 md:left-48 absolute w-auto'} style={{width:'100%', height:'100%'}}>
-                                <img src="/tes.jpg" className={'w-full'}></img>
-                            </div>
-                        </div>
-                        <div className={'w-full px-0 md:overflow-hidden'}>
-                            <div className={' -bottom-40 md:bottom-0 bg-white z-10 p-8 w-72 md:w-96 h-64 md:h-96 m-auto md:my-10 md:mx-3 text-center relative '} style={{boxShadow:'0 0px 20px rgb(0 0 0 / 20%)'}}>
-                                <p className={'text-2xl font-bold pb-4'}>Rapid Advancement in the Tech Industry</p>
-                                <p>With a growing client base, we are constantly looking for new opportunities to excel in the tech world.</p>
-                            </div>
-                            <div className={'z-0 top-0 left-0 md:left-48 absolute w-auto'} style={{width:'100%', height:'100%'}}>
-                                <img src="/tes.jpg" className={'w-full'}></img>
-                            </div>
-                        </div>
-                        
-                    </Flickity>
-                </div>
-            </section>
-            <section className={'section5careers py-10 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 h-auto'} style={{background:'#188E4D'}}>
-                <span className={'relative'} style={{top:'-180px'}} id='employeestories'></span>
-                <Flickity
-                className={'carousel'}
-                options={flickityOption3}
-                elementType={'div'}
-                disableImagesLoaded={false} 
-                reloadOnUpdate 
-                static
-                >
-                    <div className={'w-full text-center'}>
-                        <div>
-                            <p className={'text-2xl font-bold text-white pb-8 px-10'}>I gained the professional skills of project management, problem solving, flexibility, time management, mediation, efficiency and collaboration. </p>
-                        </div>
-                        <div>
-                            <img className={'m-auto pb-4'} src="/avatar.png"></img>
-                            <p className={'text-white text-base'}>Lorem Ipsum 1</p>
-                            <p className={'text-white text-lg'}>Middleware Engineer</p>
-                        </div>
-                    </div>
-                    <div className={'w-full text-center'}>
-                        <div>
-                            <p className={'text-2xl font-bold text-white pb-8 px-10'}>I gained the professional skills of project management, problem solving, flexibility, time management, mediation, efficiency and collaboration. </p>
-                        </div>
-                        <div>
-                            <img className={'m-auto pb-4'} src="/avatar.png"></img>
-                            <p className={'text-white text-base'}>Lorem Ipsum 2</p>
-                            <p className={'text-white text-lg'}>Middleware Engineer</p>
-                        </div>
-                    </div>
-                </Flickity>
-            </section>
+
+
             <section className={'section6careers py-10 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 h-auto'}>
-                <span className={'relative'} style={{top:'-140px'}} id='benefits'></span>
+                <span className={'relative'} style={{ top: '-140px' }} id='benefits'></span>
                 <div>
                     <p className={'text-center font-bold text-3xl pb-8'}>Benefits</p>
                     <p className={'pb-8 text-justify'}>
-                    Mitramas is a people-centric business with a foundation to gives working opportunities for motivated individuals at all levels. Our long-term sustainable business which has been running for +15 years and operated across 45 cities have a strong commitment to offer pleasant experience for our team, communities, and clients.
+                        Mitramas is a people-centric business with a foundation to gives working opportunities for motivated individuals at all levels. Our long-term sustainable business which has been running for +15 years and operated across 45 cities have a strong commitment to offer pleasant experience for our team, communities, and clients.
                     </p>
                     <div className={'block md:flex justify-center'}>
                         <div className={'pb-6 md:w-1/2 flex-row flex'}>
                             <img className={'flex-row'} src='/avatar.png'></img>
                             <p className={' text-base flex-row my-auto pl-4'}>
-                            We love to empower our team members to solve problems that matter
+                                We love to empower our team members to solve problems that matter
                             </p>
                         </div>
                         <div className={'pb-6 md:w-1/2 flex-row flex'}>
                             <img className={'flex-row'} src='/avatar.png'></img>
                             <p className={' text-base flex-row my-auto pl-4'}>
-                            We offer diverse industry exposures and hands-on experience
-                            </p>
-                        </div>
-                    </div>
-                    <div className={'block md:flex justify-center'}>
-                        <div className={'pb-6 md:w-1/2 flex-row flex'}>
-                            <img className={'flex-row'} src='/avatar.png'></img>
-                            <p className={' text-base flex-row my-auto pl-4'}>
-                            We support personal growth through constant experiment and learning
-                            </p>
-                        </div>
-                        <div className={'pb-6 md:w-1/2 flex-row flex'}>
-                            <img className={'flex-row'} src='/avatar.png'></img>
-                            <p className={' text-base flex-row my-auto pl-4'}>
-                            We provide unique and competitive packages to launch your career
+                                We offer diverse industry exposures and hands-on experience
                             </p>
                         </div>
                     </div>
@@ -238,20 +138,34 @@ function JoinOurTeam({dataCareers}) {
                         <div className={'pb-6 md:w-1/2 flex-row flex'}>
                             <img className={'flex-row'} src='/avatar.png'></img>
                             <p className={' text-base flex-row my-auto pl-4'}>
-                            We value informal social bonding to offer a enjoyable working environment
+                                We support personal growth through constant experiment and learning
                             </p>
                         </div>
                         <div className={'pb-6 md:w-1/2 flex-row flex'}>
                             <img className={'flex-row'} src='/avatar.png'></img>
                             <p className={' text-base flex-row my-auto pl-4'}>
-                            We create engaging environment and believe everyone has a voice at the table
+                                We provide unique and competitive packages to launch your career
+                            </p>
+                        </div>
+                    </div>
+                    <div className={'block md:flex justify-center'}>
+                        <div className={'pb-6 md:w-1/2 flex-row flex'}>
+                            <img className={'flex-row'} src='/avatar.png'></img>
+                            <p className={' text-base flex-row my-auto pl-4'}>
+                                We value informal social bonding to offer a enjoyable working environment
+                            </p>
+                        </div>
+                        <div className={'pb-6 md:w-1/2 flex-row flex'}>
+                            <img className={'flex-row'} src='/avatar.png'></img>
+                            <p className={' text-base flex-row my-auto pl-4'}>
+                                We create engaging environment and believe everyone has a voice at the table
                             </p>
                         </div>
                     </div>
                 </div>
             </section>
             <section className={'section7careers pb-10 md:pb-20 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 h-auto'}>
-                <span className={'relative'} style={{top:'-150px'}} id='vacancies'></span>
+                <span className={'relative'} style={{ top: '-150px' }} id='vacancies'></span>
                 <div className={'block md:flex justify-between'}>
                     <div className={'flex-row left-column-section7careers pr-0 md:pr-8'}>
                         <p className={'text-3xl font-bold pb-8'}>Careers at MIG</p>
@@ -260,29 +174,29 @@ function JoinOurTeam({dataCareers}) {
                         <p className={'pb-8'}>Didn't find the role that best describes your skills ? Send your CV to <span className={'font-bold'}>recruitment@mitrasolusi.group</span> for potential opportunities</p>
                     </div>
                     <div className={'flex-row w-full'}>
-                    <Collapse
-                    accordion
-                    defaultActiveKey={['0']}
-                    expandIconPosition={'right'}
-                    >
-                        {
-                            careers.map((item,idx)=>{
-                                return (
-                                    <>
-                                    <Panel header={item.position_name} key={idx}>
-                                        <div>
-                                            <div className={'pb-4'}>
-                                                <p className={'font-bold'}>Job Description:</p>
-                                                <p>{item.job_description}</p>
-                                            </div>
-                                            <a className={'text-base'} href={item.register_link}>Apply Now<ArrowRightOutlined className={'pl-2 relative -top-0.5'}/></a>
-                                        </div>
-                                    </Panel>
-                                    </>
-                                )
-                            })
-                        }
-                        {/* <Panel header="Account Executive" key="1">
+                        <Collapse
+                            accordion
+                            defaultActiveKey={['0']}
+                            expandIconPosition={'right'}
+                        >
+                            {
+                                careers.map((item, idx) => {
+                                    return (
+                                        <>
+                                            <Panel header={item.position_name} key={idx}>
+                                                <div>
+                                                    <div className={'pb-4'}>
+                                                        <p className={'font-bold'}>Job Description:</p>
+                                                        <p>{item.job_description}</p>
+                                                    </div>
+                                                    <a className={'text-base'} href={item.register_link}>Apply Now<ArrowRightOutlined className={'pl-2 relative -top-0.5'} /></a>
+                                                </div>
+                                            </Panel>
+                                        </>
+                                    )
+                                })
+                            }
+                            {/* <Panel header="Account Executive" key="1">
                             <div>
                                 <div className={'pb-4'}>
                                     <p className={'font-bold'}>Location:</p>
@@ -329,23 +243,11 @@ function JoinOurTeam({dataCareers}) {
                         <Panel header="Senior Product Manager" key="7">
                             isi apanih
                         </Panel> */}
-                    </Collapse>
+                        </Collapse>
                     </div>
                 </div>
             </section>
-            <section className={'section5landingpage px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
-                <div className={' md:flex relative justify-between '}style={{top:'40%'}}>
-                    <div className={'flex-col text-2xl md:text-4xl text-black -top-4 md:top-0 relative gilroy-bold'} style={{}}>
-                        <p>Let’s be better together</p>
-                    </div>
-                    <div className={'flex-col w-auto'}>
-                        <button className={'text-black flex border-2 text-base md:text-xl border-black px-3 py-2 md:px-4 md:py-3 -mt-2 md:right-20 relative focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>Contact Sales &nbsp;
-                            <ArrowRightOutlined className={'pt-1'}/>
-                        </button>
 
-                    </div>
-                </div>
-            </section>
             {/* <section className={'section5landingpage'} style={{backgroundColor:'#93D9B5'}}>
                 <div className={' md:flex relative justify-between px-4 md:px-20 lg:px-28 xl:px-40'}style={{top:'40%'}}>
                     <div className={'flex-col text-2xl md:text-3xl text-white font-bold -top-4 md:top-0 relative'} style={{}}>
@@ -363,7 +265,7 @@ function JoinOurTeam({dataCareers}) {
         </Layout>
     )
 }
-export async function getServerSideProps(){
+export async function getServerSideProps() {
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/getCareers`, {
         method: `GET`
     })
