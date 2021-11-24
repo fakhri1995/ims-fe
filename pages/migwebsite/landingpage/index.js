@@ -479,7 +479,7 @@ function LandingPage({ }) {
                 </Space>
 
             </section>
-            <section className={'md:relative py-8 hidden md:block px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 text-center'}>
+            <section className={'md:relative px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 text-center'}>
 
                 <p className={'text-2xl pb-2 md:pb-4 gilroy-bold'}>
                     Show Cases
@@ -488,11 +488,11 @@ function LandingPage({ }) {
                     We build a long-term relationship to continuously seek new improvement and opportunities.
                 </p>
                 <Space>
-                    <div className={'container mx-auto pb-8'} style={{ maxWidth: 1000 }}>
+                    <div className={'container pb-8'} style={{ maxWidth: 1000 }}>
                         <Slider {...sliderSettings}>
                             <div>
-                                <Card style={{ height: 300 }}>
-                                    <p className={'pb-20 text-left pt-5'}>Provide IT hardware infrastructure with 45 service points in Indonesia. Rent and maintenance +10.000 hardware. Support at a high service level.</p>
+                                <Card>
+                                    <p className={'pb-20 text-left'}>Provide IT hardware infrastructure with 45 service points in Indonesia. Rent and maintenance +10.000 hardware. Support at a high service level.</p>
                                     <Space align={'start'}>
                                         <img className={'w-full pr-1'} src="/image/company/kb.png"></img>
                                         <p>
@@ -503,7 +503,7 @@ function LandingPage({ }) {
                                 </Card>
                             </div>
                             <div>
-                                <Card style={{ height: 300 }}>
+                                <Card>
                                     <p className={'pb-20 text-left'}>Accommodate talent with exceptional skills in a short time. The project was conducted earlier with help recruitment fastly.</p>
                                     <Space align={'start'}>
                                         <img className={'w-full pr-1'} src="/image/company/shipper.png"></img>
@@ -515,7 +515,7 @@ function LandingPage({ }) {
                                 </Card>
                             </div>
                             <div>
-                                <Card style={{ height: 300 }}>
+                                <Card>
                                     <p className={'pb-20 text-left'}>This is description about project case. This is description about project case. This is description about project case. </p>
                                     <Space align={'start'}>
                                         <img className={'w-full pr-1'} src="avatar.png"></img>
@@ -527,7 +527,7 @@ function LandingPage({ }) {
                                 </Card>
                             </div>
                             <div>
-                                <Card style={{ height: 300 }}>
+                                <Card>
                                     <p className={'pb-20 text-left'}>Develop logistic delivery process. Make sure to handle critical operations about open API business.  </p>
                                     <Space align={'start'}>
                                         <img className={'w-full pr-1'} src="avatar.png"></img>
@@ -539,7 +539,7 @@ function LandingPage({ }) {
                                 </Card>
                             </div>
                             <div>
-                                <Card style={{ height: 300 }}>
+                                <Card>
                                     <p className={'pb-20 text-left'}>Develop Forty Mobile App with a sensitive timeline. Manage from initial lending, payment transactions to reporting. </p>
                                     <Space align={'start'}>
                                         <img className={'w-full pr-1'} src="avatar.png"></img>

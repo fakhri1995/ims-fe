@@ -20,9 +20,9 @@ function AboutUs({ }) {
             <section className={'block md:flex px-4 md:px-20 lg:px-28 xl:px-40'}>
                 <div className={'flex-col w-full py-4 md:py-4 pr-0 md:pr-10 m-auto'}>
                     <p className={'font-bold text-center md:text-left pb-0 md:pb-8 text-xl'}>Who are we</p>
-                    <div className={'block md:hidden flex-col py-4 md:py-4 m-auto'}>
+                    {/* <div className={'block md:hidden flex-col py-4 md:py-4 m-auto'}>
                         <img src="/image-aboutus.png" className={'block'} style={{width:'400px',height:'auto',margin:'0 auto'}}></img>
-                    </div>
+                    </div> */}
                     <p className={'pb-8 font-bold'}>
                     Founded in 2003, Mitramas Infosys Global (MIG)  directly partner with global  providers and collaborate with local IT talents to offer you a seamless technology experience. Experienced  across archipelago for more than decade we have a plethora of experience in the business. With integrity as our core principle, we collaborate with our clients to increase their efficiency and reach long-term business goals.
                     </p>
@@ -32,7 +32,7 @@ function AboutUs({ }) {
                     </p>
                 </div>
             </section>
-            <section className={'hidden md:block py-8 px-4 lg:px-28 xl:px-40'}>
+            <section className={'py-8 px-4 lg:px-28 xl:px-40'}>
                 <div className={'pb-4'}>
                     <p className={'text-2xl md:text-3xl font-bold'}>Support your business efficiently</p>
                 </div>

@@ -36,10 +36,10 @@ function JoinOurTeam({ dataCareers }) {
                             <div className={'flex-col block md:hidden pb-6'}>
                                 <img style={{ width: '1000px', height: 'auto' }} src='/image-careers.png' />
                             </div>
-                            <p className={' text-sm md:text-base font-bold pb-4'}>We are currently looking to expand our team! Our team comprises of highly motivated, positive and hardworking individuals.
+                            <p className={'text-sm md:text-base font-bold pb-4'}>We are currently looking to expand our team! Our team comprises of highly motivated, positive and hardworking individuals.
                             </p>
                             <Linkk
-                                className={'flex-col hidden md:block'}
+                                className={'flex-col md:center'}
                                 activeClass="active"
                                 to="section7careers"
                                 spy={true}
