@@ -62,7 +62,6 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
     const [expandedkeys, setexpandedkeys] = useState([])
     const [sortednum, setsortednum] = useState(-10)
     const [sorted, setsorted] = useState(false)
-    const [sortedinit, setsortedinit] = useState(-10)
     const [selected, setselected] = useState(false)
     const [idselected, setidselected] = useState(null)
     const [loadingselected, setloadingselected] = useState(false)
@@ -86,26 +85,179 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
         }
     })
     const [lokasidrawer, setlokasidrawer] = useState(false)
+    //branch searching
+    const [searchvalue, setsearchvalue] = useState('')
+    const [autoexpandparent, setautoexpandparent] = useState(true)
 
-
-    useEffect(() => {
-        if (sortedinit !== -10) {
-            setsortedinit(true)
-            if (sorted === false) {
-                var temp = branchdata.sort((a, b) => a.title > b.title ? 1 : -1)
-                setbranchdata(temp)
-                setsorted(true)
-            }
-            else {
-                setbranchdata(branchdata2)
-                setsorted(false)
-            }
-            setsortedinit(false)
+    //handler
+    const onSortLoc = async (value) => {
+        setloadingselected(true)
+        sorted === -1 ? setsorted(true) : setsorted(value)
+        if (value === true) {
+            console.log("sini")
+            var temp = await branchdata.sort((a, b) => a.title > b.title ? 1 : -1)
+            setbranchdata(temp)
         }
-    }, [sortedinit])
+        else {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.company.role !== 2 ? `getMainLocations` : `getLocations?company_id=${dataProfile.data.company.company_id}`}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                },
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    res2.data.children ? setbranchdata(res2.data.children) : setbranchdata([])
+                })
+        }
+        setloadingselected(false)
+    }
 
+    //FILTER TREE
+    //filterAsset
+    const onExpand = (expandedKeys) => {
+        setexpandedkeys(expandedKeys);
+        setautoexpandparent(false);
+    }
+    const dataList = [];
+    const generateList = (data) => {
+        for (let i = 0; i < data.length; i++) {
+            const node = data[i];
+            const { id, key, value, parent_id, title, children_count } = node;
+            dataList.push({ id, key, value, parent_id, title, children_count });
+            if (node.children) {
+                generateList(node.children);
+            }
+        }
+    };
+    generateList(branchdata);
+    const getParentKey = (key, tree) => {
+        let parentKey;
+        for (let i = 0; i < tree.length; i++) {
+            const node = tree[i];
+            if (node.children) {
+                if (node.children.some((item) => item.key === key)) {
+                    parentKey = node.key;
+                } else if (getParentKey(key, node.children)) {
+                    parentKey = getParentKey(key, node.children);
+                }
+            }
+        }
+        return parentKey;
+    };
+    const onChangeFilterAsset = (e) => {
+        const { value } = e.target;
+        const expandedKeys = dataList
+            .map((item) => {
+                if (item.title.indexOf(value) > -1) {
+                    return getParentKey(item.key, branchdata);
+                }
+                return null;
+            })
+            .filter((item, i, self) => item && self.indexOf(item) === i);
+        if (value) {
+            setexpandedkeys(expandedKeys);
+            setsearchvalue(value);
+            setautoexpandparent(true);
+        } else {
+            setexpandedkeys(branchdata.map(doc => doc.key));
+            setsearchvalue("");
+            setautoexpandparent(false);
+        }
+    };
+    const filterTreeNode = (node) => {
+        const title = node.title.props.children[0].props ? node.title.props.children[0].props.children[2] : node.title.props.children[2];
+        const result = title ? (title.indexOf(searchvalue) !== -1 ? true : false) : false
+        return result;
+    };
+    const loop = (data) =>
+        data.map((item) => {
+            const index = item.title.indexOf(searchvalue);
+            const beforeStr = item.title.substr(0, index);
+            const afterStr = item.title.substr(index + searchvalue.length);
+            const title =
+                index > -1 ?
+                    (
+                        <div
+                            id={`wrap${item.key}`}
+                            className={`flex items-start w-full py-3 rounded-md px-2`}
+                            onMouseOver={() => {
+                                var d = document.getElementById(`text${item.key}`)
+                                d.classList.add("text-primary100"); d.classList.remove("text-gray-400")
+                                var dd = document.getElementById(`wrap${item.key}`)
+                                dd.classList.add("bg-primary10");
+                                var ddd = document.getElementById(`badge${item.key}`)
+                                ddd.classList.add("bg-primary100"); ddd.classList.remove("bg-gray-300");
+                            }}
+                            onMouseLeave={() => {
+                                var e = document.getElementById(`text${item.key}`)
+                                e.classList.add("text-gray-400"); e.classList.remove("text-primary100")
+                                var ee = document.getElementById(`wrap${item.key}`)
+                                ee.classList.remove("bg-primary10");
+                                var eee = document.getElementById(`badge${item.key}`)
+                                eee.classList.add("bg-gray-300"); eee.classList.remove("bg-primary100");
+                            }}
+                            onClick={() => { setidselected(item.id); setselected(true); setloadingselected(true) }}
+                        >
+                            <div className="mr-3 flex items-start">
+                                <LocationIconSvg id={`icon${item.key}`} size={15} color={`#808080`} />
+                            </div>
+                            <div className="mr-3">
+                                <Label id={`text${item.key}`}>
+                                    {beforeStr}
+                                    <span className=" text-primary100">{searchvalue}</span>
+                                    {afterStr}
+                                </Label>
+                            </div>
+                            <div id={`badge${item.key}`} className="w-5 h-5 rounded-full bg-gray-400 text-white text-2xs flex items-center justify-center">{item.children_count}</div>
+                        </div>
+                    )
+                    :
+                    (
+                        <div
+                            id={`wrap${item.key}`}
+                            className={`flex items-start w-full py-3 rounded-md px-2`}
+                            onMouseOver={() => {
+                                var d = document.getElementById(`text${item.key}`)
+                                d.classList.add("text-primary100"); d.classList.remove("text-gray-400")
+                                var dd = document.getElementById(`wrap${item.key}`)
+                                dd.classList.add("bg-primary10");
+                                var ddd = document.getElementById(`badge${item.key}`)
+                                ddd.classList.add("bg-primary100"); ddd.classList.remove("bg-gray-300");
+                            }}
+                            onMouseLeave={() => {
+                                var e = document.getElementById(`text${item.key}`)
+                                e.classList.add("text-gray-400"); e.classList.remove("text-primary100")
+                                var ee = document.getElementById(`wrap${item.key}`)
+                                ee.classList.remove("bg-primary10");
+                                var eee = document.getElementById(`badge${item.key}`)
+                                eee.classList.add("bg-gray-300"); eee.classList.remove("bg-primary100");
+                            }}
+                            onClick={() => { setidselected(item.id); setselected(true); setloadingselected(true) }}
+                        >
+                            <div className="mr-3 flex items-start">
+                                <LocationIconSvg id={`icon${item.key}`} size={15} color={`#808080`} />
+                            </div>
+                            <div className="mr-3">
+                                <Label id={`text${item.key}`}>
+                                    {item.title}
+                                </Label>
+                            </div>
+                            <div id={`badge${item.key}`} className="w-5 h-5 rounded-full bg-gray-400 text-white text-2xs flex items-center justify-center">{item.children_count}</div>
+                        </div>);
+            if (item.children) {
+                return { title, key: item.key, children: loop(item.children) };
+            }
+
+            return {
+                title,
+                key: item.key
+            };
+        });
+
+    //USE EFECT
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyDetail?id=${id}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyDetail?id=${dataProfile.data.company.id}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -147,7 +299,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                 const expandkeyArr = res2.data.children.map(doc => doc.key)
                 res2.data.children ? setexpandedkeys(expandkeyArr) : setexpandedkeys([])
                 setpraloading(false)
-                setsortedinit(false)
+                setloadingselected(false)
             })
     }, [])
     useEffect(() => {
@@ -161,12 +313,6 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
             })
                 .then(res => res.json())
                 .then(res2 => {
-                    // const temp = {
-                    //     ...res2.data,
-                    //     id: res2.data.id,
-                    //     image_logo: res2.data.image_logo === "" ? '/default-users.jpeg' : res2.data.image_logo,
-                    //     tanggal_pkp: res2.data.tanggal_pkp === null ? moment(new Date()) : moment(res2.data.tanggal_pkp),
-                    // }
                     setselecteddata(res2.data)
                     setloadingselected(false)
                 })
@@ -178,12 +324,10 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                 <div className="col-span-6 flex flex-col m-3">
                     <div className="flex justify-around mb-5">
                         <div className="mx-0">
-                            <Input placeholder="Cari Lokasi" style={{ backgroundColor: `transparent` }} />
+                            <Input placeholder="Cari Lokasi" style={{ backgroundColor: `transparent` }} onChange={onChangeFilterAsset} />
                         </div>
                         <div className="mx-0">
-                            <Buttonsys type="ghost" selected={sorted === true ? false : true} onClick={() => {
-                                setsortedinit(prev => prev + 1)
-                            }}>
+                            <Buttonsys type="ghost" selected={sorted === true ? true : false} onClick={() => { onSortLoc(sorted === -1 ? true : !sorted) }}>
                                 <SortingIconSvg size={12} color={`#35763B`} />
                                 Urutkan: A-Z
                             </Buttonsys>
@@ -196,7 +340,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                     </div>
                     <div className="flex flex-col">
                         {
-                            sortedinit ?
+                            loadingselected ?
                                 <>
                                     <Spin />
                                 </>
@@ -208,45 +352,13 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                                     :
                                     <Tree
                                         showIcon
-                                        autoExpandParent={true}
-                                        defaultExpandedKeys={expandedkeys}
-                                        treeData={branchdata}
+                                        onExpand={onExpand}
+                                        filterTreeNode={filterTreeNode}
+                                        autoExpandParent={autoexpandparent}
+                                        expandedKeys={expandedkeys}
+                                        treeData={loop(branchdata)}
                                         switcherIcon={<DownOutlined />}
                                         style={{ backgroundColor: `transparent` }}
-                                        titleRender={(nodeData) => (
-                                            <>
-                                                <div
-                                                    id={`wrap${nodeData.key}`}
-                                                    className={`flex items-start w-full py-3 rounded-md px-2`}
-                                                    onMouseOver={() => {
-                                                        var d = document.getElementById(`text${nodeData.key}`)
-                                                        d.classList.add("text-primary100"); d.classList.remove("text-gray-400")
-                                                        var dd = document.getElementById(`wrap${nodeData.key}`)
-                                                        dd.classList.add("bg-primary10");
-                                                        var ddd = document.getElementById(`badge${nodeData.key}`)
-                                                        ddd.classList.add("bg-primary100"); ddd.classList.remove("bg-gray-300");
-                                                    }}
-                                                    onMouseLeave={() => {
-                                                        var e = document.getElementById(`text${nodeData.key}`)
-                                                        e.classList.add("text-gray-400"); e.classList.remove("text-primary100")
-                                                        var ee = document.getElementById(`wrap${nodeData.key}`)
-                                                        ee.classList.remove("bg-primary10");
-                                                        var eee = document.getElementById(`badge${nodeData.key}`)
-                                                        eee.classList.add("bg-gray-300"); eee.classList.remove("bg-primary100");
-                                                    }}
-                                                    onClick={() => { setidselected(nodeData.id); setselected(true); setloadingselected(true) }}
-                                                >
-                                                    <div className="mr-3 flex items-start">
-                                                        <LocationIconSvg id={`icon${nodeData.key}`} size={15} color={`#808080`} />
-                                                    </div>
-                                                    <div className="mr-3">
-                                                        <Label id={`text${nodeData.key}`}>{nodeData.title}</Label>
-                                                    </div>
-                                                    <div id={`badge${nodeData.key}`} className="w-5 h-5 rounded-full bg-gray-300 text-white text-2xs flex items-center justify-center">{nodeData.children_count}</div>
-                                                </div>
-                                            </>
-                                        )
-                                        }
                                         blockNode={true}
                                     >
                                     </Tree>

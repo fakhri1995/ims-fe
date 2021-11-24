@@ -138,10 +138,6 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                             <a className="mx-2 py-2 flex items-center" alt="add" onClick={() => { rt.push(`/admin/assets/create?idparent=${item.id}&codeparent=${item.value}`) /*setNewmodalparent(true); fungsiSetParent(item.value); setParenttitle(item.title)*/ }}>
                                 <div className="rounded-full bg-black text-white h-5 w-5 flex items-center text-xs justify-center hover:bg-gray-700">+</div>
                             </a>
-                            {/* <Link href={`/admin/assets/${item.title}?parent=${prt}&id=${item.id}`}>
-                                <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
-                            </Link>
-                            <button onClick={() => { setmodaldelete(true); setDatadelete({ ...datadelete, id: item.id }) }}><a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a></button> */}
                         </div>
                     </div>
                 ) : (
@@ -391,50 +387,12 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                                 showLine={{
                                                     showLeafIcon:false
                                                 }}
-                                                titleRender={(nodeData) => {
-                                                    return (
-                                                        <>
-                                                            <div
-                                                            // onMouseOver={() => {
-                                                            //     var d = document.getElementById(`node${nodeData.key}`)
-                                                            //     d.classList.add("flex")
-                                                            //     d.classList.remove("hidden")
-                                                            // }}
-                                                            // onMouseLeave={() => {
-                                                            //     var e = document.getElementById(`node${nodeData.key}`)
-                                                            //     e.classList.add("hidden")
-                                                            //     e.classList.remove("flex")
-                                                            // }}
-                                                            >
-                                                                <div>
-                                                                    {nodeData.title}
-                                                                </div>
-                                                                {/* <div className={`hidden mx-2`} id={`node${nodeData.key}`}>
-                                                    <a className="mx-2 pb-1" alt="add" onClick={() => { setNewmodalparent(true); fungsiSetParent(nodeData.value); setParenttitle(nodeData.title) }}><PlusOutlined /></a>
-                                                    <Link href={`/admin/assets/${nodeData.title}?parent=${prt}&id=${nodeData.id}`}>
-                                                        <a className="mx-2 pb-1" alt="update"><EditOutlined /></a>
-                                                    </Link>
-                                                    <button onClick={() => { setmodaldelete(true); setDatadelete({ ...datadelete, id: nodeData.id }) }}><a className="mx-2 pb-1" alt="delete"><DeleteOutlined /></a></button>
-                                                </div> */}
-                                                            </div>
-                                                        </>
-                                                    )
-                                                }
-                                                }
                                                 blockNode={true}
                                             />
                                     }
                                 </div>
                         }
                     </div>
-                    {/* <div className="col-span-1 md:col-span-1 flex flex-col p-2 md:p-5">
-                        <h1 className="text-xs md:text-sm font-semibold mb-5">Asset Types & Fields</h1>
-                        <p className="text-xs md:text-sm">
-                            Freshservice lets you maintain a repository of assets by creating a structure of configuration types in your help desk. You can add asset types at the root level or within another asset type, and have several items mapped to those types.You can also disable the default asset types so that only the ones you need are visible.
-                        <br /><br />
-                        When you open an asset, you can find out whether it is currently being used, its business impact and the employee it’s assigned to in your team. In addition you will also be able to pull out specifications, relationship details etc. about the asset without switching between different pages.
-                        </p>
-                    </div> */}
                 </div>
             </div>
         </Layout>

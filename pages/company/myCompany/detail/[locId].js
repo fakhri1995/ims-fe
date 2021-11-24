@@ -109,6 +109,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
     //SUB LOKASI
     const [subloc, setsubloc] = useState([])
     const [subloc2, setsubloc2] = useState([])
+    const [subloc3, setsubloc3] = useState([])
     const [induksubloc, setinduksubloc] = useState([])
     const [sorted, setsorted] = useState(-1)
     const [loadingsorted, setloadingsorted] = useState(true)
@@ -116,6 +117,9 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
     const [selectedsubloc, setselectedsubloc] = useState(false)
     const [selectedsublocdata, setselectedsublocdata] = useState({})
     const [sublokasidrawer, setsublokasidrawer] = useState(false)
+    //SEARCH TREE
+    const [searchvalue, setsearchvalue] = useState('')
+    const [autoexpandparent, setautoexpandparent] = useState(true)
 
     //columns table items
     const columnitems = [
@@ -189,9 +193,6 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
             [e.target.name]: e.target.value
         })
     }
-    const onSearchSubloc = (e) => {
-        console.log(subloc)
-    }
     const onSortSubLoc = async (value) => {
         setloadingsorted(true)
         sorted === -1 ? setsorted(true) : setsorted(value)
@@ -200,7 +201,17 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
             setsubloc(temp)
         }
         else {
-            setsubloc(subloc2)
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getSubCompanyDetail?id=${locid}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                },
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    const childmap = modifData(res2.data.sub_children)
+                    setsubloc(childmap)
+                })
         }
         setloadingsorted(false)
     }
@@ -251,6 +262,146 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
             })
     }
 
+    //FILTER TREE
+    //filterAsset
+    const onExpand = (expandedKeys) => {
+        setexpandedkeys(expandedKeys);
+        setautoexpandparent(false);
+    }
+    const dataList = [];
+    const generateList = (data) => {
+        for (let i = 0; i < data.length; i++) {
+            const node = data[i];
+            const { id, key, value, parent_id, title, sub_child_count } = node;
+            dataList.push({ id, key, value, parent_id, title, sub_child_count });
+            if (node.children) {
+                generateList(node.children);
+            }
+        }
+    };
+    generateList(subloc);
+    const getParentKey = (key, tree) => {
+        let parentKey;
+        for (let i = 0; i < tree.length; i++) {
+            const node = tree[i];
+            if (node.children) {
+                if (node.children.some((item) => item.key === key)) {
+                    parentKey = node.key;
+                } else if (getParentKey(key, node.children)) {
+                    parentKey = getParentKey(key, node.children);
+                }
+            }
+        }
+        return parentKey;
+    };
+    const onChangeFilterSubLoc = (e) => {
+        const { value } = e.target;
+        const expandedKeys = dataList
+            .map((item) => {
+                if (item.title.indexOf(value) > -1) {
+                    return getParentKey(item.key, subloc);
+                }
+                return null;
+            })
+            .filter((item, i, self) => item && self.indexOf(item) === i);
+        if (value) {
+            setexpandedkeys(expandedKeys);
+            setsearchvalue(value);
+            setautoexpandparent(true);
+        } else {
+            setexpandedkeys(subloc.map(doc => doc.key));
+            setsearchvalue("");
+            setautoexpandparent(false);
+        }
+    };
+    const filterTreeNode = (node) => {
+        const title = node.title.props.children[0].props ? node.title.props.children[0].props.children[2] : node.title.props.children[2];
+        const result = title ? (title.indexOf(searchvalue) !== -1 ? true : false) : false
+        return result;
+    };
+    const loop = (data) =>
+        data.map((item) => {
+            const index = item.title.indexOf(searchvalue);
+            const beforeStr = item.title.substr(0, index);
+            const afterStr = item.title.substr(index + searchvalue.length);
+            const title =
+                index > -1 ?
+                    (
+                        <div
+                            id={`wrap${item.key}`}
+                            className={`flex items-start w-full py-2 rounded-md px-2`}
+                            onMouseOver={() => {
+                                var d = document.getElementById(`text${item.key}`)
+                                d.classList.add("text-primary100"); d.classList.remove("text-gray-400")
+                                var dd = document.getElementById(`wrap${item.key}`)
+                                dd.classList.add("bg-primary10");
+                                var ddd = document.getElementById(`badge${item.key}`)
+                                ddd.classList.add("bg-primary100"); ddd.classList.remove("bg-gray-300");
+                            }}
+                            onMouseLeave={() => {
+                                var e = document.getElementById(`text${item.key}`)
+                                e.classList.add("text-gray-400"); e.classList.remove("text-primary100")
+                                var ee = document.getElementById(`wrap${item.key}`)
+                                ee.classList.remove("bg-primary10");
+                                var eee = document.getElementById(`badge${item.key}`)
+                                eee.classList.add("bg-gray-300"); eee.classList.remove("bg-primary100");
+                            }}
+                            onClick={() => { setselectedsubloc(true); setselectedsublocdata(item) }}
+                        >
+                            <div className="mr-3 flex items-start">
+                                <LocationIconSvg id={`icon${item.key}`} size={15} color={`#808080`} />
+                            </div>
+                            <div className="mr-3">
+                                <LabelDark id={`text${item.key}`}>
+                                    {beforeStr}
+                                    <span className=" text-primary100">{searchvalue}</span>
+                                    {afterStr}
+                                </LabelDark>
+                            </div>
+                            <div id={`badge${item.key}`} className="w-5 h-5 rounded-full bg-gray-400 text-white text-2xs flex items-center justify-center">{item.sub_child_count}</div>
+                        </div>
+                    )
+                    :
+                    (
+                        <div
+                            id={`wrap${item.key}`}
+                            className={`flex items-start w-full py-2 rounded-md px-2`}
+                            onMouseOver={() => {
+                                var d = document.getElementById(`text${item.key}`)
+                                d.classList.add("text-primary100"); d.classList.remove("text-gray-400")
+                                var dd = document.getElementById(`wrap${item.key}`)
+                                dd.classList.add("bg-primary10");
+                                var ddd = document.getElementById(`badge${item.key}`)
+                                ddd.classList.add("bg-primary100"); ddd.classList.remove("bg-gray-300");
+                            }}
+                            onMouseLeave={() => {
+                                var e = document.getElementById(`text${item.key}`)
+                                e.classList.add("text-gray-400"); e.classList.remove("text-primary100")
+                                var ee = document.getElementById(`wrap${item.key}`)
+                                ee.classList.remove("bg-primary10");
+                                var eee = document.getElementById(`badge${item.key}`)
+                                eee.classList.add("bg-gray-300"); eee.classList.remove("bg-primary100");
+                            }}
+                            onClick={() => { setselectedsubloc(true); setselectedsublocdata(item) }}
+                        >
+                            <div className="mr-3 flex items-start">
+                                <LocationIconSvg id={`icon${item.key}`} size={15} color={`#808080`} />
+                            </div>
+                            <div className="mr-3">
+                                <LabelDark id={`text${item.key}`}>{item.title}</LabelDark>
+                            </div>
+                            <div id={`badge${item.key}`} className="w-5 h-5 rounded-full bg-gray-400 text-white text-2xs flex items-center justify-center">{item.sub_child_count}</div>
+                        </div>
+                    );
+            if (item.children) {
+                return { title, key: item.key, children: loop(item.children) };
+            }
+            return {
+                title,
+                key: item.key
+            };
+        });
+
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getSubCompanyDetail?id=${locid}`, {
             method: `GET`,
@@ -264,6 +415,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                 const childmap = modifData(res2.data.sub_children)
                 setsubloc(childmap)
                 setsubloc2(childmap)
+                setsubloc3(childmap)
                 const childmapforinduksublokasi = modifForIndukSubLokasi(res2.data, childmap)
                 setinduksubloc(childmapforinduksublokasi)
                 res2.data.sub_children.length > 0 ? setexpandedkeys(res2.data.sub_children.map(doc => doc.key)) : setexpandedkeys([])
@@ -409,12 +561,12 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                             }
                                         </div>
                                         <div className={`flex flex-col mb-5`}>
-                                            <Label>Total Sub-Location Level 1</Label>
-                                            <p className="mb-0">{rawdata.induk_level_1_count}</p>
+                                            <Label>Total Sub-Location Level 2</Label>
+                                            <p className="mb-0">{rawdata.sub_location_level_1_count}</p>
                                         </div>
                                         <div className={`flex flex-col mb-5`}>
-                                            <Label>Total Sub-Location Level 2</Label>
-                                            <p className="mb-0">{rawdata.induk_level_2_count}</p>
+                                            <Label>Total Sub-Location Level 3</Label>
+                                            <p className="mb-0">{rawdata.sub_location_level_2_count}</p>
                                         </div>
                                         {
                                             editable &&
@@ -455,14 +607,6 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                 <H1>Semua Aset</H1>
                             </div>
                             <div className="w-8/12 flex justify-end">
-                                {/* <div className="mx-2">
-                                    <Buttonsys type="primary">
-                                        <div className="mr-2">
-                                            <Aset2IconSvg size={15} color={`#ffffff`} />
-                                        </div>
-                                        Ke Inventori
-                                    </Buttonsys>
-                                </div> */}
                                 <div className="mx-2">
                                     <Input style={{ width: `20rem` }} placeholder="Cari ID, Tipe Aset, Model" onChange={onSearchItems} allowClear />
                                 </div>
@@ -489,7 +633,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                             </div>
                             <div className="flex justify-around mb-5">
                                 <div className="mx-0">
-                                    <Input placeholder="Cari Sublokasi" style={{ backgroundColor: `transparent` }} onChange={onSearchSubloc} />
+                                    <Input placeholder="Cari Sublokasi" style={{ backgroundColor: `transparent` }} onChange={onChangeFilterSubLoc} />
                                 </div>
                                 <div className="mx-0">
                                     <Buttonsys type="ghost" selected={sorted === true ? true : false} onClick={() => { onSortSubLoc(sorted === -1 ? true : !sorted) }}>
@@ -516,47 +660,15 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                             </>
                                             :
                                             <Tree
+                                                onExpand={onExpand}
                                                 className="treeSublokasi"
                                                 showIcon
+                                                filterTreeNode={filterTreeNode}
                                                 autoExpandParent={true}
-                                                defaultExpandedKeys={expandedkeys}
-                                                treeData={subloc}
+                                                expandedKeys={expandedkeys}
+                                                treeData={loop(subloc)}
                                                 switcherIcon={<DownOutlined />}
                                                 style={{ background: `white` }}
-                                                titleRender={(nodeData) => (
-                                                    <>
-                                                        <div
-                                                            id={`wrap${nodeData.key}`}
-                                                            className={`flex items-start w-full py-2 rounded-md px-2`}
-                                                            onMouseOver={() => {
-                                                                var d = document.getElementById(`text${nodeData.key}`)
-                                                                d.classList.add("text-primary100"); d.classList.remove("text-gray-400")
-                                                                var dd = document.getElementById(`wrap${nodeData.key}`)
-                                                                dd.classList.add("bg-primary10");
-                                                                var ddd = document.getElementById(`badge${nodeData.key}`)
-                                                                ddd.classList.add("bg-primary100"); ddd.classList.remove("bg-gray-300");
-                                                            }}
-                                                            onMouseLeave={() => {
-                                                                var e = document.getElementById(`text${nodeData.key}`)
-                                                                e.classList.add("text-gray-400"); e.classList.remove("text-primary100")
-                                                                var ee = document.getElementById(`wrap${nodeData.key}`)
-                                                                ee.classList.remove("bg-primary10");
-                                                                var eee = document.getElementById(`badge${nodeData.key}`)
-                                                                eee.classList.add("bg-gray-300"); eee.classList.remove("bg-primary100");
-                                                            }}
-                                                            onClick={() => { setselectedsubloc(true); setselectedsublocdata(nodeData) }}
-                                                        >
-                                                            <div className="mr-3 flex items-start">
-                                                                <LocationIconSvg id={`icon${nodeData.key}`} size={15} color={`#808080`} />
-                                                            </div>
-                                                            <div className="mr-3">
-                                                                <LabelDark id={`text${nodeData.key}`}>{nodeData.title}</LabelDark>
-                                                            </div>
-                                                            <div id={`badge${nodeData.key}`} className="w-5 h-5 rounded-full bg-gray-400 text-white text-2xs flex items-center justify-center">{nodeData.sub_child_count}</div>
-                                                        </div>
-                                                    </>
-                                                )
-                                                }
                                                 blockNode={true}
                                             >
                                             </Tree>
