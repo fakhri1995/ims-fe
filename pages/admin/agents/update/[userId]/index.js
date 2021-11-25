@@ -201,7 +201,7 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                             <h1 className="font-semibold py-2">Ubah Profil Agent</h1>
                             <div className="flex space-x-2">
                                 {/* <Link href={`/admin/agents/detail/${data1.id}`}> */}
-                                <Button disabled={preloading} onClick={() => { console.log(data1) }} type="default">Batal</Button>
+                                <Button disabled={preloading} onClick={() => { rt.push(`/admin/agents/detail/${userid}`) }} type="default">Batal</Button>
                                 {/* </Link> */}
                                 {
                                     // [116, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&

@@ -253,7 +253,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getMainCompanyDetail`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyDetail?id=${dataProfile.data.company.id}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(tok),
@@ -450,7 +450,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                                     :
                                                     <div className="flex">
                                                         <div className="mr-1">
-                                                            <EmailIconSvg size={20} />
+                                                            <EmailIconSvg size={20} color={`#35763B`} />
                                                         </div>
                                                         <a href={`mailto:${displaydata.email}`} className="text-primary100 hover:text-primary75">{displaydata.email}</a>
                                                     </div>
@@ -464,7 +464,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                                     :
                                                     <div className="flex">
                                                         <div className="mr-1">
-                                                            <PhoneIconSvg size={20} />
+                                                            <PhoneIconSvg size={20} color={`#35763B`} />
                                                         </div>
                                                         <a href={`tel:${displaydata.phone_number}`} className="text-primary100 hover:text-primary75">{displaydata.phone_number}</a>
                                                     </div>
@@ -478,7 +478,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                                     :
                                                     <div className="flex">
                                                         <div className="mr-1">
-                                                            <WebIconSvg size={20} />
+                                                            <WebIconSvg size={20} color={`#35763B`} />
                                                         </div>
                                                         <a href={`${displaydata.website}`} className="text-primary100 hover:text-primary75">{displaydata.website}</a>
                                                     </div>
@@ -521,7 +521,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                     <div className="flex flex-col shadow-md rounded-md bg-white p-8 mb-5 mx-2">
                         <div className="flex justify-between items-center">
                             <H1>Lokasi</H1>
-                            <div onClick={() => { rt.push(`/company/myCompany/index3`) }}>
+                            <div onClick={() => { rt.push(`/company/myCompany/index3?id=${displaydata.id}`) }}>
                                 <Label color="green" cursor="pointer">Lihat Semua</Label>
                             </div>
                         </div>

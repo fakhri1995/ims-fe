@@ -139,9 +139,7 @@ const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations, 
                             <div className="flex flex-col mt-3 mb-5">
                                 <h1 className=" text-sm font-semibold mb-0">Jenis Produk:</h1>
                                 <p className="mb-0 text-sm">
-                                    {maindata.ticket.ticketable.product_type === 1 && "UPS"}
-                                    {maindata.ticket.ticketable.product_type === 2 && "ATM"}
-                                    {maindata.ticket.ticketable.product_type === 3 && "PC"}
+                                    {maindata.ticket.ticketable.product_type.name}
                                 </p>
                             </div>
                             <div className="flex flex-col mb-5">
@@ -611,7 +609,7 @@ const Activity = ({ ticketid, initProps, activitytrigger, dataProfile }) => {
                                             <Timeline.Item label={moment(doclog.created_at).locale('id').format('LL') + " " + moment(doclog.created_at).locale('id').format('LT')}>
                                                 <div className="flex flex-col">
                                                     <h1 className="font-semibold text-base mb-1">{doclog.log_name}</h1>
-                                                    <p className="mb-1 text-xs text-gray-500">Oleh {doclog.causer.fullname}</p>
+                                                    <p className="mb-1 text-xs text-gray-500">Oleh {doclog.causer.name}</p>
                                                     <p className="mb-1 text-sm">Notes: {doclog.description === null ? "-" : doclog.description}</p>
                                                 </div>
                                             </Timeline.Item>
@@ -994,7 +992,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                                                     <p className="mb-1">Assign To:</p>
                                                     {
                                                         displayassignto ?
-                                                            <div className="py-1 px-3 border flex items-center justify-between">
+                                                            <div className="py-1 px-3 border border-primary100 flex items-center justify-between">
                                                                 <h1 className="font-semibold mb-0 mr-5">{assignto === null ? 'None' : `${nameassignto}`}</h1>
                                                                 <DownOutlined />
                                                             </div>

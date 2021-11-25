@@ -89,7 +89,7 @@ function Talents({ }) {
                         </ul>
                     </div>
                         <div className={'flex-col w-1/2 my-auto'}>
-                            <img src="/image/hardware/Hardware-Solution.png"></img>
+                            <img src="/image/people/People-Solution.png"></img>
                         </div>
                 </div>
                 <div className={'block md:hidden'}>

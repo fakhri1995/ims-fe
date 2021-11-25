@@ -398,7 +398,7 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
             })
     }, [])
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientList`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
