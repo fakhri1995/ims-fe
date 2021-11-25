@@ -62,7 +62,7 @@ const DrawerBank = ({ title, visible, onClose, children, buttonOkText, initProps
                     })
                     setTimeout(() => {
                         setbankloading(false)
-                        rt.push(`/company/myCompany/index2`)
+                        rt.push(`/company/myCompany`)
                     }, 500)
                 }
                 else {

@@ -22,7 +22,7 @@ const InputRequired = ({ label, name, defaultValue, onChangeInput, value }) => {
     )
 }
 
-const TreeSelectRequired = ({ label, name, defaultValue, onChangeTreeselect, value, treeData }) => {
+const TreeSelectRequired = ({ label, name, defaultValue, onChangeTreeselect, value, treeData, allowClear }) => {
     return (
         <div className="flex flex-col mb-5 px-3">
             <div className="flex">
@@ -37,7 +37,7 @@ const TreeSelectRequired = ({ label, name, defaultValue, onChangeTreeselect, val
                     `}
                 </style>
             </div>
-            <TreeSelect name={name} treeDefaultExpandedKeys={[1]} defaultValue={defaultValue} value={value} onChange={onChangeTreeselect} treeData={treeData}></TreeSelect>
+            <TreeSelect allowClear={allowClear} name={name} treeDefaultExpandedKeys={[1]} defaultValue={defaultValue} value={value} onChange={onChangeTreeselect} treeData={treeData}></TreeSelect>
         </div>
     )
 }

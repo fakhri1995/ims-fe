@@ -6,9 +6,9 @@ import st from '../../../../components/layout-dashboard-mig.module.css'
 import { Tree, Input, Form, Spin, notification, Empty } from 'antd'
 import Buttonsys from '../../../../components/button'
 import { H1, Text, Label, LabelDark } from '../../../../components/typography'
-import { EditIconSvg, PhoneIconSvg, SortingIconSvg, TrashIconSvg, CheckIconSvg, Aset2IconSvg, LocationIconSvg, CameraIconSvg, ExternalLinkIconSvg } from '../../../../components/icon'
+import { EditIconSvg, PhoneIconSvg, SortingIconSvg, TrashIconSvg, CheckIconSvg, LocationIconSvg, CameraIconSvg, ExternalLinkIconSvg, MoveIconSvg } from '../../../../components/icon'
 import moment from 'moment'
-import { ModalEdit } from '../../../../components/modal/modalCustom'
+import { ModalEdit, ModalHapusLokasiCekChild, ModalHapusLokasiConfirm, ModalHapusLokasiMoveChild } from '../../../../components/modal/modalCustom'
 import { DrawerSublokasi } from '../../../../components/drawer/drawerCustom'
 import { TableCustom } from '../../../../components/table/tableCustom'
 import { DownOutlined } from '@ant-design/icons'
@@ -82,6 +82,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
         website: ""
     })
     const [isenabled, setisenabled] = useState(false)
+    const [rawlocations, setrawlocations] = useState([])
     //EDIT PROFILE
     const [editable, seteditable] = useState(false)
     const [modaledit, setmodaledit] = useState(false)
@@ -108,8 +109,6 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
     const [praloadingitem, setpraloadingitem] = useState(true)
     //SUB LOKASI
     const [subloc, setsubloc] = useState([])
-    const [subloc2, setsubloc2] = useState([])
-    const [subloc3, setsubloc3] = useState([])
     const [induksubloc, setinduksubloc] = useState([])
     const [sorted, setsorted] = useState(-1)
     const [loadingsorted, setloadingsorted] = useState(true)
@@ -120,6 +119,25 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
     //SEARCH TREE
     const [searchvalue, setsearchvalue] = useState('')
     const [autoexpandparent, setautoexpandparent] = useState(true)
+    //DELETE
+    const [deletedata, setdeletedata] = useState({
+        id: Number(locid),
+        new_parent: null
+    })
+    const [tipe, settipe] = useState(1)
+    const [loadingdelete, setloadingdelete] = useState(false)
+    //1. cek
+    const [modalcheckchild, setmodalcheckchild] = useState(false)
+    const [modalchecksubchild, setmodalchecksubchild] = useState(false)
+    //2. move sublokasi
+    const [modalmove, setmodalmove] = useState(false)
+    const [modalsubmove, setmodalsubmove] = useState(false)
+    //3. konfirmasi
+    const [modalconfirm, setmodalconfirm] = useState(false)
+    const [modalsubconfirm, setmodalsubconfirm] = useState(false)
+
+
+
 
     //columns table items
     const columnitems = [
@@ -251,6 +269,37 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                     })
                     setTimeout(() => {
                         rt.push(`/company/myCompany/detail/${locid}`)
+                    }, 500)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
+    const handleDelete = () => {
+        setloadingdelete(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteCompany`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(deletedata)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setmodalconfirm(false)
+                setloadingdelete(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    setTimeout(() => {
+                        rt.push(`/company/myCompany/locations`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -414,8 +463,6 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                 setrawdata(res2.data)
                 const childmap = modifData(res2.data.sub_children)
                 setsubloc(childmap)
-                setsubloc2(childmap)
-                setsubloc3(childmap)
                 const childmapforinduksublokasi = modifForIndukSubLokasi(res2.data, childmap)
                 setinduksubloc(childmapforinduksublokasi)
                 res2.data.sub_children.length > 0 ? setexpandedkeys(res2.data.sub_children.map(doc => doc.key)) : setexpandedkeys([])
@@ -433,6 +480,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                     email: res2.data.email,
                     website: res2.data.website,
                 })
+                settipe(res2.data.level)
                 setisenabled(res2.data.is_enabled)
                 setpraloadingedit(false)
                 setloadingsorted(false)
@@ -451,6 +499,19 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                 setrawitems(res2.data)
                 setitems(res2.data.data)
                 setpraloadingitem(false)
+            })
+    }, [])
+
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setrawlocations([res2.data])
             })
     }, [])
 
@@ -561,17 +622,26 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                             }
                                         </div>
                                         <div className={`flex flex-col mb-5`}>
-                                            <Label>Total Sub-Location Level 2</Label>
+                                            <Label>Total Sub-Location Level 1</Label>
                                             <p className="mb-0">{rawdata.sub_location_level_1_count}</p>
                                         </div>
                                         <div className={`flex flex-col mb-5`}>
-                                            <Label>Total Sub-Location Level 3</Label>
+                                            <Label>Total Sub-Location Level 2</Label>
                                             <p className="mb-0">{rawdata.sub_location_level_2_count}</p>
                                         </div>
                                         {
                                             editable &&
                                             <div className="flex justify-center items-center mb-10">
-                                                <Buttonsys type="primary" color="danger">
+                                                <Buttonsys disabled={rawdata.induk_level_1_count > 0 ? true : false} type="primary" color="danger" onClick={() => {
+                                                    if (tipe === 1) {
+                                                        if (subloc.length > 0) {
+                                                            setmodalcheckchild(true)
+                                                        }
+                                                        else {
+                                                            setmodalconfirm(true)
+                                                        }
+                                                    }
+                                                }}>
                                                     <div className="mr-1">
                                                         <TrashIconSvg size={18} color={"#FFFFFF"} />
                                                     </div>
@@ -597,6 +667,74 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                         </div>
                                     }
                                 ></ModalEdit>
+                                <ModalHapusLokasiCekChild
+                                    title={`Sebelum menghapus Lokasi Induk...`}
+                                    visible={modalcheckchild}
+                                    onCancel={() => { setmodalcheckchild(false) }}
+                                    footer={
+                                        <div className="flex justify-between items-center">
+                                            <Buttonsys type="default" onClick={() => { setdeletedata({ ...deletedata, new_parent: null }); setmodalcheckchild(false) }}>
+                                                Batalkan
+                                            </Buttonsys>
+                                            <div className="flex items-center justify-end">
+                                                <div className="mr-5">
+                                                    <Buttonsys type="primary" onClick={() => { setmodalcheckchild(false); setmodalmove(true) }}>
+                                                        <MoveIconSvg size={15} />
+                                                        Pindahkan Sublokasi
+                                                    </Buttonsys>
+                                                </div>
+                                                <Buttonsys type="primary" color="danger" onClick={() => { setmodalcheckchild(false); setmodalconfirm(true) }}>
+                                                    <TrashIconSvg size={15} color={`#ffffff`} />
+                                                    Hapus Lokasi
+                                                </Buttonsys>
+                                            </div>
+                                        </div>
+                                    }
+                                    subloc={subloc}
+                                    rawdata={rawdata}
+                                ></ModalHapusLokasiCekChild>
+                                <ModalHapusLokasiMoveChild
+                                    title={`Pemindahan Sublokasi`}
+                                    visible={modalmove}
+                                    footer={
+                                        <div className="flex justify-between items-center">
+                                            <Buttonsys type="default" onClick={() => { setmodalmove(false); setmodalcheckchild(true) }}>
+                                                Batalkan
+                                            </Buttonsys>
+                                            <div className="flex items-center">
+                                                <Buttonsys disabled={deletedata.new_parent === null ? true : false} type="primary" color="danger" onClick={() => { setmodalmove(false); setmodalconfirm(true) }}>
+                                                    <TrashIconSvg size={15} color={`#ffffff`} />
+                                                    Lanjutkan penghapusan
+                                                </Buttonsys>
+                                            </div>
+                                        </div>
+                                    }
+                                    rawdata={rawdata}
+                                    rawlocations={rawlocations}
+                                    deletedata={deletedata}
+                                    setdeletedata={setdeletedata}
+                                ></ModalHapusLokasiMoveChild>
+                                <ModalHapusLokasiConfirm
+                                    title={`${deletedata.new_parent === null && rawdata.sub_children.length > 0 ? `Peringatan!` : `Sebelum menghapus lokasi induk...`}`}
+                                    visible={modalconfirm}
+                                    footer={
+                                        <Spin spinning={loadingdelete}>
+                                            <div className="flex justify-between items-center">
+                                                <Buttonsys type="default" onClick={() => { setdeletedata({ ...deletedata, new_parent: null }); setmodalconfirm(false) }}>
+                                                    Batalkan
+                                                </Buttonsys>
+                                                <div className="flex items-center">
+                                                    <Buttonsys type="primary" color="danger" onClick={handleDelete}>
+                                                        <TrashIconSvg size={15} color={`#ffffff`} />
+                                                        Ya, saya yakin dan hapus lokasi
+                                                    </Buttonsys>
+                                                </div>
+                                            </div>
+                                        </Spin>
+                                    }
+                                    rawdata={rawdata}
+                                    deletedata={deletedata}
+                                ></ModalHapusLokasiConfirm>
                             </Spin>
                         </div>
                 }
