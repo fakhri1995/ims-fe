@@ -88,13 +88,13 @@ function Software({ }) {
                         </ul>
                     </div>
                         <div className={'flex-col w-1/2 my-auto'}>
-                            <img src="/image/hardware/Hardware-Solution.png"></img>
+                            <img src="/image/landingpage/Software.png"></img>
                         </div>
                 </div>
                 <div className={'block md:hidden'}>
                     <div className={'my-auto'}>
                         <div className={'my-auto'}>
-                            <img src="/image/hardware/Hardware-Solution.png"></img>
+                            <img src="/image/landingpage/Software.png"></img>
                         </div>
                         <p className={'text-2xl pb-4 gilroy-bold'}>Manual business processes <span style={{borderBottom:'solid 3px #188E4D',paddingBottom:'2.5px'}}>hamper</span> performance</p>
                         <p className={'pb-4 pt-2 gilroy-medium text-xl'}>High competition, need transformation, and slow operations force you to be more effective and efficient in order to grow rapidly.</p>
@@ -151,10 +151,10 @@ function Software({ }) {
                 </div>
             </section>
 
-            <section className={'px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
+            <section className={'px-4 mt-10 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                 <div className={'container mx-auto text-center'}>
                     <div className={'pb-12'}>
-                        <p className={'text-lg w-full gilroy-medium'}>We support your companies to simplify and automate the process through digitalization with all framework that you want.</p>
+                        <p className={'text-xl w-full gilroy-medium'}>We support your companies to simplify and automate the process through digitalization with all framework that you want.</p>
                     </div>
                     <img className={'m-auto w-full'} src='/image-software.png'></img>
                 </div>

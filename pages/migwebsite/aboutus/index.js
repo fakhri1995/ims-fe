@@ -11,7 +11,7 @@ function AboutUs({ }) {
             
             <section className={'section2people px-4 md:px-20 lg:px-28 xl:px-40 py-8 md:py-32 text-center justify-center '}>
                 <div className={'pb-8'}>
-                    <p className={'text-2xl md:text-3xl font-bold'}>Operate your business , more efficient and more agile</p>
+                    <p className={'text-2xl md:text-3xl font-bold'}>Operate your business, more efficient and more agile</p>
                 </div>
                 <div className={'pb-12'}>
                     <p className={'text-base w-full font-bold'}>Mitramas Infosys global is supporting you staff augmentation &  delivering software and hardware managed services. We have served multiple industries, bringing the best solutions to financial service companies, start ups, as well as government agencies.</p>
@@ -150,7 +150,7 @@ function AboutUs({ }) {
                     </div>
                 </div>
             </section>
-            <section className={'section5landingpage'} style={{backgroundColor:'#93D9B5'}}>
+            {/* <section className={'section5landingpage'} style={{backgroundColor:'#93D9B5'}}>
                 <div className={' md:flex relative justify-between px-4 md:px-20 lg:px-28 xl:px-40'}style={{top:'40%'}}>
                     <div className={'flex-col text-2xl md:text-3xl text-white font-bold -top-4 md:top-0 relative'} style={{}}>
                         <p>Let’s be better together</p>
@@ -162,7 +162,7 @@ function AboutUs({ }) {
 
                     </div>
                 </div>
-            </section>
+            </section> */}
 
         </Layout>
     )
