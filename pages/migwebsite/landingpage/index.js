@@ -35,13 +35,13 @@ function LandingPage({ }) {
         slidesToScroll: 1,
         responsive: [
             {
-                breakpoint: 600,
+                breakpoint: 768,
                 settings: {
                     slidesToShow: 2,
                 }
             },
             {
-                breakpoint: 480,
+                breakpoint: 576,
                 settings: {
                     slidesToShow: 1,
                 }
@@ -392,7 +392,7 @@ function LandingPage({ }) {
 
             <section className={'md:relative px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 text-center md:bottom-32'}>
 
-                <p className={'text-2xl pb-2 md:pb-4 gilroy-bold'}>
+                <p className={'text-3xl md:text-4xl pb-2 md:pb-4 gilroy-medium font-semibold'}>
                     Show Cases
                 </p>
                 <p className={'gilroy-medium text-lg'}>
@@ -402,61 +402,61 @@ function LandingPage({ }) {
                 <div className={'pb-8 center md:content-around'} style={{ maxWidth: 1000 }}>
                     <Slider {...sliderSettings}>
                         <div>
-                            <Card style={{ width: 300, height: 350 }}>
+                            <Card style={{ maxWidth: 300, maxHeight: 350 }}>
                                 <p className={'pb-20 text-left'}>Provide IT hardware infrastructure with 45 service points in Indonesia. Rent and maintenance +10.000 hardware. Support at a high service level.</p>
                                 <Space align={'start'}>
                                     <img className={'pr-1'} style={{ height: 90 }} src="/image/company/kb.png"></img>
                                     <p>
-                                        <p className={'text-xl gilroy-bold'}>KB Bukopin</p>
-                                        <p className={'gilroy-regular'}>Banking</p>
+                                        <p className={'text-xl gilroy-bold  text-left'}>KB Bukopin</p>
+                                        <p className={'gilroy-regular  text-left'}>Banking</p>
                                     </p>
                                 </Space>
                             </Card>
                         </div>
                         <div>
-                            <Card style={{ width: 300, height: 350 }}>
+                            <Card style={{ maxWidth: 300, maxHeight: 350 }}>
                                 <p className={'pb-20 text-left'}>Accommodate talent with exceptional skills in a short time. The project was conducted earlier with help recruitment fastly.</p>
                                 <Space align={'start'}>
                                     <img className={'pr-1'} style={{ height: 90 }} src="/image/company/shipper.png"></img>
                                     <p>
-                                        <p className={'text-xl gilroy-bold'}>Shipper</p>
-                                        <p className={'gilroy-regular'}>Logistic Service</p>
+                                        <p className={'text-xl gilroy-bold  text-left'}>Shipper</p>
+                                        <p className={'gilroy-regular  text-left'}>Logistic Service</p>
                                     </p>
                                 </Space>
                             </Card>
                         </div>
                         <div>
-                            <Card style={{ width: 300, height: 350 }}>
+                            <Card style={{ maxWidth: 300, maxHeight: 350 }}>
                                 <p className={'pb-20 text-left'}>This is description about project case. This is description about project case. This is description about project case. Test project case</p>
                                 <Space align={'start'}>
                                     <img className={'pr-1'} style={{ height: 90 }} src="avatar.png"></img>
                                     <p>
-                                        <p className={'text-xl gilroy-bold'}>Company Name</p>
-                                        <p className={'gilroy-regular'}>Sector Business</p>
+                                        <p className={'text-xl gilroy-bold  text-left'}>Company Name</p>
+                                        <p className={'gilroy-regular text-left'}>Sector Business</p>
                                     </p>
                                 </Space>
                             </Card>
                         </div>
                         <div>
-                            <Card style={{ width: 300, height: 350 }}>
+                            <Card style={{ maxWidth: 300, maxHeight: 350 }}>
                                 <p className={'pb-20 text-left'}>Develop logistic delivery process and reporting. Make sure to handle critical operations about open API business.  </p>
                                 <Space align={'start'}>
                                     <img className={'pr-1'} style={{ height: 90 }} src="avatar.png"></img>
                                     <p>
-                                        <p className={'text-xl gilroy-bold'}>CGX</p>
-                                        <p className={'gilroy-regular'}>Shipping Company</p>
+                                        <p className={'text-xl gilroy-bold text-left'}>CGX</p>
+                                        <p className={'gilroy-regular text-left'}>Shipping Company</p>
                                     </p>
                                 </Space>
                             </Card>
                         </div>
                         <div>
-                            <Card style={{ width: 300, height: 350 }}>
+                            <Card style={{ maxWidth: 300, maxHeight: 3500 }}>
                                 <p className={'pb-20 text-left'}>Develop Forty Mobile App with a sensitive timeline. Manage from initial lending, payment transactions to reporting. </p>
                                 <Space align={'start'}>
                                     <img className={'pr-1'} style={{ height: 90 }} src="avatar.png"></img>
                                     <p>
-                                        <p className={'text-xl gilroy-bold'}>Forty</p>
-                                        <p className={'gilroy-regular'}>Development Company</p>
+                                        <p className={'text-xl gilroy-bold text-left'}>Forty</p>
+                                        <p className={'gilroy-regular text-left'}>Development Company</p>
                                     </p>
                                 </Space>
                             </Card>
