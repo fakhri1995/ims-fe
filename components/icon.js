@@ -401,6 +401,46 @@ const PkpIconSvg = ({ size, color }) => {
         <Icon component={pkpIconSvg}></Icon>
     )
 }
+const AlertIconSvg = ({ size, color }) => {
+    const alertIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-alert-circle" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <circle cx={12} cy={12} r={9} />
+            <line x1={12} y1={8} x2={12} y2={12} />
+            <line x1={12} y1={16} x2="12.01" y2={16} />
+        </svg>
+    )
+    return (
+        <Icon component={alertIconSvg}></Icon>
+    )
+}
+const MoveIconSvg = ({ size, color }) => {
+    const moveIconSvg = () => (
+        <svg width={size} height={size} viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g filter="url(#filter0_d_2864_33813)">
+                <path d="M2 0.666748H3.29867C4.574 0.666748 5.76867 1.28875 6.5 2.33341C6.8603 2.84814 7.33941 3.26839 7.8967 3.55853C8.454 3.84866 9.07304 4.00013 9.70133 4.00008H14" stroke="white" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M2 7.33333H3.3C3.92792 7.33334 4.54656 7.18184 5.10342 6.89169C5.66028 6.60154 6.13891 6.1813 6.49867 5.66667C6.85843 5.15203 7.33705 4.7318 7.89391 4.44164C8.45077 4.15149 9.06942 3.99999 9.69733 4H13.3333" stroke="white" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M12 6L14 4L12 2" stroke="white" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
+            </g>
+            <defs>
+                <filter id="filter0_d_2864_33813" x="-2.6665" y={0} width="21.333" height={16} filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                    <feFlood floodOpacity={0} result="BackgroundImageFix" />
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                    <feOffset dy={4} />
+                    <feGaussianBlur stdDeviation={2} />
+                    <feComposite in2="hardAlpha" operator="out" />
+                    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2864_33813" />
+                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_2864_33813" result="shape" />
+                </filter>
+            </defs>
+        </svg>
+
+    )
+    return (
+        <Icon component={moveIconSvg}></Icon>
+    )
+}
 const ContractIconSvg = () => {
     const contractIconSvg = () => (
         <svg width="2em" height="2em" id="icon-contract" viewBox="0 0 32 32">
@@ -522,5 +562,7 @@ export {
     Iconquestion,
     NotesIconSvg,
     FaxIconSvg,
-    PkpIconSvg
+    PkpIconSvg,
+    MoveIconSvg,
+    AlertIconSvg
 }

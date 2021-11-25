@@ -2,10 +2,10 @@ import { Button } from 'antd'
 
 import React from 'react'
 
-const ButtonSys = ({ size, type, children, color, submit, onClick, form, selected, onChangeGambar }) => {
+const ButtonSys = ({ size, type, children, color, submit, onClick, form, selected, onChangeGambar, disabled }) => {
     if (type === 'primary') {
         return (
-            <button form={form} onClick={onClick} type={submit && "submit"} className={`btn ${size === "large" ? "" : "btn-sm"} ${typeof (color) === 'undefined' ? "bg-primary100" : (color === "danger" && "bg-state1")}  hover:${typeof (color) === 'undefined' ? "bg-primary75" : (color === "danger" && "bg-state1")} ${typeof (color) === 'undefined' ? "border-primary100" : (color === "danger" && "border-state1")} hover:${typeof (color) === 'undefined' ? "border-primary75" : (color === "danger" && "border-state1")} px-6`}>
+            <button disabled={disabled} form={form} onClick={onClick} type={submit && "submit"} className={`btn ${size === "large" ? "" : "btn-sm"} ${typeof (color) === 'undefined' ? "bg-primary100" : (color === "danger" && "bg-state1")}  hover:${typeof (color) === 'undefined' ? "bg-primary75" : (color === "danger" && "bg-state1")} ${typeof (color) === 'undefined' ? "border-primary100" : (color === "danger" && "border-state1")} hover:${typeof (color) === 'undefined' ? "border-primary75" : (color === "danger" && "border-state1")} px-6`}>
                 {children}
             </button>
         )

@@ -1,16 +1,16 @@
-import Layout from '../../../components/layout-dashboardNew'
+import Layout from '../../../../components/layout-dashboardNew'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import st from '../../../components/layout-dashboard-mig.module.css'
+import st from '../../../../components/layout-dashboard-mig.module.css'
 import Link from 'next/link'
 import { Tree, Input, Empty, Spin, Progress, } from 'antd'
-import Buttonsys from '../../../components/button'
-import { H1, H2, Label } from '../../../components/typography'
-import { SortingIconSvg, LocationIconSvg, ExternalLinkIconSvg, PhoneIconSvg, EmailIconSvg } from '../../../components/icon'
+import Buttonsys from '../../../../components/button'
+import { H1, H2, Label } from '../../../../components/typography'
+import { SortingIconSvg, LocationIconSvg, ExternalLinkIconSvg, PhoneIconSvg, EmailIconSvg } from '../../../../components/icon'
 import { DownOutlined } from '@ant-design/icons'
 import moment from 'moment'
-import { DrawerBank, DrawerLokasi } from '../../../components/drawer/drawerCustom'
+import { DrawerBank, DrawerLokasi } from '../../../../components/drawer/drawerCustom'
 
 const Index3 = ({ initProps, dataProfile, sidemenu }) => {
     const rt = useRouter()
@@ -91,10 +91,9 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
 
     //handler
     const onSortLoc = async (value) => {
-        setloadingselected(true)
+        setpraloading(true)
         sorted === -1 ? setsorted(true) : setsorted(value)
         if (value === true) {
-            console.log("sini")
             var temp = await branchdata.sort((a, b) => a.title > b.title ? 1 : -1)
             setbranchdata(temp)
         }
@@ -110,7 +109,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                     res2.data.children ? setbranchdata(res2.data.children) : setbranchdata([])
                 })
         }
-        setloadingselected(false)
+        setpraloading(false)
     }
 
     //FILTER TREE
@@ -340,7 +339,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                     </div>
                     <div className="flex flex-col">
                         {
-                            loadingselected ?
+                            praloading ?
                                 <>
                                     <Spin />
                                 </>
@@ -381,7 +380,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                                         <div className="flex flex-col w-9/12">
                                             <div className="flex justify-between items-center">
                                                 <H1>{selecteddata.name}</H1>
-                                                <a href={`/company/myCompany/detail/${selecteddata.id}`} target="_blank">
+                                                <a href={`/company/myCompany/locations/${selecteddata.id}`} target="_blank">
                                                     <div className="flex items-center">
                                                         <div className="mr-2">
                                                             <Label color="green" cursor="pointer">Lihat Detail</Label>
@@ -443,7 +442,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                                     </div>
                                 </>
                             :
-                            <div className="flex items-center justify-center">
+                            <div className="flex h-screen items-center justify-center">
                                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Silahkan pilih untuk lihat detail lokasi" />
                             </div>
                     }
