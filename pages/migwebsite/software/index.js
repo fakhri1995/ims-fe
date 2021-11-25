@@ -151,10 +151,10 @@ function Software({ }) {
                 </div>
             </section>
 
-            <section className={'px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
+            <section className={'px-4 mt-10 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                 <div className={'container mx-auto text-center'}>
                     <div className={'pb-12'}>
-                        <p className={'text-lg w-full gilroy-medium'}>We support your companies to simplify and automate the process through digitalization with all framework that you want.</p>
+                        <p className={'text-xl w-full gilroy-medium'}>We support your companies to simplify and automate the process through digitalization with all framework that you want.</p>
                     </div>
                     <img className={'m-auto w-full'} src='/image-software.png'></img>
                 </div>

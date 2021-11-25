@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Head from './head'
 import Styles from './styles'
 import { Menu, Layout, Button, Dropdown  } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined,LinkedinFilled,InstagramFilled } from '@ant-design/icons';
 import { useState, useEffect } from 'react'
 import Bounce from 'react-reveal/Bounce';
 import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
@@ -48,37 +48,37 @@ function layout({ children }) {
     //     </div>
     //   );
     const menu = (
-        <div className={'bg-white w-96 h-auto p-2 top-6 relative'} style={{boxShadow:'0px 40px 50px rgb(0 0 0 / 20%)'}}>
+        <div className={'bg-white w-96 h-auto p-2 top-6 relative'} style={{boxShadow:'0px 0px 3px rgba(50, 50, 50, 0.75)'}}>
             <Link href="/hardware">
-            <div className={'flex py-2 cursor-pointer hover:bg-gray-100'}>
+            <div className={'group flex py-2 cursor-pointer hover:bg-gray-100'}>
                 <div className={'px-4 my-auto w-1/6'}>
-                    <img className={'relative -top-5'} width={40} src={'/image/navbar/hardware.png'}></img>
+                    <img className={'relative -top-5'} width={40} src={'/image/navbar/hardware_black.png'}></img>
                 </div>
                 <div className={'w-5/6'}>
-                    <p className={'text-lg gilroy-medium'}>Hardware</p>
-                    <p className={'text-sm gilroy-regular'}>Optimize your cost by leasing and maintenances IT hardwares</p>
+                    <p className={'text-lg gilroy-medium group-hover:text-blue-600'}>Hardware</p>
+                    <p className={'text-sm gilroy-regular group-hover:text-blue-600'}>Optimize your cost by leasing and maintenances IT hardwares</p>
                 </div>
             </div>
             </Link>
             <Link href="/software">
-            <div className={'flex py-2 cursor-pointer hover:bg-gray-100'}>
+            <div className={'group flex py-2 cursor-pointer hover:bg-gray-100'}>
                 <div className={'px-4 my-auto w-1/6'}>
-                    <img className={'relative -top-5'} width={40} src={'/image/navbar/software.png'}></img>
+                    <img className={'relative -top-5'} width={40} src={'/image/navbar/software_black.png'}></img>
                 </div>
                 <div className={'w-5/6'}>
-                    <p className={'text-lg gilroy-medium'}>Software</p>
-                    <p className={'text-sm gilroy-regular'}>Simplify and automate the process through digitalization</p>
+                    <p className={'text-lg gilroy-medium group-hover:text-blue-600'}>Software</p>
+                    <p className={'text-sm gilroy-regular group-hover:text-blue-600'}>Simplify and automate the process through digitalization</p>
                 </div>
             </div>
             </Link>
             <Link href="/talents">
-            <div className={'flex py-2 cursor-pointer hover:bg-gray-100'}>
+            <div className={'group flex py-2 cursor-pointer hover:bg-gray-100'}>
                 <div className={'px-4 my-auto w-1/6'}>
-                    <img className={'relative -top-5'} width={40} src={'/image/navbar/talents.png'}></img>
+                    <img className={'relative -top-5'} width={40} src={'/image/navbar/talents_black.png'}></img>
                 </div>
                 <div className={'w-5/6'}>
-                    <p className={'text-lg gilroy-medium'}>Talents</p>
-                    <p className={'text-sm gilroy-regular'}>Reduce complexity in talent sourcing and management</p>
+                    <p className={'text-lg gilroy-medium group-hover:text-blue-600'}>Talents</p>
+                    <p className={'text-sm gilroy-regular group-hover:text-blue-600'}>Reduce complexity in talent sourcing and management</p>
                 </div>
             </div>
             </Link>
@@ -183,7 +183,7 @@ function layout({ children }) {
                     <div theme="light" mode="horizontal" style={{lineHeight:'3.9rem',}} className={'hidden md:block float-right menu pt-2'}>
                         <Dropdown overlay={menu} placement="bottomCenter">
                             <Button type={'text'} style={{background:'white'}} className={'ant-dropdown-link text-lg text-black hover:text-black'} onClick={e => e.preventDefault()}>
-                            <p className={'text-lg gilroy-medium menu-underlined'}>Solution</p>
+                            <p className={'text-lg gilroy-medium menu-underlined'}>Solutions <DownOutlined style={{display: 'inline-block', verticalAlign: 'middle'}}/></p>
                             </Button>
                         </Dropdown>
                         <Button href="/aboutus" type="text" className={''} style={{background:'white'}} key="1"><p className={'text-lg gilroy-medium menu-underlined'}>About Us</p></Button>
@@ -196,21 +196,30 @@ function layout({ children }) {
                 <input className={`hidden menuToggle`} type="checkbox" id={`menutoggle`} />
                 <section className={'md:hidden w-full pt-16'}>
                     <div theme="light" style={{lineHeight:'3.9rem',}} className={'float-right menu2'}>
+                        {/* <Button type="text" onClick={()=>{handleSolutionNavbar()}} className={'menu-navbar mt-2'} style={{fontWeight:'600', background:'white'}} key="0">
+                            Solutions/>
+                        </Button><hr className={'mx-4'}/> */}
                         <Button type="text" onClick={()=>{handleSolutionNavbar()}} className={'menu-navbar mt-2'} style={{fontWeight:'600', background:'white'}} key="0">
-                            Solution
+                            Solutions <ArrowRightOutlined style={{fontdisplay: 'inline-block', verticalAlign: 'middle', horizonalAlign: 'right', fontSize:"32"}} />
                         </Button><hr className={'mx-4'}/>
-                        <Button type="text" onClick={()=>{handleCompanyNavbar()}} className={'menu-navbar'} style={{fontWeight:'600', background:'white'}} key="1">
+                        {/* <Button type="text" onClick={()=>{handleCompanyNavbar()}} className={'menu-navbar'} style={{fontWeight:'600', background:'white'}} key="1">
+                            About Us
+                        </Button><hr className={'mx-4'}/> */}
+                        <Button type="text" href='/aboutus' className={'menu-navbar'} style={{fontWeight:'600', background:'white'}} key="1">
                             About Us
                         </Button><hr className={'mx-4'}/>
-                        <Button type="text" className={'menu-navbar'} style={{fontWeight:'600', background:'white'}} key="2">
+                        <Button type="text" href='/joinourteam' className={'menu-navbar'} style={{fontWeight:'600', background:'white'}} key="2">
                             Join Our Team
                         </Button><hr className={'mx-4'}/>
-                        <div hidden={navbarBottom} className={'bottom-5'} style={{position:'fixed'}}>
+                        <Button type="text" href='/contactus' className={'menu-navbar'} style={{fontWeight:'600', background:'white'}} key="3">
+                            Contact Us <ArrowRightOutlined style={{display: 'inline-block', verticalAlign: 'middle'}}/> <LinkedinFilled style={{display: 'inline-block', verticalAlign: 'middle'}}/> <InstagramFilled style={{display: 'inline-block', verticalAlign: 'middle'}}/>
+                        </Button><hr className={'mx-4'}/>
+                        {/* <div hidden={navbarBottom} className={'bottom-5'} style={{position:'fixed'}}>
                             <p className={' text-xs mx-4 -my-4 text-gray-400'}>CONNECT WITH MITRAMAS INFOSYS GLOBAL</p>
                             <Button  type="text" className={'menu-navbar'} style={{fontWeight:'600', background:'white'}} key="3">
                                 Contact Us <ArrowRightOutlined className={'relative'} style={{top:'-0.1rem'}}/>
                             </Button>
-                        </div>
+                        </div> */}
                     </div>
                 </section>
 
@@ -242,7 +251,7 @@ function layout({ children }) {
                             </button>
                         </a>
                     </div>
-                    <div className={'h-full'} style={{backgroundColor:'#E7EDEF'}}>
+                    {/* <div className={'h-full'} style={{backgroundColor:'#E7EDEF'}}>
                         <div className={'grid justify-start'} >
                             <a className={''} href={'/advantages'}>
                                 <button type="text" className={'text-black menu-underlined mx-4 my-2 '} style={{fontWeight:'600'}}>
@@ -254,7 +263,7 @@ function layout({ children }) {
                         <Link href="/advantages"><button className={' border-2 mx-4 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none hover:bg-black hover:text-white'}>
                         See How It Works
                         </button></Link>
-                    </div>
+                    </div> */}
                 </section>
                 </Bounce>
                 {/* SubMenu Company */}

@@ -62,16 +62,31 @@ function JoinOurTeam({ dataCareers }) {
             <section className={'section2careers hidden md:block px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 z-50'} style={{ background: '#F4F4F4' }}>
                 <div className={'block md:flex'}>
                     <div className={'flex py-4'}>
-                        <Link href='/careers/#ourvalues'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Our Values
-                        </p></Link>
-                        <Link href='/careers/#lifeatmig'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Life at MIG
+                        <Linkk activeClass="active"
+                                to="section3careers"
+                                spy={true}
+                                smooth={true}
+                                offset={-120}
+                                duration={500}><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Our Values
+                        </p></Linkk>
+                        {/* <Link href='/careers/#lifeatmig'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Life at MIG
                         </p></Link>
                         <Link href='/careers/#employeestories'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Employee Stories
-                        </p></Link>
-                        <Link href='/careers/#benefits'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Benefits
-                        </p></Link>
-                        <Link href='/careers/#vacancies'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Vacancies
-                        </p></Link>
+                        </p></Link> */}
+                        <Linkk activeClass="active"
+                                to="section6careers"
+                                spy={true}
+                                smooth={true}
+                                offset={-120}
+                                duration={500}><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Benefits
+                        </p></Linkk>
+                        <Linkk activeClass="active"
+                                to="section7careers"
+                                spy={true}
+                                smooth={true}
+                                offset={-120}
+                                duration={500}><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Careers
+                        </p></Linkk>
                     </div>
                 </div>
             </section>

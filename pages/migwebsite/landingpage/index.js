@@ -32,21 +32,18 @@ function LandingPage({ }) {
         infinite: true,
         speed: 500,
         slidesToShow: 3,
-        slidesToScroll: 3,
+        slidesToScroll: 1,
         responsive: [
             {
                 breakpoint: 600,
                 settings: {
                     slidesToShow: 2,
-                    slidesToScroll: 2,
-                    initialSlide: 2
                 }
             },
             {
                 breakpoint: 480,
                 settings: {
                     slidesToShow: 1,
-                    slidesToScroll: 1
                 }
             }
         ]
@@ -392,6 +389,83 @@ function LandingPage({ }) {
                         </div>
                     </Slider>
                 </section> */}
+
+            <section className={'md:relative px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 text-center md:bottom-32'}>
+
+                <p className={'text-2xl pb-2 md:pb-4 gilroy-bold'}>
+                    Show Cases
+                </p>
+                <p className={'gilroy-medium text-lg'}>
+                    We build a long-term relationship to continuously seek new improvement and opportunities.
+                </p>
+
+                <div className={'pb-8 center md:content-around'} style={{ maxWidth: 1000 }}>
+                    <Slider {...sliderSettings}>
+                        <div>
+                            <Card style={{ width: 300, height: 350 }}>
+                                <p className={'pb-20 text-left'}>Provide IT hardware infrastructure with 45 service points in Indonesia. Rent and maintenance +10.000 hardware. Support at a high service level.</p>
+                                <Space align={'start'}>
+                                    <img className={'pr-1'} style={{ height: 90 }} src="/image/company/kb.png"></img>
+                                    <p>
+                                        <p className={'text-xl gilroy-bold'}>KB Bukopin</p>
+                                        <p className={'gilroy-regular'}>Banking</p>
+                                    </p>
+                                </Space>
+                            </Card>
+                        </div>
+                        <div>
+                            <Card style={{ width: 300, height: 350 }}>
+                                <p className={'pb-20 text-left'}>Accommodate talent with exceptional skills in a short time. The project was conducted earlier with help recruitment fastly.</p>
+                                <Space align={'start'}>
+                                    <img className={'pr-1'} style={{ height: 90 }} src="/image/company/shipper.png"></img>
+                                    <p>
+                                        <p className={'text-xl gilroy-bold'}>Shipper</p>
+                                        <p className={'gilroy-regular'}>Logistic Service</p>
+                                    </p>
+                                </Space>
+                            </Card>
+                        </div>
+                        <div>
+                            <Card style={{ width: 300, height: 350 }}>
+                                <p className={'pb-20 text-left'}>This is description about project case. This is description about project case. This is description about project case. Test project case</p>
+                                <Space align={'start'}>
+                                    <img className={'pr-1'} style={{ height: 90 }} src="avatar.png"></img>
+                                    <p>
+                                        <p className={'text-xl gilroy-bold'}>Company Name</p>
+                                        <p className={'gilroy-regular'}>Sector Business</p>
+                                    </p>
+                                </Space>
+                            </Card>
+                        </div>
+                        <div>
+                            <Card style={{ width: 300, height: 350 }}>
+                                <p className={'pb-20 text-left'}>Develop logistic delivery process and reporting. Make sure to handle critical operations about open API business.  </p>
+                                <Space align={'start'}>
+                                    <img className={'pr-1'} style={{ height: 90 }} src="avatar.png"></img>
+                                    <p>
+                                        <p className={'text-xl gilroy-bold'}>CGX</p>
+                                        <p className={'gilroy-regular'}>Shipping Company</p>
+                                    </p>
+                                </Space>
+                            </Card>
+                        </div>
+                        <div>
+                            <Card style={{ width: 300, height: 350 }}>
+                                <p className={'pb-20 text-left'}>Develop Forty Mobile App with a sensitive timeline. Manage from initial lending, payment transactions to reporting. </p>
+                                <Space align={'start'}>
+                                    <img className={'pr-1'} style={{ height: 90 }} src="avatar.png"></img>
+                                    <p>
+                                        <p className={'text-xl gilroy-bold'}>Forty</p>
+                                        <p className={'gilroy-regular'}>Development Company</p>
+                                    </p>
+                                </Space>
+                            </Card>
+                        </div>
+                    </Slider>
+                </div>
+
+            </section>
+
             <section className={'px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 pb-20 pt-10 md:pt-0 text-center'}>
                 <div className={'container mx-auto'}>
                     <p className={'text-3xl md:text-4xl pb-4 gilroy-medium font-semibold'}>
@@ -462,7 +536,7 @@ function LandingPage({ }) {
                     </div>
                 </section> */}
             {/* </section> */}
-            <section className={'px-4 sm:px-10 md:bottom-32 md:px-10 lg:px-10 xl:px-10 2xl:px-20 pb-20 pt-10 md:pt-0 text-center'}>
+            {/* <section className={'px-4 sm:px-10 md:bottom-32 md:px-10 lg:px-10 xl:px-10 2xl:px-20 pb-20 pt-10 md:pt-0 text-center'}>
 
                 <p className={'text-2xl pb-2 md:pb-4 gilroy-bold'}>
                     Our Clients
@@ -478,82 +552,8 @@ function LandingPage({ }) {
                     <img className={'w-full'} src="/image/company/shipper_text.png"></img>
                 </Space>
 
-            </section>
-            <section className={'md:relative px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 text-center'}>
+            </section> */}
 
-                <p className={'text-2xl pb-2 md:pb-4 gilroy-bold'}>
-                    Show Cases
-                </p>
-                <p className={'gilroy-medium text-lg'}>
-                    We build a long-term relationship to continuously seek new improvement and opportunities.
-                </p>
-                <Space>
-                    <div className={'container pb-8'} style={{ maxWidth: 1000 }}>
-                        <Slider {...sliderSettings}>
-                            <div>
-                                <Card>
-                                    <p className={'pb-20 text-left'}>Provide IT hardware infrastructure with 45 service points in Indonesia. Rent and maintenance +10.000 hardware. Support at a high service level.</p>
-                                    <Space align={'start'}>
-                                        <img className={'w-full pr-1'} src="/image/company/kb.png"></img>
-                                        <p>
-                                            <p className={'text-xl gilroy-bold'}>KB Bukopin</p>
-                                            <p className={'gilroy-regular'}>Banking</p>
-                                        </p>
-                                    </Space>
-                                </Card>
-                            </div>
-                            <div>
-                                <Card>
-                                    <p className={'pb-20 text-left'}>Accommodate talent with exceptional skills in a short time. The project was conducted earlier with help recruitment fastly.</p>
-                                    <Space align={'start'}>
-                                        <img className={'w-full pr-1'} src="/image/company/shipper.png"></img>
-                                        <p>
-                                            <p className={'text-xl gilroy-bold'}>Shipper</p>
-                                            <p className={'gilroy-regular'}>Logistic Service</p>
-                                        </p>
-                                    </Space>
-                                </Card>
-                            </div>
-                            <div>
-                                <Card>
-                                    <p className={'pb-20 text-left'}>This is description about project case. This is description about project case. This is description about project case. </p>
-                                    <Space align={'start'}>
-                                        <img className={'w-full pr-1'} src="avatar.png"></img>
-                                        <p>
-                                            <p className={'text-xl gilroy-bold'}>Company Name</p>
-                                            <p className={'gilroy-regular'}>Sector Business</p>
-                                        </p>
-                                    </Space>
-                                </Card>
-                            </div>
-                            <div>
-                                <Card>
-                                    <p className={'pb-20 text-left'}>Develop logistic delivery process. Make sure to handle critical operations about open API business.  </p>
-                                    <Space align={'start'}>
-                                        <img className={'w-full pr-1'} src="avatar.png"></img>
-                                        <p>
-                                            <p className={'text-xl gilroy-bold'}>CGX</p>
-                                            <p className={'gilroy-regular'}>Shipping Company</p>
-                                        </p>
-                                    </Space>
-                                </Card>
-                            </div>
-                            <div>
-                                <Card>
-                                    <p className={'pb-20 text-left'}>Develop Forty Mobile App with a sensitive timeline. Manage from initial lending, payment transactions to reporting. </p>
-                                    <Space align={'start'}>
-                                        <img className={'w-full pr-1'} src="avatar.png"></img>
-                                        <p>
-                                            <p className={'text-xl gilroy-bold'}>Forty</p>
-                                            <p className={'gilroy-regular'}>Development Company</p>
-                                        </p>
-                                    </Space>
-                                </Card>
-                            </div>
-                        </Slider>
-                    </div>
-                </Space>
-            </section>
         </Layout>
     )
 }
