@@ -84,7 +84,7 @@ function JoinOurTeam({ dataCareers }) {
                                 to="section7careers"
                                 spy={true}
                                 smooth={true}
-                                offset={-120}
+                                offset={-150}
                                 duration={500}><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Careers
                         </p></Linkk>
                     </div>
