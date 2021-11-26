@@ -45,14 +45,14 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                     },
                     children:
                         <>
-                            {
-                                [188, 190, 191, 192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                            {/* {
+                                [188, 190, 191, 192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr)) ? */}
                                     <Link href={`/admin/service/${record.id}`}>
                                         <a href="#"><h1 className="font-semibold hover:text-gray-500">{record.itemName}</h1></a>
                                     </Link>
-                                    :
-                                    <h1 className="font-semibold hover:text-gray-500">{record.itemName}</h1>
-                            }
+                            {/* //         :
+                            //         <h1 className="font-semibold hover:text-gray-500">{record.itemName}</h1>
+                            // } */}
                         </>
                 }
             }
@@ -68,14 +68,14 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                     },
                     children:
                         <>
-                            {
-                                [188, 190, 191, 192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                            {/* {
+                                [188, 190, 191, 192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr)) ? */}
                                     <Link href={`/admin/service/${record.id}`}>
                                         <a href="#"><h1 className="hover:text-gray-500 text-xs">{record.shortDesc}</h1></a>
                                     </Link>
-                                    :
+                                    {/* :
                                     <h1 className="hover:text-gray-500 text-xs">{record.shortDesc}</h1>
-                            }
+                            } */}
                         </>
                 }
             }
@@ -91,14 +91,14 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                     },
                     children:
                         <>
-                            {
-                                [188, 190, 191, 192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                            {/* {
+                                [188, 190, 191, 192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr)) ? */}
                                     <Link href={`/admin/service/${record.id}`}>
                                         <a href="#"><h1 className="hover:text-gray-500 text-sm">{record.categoryName}</h1></a>
                                     </Link>
-                                    :
+                                    {/* :
                                     <h1 className="hover:text-gray-500 text-sm">{record.categoryName}</h1>
-                            }
+                            } */}
                         </>
                 }
             }
@@ -114,8 +114,8 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                     },
                     children:
                         <>
-                            {
-                                [188, 190, 191, 192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                            {/* {
+                                [188, 190, 191, 192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr)) ? */}
                                     <Link href={`/admin/service/${record.id}`}>
                                         <a href="#">
                                             {
@@ -126,7 +126,7 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                                             }
                                         </a>
                                     </Link>
-                                    :
+                                    {/* :
                                     <>
                                         {
                                             record.status ?
@@ -135,7 +135,7 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                                                 <div className="py-1 px-2 rounded-l-full rounded-r-full text-gray-500 border border-gray-500 bg-gray-100 text-center text-xs">Draft</div>
                                         }
                                     </>
-                            }
+                            } */}
                         </>
                 }
             }
@@ -169,13 +169,13 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
     const menu = (
         <Menu>
             {
-                [184].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                // [184].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                 <Menu.Item key="1" onClick={() => setmodaltambahkateg(true)}>
                     Service Category
                 </Menu.Item>
             }
             {
-                [189].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                // [189].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                 <Menu.Item key="2" onClick={() => rt.push(`/admin/service/create`)}>
                     Service Item
                 </Menu.Item>
@@ -454,7 +454,7 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                             <p className="font-semibold text-lg">Service Catalog</p>
                         </div>
                         {
-                            [184, 189].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                            // [184, 189].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                             <div>
                                 <Dropdown overlay={menu} trigger={['click']}>
                                     <Button size="large" style={{ backgroundColor: `rgb(24,144,255)`, color: `white` }}>
@@ -550,7 +550,7 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                                                     {tabnameArrVal[idx + 1] === "block" && <p className="font-semibold m-0">{doc.nama_kategori}</p>}
                                                 </div>
                                                 {
-                                                    [185].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                                    // [185].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                                     <div className="w-auto h-6 px-1 border rounded-sm cursor-pointer hover:border-blue-500 hover:text-blue-500 flex justify-center items-center" onClick={() => setmodaleditkateg(true)}><EditOutlined /></div>
                                                 }
                                             </div>
@@ -609,7 +609,7 @@ function ServiceCatalog({ initProps, dataProfile, dataListServiceCategories, dat
                                 </div>
                                 <div className="flex justify-between">
                                     {
-                                        [186].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                                        // [186].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                         <Button onClick={() => { setmodaleditkateg(false); setmodalkonfhapuskateg(true) }} type="default">Delete</Button>
                                     }
                                     <div className="flex">
@@ -685,7 +685,7 @@ export async function getServerSideProps({ req, res }) {
         }
     }
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -693,10 +693,10 @@ export async function getServerSideProps({ req, res }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    if (![183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     const resourcesGSI = await fetch(`https://boiling-thicket-46501.herokuapp.com/getServiceItems`, {
         method: `GET`,

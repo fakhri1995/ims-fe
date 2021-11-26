@@ -3,7 +3,7 @@ import { useState } from 'react'
 import httpcookie from 'cookie'
 import { DownOutlined, MinusCircleTwoTone } from '@ant-design/icons'
 import { Button, Anchor, Dropdown, Menu, Form, Input, notification, Select, Checkbox } from 'antd'
-import Layout from '../../../../components/layout-dashboard'
+import Layout from '../../../../components/layout-dashboard2'
 import st from '../../../../components/layout-dashboard.module.css'
 
 function ServiceCreate({ initProps, dataProfile, dataListServiceCategories, dataListServiceItem, sidemenu }) {
@@ -177,7 +177,7 @@ function ServiceCreate({ initProps, dataProfile, dataListServiceCategories, data
 
     return (
         <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
-            <div className="w-full h-80 border-t border-opacity-30 border-gray-500 bg-white">
+            <div className="w-full border-t border-opacity-30 border-gray-500 bg-white">
                 <div className="w-full flex flex-col md:flex-row justify-between p-3">
                     <div>
                         <p className="font-semibold text-lg">Add Service Item</p>
@@ -332,7 +332,7 @@ export async function getServerSideProps({ req, res }) {
         }
     }
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -340,10 +340,10 @@ export async function getServerSideProps({ req, res }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    if(![189].every((curr) => dataProfile.data.registered_feature.includes(curr))){
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if(![189].every((curr) => dataProfile.data.registered_feature.includes(curr))){
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     const resourcesGSI = await fetch(`https://boiling-thicket-46501.herokuapp.com/getServiceItems`, {
         method: `GET`,

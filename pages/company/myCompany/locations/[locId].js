@@ -632,7 +632,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                         {
                                             editable &&
                                             <div className="flex justify-center items-center mb-10">
-                                                <Buttonsys disabled={rawdata.induk_level_1_count > 0 ? true : false} type="primary" color="danger" onClick={() => {
+                                                <Buttonsys /*disabled={rawdata.induk_level_1_count > 0 ? true : false}*/ type="primary" color="danger" onClick={() => {
                                                     if (tipe === 1) {
                                                         if (subloc.length > 0) {
                                                             setmodalcheckchild(true)
@@ -678,12 +678,12 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                             </Buttonsys>
                                             <div className="flex items-center justify-end">
                                                 <div className="mr-5">
-                                                    <Buttonsys type="primary" onClick={() => { setmodalcheckchild(false); setmodalmove(true) }}>
+                                                    <Buttonsys disabled={rawdata.induk_level_1_count > 0 ? true : false} type="primary" onClick={() => { setmodalcheckchild(false); setmodalmove(true) }}>
                                                         <MoveIconSvg size={15} />
                                                         Pindahkan Sublokasi
                                                     </Buttonsys>
                                                 </div>
-                                                <Buttonsys type="primary" color="danger" onClick={() => { setmodalcheckchild(false); setmodalconfirm(true) }}>
+                                                <Buttonsys disabled={rawdata.induk_level_1_count > 0 ? true : false} type="primary" color="danger" onClick={() => { setmodalcheckchild(false); setmodalconfirm(true) }}>
                                                     <TrashIconSvg size={15} color={`#ffffff`} />
                                                     Hapus Lokasi
                                                 </Buttonsys>
