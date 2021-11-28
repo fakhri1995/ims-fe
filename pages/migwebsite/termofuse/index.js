@@ -2,11 +2,15 @@ import React from 'react'
 import Link from 'next/link'
 import Layout from '../../../components/migwebsite/layout.js'
 import {Collapse} from 'antd'
+import Head from "next/head";
 
 function TermOfUse({ }) {
     const { Panel } = Collapse;
     return (
         <Layout>
+            <Head>
+                <title>Term Of Use</title>
+            </Head>
             <section className={'px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                 <div className={'container mx-auto'}>
                     <div>

@@ -405,7 +405,7 @@ function LandingPage({ }) {
                             <Card style={{ maxWidth: 300, maxHeight: 350 }}>
                                 <p className={'pb-20 text-left'}>Provide IT hardware infrastructure with 45 service points in Indonesia. Rent and maintenance +10.000 hardware. Support at a high service level.</p>
                                 <Space align={'start'}>
-                                    <img className={'pr-1'} style={{ height: 90 }} src="/image/company/kb.png"></img>
+                                    <img className={'pr-1'} style={{ minHeight: 90 }} src="/image/company/kb.png"></img>
                                     <p>
                                         <p className={'text-xl gilroy-bold  text-left'}>KB Bukopin</p>
                                         <p className={'gilroy-regular  text-left'}>Banking</p>
@@ -417,7 +417,7 @@ function LandingPage({ }) {
                             <Card style={{ maxWidth: 300, maxHeight: 350 }}>
                                 <p className={'pb-20 text-left'}>Accommodate talent with exceptional skills in a short time. The project was conducted earlier with help recruitment fastly.</p>
                                 <Space align={'start'}>
-                                    <img className={'pr-1'} style={{ height: 90 }} src="/image/company/shipper.png"></img>
+                                    <img className={'pr-1'} style={{ minHeight: 90 }} src="/image/company/shipper.png"></img>
                                     <p>
                                         <p className={'text-xl gilroy-bold  text-left'}>Shipper</p>
                                         <p className={'gilroy-regular  text-left'}>Logistic Service</p>
@@ -427,9 +427,9 @@ function LandingPage({ }) {
                         </div>
                         <div>
                             <Card style={{ maxWidth: 300, maxHeight: 350 }}>
-                                <p className={'pb-20 text-left'}>This is description about project case. This is description about project case. This is description about project case. Test project case</p>
+                                <p className={'pb-20 text-left'}>This is description about project case. This is description about project case. This is description about project case.</p>
                                 <Space align={'start'}>
-                                    <img className={'pr-1'} style={{ height: 90 }} src="avatar.png"></img>
+                                    <img className={'pr-1'} style={{ minHeight: 90 }} src="avatar.png"></img>
                                     <p>
                                         <p className={'text-xl gilroy-bold  text-left'}>Company Name</p>
                                         <p className={'gilroy-regular text-left'}>Sector Business</p>
@@ -439,12 +439,24 @@ function LandingPage({ }) {
                         </div>
                         <div>
                             <Card style={{ maxWidth: 300, maxHeight: 350 }}>
-                                <p className={'pb-20 text-left'}>Develop logistic delivery process and reporting. Make sure to handle critical operations about open API business.  </p>
+                                <p className={'pb-20 text-left'}>Develop logistic delivery process and reporting. Make sure to handle critical operations about open API business.</p>
                                 <Space align={'start'}>
-                                    <img className={'pr-1'} style={{ height: 90 }} src="avatar.png"></img>
+                                    <img className={'pr-1'} style={{ minHeight: 90 }} src="/image/company/cgx.png"></img>
                                     <p>
                                         <p className={'text-xl gilroy-bold text-left'}>CGX</p>
-                                        <p className={'gilroy-regular text-left'}>Shipping Company</p>
+                                        <p className={'gilroy-regular text-left'}>Shipment and Warehouse</p>
+                                    </p>
+                                </Space>
+                            </Card>
+                        </div>
+                        <div>
+                            <Card style={{ maxWidth: 300, maxHeight: 350 }}>
+                                <p className={'pb-20 text-left'}>Provide IT Engineer for build many projects. Provide team required for a long-term project.</p>
+                                <Space align={'start'}>
+                                    <img className={'pr-1'} style={{ minHeight: 90 }} src="/image/company/kb.png"></img>
+                                    <p>
+                                        <p className={'text-xl gilroy-bold text-left'}>KB Bukopin</p>
+                                        <p className={'gilroy-regular text-left'}>Banking</p>
                                     </p>
                                 </Space>
                             </Card>
@@ -453,10 +465,10 @@ function LandingPage({ }) {
                             <Card style={{ maxWidth: 300, maxHeight: 3500 }}>
                                 <p className={'pb-20 text-left'}>Develop Forty Mobile App with a sensitive timeline. Manage from initial lending, payment transactions to reporting. </p>
                                 <Space align={'start'}>
-                                    <img className={'pr-1'} style={{ height: 90 }} src="avatar.png"></img>
+                                    <img className={'pr-1'} style={{ minHeight: 90 }} src="/image/company/forty.png"></img>
                                     <p>
                                         <p className={'text-xl gilroy-bold text-left'}>Forty</p>
-                                        <p className={'gilroy-regular text-left'}>Development Company</p>
+                                        <p className={'gilroy-regular text-left'}>IT Service</p>
                                     </p>
                                 </Space>
                             </Card>

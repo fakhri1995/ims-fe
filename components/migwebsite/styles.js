@@ -32,6 +32,11 @@ const Styles = (props) => (
       border-bottom: 2px solid #1ac929;
       color: green !important;
     }
+    .jot-underlined :focus{
+      font-weight: bold;
+      display:inline-block;
+      border-bottom:2px solid #1ac929;
+    }
     .flex-important{
       display: flex !important;
     }

@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Head from './head'
 import Styles from './styles'
 import { Menu, Layout, Button, Dropdown  } from 'antd';
-import { DownOutlined,LinkedinFilled,InstagramFilled } from '@ant-design/icons';
+import { CaretDownOutlined,LinkedinFilled,InstagramFilled } from '@ant-design/icons';
 import { useState, useEffect } from 'react'
 import Bounce from 'react-reveal/Bounce';
 import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
@@ -55,8 +55,8 @@ function layout({ children }) {
                     <img className={'relative -top-5'} width={40} src={'/image/navbar/hardware_black.png'}></img>
                 </div>
                 <div className={'w-5/6'}>
-                    <p className={'text-lg gilroy-medium group-hover:text-blue-600'}>Hardware</p>
-                    <p className={'text-sm gilroy-regular group-hover:text-blue-600'}>Optimize your cost by leasing and maintenances IT hardwares</p>
+                    <p className={'text-lg gilroy-medium group-hover:text-green-600'}>Hardware</p>
+                    <p className={'text-sm gilroy-regular group-hover:text-green-600'}>Optimize your cost by leasing and maintenances IT hardwares</p>
                 </div>
             </div>
             </Link>
@@ -66,8 +66,8 @@ function layout({ children }) {
                     <img className={'relative -top-5'} width={40} src={'/image/navbar/software_black.png'}></img>
                 </div>
                 <div className={'w-5/6'}>
-                    <p className={'text-lg gilroy-medium group-hover:text-blue-600'}>Software</p>
-                    <p className={'text-sm gilroy-regular group-hover:text-blue-600'}>Simplify and automate the process through digitalization</p>
+                    <p className={'text-lg gilroy-medium group-hover:text-green-600'}>Software</p>
+                    <p className={'text-sm gilroy-regular group-hover:text-green-600'}>Simplify and automate the process through digitalization</p>
                 </div>
             </div>
             </Link>
@@ -77,8 +77,8 @@ function layout({ children }) {
                     <img className={'relative -top-5'} width={40} src={'/image/navbar/talents_black.png'}></img>
                 </div>
                 <div className={'w-5/6'}>
-                    <p className={'text-lg gilroy-medium group-hover:text-blue-600'}>Talents</p>
-                    <p className={'text-sm gilroy-regular group-hover:text-blue-600'}>Reduce complexity in talent sourcing and management</p>
+                    <p className={'text-lg gilroy-medium group-hover:text-green-600'}>Talents</p>
+                    <p className={'text-sm gilroy-regular group-hover:text-green-600'}>Reduce complexity in talent sourcing and management</p>
                 </div>
             </div>
             </Link>
@@ -183,7 +183,7 @@ function layout({ children }) {
                     <div theme="light" mode="horizontal" style={{lineHeight:'3.9rem',}} className={'hidden md:block float-right menu pt-2'}>
                         <Dropdown overlay={menu} placement="bottomCenter">
                             <Button type={'text'} style={{background:'white'}} className={'ant-dropdown-link text-lg text-black hover:text-black'} onClick={e => e.preventDefault()}>
-                            <p className={'text-lg gilroy-medium menu-underlined'}>Solutions <DownOutlined style={{display: 'inline-block', verticalAlign: 'middle'}}/></p>
+                            <p className={'text-lg gilroy-medium menu-underlined'}>Solutions <CaretDownOutlined style={{display: 'inline-block', verticalAlign: 'middle'}}/></p>
                             </Button>
                         </Dropdown>
                         <Button href="/aboutus" type="text" className={''} style={{background:'white'}} key="1"><p className={'text-lg gilroy-medium menu-underlined'}>About Us</p></Button>
@@ -237,17 +237,17 @@ function layout({ children }) {
                     <div className={'grid justify-start border-b-2 border-t-2 border-black'} style={{backgroundColor:'#F4EFEE'}}>
                         <a className={''} href={'/hardware'}>
                             <button type="text" className={'text-black menu-underlined mx-4 my-2'} style={{fontWeight:'600'}}>
-                                Hardware
+                            <img className={'relative'} style={{display: 'inline-block'}} width={40} src={'/image/navbar/hardware_black.png'}></img>Hardware
                             </button>
                         </a>
                         <a className={'text-black'} href={'/software'}>
                             <button type="text" className={'text-black menu-underlined mx-4 my-2'} style={{fontWeight:'600'}}>
-                                Software
+                            <img className={'relative'} style={{display: 'inline-block'}} width={40} src={'/image/navbar/software_black.png'}></img>Software
                             </button>
                         </a>
                         <a className={'text-black'} href={'/people'}>
                             <button type="text" className={'text-black menu-underlined mx-4 my-2'} style={{fontWeight:'600'}}>
-                                People
+                            <img className={'relative'} style={{display: 'inline-block'}} width={40} src={'/image/navbar/talents_black.png'}></img>Talents
                             </button>
                         </a>
                     </div>

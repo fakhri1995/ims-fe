@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Layout from '../../../components/migwebsite/layout.js'
 import {Form, Input, Checkbox, notification} from 'antd'
 import {CheckCircleTwoTone } from '@ant-design/icons'
+import Head from "next/head";
 
 function Software({ }) {
     const [form] = Form.useForm();
@@ -52,7 +53,9 @@ function Software({ }) {
     }, [])
     return (
         <Layout>
-
+            <Head>
+                <title>Software</title>
+            </Head>
             <section className={'section1advantages hidden md:block fixed w-full z-50 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'} style={{background:'#F4F4F4'}}>
                 <div className={'block md:flex container mx-auto'}>
                     <div className={'flex py-4'}>

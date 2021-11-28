@@ -2,9 +2,10 @@ import React from 'react'
 import Layout from '../../../components/migwebsite/layout.js'
 import Link from 'next/link'
 import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
-import { Button, Collapse } from 'antd'
+import { Card, Button, Collapse } from 'antd'
 import Flickity from 'react-flickity-component'
 import { Link as Linkk } from "react-scroll";
+import Head from "next/head";
 
 function JoinOurTeam({ dataCareers }) {
     console.log(dataCareers)
@@ -27,6 +28,9 @@ function JoinOurTeam({ dataCareers }) {
     const { Panel } = Collapse;
     return (
         <Layout>
+            <Head>
+                <title>Join Our Team</title>
+            </Head>
             <section className={'section1careers py-4 md:py-20 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                 <div className={'block md:flex'}>
                     <div className={'flex-col m-auto'}>
@@ -63,65 +67,90 @@ function JoinOurTeam({ dataCareers }) {
                 <div className={'block md:flex'}>
                     <div className={'flex py-4'}>
                         <Linkk activeClass="active"
-                                to="section3careers"
-                                spy={true}
-                                smooth={true}
-                                offset={-120}
-                                duration={500}><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Our Values
-                        </p></Linkk>
+                            to="section3careers"
+                            spy={true}
+                            smooth={true}
+                            offset={-120}
+                            className={'mr-12'}
+                            duration={500}><button className={'text-black cursor-pointer flex-col text-base focus:outline-none jot-underlined'} style={{}}>Our Values
+                            </button></Linkk>
                         {/* <Link href='/careers/#lifeatmig'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Life at MIG
                         </p></Link>
                         <Link href='/careers/#employeestories'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Employee Stories
                         </p></Link> */}
                         <Linkk activeClass="active"
-                                to="section6careers"
-                                spy={true}
-                                smooth={true}
-                                offset={-120}
-                                duration={500}><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Benefits
-                        </p></Linkk>
+                            to="section6careers"
+                            spy={true}
+                            smooth={true}
+                            offset={-120}
+                            className={'mr-12'}
+                            duration={500}><button className={'text-black cursor-pointer flex-col text-base focus:outline-none jot-underlined'} style={{}}>Benefits
+                            </button></Linkk>
                         <Linkk activeClass="active"
-                                to="section7careers"
-                                spy={true}
-                                smooth={true}
-                                offset={-150}
-                                duration={500}><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Careers
-                        </p></Linkk>
+                            to="section7careers"
+                            spy={true}
+                            smooth={true}
+                            offset={-150}
+                            className={'mr-12'}
+                            duration={500}><button className={'text-black cursor-pointer flex-col text-base focus:outline-none jot-underlined'} style={{}}>Careers
+                            </button></Linkk>
                     </div>
                 </div>
             </section>
             <section className={'h-8 hidden md:block'}></section>
-            <section className={'section3careers py-10 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'} style={{ background: '#F4F4F4' }}>
+            <section className={'section3careers py-10 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'} >
                 <span className={'relative'} style={{ top: '-140px' }} id='ourvalues'></span>
                 <div>
-                    <p className={'text-2xl font-bold'}>Our Values</p>
+                    <p className={'text-3xl font-bold text-center pb-8'}>Our Values</p>
                 </div>
-                <div className={'hidden md:flex justify-beetwen'}>
-                    <div className={'w-1/3 flex-col flex'}>
-                        <div className={'py-8 mx-auto pr-4'}>
-                            <img src={'/avatar.png'}></img>
+
+                <div className={'md:flex justify-between'}>
+                    {/* <Card className="" style={{ borderRadius: "20px", overflow: "hidden" }} hoverable>
+                        <div className={'flex-col flex bg-white mr-0 md:mr-10 p-4 w-full md:w-96'}>
+                            <div>
+                                <p className={'text-2xl gilroy-bold pr-10'}>Agility</p>
+                                <br></br>
+                                <p className={'text-justify pr-4'}>We are adapting to fast-changing environments.</p>
+                            </div>
                         </div>
+                    </Card>
+                    <Card className="" style={{ borderRadius: "20px", overflow: "hidden" }} hoverable>
+                        <div className={'flex-col flex bg-white mr-0 md:mr-10 p-4 w-full md:w-96'}>
+                            <div>
+                                <p className={'text-2xl gilroy-bold pr-10'}>Perseverance</p>
+                                <br></br>
+                                <p className={'text-justify pr-4'}>We aim high and constantly strive for excellence.</p>
+                            </div>
+                        </div>
+                    </Card>
+                    <Card className="" style={{ borderRadius: "20px", overflow: "hidden" }} hoverable>
+                        <div className={'flex-col flex bg-white mr-0 md:mr-10 p-4 w-full md:w-96'}>
+                            <div>
+                                <p className={'text-2xl gilroy-bold pr-10'}>Integrity</p>
+                                <br></br>
+                                <p className={'text-justify pr-4'}>We are dedicated to adhering to positive ethical values.</p>
+                            </div>
+                        </div>
+                    </Card> */}
+                    <div className={'flex-col flex bg-white mr-0 md:mr-10 p-4 w-auto border-2 border-black-300 rounded-lg hover:shadow-lg pb-10'}>
                         <div>
-                            <p className={'text-xl pr-4'}>Agility</p>
+                            <p className={'text-2xl gilroy-bold pr-10'}>Agility</p>
+                            <br></br>
                             <p className={'text-justify pr-4'}>We are adapting to fast-changing environments.</p>
                         </div>
                     </div>
-                    <div className={'w-1/3 flex-col flex'}>
-                        <div className={'py-8 mx-auto pr-4 pl-4'}>
-                            <img src={'/avatar.png'}></img>
-                        </div>
+                    <div className={'flex-col flex bg-white mr-0 md:mr-10 p-4 w-auto border-2 border-black-300 rounded-lg hover:shadow-lg pb-10'}>
                         <div>
-                            <p className={'text-xl pr-4 pl-4'}>Perseverance</p>
-                            <p className={'text-justify pr-4 pl-4'}>We aim high and constantly strive for excellence.</p>
+                            <p className={'text-2xl gilroy-bold pr-10'}>Perseverance</p>
+                            <br></br>
+                            <p className={'text-justify pr-4'}>We aim high and constantly strive for excellence.</p>
                         </div>
                     </div>
-                    <div className={'w-1/3 flex-col flex'}>
-                        <div className={'py-8 mx-auto pl-4'}>
-                            <img src={'/avatar.png'}></img>
-                        </div>
+                    <div className={'flex-col flex bg-white mr-0 md:mr-10 p-4 w-auto border-2 border-black-300 rounded-lg hover:shadow-lg pb-10'}>
                         <div>
-                            <p className={'text-xl pl-4'}>Integrity</p>
-                            <p className={'text-justify pl-4'}>We are dedicated to adhering to positive ethical values.</p>
+                            <p className={'text-2xl gilroy-bold pr-10'}>Integrity</p>
+                            <br></br>
+                            <p className={'text-justify pr-4'}>We are dedicated to adhering to positive ethical values.</p>
                         </div>
                     </div>
                 </div>
@@ -130,51 +159,95 @@ function JoinOurTeam({ dataCareers }) {
 
             <section className={'section6careers py-10 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 h-auto'}>
                 <span className={'relative'} style={{ top: '-140px' }} id='benefits'></span>
-                <div>
+                <div className={'justify-center'}>
                     <p className={'text-center font-bold text-3xl pb-8'}>Benefits</p>
                     <p className={'pb-8 text-justify'}>
                         Mitramas is a people-centric business with a foundation to gives working opportunities for motivated individuals at all levels. Our long-term sustainable business which has been running for +15 years and operated across 45 cities have a strong commitment to offer pleasant experience for our team, communities, and clients.
                     </p>
-                    <div className={'block md:flex justify-center'}>
+                    {/* <div className={'block md:flex justify-center'}>
                         <div className={'pb-6 md:w-1/2 flex-row flex'}>
-                            <img className={'flex-row'} src='/avatar.png'></img>
+                            <img className={'flex-row'} src='/image/joinourteam/benefit_1.png'></img>
                             <p className={' text-base flex-row my-auto pl-4'}>
                                 We love to empower our team members to solve problems that matter
                             </p>
                         </div>
                         <div className={'pb-6 md:w-1/2 flex-row flex'}>
-                            <img className={'flex-row'} src='/avatar.png'></img>
-                            <p className={' text-base flex-row my-auto pl-4'}>
-                                We offer diverse industry exposures and hands-on experience
-                            </p>
-                        </div>
-                    </div>
-                    <div className={'block md:flex justify-center'}>
-                        <div className={'pb-6 md:w-1/2 flex-row flex'}>
-                            <img className={'flex-row'} src='/avatar.png'></img>
-                            <p className={' text-base flex-row my-auto pl-4'}>
-                                We support personal growth through constant experiment and learning
-                            </p>
-                        </div>
-                        <div className={'pb-6 md:w-1/2 flex-row flex'}>
-                            <img className={'flex-row'} src='/avatar.png'></img>
+                            <img className={'flex-row'} src='/image/joinourteam/benefit_4.png'></img>
                             <p className={' text-base flex-row my-auto pl-4'}>
                                 We provide unique and competitive packages to launch your career
                             </p>
                         </div>
                     </div>
                     <div className={'block md:flex justify-center'}>
+                        
                         <div className={'pb-6 md:w-1/2 flex-row flex'}>
-                            <img className={'flex-row'} src='/avatar.png'></img>
+                            <img className={'flex-row'} src='/image/joinourteam/benefit_2.png'></img>
+                            <p className={' text-base flex-row my-auto pl-4'}>
+                                We offer diverse industry exposures and hands-on experience
+                            </p>
+                        </div>
+                        <div className={'pb-6 md:w-1/2 flex-row flex'}>
+                            <img className={'flex-row'} src='/image/joinourteam/benefit_5.png'></img>
                             <p className={' text-base flex-row my-auto pl-4'}>
                                 We value informal social bonding to offer a enjoyable working environment
                             </p>
                         </div>
+                    </div>
+                    <div className={'block md:flex justify-center'}>
                         <div className={'pb-6 md:w-1/2 flex-row flex'}>
-                            <img className={'flex-row'} src='/avatar.png'></img>
+                            <img className={'flex-row'} src='/image/joinourteam/benefit_3.png'></img>
+                            <p className={' text-base flex-row my-auto pl-4'}>
+                                We support personal growth through constant experiment and learning
+                            </p>
+                        </div>
+                        
+                        <div className={'pb-6 md:w-1/2 flex-row flex'}>
+                            <img className={'flex-row'} src='/image/joinourteam/benefit_6.png'></img>
                             <p className={' text-base flex-row my-auto pl-4'}>
                                 We create engaging environment and believe everyone has a voice at the table
                             </p>
+                        </div>
+                    </div> */}
+                    <div className={'block md:flex md:flex-row justify-center'}>
+                        <div className={'block md:flex md:flex-col justify-center md:w-1/2'}>
+                            <div className={'pb-6 flex-row flex'}>
+                                <img className={'flex-row'} src='/image/joinourteam/benefit_1.png'></img>
+                                <p className={' text-base flex-row my-auto pl-4'}>
+                                    We love to empower our team members to solve problems that matter
+                                </p>
+                            </div>
+                            <div className={'pb-6 flex-row flex'}>
+                                <img className={'flex-row'} src='/image/joinourteam/benefit_2.png'></img>
+                                <p className={' text-base flex-row my-auto pl-4'}>
+                                    We offer diverse industry exposures and hands-on experience
+                                </p>
+                            </div>
+                            <div className={'pb-6 flex-row flex'}>
+                                <img className={'flex-row'} src='/image/joinourteam/benefit_3.png'></img>
+                                <p className={' text-base flex-row my-auto pl-4'}>
+                                    We support personal growth through constant experiment and learning
+                                </p>
+                            </div>
+                        </div>
+                        <div className={'block md:flex md:flex-col justify-center md:w-1/2'}>
+                            <div className={'pb-6 flex-row flex'}>
+                                <img className={'flex-row'} src='/image/joinourteam/benefit_4.png'></img>
+                                <p className={' text-base flex-row my-auto pl-4'}>
+                                    We provide unique and competitive packages to launch your career
+                                </p>
+                            </div>
+                            <div className={'pb-6 flex-row flex'}>
+                                <img className={'flex-row'} src='/image/joinourteam/benefit_5.png'></img>
+                                <p className={' text-base flex-row my-auto pl-4'}>
+                                    We value informal social bonding to offer a enjoyable working environment
+                                </p>
+                            </div>
+                            <div className={'pb-6 flex-row flex'}>
+                                <img className={'flex-row'} src='/image/joinourteam/benefit_6.png'></img>
+                                <p className={' text-base flex-row my-auto pl-4'}>
+                                    We create engaging environment and believe everyone has a voice at the table
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -204,7 +277,7 @@ function JoinOurTeam({ dataCareers }) {
                                                         <p className={'font-bold'}>Job Description:</p>
                                                         <p>{item.job_description}</p>
                                                     </div>
-                                                    <a className={'text-base'} href={item.register_link}>Apply Now<ArrowRightOutlined className={'pl-2 relative -top-0.5'} /></a>
+                                                    <a className={'text-base hover:text-green-600'} href={item.register_link}>Apply Now<ArrowRightOutlined className={'pl-2 relative -top-0.5'} /></a>
                                                 </div>
                                             </Panel>
                                         </>
