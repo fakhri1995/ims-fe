@@ -3,6 +3,7 @@ import Link from 'next/link'
 import {Form, Input, Select, Button, Checkbox, notification } from 'antd'
 import Layout from '../../../components/migwebsite/layout.js'
 import {CheckCircleTwoTone } from '@ant-design/icons'
+import Head from "next/head";
 
 function ContactUs({ }) {
     const [form] = Form.useForm();
@@ -53,6 +54,9 @@ function ContactUs({ }) {
     }, [])
     return (
         <Layout>
+            <Head>
+                <title>Contact Us</title>
+            </Head>
             <section className={'px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                 <div className={'container mx-auto block md:flex'}>
                     <div className={'w-full md:w-1/2'}>
