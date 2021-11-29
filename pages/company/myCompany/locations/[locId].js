@@ -2,13 +2,13 @@ import Layout from '../../../../components/layout-dashboardNew'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import st from '../../../../components/layout-dashboard-mig.module.css'
+import st from '../../../../components/layout-dashboard.module.css'
 import { Tree, Input, Form, Spin, notification, Empty } from 'antd'
 import Buttonsys from '../../../../components/button'
 import { H1, Text, Label, LabelDark } from '../../../../components/typography'
-import { EditIconSvg, PhoneIconSvg, SortingIconSvg, TrashIconSvg, CheckIconSvg, LocationIconSvg, CameraIconSvg, ExternalLinkIconSvg, MoveIconSvg } from '../../../../components/icon'
+import { EditIconSvg, PhoneIconSvg, SortingIconSvg, TrashIconSvg, CheckIconSvg, LocationIconSvg, CameraIconSvg, ExternalLinkIconSvg, MoveIconSvg, BackIconSvg } from '../../../../components/icon'
 import moment from 'moment'
-import { ModalEdit, ModalHapusLokasiCekChild, ModalHapusLokasiConfirm, ModalHapusLokasiMoveChild } from '../../../../components/modal/modalCustom'
+import { ModalEdit, ModalHapusInventoryExist, ModalHapusLokasiCekChild, ModalHapusLokasiConfirm, ModalHapusLokasiMoveChild } from '../../../../components/modal/modalCustom'
 import { DrawerSublokasi } from '../../../../components/drawer/drawerCustom'
 import { TableCustom } from '../../../../components/table/tableCustom'
 import { DownOutlined } from '@ant-design/icons'
@@ -46,6 +46,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
     //useState
     const [rawdata, setrawdata] = useState({
         id: "",
+        top_parent_id: "",
         name: "",
         image_logo: "",
         phone_number: "",
@@ -135,6 +136,10 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
     //3. konfirmasi
     const [modalconfirm, setmodalconfirm] = useState(false)
     const [modalsubconfirm, setmodalsubconfirm] = useState(false)
+    //4. inventory exist
+    const [datainvexist, setdatainvexist] = useState([])
+    const [modalinvexist, setmodalinvexist] = useState(false)
+    const [modalsubinvexist, setmodalsubinvexist] = useState(false)
 
 
 
@@ -268,7 +273,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/company/myCompany/detail/${locid}`)
+                        rt.push(`/company/myCompany/locations/${locid}`)
                     }, 500)
                 }
                 else if (!res2.success) {
@@ -292,21 +297,30 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
             .then(res => res.json())
             .then(res2 => {
                 setmodalconfirm(false)
+                setmodalmove(false)
                 setloadingdelete(false)
                 if (res2.success) {
+                    setmodalcheckchild(false)
                     notification['success']({
                         message: res2.message,
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/company/myCompany/locations`)
+                        rawdata.top_parent_id === null ?
+                            rt.push(`/company/myCompany/locations`)
+                            :
+                            window.location.href = `/company/myCompany/locations/${rawdata.top_parent_id}`
                     }, 500)
                 }
                 else if (!res2.success) {
                     notification['error']({
-                        message: res2.message,
+                        message: res2.inventories ? `Masih terdapat inventori` : res2.message,
                         duration: 3
                     })
+                    if (res2.inventories) {
+                        setdatainvexist(res2.inventories)
+                        setmodalinvexist(true)
+                    }
                 }
             })
     }
@@ -536,7 +550,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                             editable ?
                                                 <div className={`flex flex-col px-5`}>
                                                     <div className="flex">
-                                                        <Label>Nama Perusahaan</Label>
+                                                        <Label>Nama {tipe === 1 ? `Lokasi` : `Sublokasi`}</Label>
                                                         <span className="namaField"></span>
                                                         <style jsx>
                                                             {`
@@ -633,14 +647,9 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                             editable &&
                                             <div className="flex justify-center items-center mb-10">
                                                 <Buttonsys /*disabled={rawdata.induk_level_1_count > 0 ? true : false}*/ type="primary" color="danger" onClick={() => {
-                                                    if (tipe === 1) {
-                                                        if (subloc.length > 0) {
-                                                            setmodalcheckchild(true)
-                                                        }
-                                                        else {
-                                                            setmodalconfirm(true)
-                                                        }
-                                                    }
+                                                    // if (tipe === 1) {
+                                                    setmodalcheckchild(true)
+                                                    // }
                                                 }}>
                                                     <div className="mr-1">
                                                         <TrashIconSvg size={18} color={"#FFFFFF"} />
@@ -668,59 +677,89 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                     }
                                 ></ModalEdit>
                                 <ModalHapusLokasiCekChild
-                                    title={`Sebelum menghapus Lokasi Induk...`}
+                                    title={<strong>Sebelum menghapus {tipe === 1 ? `lokasi induk` : `Sublokasi`}...</strong>}
                                     visible={modalcheckchild}
                                     onCancel={() => { setmodalcheckchild(false) }}
                                     footer={
-                                        <div className="flex justify-between items-center">
-                                            <Buttonsys type="default" onClick={() => { setdeletedata({ ...deletedata, new_parent: null }); setmodalcheckchild(false) }}>
-                                                Batalkan
-                                            </Buttonsys>
-                                            <div className="flex items-center justify-end">
-                                                <div className="mr-5">
-                                                    <Buttonsys disabled={rawdata.induk_level_1_count > 0 ? true : false} type="primary" onClick={() => { setmodalcheckchild(false); setmodalmove(true) }}>
-                                                        <MoveIconSvg size={15} />
-                                                        Pindahkan Sublokasi
+                                        <Spin spinning={loadingdelete}>
+                                            <div className="flex justify-between items-center">
+                                                <Buttonsys type="default" onClick={() => { setdeletedata({ ...deletedata, new_parent: null }); setmodalcheckchild(false) }}>
+                                                    Batalkan
+                                                </Buttonsys>
+                                                <div className="flex items-center justify-end">
+                                                    <div className="mr-5">
+                                                        <Buttonsys /*disabled={rawdata.induk_level_1_count > 0 ? true : false}*/ type="primary" onClick={() => { setmodalcheckchild(false); setmodalmove(true) }}>
+                                                            <MoveIconSvg size={15} />
+                                                            Pindahkan Inventori
+                                                        </Buttonsys>
+                                                    </div>
+                                                    <Buttonsys /*disabled={rawdata.induk_level_1_count > 0 ? true : false}*/ type="primary" color="danger" onClick={() => {
+                                                        if (tipe === 1) {
+                                                            handleDelete()
+                                                        }
+                                                        else {
+                                                            setmodalcheckchild(false)
+                                                            setmodalconfirm(true)
+                                                        }
+                                                    }}>
+                                                        <TrashIconSvg size={15} color={`#ffffff`} />
+                                                        Hapus Lokasi
                                                     </Buttonsys>
                                                 </div>
-                                                <Buttonsys disabled={rawdata.induk_level_1_count > 0 ? true : false} type="primary" color="danger" onClick={() => { setmodalcheckchild(false); setmodalconfirm(true) }}>
-                                                    <TrashIconSvg size={15} color={`#ffffff`} />
-                                                    Hapus Lokasi
-                                                </Buttonsys>
                                             </div>
-                                        </div>
+                                        </Spin>
                                     }
                                     subloc={subloc}
                                     rawdata={rawdata}
                                 ></ModalHapusLokasiCekChild>
                                 <ModalHapusLokasiMoveChild
-                                    title={`Pemindahan Sublokasi`}
+                                    title={<strong>{rawdata.level === 1 ? `Peringatan` : `Pemindahan Inventori`}</strong>}
                                     visible={modalmove}
                                     footer={
-                                        <div className="flex justify-between items-center">
-                                            <Buttonsys type="default" onClick={() => { setmodalmove(false); setmodalcheckchild(true) }}>
-                                                Batalkan
-                                            </Buttonsys>
-                                            <div className="flex items-center">
-                                                <Buttonsys disabled={deletedata.new_parent === null ? true : false} type="primary" color="danger" onClick={() => { setmodalmove(false); setmodalconfirm(true) }}>
-                                                    <TrashIconSvg size={15} color={`#ffffff`} />
-                                                    Lanjutkan penghapusan
+                                        <Spin spinning={loadingdelete}>
+                                            <div className="flex justify-between items-center">
+                                                <Buttonsys type="default" onClick={() => { setdeletedata({ ...deletedata, new_parent: null }); setmodalmove(false); setmodalcheckchild(true) }}>
+                                                    Batalkan
                                                 </Buttonsys>
+                                                <div className="flex items-center">
+                                                    <Buttonsys disabled={deletedata.new_parent === null ? true : false} type="primary" color="danger" onClick={handleDelete}>
+                                                        <TrashIconSvg size={15} color={`#ffffff`} />
+                                                        Lanjutkan penghapusan
+                                                    </Buttonsys>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </Spin>
                                     }
                                     rawdata={rawdata}
                                     rawlocations={rawlocations}
                                     deletedata={deletedata}
                                     setdeletedata={setdeletedata}
+                                    initProps={initProps}
                                 ></ModalHapusLokasiMoveChild>
+                                {/* Hanya untuk Lokasi */}
+                                <ModalHapusInventoryExist
+                                    title={<strong>Tidak dapat menghapus Lokasi</strong>}
+                                    visible={modalinvexist}
+                                    footer={
+                                        <div className="flex justify-end items-center">
+                                            <Buttonsys type="primary" onClick={() => { setmodalinvexist(false); setmodalcheckchild(true) }}>
+                                                <div className="mr-2">
+                                                    <BackIconSvg size={15} color={`#ffffff`} />
+                                                </div>
+                                                Kembali
+                                            </Buttonsys>
+                                        </div>
+                                    }
+                                    invexistdata={datainvexist}
+                                ></ModalHapusInventoryExist>
+                                {/* Hanya untuk Sublokasi */}
                                 <ModalHapusLokasiConfirm
-                                    title={`${deletedata.new_parent === null && rawdata.sub_children.length > 0 ? `Peringatan!` : `Sebelum menghapus lokasi induk...`}`}
+                                    title={<strong>Peringatan</strong>}
                                     visible={modalconfirm}
                                     footer={
                                         <Spin spinning={loadingdelete}>
                                             <div className="flex justify-between items-center">
-                                                <Buttonsys type="default" onClick={() => { setdeletedata({ ...deletedata, new_parent: null }); setmodalconfirm(false) }}>
+                                                <Buttonsys type="default" onClick={() => { setdeletedata({ ...deletedata, new_parent: null }); setmodalconfirm(false); setmodalcheckchild(true) }}>
                                                     Batalkan
                                                 </Buttonsys>
                                                 <div className="flex items-center">
@@ -833,7 +872,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                         <div className="mb-4">
                                             <Label>{selectedsublocdata.parent_name}</Label>
                                         </div>
-                                        <a href={`/company/myCompany/detail/${selectedsublocdata.id}`} target="_blank">
+                                        <a href={`/company/myCompany/locations/${selectedsublocdata.id}`} target="_blank">
                                             <div className="flex items-center">
                                                 <div className="mr-2">
                                                     <Label color="green" cursor="pointer">Lihat Detail</Label>

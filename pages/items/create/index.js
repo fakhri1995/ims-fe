@@ -28,6 +28,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
         status_usage: null,
         serial_number: "",
         location: null,
+        sub_location: null,
         is_exist: true,
         deskripsi: "",
         manufacturer_id: null,
@@ -76,10 +77,12 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
     const [disabledfield, setdisabledfield] = useState(true)
     const [fetchingmodel, setfetchingmodel] = useState(false)
     const [modelfilter, setmodelfilter] = useState([])
+    const [sublocdata, setsublocdata] = useState([])
     //2.1trigger
     const [emptyfieldpart, setemptyfieldpart] = useState([])
     const [emptyfieldpartmodel, setemptyfieldpartmodel] = useState(0)
     const [emptyfieldparttrigger, setemptyfieldparttrigger] = useState(0)
+    const [subloctrigger, setsubloctrigger] = useState(-1)
 
     //2.helper function
     const searchPart = (doc, partid) => {
@@ -752,7 +755,21 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                 setmodelfilter(res2.data)
                 setpraloading(false)
             })
-    },[])
+    }, [])
+    useEffect(() => {
+        if (subloctrigger !== -1) {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getSubLocations?company_id=${subloctrigger}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                }
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    setsublocdata(res2.data.children)
+                })
+        }
+    }, [subloctrigger])
     useEffect(() => {
         if (emptyfieldparttrigger !== 0) {
             if (emptyfieldpartmodel.enable_part === true) {
@@ -1055,22 +1072,25 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                         <Input disabled={disabledfielditem} name="serial_number" onChange={(e) => { setnewdata({ ...newdata, serial_number: e.target.value }) }} />
                                     </Form.Item>
                             }
-                            <Form.Item name="location" label="Location">
+                            <Form.Item name="location" label="Lokasi">
                                 <TreeSelect disabled={disabledfielditem} treeDefaultExpandedKeys={[invrelations.tree_companies.key]} placeholder="Pilih Location" treeData={[invrelations.tree_companies]} onChange={(value) => {
-                                    setnewdata({ ...newdata, location: value })
+                                    setnewdata({ ...newdata, location: value, sub_location: value })
+                                    setsubloctrigger(value)
                                 }}></TreeSelect>
-                                {/* <Select disabled={disabledfielditem} placeholder="Pilih Location" onChange={(value) => {
-                                    setnewdata({ ...newdata, location: value })
-                                }}>
-                                    {
-                                        invrelations.companies.map((doc, idx) => {
-                                            return (
-                                                <Select.Option value={doc.id}>{doc.name}</Select.Option>
-                                            )
-                                        })
-                                    }
-                                </Select> */}
                             </Form.Item>
+                            {
+                                newdata.location !== null &&
+                                <Form.Item name="sublocation" label="Sub Lokasi">
+                                    <TreeSelect allowClear disabled={disabledfielditem} placeholder="Pilih Location" treeData={sublocdata} onChange={(value) => {
+                                        if (typeof (value) === 'undefined') {
+                                            setnewdata({ ...newdata, location: newdata.sub_location })
+                                        }
+                                        else {
+                                            setnewdata({ ...newdata, location: value })
+                                        }
+                                    }}></TreeSelect>
+                                </Form.Item>
+                            }
                             <Form.Item name="vendor_id" label="Vendor">
                                 <Select disabled={disabledfielditem} placeholder="Pilih vendor" onChange={(value) => {
                                     setnewdata({ ...newdata, vendor_id: value })

@@ -238,7 +238,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     }
     //search location
     const onChangeLocation = (id) => {
-        if (e.target.value === "") {
+        if (typeof(id) === 'undefined') {
             // setdisplaydata(displaydata2)
             window.location.href = `items?asset_id=${assettypefilteract ? asset_id1 : ""}&model_id=${modelfilteract ? model_id1 : ""}&status_condition=${kondisifilteract ? status_condition1 : ""}&status_usage=${pemakaianfilteract ? status_usage1 : ""}&name=${namasearchact ? name1 : ""}&mig_id=${migidact ? migid1 : ""}&location_id=&sort_by=${sort_by}&sort_type=${sort_type}`
             setlocationact(false)
@@ -517,10 +517,10 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                             style={{ width: `100%` }}
                                             onChange={(value, label, extra) => {
                                                 if (typeof (value) === 'undefined') {
-                                                    onChangeAssetType()
+                                                    onChangeLocation()
                                                 }
                                                 else {
-                                                    onChangeAssetType(extra.allCheckedNodes[0].node.props.id)
+                                                    onChangeLocation(extra.allCheckedNodes[0].node.props.id)
                                                     setnamaasset(extra.allCheckedNodes[0].node.props.title)
                                                 }
                                             }}

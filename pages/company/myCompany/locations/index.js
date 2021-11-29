@@ -2,7 +2,7 @@ import Layout from '../../../../components/layout-dashboardNew'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import st from '../../../../components/layout-dashboard-mig.module.css'
+import st from '../../../../components/layout-dashboard.module.css'
 import Link from 'next/link'
 import { Tree, Input, Empty, Spin, Progress, } from 'antd'
 import Buttonsys from '../../../../components/button'
@@ -300,7 +300,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                 setpraloading(false)
                 setloadingselected(false)
             })
-    }, [])
+    }, [lokasidrawer])
     useEffect(() => {
         if (selected === true) {
             fetch(`https://boiling-thicket-46501.herokuapp.com/getSubCompanyProfile?id=${idselected}`, {

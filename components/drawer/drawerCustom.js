@@ -128,7 +128,7 @@ const DrawerLokasi = ({ title, visible, onClose, children, buttonOkText, initPro
         image_logo: '',
         parent_id: null,
         singkatan: "",
-        tanggal_pkp: "",
+        tanggal_pkp: null,
         penanggung_jawab: "",
         npwp: "",
         fax: "",
@@ -195,7 +195,7 @@ const DrawerLokasi = ({ title, visible, onClose, children, buttonOkText, initPro
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/company/myCompany/index3`)
+                        rt.push(`/company/myCompany/locations`)
                     }, 500)
                 }
                 else {
