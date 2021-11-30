@@ -61,7 +61,7 @@ function Software({ }) {
                     <div className={'flex py-4'}>
                         <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer flex-col text-lg gilroy-medium mr-4'}>Hardware
                             </p></Link>
-                        <Link href={{pathname: '/software'}}><p className={'cursor-pointer flex-col text-lg gilroy-bold mx-4'} style={{borderBottom:'solid 2px #188E4D',paddingBottom:'2.5px'}}>Software
+                        <Link href={{pathname: '/software'}}><p className={'cursor-pointer flex-col text-lg gilroy-bold mx-4'} style={{borderBottom:'solid 2px #10B981',paddingBottom:'2.5px'}}>Software
                             </p></Link>
                         <Link href={{pathname: '/talents'}}><p className={'cursor-pointer flex-col text-lg gilroy-medium mx-4'}>Talents
                             </p></Link>
