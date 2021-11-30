@@ -72,19 +72,15 @@ function JoinOurTeam({ dataCareers }) {
                             smooth={true}
                             offset={-120}
                             className={'mr-12'}
-                            duration={500}><button className={'text-black cursor-pointer flex-col text-base focus:outline-none jot-underlined'} style={{}}>Our Values
+                            duration={500}><button className={'gilroy-regular text-lg text-black cursor-pointer flex-col text-base focus:outline-none jot-underlined'} style={{}}>Our Values
                             </button></Linkk>
-                        {/* <Link href='/careers/#lifeatmig'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Life at MIG
-                        </p></Link>
-                        <Link href='/careers/#employeestories'><p className={'text-black cursor-pointer flex-col text-base font-semibold pr-12'} style={{}}>Employee Stories
-                        </p></Link> */}
                         <Linkk activeClass="active"
                             to="section6careers"
                             spy={true}
                             smooth={true}
                             offset={-120}
                             className={'mr-12'}
-                            duration={500}><button className={'text-black cursor-pointer flex-col text-base focus:outline-none jot-underlined'} style={{}}>Benefits
+                            duration={500}><button className={'gilroy-regular text-lg text-black cursor-pointer flex-col text-base focus:outline-none jot-underlined'} style={{}}>Benefits
                             </button></Linkk>
                         <Linkk activeClass="active"
                             to="section7careers"
@@ -92,7 +88,7 @@ function JoinOurTeam({ dataCareers }) {
                             smooth={true}
                             offset={-150}
                             className={'mr-12'}
-                            duration={500}><button className={'text-black cursor-pointer flex-col text-base focus:outline-none jot-underlined'} style={{}}>Careers
+                            duration={500}><button className={'gilroy-regular text-lg text-black cursor-pointer flex-col text-base focus:outline-none jot-underlined'} style={{}}>Careers
                             </button></Linkk>
                     </div>
                 </div>
@@ -105,33 +101,6 @@ function JoinOurTeam({ dataCareers }) {
                 </div>
 
                 <div className={'md:flex justify-between'}>
-                    {/* <Card className="" style={{ borderRadius: "20px", overflow: "hidden" }} hoverable>
-                        <div className={'flex-col flex bg-white mr-0 md:mr-10 p-4 w-full md:w-96'}>
-                            <div>
-                                <p className={'text-2xl gilroy-bold pr-10'}>Agility</p>
-                                <br></br>
-                                <p className={'text-justify pr-4'}>We are adapting to fast-changing environments.</p>
-                            </div>
-                        </div>
-                    </Card>
-                    <Card className="" style={{ borderRadius: "20px", overflow: "hidden" }} hoverable>
-                        <div className={'flex-col flex bg-white mr-0 md:mr-10 p-4 w-full md:w-96'}>
-                            <div>
-                                <p className={'text-2xl gilroy-bold pr-10'}>Perseverance</p>
-                                <br></br>
-                                <p className={'text-justify pr-4'}>We aim high and constantly strive for excellence.</p>
-                            </div>
-                        </div>
-                    </Card>
-                    <Card className="" style={{ borderRadius: "20px", overflow: "hidden" }} hoverable>
-                        <div className={'flex-col flex bg-white mr-0 md:mr-10 p-4 w-full md:w-96'}>
-                            <div>
-                                <p className={'text-2xl gilroy-bold pr-10'}>Integrity</p>
-                                <br></br>
-                                <p className={'text-justify pr-4'}>We are dedicated to adhering to positive ethical values.</p>
-                            </div>
-                        </div>
-                    </Card> */}
                     <div className={'flex-col flex bg-white mr-0 md:mr-10 p-4 w-auto border-2 border-black-300 rounded-lg hover:shadow-lg pb-10'}>
                         <div>
                             <p className={'text-2xl gilroy-bold pr-10'}>Agility</p>
@@ -164,66 +133,22 @@ function JoinOurTeam({ dataCareers }) {
                     <p className={'pb-8 text-justify'}>
                         Mitramas is a people-centric business with a foundation to gives working opportunities for motivated individuals at all levels. Our long-term sustainable business which has been running for +15 years and operated across 45 cities have a strong commitment to offer pleasant experience for our team, communities, and clients.
                     </p>
-                    {/* <div className={'block md:flex justify-center'}>
-                        <div className={'pb-6 md:w-1/2 flex-row flex'}>
-                            <img className={'flex-row'} src='/image/joinourteam/benefit_1.png'></img>
-                            <p className={' text-base flex-row my-auto pl-4'}>
-                                We love to empower our team members to solve problems that matter
-                            </p>
-                        </div>
-                        <div className={'pb-6 md:w-1/2 flex-row flex'}>
-                            <img className={'flex-row'} src='/image/joinourteam/benefit_4.png'></img>
-                            <p className={' text-base flex-row my-auto pl-4'}>
-                                We provide unique and competitive packages to launch your career
-                            </p>
-                        </div>
-                    </div>
-                    <div className={'block md:flex justify-center'}>
-                        
-                        <div className={'pb-6 md:w-1/2 flex-row flex'}>
-                            <img className={'flex-row'} src='/image/joinourteam/benefit_2.png'></img>
-                            <p className={' text-base flex-row my-auto pl-4'}>
-                                We offer diverse industry exposures and hands-on experience
-                            </p>
-                        </div>
-                        <div className={'pb-6 md:w-1/2 flex-row flex'}>
-                            <img className={'flex-row'} src='/image/joinourteam/benefit_5.png'></img>
-                            <p className={' text-base flex-row my-auto pl-4'}>
-                                We value informal social bonding to offer a enjoyable working environment
-                            </p>
-                        </div>
-                    </div>
-                    <div className={'block md:flex justify-center'}>
-                        <div className={'pb-6 md:w-1/2 flex-row flex'}>
-                            <img className={'flex-row'} src='/image/joinourteam/benefit_3.png'></img>
-                            <p className={' text-base flex-row my-auto pl-4'}>
-                                We support personal growth through constant experiment and learning
-                            </p>
-                        </div>
-                        
-                        <div className={'pb-6 md:w-1/2 flex-row flex'}>
-                            <img className={'flex-row'} src='/image/joinourteam/benefit_6.png'></img>
-                            <p className={' text-base flex-row my-auto pl-4'}>
-                                We create engaging environment and believe everyone has a voice at the table
-                            </p>
-                        </div>
-                    </div> */}
                     <div className={'block md:flex md:flex-row justify-center'}>
                         <div className={'block md:flex md:flex-col justify-center md:w-1/2'}>
                             <div className={'pb-6 flex-row flex'}>
-                                <img className={'flex-row'} src='/image/joinourteam/benefit_1.png'></img>
+                                <img className={'flex-row'} src='/image/joinourteam/benefit_1.png' width='60'></img>
                                 <p className={' text-base flex-row my-auto pl-4'}>
                                     We love to empower our team members to solve problems that matter
                                 </p>
                             </div>
                             <div className={'pb-6 flex-row flex'}>
-                                <img className={'flex-row'} src='/image/joinourteam/benefit_2.png'></img>
+                                <img className={'flex-row'} src='/image/joinourteam/benefit_2.png' width='60'></img>
                                 <p className={' text-base flex-row my-auto pl-4'}>
                                     We offer diverse industry exposures and hands-on experience
                                 </p>
                             </div>
                             <div className={'pb-6 flex-row flex'}>
-                                <img className={'flex-row'} src='/image/joinourteam/benefit_3.png'></img>
+                                <img className={'flex-row'} src='/image/joinourteam/benefit_3.png' width='60'></img>
                                 <p className={' text-base flex-row my-auto pl-4'}>
                                     We support personal growth through constant experiment and learning
                                 </p>
@@ -231,19 +156,19 @@ function JoinOurTeam({ dataCareers }) {
                         </div>
                         <div className={'block md:flex md:flex-col justify-center md:w-1/2'}>
                             <div className={'pb-6 flex-row flex'}>
-                                <img className={'flex-row'} src='/image/joinourteam/benefit_4.png'></img>
+                                <img className={'flex-row'} src='/image/joinourteam/benefit_4.png' width='60'></img>
                                 <p className={' text-base flex-row my-auto pl-4'}>
                                     We provide unique and competitive packages to launch your career
                                 </p>
                             </div>
                             <div className={'pb-6 flex-row flex'}>
-                                <img className={'flex-row'} src='/image/joinourteam/benefit_5.png'></img>
+                                <img className={'flex-row'} src='/image/joinourteam/benefit_5.png' width='60'></img>
                                 <p className={' text-base flex-row my-auto pl-4'}>
                                     We value informal social bonding to offer a enjoyable working environment
                                 </p>
                             </div>
                             <div className={'pb-6 flex-row flex'}>
-                                <img className={'flex-row'} src='/image/joinourteam/benefit_6.png'></img>
+                                <img className={'flex-row'} src='/image/joinourteam/benefit_6.png' width='60'></img>
                                 <p className={' text-base flex-row my-auto pl-4'}>
                                     We create engaging environment and believe everyone has a voice at the table
                                 </p>
@@ -277,7 +202,7 @@ function JoinOurTeam({ dataCareers }) {
                                                         <p className={'font-bold'}>Job Description:</p>
                                                         <p>{item.job_description}</p>
                                                     </div>
-                                                    <a className={'text-base hover:text-green-600'} href={item.register_link}>Apply Now<ArrowRightOutlined className={'pl-2 relative -top-0.5'} /></a>
+                                                    <a className={'text-base hover:text-green-500'} href={item.register_link}>Apply Now<ArrowRightOutlined className={'pl-2 relative -top-0.5'} /></a>
                                                 </div>
                                             </Panel>
                                         </>

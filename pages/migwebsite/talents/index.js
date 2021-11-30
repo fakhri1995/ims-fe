@@ -64,7 +64,7 @@ function Talents({ }) {
                             </p></Link>
                         <Link href={{pathname: '/software'}}><p className={'cursor-pointer flex-col text-lg gilroy-medium mx-4'}>Software
                             </p></Link>
-                        <Link href={{pathname: '/talents'}}><p className={'cursor-pointer flex-col text-lg gilroy-bold mx-4'} style={{borderBottom:'solid 2px #188E4D',paddingBottom:'2.5px'}}>Talents
+                        <Link href={{pathname: '/talents'}}><p className={'cursor-pointer flex-col text-lg gilroy-bold mx-4'} style={{borderBottom:'solid 2px #10B981',paddingBottom:'2.5px'}}>Talents
                             </p></Link>
                     </div>
                 </div>
