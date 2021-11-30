@@ -9,12 +9,12 @@ import { H1, H2, Label } from '../../../../components/typography'
 import { SortingIconSvg, LocationIconSvg, ExternalLinkIconSvg, PhoneIconSvg, EmailIconSvg } from '../../../../components/icon'
 import { DownOutlined } from '@ant-design/icons'
 import moment from 'moment'
-import { DrawerLokasi } from '../../../../components/drawer/drawerCustom'
+import { DrawerLokasi, DrawerLokasiClient } from '../../../../components/drawer/drawerCustom'
 import { Chart, ArcElement, Tooltip } from 'chart.js'
 Chart.register(ArcElement, Tooltip);
 import { Pie } from 'react-chartjs-2';
 
-const Index3 = ({ initProps, dataProfile, sidemenu }) => {
+const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
     const rt = useRouter()
     var activeTab = "profile"
     const { active, id } = rt.query
@@ -100,7 +100,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
             setbranchdata(temp)
         }
         else {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.company.role !== 2 ? `getMainLocations` : `getLocations?company_id=${dataProfile.data.company.company_id}`}`, {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.company.role !== 2 ? `getMainLocations` : `getLocations?company_id=${id}`}`, {
                 method: `GET`,
                 headers: {
                     'Authorization': JSON.parse(initProps),
@@ -258,7 +258,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
 
     //USE EFECT
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyDetail?id=${dataProfile.data.company.id}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyDetail?id=${id}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -288,7 +288,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
             })
     }, [])
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.company.role !== 2 ? `getMainLocations` : `getLocations?company_id=${dataProfile.data.company.company_id}`}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations?company_id=${id}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -334,7 +334,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                             </Buttonsys>
                         </div>
                         <div className="mx-0">
-                            <Buttonsys type="primary" onClick={() => { setlokasidrawer(true); console.log(branchdata, sorted) }}>
+                            <Buttonsys type="primary" onClick={() => { setlokasidrawer(true) }}>
                                 + Tambah Lokasi
                             </Buttonsys>
                         </div>
@@ -382,7 +382,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                                         <div className="flex flex-col w-9/12">
                                             <div className="flex justify-between items-center">
                                                 <H1>{selecteddata.name}</H1>
-                                                <a href={`/company/myCompany/locations/${selecteddata.id}`} target="_blank">
+                                                <a href={`/company/clients/locations/${selecteddata.id}`} target="_blank">
                                                     <div className="flex items-center">
                                                         <div className="mr-2">
                                                             <Label color="green" cursor="pointer">Lihat Detail</Label>
@@ -438,10 +438,11 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                                                         options={{
                                                             title: {
                                                                 display: false,
-                                                        
+
                                                             },
                                                             legend: {
-                                                                display: false,                                                            }
+                                                                display: false,
+                                                            }
                                                         }}
                                                     />
                                                 </div>
@@ -479,7 +480,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                     }
                 </div>
             </div>
-            <DrawerLokasi
+            <DrawerLokasiClient
                 title={"Tambah Lokasi"}
                 visible={lokasidrawer}
                 onClose={() => { setlokasidrawer(false) }}
@@ -529,4 +530,4 @@ export async function getServerSideProps({ req, res }) {
     }
 }
 
-export default Index3
+export default ClientLocationIndex

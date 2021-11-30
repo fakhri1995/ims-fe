@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import st from '../../../../../components/layout-dashboard-groups.module.css'
+import st from '../../../../../components/layout-dashboard.module.css'
 import { Divider, Input, Select, Radio, Row, Col, Button, notification, Form } from 'antd'
 
 function GroupsAgentsDetail({ initProps, dataProfile, dataListAccount, dataDetailGroup, sidemenu }) {

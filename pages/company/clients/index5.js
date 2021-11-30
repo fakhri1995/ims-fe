@@ -17,23 +17,6 @@ function ClientsDetailProfile({ dataProfile, tok, companyid }) {
     const [loadingbtn, setloadingbtn] = useState(false)
     const [loadingubahaktif, setloadingubahaktif] = useState(false)
     const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
-    // if (dataDetailCompany.data.tanggal_pkp === null) {
-    //     dataDetailCompany.data.tanggal_pkp = new Date()
-    // }
-    // const [data1, setData1] = useState({
-    //     id: dataDetailCompany.data.company_id,
-    //     company_name: dataDetailCompany.data.company_name,
-    //     address: dataDetailCompany.data.address,
-    //     phone_number: dataDetailCompany.data.phone_number,
-    //     image_logo: dataDetailCompany.data.image_logo === "" ? '/default-users.jpeg' : dataDetailCompany.data.image_logo,
-    //     singkatan: dataDetailCompany.data.singkatan,
-    //     tanggal_pkp: moment(dataDetailCompany.data.tanggal_pkp),
-    //     penanggung_jawab: dataDetailCompany.data.penanggung_jawab,
-    //     npwp: dataDetailCompany.data.npwp,
-    //     fax: dataDetailCompany.data.fax,
-    //     email: dataDetailCompany.data.email,
-    //     website: dataDetailCompany.data.website
-    // })
     const [data1, setData1] = useState({
         id: "",
         company_name: "",
@@ -1734,7 +1717,7 @@ export async function getServerSideProps({ req, res, params }) {
             dataProfile,
             // dataDetailCompany,
             // dataGetBanks,
-            sidemenu: "442",
+            sidemenu: "52",
             companyid
         },
     }

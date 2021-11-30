@@ -6,7 +6,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
 import { Tabs, Dropdown, Menu, notification, Modal, Button, Table } from 'antd'
-import st from '../../../components/layout-dashboard-groups.module.css'
+import st from '../../../components/layout-dashboard.module.css'
 
 function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters, sidemenu, dataDetailGroup }) {
     const rt = useRouter()

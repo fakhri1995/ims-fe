@@ -1618,12 +1618,13 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
     const [displayusage, setdisplayusage] = useState(true)
     const [loadingchangecompanyusage, setloadingchangecompanyusage] = useState(false)
     const [loadingusage, setloadingusage] = useState(false)
-    const [agents, setagents] = useState([])
-    const [requesters, setrequesters] = useState([])
+    // const [agents, setagents] = useState([])
+    // const [requesters, setrequesters] = useState([])
+    const [detaillist, setdetaillist] = useState([])
     const [models, setmodels] = useState([])
-    const [locations, setlocations] = useState([])
+    const [sublocations, setsublocations] = useState([])
     const [locationsdisplay, setlocationsdisplay] = useState(false)
-    const [locationtrigger, setlocationtrigger] = useState(-1)
+    const [sublocationtrigger, setsublocationtrigger] = useState(-1)
     const [activitytrigger, setactivitytrigger] = useState(0)
 
     //helper
@@ -1824,51 +1825,61 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                 setmodels(res2.data)
             })
     }, [])
+    // useEffect(() => {
+    //     fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList`, {
+    //         method: `GET`,
+    //         headers: {
+    //             'Authorization': JSON.parse(initProps),
+    //             'Content-Type': 'application/json'
+    //         },
+    //     })
+    //         .then(res => res.json())
+    //         .then(res2 => {
+    //             setagents(res2.data)
+    //         })
+    // }, [])
+    // useEffect(() => {
+    //     fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
+    //         method: `GET`,
+    //         headers: {
+    //             'Authorization': JSON.parse(initProps),
+    //         },
+    //     })
+    //         .then(res => res.json())
+    //         .then(res2 => {
+    //             setrequesters(res2.data)
+    //         })
+    // }, [])
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList`, {
-            method: `GET`,
-            headers: {
-                'Authorization': JSON.parse(initProps),
-                'Content-Type': 'application/json'
-            },
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setagents(res2.data)
-            })
-    }, [])
-    useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
-            method: `GET`,
-            headers: {
-                'Authorization': JSON.parse(initProps),
-            },
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setrequesters(res2.data)
-            })
-    }, [])
-    useEffect(() => {
-        if (locationtrigger !== -1) {
-            setloadingchangecompanyusage(true)
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
+        if (changeusage.relationship_type_id !== "") {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getChangeStatusUsageDetailList?id=${changeusage.relationship_type_id}`, {
                 method: `GET`,
                 headers: {
                     'Authorization': JSON.parse(initProps),
-                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    company_id: Number(changeusage.connected_id)
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    changeusage.relationship_type_id === -3 ? setdetaillist([res2.data]) : setdetaillist(res2.data.data)
                 })
+        }
+    }, [changeusage])
+    useEffect(() => {
+        if (sublocationtrigger !== -1) {
+            setloadingchangecompanyusage(true)
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${changeusage.connected_id}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                },
             })
                 .then(res => res.json())
                 .then(res2 => {
                     setloadingchangecompanyusage(false)
-                    setlocations(res2.data)
+                    setsublocations(res2.data.children)
                 })
         }
-    }, [locationtrigger])
+    }, [sublocationtrigger])
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventory?id=${itemid}&type_id=-4`, {
             method: `GET`,
@@ -1959,7 +1970,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                             </div>
                             <div className="flex space-x-2 items-center">
                                 <Button style={{ marginRight: `1rem` }} onClick={() => { setmodalnotes(true) }} size="large">Tambah Notes</Button>
-                                <Button type="danger" size="large" onClick={() => { setmodaldelete(true) }}>Hapus</Button>
+                                <Button type="danger" size="large" onClick={() => { setmodaldelete(true); console.log(agents, requesters) }}>Hapus</Button>
                             </div>
                         </div>
                     </Sticky>
@@ -2059,9 +2070,9 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                             setlocationsdisplay(false)
                                         }
                                     }}>
-                                        <Select.Option value={1}>Agent</Select.Option>
-                                        <Select.Option value={2}>Requester</Select.Option>
-                                        <Select.Option value={3}>Company</Select.Option>
+                                        <Select.Option value={-1}>Agent</Select.Option>
+                                        <Select.Option value={-2}>Requester</Select.Option>
+                                        <Select.Option value={-3}>Company</Select.Option>
                                     </Select>
                                     <style jsx>
                                         {`
@@ -2073,35 +2084,47 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                     </style>
                                 </div>
                                 <div className="flex flex-col mb-3 ml-5">
-                                    <p className="mb-0">Nama {changeusage.relationship_type_id === 1 && "Agent"} {changeusage.relationship_type_id === 2 && "Requester"} {changeusage.relationship_type_id === 3 && "Company"} <span className="namabymodal"></span></p>
-                                    <Select value={changeusage.connected_id} onChange={(value) => {
-                                        setchangeusage({
-                                            ...changeusage,
-                                            connected_id: value
-                                        })
-                                        changeusage.relationship_type_id === 3 ? setlocationtrigger(prev => prev + 1) : null
-                                        changeusage.relationship_type_id === 3 ? setlocationsdisplay(true) : null
-                                        setdisabledusage(false)
-                                    }}>
-                                        {
-                                            changeusage.relationship_type_id === 1 &&
-                                            agents.map((doc, idx) => (
-                                                <Select.Option value={doc.user_id}>{doc.fullname}</Select.Option>
-                                            ))
-                                        }
-                                        {
-                                            changeusage.relationship_type_id === 2 &&
-                                            requesters.map((doc, idx) => (
-                                                <Select.Option value={doc.user_id}>{doc.fullname}</Select.Option>
-                                            ))
-                                        }
-                                        {
+                                    <p className="mb-0">Nama {changeusage.relationship_type_id === -1 && "Agent"} {changeusage.relationship_type_id === -2 && "Requester"} {changeusage.relationship_type_id === -3 && "Company"} <span className="namabymodal"></span></p>
+                                    {
+                                        changeusage.relationship_type_id === -3 ?
+                                            <TreeSelect treeData={[invrelations.tree_companies]} treeDefaultExpandedKeys={[1]} onChange={(value) => {
+                                                setchangeusage({
+                                                    ...changeusage,
+                                                    connected_id: value
+                                                })
+                                                changeusage.relationship_type_id === -3 ? setsublocationtrigger(prev => prev + 1) : null
+                                                changeusage.relationship_type_id === -3 ? setlocationsdisplay(true) : null
+                                                setdisabledusage(false)
+                                            }}>
+                                            </TreeSelect>
+                                            :
+                                            <Select value={changeusage.connected_id} onChange={(value) => {
+                                                setchangeusage({
+                                                    ...changeusage,
+                                                    connected_id: value
+                                                })
+                                                setdisabledusage(false)
+                                            }}>
+                                                {
+                                                    changeusage.relationship_type_id === -1 &&
+                                                    detaillist.map((doc, idx) => (
+                                                        <Select.Option value={doc.id}>{doc.name}</Select.Option>
+                                                    ))
+                                                }
+                                                {
+                                                    changeusage.relationship_type_id === -2 &&
+                                                    detaillist.map((doc, idx) => (
+                                                        <Select.Option value={doc.id}>{doc.name}</Select.Option>
+                                                    ))
+                                                }
+                                                {/* {
                                             changeusage.relationship_type_id === 3 &&
-                                            invrelations.companies.map((doc, idx) => (
+                                            invrelations.tree_companies.map((doc, idx) => (
                                                 <Select.Option value={doc.id}>{doc.name}</Select.Option>
                                             ))
-                                        }
-                                    </Select>
+                                        } */}
+                                            </Select>
+                                    }
                                     <style jsx>
                                         {`
                                             .namabymodal::before{
@@ -2112,10 +2135,10 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                     </style>
                                 </div>
                                 {
-                                    changeusage.connected_id === 3 || locationsdisplay === true ?
+                                    changeusage.connected_id === -3 || locationsdisplay === true ?
                                         <div className="flex flex-col ml-5">
                                             <p className="mb-0">Nama Lokasi</p>
-                                            <TreeSelect loading={loadingchangecompanyusage} treeData={locations} onChange={(value) => {
+                                            <TreeSelect loading={loadingchangecompanyusage} treeData={sublocations} onChange={(value) => {
                                                 setchangeusage({
                                                     ...changeusage,
                                                     detail_connected_id: value
@@ -2242,9 +2265,12 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                         </p>
                         <ul className="mb-2 text-xs">
                             {
-                                relship.map((docrel, idxrel) => (
-                                    <li key={idxrel}>- <strong>{docrel.type} - {docrel.connected_detail_name}</strong></li>
-                                ))
+                                relship.length === 0 ?
+                                    <p className="font-semibold">-</p>
+                                    :
+                                    relship.map((docrel, idxrel) => (
+                                        <li key={idxrel}>- <strong>{docrel.type} - {docrel.connected_detail_name}</strong></li>
+                                    ))
                             }
                         </ul>
                         <p className="mb-2 text-xs font-semibold text-red-500">

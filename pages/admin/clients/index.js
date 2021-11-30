@@ -5,7 +5,7 @@ import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import st from '../../../components/layout-dashboard-clients.module.css'
+import st from '../../../components/layout-dashboard.module.css'
 import { Table, notification, Button, Input } from 'antd'
 
 function modifData(dataa) {

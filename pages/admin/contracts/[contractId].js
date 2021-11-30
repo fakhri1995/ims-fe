@@ -5,7 +5,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
 import { Tabs, notification, Modal, Timeline, InputNumber } from 'antd'
-import st from '../../../components/layout-dashboard-inventories.module.css'
+import st from '../../../components/layout-dashboard.module.css'
 import moment from 'moment'
 
 function ViewContract({ initProps, dataProfile, dataContract, dataContractTypes, sidemenu }) {
