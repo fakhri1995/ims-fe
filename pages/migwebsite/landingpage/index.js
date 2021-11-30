@@ -427,18 +427,6 @@ function LandingPage({ }) {
                         </div>
                         <div>
                             <Card style={{ maxWidth: 300, maxHeight: 350 }}>
-                                <p className={'pb-20 text-left'}>This is description about project case. This is description about project case. This is description about project case.</p>
-                                <Space align={'start'}>
-                                    <img className={'pr-1'} style={{ minHeight: 90 }} src="avatar.png"></img>
-                                    <p>
-                                        <p className={'text-xl gilroy-bold  text-left'}>Company Name</p>
-                                        <p className={'gilroy-regular text-left'}>Sector Business</p>
-                                    </p>
-                                </Space>
-                            </Card>
-                        </div>
-                        <div>
-                            <Card style={{ maxWidth: 300, maxHeight: 350 }}>
                                 <p className={'pb-20 text-left'}>Develop logistic delivery process and reporting. Make sure to handle critical operations about open API business.</p>
                                 <Space align={'start'}>
                                     <img className={'pr-1'} style={{ minHeight: 90 }} src="/image/company/cgx.png"></img>

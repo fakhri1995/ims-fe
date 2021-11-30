@@ -60,7 +60,7 @@ function Hardware({ }) {
             <section className={'section1advantages hidden md:block fixed w-full z-50 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'} style={{background:'#F4F4F4'}}>
                 <div className={'block md:flex container mx-auto'}>
                     <div className={'flex py-4'}>
-                        <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer flex-col gilroy-bold text-lg mr-4'} style={{borderBottom:'solid 2px #188E4D',paddingBottom:'2.5px'}}>Hardware
+                        <Link href={{pathname: '/hardware'}}><p className={'cursor-pointer flex-col gilroy-bold text-lg mr-4'} style={{borderBottom:'solid 2px #10B981',paddingBottom:'2.5px'}}>Hardware
                             </p></Link>
                         <Link href={{pathname: '/software'}}><p className={'cursor-pointer flex-col gilroy-medium text-lg mx-4'}>Software
                             </p></Link>

@@ -29,13 +29,13 @@ const Styles = (props) => (
       color: green !important;
     }
     .menu-underlined :hover{
-      border-bottom: 2px solid #1ac929;
+      border-bottom: 2px solid #10B981;
       color: green !important;
     }
     .jot-underlined :focus{
-      font-weight: bold;
+      font-family: 'Gilroy-Bold', sans-serif;
       display:inline-block;
-      border-bottom:2px solid #1ac929;
+      border-bottom:2px solid #10B981;
     }
     .flex-important{
       display: flex !important;
