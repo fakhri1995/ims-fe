@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import st from '../../../components/layout-dashboard.module.css'
 import Link from 'next/link'
-import { Switch, DatePicker, Input, Form, Spin, notification } from 'antd'
+import { Switch, DatePicker, Input, Form, Spin, notification, Empty } from 'antd'
 import Buttonsys from '../../../components/button'
 import { H1, H2, Label } from '../../../components/typography'
 import { EditIconSvg, EmailIconSvg, PhoneIconSvg, WebIconSvg, LocationIconSvg, SubLocationIconSvg, ShareIconSvg, TrashIconSvg, CheckIconSvg } from '../../../components/icon'
@@ -133,7 +133,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
         })
     }
     const fetchDataMoreLogs = () => {
-        if (logs.length >= rawlogs.total) {
+        if (logs.length >= rawlogs.total || logs.length === 0) {
             sethasmore(false)
         }
         else {
@@ -319,7 +319,6 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                     website: res2.data.website,
                 })
                 setisenabled(res2.data.is_enabled)
-                setpraloadingedit(false)
                 return res2.data.id
             })
             .then((res3) => {
@@ -334,6 +333,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                         setrawlogs(res5.data)
                         setlogs(res5.data.data)
                         setpage(prev => prev + 1)
+                        setpraloadingedit(false)
                     })
             })
     }, [])
@@ -749,73 +749,85 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                                 <H1>Aktivitas</H1>
                             </div>
                             <div className="h-screen overflow-auto">
-                                <InfiniteScroll
-                                    dataLength={logs.length}
-                                    next={fetchDataMoreLogs}
-                                    hasMore={hasmore}
-                                    loader={
+                                {
+                                    praloadingedit ?
                                         <>
                                             <Spin />
                                         </>
-                                    }
-                                    endMessage={
-                                        <div className="flex justify-center text-center">
-                                            <Label>Sudah Semua</Label>
-                                        </div>
-                                    }
-                                >
-                                    {
-                                        logs.map((doc, idx) => {
-                                            var tanggalan = (new Date() - new Date(doc.created_at)) / (1000 * 60 * 60 * 24)
-                                            var aksi = ''
-                                            const type = doc.subjectable_type.split("\\")
-                                            if (type[1] === "Company") {
-                                                if (doc.log_name === 'Updated') {
-                                                    return (
-                                                        <div className="flex flex-col mb-5">
-                                                            <p className="mb-0">
-                                                                {doc.causer.name} <strong>mengubah</strong>  informasi profil perusahaan
-                                                            </p>
-                                                            <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
-                                                        </div>
-                                                    )
+                                        :
+                                        logs.length === 0 ?
+                                            <>
+                                                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                            </>
+                                            :
+                                            <InfiniteScroll
+                                                dataLength={logs.length}
+                                                next={fetchDataMoreLogs}
+                                                hasMore={hasmore}
+                                                loader={
+                                                    <>
+                                                        <Spin />
+                                                    </>
                                                 }
-                                            }
-                                            else if (type[1] === "Bank") {
-                                                if (doc.log_name === 'Created') {
-                                                    return (
-                                                        <div className="flex flex-col mb-5">
-                                                            <p className="mb-0">
-                                                                {doc.causer.name} <strong>menambahkan</strong> akun <strong>{doc.subjectable.name}</strong>
-                                                            </p>
-                                                            <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
-                                                        </div>
-                                                    )
+                                                endMessage={
+                                                    <div className="flex justify-center text-center">
+                                                        <Label>Sudah Semua</Label>
+                                                    </div>
                                                 }
-                                                else if (doc.log_name === 'Updated') {
-                                                    return (
-                                                        <div className="flex flex-col mb-5">
-                                                            <p className="mb-0">
-                                                                {doc.causer.name} <strong>mengubah</strong> informasi akun <strong>{doc.subjectable.name}</strong>
-                                                            </p>
-                                                            <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
-                                                        </div>
-                                                    )
+                                            >
+                                                {
+                                                    logs.map((doc, idx) => {
+                                                        var tanggalan = (new Date() - new Date(doc.created_at)) / (1000 * 60 * 60 * 24)
+                                                        var aksi = ''
+                                                        const type = doc.subjectable_type.split("\\")
+                                                        if (type[1] === "Company") {
+                                                            if (doc.log_name === 'Updated') {
+                                                                return (
+                                                                    <div className="flex flex-col mb-5">
+                                                                        <p className="mb-0">
+                                                                            {doc.causer.name} <strong>mengubah</strong>  informasi profil perusahaan
+                                                                        </p>
+                                                                        <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                        }
+                                                        else if (type[1] === "Bank") {
+                                                            if (doc.log_name === 'Created') {
+                                                                return (
+                                                                    <div className="flex flex-col mb-5">
+                                                                        <p className="mb-0">
+                                                                            {doc.causer.name} <strong>menambahkan</strong> akun <strong>{doc.subjectable.name}</strong>
+                                                                        </p>
+                                                                        <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                            else if (doc.log_name === 'Updated') {
+                                                                return (
+                                                                    <div className="flex flex-col mb-5">
+                                                                        <p className="mb-0">
+                                                                            {doc.causer.name} <strong>mengubah</strong> informasi akun <strong>{doc.subjectable.name}</strong>
+                                                                        </p>
+                                                                        <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                            else if (doc.log_name === 'Deleted') {
+                                                                return (
+                                                                    <div className="flex flex-col mb-5">
+                                                                        <p className="mb-0">
+                                                                            {doc.causer.name} <strong>menghapus</strong> akun <strong>{doc.subjectable.name}</strong>
+                                                                        </p>
+                                                                        <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                        }
+                                                    })
                                                 }
-                                                else if (doc.log_name === 'Deleted') {
-                                                    return (
-                                                        <div className="flex flex-col mb-5">
-                                                            <p className="mb-0">
-                                                                {doc.causer.name} <strong>menghapus</strong> akun <strong>{doc.subjectable.name}</strong>
-                                                            </p>
-                                                            <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
-                                                        </div>
-                                                    )
-                                                }
-                                            }
-                                        })
-                                    }
-                                </InfiniteScroll>
+                                            </InfiniteScroll>
+                                }
                             </div>
                         </div>
                     </div>
