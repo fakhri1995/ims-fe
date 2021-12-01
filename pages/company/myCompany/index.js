@@ -4,18 +4,21 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import st from '../../../components/layout-dashboard.module.css'
 import Link from 'next/link'
-import { Switch, DatePicker, Input, Form, Spin, notification, Empty } from 'antd'
+import { Switch, DatePicker, Input, Form, Spin, notification, Empty, Select, TreeSelect } from 'antd'
 import Buttonsys from '../../../components/button'
 import { H1, H2, Label } from '../../../components/typography'
-import { EditIconSvg, EmailIconSvg, PhoneIconSvg, WebIconSvg, LocationIconSvg, SubLocationIconSvg, ShareIconSvg, TrashIconSvg, CheckIconSvg } from '../../../components/icon'
+import { EditIconSvg, EmailIconSvg, PhoneIconSvg, WebIconSvg, LocationIconSvg, SubLocationIconSvg, ShareIconSvg, TrashIconSvg, CheckIconSvg, BackIconSvg } from '../../../components/icon'
 import moment from 'moment'
 import { ModalEdit, ModalHapus } from '../../../components/modal/modalCustom'
-import { DrawerBank } from '../../../components/drawer/drawerCustom'
+import { DrawerAddRelasi, DrawerBank } from '../../../components/drawer/drawerCustom'
 import DrawerCore from '../../../components/drawer/drawerCore'
 import { InputRequired, RadioRequired } from '../../../components/input'
 import { AtmMain, AtmBank } from '../../../components/atm'
 import CountUp from 'react-countup'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { TableCustom, TableCustomRelasi } from '../../../components/table/tableCustom'
+import { DownOutlined, UpOutlined } from '@ant-design/icons'
+import ModalCore from '../../../components/modal/modalCore'
 
 
 const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
@@ -46,7 +49,8 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
         role: "",
         induk_level_1_count: "",
         induk_level_2_count: "",
-        induk_level_3_count: ""
+        induk_level_3_count: "",
+        relationship_inventories: []
     })
     const [displaydata, setdisplaydata] = useState({
         id: "",
@@ -108,6 +112,138 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
     //delete
     const [bankmodalhapus, setbankmodalhapus] = useState(false)
     const [bankloadinghapus, setbankloadinghapus] = useState(false)
+    //RELASI
+    const [viewrelasi, setviewrelasi] = useState(false)
+    const [datarawrelasi, setdatarawrelasi] = useState({
+        current_page: "",
+        data: [],
+        first_page_url: "",
+        from: null,
+        last_page: null,
+        last_page_url: "",
+        next_page_url: "",
+        path: "",
+        per_page: null,
+        prev_page_url: null,
+        to: null,
+        total: null
+    })
+    const [datarelasi, setdatarelasi] = useState([])
+    const [pagerelasi, setpagerelasi] = useState(1)
+    const [rowsrelasi, setrowsrelasi] = useState(6)
+    const [loadingrelasi, setloadingrelasi] = useState(false)
+    const [drawerelasi, setdrawerelasi] = useState(false)
+    const [drawerupdaterelasi, setdrawerupdaterelasi] = useState(false)
+    //relasi-update
+    const [dataApiupdate, setdataApiupdate] = useState({
+        id: null,
+        relationship_id: null,
+        connected_ids: null,
+        backup_connected_ids: null,
+        is_inverse: null,
+        from_inverse: null,
+        type_id: null
+    })
+    const [displaydatarelations, setdisplaydatarelations] = useState([])
+    const [relationnameadd, setrelationnameadd] = useState("")
+    const [relationnameddadd, setrelationnameddadd] = useState(false)
+    const [relationselectedidxadd, setrelationselectedidxadd] = useState(-1)
+    const [relationselectedisinverseadd, setrelationselectedisinverseadd] = useState(-1)
+    const [detailtipeadd, setdetailtipeadd] = useState(-10)
+    const [detailtipedataadd, setdetailtipedataadd] = useState([])
+    const [modaladd, setmodaladd] = useState(false)
+    const [disabledadd, setdisabledadd] = useState(true)
+    const [loadingadd, setloadingadd] = useState(false)
+    const [fetchingmodel, setfetchingmodel] = useState(false)
+    const [sublocdata, setsublocdata] = useState(null)
+    const [subloctrig, setsubloctrig] = useState(-1)
+    //relasi-delete
+    const [modaldeleterelasi, setmodaldeleterelasi] = useState(false)
+    const [loadingdeleterelasi, setloadingdeleterelasi] = useState(false)
+
+    //columns table items
+    const columnrelasi = [
+        {
+            title: 'No',
+            dataIndex: 'num',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {datarawrelasi.from + index}
+                        </>
+                }
+            }
+        },
+        {
+            title: 'Tipe Relasi',
+            dataIndex: 'relationship_type',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.relationship.relationship_type}
+                        </>
+                }
+            },
+            sorter: (a, b) => a.mig_id - b.mig_id,
+        },
+        {
+            title: 'Nama Model',
+            dataIndex: 'model_name',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.inventory.model_inventory.name}
+                        </>
+                }
+            }
+        },
+        {
+            title: 'Lokasi',
+            dataIndex: 'location_inventory',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.inventory.full_name}
+                        </>
+                }
+            }
+        },
+        {
+            title: 'Opsi',
+            dataIndex: 'option',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <div className="flex items-center">
+                            <div className="mx-1">
+                                <Buttonsys type="default" onClick={() => {
+                                    setdataApiupdate({
+                                        ...dataApiupdate,
+                                        id: record.relationship.id,
+                                        relationship_id: record.relationship_id,
+                                        connected_ids: record.connected_id,
+                                        is_inverse: record.is_inverse,
+                                        from_inverse: !record.is_inverse
+                                    })
+                                    setdrawerupdaterelasi(true)
+                                }}>
+                                    <EditIconSvg size={15} color={`#35763B`} />
+                                </Buttonsys>
+                            </div>
+                            <div className="mx-1">
+                                <Buttonsys type="default" color="danger" onClick={() => { setmodaldeleterelasi(true) }}>
+                                    <TrashIconSvg size={15} color={`#BF4A40`} />
+                                </Buttonsys>
+                            </div>
+                        </div>
+                }
+            }
+        },
+    ]
 
     //handler
     const onChangeInput = (e) => {
@@ -250,6 +386,89 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                 }
             })
     }
+    const handleUpdateRelationshipItem = () => {
+        setloadingadd(true)
+        // delete dataApiadd.backup_connected_ids
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateRelationshipInventory`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataApiupdate)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingadd(false)
+                onvisible(false)
+                if (res2.success) {
+                    setdataApiadd({
+                        subject_id: Number(id),
+                        relationship_id: null,
+                        is_inverse: null,
+                        type_id: null,
+                        connected_ids: null,
+                        backup_connected_ids: null
+                    })
+                    setrelationnameadd("")
+                    setsublocdata(null)
+                    setrelationselectedidxadd(-1)
+                    setrelationselectedisinverseadd(-1)
+                    setsubloctrig(-1)
+                    notification['success']({
+                        message: "Relationship Item berhasil ditambahkan",
+                        duration: 3
+                    })
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationships`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdisplaydatarelations(res2.data)
+            })
+    }, [])
+    useEffect(() => {
+        if (subloctrig !== -1) {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${subloctrig}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                }
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    setsublocdata(res2.data.children)
+                })
+        }
+        else if (detailtipeadd !== -10) {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${dataApiupdate.type_id}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                }
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    dataApiupdate.type_id === -3 && setdetailtipedataadd([res2.data])
+                    dataApiupdate.type_id === -1 && setdetailtipedataadd(res2.data)
+                    dataApiupdate.type_id === -2 && setdetailtipedataadd(res2.data)
+                    dataApiupdate.type_id === -4 && setdetailtipedataadd(res2.data.data)
+                })
+        }
+    }, [detailtipeadd, subloctrig])
 
     //useEffect
     useEffect(() => {
@@ -310,6 +529,23 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                 setbanks(res2.data)
             })
     }, [bankloadinghapus, bankloadingedit, bankdrawer])
+    useEffect(() => {
+        if (viewrelasi === true) {
+            setloadingrelasi(true)
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyRelationshipInventory?id=${dataProfile.data.company.id}&page=${pagerelasi}&rows=${rowsrelasi}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                },
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    setdatarawrelasi(res2.data)
+                    setdatarelasi(res2.data.data)
+                    setloadingrelasi(false)
+                })
+        }
+    }, [viewrelasi, drawerelasi, drawerupdaterelasi])
     return (
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={patharr} st={st}>
             <div className="grid grid-cols-12">
@@ -549,228 +785,497 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                             </div>
                         </div>
                     </div>
-                    <div className="flex">
-                        <div className="w-6/12 flex flex-col mx-2">
-                            {/* Bank */}
-                            <div className="flex flex-col shadow-md rounded-md bg-white p-8 mb-5">
-                                <div className="flex justify-between items-center">
-                                    <H1>Akun Bank</H1>
-                                    <div onClick={() => { setbankdrawer(true) }}>
-                                        <Buttonsys type="primary" >
-                                            + Tambah Akun Bank
+                    {
+                        viewrelasi ?
+                            <div className="flex flex-col shadow-md rounded-md bg-white p-8 mx-2 h-screen">
+                                <div className="flex justify-between items-center mb-5">
+                                    <div className="flex">
+                                        <div className="mr-2 cursor-pointer" onClick={() => { setviewrelasi(false) }}>
+                                            <BackIconSvg size={15} color={`#000000`} />
+                                        </div>
+                                        <H1>Relasi</H1>
+                                    </div>
+                                    <div>
+                                        <Buttonsys type="primary" onClick={() => { setdrawerlokasi(true) }}>
+                                            + Tambah Relasi
                                         </Buttonsys>
                                     </div>
                                 </div>
-                                {
-                                    banks.map((doc, idx) => {
-                                        return (
-                                            <div className="flex mt-5">
-                                                <AtmMain idx={idx} from={doc.color_first} to={doc.color_second}></AtmMain>
-                                                <div className="w-7/12 flex flex-col justify-between">
-                                                    <div className="flex justify-between w-full items-center">
-                                                        <H2>{doc.name ?? "-"}</H2>
-                                                        <div className="flex">
-                                                            <div className="mx-1 cursor-pointer" onClick={() => { seteditbankdata({ ...doc }); setbankdraweredit(true) }}>
-                                                                <EditIconSvg size={15} color={`#35763B`} />
-                                                            </div>
-                                                            <div className="mx-1 cursor-pointer" onClick={() => { sethapusbankdata({ ...hapusbankdata, id: doc.id }); setbankmodalhapus(true) }}>
-                                                                <TrashIconSvg size={15} color={`#BF4A40`} />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className=" flex flex-col">
-                                                        <Label>***{doc.account_number.slice(doc.account_number.length - 4, doc.account_number.length)} - {doc.owner}</Label>
-                                                        <Label>{doc.currency ?? "-"}</Label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )
-                                    })
-                                }
-                                <DrawerBank
-                                    title={"Tambah Bank"}
-                                    visible={bankdrawer}
-                                    onClose={() => { setbankdrawer(false) }}
-                                    buttonOkText={"Simpan Bank"}
+                                <div>
+                                    <TableCustomRelasi
+                                        dataSource={datarelasi}
+                                        setDataSource={setdatarelasi}
+                                        columns={columnrelasi}
+                                        loading={loadingrelasi}
+                                        setpraloading={setloadingrelasi}
+                                        pageSize={rowsrelasi}
+                                        total={datarawrelasi.total}
+                                        initProps={initProps}
+                                        setpage={setpagerelasi}
+                                        id={dataProfile.data.company.id}
+                                        setdataraw={setdatarawrelasi}
+                                    />
+                                </div>
+                                <DrawerAddRelasi
+                                    title={"Tambah Relasi"}
+                                    visible={drawerelasi}
+                                    onClose={() => { setdrawerelasi(false) }}
+                                    buttonOkText={"Simpan Relasi"}
                                     initProps={initProps}
-                                    onvisible={setbankdrawer}
-                                ></DrawerBank>
+                                    onvisible={setdrawerelasi}
+                                    id={dataProfile.data.company.id}
+                                />
                                 <DrawerCore
-                                    title={`Edit Bank`}
-                                    visible={bankdraweredit}
-                                    onClose={() => { setbankdraweredit(false) }}
-                                    buttonOkText={`Simpan Bank`}
-                                    onClick={handleEditBank}
+                                    title={"Edit Relasi"}
+                                    visible={drawerupdaterelasi}
+                                    onClose={() => { /*console.log(dataApiadd)*/ setdrawerupdaterelasi(false) }}
+                                    buttonOkText={"Simpan Relasi"}
+                                    onClick={handleUpdateRelationshipItem}
                                 >
-                                    <Spin spinning={bankloadingedit}>
-                                        <div className="flex flex-col">
-                                            <div className="flex justify-center items-center mb-5">
-                                                <AtmBank from={editbankdata.color_first} to={editbankdata.color_second}></AtmBank>
+                                    <Spin spinning={loadingadd}>
+                                        <div className="flex flex-col mb-3">
+                                            <div className="flex flex-col mb-3">
+                                                <p className="mb-0">Relationship Type <span className="namapart"></span></p>
+                                                <div className="w-full border p-2 hover:border-primary100 rounded-sm flex items-center justify-between cursor-pointer" onClick={() => { setrelationnameddadd(prev => !prev) }}>
+                                                    <p className="mb-0">{relationnameadd}</p>
+                                                    {relationnameddadd ? <UpOutlined style={{ color: `rgb(229,231,235)` }} /> : <DownOutlined style={{ color: `rgb(229,231,235)` }} />}
+                                                </div>
+                                                {
+                                                    relationnameddadd ?
+                                                        <div className="flex flex-col">
+                                                            <div className="flex">
+                                                                <div className="bg-gray-200 font-semibold p-3 w-6/12">Relationship Type</div>
+                                                                <div className="bg-gray-200 font-semibold p-3 w-6/12">Inverse Relationship Type</div>
+                                                            </div>
+                                                            {
+                                                                displaydatarelations.map((doc, idx) => {
+                                                                    return (
+                                                                        <div className="flex">
+                                                                            <div className={` hover:bg-primary10 cursor-pointer hover:text-black p-3 w-6/12 ${relationselectedidxadd === idx && relationselectedisinverseadd === false ? " bg-primary50" : "bg-white"}`}
+                                                                                onClick={(e) => {
+                                                                                    setrelationnameddadd(false);
+                                                                                    setrelationnameadd(doc.relationship_type);
+                                                                                    setdataApiadd({ ...dataApiupdate, relationship_id: doc.id, is_inverse: false })
+                                                                                    doc.id === null || dataApiupdate.type_id === null ? setdisabledadd(true) : setdisabledadd(false)
+                                                                                    setrelationselectedidxadd(idx)
+                                                                                    setrelationselectedisinverseadd(false)
+                                                                                }}
+                                                                            >{doc.relationship_type}</div>
+                                                                            <div className={` hover:bg-primary10 cursor-pointer hover:text-black p-3 w-6/12 ${relationselectedidxadd === idx && relationselectedisinverseadd === true ? " bg-primary50" : "bg-white"}`}
+                                                                                onClick={(e) => {
+                                                                                    setrelationnameddadd(false);
+                                                                                    setrelationnameadd(doc.inverse_relationship_type);
+                                                                                    setdataApiadd({ ...dataApiupdate, relationship_id: doc.id, is_inverse: true })
+                                                                                    doc.id === null || dataApiupdate.type_id === null ? setdisabledadd(true) : setdisabledadd(false)
+                                                                                    setrelationselectedidxadd(idx)
+                                                                                    setrelationselectedisinverseadd(true)
+                                                                                }}
+                                                                            >{doc.inverse_relationship_type}</div>
+                                                                        </div>
+                                                                    )
+                                                                })
+                                                            }
+                                                        </div>
+                                                        :
+                                                        null
+                                                }
+                                                <style jsx>
+                                                    {`
+                                .namapart::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+                                                </style>
                                             </div>
-                                            <div className="flex justify-center mb-10">
-                                                <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state1 to-state2 border cursor-pointer ${editbankdata.color_first === "from-state1" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-state1", color_second: "to-state2" }) }}></div>
-                                                <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state3 to-state4 border cursor-pointer ${editbankdata.color_first === "from-state3" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-state3", color_second: "to-state4" }) }}></div>
-                                                <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-red-200 to-red-600 border cursor-pointer ${editbankdata.color_first === "from-red-200" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-red-200", color_second: "to-red-600" }) }}></div>
-                                                <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-purple-600 to-pink-600 border cursor-pointer ${editbankdata.color_first === "from-purple-600" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-purple-600", color_second: "to-pink-600" }) }}></div>
+                                            <div className="flex flex-col mb-3">
+                                                <p className="mb-0">Tipe <span className="tipepart"></span></p>
+                                                <Select value={dataApiupdate.type_id} onChange={(value) => {
+                                                    setdataApiadd({ ...dataApiupdate, type_id: value })
+                                                    dataApiupdate.relationship_id === null || value === null ? setdisabledadd(true) : setdisabledadd(false)
+                                                    setdetailtipeadd(value)
+                                                }}>
+                                                    <Select.Option value={-1}>Agent</Select.Option>
+                                                    <Select.Option value={-2}>Requester</Select.Option>
+                                                    <Select.Option value={-3}>Company</Select.Option>
+                                                    <Select.Option value={-4}>Asset Type</Select.Option>
+                                                </Select>
+                                                <style jsx>
+                                                    {`
+                                .tipepart::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+                                                </style>
                                             </div>
-                                            <div className="flex flex-col ">
-                                                <InputRequired name="name" defaultValue={editbankdata.name} onChangeInput={onChangeInputBankEdit} label="Nama Bank"></InputRequired>
-                                                <InputRequired name="account_number" defaultValue={editbankdata.account_number} onChangeInput={onChangeInputBankEdit} label="Nomor Rekening"></InputRequired>
-                                                <InputRequired name="owner" defaultValue={editbankdata.owner} onChangeInput={onChangeInputBankEdit} label="Nama Pemegang Rekening"></InputRequired>
-                                                <RadioRequired name="currency" label="Mata Uang" defaultValue={editbankdata.currency} onChangeRadio={onChangeRadioBankEdit} options={
-                                                    [
+                                            {
+                                                dataApiupdate.type_id !== null ?
+                                                    <>
                                                         {
-                                                            value: "IDR",
-                                                            title: "IDR"
-                                                        },
-                                                        {
-                                                            value: 'USD',
-                                                            title: "USD"
+                                                            dataApiupdate.type_id === -1 &&
+                                                            <div className="flex flex-col mb-3">
+                                                                <p className="mb-0">Detail Tipe</p>
+                                                                <Select value={dataApiupdate.connected_ids} mode="multiple" showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
+                                                                    setfetchingmodel(true)
+                                                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&name=${value !== "" ? value : ""}`, {
+                                                                        method: `GET`,
+                                                                        headers: {
+                                                                            'Authorization': JSON.parse(initProps),
+                                                                        },
+                                                                    })
+                                                                        .then(res => res.json())
+                                                                        .then(res2 => {
+                                                                            setdetailtipedataadd(res2.data)
+                                                                            setfetchingmodel(false)
+                                                                        })
+                                                                }} filterOption={(input, opt) => (
+                                                                    opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                                                )} onChange={(value) => {
+                                                                    setdataApiadd({ ...dataApiupdate, connected_ids: value, backup_connected_ids: value })
+                                                                }}>
+                                                                    {
+                                                                        detailtipedataadd.map((doc, idx) => {
+                                                                            return (
+                                                                                <Select.Option value={doc.id}>{doc.name}</Select.Option>
+                                                                            )
+                                                                        })
+                                                                    }
+                                                                </Select>
+                                                            </div>
                                                         }
-                                                    ]
-                                                }></RadioRequired>
-                                            </div>
+                                                        {
+                                                            dataApiupdate.type_id === -2 &&
+                                                            <div className="flex flex-col mb-3">
+                                                                <p className="mb-0">Detail Tipe</p>
+                                                                <Select value={dataApiupdate.connected_ids} mode="multiple" showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
+                                                                    setfetchingmodel(true)
+                                                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&name=${value !== "" ? value : ""}`, {
+                                                                        method: `GET`,
+                                                                        headers: {
+                                                                            'Authorization': JSON.parse(initProps),
+                                                                        },
+                                                                    })
+                                                                        .then(res => res.json())
+                                                                        .then(res2 => {
+                                                                            setdetailtipedataadd(res2.data)
+                                                                            setfetchingmodel(false)
+                                                                        })
+                                                                }} filterOption={(input, opt) => (
+                                                                    opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                                                )} onChange={(value) => {
+                                                                    setdataApiadd({ ...dataApiupdate, connected_ids: value, backup_connected_ids: value })
+                                                                }}>
+                                                                    {
+                                                                        detailtipedataadd.map((doc, idx) => {
+                                                                            return (
+                                                                                <Select.Option value={doc.id}>{doc.name}</Select.Option>
+                                                                            )
+                                                                        })
+                                                                    }
+                                                                </Select>
+                                                            </div>
+                                                        }
+                                                        {
+                                                            dataApiupdate.type_id === -3 &&
+                                                            <div className="flex flex-col mb-3">
+                                                                <p className="mb-0">Detail Tipe</p>
+                                                                <TreeSelect value={dataApiupdate.backup_connected_ids === null ? null : dataApiupdate.backup_connected_ids[0]} treeDefaultExpandedKeys={[1]} treeData={detailtipedataadd} onChange={(value, label, extra) => {
+                                                                    setdataApiadd({ ...dataApiupdate, connected_ids: [value], backup_connected_ids: [value] })
+                                                                    setsubloctrig(value)
+                                                                }}></TreeSelect>
+                                                            </div>
+                                                        }
+                                                        {
+                                                            dataApiupdate.type_id === -4 &&
+                                                            <div className="flex flex-col mb-3">
+                                                                <p className="mb-0">Detail Tipe</p>
+                                                                <Select placeholder="Cari dengan Model ID" value={dataApiupdate.connected_ids} mode="multiple" showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
+                                                                    setfetchingmodel(true)
+                                                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&model_id=${value !== "" ? value : ""}`, {
+                                                                        method: `GET`,
+                                                                        headers: {
+                                                                            'Authorization': JSON.parse(initProps),
+                                                                        },
+                                                                    })
+                                                                        .then(res => res.json())
+                                                                        .then(res2 => {
+                                                                            setdetailtipedataadd(res2.data)
+                                                                            setfetchingmodel(false)
+                                                                        })
+                                                                }} filterOption={(input, opt) => (
+                                                                    opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                                                )} onChange={(value) => {
+                                                                    setdataApiadd({ ...dataApiupdate, connected_ids: value, backup_connected_ids: value })
+                                                                }}>
+                                                                    {
+                                                                        detailtipedataadd.map((doc, idx) => {
+                                                                            return (
+                                                                                <Select.Option value={doc.id}>{doc.mig_id}</Select.Option>
+                                                                            )
+                                                                        })
+                                                                    }
+                                                                </Select>
+                                                            </div>
+                                                        }
+                                                    </>
+                                                    :
+                                                    null
+
+                                            }
+                                            {
+                                                sublocdata !== null &&
+                                                <div className="flex flex-col mb-3">
+                                                    <p className="mb-0">Detail Tipe (Sublokasi)</p>
+                                                    <TreeSelect multiple allowClear treeData={sublocdata} onChange={(value, label, extra) => {
+                                                        if (value.length === 0) {
+                                                            setdataApiadd({ ...dataApiupdate, connected_ids: dataApiupdate.backup_connected_ids })
+                                                        }
+                                                        else {
+                                                            setdataApiadd({ ...dataApiupdate, connected_ids: value })
+                                                        }
+                                                    }}></TreeSelect>
+                                                </div>
+                                            }
                                         </div>
                                     </Spin>
                                 </DrawerCore>
-                                <ModalHapus
-                                    title={`Konfirmasi Hapus Bank`}
-                                    visible={bankmodalhapus}
-                                    onCancel={() => { setbankmodalhapus(false) }}
+                                <ModalCore
+                                    title={"Konfirmasi Hapus Relasi"}
+                                    visible={modaldeleterelasi}
+                                    onCancel={() => { setmodaldeleterelasi(false) }}
                                     footer={
                                         <div className="flex justify-between items-center">
-                                            <Buttonsys type="default" color="danger" onClick={() => { setbankmodalhapus(false) }}>
+                                            <Buttonsys type="default" color="danger" onClick={() => { setmodaldeleterelasi(false) }}>
                                                 Batalkan
                                             </Buttonsys>
-                                            <Buttonsys type="primary" color="danger" onClick={handleDeleteBank}>
+                                            <Buttonsys type="primary" color="danger">
                                                 <TrashIconSvg size={15} color={`#ffffff`} />
                                                 Ya, saya yakin dan hapus bank
                                             </Buttonsys>
                                         </div>
                                     }
-                                ></ModalHapus>
+                                    loading={loadingdeleterelasi}
+                                >
+                                    Apakah Anda yakin ingin melanjutkan penghapusan relasi?
+                                </ModalCore>
                             </div>
-                            {/* Relationship */}
-                            <div className="flex flex-col shadow-md rounded-md bg-white p-8 h-full">
-                                <div className="flex justify-between items-center">
-                                    <H1>Relasi</H1>
-                                    <Link href="/company/myCompany">
-                                        <Buttonsys type="primary">
-                                            + Tambah Relasi
-                                        </Buttonsys>
-                                    </Link>
-                                </div>
-                                <div className="flex items-center mt-5">
-                                    <ShareIconSvg size={25} color={`#000000`} />
-                                    <div className="flex flex-col ml-2">
-                                        <H2>20</H2>
-                                        <Label>Memiliki</Label>
-                                    </div>
-                                </div>
-                                <div className="flex items-center mt-5">
-                                    <ShareIconSvg size={25} color={`#000000`} />
-                                    <div className="flex flex-col ml-2">
-                                        <H2>108</H2>
-                                        <Label>Menggunakan</Label>
-                                    </div>
-                                </div>
-                                <div className="flex items-center mt-5">
-                                    <ShareIconSvg size={25} color={`#000000`} />
-                                    <div className="flex flex-col ml-2">
-                                        <H2>67</H2>
-                                        <Label>Meminjam</Label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {/* Aktivitas */}
-                        <div className="w-6/12 flex flex-col shadow-md rounded-md bg-white p-8 mx-2">
-                            <div className="mb-8">
-                                <H1>Aktivitas</H1>
-                            </div>
-                            <div className="h-screen overflow-auto">
-                                {
-                                    praloadingedit ?
-                                        <>
-                                            <Spin />
-                                        </>
-                                        :
-                                        logs.length === 0 ?
-                                            <>
-                                                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                                            </>
-                                            :
-                                            <InfiniteScroll
-                                                dataLength={logs.length}
-                                                next={fetchDataMoreLogs}
-                                                hasMore={hasmore}
-                                                loader={
-                                                    <>
-                                                        <Spin />
-                                                    </>
-                                                }
-                                                endMessage={
-                                                    <div className="flex justify-center text-center">
-                                                        <Label>Sudah Semua</Label>
+                            :
+                            <div className="flex">
+                                <div className="w-6/12 flex flex-col mx-2">
+                                    {/* Bank */}
+                                    <div className="flex flex-col shadow-md rounded-md bg-white p-8 mb-5">
+                                        <div className="flex justify-between items-center">
+                                            <H1>Akun Bank</H1>
+                                            <div onClick={() => { setbankdrawer(true) }}>
+                                                <Buttonsys type="primary" >
+                                                    + Tambah Akun Bank
+                                                </Buttonsys>
+                                            </div>
+                                        </div>
+                                        {
+                                            banks.map((doc, idx) => {
+                                                return (
+                                                    <div className="flex mt-5">
+                                                        <AtmMain idx={idx} from={doc.color_first} to={doc.color_second}></AtmMain>
+                                                        <div className="w-7/12 flex flex-col justify-between">
+                                                            <div className="flex justify-between w-full items-center">
+                                                                <H2>{doc.name ?? "-"}</H2>
+                                                                <div className="flex">
+                                                                    <div className="mx-1 cursor-pointer" onClick={() => { seteditbankdata({ ...doc }); setbankdraweredit(true) }}>
+                                                                        <EditIconSvg size={15} color={`#35763B`} />
+                                                                    </div>
+                                                                    <div className="mx-1 cursor-pointer" onClick={() => { sethapusbankdata({ ...hapusbankdata, id: doc.id }); setbankmodalhapus(true) }}>
+                                                                        <TrashIconSvg size={15} color={`#BF4A40`} />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div className=" flex flex-col">
+                                                                <Label>***{doc.account_number.slice(doc.account_number.length - 4, doc.account_number.length)} - {doc.owner}</Label>
+                                                                <Label>{doc.currency ?? "-"}</Label>
+                                                            </div>
+                                                        </div>
                                                     </div>
+                                                )
+                                            })
+                                        }
+                                        <DrawerBank
+                                            title={"Tambah Bank"}
+                                            visible={bankdrawer}
+                                            onClose={() => { setbankdrawer(false) }}
+                                            buttonOkText={"Simpan Bank"}
+                                            initProps={initProps}
+                                            onvisible={setbankdrawer}
+                                        ></DrawerBank>
+                                        <DrawerCore
+                                            title={`Edit Bank`}
+                                            visible={bankdraweredit}
+                                            onClose={() => { setbankdraweredit(false) }}
+                                            buttonOkText={`Simpan Bank`}
+                                            onClick={handleEditBank}
+                                        >
+                                            <Spin spinning={bankloadingedit}>
+                                                <div className="flex flex-col">
+                                                    <div className="flex justify-center items-center mb-5">
+                                                        <AtmBank from={editbankdata.color_first} to={editbankdata.color_second}></AtmBank>
+                                                    </div>
+                                                    <div className="flex justify-center mb-10">
+                                                        <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state1 to-state2 border cursor-pointer ${editbankdata.color_first === "from-state1" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-state1", color_second: "to-state2" }) }}></div>
+                                                        <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state3 to-state4 border cursor-pointer ${editbankdata.color_first === "from-state3" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-state3", color_second: "to-state4" }) }}></div>
+                                                        <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-red-200 to-red-600 border cursor-pointer ${editbankdata.color_first === "from-red-200" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-red-200", color_second: "to-red-600" }) }}></div>
+                                                        <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-purple-600 to-pink-600 border cursor-pointer ${editbankdata.color_first === "from-purple-600" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-purple-600", color_second: "to-pink-600" }) }}></div>
+                                                    </div>
+                                                    <div className="flex flex-col ">
+                                                        <InputRequired name="name" defaultValue={editbankdata.name} onChangeInput={onChangeInputBankEdit} label="Nama Bank"></InputRequired>
+                                                        <InputRequired name="account_number" defaultValue={editbankdata.account_number} onChangeInput={onChangeInputBankEdit} label="Nomor Rekening"></InputRequired>
+                                                        <InputRequired name="owner" defaultValue={editbankdata.owner} onChangeInput={onChangeInputBankEdit} label="Nama Pemegang Rekening"></InputRequired>
+                                                        <RadioRequired name="currency" label="Mata Uang" defaultValue={editbankdata.currency} onChangeRadio={onChangeRadioBankEdit} options={
+                                                            [
+                                                                {
+                                                                    value: "IDR",
+                                                                    title: "IDR"
+                                                                },
+                                                                {
+                                                                    value: 'USD',
+                                                                    title: "USD"
+                                                                }
+                                                            ]
+                                                        }></RadioRequired>
+                                                    </div>
+                                                </div>
+                                            </Spin>
+                                        </DrawerCore>
+                                        <ModalHapus
+                                            title={`Konfirmasi Hapus Bank`}
+                                            visible={bankmodalhapus}
+                                            onCancel={() => { setbankmodalhapus(false) }}
+                                            footer={
+                                                <div className="flex justify-between items-center">
+                                                    <Buttonsys type="default" color="danger" onClick={() => { setbankmodalhapus(false) }}>
+                                                        Batalkan
+                                                    </Buttonsys>
+                                                    <Buttonsys type="primary" color="danger" onClick={handleDeleteBank}>
+                                                        <TrashIconSvg size={15} color={`#ffffff`} />
+                                                        Ya, saya yakin dan hapus bank
+                                                    </Buttonsys>
+                                                </div>
+                                            }
+                                        ></ModalHapus>
+                                    </div>
+                                    {/* Relationship */}
+                                    <div className="flex flex-col shadow-md rounded-md bg-white p-8 h-full">
+                                        <div className="flex justify-between items-center">
+                                            <H1>Relasi</H1>
+                                            <div onClick={() => { setviewrelasi(true) }}>
+                                                <Label color="green" cursor="pointer">Lihat Semua</Label>
+                                            </div>
+                                        </div>
+                                        {
+                                            rawdata.relationship_inventories.map((doc, idx) => {
+                                                if (idx <= 2) {
+                                                    return (
+                                                        <div className="flex items-center mt-5">
+                                                            <ShareIconSvg size={25} color={`#000000`} />
+                                                            <div className="flex flex-col ml-2">
+                                                                <H2>{doc.relationship_total}</H2>
+                                                                <Label>{doc.relationship_name}</Label>
+                                                            </div>
+                                                        </div>
+                                                    )
                                                 }
-                                            >
-                                                {
-                                                    logs.map((doc, idx) => {
-                                                        var tanggalan = (new Date() - new Date(doc.created_at)) / (1000 * 60 * 60 * 24)
-                                                        var aksi = ''
-                                                        const type = doc.subjectable_type.split("\\")
-                                                        if (type[1] === "Company") {
-                                                            if (doc.log_name === 'Updated') {
-                                                                return (
-                                                                    <div className="flex flex-col mb-5">
-                                                                        <p className="mb-0">
-                                                                            {doc.causer.name} <strong>mengubah</strong>  informasi profil perusahaan
-                                                                        </p>
-                                                                        <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
-                                                                    </div>
-                                                                )
-                                                            }
+                                            })
+                                        }
+                                    </div>
+                                </div>
+                                {/* Aktivitas */}
+                                <div className="w-6/12 flex flex-col shadow-md rounded-md bg-white p-8 mx-2">
+                                    <div className="mb-8">
+                                        <H1>Aktivitas</H1>
+                                    </div>
+                                    <div className="h-screen overflow-auto">
+                                        {
+                                            praloadingedit ?
+                                                <>
+                                                    <Spin />
+                                                </>
+                                                :
+                                                logs.length === 0 ?
+                                                    <>
+                                                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                                    </>
+                                                    :
+                                                    <InfiniteScroll
+                                                        dataLength={logs.length}
+                                                        next={fetchDataMoreLogs}
+                                                        hasMore={hasmore}
+                                                        loader={
+                                                            <>
+                                                                <Spin />
+                                                            </>
                                                         }
-                                                        else if (type[1] === "Bank") {
-                                                            if (doc.log_name === 'Created') {
-                                                                return (
-                                                                    <div className="flex flex-col mb-5">
-                                                                        <p className="mb-0">
-                                                                            {doc.causer.name} <strong>menambahkan</strong> akun <strong>{doc.subjectable.name}</strong>
-                                                                        </p>
-                                                                        <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
-                                                                    </div>
-                                                                )
-                                                            }
-                                                            else if (doc.log_name === 'Updated') {
-                                                                return (
-                                                                    <div className="flex flex-col mb-5">
-                                                                        <p className="mb-0">
-                                                                            {doc.causer.name} <strong>mengubah</strong> informasi akun <strong>{doc.subjectable.name}</strong>
-                                                                        </p>
-                                                                        <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
-                                                                    </div>
-                                                                )
-                                                            }
-                                                            else if (doc.log_name === 'Deleted') {
-                                                                return (
-                                                                    <div className="flex flex-col mb-5">
-                                                                        <p className="mb-0">
-                                                                            {doc.causer.name} <strong>menghapus</strong> akun <strong>{doc.subjectable.name}</strong>
-                                                                        </p>
-                                                                        <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
-                                                                    </div>
-                                                                )
-                                                            }
+                                                        endMessage={
+                                                            <div className="flex justify-center text-center">
+                                                                <Label>Sudah Semua</Label>
+                                                            </div>
                                                         }
-                                                    })
-                                                }
-                                            </InfiniteScroll>
-                                }
+                                                    >
+                                                        {
+                                                            logs.map((doc, idx) => {
+                                                                var tanggalan = (new Date() - new Date(doc.created_at)) / (1000 * 60 * 60 * 24)
+                                                                var aksi = ''
+                                                                const type = doc.subjectable_type.split("\\")
+                                                                if (type[1] === "Company") {
+                                                                    if (doc.log_name === 'Updated') {
+                                                                        return (
+                                                                            <div className="flex flex-col mb-5">
+                                                                                <p className="mb-0">
+                                                                                    {doc.causer.name} <strong>mengubah</strong>  informasi profil perusahaan
+                                                                                </p>
+                                                                                <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
+                                                                            </div>
+                                                                        )
+                                                                    }
+                                                                }
+                                                                else if (type[1] === "Bank") {
+                                                                    if (doc.log_name === 'Created') {
+                                                                        return (
+                                                                            <div className="flex flex-col mb-5">
+                                                                                <p className="mb-0">
+                                                                                    {doc.causer.name} <strong>menambahkan</strong> akun <strong>{doc.subjectable.name}</strong>
+                                                                                </p>
+                                                                                <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
+                                                                            </div>
+                                                                        )
+                                                                    }
+                                                                    else if (doc.log_name === 'Updated') {
+                                                                        return (
+                                                                            <div className="flex flex-col mb-5">
+                                                                                <p className="mb-0">
+                                                                                    {doc.causer.name} <strong>mengubah</strong> informasi akun <strong>{doc.subjectable.name}</strong>
+                                                                                </p>
+                                                                                <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
+                                                                            </div>
+                                                                        )
+                                                                    }
+                                                                    else if (doc.log_name === 'Deleted') {
+                                                                        return (
+                                                                            <div className="flex flex-col mb-5">
+                                                                                <p className="mb-0">
+                                                                                    {doc.causer.name} <strong>menghapus</strong> akun <strong>{doc.subjectable.name}</strong>
+                                                                                </p>
+                                                                                <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
+                                                                            </div>
+                                                                        )
+                                                                    }
+                                                                }
+                                                            })
+                                                        }
+                                                    </InfiniteScroll>
+                                        }
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                    }
                 </div>
             </div>
         </Layout>

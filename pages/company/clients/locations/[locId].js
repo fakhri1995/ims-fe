@@ -945,7 +945,7 @@ export async function getServerSideProps({ req, res, params }) {
         props: {
             initProps,
             dataProfile,
-            sidemenu: "51",
+            sidemenu: "52",
             locid
         },
     }

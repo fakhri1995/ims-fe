@@ -1033,33 +1033,6 @@ const Relationship = ({ initProps, maindata, itemid }) => {
         }
     }, [detailtipeadd, subloctrig])
 
-    // useEffect(() => {
-    //     fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
-    //         method: `GET`,
-    //         headers: {
-    //             'Authorization': JSON.parse(initProps),
-    //         }
-    //     })
-    //         .then(res => res.json())
-    //         .then(res2 => {
-    //             var selectedAsset = {}
-    //             const recursiveSearchAsset = (doc, key) => {
-    //                 for (var i = 0; i < doc.length; i++) {
-    //                     if (doc[i].id === key) {
-    //                         selectedAsset = doc[i]
-    //                     }
-    //                     else {
-    //                         if (doc[i].children) {
-    //                             recursiveSearchAsset(doc[i].children, key)
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //             recursiveSearchAsset(res2.data, maindata.model_inventory.asset_id)
-    //             setdataasset(selectedAsset)
-    //         })
-    // }, [])
-
     return (
         <div className="flex flex-col">
             <div className="border-b flex justify-between p-5 mb-8">
@@ -1307,24 +1280,6 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                                     dataApiadd.type_id === -4 &&
                                     <div className="flex flex-col mb-3">
                                         <p className="mb-0">Detail Tipe</p>
-                                        {/* <TreeSelect value={dataApiadd.connected_ids} multiple showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
-                                            setfetchingmodel(true)
-                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&model_id=${value !== "" ? value : ""}`, {
-                                                method: `GET`,
-                                                headers: {
-                                                    'Authorization': JSON.parse(initProps),
-                                                },
-                                            })
-                                                .then(res => res.json())
-                                                .then(res2 => {
-                                                    setdetailtipedataadd(res2.data)
-                                                    setfetchingmodel(false)
-                                                })
-                                        }} filterOption={(input, opt) => (
-                                            opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                        )} treeData={detailtipedataadd} onChange={(value, label, extra) => {
-                                            setdataApiadd({ ...dataApiadd, connected_ids: value, backup_connected_ids: value })
-                                        }}></TreeSelect> */}
                                         <Select placeholder="Cari dengan Model ID" value={dataApiadd.connected_ids} mode="multiple" showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
                                             setfetchingmodel(true)
                                             fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&model_id=${value !== "" ? value : ""}`, {
@@ -2243,7 +2198,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                     <Sticky containerSelectorFocus="#createAgentsWrapper">
                         <div className=" col-span-4 flex justify-between py-5 px-4 border-t border-b bg-white">
                             <div className="flex items-center">
-                                <h1 className="font-semibold py-2 text-2xl mb-0 mr-20">{maindata.inventory_name}</h1>
+                                <h1 className="font-semibold py-2 text-2xl mb-0 mr-20">{maindata.mig_id}</h1>
                                 {
                                     praloading ?
                                         null
