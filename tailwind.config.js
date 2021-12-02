@@ -4,13 +4,13 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
-      spacing:{
-        '108' : '27rem',
-        '120' : '30rem',
-        '224' : '37rem',
-        '500' : '50rem',
+      spacing: {
+        '108': '27rem',
+        '120': '30rem',
+        '224': '37rem',
+        '500': '50rem',
       },
-      fontFamily:{
+      fontFamily: {
         mont: ['Montserrat']
       },
       backgroundColor: theme => ({
@@ -31,10 +31,16 @@ module.exports = {
         'state2': `#DDB44A`,
         'state3': `#5495B9`,
         'state4': `#AD6DBD`,
+        'open': `#E5C471`,
+        'overdue': `#BF4A40`,
+        'onprogress': `#ED962F`,
+        'onhold': `#2F80ED`,
+        'completed': `#6AAA70`,
+        'closed': `#EE6DD9`,
         'bgPrimary': `#edf3ee`,
         'bgSecondary': `#ebf1eb`
       }),
-      borderColor: theme =>({
+      borderColor: theme => ({
         'primary': '#1890ff',
         'secondary': '#60A5FA',
         'primary100': '#35763B',
@@ -51,6 +57,12 @@ module.exports = {
         'state2': `#DDB44A`,
         'state3': `#5495B9`,
         'state4': `#AD6DBD`,
+        'open': `#E5C471`,
+        'overdue': `#BF4A40`,
+        'onprogress': `#ED962F`,
+        'onhold': `#2F80ED`,
+        'completed': `#6AAA70`,
+        'closed': `#EE6DD9`,
         'bgPrimary': `#edf3ee`,
         'bgSecondary': `#ebf1eb`
       }),
@@ -69,12 +81,18 @@ module.exports = {
         'state2': `#DDB44A`,
         'state3': `#5495B9`,
         'state4': `#AD6DBD`,
+        'open': `#E5C471`,
+        'overdue': `#BF4A40`,
+        'onprogress': `#ED962F`,
+        'onhold': `#2F80ED`,
+        'completed': `#6AAA70`,
+        'closed': `#EE6DD9`,
       },
       gradientColorStops: theme => ({
-          'state1': `#799F0C`,
-          'state2': `#FFE000`,
-          'state3': `#6DD5ED`,
-          'state4': `#2193B0`,
+        'state1': `#799F0C`,
+        'state2': `#FFE000`,
+        'state3': `#6DD5ED`,
+        'state4': `#2193B0`,
       })
     },
   },

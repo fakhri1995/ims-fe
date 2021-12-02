@@ -72,7 +72,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             </>
                     }
                     <Menu.Item key="20" icon={<TaskIconSvg />} title="Task">
-                        <Link href="#">
+                        <Link href="/tasks">
                             Task
                         </Link>
                     </Menu.Item>
@@ -376,7 +376,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             </>
                     }
                     <Menu.Item key="20" icon={<TaskIconSvg />} title="Task">
-                        <Link href="#">
+                        <Link href="/tasks">
                             Task
                         </Link>
                     </Menu.Item>

@@ -414,6 +414,88 @@ const AlertIconSvg = ({ size, color }) => {
         <Icon component={alertIconSvg}></Icon>
     )
 }
+const AlerttriangleIconSvg = ({ size, color }) => {
+    const alerttriangleIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-alert-triangle" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M12 9v2m0 4v.01" />
+            <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
+        </svg>
+    )
+    return (
+        <Icon component={alerttriangleIconSvg}></Icon>
+    )
+}
+const ClockIconSvg = ({ size, color }) => {
+    const clockIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-clock" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <circle cx={12} cy={12} r={9} />
+            <polyline points="12 7 12 12 15 15" />
+        </svg>
+
+    )
+    return (
+        <Icon component={clockIconSvg}></Icon>
+    )
+}
+const ClipboardcheckIconSvg = ({ size, color }) => {
+    const clipboardcheckIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-clipboard-check" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+            <rect x={9} y={3} width={6} height={4} rx={2} />
+            <path d="M9 14l2 2l4 -4" />
+        </svg>
+    )
+    return (
+        <Icon component={clipboardcheckIconSvg}></Icon>
+    )
+}
+const CalendartimeIconSvg = ({ size, color }) => {
+    const calendartimeIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-calendar-time" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+            <circle cx={18} cy={18} r={4} />
+            <path d="M15 3v4" />
+            <path d="M7 3v4" />
+            <path d="M3 11h16" />
+            <path d="M18 16.496v1.504l1 1" />
+        </svg>
+    )
+    return (
+        <Icon component={calendartimeIconSvg}></Icon>
+    )
+}
+const MappinIconSvg = ({ size, color }) => {
+    const mappinIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-map-pin" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <circle cx={12} cy={11} r={3} />
+            <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" />
+        </svg>
+    )
+    return (
+        <Icon component={mappinIconSvg}></Icon>
+    )
+}
+const ListcheckIconSvg = ({ size, color }) => {
+    const listcheckIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-list-check" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M3.5 5.5l1.5 1.5l2.5 -2.5" />
+            <path d="M3.5 11.5l1.5 1.5l2.5 -2.5" />
+            <path d="M3.5 17.5l1.5 1.5l2.5 -2.5" />
+            <line x1={11} y1={6} x2={20} y2={6} />
+            <line x1={11} y1={12} x2={20} y2={12} />
+            <line x1={11} y1={18} x2={20} y2={18} />
+        </svg>
+    )
+    return (
+        <Icon component={listcheckIconSvg}></Icon>
+    )
+}
 const MoveIconSvg = ({ size, color }) => {
     const moveIconSvg = () => (
         <svg width={size} height={size} viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -564,5 +646,12 @@ export {
     FaxIconSvg,
     PkpIconSvg,
     MoveIconSvg,
-    AlertIconSvg
+    AlertIconSvg,
+    ClockIconSvg,
+    ClipboardcheckIconSvg,
+    MappinIconSvg,
+    ListcheckIconSvg,
+    CalendartimeIconSvg,
+    AlerttriangleIconSvg
+
 }
