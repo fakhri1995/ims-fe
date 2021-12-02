@@ -14,7 +14,7 @@ function AboutUs({ }) {
             </Head>
             <section className={'section2people px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 py-8 md:py-32 text-center justify-center '}>
                 <div className={'pb-8'}>
-                    <p className={'text-2xl md:text-3xl gilroy-bold'}>Operate your business, more efficient and more agile</p>
+                    <p className={'text-3xl md:text-4xl gilroy-bold'}>Operate your business, more efficient and more agile</p>
                 </div>
                 <div className={'pb-12'}>
                     <p className={'text-base w-full gilroy-regular'}>Mitramas Infosys global is supporting you staff augmentation &  delivering software and hardware managed services. We have served multiple industries, bringing the best solutions to financial service companies, start ups, as well as government agencies.</p>
