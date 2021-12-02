@@ -20,6 +20,21 @@ function ModalEdit({ title, visible, onOk, onCancel, footer, loading, children }
     )
 }
 
+function ModalStatus({ title, visible, onOk, onCancel, footer, loading, checked, children }) {
+    return (
+        <ModalCore
+            title={title}
+            visible={visible}
+            onOk={onOk}
+            onCancel={onCancel}
+            footer={footer}
+            loading={loading}
+        >
+            Apakah anda yakin ingin merubah status perusahaan ini menjadi {checked ? `Aktif` : `Non-Aktif`}?`
+        </ModalCore>
+    )
+}
+
 function ModalHapus({ title, visible, onOk, onCancel, footer, loading, namabank, children }) {
     return (
         <ModalCore
@@ -168,24 +183,6 @@ function ModalHapusLokasiConfirm({ title, visible, footer, rawdata, deletedata, 
                 <Text>
                     Jika masih terdapat inventori di sublokasi yang akan dihapus, Inventori akan otomatis dipindahkan ke Lokasi induk <strong>{rawdata.name}</strong>. Anda <strong>tidak dapat mengembalikan</strong> sublokasi setelah penghapusan. Apakah Anda yakin ingin melanjutkan penghapusan?
                 </Text>
-                {/* {
-                    deletedata.new_parent === null && rawdata.sub_children.length > 0 &&
-                    <Text>
-                        Masih terdapat sublokasi pada <strong>{rawdata.name}</strong>. Anda <strong>tidak dapat mengembalikan</strong> sublokasi setelah penghapusan. Apakah Anda yakin ingin melanjutkan penghapusan?
-                    </Text>
-                }
-                {
-                    deletedata.new_parent !== null &&
-                    <Text>
-                        Tidak ada sublokasi yang terhubung dengan lokasi induk <strong>{rawdata.name}</strong>. Anda dapat menghapus lokasi ini. Apakah Anda yakin ingin melanjutkan penghapusan?
-                    </Text>
-                }
-                {
-                    rawdata.sub_children.length < 1 &&
-                    <Text>
-                        Tidak ada sublokasi yang terhubung dengan lokasi induk <strong>{rawdata.name}</strong>. Anda dapat menghapus lokasi ini. Apakah Anda yakin ingin melanjutkan penghapusan?
-                    </Text>
-                } */}
             </div>
         </ModalCore>
     )
@@ -227,5 +224,5 @@ function ModalHapusInventoryExist({ title, visible, footer, invexistdata, childr
 }
 
 export {
-    ModalEdit, ModalHapus, ModalHapusLokasiCekChild, ModalHapusLokasiMoveChild, ModalHapusLokasiConfirm, ModalHapusInventoryExist
+    ModalEdit, ModalHapus, ModalHapusLokasiCekChild, ModalHapusLokasiMoveChild, ModalHapusLokasiConfirm, ModalHapusInventoryExist, ModalStatus
 }

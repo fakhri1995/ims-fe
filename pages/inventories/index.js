@@ -7,7 +7,7 @@ import EditOutlined from '@ant-design/icons/EditOutlined'
 import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
-import st from '../../components/layout-dashboard-inventories.module.css'
+import st from '../../components/layout-dashboard.module.css'
 
 function Inventories({ initProps, dataProfile, dataInventories, sidemenu }) {
     const rt = useRouter()

@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
 import Link from 'next/link'
-import { ExclamationCircleOutlined, SearchOutlined, CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons'
+import { ExclamationCircleOutlined, SearchOutlined, CloseCircleOutlined, DeleteOutlined, UpOutlined, DownOutlined } from '@ant-design/icons'
 import { notification, Button, Spin, Timeline, Empty, Modal, Tooltip, Select, Tabs, Input, TreeSelect, Table, Popover } from 'antd'
 import Layout from '../../../components/layout-dashboard2'
 import moment from 'moment'
@@ -802,7 +802,6 @@ const Relationship = ({ initProps, maindata, itemid }) => {
     const [datatrigger, setdatatrigger] = useState(0)
     const [loadingrel, setloadingrel] = useState(false)
     const [praloadingrel, setpraloadingrel] = useState(false)
-    const [dataasset, setdataasset] = useState({})
     //delete
     const [dataApidelete, setdataApidelete] = useState({
         id: "",
@@ -814,9 +813,30 @@ const Relationship = ({ initProps, maindata, itemid }) => {
         tipe: "",
         koneksi: ""
     })
+    //add
+    const [dataApiadd, setdataApiadd] = useState({
+        subject_id: Number(itemid),
+        relationship_id: null,
+        is_inverse: null,
+        type_id: null,
+        connected_ids: null,
+        backup_connected_ids: null
+    })
+    const [displaydatarelations, setdisplaydatarelations] = useState([])
+    const [relationnameadd, setrelationnameadd] = useState("")
+    const [relationnameddadd, setrelationnameddadd] = useState(false)
+    const [relationselectedidxadd, setrelationselectedidxadd] = useState(-1)
+    const [relationselectedisinverseadd, setrelationselectedisinverseadd] = useState(-1)
+    const [detailtipeadd, setdetailtipeadd] = useState(-10)
+    const [detailtipedataadd, setdetailtipedataadd] = useState([])
+    const [modaladd, setmodaladd] = useState(false)
+    const [disabledadd, setdisabledadd] = useState(true)
+    const [loadingadd, setloadingadd] = useState(false)
+    const [fetchingmodel, setfetchingmodel] = useState(false)
+    const [sublocdata, setsublocdata] = useState(null)
+    const [subloctrig, setsubloctrig] = useState(-1)
 
     //declaration
-    //Declaration
     const columns = [
         {
             title: 'Relationship Type',
@@ -907,6 +927,50 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                 }
             })
     }
+    const handleAddRelationshipItem = () => {
+        setloadingadd(true)
+        delete dataApiadd.backup_connected_id
+        // console.log(dataApiadd)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/addRelationshipInventories`, {
+            method: 'POST',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataApiadd)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingadd(false)
+                setmodaladd(false)
+                if (res2.success) {
+                    setdataApiadd({
+                        subject_id: Number(itemid),
+                        relationship_id: null,
+                        is_inverse: null,
+                        type_id: null,
+                        connected_ids: null,
+                        backup_connected_ids: null
+                    })
+                    setrelationnameadd("")
+                    setsublocdata(null)
+                    setrelationselectedidxadd(-1)
+                    setrelationselectedisinverseadd(-1)
+                    setsubloctrig(-1)
+                    notification['success']({
+                        message: "Relationship Item berhasil ditambahkan",
+                        duration: 3
+                    })
+                    setdatatrigger(prev => prev + 1)
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
 
     //useEffect
     useEffect(() => {
@@ -927,9 +991,8 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                 })
         }
     }, [datatrigger])
-
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationships`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -937,23 +1000,38 @@ const Relationship = ({ initProps, maindata, itemid }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                var selectedAsset = {}
-                const recursiveSearchAsset = (doc, key) => {
-                    for (var i = 0; i < doc.length; i++) {
-                        if (doc[i].id === key) {
-                            selectedAsset = doc[i]
-                        }
-                        else {
-                            if (doc[i].children) {
-                                recursiveSearchAsset(doc[i].children, key)
-                            }
-                        }
-                    }
-                }
-                recursiveSearchAsset(res2.data, maindata.model_inventory.asset_id)
-                setdataasset(selectedAsset)
+                setdisplaydatarelations(res2.data)
             })
     }, [])
+    useEffect(() => {
+        if (subloctrig !== -1) {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${subloctrig}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                }
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    setsublocdata(res2.data.children)
+                })
+        }
+        else if (detailtipeadd !== -10) {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${dataApiadd.type_id}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                }
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    dataApiadd.type_id === -3 && setdetailtipedataadd([res2.data])
+                    dataApiadd.type_id === -1 && setdetailtipedataadd(res2.data)
+                    dataApiadd.type_id === -2 && setdetailtipedataadd(res2.data)
+                    dataApiadd.type_id === -4 && setdetailtipedataadd(res2.data.data)
+                })
+        }
+    }, [detailtipeadd, subloctrig])
 
     return (
         <div className="flex flex-col">
@@ -969,7 +1047,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                             null
                     }
                 </div>
-                <Button type="primary" size="large" onClick={() => { /*console.log(dataasset);*/ rt.push(`/items/createrelationship/${itemid}?nama=${maindata.inventory_name}&asset_id=${maindata.model_inventory.asset.id}`) }}>Tambah</Button>
+                <Button type="primary" size="large" onClick={() => { setmodaladd(true) /*rt.push(`/items/createrelationship/${itemid}?nama=${maindata.inventory_name}&asset_id=${maindata.model_inventory.asset.id}`)*/ }}>Tambah</Button>
             </div>
             <div className="flex mb-5">
                 {
@@ -1025,9 +1103,230 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                     <div className="flex flex-col">
                         <p className="mb-0">Notes</p>
                         <Input placeholder="Masukkan Notes" onChange={(e => {
-                            // setdataApiremoved({ ...dataApiremoved, notes: e.target.value })
                         })}></Input>
                     </div>
+                </div>
+            </Modal>
+            <Modal title={
+                <div className="flex justify-between p-5 mt-5">
+                    <h1 className="font-bold text-xl">Form Tambah Relationship "{maindata.name}"</h1>
+                    <div className="flex">
+                        <>
+                            <Button type="default" onClick={() => { setmodaladd(false); /*setdataApiadd({ ...dataApiadd, relationship_id: null, type_id: null, connected_id: null })*/ /*console.log(dataApiadd)*/ }} style={{ marginRight: `1rem` }}>Batal</Button>
+                            <Button type='primary' disabled={disabledadd} onClick={handleAddRelationshipItem} loading={loadingadd}>Simpan</Button>
+                        </>
+                    </div>
+                </div>
+            }
+                visible={modaladd}
+                onCancel={() => { setmodaladd(false) }}
+                footer={null}
+                width={760}
+            >
+                <div className="flex flex-col mb-3">
+                    <div className="flex flex-col mb-3">
+                        <p className="mb-0">Relationship Type <span className="namapart"></span></p>
+                        <div className="w-full border p-2 hover:border-primary rounded-sm flex items-center justify-between cursor-pointer" onClick={() => { setrelationnameddadd(prev => !prev) }}>
+                            <p className="mb-0">{relationnameadd}</p>
+                            {relationnameddadd ? <UpOutlined style={{ color: `rgb(229,231,235)` }} /> : <DownOutlined style={{ color: `rgb(229,231,235)` }} />}
+                        </div>
+                        {
+                            relationnameddadd ?
+                                <div className="flex flex-col">
+                                    <div className="flex">
+                                        <div className="bg-gray-200 font-semibold p-3 w-6/12">Relationship Type</div>
+                                        <div className="bg-gray-200 font-semibold p-3 w-6/12">Inverse Relationship Type</div>
+                                    </div>
+                                    {
+                                        displaydatarelations.map((doc, idx) => {
+                                            return (
+                                                <div className="flex">
+                                                    <div className={`hover:bg-ternary cursor-pointer hover:text-black p-3 w-6/12 ${relationselectedidxadd === idx && relationselectedisinverseadd === false ? " bg-secondary" : "bg-white"}`}
+                                                        onClick={(e) => {
+                                                            setrelationnameddadd(false);
+                                                            setrelationnameadd(doc.relationship_type);
+                                                            setdataApiadd({ ...dataApiadd, relationship_id: doc.id, is_inverse: false })
+                                                            doc.id === null || dataApiadd.type_id === null ? setdisabledadd(true) : setdisabledadd(false)
+                                                            setrelationselectedidxadd(idx)
+                                                            setrelationselectedisinverseadd(false)
+                                                        }}
+                                                    >{doc.relationship_type}</div>
+                                                    <div className={`hover:bg-ternary cursor-pointer hover:text-black p-3 w-6/12 ${relationselectedidxadd === idx && relationselectedisinverseadd === true ? " bg-secondary" : "bg-white"}`}
+                                                        onClick={(e) => {
+                                                            setrelationnameddadd(false);
+                                                            setrelationnameadd(doc.inverse_relationship_type);
+                                                            setdataApiadd({ ...dataApiadd, relationship_id: doc.id, is_inverse: true })
+                                                            doc.id === null || dataApiadd.type_id === null ? setdisabledadd(true) : setdisabledadd(false)
+                                                            setrelationselectedidxadd(idx)
+                                                            setrelationselectedisinverseadd(true)
+                                                        }}
+                                                    >{doc.inverse_relationship_type}</div>
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                </div>
+                                :
+                                null
+                        }
+                        <style jsx>
+                            {`
+                                .namapart::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+                        </style>
+                    </div>
+                    <div className="flex flex-col mb-3">
+                        <p className="mb-0">Tipe <span className="tipepart"></span></p>
+                        <Select value={dataApiadd.type_id} onChange={(value) => {
+                            setdataApiadd({ ...dataApiadd, type_id: value })
+                            dataApiadd.relationship_id === null || value === null ? setdisabledadd(true) : setdisabledadd(false)
+                            setdetailtipeadd(value)
+                        }}>
+                            <Select.Option value={-1}>Agent</Select.Option>
+                            <Select.Option value={-2}>Requester</Select.Option>
+                            <Select.Option value={-3}>Company</Select.Option>
+                            <Select.Option value={-4}>Asset Type</Select.Option>
+                        </Select>
+                        <style jsx>
+                            {`
+                                .tipepart::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+                        </style>
+                    </div>
+                    {
+                        dataApiadd.type_id !== null ?
+                            <>
+                                {
+                                    dataApiadd.type_id === -1 &&
+                                    <div className="flex flex-col mb-3">
+                                        <p className="mb-0">Detail Tipe</p>
+                                        <Select value={dataApiadd.connected_ids} mode="multiple" showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
+                                            setfetchingmodel(true)
+                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&name=${value !== "" ? value : ""}`, {
+                                                method: `GET`,
+                                                headers: {
+                                                    'Authorization': JSON.parse(initProps),
+                                                },
+                                            })
+                                                .then(res => res.json())
+                                                .then(res2 => {
+                                                    setdetailtipedataadd(res2.data)
+                                                    setfetchingmodel(false)
+                                                })
+                                        }} filterOption={(input, opt) => (
+                                            opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        )} onChange={(value) => {
+                                            setdataApiadd({ ...dataApiadd, connected_ids: value, backup_connected_ids: value })
+                                        }}>
+                                            {
+                                                detailtipedataadd.map((doc, idx) => {
+                                                    return (
+                                                        <Select.Option value={doc.id}>{doc.name}</Select.Option>
+                                                    )
+                                                })
+                                            }
+                                        </Select>
+                                    </div>
+                                }
+                                {
+                                    dataApiadd.type_id === -2 &&
+                                    <div className="flex flex-col mb-3">
+                                        <p className="mb-0">Detail Tipe</p>
+                                        <Select value={dataApiadd.connected_ids} mode="multiple" showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
+                                            setfetchingmodel(true)
+                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&name=${value !== "" ? value : ""}`, {
+                                                method: `GET`,
+                                                headers: {
+                                                    'Authorization': JSON.parse(initProps),
+                                                },
+                                            })
+                                                .then(res => res.json())
+                                                .then(res2 => {
+                                                    setdetailtipedataadd(res2.data)
+                                                    setfetchingmodel(false)
+                                                })
+                                        }} filterOption={(input, opt) => (
+                                            opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        )} onChange={(value) => {
+                                            setdataApiadd({ ...dataApiadd, connected_ids: value, backup_connected_ids: value })
+                                        }}>
+                                            {
+                                                detailtipedataadd.map((doc, idx) => {
+                                                    return (
+                                                        <Select.Option value={doc.id}>{doc.name}</Select.Option>
+                                                    )
+                                                })
+                                            }
+                                        </Select>
+                                    </div>
+                                }
+                                {
+                                    dataApiadd.type_id === -3 &&
+                                    <div className="flex flex-col mb-3">
+                                        <p className="mb-0">Detail Tipe</p>
+                                        <TreeSelect value={dataApiadd.backup_connected_ids === null ? null : dataApiadd.backup_connected_ids[0]} treeDefaultExpandedKeys={[1]} treeData={detailtipedataadd} onChange={(value, label, extra) => {
+                                            setdataApiadd({ ...dataApiadd, connected_ids: [value], backup_connected_ids: [value] })
+                                            setsubloctrig(value)
+                                        }}></TreeSelect>
+                                    </div>
+                                }
+                                {
+                                    dataApiadd.type_id === -4 &&
+                                    <div className="flex flex-col mb-3">
+                                        <p className="mb-0">Detail Tipe</p>
+                                        <Select placeholder="Cari dengan Model ID" value={dataApiadd.connected_ids} mode="multiple" showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
+                                            setfetchingmodel(true)
+                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&model_id=${value !== "" ? value : ""}`, {
+                                                method: `GET`,
+                                                headers: {
+                                                    'Authorization': JSON.parse(initProps),
+                                                },
+                                            })
+                                                .then(res => res.json())
+                                                .then(res2 => {
+                                                    setdetailtipedataadd(res2.data)
+                                                    setfetchingmodel(false)
+                                                })
+                                        }} filterOption={(input, opt) => (
+                                            opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        )} onChange={(value) => {
+                                            setdataApiadd({ ...dataApiadd, connected_ids: value, backup_connected_ids: value })
+                                        }}>
+                                            {
+                                                detailtipedataadd.map((doc, idx) => {
+                                                    return (
+                                                        <Select.Option value={doc.id}>{doc.mig_id}</Select.Option>
+                                                    )
+                                                })
+                                            }
+                                        </Select>
+                                    </div>
+                                }
+                            </>
+                            :
+                            null
+
+                    }
+                    {
+                        sublocdata !== null &&
+                        <div className="flex flex-col mb-3">
+                            <p className="mb-0">Detail Tipe (Sublokasi)</p>
+                            <TreeSelect multiple allowClear treeData={sublocdata} onChange={(value, label, extra) => {
+                                if (value.length === 0) {
+                                    setdataApiadd({ ...dataApiadd, connected_ids: dataApiadd.backup_connected_ids })
+                                }
+                                else {
+                                    setdataApiadd({ ...dataApiadd, connected_ids: value })
+                                }
+                            }}></TreeSelect>
+                        </div>
+                    }
                 </div>
             </Modal>
         </div>
@@ -1618,12 +1917,13 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
     const [displayusage, setdisplayusage] = useState(true)
     const [loadingchangecompanyusage, setloadingchangecompanyusage] = useState(false)
     const [loadingusage, setloadingusage] = useState(false)
-    const [agents, setagents] = useState([])
-    const [requesters, setrequesters] = useState([])
+    // const [agents, setagents] = useState([])
+    // const [requesters, setrequesters] = useState([])
+    const [detaillist, setdetaillist] = useState([])
     const [models, setmodels] = useState([])
-    const [locations, setlocations] = useState([])
+    const [sublocations, setsublocations] = useState([])
     const [locationsdisplay, setlocationsdisplay] = useState(false)
-    const [locationtrigger, setlocationtrigger] = useState(-1)
+    const [sublocationtrigger, setsublocationtrigger] = useState(-1)
     const [activitytrigger, setactivitytrigger] = useState(0)
 
     //helper
@@ -1824,51 +2124,61 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                 setmodels(res2.data)
             })
     }, [])
+    // useEffect(() => {
+    //     fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList`, {
+    //         method: `GET`,
+    //         headers: {
+    //             'Authorization': JSON.parse(initProps),
+    //             'Content-Type': 'application/json'
+    //         },
+    //     })
+    //         .then(res => res.json())
+    //         .then(res2 => {
+    //             setagents(res2.data)
+    //         })
+    // }, [])
+    // useEffect(() => {
+    //     fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
+    //         method: `GET`,
+    //         headers: {
+    //             'Authorization': JSON.parse(initProps),
+    //         },
+    //     })
+    //         .then(res => res.json())
+    //         .then(res2 => {
+    //             setrequesters(res2.data)
+    //         })
+    // }, [])
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList`, {
-            method: `GET`,
-            headers: {
-                'Authorization': JSON.parse(initProps),
-                'Content-Type': 'application/json'
-            },
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setagents(res2.data)
-            })
-    }, [])
-    useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
-            method: `GET`,
-            headers: {
-                'Authorization': JSON.parse(initProps),
-            },
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setrequesters(res2.data)
-            })
-    }, [])
-    useEffect(() => {
-        if (locationtrigger !== -1) {
-            setloadingchangecompanyusage(true)
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
+        if (changeusage.relationship_type_id !== "") {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getChangeStatusUsageDetailList?id=${changeusage.relationship_type_id}`, {
                 method: `GET`,
                 headers: {
                     'Authorization': JSON.parse(initProps),
-                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    company_id: Number(changeusage.connected_id)
+            })
+                .then(res => res.json())
+                .then(res2 => {
+                    changeusage.relationship_type_id === -3 ? setdetaillist([res2.data]) : setdetaillist(res2.data.data)
                 })
+        }
+    }, [changeusage])
+    useEffect(() => {
+        if (sublocationtrigger !== -1) {
+            setloadingchangecompanyusage(true)
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${changeusage.connected_id}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                },
             })
                 .then(res => res.json())
                 .then(res2 => {
                     setloadingchangecompanyusage(false)
-                    setlocations(res2.data)
+                    setsublocations(res2.data.children)
                 })
         }
-    }, [locationtrigger])
+    }, [sublocationtrigger])
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventory?id=${itemid}&type_id=-4`, {
             method: `GET`,
@@ -1888,7 +2198,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                     <Sticky containerSelectorFocus="#createAgentsWrapper">
                         <div className=" col-span-4 flex justify-between py-5 px-4 border-t border-b bg-white">
                             <div className="flex items-center">
-                                <h1 className="font-semibold py-2 text-2xl mb-0 mr-20">{maindata.inventory_name}</h1>
+                                <h1 className="font-semibold py-2 text-2xl mb-0 mr-20">{maindata.mig_id}</h1>
                                 {
                                     praloading ?
                                         null
@@ -1959,7 +2269,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                             </div>
                             <div className="flex space-x-2 items-center">
                                 <Button style={{ marginRight: `1rem` }} onClick={() => { setmodalnotes(true) }} size="large">Tambah Notes</Button>
-                                <Button type="danger" size="large" onClick={() => { setmodaldelete(true) }}>Hapus</Button>
+                                <Button type="danger" size="large" onClick={() => { setmodaldelete(true); console.log(agents, requesters) }}>Hapus</Button>
                             </div>
                         </div>
                     </Sticky>
@@ -2059,9 +2369,9 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                             setlocationsdisplay(false)
                                         }
                                     }}>
-                                        <Select.Option value={1}>Agent</Select.Option>
-                                        <Select.Option value={2}>Requester</Select.Option>
-                                        <Select.Option value={3}>Company</Select.Option>
+                                        <Select.Option value={-1}>Agent</Select.Option>
+                                        <Select.Option value={-2}>Requester</Select.Option>
+                                        <Select.Option value={-3}>Company</Select.Option>
                                     </Select>
                                     <style jsx>
                                         {`
@@ -2073,35 +2383,47 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                     </style>
                                 </div>
                                 <div className="flex flex-col mb-3 ml-5">
-                                    <p className="mb-0">Nama {changeusage.relationship_type_id === 1 && "Agent"} {changeusage.relationship_type_id === 2 && "Requester"} {changeusage.relationship_type_id === 3 && "Company"} <span className="namabymodal"></span></p>
-                                    <Select value={changeusage.connected_id} onChange={(value) => {
-                                        setchangeusage({
-                                            ...changeusage,
-                                            connected_id: value
-                                        })
-                                        changeusage.relationship_type_id === 3 ? setlocationtrigger(prev => prev + 1) : null
-                                        changeusage.relationship_type_id === 3 ? setlocationsdisplay(true) : null
-                                        setdisabledusage(false)
-                                    }}>
-                                        {
-                                            changeusage.relationship_type_id === 1 &&
-                                            agents.map((doc, idx) => (
-                                                <Select.Option value={doc.user_id}>{doc.fullname}</Select.Option>
-                                            ))
-                                        }
-                                        {
-                                            changeusage.relationship_type_id === 2 &&
-                                            requesters.map((doc, idx) => (
-                                                <Select.Option value={doc.user_id}>{doc.fullname}</Select.Option>
-                                            ))
-                                        }
-                                        {
+                                    <p className="mb-0">Nama {changeusage.relationship_type_id === -1 && "Agent"} {changeusage.relationship_type_id === -2 && "Requester"} {changeusage.relationship_type_id === -3 && "Company"} <span className="namabymodal"></span></p>
+                                    {
+                                        changeusage.relationship_type_id === -3 ?
+                                            <TreeSelect treeData={[invrelations.tree_companies]} treeDefaultExpandedKeys={[1]} onChange={(value) => {
+                                                setchangeusage({
+                                                    ...changeusage,
+                                                    connected_id: value
+                                                })
+                                                changeusage.relationship_type_id === -3 ? setsublocationtrigger(prev => prev + 1) : null
+                                                changeusage.relationship_type_id === -3 ? setlocationsdisplay(true) : null
+                                                setdisabledusage(false)
+                                            }}>
+                                            </TreeSelect>
+                                            :
+                                            <Select value={changeusage.connected_id} onChange={(value) => {
+                                                setchangeusage({
+                                                    ...changeusage,
+                                                    connected_id: value
+                                                })
+                                                setdisabledusage(false)
+                                            }}>
+                                                {
+                                                    changeusage.relationship_type_id === -1 &&
+                                                    detaillist.map((doc, idx) => (
+                                                        <Select.Option value={doc.id}>{doc.name}</Select.Option>
+                                                    ))
+                                                }
+                                                {
+                                                    changeusage.relationship_type_id === -2 &&
+                                                    detaillist.map((doc, idx) => (
+                                                        <Select.Option value={doc.id}>{doc.name}</Select.Option>
+                                                    ))
+                                                }
+                                                {/* {
                                             changeusage.relationship_type_id === 3 &&
-                                            invrelations.companies.map((doc, idx) => (
+                                            invrelations.tree_companies.map((doc, idx) => (
                                                 <Select.Option value={doc.id}>{doc.name}</Select.Option>
                                             ))
-                                        }
-                                    </Select>
+                                        } */}
+                                            </Select>
+                                    }
                                     <style jsx>
                                         {`
                                             .namabymodal::before{
@@ -2112,10 +2434,10 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                     </style>
                                 </div>
                                 {
-                                    changeusage.connected_id === 3 || locationsdisplay === true ?
+                                    changeusage.connected_id === -3 || locationsdisplay === true ?
                                         <div className="flex flex-col ml-5">
                                             <p className="mb-0">Nama Lokasi</p>
-                                            <TreeSelect loading={loadingchangecompanyusage} treeData={locations} onChange={(value) => {
+                                            <TreeSelect loading={loadingchangecompanyusage} treeData={sublocations} onChange={(value) => {
                                                 setchangeusage({
                                                     ...changeusage,
                                                     detail_connected_id: value
@@ -2242,9 +2564,12 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                         </p>
                         <ul className="mb-2 text-xs">
                             {
-                                relship.map((docrel, idxrel) => (
-                                    <li key={idxrel}>- <strong>{docrel.type} - {docrel.connected_detail_name}</strong></li>
-                                ))
+                                relship.length === 0 ?
+                                    <p className="font-semibold">-</p>
+                                    :
+                                    relship.map((docrel, idxrel) => (
+                                        <li key={idxrel}>- <strong>{docrel.type} - {docrel.connected_detail_name}</strong></li>
+                                    ))
                             }
                         </ul>
                         <p className="mb-2 text-xs font-semibold text-red-500">

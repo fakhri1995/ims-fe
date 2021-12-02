@@ -5,7 +5,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Sticky from 'wil-react-sticky'
 import { Tabs, notification, Modal, Timeline, Button } from 'antd'
-import st from '../../components/layout-dashboard-inventories.module.css'
+import st from '../../components/layout-dashboard.module.css'
 
 function Inventories({ initProps, dataProfile, dataInventory, dataInventoryColumnAndVendor, dataInventoryActivityLog, sidemenu }) {
     // Router.events.on('routeChangeStart', () => {

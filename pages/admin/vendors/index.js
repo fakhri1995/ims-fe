@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
 import Layout from '../../../components/layout-dashboard'
-import st from '../../../components/layout-dashboard-vendors.module.css'
+import st from '../../../components/layout-dashboard.module.css'
 import httpcookie from 'cookie'
 import Sticky from 'wil-react-sticky'
 import EditOutlined from '@ant-design/icons/EditOutlined'

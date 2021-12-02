@@ -5,7 +5,7 @@ import LoadingOutlined from '@ant-design/icons/LoadingOutlined'
 import PlusOutlined from '@ant-design/icons/PlusOutlined'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import st from '../../../components/layout-dashboard-clients.module.css'
+import st from '../../../components/layout-dashboard.module.css'
 import { Table, notification, Button, Input } from 'antd'
 
 function modifData(dataa) {
@@ -73,7 +73,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
                     // },
                     children:
                         <>
-                            <Link href={`/admin/clients/${record.id}`}>
+                            <Link href={`/company/clients/${record.id}`}>
                                 <a><img src={record.image_logo === "-" || record.image_logo === "" ? `/default-users.jpeg` : record.image_logo} alt="imageProfile" className=" object-cover w-10 h-10 rounded-full" /></a>
                             </Link>
                         </>
@@ -109,7 +109,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
                     // },
                     children:
                         <>
-                            <Link href={`/admin/clients/${record.id}`}>
+                            <Link href={`/company/clients/${record.id}`}>
                                 <a><h1>{record.name}</h1></a>
                             </Link>
                         </>
@@ -129,7 +129,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
                     // },
                     children:
                         <div className="flex justify-center">
-                            <Link href={`/admin/clients/${record.id}`}>
+                            <Link href={`/company/clients/${record.id}`}>
                                 {
                                     record.is_enabled ?
                                         <a><div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md text-center w-40">AKTIF MODULE</div></a>
@@ -323,7 +323,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
     //useEffect
     useEffect(() => {
         setloaddatatable(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientList`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),

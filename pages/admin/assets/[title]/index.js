@@ -6,7 +6,7 @@ import Sticky from 'wil-react-sticky'
 import Link from 'next/link'
 import { Button, notification, Form, Input, Checkbox, Modal } from 'antd'
 import Layout from '../../../../components/layout-dashboard'
-import st from '../../../../components/layout-dashboard-main.module.css'
+import st from '../../../../components/layout-dashboard.module.css'
 
 function AssetsNew({ initProps, dataProfile, dataAssetsList, sidemenu, assetsTitle, assetsParent, dataInvColumns }) {
     const rt = useRouter()

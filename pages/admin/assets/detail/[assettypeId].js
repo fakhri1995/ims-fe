@@ -584,17 +584,6 @@ const Relationship = ({ assettypeid, initProps, maindata }) => {
                                     dataApiadd.type_id === -3 &&
                                     <div className="flex flex-col mb-3">
                                         <p className="mb-0">Detail Tipe</p>
-                                        {/* <Select onChange={(value) => {
-                                            setdataApiadd({ ...dataApiadd, connected_id: value })
-                                        }}>
-                                            {
-                                                detailtipedataadd.map((doc, idx) => {
-                                                    return (
-                                                        <Select.Option value={doc.id}>{doc.name}</Select.Option>
-                                                    )
-                                                })
-                                            }
-                                        </Select> */}
                                         <TreeSelect treeDefaultExpandedKeys={[1]} treeData={detailtipedataadd} onChange={(value, label, extra) => {
                                             setdataApiadd({ ...dataApiadd, connected_id: extra.allCheckedNodes[0].node.props.id })
                                         }}></TreeSelect>
@@ -1096,8 +1085,9 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                         </div>
                     </Sticky>
                 </div>
-                <div className="col-span-1 md:col-span-4 mb-8 pt-5">
-                    <div className=" hidden md:block">
+                <div className="col-span-1 md:col-span-3 mb-8 pt-5">
+                    <Overview assettypeid={assettypeid} initProps={initProps} displaydata={displaydata} parentcode={parentcode} praloading={praloading} idparent={parentid} />
+                    {/* <div className=" hidden md:block">
                         <Tabs tabPosition={`left`} defaultActiveKey={active}>
                             <TabPane tab="Overview" key={`overview`}>
                                 <Overview assettypeid={assettypeid} initProps={initProps} displaydata={displaydata} parentcode={parentcode} praloading={praloading} idparent={parentid} />
@@ -1116,7 +1106,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                                 <Relationship assettypeid={assettypeid} initProps={initProps} maindata={displaydata} />
                             </TabPane>
                         </Tabs>
-                    </div>
+                    </div> */}
                 </div>
             </div>
             <Modal
