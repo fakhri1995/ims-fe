@@ -8,8 +8,8 @@ import { Progress } from 'antd'
 import Buttonsys from '../../components/button'
 import { H1, H2, Label, Text } from '../../components/typography'
 import { AlerttriangleIconSvg, CalendartimeIconSvg, ClipboardcheckIconSvg, ClockIconSvg, EditIconSvg, ListcheckIconSvg, MappinIconSvg } from '../../components/icon'
-import { Chart, ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement } from 'chart.js'
-Chart.register(ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement);
+import { Chart, ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement } from 'chart.js'
+Chart.register(ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement);
 import { Doughnut, Bar, Line } from 'react-chartjs-2';
 
 const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
