@@ -402,7 +402,7 @@ function LandingPage({ }) {
                 <div className={'pb-8 center md:content-around'} style={{ maxWidth: 1000 }}>
                     <Slider {...sliderSettings}>
                         <div>
-                            <Card style={{ maxWidth: 300, maxHeight: 350 }}>
+                            <Card bodyStyle={{height:'35vh', overflow:'auto'}}>
                                 <p className={'pb-20 text-left'}>Provide IT hardware infrastructure with 45 service points in Indonesia. Rent and maintenance +10.000 hardware. Support at a high service level.</p>
                                 <Space align={'start'}>
                                     <img className={'pr-1'} style={{ minHeight: 90 }} src="/image/company/kb.png"></img>
@@ -414,7 +414,7 @@ function LandingPage({ }) {
                             </Card>
                         </div>
                         <div>
-                            <Card style={{ maxWidth: 300, maxHeight: 350 }}>
+                            <Card bodyStyle={{height:'35vh', overflow:'auto'}}>
                                 <p className={'pb-20 text-left'}>Accommodate talent with exceptional skills in a short time. The project was conducted earlier with help recruitment fastly.</p>
                                 <Space align={'start'}>
                                     <img className={'pr-1'} style={{ minHeight: 90 }} src="/image/company/shipper.png"></img>
@@ -426,7 +426,7 @@ function LandingPage({ }) {
                             </Card>
                         </div>
                         <div>
-                            <Card style={{ maxWidth: 300, maxHeight: 350 }}>
+                            <Card  bodyStyle={{height:'35vh', overflow:'auto'}}>
                                 <p className={'pb-20 text-left'}>Develop logistic delivery process and reporting. Make sure to handle critical operations about open API business.</p>
                                 <Space align={'start'}>
                                     <img className={'pr-1'} style={{ minHeight: 90 }} src="/image/company/cgx.png"></img>
@@ -438,8 +438,8 @@ function LandingPage({ }) {
                             </Card>
                         </div>
                         <div>
-                            <Card style={{ maxWidth: 300, maxHeight: 350 }}>
-                                <p className={'pb-20 text-left'}>Provide IT Engineer for build many projects. Provide team required for a long-term project.</p>
+                            <Card bodyStyle={{height:'35vh', overflow:'auto'}}>
+                                <p className={'pb-20 text-left'}> IT Engineer for build many projects. Provide team required for a long-term project.</p>
                                 <Space align={'start'}>
                                     <img className={'pr-1'} style={{ minHeight: 90 }} src="/image/company/kb.png"></img>
                                     <p>
@@ -450,7 +450,7 @@ function LandingPage({ }) {
                             </Card>
                         </div>
                         <div>
-                            <Card style={{ maxWidth: 300, maxHeight: 3500 }}>
+                            <Card bodyStyle={{height:'35vh', overflow:'auto'}}>
                                 <p className={'pb-20 text-left'}>Develop Forty Mobile App with a sensitive timeline. Manage from initial lending, payment transactions to reporting. </p>
                                 <Space align={'start'}>
                                     <img className={'pr-1'} style={{ minHeight: 90 }} src="/image/company/forty.png"></img>
