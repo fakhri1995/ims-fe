@@ -48,7 +48,7 @@ function JoinOurTeam({ dataCareers }) {
                                 to="section7careers"
                                 spy={true}
                                 smooth={true}
-                                offset={-120}
+                                offset={-150}
                                 duration={500}
                             >
 
