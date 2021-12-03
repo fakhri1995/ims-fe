@@ -156,7 +156,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                 return {
                     children:
                         <>
-                            {record.relationship.relationship_type}
+                            {record.relationship_name}
                         </>
                 }
             },
@@ -169,7 +169,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                 return {
                     children:
                         <>
-                            {record.inventory.model_inventory.name}
+                            {record.model_name}
                         </>
                 }
             }
@@ -181,7 +181,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                 return {
                     children:
                         <>
-                            {record.inventory.full_name}
+                            {record.location_name}
                         </>
                 }
             }

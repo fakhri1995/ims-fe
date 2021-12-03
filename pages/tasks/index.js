@@ -4,18 +4,90 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import st from '../../components/layout-dashboard.module.css'
 import Link from 'next/link'
-import { Progress } from 'antd'
+import { Progress, Input } from 'antd'
 import Buttonsys from '../../components/button'
 import { H1, H2, Label, Text } from '../../components/typography'
 import { AlerttriangleIconSvg, CalendartimeIconSvg, ClipboardcheckIconSvg, ClockIconSvg, EditIconSvg, ListcheckIconSvg, MappinIconSvg } from '../../components/icon'
 import { Chart, ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement } from 'chart.js'
 Chart.register(ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement);
 import { Doughnut, Bar, Line } from 'react-chartjs-2';
+import moment from 'moment'
 
 const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     //1.Init
     const rt = useRouter()
     const pathArr = rt.pathname.split("/").slice(1)
+
+    //2. columns table
+    const datadummies = [
+        {
+            task_id: `T-00001`,
+            task_type: `Insiden Aset`,
+            task_title: `Perbaikan ATM H2VLL`,
+            task_deadline: moment(new Date()).locale('id').format("LL"),
+            task_staff: [`Bintang`],
+            task_loc: `Wilayah 1`,
+            task_status: `Overdue`
+        },
+        {
+            task_id: `T-00002`,
+            task_type: `Insiden Aset 2`,
+            task_title: `Perbaikan ATM HGNKK`,
+            task_deadline: moment(new Date()).locale('id').format("LL"),
+            task_staff: [`Bintang`,`Yues`],
+            task_loc: `Wilayah 1`,
+            task_status: `Overdue`
+        },
+        {
+            task_id: `T-00001`,
+            task_type: `Insiden Aset`,
+            task_title: `Perbaikan ATM H2VLL`,
+            task_deadline: moment(new Date()).locale('id').format("LL"),
+            task_staff: [`Bintang`],
+            task_loc: `Wilayah 1`,
+            task_status: `Overdue`
+        }
+    ]
+    const columns1 = [
+        {
+            title: 'No',
+            dataIndex: 'num',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {/* {datarawrelasi.from + index} */}
+                            {index+1}
+                        </>
+                }
+            }
+        },
+        {
+            title: 'Nomor Task',
+            dataIndex: 'task_id',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.model_name}
+                        </>
+                }
+            },
+            sorter: (a, b) => a.mig_id - b.mig_id,
+        },
+        {
+            title: 'Lokasi',
+            dataIndex: 'location_inventory',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.location_name}
+                        </>
+                }
+            }
+        },
+    ]
 
     return (
         <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
@@ -427,9 +499,14 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     <div className="col-span-11 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mr-3">
                         <div className="flex items-center justify-between mb-4">
                             <H1>Semua Task</H1>
+                            <div className="w-8/12 flex justify-end">
+                                <div className="mx-2">
+                                    <Input style={{ width: `20rem` }} placeholder="Cari Task" allowClear />
+                                </div>
+                            </div>
                         </div>
                         <div className="flex flex-col">
-                            
+
                         </div>
                     </div>
                 </div>

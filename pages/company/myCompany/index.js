@@ -133,33 +133,59 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
     const [rowsrelasi, setrowsrelasi] = useState(6)
     const [loadingrelasi, setloadingrelasi] = useState(false)
     const [drawerelasi, setdrawerelasi] = useState(false)
-    const [drawerupdaterelasi, setdrawerupdaterelasi] = useState(false)
     //relasi-update
+    const [drawerupdaterelasi, setdrawerupdaterelasi] = useState(false)
+    const [dataupdaterelasi, setdataupdaterelasi] = useState({
+        id: null,
+        subject_id: null,
+        relationship_id: null,
+        connected_id: null,
+        is_inverse: null,
+        relationship: {
+            id: null,
+            relationship_type: "",
+            inverse_relationship_type: ""
+        },
+        inventory: {}
+    })
     const [dataApiupdate, setdataApiupdate] = useState({
         id: null,
         relationship_id: null,
-        connected_ids: null,
-        backup_connected_ids: null,
+        connected_id: null,
+        backup_connected_id: null,
         is_inverse: null,
         from_inverse: null,
         type_id: null
     })
     const [displaydatarelations, setdisplaydatarelations] = useState([])
-    const [relationnameadd, setrelationnameadd] = useState("")
-    const [relationnameddadd, setrelationnameddadd] = useState(false)
-    const [relationselectedidxadd, setrelationselectedidxadd] = useState(-1)
-    const [relationselectedisinverseadd, setrelationselectedisinverseadd] = useState(-1)
-    const [detailtipeadd, setdetailtipeadd] = useState(-10)
-    const [detailtipedataadd, setdetailtipedataadd] = useState([])
-    const [modaladd, setmodaladd] = useState(false)
-    const [disabledadd, setdisabledadd] = useState(true)
-    const [loadingadd, setloadingadd] = useState(false)
-    const [fetchingmodel, setfetchingmodel] = useState(false)
+    const [relationnameupdate, setrelationnameupdate] = useState("")
+    const [relationnameddupdate, setrelationnameddupdate] = useState(false)
+    const [relationselectedidxupdate, setrelationselectedidxupdate] = useState(-1)
+    const [relationselectedisinverseupdate, setrelationselectedisinverseupdate] = useState(-1)
+    const [detailtipeupdate, setdetailtipeupdate] = useState(-10)
+    const [detailtipedataupdate, setdetailtipedataupdate] = useState([])
+    const [disabledupdate, setdisabledupdate] = useState(true)
+    const [loadingupdate, setloadingupdate] = useState(false)
     const [sublocdata, setsublocdata] = useState(null)
     const [subloctrig, setsubloctrig] = useState(-1)
+    const [triggerupdaterelasi, settriggerupdaterelasi] = useState(0)
     //relasi-delete
+    const [datadeleterelasi, setdatadeleterelasi] = useState({
+        id: null,
+        subject_id: null,
+        relationship_id: null,
+        connected_id: null,
+        is_inverse: null,
+        relationship: {
+            id: null,
+            relationship_type: "",
+            inverse_relationship_type: ""
+        },
+        inventory: {}
+    })
     const [modaldeleterelasi, setmodaldeleterelasi] = useState(false)
     const [loadingdeleterelasi, setloadingdeleterelasi] = useState(false)
+    const [triggerdeleterelasi, settriggerdeleterelasi] = useState(0)
 
     //columns table items
     const columnrelasi = [
@@ -182,7 +208,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                 return {
                     children:
                         <>
-                            {record.relationship.relationship_type}
+                            {record.relationship_name}
                         </>
                 }
             },
@@ -195,7 +221,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                 return {
                     children:
                         <>
-                            {record.inventory.model_inventory.name}
+                            {record.model_name}
                         </>
                 }
             }
@@ -207,7 +233,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                 return {
                     children:
                         <>
-                            {record.inventory.full_name}
+                            {record.location_name}
                         </>
                 }
             }
@@ -223,19 +249,25 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                 <Buttonsys type="default" onClick={() => {
                                     setdataApiupdate({
                                         ...dataApiupdate,
-                                        id: record.relationship.id,
+                                        id: record.id,
                                         relationship_id: record.relationship_id,
-                                        connected_ids: record.connected_id,
+                                        connected_id: record.connected_id,
+                                        backup_connected_id: record.connected_id,
                                         is_inverse: record.is_inverse,
-                                        from_inverse: !record.is_inverse
+                                        from_inverse: record.from_inverse,
+                                        type_id: -3
                                     })
+                                    setrelationnameupdate(record.relationship_name)
+                                    setrelationselectedidxupdate(displaydatarelations.map((doc, idx) => ({ ...doc, index: idx })).filter((doc, idx) => doc.id === record.relationship_id)[0].index)
+                                    setrelationselectedisinverseupdate(!record.is_inverse)
+                                    setdetailtipeupdate(-3)
                                     setdrawerupdaterelasi(true)
                                 }}>
                                     <EditIconSvg size={15} color={`#35763B`} />
                                 </Buttonsys>
                             </div>
                             <div className="mx-1">
-                                <Buttonsys type="default" color="danger" onClick={() => { setmodaldeleterelasi(true) }}>
+                                <Buttonsys type="default" color="danger" onClick={() => { setmodaldeleterelasi(true); setdatadeleterelasi(record) }}>
                                     <TrashIconSvg size={15} color={`#BF4A40`} />
                                 </Buttonsys>
                             </div>
@@ -387,8 +419,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
             })
     }
     const handleUpdateRelationshipItem = () => {
-        setloadingadd(true)
-        // delete dataApiadd.backup_connected_ids
+        setloadingupdate(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateRelationshipInventory`, {
             method: 'PUT',
             headers: {
@@ -399,21 +430,22 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                setloadingadd(false)
-                onvisible(false)
+                setloadingupdate(false)
+                setdrawerupdaterelasi(false)
+                settriggerupdaterelasi(prev => prev + 1)
                 if (res2.success) {
-                    setdataApiadd({
-                        subject_id: Number(id),
+                    setdataApiupdate({
+                        subject_id: Number(dataProfile.data.company.id),
                         relationship_id: null,
                         is_inverse: null,
                         type_id: null,
-                        connected_ids: null,
-                        backup_connected_ids: null
+                        connected_id: null,
+                        backup_connected_id: null
                     })
-                    setrelationnameadd("")
+                    setrelationnameupdate("")
                     setsublocdata(null)
-                    setrelationselectedidxadd(-1)
-                    setrelationselectedisinverseadd(-1)
+                    setrelationselectedidxupdate(-1)
+                    setrelationselectedisinverseupdate(-1)
                     setsubloctrig(-1)
                     notification['success']({
                         message: "Relationship Item berhasil ditambahkan",
@@ -428,6 +460,39 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                 }
             })
     }
+    const handleDeleteRelationshipItem = () => {
+        setloadingdeleterelasi(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteRelationshipInventory`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: Number(datadeleterelasi.id)
+            })
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingdeleterelasi(false)
+                setmodaldeleterelasi(false)
+                settriggerdeleterelasi(prev => prev + 1)
+                if (res2.success) {
+                    notification['success']({
+                        message: "Relationship Company berhasil dihapus",
+                        duration: 3
+                    })
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
+
+    //useEffect
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationships`, {
             method: `GET`,
@@ -453,7 +518,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                     setsublocdata(res2.data.children)
                 })
         }
-        else if (detailtipeadd !== -10) {
+        else if (detailtipeupdate !== -10) {
             fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${dataApiupdate.type_id}`, {
                 method: `GET`,
                 headers: {
@@ -462,13 +527,13 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
             })
                 .then(res => res.json())
                 .then(res2 => {
-                    dataApiupdate.type_id === -3 && setdetailtipedataadd([res2.data])
-                    dataApiupdate.type_id === -1 && setdetailtipedataadd(res2.data)
-                    dataApiupdate.type_id === -2 && setdetailtipedataadd(res2.data)
-                    dataApiupdate.type_id === -4 && setdetailtipedataadd(res2.data.data)
+                    dataApiupdate.type_id === -3 && setdetailtipedataupdate([res2.data])
+                    dataApiupdate.type_id === -1 && setdetailtipedataupdate(res2.data)
+                    dataApiupdate.type_id === -2 && setdetailtipedataupdate(res2.data)
+                    dataApiupdate.type_id === -4 && setdetailtipedataupdate(res2.data.data)
                 })
         }
-    }, [detailtipeadd, subloctrig])
+    }, [detailtipeupdate, subloctrig])
 
     //useEffect
     useEffect(() => {
@@ -545,7 +610,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                     setloadingrelasi(false)
                 })
         }
-    }, [viewrelasi, drawerelasi, drawerupdaterelasi])
+    }, [viewrelasi, drawerelasi, triggerdeleterelasi, triggerupdaterelasi])
     return (
         <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={patharr} st={st}>
             <div className="grid grid-cols-12">
@@ -796,7 +861,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                         <H1>Relasi</H1>
                                     </div>
                                     <div>
-                                        <Buttonsys type="primary" onClick={() => { setdrawerlokasi(true) }}>
+                                        <Buttonsys type="primary" onClick={() => { setdrawerelasi(true) }}>
                                             + Tambah Relasi
                                         </Buttonsys>
                                     </div>
@@ -832,16 +897,16 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                     buttonOkText={"Simpan Relasi"}
                                     onClick={handleUpdateRelationshipItem}
                                 >
-                                    <Spin spinning={loadingadd}>
+                                    <Spin spinning={loadingupdate}>
                                         <div className="flex flex-col mb-3">
                                             <div className="flex flex-col mb-3">
                                                 <p className="mb-0">Relationship Type <span className="namapart"></span></p>
-                                                <div className="w-full border p-2 hover:border-primary100 rounded-sm flex items-center justify-between cursor-pointer" onClick={() => { setrelationnameddadd(prev => !prev) }}>
-                                                    <p className="mb-0">{relationnameadd}</p>
-                                                    {relationnameddadd ? <UpOutlined style={{ color: `rgb(229,231,235)` }} /> : <DownOutlined style={{ color: `rgb(229,231,235)` }} />}
+                                                <div className="w-full border p-2 hover:border-primary100 rounded-sm flex items-center justify-between cursor-pointer" onClick={() => { setrelationnameddupdate(prev => !prev) }}>
+                                                    <p className="mb-0">{relationnameupdate}</p>
+                                                    {relationnameddupdate ? <UpOutlined style={{ color: `rgb(229,231,235)` }} /> : <DownOutlined style={{ color: `rgb(229,231,235)` }} />}
                                                 </div>
                                                 {
-                                                    relationnameddadd ?
+                                                    relationnameddupdate ?
                                                         <div className="flex flex-col">
                                                             <div className="flex">
                                                                 <div className="bg-gray-200 font-semibold p-3 w-6/12">Relationship Type</div>
@@ -851,24 +916,24 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                                                 displaydatarelations.map((doc, idx) => {
                                                                     return (
                                                                         <div className="flex">
-                                                                            <div className={` hover:bg-primary10 cursor-pointer hover:text-black p-3 w-6/12 ${relationselectedidxadd === idx && relationselectedisinverseadd === false ? " bg-primary50" : "bg-white"}`}
+                                                                            <div className={` hover:bg-primary10 cursor-pointer hover:text-black p-3 w-6/12 ${relationselectedidxupdate === idx && relationselectedisinverseupdate === false ? " bg-primary50" : "bg-white"}`}
                                                                                 onClick={(e) => {
-                                                                                    setrelationnameddadd(false);
-                                                                                    setrelationnameadd(doc.relationship_type);
-                                                                                    setdataApiadd({ ...dataApiupdate, relationship_id: doc.id, is_inverse: false })
+                                                                                    setrelationnameddupdate(false);
+                                                                                    setrelationnameupdate(doc.relationship_type);
+                                                                                    setdataApiupdate({ ...dataApiupdate, relationship_id: doc.id, is_inverse: false })
                                                                                     doc.id === null || dataApiupdate.type_id === null ? setdisabledadd(true) : setdisabledadd(false)
-                                                                                    setrelationselectedidxadd(idx)
-                                                                                    setrelationselectedisinverseadd(false)
+                                                                                    setrelationselectedidxupdate(idx)
+                                                                                    setrelationselectedisinverseupdate(false)
                                                                                 }}
                                                                             >{doc.relationship_type}</div>
-                                                                            <div className={` hover:bg-primary10 cursor-pointer hover:text-black p-3 w-6/12 ${relationselectedidxadd === idx && relationselectedisinverseadd === true ? " bg-primary50" : "bg-white"}`}
+                                                                            <div className={` hover:bg-primary10 cursor-pointer hover:text-black p-3 w-6/12 ${relationselectedidxupdate === idx && relationselectedisinverseupdate === true ? " bg-primary50" : "bg-white"}`}
                                                                                 onClick={(e) => {
-                                                                                    setrelationnameddadd(false);
-                                                                                    setrelationnameadd(doc.inverse_relationship_type);
-                                                                                    setdataApiadd({ ...dataApiupdate, relationship_id: doc.id, is_inverse: true })
+                                                                                    setrelationnameddupdate(false);
+                                                                                    setrelationnameupdate(doc.inverse_relationship_type);
+                                                                                    setdataApiupdate({ ...dataApiupdate, relationship_id: doc.id, is_inverse: true })
                                                                                     doc.id === null || dataApiupdate.type_id === null ? setdisabledadd(true) : setdisabledadd(false)
-                                                                                    setrelationselectedidxadd(idx)
-                                                                                    setrelationselectedisinverseadd(true)
+                                                                                    setrelationselectedidxupdate(idx)
+                                                                                    setrelationselectedisinverseupdate(true)
                                                                                 }}
                                                                             >{doc.inverse_relationship_type}</div>
                                                                         </div>
@@ -881,19 +946,19 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                                 }
                                                 <style jsx>
                                                     {`
-                                .namapart::before{
-                                    content: '*';
-                                    color: red;
-                                }
-                            `}
+                                                        .namapart::before{
+                                                            content: '*';
+                                                            color: red;
+                                                        }
+                                                    `}
                                                 </style>
                                             </div>
                                             <div className="flex flex-col mb-3">
                                                 <p className="mb-0">Tipe <span className="tipepart"></span></p>
-                                                <Select value={dataApiupdate.type_id} onChange={(value) => {
-                                                    setdataApiadd({ ...dataApiupdate, type_id: value })
+                                                <Select disabled value={dataApiupdate.type_id} onChange={(value) => {
+                                                    setdataApiupdate({ ...dataApiupdate, type_id: value })
                                                     dataApiupdate.relationship_id === null || value === null ? setdisabledadd(true) : setdisabledadd(false)
-                                                    setdetailtipeadd(value)
+                                                    setdetailtipeupdate(value)
                                                 }}>
                                                     <Select.Option value={-1}>Agent</Select.Option>
                                                     <Select.Option value={-2}>Requester</Select.Option>
@@ -902,120 +967,24 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                                 </Select>
                                                 <style jsx>
                                                     {`
-                                .tipepart::before{
-                                    content: '*';
-                                    color: red;
-                                }
-                            `}
+                                                        .tipepart::before{
+                                                            content: '*';
+                                                            color: red;
+                                                        }
+                                                    `}
                                                 </style>
                                             </div>
                                             {
                                                 dataApiupdate.type_id !== null ?
                                                     <>
                                                         {
-                                                            dataApiupdate.type_id === -1 &&
-                                                            <div className="flex flex-col mb-3">
-                                                                <p className="mb-0">Detail Tipe</p>
-                                                                <Select value={dataApiupdate.connected_ids} mode="multiple" showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
-                                                                    setfetchingmodel(true)
-                                                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&name=${value !== "" ? value : ""}`, {
-                                                                        method: `GET`,
-                                                                        headers: {
-                                                                            'Authorization': JSON.parse(initProps),
-                                                                        },
-                                                                    })
-                                                                        .then(res => res.json())
-                                                                        .then(res2 => {
-                                                                            setdetailtipedataadd(res2.data)
-                                                                            setfetchingmodel(false)
-                                                                        })
-                                                                }} filterOption={(input, opt) => (
-                                                                    opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                                                )} onChange={(value) => {
-                                                                    setdataApiadd({ ...dataApiupdate, connected_ids: value, backup_connected_ids: value })
-                                                                }}>
-                                                                    {
-                                                                        detailtipedataadd.map((doc, idx) => {
-                                                                            return (
-                                                                                <Select.Option value={doc.id}>{doc.name}</Select.Option>
-                                                                            )
-                                                                        })
-                                                                    }
-                                                                </Select>
-                                                            </div>
-                                                        }
-                                                        {
-                                                            dataApiupdate.type_id === -2 &&
-                                                            <div className="flex flex-col mb-3">
-                                                                <p className="mb-0">Detail Tipe</p>
-                                                                <Select value={dataApiupdate.connected_ids} mode="multiple" showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
-                                                                    setfetchingmodel(true)
-                                                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&name=${value !== "" ? value : ""}`, {
-                                                                        method: `GET`,
-                                                                        headers: {
-                                                                            'Authorization': JSON.parse(initProps),
-                                                                        },
-                                                                    })
-                                                                        .then(res => res.json())
-                                                                        .then(res2 => {
-                                                                            setdetailtipedataadd(res2.data)
-                                                                            setfetchingmodel(false)
-                                                                        })
-                                                                }} filterOption={(input, opt) => (
-                                                                    opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                                                )} onChange={(value) => {
-                                                                    setdataApiadd({ ...dataApiupdate, connected_ids: value, backup_connected_ids: value })
-                                                                }}>
-                                                                    {
-                                                                        detailtipedataadd.map((doc, idx) => {
-                                                                            return (
-                                                                                <Select.Option value={doc.id}>{doc.name}</Select.Option>
-                                                                            )
-                                                                        })
-                                                                    }
-                                                                </Select>
-                                                            </div>
-                                                        }
-                                                        {
                                                             dataApiupdate.type_id === -3 &&
                                                             <div className="flex flex-col mb-3">
                                                                 <p className="mb-0">Detail Tipe</p>
-                                                                <TreeSelect value={dataApiupdate.backup_connected_ids === null ? null : dataApiupdate.backup_connected_ids[0]} treeDefaultExpandedKeys={[1]} treeData={detailtipedataadd} onChange={(value, label, extra) => {
-                                                                    setdataApiadd({ ...dataApiupdate, connected_ids: [value], backup_connected_ids: [value] })
+                                                                <TreeSelect value={dataApiupdate.backup_connected_id === null ? null : dataApiupdate.backup_connected_id} treeDefaultExpandedKeys={[1]} treeData={detailtipedataupdate} onChange={(value, label, extra) => {
+                                                                    setdataApiupdate({ ...dataApiupdate, connected_id: value, backup_connected_id: value })
                                                                     setsubloctrig(value)
                                                                 }}></TreeSelect>
-                                                            </div>
-                                                        }
-                                                        {
-                                                            dataApiupdate.type_id === -4 &&
-                                                            <div className="flex flex-col mb-3">
-                                                                <p className="mb-0">Detail Tipe</p>
-                                                                <Select placeholder="Cari dengan Model ID" value={dataApiupdate.connected_ids} mode="multiple" showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
-                                                                    setfetchingmodel(true)
-                                                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&model_id=${value !== "" ? value : ""}`, {
-                                                                        method: `GET`,
-                                                                        headers: {
-                                                                            'Authorization': JSON.parse(initProps),
-                                                                        },
-                                                                    })
-                                                                        .then(res => res.json())
-                                                                        .then(res2 => {
-                                                                            setdetailtipedataadd(res2.data)
-                                                                            setfetchingmodel(false)
-                                                                        })
-                                                                }} filterOption={(input, opt) => (
-                                                                    opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                                                )} onChange={(value) => {
-                                                                    setdataApiadd({ ...dataApiupdate, connected_ids: value, backup_connected_ids: value })
-                                                                }}>
-                                                                    {
-                                                                        detailtipedataadd.map((doc, idx) => {
-                                                                            return (
-                                                                                <Select.Option value={doc.id}>{doc.mig_id}</Select.Option>
-                                                                            )
-                                                                        })
-                                                                    }
-                                                                </Select>
                                                             </div>
                                                         }
                                                     </>
@@ -1029,10 +998,10 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                                     <p className="mb-0">Detail Tipe (Sublokasi)</p>
                                                     <TreeSelect multiple allowClear treeData={sublocdata} onChange={(value, label, extra) => {
                                                         if (value.length === 0) {
-                                                            setdataApiadd({ ...dataApiupdate, connected_ids: dataApiupdate.backup_connected_ids })
+                                                            setdataApiupdate({ ...dataApiupdate, connected_id: dataApiupdate.backup_connected_id })
                                                         }
                                                         else {
-                                                            setdataApiadd({ ...dataApiupdate, connected_ids: value })
+                                                            setdataApiupdate({ ...dataApiupdate, connected_id: value })
                                                         }
                                                     }}></TreeSelect>
                                                 </div>
@@ -1045,19 +1014,21 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                     visible={modaldeleterelasi}
                                     onCancel={() => { setmodaldeleterelasi(false) }}
                                     footer={
-                                        <div className="flex justify-between items-center">
-                                            <Buttonsys type="default" color="danger" onClick={() => { setmodaldeleterelasi(false) }}>
-                                                Batalkan
-                                            </Buttonsys>
-                                            <Buttonsys type="primary" color="danger">
-                                                <TrashIconSvg size={15} color={`#ffffff`} />
-                                                Ya, saya yakin dan hapus bank
-                                            </Buttonsys>
-                                        </div>
+                                        <Spin spinning={loadingdeleterelasi}>
+                                            <div className="flex justify-between items-center">
+                                                <Buttonsys type="default" color="danger" onClick={() => { setmodaldeleterelasi(false) }}>
+                                                    Batalkan
+                                                </Buttonsys>
+                                                <Buttonsys type="primary" color="danger" onClick={handleDeleteRelationshipItem}>
+                                                    <TrashIconSvg size={15} color={`#ffffff`} />
+                                                    Ya, saya yakin dan hapus bank
+                                                </Buttonsys>
+                                            </div>
+                                        </Spin>
                                     }
                                     loading={loadingdeleterelasi}
                                 >
-                                    Apakah Anda yakin ingin melanjutkan penghapusan relasi?
+                                    Apakah Anda yakin ingin melanjutkan penghapusan relasi <strong>{datadeleterelasi.relationship_name}</strong>?
                                 </ModalCore>
                             </div>
                             :
