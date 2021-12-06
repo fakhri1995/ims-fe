@@ -3,10 +3,10 @@ import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import st from '../../../../components/layout-dashboard.module.css'
-import { Tree, Input, Form, Spin, notification, Empty } from 'antd'
+import { Tree, Input, Form, Spin, notification, Empty, DatePicker } from 'antd'
 import Buttonsys from '../../../../components/button'
 import { H1, Text, Label, LabelDark } from '../../../../components/typography'
-import { EditIconSvg, PhoneIconSvg, SortingIconSvg, TrashIconSvg, CheckIconSvg, LocationIconSvg, CameraIconSvg, ExternalLinkIconSvg, MoveIconSvg, BackIconSvg } from '../../../../components/icon'
+import { EditIconSvg, PhoneIconSvg, SortingIconSvg, TrashIconSvg, CheckIconSvg, LocationIconSvg, CameraIconSvg, ExternalLinkIconSvg, MoveIconSvg, BackIconSvg, FaxIconSvg } from '../../../../components/icon'
 import moment from 'moment'
 import { ModalEdit, ModalHapusInventoryExist, ModalHapusLokasiCekChild, ModalHapusLokasiConfirm, ModalHapusLokasiMoveChild } from '../../../../components/modal/modalCustom'
 import { DrawerSublokasi } from '../../../../components/drawer/drawerCustom'
@@ -75,7 +75,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
         phone_number: "",
         image_logo: "",
         singkatan: "",
-        tanggal_pkp: moment(new Date()),
+        tanggal_pkp: null,
         penanggung_jawab: "",
         npwp: "",
         fax: "",
@@ -178,7 +178,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
                 return {
                     children:
                         <>
-                            {record.model_inventory.asset.name}
+                            {record.model_inventory.asset.asset_name}
                         </>
                 }
             }
@@ -487,7 +487,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
                     phone_number: res2.data.phone_number,
                     image_logo: res2.data.image_logo === "-" || res2.data.image_logo === "" ? '/default-users.jpeg' : res2.data.image_logo,
                     singkatan: res2.data.singkatan,
-                    tanggal_pkp: res2.data.tanggal_pkp === null ? moment(new Date()) : moment(res2.data.tanggal_pkp),
+                    tanggal_pkp: res2.data.tanggal_pkp === null ? null : moment(res2.data.tanggal_pkp),
                     penanggung_jawab: res2.data.penanggung_jawab,
                     npwp: res2.data.npwp,
                     fax: res2.data.fax,
@@ -625,7 +625,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
                                             <Label>No.Telp</Label>
                                             {
                                                 editable ?
-                                                    <Input name="phone_number" onChange={onChangeInput} prefix={<PhoneIconSvg size={15} />} defaultValue={displaydata.phone_number ?? "-"}></Input>
+                                                    <Input name="phone_number" onChange={onChangeInput} prefix={<PhoneIconSvg size={15} color={`#35763B`} />} defaultValue={displaydata.phone_number ?? "-"}></Input>
                                                     :
                                                     <div className="flex">
                                                         <div className="mr-1">
@@ -635,9 +635,90 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
                                                     </div>
                                             }
                                         </div>
+                                        {
+                                            displaydata.npwp !== "-" &&
+                                            <div className="flex flex-col mb-5">
+                                                <Label>NPWP</Label>
+                                                {
+                                                    editable ?
+                                                        <Input name="npwp" onChange={onChangeInput} defaultValue={displaydata.npwp ?? "-"}></Input>
+                                                        :
+                                                        <p className="mb-0">{displaydata.npwp ?? "-"}</p>
+                                                }
+                                            </div>
+                                        }
+                                        {
+                                            displaydata.tanggal_pkp !== "-" &&
+                                            <div className="flex flex-col mb-5">
+                                                <Label>Tanggal PKP</Label>
+                                                {
+                                                    editable ?
+                                                        <DatePicker onChange={(value, dateString) => {
+                                                            setdisplaydata({ ...displaydata, tanggal_pkp: dateString })
+                                                        }} defaultValue={displaydata.tanggal_pkp === null ? null : moment(displaydata.tanggal_pkp)}></DatePicker>
+                                                        :
+                                                        <p className="mb-0">{displaydata.tanggal_pkp === "-" ? "-" : moment(displaydata.tanggal_pkp).locale("id").format("LL")}</p>
+                                                }
+                                            </div>
+                                        }
+                                        {
+                                            displaydata.email !== "-" &&
+                                            <div className="flex flex-col mb-5">
+                                                <Label>Email</Label>
+                                                {
+                                                    editable ?
+                                                        <Input name="email" onChange={onChangeInput} prefix={<EmailIconSvg size={15} color={`#35763B`} />} defaultValue={displaydata.email ?? "-"}></Input>
+                                                        :
+                                                        <div className="flex">
+                                                            <div className="mr-1">
+                                                                <EmailIconSvg size={20} color={`#35763B`} />
+                                                            </div>
+                                                            <a href={`mailto:${displaydata.email}`} className="text-primary100 hover:text-primary75">{displaydata.email}</a>
+                                                        </div>
+                                                }
+                                            </div>
+                                        }
+                                        {
+                                            displaydata.fax !== "-" &&
+                                            <div className="flex flex-col mb-5">
+                                                <Label>Fax</Label>
+                                                {
+                                                    editable ?
+                                                        <Input name="fax" onChange={onChangeInput} prefix={<FaxIconSvg size={15} color={`#35763B`} />} defaultValue={displaydata.fax ?? "-"}></Input>
+                                                        :
+                                                        <div className="flex">
+                                                            <div className="mr-1">
+                                                                <FaxIconSvg size={20} color={`#35763B`} />
+                                                            </div>
+                                                            <a href={`${displaydata.fax}`} className="text-primary100 hover:text-primary75">{displaydata.fax}</a>
+                                                        </div>
+                                                }
+                                            </div>
+                                        }
+                                        {
+                                            displaydata.website !== "-" &&
+                                            <div className="flex flex-col mb-5">
+                                                <Label>Website</Label>
+                                                {
+                                                    editable ?
+                                                        <Input name="website" onChange={onChangeInput} prefix={<WebIconSvg size={15} color={`#35763B`} />} defaultValue={displaydata.website ?? "-"}></Input>
+                                                        :
+                                                        <div className="flex">
+                                                            <div className="mr-1">
+                                                                <WebIconSvg size={20} color={`#35763B`} />
+                                                            </div>
+                                                            <a href={`${displaydata.website}`} className="text-primary100 hover:text-primary75">{displaydata.website}</a>
+                                                        </div>
+                                                }
+                                            </div>
+                                        }
                                         <div className={`flex flex-col mb-5`}>
                                             <Label>Total Sub-Location Level 1</Label>
                                             <p className="mb-0">{rawdata.sub_location_level_1_count}</p>
+                                        </div>
+                                        <div className={`flex flex-col mb-5`}>
+                                            <Label>Total Sub-Location Level 2</Label>
+                                            <p className="mb-0">{rawdata.sub_location_level_2_count}</p>
                                         </div>
                                         <div className={`flex flex-col mb-5`}>
                                             <Label>Total Sub-Location Level 2</Label>

@@ -100,6 +100,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
     const [defasset, setdefasset] = useState(null)
     const [rowstate, setrowstate] = useState(0)
     const [praloading, setpraloading] = useState(true)
+    const [inputnumberfalse, setinputnumberfalse] = useState(false)
 
     //declaration
     const column = [
@@ -226,8 +227,14 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
             setnamasearchact(false)
         }
         else {
-            setnamasearchact(true)
-            setnamavalue(e.target.value)
+            if (/(^\d*$)/.test(e.target.value)) {
+                setinputnumberfalse(false)
+                setnamasearchact(true)
+                setnamavalue(e.target.value)
+            }
+            else {
+                setinputnumberfalse(true)
+            }
         }
     }
     //search lokasi
@@ -292,7 +299,9 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
         //     })
         // }
         // setdisplaydata(datatemp)
-        window.location.href = `/tickets?ticket_id=${namasearchact ? (namavalue === null ? ticketid1 : namavalue) : ""}&location_id=${lokasifilteract ? (lokasivalue === null ? locationid1 : lokasivalue) : ""}&status=${statusfilteract ? (statusvalue === null ? statusid1 : statusvalue) : ""}&from=${fromact ? (fromvalue === null ? from1 : fromvalue) : ""}&to=${toact ? (tovalue === null ? to1 : tovalue) : ""}`
+        if (inputnumberfalse === false) {
+            window.location.href = `/tickets?ticket_id=${namasearchact ? (namavalue === null ? ticketid1 : namavalue) : ""}&location_id=${lokasifilteract ? (lokasivalue === null ? locationid1 : lokasivalue) : ""}&status=${statusfilteract ? (statusvalue === null ? statusid1 : statusvalue) : ""}&from=${fromact ? (fromvalue === null ? from1 : fromvalue) : ""}&to=${toact ? (tovalue === null ? to1 : tovalue) : ""}`
+        }
         // setpraloading(true)
         // fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?ticket_id=${namasearchact ? namavalue : ""}&location_id=${lokasifilteract ? lokasivalue : ""}&status_id=${statusfilteract ? statusvalue : ""}&from=${rangedatefilteract ? moment(rangedatevalue[0]).locale('id').format('YYYY-MM-DD') : ""}&to=${rangedatefilteract ? moment(rangedatevalue[1]).locale('id').format('YYYY-MM-DD') : ""}`, {
         //     method: `GET`,
@@ -334,8 +343,8 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
             .then(res => res.json())
             .then(res2 => {
                 var status_ticket_map = []
-                if(dataProfile.data.role !== 1){
-                    for(var attr in res2.data.status_ticket){
+                if (dataProfile.data.role !== 1) {
+                    for (var attr in res2.data.status_ticket) {
                         status_ticket_map.push(res2.data.status_ticket[attr])
                     }
                     setticketrelations({
@@ -343,7 +352,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                         status_ticket: status_ticket_map
                     })
                 }
-                else{
+                else {
                     setticketrelations(res2.data)
                 }
                 setdefasset(namaasset)
@@ -427,11 +436,11 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     }
                     {
                         dataProfile.data.role === 1 &&
-                            <Link href={'/tickets/exporting?closed=0'}>
-                                <Button style={{ backgroundColor: `gray`, borderColor: `gray`, marginRight: `1rem` }} size="large" type="primary">
-                                    Export
-                                </Button>
-                            </Link>
+                        <Link href={'/tickets/exporting?closed=0'}>
+                            <Button style={{ backgroundColor: `gray`, borderColor: `gray`, marginRight: `1rem` }} size="large" type="primary">
+                                Export
+                            </Button>
+                        </Link>
                     }
                     <Link href={'/tickets/create'}>
                         <Button size="large" type="primary">
@@ -448,8 +457,9 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                             :
                             <div className="flex mb-8">
                                 <div className=" w-full mr-1 grid grid-cols-12">
-                                    <div className="col-span-3 mr-1">
+                                    <div className="col-span-3 mr-1 flex flex-col">
                                         <Input defaultValue={ticketid1} style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Ticket Number" onChange={onChangeSearch} allowClear></Input>
+                                        {inputnumberfalse && <p className="mb-0 text-xs text-red-400">Ticket number harus angka</p>}
                                     </div>
                                     <div className="col-span-3 mr-1">
                                         <TreeSelect defaultValue={namaasset === "" ? null : Number(defasset)} placeholder="Lokasi Problem" style={{ width: `100%` }} allowClear onChange={(value, label, extra) => {

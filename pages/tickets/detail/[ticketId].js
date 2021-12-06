@@ -308,7 +308,7 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
     }, [])
     useEffect(() => {
         if (selectedasset !== null) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?asset_id=${selectedasset === null ? "" : selectedasset}`, {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?rows=50&location_id=${maindata.ticket.ticketable.location_id !== null ? maindata.ticket.ticketable.location_id : ``}&asset_id=${selectedasset === null ? "" : selectedasset}`, {
                 method: `GET`,
                 headers: {
                     'Authorization': JSON.parse(initProps),
@@ -410,18 +410,18 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
                         </div>
                         :
                         <div className="mb-8 w-10/12 flex flex-col">
-                            <div className="border shadow-md rounded-md flex flex-col p-5 mb-3">
+                            {/* <div className="border shadow-md rounded-md flex flex-col p-5 mb-3">
                                 <div className="flex justify-between">
                                     <div className="flex flex-col mt-3 mb-5">
                                         <h1 className=" text-sm font-semibold mb-0">Item:</h1>
                                         <p className="mb-0 text-sm">{connecteditem.inventory_name ?? ""}</p>
                                     </div>
-                                    <div className="flex items-center">
-                                        <Button onClick={() => { setmodalconnecteditem(true) }}>Ganti Item</Button>
-                                    </div>
                                 </div>
-                            </div>
-                            <div className="border shadow-md rounded-md flex flex-col p-5 mb-5">
+                            </div> */}
+                            <div className="border shadow-md rounded-md flex flex-col p-5 mb-5 relative">
+                                <div className="flex items-center absolute right-8 top-8">
+                                    <Button onClick={() => { setmodalconnecteditem(true) }}>Ganti Item</Button>
+                                </div>
                                 <div className="flex flex-col mt-3 mb-5">
                                     <h1 className=" text-sm font-semibold mb-0">Model:</h1>
                                     <p className="mb-0 text-sm">{connecteditem.model_inventory.name ?? "-"}</p>
@@ -480,7 +480,7 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
                                 </div>
                                 <div className="flex flex-col mt-3 mb-5">
                                     <h1 className=" text-sm font-semibold mb-0">Serial Number:</h1>
-                                    <p className="mb-0 text-sm">{connecteditem.serial_number === "" ? "-" : connecteditem.serial_number}</p>
+                                    <p className="mb-0 text-sm">{connecteditem.serial_number === null ? "-" : connecteditem.serial_number}</p>
                                 </div>
                                 <div className="flex flex-col mt-3 mb-5">
                                     <h1 className=" text-sm font-semibold mb-0">Location:</h1>
@@ -488,7 +488,7 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
                                 </div>
                                 <div className="flex flex-col mt-3 mb-5">
                                     <h1 className=" text-sm font-semibold mb-0">Deskripsi:</h1>
-                                    <p className="mb-0 text-sm">{connecteditem.deskripsi === "" ? "-" : connecteditem.deskripsi}</p>
+                                    <p className="mb-0 text-sm">{connecteditem.deskripsi === null || connecteditem.deskripsi === "" ? "-" : connecteditem.deskripsi}</p>
                                 </div>
                             </div>
                         </div>
@@ -529,7 +529,7 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
                         <p className="mb-0">Item <span className="itemitem"></span></p>
                         <Select disabled={selectedasset === null} value={selecteditem} notFoundContent={fetchingpart ? <Spin size="small" /> : null} onSearch={(value) => {
                             setfetchingpart(true)
-                            fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?rows=50&asset_id=${selectedasset === null ? "" : selectedasset}&name=${value !== "" ? value : ""}`, {
+                            fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?rows=50&location_id=${maindata.ticket.ticketable.location_id !== null ? maindata.ticket.ticketable.location_id : ``}&asset_id=${selectedasset === null ? "" : selectedasset}&mig_id=${value !== "" ? value : ""}`, {
                                 method: `GET`,
                                 headers: {
                                     'Authorization': JSON.parse(initProps),
@@ -546,7 +546,7 @@ const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, main
                             {
                                 itemdata.map((doc, idx) => {
                                     return (
-                                        <Select.Option value={doc.id}>{doc.inventory_name}</Select.Option>
+                                        <Select.Option value={doc.id}>{doc.mig_id}</Select.Option>
                                     )
                                 })
                             }

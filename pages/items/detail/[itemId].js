@@ -2198,7 +2198,10 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                     <Sticky containerSelectorFocus="#createAgentsWrapper">
                         <div className=" col-span-4 flex justify-between py-5 px-4 border-t border-b bg-white">
                             <div className="flex items-center">
-                                <h1 className="font-semibold py-2 text-2xl mb-0 mr-20">{maindata.mig_id}</h1>
+                                <div className="flex flex-col">
+                                    <p className=" text-gray-400 mb-0">MIG ID:</p>
+                                    <h1 className="font-semibold py-2 text-2xl mb-0 mr-20">{maindata.mig_id}</h1>
+                                </div>
                                 {
                                     praloading ?
                                         null

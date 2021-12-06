@@ -3,7 +3,7 @@ import { Drawer } from 'antd'
 import ButtonSys from '../button'
 import { CheckIconSvg } from '../icon'
 
-const DrawerCore = ({ title, visible, onClose, children, buttonOkText, onClick }) => {
+const DrawerCore = ({ title, visible, onClose, children, buttonOkText, onClick, disabled }) => {
     return (
         <Drawer
             title={title}
@@ -14,7 +14,7 @@ const DrawerCore = ({ title, visible, onClose, children, buttonOkText, onClick }
             width={420}
             footer={
                 <div style={{ textAlign: 'right' }}>
-                    <ButtonSys type="primary" onClick={onClick}>
+                    <ButtonSys disabled={disabled} type="primary" onClick={onClick}>
                         <CheckIconSvg size={15} color="#FFFFFF" />
                         {buttonOkText}
                     </ButtonSys>

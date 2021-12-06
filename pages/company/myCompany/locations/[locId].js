@@ -178,7 +178,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                 return {
                     children:
                         <>
-                            {record.model_inventory.asset.name}
+                            {record.model_inventory.asset.asset_name}
                         </>
                 }
             }

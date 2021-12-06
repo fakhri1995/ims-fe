@@ -15,7 +15,7 @@ function ModalEdit({ title, visible, onOk, onCancel, footer, loading, children }
             footer={footer}
             loading={loading}
         >
-            Apakah anda yakin ingin menghapus Perusahan ini?`
+            Apakah anda yakin ingin mengubah profil Perusahan ini?`
         </ModalCore>
     )
 }

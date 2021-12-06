@@ -252,14 +252,15 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
                                         {
                                             filesupload.map((docfile, idxfile) => {
                                                 return (
-                                                    <div key={idxfile} className="border border-dashed px-8 py-4 flex justify-between items-center w-6/12 mb-1 relative cursor-pointer hover:text-blue-500">
-                                                        <div className="mr-5 flex items-center">
-                                                            <img src={docfile.url} alt="imageProfile" className=" object-cover w-16 h-16 mr-10" />
-                                                            {/* {docfile.type === "application/pdf" && <img src="/image/pdfIcon.png" alt="selected images" className="object-contain w-16 h-16 mr-10" />}
+                                                    <div key={idxfile} className="border border-dashed px-8 py-4 flex justify-between items-center w-6/12 mb-1 relative hover:text-blue-500">
+                                                        <a href={docfile.url} target="_blank">
+                                                            <div className="mr-5 flex items-center cursor-pointer text-black hover:text-blue-500">
+                                                                <img src={docfile.url} alt="imageProfile" className=" object-cover w-16 h-16 mr-10" />
+                                                                {/* {docfile.type === "application/pdf" && <img src="/image/pdfIcon.png" alt="selected images" className="object-contain w-16 h-16 mr-10" />}
                                                             {docfile.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && <img src="/image/wordIcon.png" alt="selected image" className="object-contain w-16 h-16 mr-10" />}
                                                             {docfile.type === "image/jpeg" && <img src={URL.createObjectURL(docfile)} alt="selected image" className="object-contain w-16 h-16 mr-10" />} */}
-                                                            <p className="mb-0 mr-3">{docfile.name}</p>
-                                                            {/* <div className="w-10 h-10 absolute z-10 left-0 top-0 bg-black opacity-50 flex items-center justify-center">
+                                                                <p className="mb-0 mr-3">{docfile.name}</p>
+                                                                {/* <div className="w-10 h-10 absolute z-10 left-0 top-0 bg-black opacity-50 flex items-center justify-center">
                                                                 <DeleteOutlined style={{ color: `white`, cursor: `pointer` }} onClick={() => {
                                                                     setnewdata(prev => {
                                                                         var temp = prev
@@ -270,7 +271,8 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                                     setuploaddeletetrigger(prev => prev + 1)
                                                                 }} />
                                                             </div> */}
-                                                        </div>
+                                                            </div>
+                                                        </a>
                                                         <div className="flex items-center">
                                                             <Popconfirm
                                                                 title="Yakin ingin menghapus bukti incident ini?"
@@ -285,7 +287,7 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                                 okText="Ya"
                                                                 cancelText="Tidak"
                                                             >
-                                                                <DeleteOutlined style={{ color: `red`, cursor: `pointer`, fontSize:`1.5rem` }} />
+                                                                <DeleteOutlined style={{ color: `red`, cursor: `pointer`, fontSize: `1.5rem` }} />
                                                             </Popconfirm>
                                                         </div>
                                                     </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import DrawerCore from './drawerCore'
 import { AtmBank } from '../atm'
-import { DateRequired, InputRequired, RadioRequired, TreeSelectRequired } from '../input'
+import { DateNotRequired, DateRequired, InputNotRequired, InputRequired, RadioRequired, TreeSelectRequired } from '../input'
 import { Spin, notification, Input, Select, TreeSelect } from 'antd'
 import { CameraIconSvg, EmailIconSvg, FaxIconSvg, NotesIconSvg, PkpIconSvg, RefreshIconSvg, SquarePlusIconSvg, WebIconSvg } from '../icon'
 import { useRouter } from 'next/router'
@@ -454,7 +454,7 @@ const DrawerLokasi = ({ title, visible, onClose, children, buttonOkText, initPro
     )
 }
 
-const DrawerLokasiClient = ({ title, visible, onClose, children, buttonOkText, initProps, onvisible }) => {
+const DrawerLokasiClient = ({ title, visible, onClose, children, buttonOkText, initProps, onvisible, displaydata }) => {
     const rt = useRouter()
     const [createdata, setcreatedata] = useState({
         name: '',
@@ -480,8 +480,17 @@ const DrawerLokasiClient = ({ title, visible, onClose, children, buttonOkText, i
         fax: false,
         tanggal_pkp: false
     })
+    const [disabledsave, setdisabledsave] = useState(true)
+    const [disabledtrigger, setdisabledtrigger] = useState(-1)
 
     const onChangeInput = (e) => {
+        setcreatedata({
+            ...createdata,
+            [e.target.name]: e.target.value
+        })
+        setdisabledtrigger(prev => prev + 1)
+    }
+    const onChangeInputNotRequired = (e) => {
         setcreatedata({
             ...createdata,
             [e.target.name]: e.target.value
@@ -530,7 +539,7 @@ const DrawerLokasiClient = ({ title, visible, onClose, children, buttonOkText, i
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/company/clients/locations`)
+                        rt.push(`/company/clients/locations?id=${displaydata.id}&company_name=${displaydata.name}`)
                     }, 500)
                 }
                 else {
@@ -553,6 +562,16 @@ const DrawerLokasiClient = ({ title, visible, onClose, children, buttonOkText, i
                 settreedata([res2.data])
             })
     }, [lokasiloading])
+    useEffect(()=>{
+        if(disabledtrigger !== -1){
+            if(createdata.parent_id !== null && createdata.name !== "" && createdata.address !== "" && createdata.phone_number !== "" && createdata.penanggung_jawab !== ""){
+                setdisabledsave(false)
+            }
+            else{
+                setdisabledsave(true)
+            }
+        }
+    },[disabledtrigger])
     return (
         <DrawerCore
             title={title}
@@ -560,6 +579,7 @@ const DrawerLokasiClient = ({ title, visible, onClose, children, buttonOkText, i
             onClose={onClose}
             buttonOkText={buttonOkText}
             onClick={handleCreateLokasi}
+            disabled={disabledsave}
         >
             <Spin spinning={lokasiloading}>
                 <div className="flex flex-col">
@@ -597,11 +617,11 @@ const DrawerLokasiClient = ({ title, visible, onClose, children, buttonOkText, i
                         <InputRequired name="address" onChangeInput={onChangeInput} label="Alamat Lokasi"></InputRequired>
                         <InputRequired name="phone_number" onChangeInput={onChangeInput} label="Nomor Telepon"></InputRequired>
                         <InputRequired name="penanggung_jawab" onChangeInput={onChangeInput} label="Penanggung Jawab (PIC)"></InputRequired>
-                        {dynamicattr.email && <InputRequired name="email" onChangeInput={onChangeInput} label="Email"></InputRequired>}
-                        {dynamicattr.website && <InputRequired name="website" onChangeInput={onChangeInput} label="Website"></InputRequired>}
-                        {dynamicattr.npwp && <InputRequired name="npwp" onChangeInput={onChangeInput} label="NPWP"></InputRequired>}
-                        {dynamicattr.fax && <InputRequired name="fax" onChangeInput={onChangeInput} label="Fax"></InputRequired>}
-                        {dynamicattr.tanggal_pkp && <DateRequired name="tanggal_pkp" onChangeDate={onchangeDate} label="Tanggal PKP" defaultValue={createdata.tanggal_pkp === "" ? null : moment(createdata.tanggal_pkp)}></DateRequired>}
+                        {dynamicattr.email && <InputNotRequired name="email" onChangeInput={onChangeInputNotRequired} label="Email"></InputNotRequired>}
+                        {dynamicattr.website && <InputNotRequired name="website" onChangeInput={onChangeInputNotRequired} label="Website"></InputNotRequired>}
+                        {dynamicattr.npwp && <InputNotRequired name="npwp" onChangeInput={onChangeInputNotRequired} label="NPWP"></InputNotRequired>}
+                        {dynamicattr.fax && <InputNotRequired name="fax" onChangeInput={onChangeInputNotRequired} label="Fax"></InputNotRequired>}
+                        {dynamicattr.tanggal_pkp && <DateNotRequired name="tanggal_pkp" onChangeDate={onchangeDate} label="Tanggal PKP" defaultValue={createdata.tanggal_pkp === null ? null : moment(createdata.tanggal_pkp)}></DateNotRequired>}
                     </div>
                     <div className="mb-5 flex flex-col">
                         <div className="mb-3">

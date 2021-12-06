@@ -17,6 +17,9 @@ import { Pie } from 'react-chartjs-2';
 const Index3 = ({ initProps, dataProfile, sidemenu }) => {
     const rt = useRouter()
     var activeTab = "profile"
+    var temp2 = rt.pathname.split("/").slice(1)
+    temp2.splice(0, 1)
+    temp2[temp2.length - 1] = dataProfile.data.company.name
     const { active, id } = rt.query
 
     if (active) {
@@ -62,8 +65,9 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
     const [branchdata, setbranchdata] = useState([])
     const [branchdata2, setbranchdata2] = useState([])
     const [expandedkeys, setexpandedkeys] = useState([])
-    const [sortednum, setsortednum] = useState(-10)
+    const [sortedname, setsortedname] = useState("A-Z")
     const [sorted, setsorted] = useState(false)
+    const [sortedbtn, setsortedbtn] = useState(false)
     const [selected, setselected] = useState(false)
     const [idselected, setidselected] = useState(null)
     const [loadingselected, setloadingselected] = useState(false)
@@ -95,9 +99,11 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
     const onSortLoc = async (value) => {
         setpraloading(true)
         sorted === -1 ? setsorted(true) : setsorted(value)
+        setsortedbtn(true)
         if (value === true) {
             var temp = await branchdata.sort((a, b) => a.title > b.title ? 1 : -1)
             setbranchdata(temp)
+            setsortedname("A-Z")
         }
         else {
             fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.company.role !== 2 ? `getMainLocations` : `getLocations?company_id=${dataProfile.data.company.company_id}`}`, {
@@ -108,7 +114,15 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
             })
                 .then(res => res.json())
                 .then(res2 => {
-                    res2.data.children ? setbranchdata(res2.data.children) : setbranchdata([])
+                    // res2.data.children ? setbranchdata(res2.data.children) : setbranchdata([])
+                    if(res2.data.children){
+                        var temp = res2.data.children.sort((a, b) => a.title < b.title ? 1 : -1)
+                        setbranchdata(temp)
+                        setsortedname("Z-A")
+                    }
+                    else{
+                        setbranchdata([])
+                    }
                 })
         }
         setpraloading(false)
@@ -258,36 +272,6 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
 
     //USE EFECT
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyDetail?id=${dataProfile.data.company.id}`, {
-            method: `GET`,
-            headers: {
-                'Authorization': JSON.parse(initProps),
-            },
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                var temp2 = rt.pathname.split("/").slice(1)
-                temp2[temp2.length - 1] = res2.data.name
-                setpatharr(temp2)
-                setrawdata(res2.data)
-                setdisplaydata({
-                    id: res2.data.id,
-                    name: res2.data.name,
-                    address: res2.data.address,
-                    phone_number: res2.data.phone_number,
-                    image_logo: res2.data.image_logo === "-" || res2.data.image_logo === "" ? '/default-users.jpeg' : res2.data.image_logo,
-                    singkatan: res2.data.singkatan,
-                    tanggal_pkp: res2.data.tanggal_pkp === null ? moment(new Date()) : moment(res2.data.tanggal_pkp),
-                    penanggung_jawab: res2.data.penanggung_jawab,
-                    npwp: res2.data.npwp,
-                    fax: res2.data.fax,
-                    email: res2.data.email,
-                    website: res2.data.website,
-                })
-                setisenabled(res2.data.is_enabled)
-            })
-    }, [])
-    useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.company.role !== 2 ? `getMainLocations` : `getLocations?company_id=${dataProfile.data.company.company_id}`}`, {
             method: `GET`,
             headers: {
@@ -314,13 +298,16 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
             })
                 .then(res => res.json())
                 .then(res2 => {
-                    setselecteddata(res2.data)
+                    setselecteddata({
+                        ...res2.data,
+                        image_logo: res2.data.image_logo === "-" || res2.data.image_logo === "" ? '/default-users.jpeg' : res2.data.image_logo
+                    })
                     setloadingselected(false)
                 })
         }
     }, [idselected])
     return (
-        <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={patharr} st={st}>
+        <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={temp2} st={st}>
             <div className="grid grid-cols-12">
                 <div className="col-span-6 flex flex-col m-3">
                     <div className="flex justify-around mb-5">
@@ -328,9 +315,9 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                             <Input placeholder="Cari Lokasi" style={{ backgroundColor: `transparent` }} onChange={onChangeFilterAsset} />
                         </div>
                         <div className="mx-0">
-                            <Buttonsys type="ghost" selected={sorted === true ? true : false} onClick={() => { onSortLoc(sorted === -1 ? true : !sorted) }}>
+                            <Buttonsys type="ghost" selected={sortedbtn === true ? true : false} onClick={() => { onSortLoc(sorted === -1 ? true : !sorted) }}>
                                 <SortingIconSvg size={12} color={`#35763B`} />
-                                Urutkan: A-Z
+                                Urutkan: {sortedname}
                             </Buttonsys>
                         </div>
                         <div className="mx-0">
@@ -339,7 +326,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                             </Buttonsys>
                         </div>
                     </div>
-                    <div className="flex flex-col">
+                    <div className="flex flex-col max-h-screen overflow-auto">
                         {
                             praloading ?
                                 <>

@@ -703,7 +703,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                     <div className="flex flex-col shadow-md rounded-md bg-white p-8 mb-5 mx-2">
                         <div className="flex justify-between items-center">
                             <H1>Lokasi</H1>
-                            <div onClick={() => { rt.push(`/company/clients/locations?id=${displaydata.id}`) }}>
+                            <div onClick={() => { rt.push(`/company/clients/locations?id=${displaydata.id}&company_name=${displaydata.name}`) }}>
                                 <Label color="green" cursor="pointer">Lihat Semua</Label>
                             </div>
                         </div>

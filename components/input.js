@@ -22,6 +22,17 @@ const InputRequired = ({ label, name, defaultValue, onChangeInput, value }) => {
     )
 }
 
+const InputNotRequired = ({ label, name, defaultValue, onChangeInput, value }) => {
+    return (
+        <div className="flex flex-col mb-5 px-3">
+            <div className="flex">
+                <Label>{label}</Label>
+            </div>
+            <Input name={name} defaultValue={defaultValue} value={value} onChange={onChangeInput}></Input>
+        </div>
+    )
+}
+
 const TreeSelectRequired = ({ label, name, defaultValue, onChangeTreeselect, value, treeData, allowClear }) => {
     return (
         <div className="flex flex-col mb-5 px-3">
@@ -85,6 +96,18 @@ const DateRequired = ({ label, name, defaultValue, onChangeDate, value, children
         </div>
     )
 }
+const DateNotRequired = ({ label, name, defaultValue, onChangeDate, value, children }) => {
+    return (
+        <div className="flex flex-col mb-5 px-3">
+            <div className="flex">
+                <Label>{label}</Label>
+            </div>
+            <DatePicker name={name} defaultValue={defaultValue} value={value} onChange={onChangeDate}>
+                {children}
+            </DatePicker>
+        </div>
+    )
+}
 
 const RadioRequired = ({ label, name, onChangeRadio, options, value, defaultValue }) => {
     return (
@@ -118,5 +141,5 @@ const RadioRequired = ({ label, name, onChangeRadio, options, value, defaultValu
 }
 
 export {
-    InputRequired, RadioRequired, SelectRequired, TreeSelectRequired, DateRequired
+    InputRequired, InputNotRequired, RadioRequired, SelectRequired, TreeSelectRequired, DateRequired, DateNotRequired
 }
