@@ -6,12 +6,13 @@ import st from '../../../../components/layout-dashboard.module.css'
 import { Tree, Input, Form, Spin, notification, Empty } from 'antd'
 import Buttonsys from '../../../../components/button'
 import { H1, Text, Label, LabelDark } from '../../../../components/typography'
-import { EditIconSvg, PhoneIconSvg, SortingIconSvg, TrashIconSvg, CheckIconSvg, LocationIconSvg, CameraIconSvg, ExternalLinkIconSvg, MoveIconSvg, BackIconSvg } from '../../../../components/icon'
+import { EditIconSvg, PhoneIconSvg, SortingIconSvg, TrashIconSvg, CheckIconSvg, LocationIconSvg, CameraIconSvg, ExternalLinkIconSvg, MoveIconSvg, BackIconSvg, RefreshIconSvg, EmailIconSvg, SquarePlusIconSvg, WebIconSvg, NotesIconSvg, FaxIconSvg, PkpIconSvg } from '../../../../components/icon'
 import moment from 'moment'
 import { ModalEdit, ModalHapusInventoryExist, ModalHapusLokasiCekChild, ModalHapusLokasiConfirm, ModalHapusLokasiMoveChild } from '../../../../components/modal/modalCustom'
 import { DrawerSublokasi } from '../../../../components/drawer/drawerCustom'
 import { TableCustom } from '../../../../components/table/tableCustom'
-import { DownOutlined } from '@ant-design/icons'
+import { DownOutlined, LoadingOutlined } from '@ant-design/icons'
+import { InputNotRequired, DateNotRequired } from '../../../../components/input'
 
 function modifData(dataa) {
     for (var i = 0; i < dataa.length; i++) {
@@ -75,7 +76,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
         phone_number: "",
         image_logo: "",
         singkatan: "",
-        tanggal_pkp: moment(new Date()),
+        tanggal_pkp: null,
         penanggung_jawab: "",
         npwp: "",
         fax: "",
@@ -89,6 +90,14 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
     const [modaledit, setmodaledit] = useState(false)
     const [praloadingedit, setpraloadingedit] = useState(true)
     const [editloading, seteditloading] = useState(false)
+    const [loadingfoto, setloadingfoto] = useState(false)
+    const [dynamicattr, setdynamicattr] = useState({
+        email: false,
+        website: false,
+        npwp: false,
+        fax: false,
+        tanggal_pkp: false
+    })
     //ITEMS
     const [rawitems, setrawitems] = useState({
         current_page: "",
@@ -111,7 +120,9 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
     //SUB LOKASI
     const [subloc, setsubloc] = useState([])
     const [induksubloc, setinduksubloc] = useState([])
+    const [sortedname, setsortedname] = useState("A-Z")
     const [sorted, setsorted] = useState(-1)
+    const [sortedbtn, setsortedbtn] = useState(false)
     const [loadingsorted, setloadingsorted] = useState(true)
     const [expandedkeys, setexpandedkeys] = useState([])
     const [selectedsubloc, setselectedsubloc] = useState(false)
@@ -216,12 +227,23 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
             [e.target.name]: e.target.value
         })
     }
+    const onChangeInputNotRequired = (e) => {
+        setdisplaydata({
+            ...displaydata,
+            [e.target.name]: e.target.value
+        })
+    }
+    const onchangeDate = (date, datestring) => {
+        setdisplaydata({ ...displaydata, tanggal_pkp: datestring })
+    }
     const onSortSubLoc = async (value) => {
         setloadingsorted(true)
         sorted === -1 ? setsorted(true) : setsorted(value)
+        setsortedbtn(true)
         if (value === true) {
             var temp = await subloc.sort((a, b) => a.title > b.title ? 1 : -1)
             setsubloc(temp)
+            setsortedname("A-Z")
         }
         else {
             fetch(`https://boiling-thicket-46501.herokuapp.com/getSubCompanyDetail?id=${locid}`, {
@@ -232,8 +254,15 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
             })
                 .then(res => res.json())
                 .then(res2 => {
-                    const childmap = modifData(res2.data.sub_children)
-                    setsubloc(childmap)
+                    if (res2.data.sub_children) {
+                        const childmap = modifData(res2.data.sub_children)
+                        var temp = childmap.sort((a, b) => a.title < b.title ? 1 : -1)
+                        setsubloc(temp)
+                        setsortedname("Z-A")
+                    }
+                    else {
+                        setsubloc([])
+                    }
                 })
         }
         setloadingsorted(false)
@@ -251,6 +280,20 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                 setitems(res2.data.data)
                 setpraloadingitem(false)
             })
+    }
+    const onChangeGambar = async (e) => {
+        setloadingfoto(true)
+        const foto = e.target.files
+        const formdata = new FormData()
+        formdata.append('file', foto[0])
+        formdata.append('upload_preset', 'migsys')
+        const fetching = await fetch(`https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`, {
+            method: 'POST',
+            body: formdata
+        })
+        const datajson = await fetching.json()
+        setdisplaydata({ ...displaydata, image_logo: datajson.secure_url })
+        setloadingfoto(false)
     }
     const handleEdit = () => {
         seteditloading(true)
@@ -487,12 +530,19 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                     phone_number: res2.data.phone_number,
                     image_logo: res2.data.image_logo === "-" || res2.data.image_logo === "" ? '/default-users.jpeg' : res2.data.image_logo,
                     singkatan: res2.data.singkatan,
-                    tanggal_pkp: res2.data.tanggal_pkp === null ? moment(new Date()) : moment(res2.data.tanggal_pkp),
+                    tanggal_pkp: res2.data.tanggal_pkp === null ? null : moment(res2.data.tanggal_pkp),
                     penanggung_jawab: res2.data.penanggung_jawab,
                     npwp: res2.data.npwp,
                     fax: res2.data.fax,
                     email: res2.data.email,
                     website: res2.data.website,
+                })
+                setdynamicattr({
+                    email: res2.data.email !== "-" ? true : false,
+                    website: res2.data.website !== "-" ? true : false,
+                    npwp: res2.data.npwp !== "-" ? true : false,
+                    fax: res2.data.fax !== "-" ? true : false,
+                    tanggal_pkp: res2.data.tanggal_pkp !== "-" ? true : false,
                 })
                 settipe(res2.data.level)
                 setisenabled(res2.data.is_enabled)
@@ -547,9 +597,18 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                     </div>
                                     <div className="mt-14 flex flex-col justify-center text-center">
                                         {
+                                            editable &&
+                                            <div className="flex mx-auto mb-5">
+                                                <Buttonsys type="primaryInput" onChangeGambar={onChangeGambar}>
+                                                    {loadingfoto ? <LoadingOutlined style={{ marginRight: `0.5rem` }} /> : <RefreshIconSvg size={15} color={`#ffffff`} />}
+                                                    Atur Ulang
+                                                </Buttonsys>
+                                            </div>
+                                        }
+                                        {
                                             editable ?
                                                 <div className={`flex flex-col px-5`}>
-                                                    <div className="flex">
+                                                    <div className="flex justify-center">
                                                         <Label>Nama {tipe === 1 ? `Lokasi` : `Sublokasi`}</Label>
                                                         <span className="namaField"></span>
                                                         <style jsx>
@@ -586,7 +645,8 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                                 </div>
                                                 <div className="mx-1" onClick={() => { }}>
                                                     <Buttonsys type="primary" submit={true} onClick={() => { instanceForm.submit(); setmodaledit(true) }}>
-                                                        X Simpan
+                                                        <CheckIconSvg size={15} color={`#ffffff`} />
+                                                        Simpan
                                                     </Buttonsys>
                                                 </div>
                                             </div>
@@ -625,7 +685,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                             <Label>No.Telp</Label>
                                             {
                                                 editable ?
-                                                    <Input name="phone_number" onChange={onChangeInput} prefix={<PhoneIconSvg size={15} />} defaultValue={displaydata.phone_number ?? "-"}></Input>
+                                                    <Input name="phone_number" onChange={onChangeInput} prefix={<PhoneIconSvg size={15} color={`#35763B`} />} defaultValue={displaydata.phone_number ?? "-"}></Input>
                                                     :
                                                     <div className="flex">
                                                         <div className="mr-1">
@@ -635,6 +695,164 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                                     </div>
                                             }
                                         </div>
+                                        {
+                                            displaydata.npwp !== "-" &&
+                                            <div className="flex flex-col mb-5">
+                                                {
+                                                    !editable &&
+                                                    <>
+                                                        <Label>NPWP</Label>
+                                                        <p className="mb-0">{displaydata.npwp ?? "-"}</p>
+                                                    </>
+                                                }
+                                            </div>
+                                        }
+                                        {
+                                            displaydata.tanggal_pkp !== "-" &&
+                                            <div className="flex flex-col mb-5">
+                                                {
+                                                    !editable &&
+                                                    <>
+                                                        <Label>Tanggal PKP</Label>
+                                                        <p className="mb-0">{displaydata.tanggal_pkp === "-" ? "-" : moment(displaydata.tanggal_pkp).locale("id").format("LL")}</p>
+                                                    </>
+                                                }
+                                            </div>
+                                        }
+                                        {
+                                            displaydata.email !== "-" &&
+                                            <div className="flex flex-col mb-5">
+                                                {
+                                                    !editable &&
+                                                    <>
+                                                        <Label>Email</Label>
+                                                        <div className="flex">
+                                                            <div className="mr-1">
+                                                                <EmailIconSvg size={20} color={`#35763B`} />
+                                                            </div>
+                                                            <a href={`mailto:${displaydata.email}`} className="text-primary100 hover:text-primary75">{displaydata.email}</a>
+                                                        </div>
+                                                    </>
+                                                }
+                                            </div>
+                                        }
+                                        {
+                                            displaydata.fax !== "-" &&
+                                            <div className="flex flex-col mb-5">
+                                                {
+                                                    !editable &&
+                                                    <>
+                                                        <Label>Fax</Label>
+                                                        <div className="flex">
+                                                            <div className="mr-1">
+                                                                <FaxIconSvg size={20} color={`#35763B`} />
+                                                            </div>
+                                                            <a href={`${displaydata.fax}`} className="text-primary100 hover:text-primary75">{displaydata.fax}</a>
+                                                        </div>
+                                                    </>
+                                                }
+                                            </div>
+                                        }
+                                        {
+                                            displaydata.website !== "-" &&
+                                            <div className="flex flex-col mb-5">
+                                                {
+                                                    !editable &&
+                                                    <>
+                                                        <Label>Website</Label>
+                                                        <div className="flex">
+                                                            <div className="mr-1">
+                                                                <WebIconSvg size={20} color={`#35763B`} />
+                                                            </div>
+                                                            <a href={`${displaydata.website}`} className="text-primary100 hover:text-primary75">{displaydata.website}</a>
+                                                        </div>
+                                                    </>
+                                                }
+                                            </div>
+                                        }
+                                        {
+                                            editable &&
+                                            <>
+                                                {dynamicattr.email && <InputNotRequired name="email" onChangeInput={onChangeInputNotRequired} defaultValue={displaydata.email} label="Email"></InputNotRequired>}
+                                                {dynamicattr.website && <InputNotRequired name="website" onChangeInput={onChangeInputNotRequired} defaultValue={displaydata.website} label="Website"></InputNotRequired>}
+                                                {dynamicattr.npwp && <InputNotRequired name="npwp" onChangeInput={onChangeInputNotRequired} defaultValue={displaydata.npwp} label="NPWP"></InputNotRequired>}
+                                                {dynamicattr.fax && <InputNotRequired name="fax" onChangeInput={onChangeInputNotRequired} defaultValue={displaydata.fax} label="Fax"></InputNotRequired>}
+                                                {dynamicattr.tanggal_pkp && <DateNotRequired name="tanggal_pkp" onChangeDate={onchangeDate} label="Tanggal PKP" defaultValue={displaydata.tanggal_pkp === null ? null : moment(displaydata.tanggal_pkp)}></DateNotRequired>}
+                                            </>
+                                        }
+                                        {
+                                            editable &&
+                                            <div className="mb-5 flex flex-col">
+                                                <div className="mb-3">
+                                                    <Label>Informasi Tambahan</Label>
+                                                </div>
+                                                {!dynamicattr.email &&
+                                                    <div className="flex justify-between mb-3">
+                                                        <div className="flex items-center">
+                                                            <div className="mr-2">
+                                                                <EmailIconSvg size={18} color={`#808080`} />
+                                                            </div>
+                                                            Email
+                                                        </div>
+                                                        <div className="cursor-pointer" onClick={() => { setdynamicattr({ ...dynamicattr, email: true }) }}>
+                                                            <SquarePlusIconSvg size={18} color={`#808080`} />
+                                                        </div>
+                                                    </div>
+                                                }
+                                                {!dynamicattr.website &&
+                                                    <div className="flex justify-between mb-3">
+                                                        <div className="flex items-center">
+                                                            <div className="mr-2">
+                                                                <WebIconSvg size={18} color={`#808080`} />
+                                                            </div>
+                                                            Website
+                                                        </div>
+                                                        <div className="cursor-pointer" onClick={() => { setdynamicattr({ ...dynamicattr, website: true }) }}>
+                                                            <SquarePlusIconSvg size={18} color={`#808080`} />
+                                                        </div>
+                                                    </div>
+                                                }
+                                                {!dynamicattr.npwp &&
+                                                    <div className="flex justify-between mb-3">
+                                                        <div className="flex items-center">
+                                                            <div className="mr-2">
+                                                                <NotesIconSvg size={18} color={`#808080`} />
+                                                            </div>
+                                                            NPWP
+                                                        </div>
+                                                        <div className="cursor-pointer" onClick={() => { setdynamicattr({ ...dynamicattr, npwp: true }) }}>
+                                                            <SquarePlusIconSvg size={18} color={`#808080`} />
+                                                        </div>
+                                                    </div>
+                                                }
+                                                {!dynamicattr.fax &&
+                                                    <div className="flex justify-between mb-3">
+                                                        <div className="flex items-center">
+                                                            <div className="mr-2">
+                                                                <FaxIconSvg size={18} color={`#808080`} />
+                                                            </div>
+                                                            Fax
+                                                        </div>
+                                                        <div className="cursor-pointer" onClick={() => { setdynamicattr({ ...dynamicattr, fax: true }) }}>
+                                                            <SquarePlusIconSvg size={18} color={`#808080`} />
+                                                        </div>
+                                                    </div>
+                                                }
+                                                {!dynamicattr.tanggal_pkp &&
+                                                    <div className="flex justify-between mb-3">
+                                                        <div className="flex items-center">
+                                                            <div className="mr-2">
+                                                                <PkpIconSvg size={18} color={`#808080`} />
+                                                            </div>
+                                                            Tanggal PKP
+                                                        </div>
+                                                        <div className="cursor-pointer" onClick={() => { setdynamicattr({ ...dynamicattr, tanggal_pkp: true }) }}>
+                                                            <SquarePlusIconSvg size={18} color={`#808080`} />
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
                                         <div className={`flex flex-col mb-5`}>
                                             <Label>Total Sub-Location Level 1</Label>
                                             <p className="mb-0">{rawdata.sub_location_level_1_count}</p>
@@ -813,9 +1031,9 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                     <Input placeholder="Cari Sublokasi" style={{ backgroundColor: `transparent` }} onChange={onChangeFilterSubLoc} />
                                 </div>
                                 <div className="mx-0">
-                                    <Buttonsys type="ghost" selected={sorted === true ? true : false} onClick={() => { onSortSubLoc(sorted === -1 ? true : !sorted) }}>
+                                    <Buttonsys type="ghost" selected={sortedbtn === true ? true : false} onClick={() => { onSortSubLoc(sorted === -1 ? true : !sorted) }}>
                                         <SortingIconSvg size={12} color={`#35763B`} />
-                                        Urutkan: A-Z
+                                        Urutkan: {sortedname}
                                     </Buttonsys>
                                 </div>
                                 <div className="mx-0">

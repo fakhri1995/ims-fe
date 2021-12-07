@@ -61,9 +61,8 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
     const [namavalue, setnamavalue] = useState("")
     const [rowstate, setrowstate] = useState(0)
     const [praloading, setpraloading] = useState(true)
-    const [dummies, setdummies] = useState([])
+    const [inputnumberfalse, setinputnumberfalse] = useState(false)
 
-    //declaration
     //declaration
     const datatableDummies = [
         {
@@ -174,8 +173,14 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
             setnamasearchact(false)
         }
         else {
-            setnamasearchact(true)
-            setnamavalue(e.target.value)
+            if (/(^\d*$)/.test(e.target.value)) {
+                setinputnumberfalse(false)
+                setnamasearchact(true)
+                setnamavalue(e.target.value)
+            }
+            else {
+                setinputnumberfalse(true)
+            }
         }
     }
     const onFinalClick = () => {
@@ -186,18 +191,20 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
         //     })
         // }
         // setdisplaydata(datatemp)
-        setpraloading(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getClosedTickets" : "getClientClosedTickets"}?ticket_id=${namasearchact ? namavalue : ""}`, {
-            method: `GET`,
-            headers: {
-                'Authorization': JSON.parse(initProps),
-            },
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                res2.data.tickets.data.length === 0 ? setdisplaydata([]) : setdisplaydata(res2.data.tickets.data)
-                setpraloading(false)
+        if (inputnumberfalse === false) {
+            setpraloading(true)
+            fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getClosedTickets" : "getClientClosedTickets"}?ticket_id=${namasearchact ? namavalue : ""}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                },
             })
+                .then(res => res.json())
+                .then(res2 => {
+                    res2.data.tickets.data.length === 0 ? setdisplaydata([]) : setdisplaydata(res2.data.tickets.data)
+                    setpraloading(false)
+                })
+        }
     }
 
     //5.useEffect
@@ -251,6 +258,7 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
                         <div className=" w-full mr-1 grid grid-cols-12">
                             <div className="col-span-4 mr-1">
                                 <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Ticket Number" onChange={onChangeSearch} allowClear></Input>
+                                {inputnumberfalse && <p className="mb-0 text-xs text-red-400">Ticket number harus angka</p>}
                             </div>
                             <div className=" col-span-1">
                                 <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
@@ -277,7 +285,7 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
                                             setpraloading(false)
                                         })
                                 }
-                            }} 
+                            }}
                             scroll={{ x: 200 }} dataSource={displaydata} columns={column} loading={praloading}
                             onRow={(record, rowIndex) => {
                                 return {

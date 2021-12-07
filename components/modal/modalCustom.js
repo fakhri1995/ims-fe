@@ -133,7 +133,7 @@ function ModalHapusLokasiMoveChild({ initProps, title, visible, footer, rawdata,
     const [subloc, setsubloc] = useState([])
     useEffect(() => {
         if (rawdata.level !== -1) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getSubLocations?company_id=${rawdata.top_parent_id}`, {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getSubLocations?${rawdata.top_parent_id === null ? `` : `company_id=${rawdata.top_parent_id}`}`, {
                 method: `GET`,
                 headers: {
                     'Authorization': JSON.parse(initProps),

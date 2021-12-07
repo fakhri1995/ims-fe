@@ -255,8 +255,17 @@ const DrawerLokasi = ({ title, visible, onClose, children, buttonOkText, initPro
         fax: false,
         tanggal_pkp: false
     })
+    const [disabledsave, setdisabledsave] = useState(true)
+    const [disabledtrigger, setdisabledtrigger] = useState(-1)
 
     const onChangeInput = (e) => {
+        setcreatedata({
+            ...createdata,
+            [e.target.name]: e.target.value
+        })
+        setdisabledtrigger(prev => prev + 1)
+    }
+    const onChangeInputNotRequired = (e) => {
         setcreatedata({
             ...createdata,
             [e.target.name]: e.target.value
@@ -328,6 +337,16 @@ const DrawerLokasi = ({ title, visible, onClose, children, buttonOkText, initPro
                 settreedata([res2.data])
             })
     }, [lokasiloading])
+    useEffect(() => {
+        if (disabledtrigger !== -1) {
+            if (createdata.parent_id !== null && createdata.name !== "" && createdata.address !== "" && createdata.phone_number !== "" && createdata.penanggung_jawab !== "") {
+                setdisabledsave(false)
+            }
+            else {
+                setdisabledsave(true)
+            }
+        }
+    }, [disabledtrigger])
     return (
         <DrawerCore
             title={title}
@@ -335,6 +354,7 @@ const DrawerLokasi = ({ title, visible, onClose, children, buttonOkText, initPro
             onClose={onClose}
             buttonOkText={buttonOkText}
             onClick={handleCreateLokasi}
+            disabled={disabledsave}
         >
             <Spin spinning={lokasiloading}>
                 <div className="flex flex-col">
@@ -372,11 +392,11 @@ const DrawerLokasi = ({ title, visible, onClose, children, buttonOkText, initPro
                         <InputRequired name="address" onChangeInput={onChangeInput} label="Alamat Lokasi"></InputRequired>
                         <InputRequired name="phone_number" onChangeInput={onChangeInput} label="Nomor Telepon"></InputRequired>
                         <InputRequired name="penanggung_jawab" onChangeInput={onChangeInput} label="Penanggung Jawab (PIC)"></InputRequired>
-                        {dynamicattr.email && <InputRequired name="email" onChangeInput={onChangeInput} label="Email"></InputRequired>}
-                        {dynamicattr.website && <InputRequired name="website" onChangeInput={onChangeInput} label="Website"></InputRequired>}
-                        {dynamicattr.npwp && <InputRequired name="npwp" onChangeInput={onChangeInput} label="NPWP"></InputRequired>}
-                        {dynamicattr.fax && <InputRequired name="fax" onChangeInput={onChangeInput} label="Fax"></InputRequired>}
-                        {dynamicattr.tanggal_pkp && <DateRequired name="tanggal_pkp" onChangeDate={onchangeDate} label="Tanggal PKP" defaultValue={createdata.tanggal_pkp === "" ? null : moment(createdata.tanggal_pkp)}></DateRequired>}
+                        {dynamicattr.email && <InputNotRequired name="email" onChangeInput={onChangeInputNotRequired} label="Email"></InputNotRequired>}
+                        {dynamicattr.website && <InputNotRequired name="website" onChangeInput={onChangeInputNotRequired} label="Website"></InputNotRequired>}
+                        {dynamicattr.npwp && <InputNotRequired name="npwp" onChangeInput={onChangeInputNotRequired} label="NPWP"></InputNotRequired>}
+                        {dynamicattr.fax && <InputNotRequired name="fax" onChangeInput={onChangeInputNotRequired} label="Fax"></InputNotRequired>}
+                        {dynamicattr.tanggal_pkp && <DateNotRequired name="tanggal_pkp" onChangeDate={onchangeDate} label="Tanggal PKP" defaultValue={createdata.tanggal_pkp === null ? null : moment(createdata.tanggal_pkp)}></DateNotRequired>}
                     </div>
                     <div className="mb-5 flex flex-col">
                         <div className="mb-3">
@@ -562,16 +582,16 @@ const DrawerLokasiClient = ({ title, visible, onClose, children, buttonOkText, i
                 settreedata([res2.data])
             })
     }, [lokasiloading])
-    useEffect(()=>{
-        if(disabledtrigger !== -1){
-            if(createdata.parent_id !== null && createdata.name !== "" && createdata.address !== "" && createdata.phone_number !== "" && createdata.penanggung_jawab !== ""){
+    useEffect(() => {
+        if (disabledtrigger !== -1) {
+            if (createdata.parent_id !== null && createdata.name !== "" && createdata.address !== "" && createdata.phone_number !== "" && createdata.penanggung_jawab !== "") {
                 setdisabledsave(false)
             }
-            else{
+            else {
                 setdisabledsave(true)
             }
         }
-    },[disabledtrigger])
+    }, [disabledtrigger])
     return (
         <DrawerCore
             title={title}
@@ -716,6 +736,8 @@ const DrawerSublokasi = ({ title, visible, onClose, children, buttonOkText, init
         email: "",
         website: ""
     })
+    const [disabledsave, setdisabledsave] = useState(true)
+    const [disabledtrigger, setdisabledtrigger] = useState(-1)
     const [treedata, settreedata] = useState([])
     const [sameaddress, setsameaddress] = useState(false)
     const [lokasiloading, setlokasiloading] = useState(false)
@@ -726,12 +748,14 @@ const DrawerSublokasi = ({ title, visible, onClose, children, buttonOkText, init
             ...createdata,
             [e.target.name]: e.target.value
         })
+        setdisabledtrigger(prev => prev + 1)
     }
     const onChangeTreeselect = (value, label, extra) => {
         setcreatedata({
             ...createdata,
             parent_id: value
         })
+        setdisabledtrigger(prev => prev + 1)
     }
     const onChangeRadioAlamat = (e) => {
         e.target.value === true ? setsameaddress(true) : setsameaddress(false)
@@ -739,6 +763,7 @@ const DrawerSublokasi = ({ title, visible, onClose, children, buttonOkText, init
             ...createdata,
             address_same: e.target.value
         })
+        setdisabledtrigger(prev => prev + 1)
     }
     const onChangeGambar = async (e) => {
         setloadingfoto(true)
@@ -797,6 +822,16 @@ const DrawerSublokasi = ({ title, visible, onClose, children, buttonOkText, init
                 settreedata([res2.data])
             })
     }, [lokasiloading])
+    useEffect(() => {
+        if (disabledtrigger !== -1) {
+            if (createdata.parent_id !== null && createdata.name !== "" && (createdata.address_same !== false || createdata.address !== "") && createdata.phone_number !== "" && createdata.penanggung_jawab !== "") {
+                setdisabledsave(false)
+            }
+            else {
+                setdisabledsave(true)
+            }
+        }
+    }, [disabledtrigger])
     return (
         <DrawerCore
             title={title}
@@ -804,6 +839,7 @@ const DrawerSublokasi = ({ title, visible, onClose, children, buttonOkText, init
             onClose={onClose}
             buttonOkText={buttonOkText}
             onClick={handleCreateSubLokasi}
+            disabled={disabledsave}
         // onClick={()=>{console.log(createdata)}}
         >
             <Spin spinning={lokasiloading}>
@@ -839,7 +875,7 @@ const DrawerSublokasi = ({ title, visible, onClose, children, buttonOkText, init
                     <div className="flex flex-col mb-5">
                         <TreeSelectRequired name="parent_id" onChangeTreeselect={onChangeTreeselect} label="Induk Lokasi" treeData={subchildren} />
                         <InputRequired name="name" onChangeInput={onChangeInput} label="Nama Sub Lokasi"></InputRequired>
-                        <RadioRequired name="currency" label="Alamat Sub Lokasi" onChangeRadio={onChangeRadioAlamat} options={
+                        <RadioRequired name="address" label="Alamat Sub Lokasi" onChangeRadio={onChangeRadioAlamat} options={
                             [
                                 {
                                     value: true,

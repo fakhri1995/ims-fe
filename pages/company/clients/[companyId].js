@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { Switch, DatePicker, Input, Form, Spin, notification, Empty } from 'antd'
 import Buttonsys from '../../../components/button'
 import { H1, H2, Label } from '../../../components/typography'
-import { EditIconSvg, EmailIconSvg, PhoneIconSvg, WebIconSvg, LocationIconSvg, SubLocationIconSvg, ShareIconSvg, TrashIconSvg, CheckIconSvg, BackIconSvg } from '../../../components/icon'
+import { EditIconSvg, EmailIconSvg, PhoneIconSvg, WebIconSvg, LocationIconSvg, SubLocationIconSvg, ShareIconSvg, TrashIconSvg, CheckIconSvg, BackIconSvg, RefreshIconSvg } from '../../../components/icon'
 import moment from 'moment'
 import { ModalEdit, ModalHapus, ModalStatus } from '../../../components/modal/modalCustom'
 import { DrawerBank, DrawerBankClient } from '../../../components/drawer/drawerCustom'
@@ -17,6 +17,7 @@ import { AtmMain, AtmBank } from '../../../components/atm'
 import CountUp from 'react-countup'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { TableCustomRelasi } from '../../../components/table/tableCustom'
+import { LoadingOutlined } from '@ant-design/icons'
 
 
 const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
@@ -82,6 +83,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
     const [modaledit, setmodaledit] = useState(false)
     const [praloadingedit, setpraloadingedit] = useState(true)
     const [editloading, seteditloading] = useState(false)
+    const [loadingfoto, setloadingfoto] = useState(false)
     //ACTIVITY
     const [rawlogs, setrawlogs] = useState({
         current_page: "",
@@ -225,6 +227,20 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
             ...displaydata,
             [e.target.name]: e.target.value
         })
+    }
+    const onChangeGambar = async (e) => {
+        setloadingfoto(true)
+        const foto = e.target.files
+        const formdata = new FormData()
+        formdata.append('file', foto[0])
+        formdata.append('upload_preset', 'migsys')
+        const fetching = await fetch(`https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`, {
+            method: 'POST',
+            body: formdata
+        })
+        const datajson = await fetching.json()
+        setdisplaydata({ ...displaydata, image_logo: datajson.secure_url })
+        setloadingfoto(false)
     }
     const onChangeInputBankEdit = (e) => {
         seteditbankdata({
@@ -485,14 +501,23 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                                     <div className="max-h-24 relative">
                                         <img src={`/image/Rectangle.png`} alt="" className="object-fit max-h-24 w-full rounded-t" />
                                         <div className="absolute -bottom-1/2 bg-white left-28 rounded-full">
-                                            <img src={displaydata.image_logo} alt="" className="object-contain w-24 h-24" />
+                                            <img src={displaydata.image_logo} alt="" className="object-contain w-24 h-24 rounded-full" />
                                         </div>
                                     </div>
                                     <div className="mt-14 flex flex-col justify-center text-center">
                                         {
+                                            editable &&
+                                            <div className=" flex mx-auto mb-5">
+                                                <Buttonsys type="primaryInput" onChangeGambar={onChangeGambar}>
+                                                    {loadingfoto ? <LoadingOutlined style={{ marginRight: `0.5rem` }} /> : <RefreshIconSvg size={15} color={`#ffffff`} />}
+                                                    Atur Ulang
+                                                </Buttonsys>
+                                            </div>
+                                        }
+                                        {
                                             editable ?
                                                 <div className={`flex flex-col px-5`}>
-                                                    <div className="flex">
+                                                    <div className="flex justify-center">
                                                         <Label>Nama Perusahaan</Label>
                                                         <span className="namaField"></span>
                                                         <style jsx>
@@ -529,7 +554,8 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                                                 </div>
                                                 <div className="mx-1" onClick={() => { }}>
                                                     <Buttonsys type="primary" submit={true} onClick={() => { instanceForm.submit(); setmodaledit(true) }}>
-                                                        X Simpan
+                                                        <CheckIconSvg size={15} color={`#ffffff`} />
+                                                        Simpan
                                                     </Buttonsys>
                                                 </div>
                                             </div>
@@ -929,6 +955,16 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                                                                 var aksi = ''
                                                                 const type = doc.subjectable_type.split("\\")
                                                                 if (type[1] === "Company") {
+                                                                    if (doc.log_name === 'Created') {
+                                                                        return (
+                                                                            <div className="flex flex-col mb-5">
+                                                                                <p className="mb-0">
+                                                                                    {doc.causer.name} <strong>menambahkan</strong> lokasi <strong>{doc.subjectable.name}</strong>
+                                                                                </p>
+                                                                                <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
+                                                                            </div>
+                                                                        )
+                                                                    }
                                                                     if (doc.log_name === 'Updated') {
                                                                         return (
                                                                             <div className="flex flex-col mb-5">

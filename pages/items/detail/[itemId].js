@@ -1355,30 +1355,30 @@ const Association = ({ initProps, itemid, maindata, praloading }) => {
                                 {
                                     maindata.associations.map((doc, idx) => {
                                         return (
-                                            <div className="rounded-md shadow-md py-4 px-5 border mb-4 flex justify-between w-10/12 cursor-pointer" onClick={() => { rt.push(`/tickets/detail/${doc.ticket.id}`) }}>
+                                            <div className="rounded-md shadow-md py-4 px-5 border mb-4 flex justify-between w-10/12 cursor-pointer" onClick={() => { rt.push(`/tickets/detail/${doc.ticket.id}?active=detailItem`) }}>
                                                 <div className="flex flex-col">
                                                     <p className="mb-0 font-semibold">Ticket Number</p>
                                                     <p className="mb-0">#{doc.ticket.type.code} - {doc.id}</p>
                                                 </div>
                                                 {
                                                     doc.ticket.status.id === 1 &&
-                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.ticket.status.name}</div>
-                                                }
-                                                {
-                                                    doc.ticket.status.id === 2 &&
-                                                    <div className="rounded-md flex items-center px-2 text-center bg-green-100 border border-green-200 text-green-600">Status: {doc.ticket.status.name}</div>
-                                                }
-                                                {
-                                                    doc.ticket.status.id === 3 &&
-                                                    <div className="rounded-md flex items-center px-2 text-center bg-yellow-100 border border-yellow-200 text-yellow-600">Status: {doc.ticket.status.name}</div>
-                                                }
-                                                {
-                                                    doc.ticket.status.id === 4 &&
                                                     <div className="rounded-md flex items-center px-2 text-center bg-red-100 border border-red-200 text-red-600">Status: {doc.ticket.status.name}</div>
                                                 }
                                                 {
+                                                    doc.ticket.status.id === 2 &&
+                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.ticket.status.name}</div>
+                                                }
+                                                {
+                                                    doc.ticket.status.id === 3 &&
+                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.ticket.status.name}</div>
+                                                }
+                                                {
+                                                    doc.ticket.status.id === 4 &&
+                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.ticket.status.name}</div>
+                                                }
+                                                {
                                                     doc.ticket.status.id === 5 &&
-                                                    <div className="rounded-md flex items-center px-2 text-center bg-gray-100 border border-gray-200 text-gray-600">{doc.ticket.status.name}</div>
+                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">{doc.ticket.status.name}</div>
                                                 }
                                             </div>
                                         )

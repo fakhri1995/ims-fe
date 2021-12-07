@@ -668,7 +668,8 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                                 </div>
                                                 <div className="mx-1" onClick={() => { }}>
                                                     <Buttonsys type="primary" submit={true} onClick={() => { instanceForm.submit(); setmodaledit(true) }}>
-                                                        X Simpan
+                                                        <CheckIconSvg size={15} color={`#ffffff`} />
+                                                        Simpan
                                                     </Buttonsys>
                                                 </div>
                                             </div>
@@ -1196,6 +1197,16 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                                                 var aksi = ''
                                                                 const type = doc.subjectable_type.split("\\")
                                                                 if (type[1] === "Company") {
+                                                                    if (doc.log_name === 'Created') {
+                                                                        return (
+                                                                            <div className="flex flex-col mb-5">
+                                                                                <p className="mb-0">
+                                                                                    {doc.causer.name} <strong>menambahkan</strong> lokasi <strong>{doc.subjectable.name}</strong>
+                                                                                </p>
+                                                                                <Label>{tanggalan < 1 ? `Hari ini, ${moment(doc.created_at).locale('id').format(`LT`)}` : `${moment(doc.created_at).locale('id').format('dddd')} ${moment(doc.created_at).locale('id').format('LL')}, ${moment(doc.created_at).locale('id').format(`LT`)}`}</Label>
+                                                                            </div>
+                                                                        )
+                                                                    }
                                                                     if (doc.log_name === 'Updated') {
                                                                         return (
                                                                             <div className="flex flex-col mb-5">
