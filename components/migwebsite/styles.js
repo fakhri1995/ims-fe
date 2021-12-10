@@ -198,7 +198,7 @@ const Styles = (props) => (
       overflow: hidden;
     }
     .menuToggle:checked ~ section .menu2 {
-      height: 100vh;
+      height: 90%;
     }
     .menu-navbar :hover{
       color: green !important;

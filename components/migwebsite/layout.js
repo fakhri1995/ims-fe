@@ -49,12 +49,9 @@ function layout({ children }) {
     )
     const [kelas, setKelas] = useState('notShadow')
     const handleScroll = () => {
-        if (document.documentElement.scrollTop > 1) {
-            setKelas('shadow')
-        }
-        else {
+
             setKelas('notShadow')
-        }
+
     }
     useEffect(() => {
         window.onscroll = () => { handleScroll() }
@@ -150,7 +147,17 @@ function layout({ children }) {
                                 <a href='/aboutus' className="text-lg gilroy-medium">About Us</a>
                             </Menu.Item>
                             <Menu.Item key='5'><a href='/joinourteam' className="text-lg gilroy-medium">Join Our Team</a></Menu.Item>
-                            <Menu.Item key='6'><a href='/contactus' className="text-lg gilroy-medium">Contact Us</a></Menu.Item>
+                            <Menu.Item key='6'
+                            style={{
+                                position: 'absolute',
+                                bottom: 0,
+                                zIndex: 1,
+                                transition: 'all 0.2s',
+                            }}><a href='/contactus' className="text-lg gilroy-medium">Contact Us &nbsp;&nbsp;
+                            <ArrowRightOutlined style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/>
+                            <LinkedinFilled style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/>
+                            <InstagramFilled style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/>
+                            </a></Menu.Item>
                         </Menu>
                     </div>
                 </section>
