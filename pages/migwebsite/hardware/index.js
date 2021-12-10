@@ -19,10 +19,6 @@ function Hardware({ }) {
         .then(res => res.json())
         .then(res2 => {
             if (res2.success) {
-                notification['success']({
-                    message: res2.message,
-                    duration: 5
-                })
                 form.resetFields()
                 setFeedback(false)
                 setTimeout(() => {
@@ -162,55 +158,52 @@ function Hardware({ }) {
                         <p className={'pb-4 gilroy-medium text-lg md:text-xl'}>We leasing and maintaining a variety of IT hardwares</p>
                     </div>
                     <div className={'pb-0 md:pb-8 w-full md:w-1/3 pr-0 md:pr-4'}>
-                        <div className={'pb-8'}>
-                            <Collapse
+                        <div className={'p-4 mb-8 border border-gray-300'}>
+                            {/* <Collapse
                             accordion
-                            expandIconPosition={'right'}
+                            style={{background:"#ffffff"}}
+                            className={"text-center"}
                             >
-                                <Panel className={'gilroy-medium text-lg'} header={'ATM/CRM'}>
-                                    <p className={'font-medium'}>
-                                        Lorem Ipsum
-                                    </p>
+                                <Panel className={'gilroy-medium text-lg'} header={'ATM/CRM'} showArrow={false}>
                                 </Panel>
-                            </Collapse>
+                            </Collapse> */}
+                            <p className={'gilroy-medium text-lg text-center align-middle'}>ATM/CRM</p>
                         </div>
-                        <div className={'pb-8'}>
-                            <Collapse
+                        <div className={'p-4 mb-8 border border-gray-300'}>
+                            {/* <Collapse
                             accordion
-                            expandIconPosition={'right'}
+                            style={{background:"#ffffff"}}
+                            className={"text-center"}
                             >
-                                <Panel className={'gilroy-medium text-lg'} header={'UPS'}>
-                                    <p className={'font-medium'}>
-                                        Lorem Ipsum
-                                    </p>
+                                <Panel className={'gilroy-medium text-lg'} header={'UPS'} showArrow={false}>
                                 </Panel>
-                            </Collapse>
+                            </Collapse> */}
+                            <p className={'gilroy-medium text-lg text-center align-middle'}>UPS</p>
                         </div>
                     </div>
                     <div className={'pb-0 md:pb-8 w-full md:w-1/3 pr-0 md:pr-4'}>
-                        <div className={'pb-8'}>
-                            <Collapse
+                        <div className={'p-4 mb-8 border border-gray-300'}>
+                            {/* <Collapse
                             accordion
-                            expandIconPosition={'right'}
+                            style={{background:"#ffffff"}}
+                            className={"text-center"}
                             >
-                                <Panel className={'gilroy-medium text-lg'} header={'Laptop/desktop'}>
-                                    <p className={'font-medium'}>
-                                        Lorem Ipsum
-                                    </p>
+                                <Panel className={'gilroy-medium text-lg'} header={'Laptop/desktop'} showArrow={false}>
+                                   
                                 </Panel>
-                            </Collapse>
+                            </Collapse> */}
+                            <p className={'gilroy-medium text-lg text-center align-middle'}>Laptop/desktop</p>
                         </div>
-                        <div className={'pb-8'}>
-                            <Collapse
+                        <div className={'p-4 mb-8 border border-gray-300'}>
+                            {/* <Collapse
                             accordion
-                            expandIconPosition={'right'}
+                            style={{background:"#ffffff"}}
+                            className={"text-center"}
                             >
-                                <Panel className={'gilroy-medium text-lg'} header={'Server'}>
-                                    <p className={'font-medium'}>
-                                        Lorem Ipsum
-                                    </p>
+                                <Panel className={'gilroy-medium text-lg'} header={'Server'} showArrow={false}>
                                 </Panel>
-                            </Collapse>
+                            </Collapse> */}
+                            <p className={'gilroy-medium text-lg text-center align-middle'}>Server</p>
                         </div>
                     </div>
                 </div>
@@ -271,8 +264,8 @@ function Hardware({ }) {
                             <Checkbox name="checkbox" className={'gilroy-regular text-xl'}>By proceeding, I agree that MIG's representative may contact me by email, phone, or SMS (including by automatic telephone dialing system) at the email address or number I provide, including for marketing purposes.*</Checkbox>
                         </Form.Item >
                         <Form.Item>
-                        <div className={'w-full flex justify-center pt-8 pb-8'}>
-                            <button type={'submit'} className={'text-black border border-black px-4 py-1 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
+                        <div className={'w-full flex justify-start pt-8 pb-8'}>
+                            <button type={'submit'} className={'text-black text-lg border border-black px-4 py-1 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
                                 Submit
                             </button>
                             

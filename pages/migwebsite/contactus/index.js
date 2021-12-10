@@ -19,10 +19,6 @@ function ContactUs({ }) {
         .then(res => res.json())
         .then(res2 => {
             if (res2.success) {
-                notification['success']({
-                    message: res2.message,
-                    duration: 5
-                })
                 form.resetFields()
                 setFeedback(false)
                 setTimeout(() => {
@@ -137,8 +133,8 @@ function ContactUs({ }) {
                                     <Checkbox name="checkbox">By proceeding, I agree that MIG's representative may contact me by email, phone, or SMS (including by automatic telephone dialing system) at the email address or number I provide, including for marketing purposes.*</Checkbox>
                                 </Form.Item >
                                 <Form.Item>
-                                <div className={'w-full flex justify-center pt-8 pb-8'}>
-                                    <button type={'submit'} className={'text-black border border-black px-4 py-1 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
+                                <div className={'w-full flex justify-start pt-8 pb-8'}>
+                                    <button type={'submit'} className={'text-black text-lg border border-black px-4 py-1 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
                                         Submit
                                     </button>
                                 </div>
