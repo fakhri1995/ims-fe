@@ -8,7 +8,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import CountUp from 'react-countup'
 import { Link, animateScroll as scroll } from "react-scroll";
-import { Card, Space } from 'antd'
+import { Card, Space, Row, Col } from 'antd'
 
 function LandingPage({ }) {
     const flickityOptions = {
@@ -31,21 +31,24 @@ function LandingPage({ }) {
         dots: true,
         infinite: true,
         speed: 500,
-        slidesToShow: 3,
+        slidesToShow: 2,
         slidesToScroll: 1,
+        centerMode: true,
+        arrows: false,
+        dots: false,
         responsive: [
             {
                 breakpoint: 768,
                 settings: {
-                    slidesToShow: 2,
-                }
-            },
-            {
-                breakpoint: 576,
-                settings: {
                     slidesToShow: 1,
                 }
-            }
+            },
+            //     {
+            //         breakpoint: 576,
+            //         settings: {
+            //             slidesToShow: 1,
+            //         }
+            //     }
         ]
     };
     return (
@@ -61,7 +64,7 @@ function LandingPage({ }) {
                             </p>
                             {/* <button className={'text-black text-xl border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>Let's Collaborate</button> */}
                             <p className={' text-xl gilroy-regular'}>
-                                MIG catalyze your core business with IT hardware solutions, software development, and tech talents.
+                                MIG catalyzes your core business with IT hardware solutions, software development, and tech talents.
                             </p>
                         </div>
                         {/* <div className={'block md:hidden text-center'}>
@@ -181,7 +184,7 @@ function LandingPage({ }) {
                     <div className={'pt-4 pb-4 w-full'}>
                         <img className={''} style={{ paddingLeft: '2px' }} src="/image/landingpage/Hardware.png"></img>
                     </div>
-                    <p className={'text-2xl pb-2 md:pb-4 gilroy-bold'}>Lighten up your capital heavy IT infrastructure</p>
+                    <p className={'text-2xl pb-2 md:pb-4 gilroy-bold'}>Lighten up your heavy capital in IT infrastructure</p>
                     <p className={'gilroy-medium text-lg'}>Transform yours into managed service model, guaranteeing you with predictable monthly cost and excelent service level.</p>
                     <br></br>
                     <Linkk href="/hardware">
@@ -237,7 +240,7 @@ function LandingPage({ }) {
                     <div className={'container mx-auto block md:flex'}>
                         <div className={'pt-8 pb-8 w-full md:w-1/2 my-auto'}>
                             <p className={'text-2xl pb-2 gilroy-bold text-green-600'}>Hardware</p>
-                            <p className={'text-4xl pb-2 md:pb-4 gilroy-medium'}>Lighten up your capital heavy IT infrastructure</p>
+                            <p className={'text-4xl pb-2 md:pb-4 gilroy-medium'}>Lighten up your heavy capital in IT infrastructure</p>
                             <div className={'pt-4 pb-4 w-full block md:hidden'}>
                                 <img className={'pr-1'} style={{ paddingLeft: '2px' }} src="/image/landingpage/Hardware.png"></img>
                             </div>
@@ -403,71 +406,106 @@ function LandingPage({ }) {
                     <Slider {...sliderSettings}>
                         <div>
                             <Card>
-                            <div className='h-64'>
-                                <p className={'pb-20 text-left'}>Provide IT hardware infrastructure with 45 service points in Indonesia. Rent and maintenance +10.000 hardware. Support at a high service level.</p>
-                                <Space align={'start'}>
-                                    <img className={'pr-1'} style={{ minHeight: 90 }} src="/image/company/kb.png"></img>
+                                <div className='h-64 md:h-32'>
+                                    {/* <Space className={'start pb-4'}>
+                                    <img className={'pr-1 inset-y-0 left-0'} style={{ maxHeight: 45 }} src="/image/company/kb.png"></img>
                                     <p>
                                         <p className={'text-xl gilroy-bold  text-left'}>KB Bukopin</p>
                                         <p className={'gilroy-regular  text-left'}>Banking</p>
                                     </p>
-                                </Space>
+                                </Space> */}
+                                    <Row style={{ alignItems: 'center' }}>
+                                        <Col xs={{span:12}} md={{span:6}}><img className={'pr-2'} style={{ maxHeight: 50 }} src="/image/company/kb.png"></img></Col>
+                                        <Col span={12}>
+                                            <p className={'text-xl gilroy-medium text-left'}>KB Bukopin</p>
+                                            <p className={'gilroy-regular pb-4 text-left'}>Banking</p>
+                                        </Col>
+                                    </Row>
+                                    <p className={'text-left'}>Provide IT hardware infrastructure with 45 service points in Indonesia. Rent and maintenance +5.000 hardware. Support IT Engineer for build many projects. </p>
                                 </div>
                             </Card>
                         </div>
                         <div>
                             <Card>
-                                <div className='h-64'>
-                                <p className={'pb-20 text-left'}>Accommodate talent with exceptional skills in a short time. The project was conducted earlier with help recruitment fastly.</p>
-                                <Space align={'start'}>
-                                    <img className={'pr-1'} style={{ minHeight: 90 }} src="/image/company/shipper.png"></img>
+                                <div className='h-64 md:h-32'>
+                                    {/* <Space className={'start pb-4'}>
+                                    <img className={'pr-1'} style={{ maxHeight: 45 }} src="/image/company/shipper.png"></img>
                                     <p>
                                         <p className={'text-xl gilroy-bold  text-left'}>Shipper</p>
                                         <p className={'gilroy-regular  text-left'}>Logistic Service</p>
                                     </p>
-                                </Space>
+                                </Space> */}
+                                    <Row style={{ alignItems: 'center' }}>
+                                        <Col xs={{span:12}} md={{span:6}}><img className={''} style={{ maxHeight: 50 }} src="/image/company/shipper.png"></img></Col>
+                                        <Col span={12}>
+                                            <p className={'text-xl gilroy-medium text-left'}>Shipper</p>
+                                            <p className={'gilroy-regular  text-left pb-4'}>Logistic Service</p>
+                                        </Col>
+                                    </Row>
+                                    <p className={'text-left'}>Accommodate talent with exceptional skills in a short time. The project was conducted earlier with help recruitment fastly.</p>
                                 </div>
                             </Card>
                         </div>
                         <div>
                             <Card>
-                            <div className='h-64'>
-                                <p className={'pb-20 text-left'}>Develop logistic delivery process and reporting. Make sure to handle critical operations about open API business.</p>
-                                <Space align={'start'}>
-                                    <img className={'pr-1'} style={{ minHeight: 90 }} src="/image/company/cgx.png"></img>
+                                <div className='h-64 md:h-32'>
+                                    {/* <Space className={'start pb-4'}>
+                                    <img className={'pr-1'} style={{ maxHeight: 45 }} src="/image/company/cgx.png"></img>
                                     <p>
                                         <p className={'text-xl gilroy-bold text-left'}>CGX</p>
                                         <p className={'gilroy-regular text-left'}>Shipment and Warehouse</p>
                                     </p>
-                                </Space>
+                                </Space> */}
+                                    <Row style={{ alignItems: 'center' }}>
+                                        <Col xs={{span:12}} md={{span:6}}><img className={''} style={{ maxHeight: 50 }} src="/image/company/cgx.png"></img></Col>
+                                        <Col span={12}>
+                                        <p className={'text-xl gilroy-medium text-left'}>CGX</p>
+                                        <p className={'gilroy-regular text-left pb-4'}>Shipment and Warehouse</p>
+                                        </Col>
+                                    </Row>
+                                    <p className={'text-left'}>Develop logistic delivery process and reporting. Make sure to handle critical operations about open API business.</p>
                                 </div>
                             </Card>
                         </div>
                         <div>
                             <Card>
-                            <div className='h-64'>
-                                <p className={'pb-20 text-left'}> IT Engineer for build many projects. Provide team required for a long-term project.</p>
-                                <Space align={'start'}>
-                                    <img className={'pr-1'} style={{ minHeight: 90 }} src="/image/company/kb.png"></img>
+                                <div className='h-64 md:h-32'>
+                                    {/* <Space className={'start pb-4'}>
+                                    <img className={'pr-1'} style={{ maxHeight: 45 }} src="/image/company/kb.png"></img>
                                     <p>
                                         <p className={'text-xl gilroy-bold text-left'}>KB Bukopin</p>
                                         <p className={'gilroy-regular text-left'}>Banking</p>
                                     </p>
-                                </Space>
+                                </Space> */}
+                                    <Row style={{ alignItems: 'center' }}>
+                                        <Col xs={{span:12}} md={{span:6}}><img className={''} style={{ maxHeight: 50 }} src="/image/company/kb.png"></img></Col>
+                                        <Col span={12}>
+                                            <p className={'text-xl gilroy-medium text-left'}>KB Bukopin Syariah</p>
+                                            <p className={'gilroy-regular  text-left pb-4'}>Banking</p>
+                                        </Col>
+                                    </Row>
+                                    <p className={'text-left'}>Rent and maintenance IT hardware infrastructure. Support at a high service level. </p>
                                 </div>
                             </Card>
                         </div>
                         <div>
                             <Card>
-                            <div className='h-64'>
-                                <p className={'pb-20 text-left'}>Develop Forty Mobile App with a sensitive timeline. Manage from initial lending, payment transactions to reporting. </p>
-                                <Space align={'start'}>
-                                    <img className={'pr-1'} style={{ minHeight: 90 }} src="/image/company/forty.png"></img>
+                                <div className='h-64 md:h-32'>
+                                    {/* <Space className={'start pb-4'}>
+                                    <img className={'pr-1'} style={{ maxHeight: 45 }} src="/image/company/forty.png"></img>
                                     <p>
                                         <p className={'text-xl gilroy-bold text-left'}>Forty</p>
                                         <p className={'gilroy-regular text-left'}>IT Service</p>
                                     </p>
-                                </Space>
+                                </Space> */}
+                                    <Row style={{ alignItems: 'center' }}>
+                                        <Col xs={{span:12}} md={{span:6}}><img className={''} style={{ maxHeight: 50 }} src="/image/company/forty.png"></img></Col>
+                                        <Col span={12}>
+                                            <p className={'text-xl gilroy-medium text-left'}>Forty</p>
+                                            <p className={'gilroy-regular  text-left pb-4'}>IT Service</p>
+                                        </Col>
+                                    </Row>
+                                    <p className={'text-left'}>Develop Forty Mobile App with a sensitive timeline. Manage from initial lending, payment transactions to reporting. </p>
                                 </div>
                             </Card>
                         </div>

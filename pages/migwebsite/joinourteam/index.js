@@ -38,28 +38,29 @@ function JoinOurTeam({ dataCareers }) {
                             <p className={'text-3xl md:text-4xl pb-6 text-center md:text-left gilroy-bold'}>Careers at MIG
                             </p>
                             <div className={'flex-col block md:hidden pb-6'}>
-                                <img style={{ width: '1000px', height: 'auto' }} src='/image-careers.png' />
+                                <img style={{ width: '1000px', height: 'auto' }} src='/image/joinourteam/joinourteam_image.png' />
                             </div>
-                            <p className={'text-xl gilroy-bold pb-4'}>We are currently looking to expand our team! Our team comprises of highly motivated, positive and hardworking individuals.
+                            <p className={'text-xl gilroy-medium pb-4'}>We are currently looking to expand our team! Our team comprises of highly motivated, positive and hardworking individuals.
                             </p>
-                            <p className={'text-xl gilroy-regular text-left'}>See open position!</p>
-                            <div className={'w-20'}>
-                            <Linkk
-                                className={'flex-col md:center'}
-                                activeClass="active"
-                                to="section7careers"
-                                smooth={true}
-                                offset={-150}
-                                duration={500}
-                            >
-                                
-                                <img className={'mt-5 ml-10 animate-bounce'} style={{ width: '60px' }} src='/image/landingpage/arrow-down.png' />
-                            </Linkk>
+                            <div className={'text-center md:text-left'}>
+                                <p className={'text-xl gilroy-regular'}>See open position!</p>
+                                <div className={'md:center w-20 m-auto md:mx-0'}>
+                                    <Linkk
+                                        className={'flex-col md:center'}
+                                        activeClass="active"
+                                        to="section7careers"
+                                        smooth={true}
+                                        offset={-150}
+                                        duration={500}
+                                    >
+                                        <img className={'mt-5 animate-bounce'} src='/image/landingpage/arrow-down.png' style={{width:60}}/>
+                                    </Linkk>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div className={'flex-col hidden md:flex ml-4'}>
-                        <img style={{ width: '1000px', height: 'auto' }} src='/image-careers.png' />
+                        <img style={{ width: '1000px', height: 'auto' }} src='/image/joinourteam/joinourteam_image.png' />
                     </div>
                 </div>
 
@@ -134,22 +135,22 @@ function JoinOurTeam({ dataCareers }) {
                     <p className={'pb-8 text-justify text-xl'}>
                         Mitramas is a people-centric business with a foundation to gives working opportunities for motivated individuals at all levels. Our long-term sustainable business which has been running for +15 years and operated across 45 cities have a strong commitment to offer pleasant experience for our team, communities, and clients.
                     </p>
-                    <div className={'block md:flex md:flex-row justify-center text-xl'}>
+                    <div className={'block md:flex md:flex-row justify-center object-scale-down text-base'}>
                         <div className={'block md:flex md:flex-col justify-center md:w-1/2'}>
                             <div className={'pb-6 flex-row flex '}>
-                                <img className={'flex-row'} src='/image/joinourteam/benefit_1.png'></img>
+                                <img className={'flex-row'} src='/image/joinourteam/benefit_1.png' style={{width:50}}></img>
                                 <p className={'flex-row my-auto pl-4'}>
                                     We love to empower our team members to solve problems that matter
                                 </p>
                             </div>
                             <div className={'pb-6 flex-row flex'}>
-                                <img className={'flex-row'} src='/image/joinourteam/benefit_2.png'></img>
+                                <img className={'flex-row'} src='/image/joinourteam/benefit_2.png' style={{width:50}}></img>
                                 <p className={'flex-row my-auto pl-4'}>
                                     We offer diverse industry exposures and hands-on experience
                                 </p>
                             </div>
                             <div className={'pb-6 flex-row flex'}>
-                                <img className={'flex-row'} src='/image/joinourteam/benefit_3.png'></img>
+                                <img className={'flex-row'} src='/image/joinourteam/benefit_3.png' style={{width:50}}></img>
                                 <p className={'flex-row my-auto pl-4'}>
                                     We support personal growth through constant experiment and learning
                                 </p>
@@ -157,19 +158,19 @@ function JoinOurTeam({ dataCareers }) {
                         </div>
                         <div className={'block md:flex md:flex-col justify-center md:w-1/2'}>
                             <div className={'pb-6 flex-row flex'}>
-                                <img className={'flex-row'} src='/image/joinourteam/benefit_4.png'></img>
+                                <img className={'flex-row'} src='/image/joinourteam/benefit_4.png' style={{width:50}}></img>
                                 <p className={'flex-row my-auto pl-4'}>
                                     We provide unique and competitive packages to launch your career
                                 </p>
                             </div>
                             <div className={'pb-6 flex-row flex'}>
-                                <img className={'flex-row'} src='/image/joinourteam/benefit_5.png'></img>
+                                <img className={'flex-row'} src='/image/joinourteam/benefit_5.png' style={{width:50}}></img>
                                 <p className={'flex-row my-auto pl-4'}>
                                     We value informal social bonding to offer a enjoyable working environment
                                 </p>
                             </div>
                             <div className={'pb-6 flex-row flex'}>
-                                <img className={'flex-row'} src='/image/joinourteam/benefit_6.png'></img>
+                                <img className={'flex-row'} src='/image/joinourteam/benefit_6.png' style={{width:50}}></img>
                                 <p className={'flex-row my-auto pl-4'}>
                                     We create engaging environment and believe everyone has a voice at the table
                                 </p>
@@ -183,7 +184,7 @@ function JoinOurTeam({ dataCareers }) {
                 <div className={'block md:flex justify-between'}>
                     <div className={'flex-row left-column-section7careers pr-0 md:pr-8'}>
                         <p className={'text-3xl gilroy-bold pb-8'}>Careers at MIG</p>
-                        <p className={'pb-8  text-xl'}>Want to advance your career with us ? See our job openings below for our current financial services and government projects.</p>
+                        <p className={'pb-8 text-xl'}>Want to advance your career with us ? See our job openings below for our current financial services and government projects.</p>
                         <div className={'w-5/12 border-t-8 border-green-700 pb-8'}></div>
                         <p className={'pb-8 text-xl'}>Didn't find the role that best describes your skills ? Send your CV to <span className={'gilroy-bold'}>recruitment@mitrasolusi.group</span> for potential opportunities</p>
                     </div>
@@ -197,13 +198,13 @@ function JoinOurTeam({ dataCareers }) {
                                 careers.map((item, idx) => {
                                     return (
                                         <>
-                                            <Panel className={'text-xl'} header={item.position_name} key={idx}>
+                                            <Panel className={'text-base'} header={item.position_name} key={idx}>
                                                 <div>
-                                                    <div className={'pb-4'}>
-                                                        <p className={'gilroy-bold  text-xl'}>Job Description:</p>
-                                                        <p className={'text-xl'}>{item.job_description}</p>
+                                                    <div className={'text-base pb-4'}>
+                                                        <p className={'gilroy-bold text-base'}>Job Description:</p>
+                                                        <p className={'text-base'}>{item.job_description}</p>
                                                     </div>
-                                                    <a className={' text-xl hover:text-green-500'} href={item.register_link}>Apply Now<ArrowRightOutlined className={'pl-2 relative -top-0.5'} /></a>
+                                                    <a className={'text-base hover:text-green-500'} href={item.register_link}>Apply Now<ArrowRightOutlined className={'pl-2 relative -top-0.5'} /></a>
                                                 </div>
                                             </Panel>
                                         </>

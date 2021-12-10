@@ -19,10 +19,6 @@ function Talents({ }) {
         .then(res => res.json())
         .then(res2 => {
             if (res2.success) {
-                notification['success']({
-                    message: res2.message,
-                    duration: 5
-                })
                 form.resetFields()
                 setFeedback(false)
                 setTimeout(() => {
@@ -88,7 +84,7 @@ function Talents({ }) {
                         <p className={'mr-20 gilroy-medium text-xl'}>Let us streamline your process with:</p>
                         <ul className={'list-inside list-disc'}>
                             <li className={'gilroy-medium text-xl'}><span className={'gilroy-bold'}>On-demand</span> expertise</li>
-                            <li className={'gilroy-medium text-xl'}><span className={'gilroy-bold'}>Flexible</span> talent head counts and working period</li>
+                            <li className={'gilroy-medium text-xl'}><span className={'gilroy-bold'}>Flexibility in</span> talent head counts and working period</li>
                         </ul>
                     </div>
                         <div className={'flex-col w-1/2 my-auto'}>
@@ -105,7 +101,7 @@ function Talents({ }) {
                         <p className={'gilroy-medium text-xl'}>Let us streamline your process with:</p>
                         <ul className={'list-inside list-disc'}>
                             <li className={'gilroy-medium text-xl'}><span className={'gilroy-bold'}>On-demand</span> expertise</li>
-                            <li className={'gilroy-medium text-xl'}><span className={'gilroy-bold'}>Flexible</span> talent head counts and working period</li>
+                            <li className={'gilroy-medium text-xl'}><span className={'gilroy-bold'}>Flexibility in</span> talent head counts and working period</li>
                         </ul>
                     </div>
                 </div>
@@ -119,36 +115,36 @@ function Talents({ }) {
                     <div className={'block md:hidden'}>
                         <div className={'px-4 bg-gray-200 rounded-xl mb-4'}>
                             <div className={'py-4 my-auto'}>
-                                <p className={'text-2xl font-bold pb-4 gilroy-bold'}>Custom matched with your needs</p>
+                                <p className={'text-2xl font-bold pb-4 gilroy-bold'}>Custom made with your needs</p>
                                 <p className={'pb-4 gilroy-medium text-lg'}>Numbers of talent and their working period can be tailored as per required by project.</p>
                             </div>
                         </div>
                         <div className={'px-4 bg-gray-200 rounded-xl mb-4'}>
                             <div className={'py-4 my-auto'}>
                                 <p className={'text-2xl font-bold pb-4 gilroy-bold'}>Risk free talent acquisition</p>
-                                <p className={'pb-4 gilroy-medium text-lg'}>You have full flexibility to rotate and rematch your talent to ensure your quality criteria is fullfiled.</p>
+                                <p className={'pb-4 gilroy-medium text-lg'}>You have full flexibility to rotate and rematch to make your quality criteria fullfiled.</p>
                             </div>
                         </div>
                         <div className={'px-4 bg-gray-200 rounded-xl mb-4'}>
                             <div className={'py-4 my-auto'}>
                                 <p className={'text-2xl font-bold pb-4 gilroy-bold'}>Get qualified talent for your team</p>
-                                <p className={'pb-4 gilroy-medium text-lg'}>Top talents take our extensive tests and interview process covering tech stacks, coding algorithm, systems design, and soft skills.</p>
+                                <p className={'pb-4 gilroy-medium text-lg'}>Extensive test and interview process covering tech stacks, coding algorithm, systems design, and soft skills are given to ensure you having qualified talents.</p>
                             </div>
                         </div>
                     </div>
                     <div className={'hidden md:block container'}>
                         <div className={'flex'}>
                             <div className={'pt-8 pb-8 w-1/3 pr-2'}>
-                                <p className={'text-3xl pb-4 gilroy-bold md:h-32 lg:h-20'}>Custom matched with your needs</p>
+                                <p className={'text-3xl pb-4 gilroy-bold md:h-32 lg:h-20'}>Custom made with your needs</p>
                                 <p className={'pb-4 gilroy-medium text-xl'}>Numbers of talent and their working period can be tailored as per required by project.</p>
                             </div>
                             <div className={'pt-8 pb-8 w-1/3 px-2'}>
                                 <p className={'text-3xl pb-4 gilroy-bold md:h-32 lg:h-20'}>Risk free talent acquisition</p>
-                                <p className={'pb-4 gilroy-medium text-xl'}>You have full flexibility to rotate and rematch your talent to ensure your quality criteria is fullfiled.</p>
+                                <p className={'pb-4 gilroy-medium text-xl'}>You have full flexibility to rotate and rematch to make your quality criteria fullfiled.</p>
                             </div>
                             <div className={'pt-8 pb-8 w-1/3 pl-2'}>
                                 <p className={'text-3xl pb-4 gilroy-bold md:h-32 lg:h-20'}>Get qualified talent for your team</p>
-                                <p className={'pb-4 gilroy-medium text-xl'}>Top talents take our extensive tests and interview process covering tech stacks, coding algorithm, systems design, and soft skills.</p>
+                                <p className={'pb-4 gilroy-medium text-xl'}>Extensive test and interview process covering tech stacks, coding algorithm, systems design, and soft skills are given to ensure you having qualified talents.</p>
                             </div>
                         </div>
                     </div>
@@ -165,13 +161,16 @@ function Talents({ }) {
                         <div className={'pb-8'}>
                             <Collapse
                             accordion
+                            expandIconPosition={'right'}
+                            style={{background:"#ffffff"}}
+                            className={"text-center"}
                             >
-                                <Panel className={'gilroy-medium text-lg'} header={'Software Engineer'} showArrow={false}>
+                                <Panel className={'gilroy-medium text-lg'} header={'Software Engineer'}>
                                     <div className={'py-4 px-4'}>
-                                        <p className={'gilroy-bold text-lg md:text-xl text-center'}>Typical Skills:</p>
-                                        <p className={'py-4 gilroy-medium text-lg md:text-xl'}>Bachelor's degree in Computer Science, Knowledge of primary coding languages including C++, HTML5, and JavaScript, PHP Java, Spring, Laravel,Tibco, etc., Basic programming experience, Knowledge of databases and operating systems, ability to learn new software and technologies quickly, Detail-oriented.</p>
-                                        <p className={'gilroy-bold text-lg md:text-xl text-center'}>Typical deliverable:</p>
-                                        <p className={'py-4 gilroy-medium text-lg md:text-xl'}>Integration of user-facing elements developed by front-end developers, provide support in building efficient, testable, and reusable software modules, provide assistance in solving performance problems and architectural challenges, integration of data storage solutions.</p>
+                                        <p className={'gilroy-bold text-base md:text-lg text-left'}>Typical Skills:</p>
+                                        <p className={'py-4 gilroy-medium text-base md:text-lg text-left'}>Bachelor's degree in Computer Science, Knowledge of primary coding languages including C++, HTML5, and JavaScript, PHP Java, Spring, Laravel,Tibco, etc., Basic programming experience, Knowledge of databases and operating systems, ability to learn new software and technologies quickly, Detail-oriented.</p>
+                                        <p className={'gilroy-bold text-base md:text-lg text-left'}>Typical deliverable:</p>
+                                        <p className={'py-4 gilroy-medium text-base md:text-lg text-left'}>Integration of user-facing elements developed by front-end developers, provide support in building efficient, testable, and reusable software modules, provide assistance in solving performance problems and architectural challenges, integration of data storage solutions.</p>
                                     </div>
                                 </Panel>
                             </Collapse>
@@ -179,13 +178,16 @@ function Talents({ }) {
                         <div className={'pb-8'}>
                             <Collapse
                             accordion
+                            expandIconPosition={'right'}
+                            style={{background:"#ffffff"}}
+                            className={"text-center"}
                             >
-                                <Panel className={'gilroy-medium text-lg'} header={'Data Analyst'} showArrow={false}>
+                                <Panel className={'gilroy-medium text-lg'} header={'Data Analyst'}>
                                     <div className={'py-4 px-4'}>
-                                        <p className={'gilroy-bold text-lg md:text-xl text-center'}>Typical Skills:</p>
-                                        <p className={'py-4 gilroy-medium text-lg md:text-xl'}>Skills: A high level of mathematical ability, Programming languages, such as SQL, Oracle and Python, The ability to analyze, model and interpret data, Problem-solving skills, A systematic and logical approach, Written and verbal communication skills.</p>
-                                        <p className={'gilroy-bold text-lg md:text-xl text-center'}>Typical deliverable:</p>
-                                        <p className={'py-4 gilroy-medium text-lg md:text-xl'}>Examines information using data analysis tools. Generate meaningful results that pulled from the raw data and help make decisions by identifying various facts and trends. Typical duties includes removing corrupted data, performing initial analysis to assess the quality of the data, preparing reports based on analysis and presenting to management.</p>
+                                        <p className={'gilroy-bold text-base md:text-lg text-left'}>Typical Skills:</p>
+                                        <p className={'py-4 gilroy-medium text-base md:text-lg text-left'}>Skills: A high level of mathematical ability, Programming languages, such as SQL, Oracle and Python, The ability to analyze, model and interpret data, Problem-solving skills, A systematic and logical approach, Written and verbal communication skills.</p>
+                                        <p className={'gilroy-bold text-base md:text-lg text-left'}>Typical deliverable:</p>
+                                        <p className={'py-4 gilroy-medium text-base md:text-lg text-left'}>Examines information using data analysis tools. Generate meaningful results that pulled from the raw data and help make decisions by identifying various facts and trends. Typical duties includes removing corrupted data, performing initial analysis to assess the quality of the data, preparing reports based on analysis and presenting to management.</p>
                                     </div>
                                 </Panel>
                             </Collapse>
@@ -195,13 +197,16 @@ function Talents({ }) {
                         <div className={'pb-8'}>
                             <Collapse
                             accordion
+                            expandIconPosition={'right'}
+                            style={{background:"#ffffff"}}
+                            className={"text-center"}
                             >
-                                <Panel className={'gilroy-medium text-lg'} header={'Quality Assurance'} showArrow={false}>
+                                <Panel className={'gilroy-medium text-lg'} header={'Quality Assurance'}>
                                     <div className={'py-4 px-4'}>
-                                        <p className={'gilroy-bold text-lg md:text-xl text-center'}>Typical Skills:</p>
-                                        <p className={'py-4 gilroy-medium text-lg md:text-xl'}>Proven experience as a Quality Assurance Tester or similar role, Experience in project management and QA methodology, ability to document and troubleshoot errors, Working Knowledge of test management software and SQL, Excellent communication skills, attention to detail, BSc/BA in Computer Science, Engineering or a related field.</p>
-                                        <p className={'gilroy-bold text-lg md:text-xl text-center'}>Typical deliverable:</p>
-                                        <p className={'py-4 gilroy-medium text-lg md:text-xl'}>Reviewing and analyzing system specifications, Executing test scripts and reviewing results, Reporting and documenting technical issues, Create logs to document testing phases and defects.</p>
+                                        <p className={'gilroy-bold text-base md:text-lg text-left'}>Typical Skills:</p>
+                                        <p className={'py-4 gilroy-medium text-base md:text-lg text-left'}>Proven experience as a Quality Assurance Tester or similar role, Experience in project management and QA methodology, ability to document and troubleshoot errors, Working Knowledge of test management software and SQL, Excellent communication skills, attention to detail, BSc/BA in Computer Science, Engineering or a related field.</p>
+                                        <p className={'gilroy-bold text-base md:text-lg text-left'}>Typical deliverable:</p>
+                                        <p className={'py-4 gilroy-medium text-base md:text-lg text-left'}>Reviewing and analyzing system specifications, Executing test scripts and reviewing results, Reporting and documenting technical issues, Create logs to document testing phases and defects.</p>
                                     </div>
                                 </Panel>
                             </Collapse>
@@ -209,11 +214,14 @@ function Talents({ }) {
                         <div className={'pb-8'}>
                             <Collapse
                             accordion
+                            expandIconPosition={'right'}
+                            style={{background:"#ffffff"}}
+                            className={"text-center"}
                             >
-                                <Panel className={'gilroy-medium text-lg'} header={'Product'} showArrow={false}>
-                                    <p className={'gilroy-medium'}>
-                                        Lorem Ipsunm
-                                    </p>
+                                <Panel className={'gilroy-medium text-lg'} header={'Product'}>
+                                    <div className={'py-4 px-4'}>
+                                        <p className={'text-base md:text-lg text-left'}>Lorem Ipsum</p>
+                                    </div>
                                 </Panel>
                             </Collapse>
                         </div>
@@ -276,10 +284,11 @@ function Talents({ }) {
                             <Checkbox name="checkbox" className={'gilroy-regular text-xl'}>By proceeding, I agree that MIG's representative may contact me by email, phone, or SMS (including by automatic telephone dialing system) at the email address or number I provide, including for marketing purposes.*</Checkbox>
                         </Form.Item >
                         <Form.Item>
-                        <div className={'w-full flex justify-center pt-8 pb-8'}>
-                            <button type={'submit'} className={'text-black border border-black px-4 py-1 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
+                        <div className={'w-full flex justify-start pt-8 pb-8'}>
+                            <button type={'submit'} className={'text-black text-lg border border-black px-4 py-1 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
                                 Submit
                             </button>
+                            
                         </div>
                         </Form.Item>
                     </Form>
