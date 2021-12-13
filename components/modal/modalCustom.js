@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { AlertIconSvg } from '../icon'
+import { AlertIconSvg, TrashIconSvg } from '../icon'
 import { TreeSelectRequired } from '../input'
 import { Text } from '../typography'
 import ModalCore from './modalCore'
 import { Spin } from 'antd'
+import ButtonSys from '../button'
 
 function ModalEdit({ title, visible, onOk, onCancel, footer, loading, children }) {
     return (
@@ -223,6 +224,33 @@ function ModalHapusInventoryExist({ title, visible, footer, invexistdata, childr
     )
 }
 
+//TASK
+const ModalHapusTipeTask = ({ title, visible, onvisible, onOk, onCancel, loading, datadelete, children }) => {
+    return (
+        <ModalCore
+            title={title}
+            visible={visible}
+            onCancel={onCancel}
+            footer={
+                <Spin spinning={loading}>
+                    <div className="flex justify-between items-center">
+                        <ButtonSys type="default" color="danger" onClick={() => { onvisible(false) }}>
+                            Batalkan
+                        </ButtonSys>
+                        <ButtonSys type="primary" color="danger" onClick={onOk}>
+                            <TrashIconSvg size={15} color={`#ffffff`} />
+                            Hapus
+                        </ButtonSys>
+                    </div>
+                </Spin>
+            }
+            loading={loading}
+        >
+            Apakah Anda yakin ingin melanjutkan penghapusan Tipe Task <strong>{datadelete.name}</strong>?
+        </ModalCore>
+    )
+}
+
 export {
-    ModalEdit, ModalHapus, ModalHapusLokasiCekChild, ModalHapusLokasiMoveChild, ModalHapusLokasiConfirm, ModalHapusInventoryExist, ModalStatus
+    ModalEdit, ModalHapus, ModalHapusLokasiCekChild, ModalHapusLokasiMoveChild, ModalHapusLokasiConfirm, ModalHapusInventoryExist, ModalStatus, ModalHapusTipeTask
 }

@@ -22,6 +22,26 @@ const InputRequired = ({ label, name, defaultValue, onChangeInput, value }) => {
     )
 }
 
+const TextAreaRequired = ({ label, name, defaultValue, onChangeInput, value }) => {
+    return (
+        <div className="flex flex-col mb-5 px-3">
+            <div className="flex">
+                <Label>{label}</Label>
+                <span className="namaField"></span>
+                <style jsx>
+                    {`
+                        .namaField::before{
+                            content: '*';
+                            color: red;
+                        }
+                    `}
+                </style>
+            </div>
+            <Input.TextArea name={name} defaultValue={defaultValue} value={value} onChange={onChangeInput}></Input.TextArea>
+        </div>
+    )
+}
+
 const InputNotRequired = ({ label, name, defaultValue, onChangeInput, value }) => {
     return (
         <div className="flex flex-col mb-5 px-3">
@@ -67,6 +87,19 @@ const SelectRequired = ({ label, name, defaultValue, onChangeSelect, value, chil
                         }
                     `}
                 </style>
+            </div>
+            <Select name={name} defaultValue={defaultValue} value={value} onChange={onChangeSelect}>
+                {children}
+            </Select>
+        </div>
+    )
+}
+
+const SelectNotRequired = ({ label, name, defaultValue, onChangeSelect, value, children, mb, px }) => {
+    return (
+        <div className={`flex flex-col mb-${mb} px-${px}`}>
+            <div className="flex">
+                <Label>{label}</Label>
             </div>
             <Select name={name} defaultValue={defaultValue} value={value} onChange={onChangeSelect}>
                 {children}
@@ -140,6 +173,28 @@ const RadioRequired = ({ label, name, onChangeRadio, options, value, defaultValu
     )
 }
 
+const RadioNotRequired = ({ label, name, onChangeRadio, options, value, defaultValue }) => {
+    return (
+        <div className="flex flex-col mb-3">
+            <div className="flex">
+                <Label>{label}</Label>
+            </div>
+            <Radio.Group name={name} onChange={onChangeRadio} defaultValue={defaultValue}>
+                <div className="flex flex-col">
+                    {
+                        options.map((doc, idx) => {
+                            return (
+                                <Radio value={doc.value}>{doc.title}</Radio>
+                            )
+                        })
+                    }
+                </div>
+            </Radio.Group>
+        </div>
+
+    )
+}
+
 export {
-    InputRequired, InputNotRequired, RadioRequired, SelectRequired, TreeSelectRequired, DateRequired, DateNotRequired
+    InputRequired, InputNotRequired, RadioRequired, RadioNotRequired, SelectRequired, SelectNotRequired, TreeSelectRequired, DateRequired, DateNotRequired, TextAreaRequired
 }
