@@ -62,6 +62,37 @@ const TableCustomRelasi = ({ dataSource, setDataSource, columns, loading, pageSi
     )
 }
 
+const TableCustomTipeTask = ({ dataSource, setDataSource, columns, loading, pageSize, total, setpraloading, initProps, setpage, setdataraw }) => {
+    return (
+        <Table
+            dataSource={dataSource}
+            columns={columns}
+            loading={loading}
+            scroll={{ x: 200 }}
+            pagination={{
+                pageSize: pageSize,
+                total: total,
+                onChange: (page, pageSize) => {
+                    setpraloading(true)
+                    setpage(page)
+                    fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskTypes?page=${page}&rows=${pageSize}`, {
+                        method: `GET`,
+                        headers: {
+                            'Authorization': JSON.parse(initProps),
+                        },
+                    })
+                        .then(res => res.json())
+                        .then(res2 => {
+                            setdataraw(res2.data)
+                            setDataSource(res2.data.data)
+                            setpraloading(false)
+                        })
+                }
+            }}
+        />
+    )
+}
+
 export {
-    TableCustom, TableCustomRelasi
+    TableCustom, TableCustomRelasi, TableCustomTipeTask
 }

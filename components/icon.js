@@ -480,6 +480,59 @@ const MappinIconSvg = ({ size, color }) => {
         <Icon component={mappinIconSvg}></Icon>
     )
 }
+const AlignJustifiedIconSvg = ({ size, color }) => {
+    const alignjustifiedIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-align-justified" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <line x1={4} y1={6} x2={20} y2={6} />
+            <line x1={4} y1={12} x2={20} y2={12} />
+            <line x1={4} y1={18} x2={16} y2={18} />
+        </svg>
+    )
+    return (
+        <Icon component={alignjustifiedIconSvg}></Icon>
+    )
+}
+const CheckboxIconSvg = ({ size, color }) => {
+    const checkboxIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-checkbox" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <polyline points="9 11 12 14 20 6" />
+            <path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9" />
+        </svg>
+    )
+    return (
+        <Icon component={checkboxIconSvg}></Icon>
+    )
+}
+const BorderAllSvg = ({ size, color }) => {
+    const borderallSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-border-all" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <rect x={4} y={4} width={16} height={16} rx={2} />
+            <line x1={4} y1={12} x2={20} y2={12} />
+            <line x1={12} y1={4} x2={12} y2={20} />
+        </svg>
+    )
+    return (
+        <Icon component={borderallSvg}></Icon>
+    )
+}
+const ListNumbersSvg = ({ size, color }) => {
+    const listnumbersSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-list-numbers" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M11 6h9" />
+            <path d="M11 12h9" />
+            <path d="M12 18h8" />
+            <path d="M4 16a2 2 0 1 1 4 0c0 .591 -.5 1 -1 1.5l-3 2.5h4" />
+            <path d="M6 10v-6l-2 2" />
+        </svg>
+    )
+    return (
+        <Icon component={listnumbersSvg}></Icon>
+    )
+}
 const ListcheckIconSvg = ({ size, color }) => {
     const listcheckIconSvg = () => (
         <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-list-check" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
@@ -496,6 +549,18 @@ const ListcheckIconSvg = ({ size, color }) => {
         <Icon component={listcheckIconSvg}></Icon>
     )
 }
+const CopyIconSvg = ({ size, color }) => {
+    const copyIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-copy" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <rect x={8} y={8} width={12} height={12} rx={2} />
+            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />
+        </svg>
+    )
+    return (
+        <Icon component={copyIconSvg}></Icon>
+    )
+}
 const UsercircleIconSvg = ({ size, color }) => {
     const usercircleIconSvg = () => (
         <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-user-circle" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
@@ -507,6 +572,36 @@ const UsercircleIconSvg = ({ size, color }) => {
     )
     return (
         <Icon component={usercircleIconSvg}></Icon>
+    )
+}
+const CircleXIconSvg = ({ size, color }) => {
+    const circlexIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-circle-x" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <circle cx={12} cy={12} r={9} />
+            <path d="M10 10l4 4m0 -4l-4 4" />
+        </svg>
+    )
+    return (
+        <Icon component={circlexIconSvg}></Icon>
+    )
+}
+const RulerIconSvg = ({ size, color }) => {
+    const rulerIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-ruler" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M5 4h14a1 1 0 0 1 1 1v5a1 1 0 0 1 -1 1h-7a1 1 0 0 0 -1 1v7a1 1 0 0 1 -1 1h-5a1 1 0 0 1 -1 -1v-14a1 1 0 0 1 1 -1" />
+            <line x1={4} y1={8} x2={6} y2={8} />
+            <line x1={4} y1={12} x2={7} y2={12} />
+            <line x1={4} y1={16} x2={6} y2={16} />
+            <line x1={8} y1={4} x2={8} y2={6} />
+            <polyline points="12 4 12 7 " />
+            <polyline points="16 4 16 6 " />
+        </svg>
+
+    )
+    return (
+        <Icon component={rulerIconSvg}></Icon>
     )
 }
 const MoveIconSvg = ({ size, color }) => {
@@ -666,5 +761,12 @@ export {
     ListcheckIconSvg,
     CalendartimeIconSvg,
     AlerttriangleIconSvg,
-    UsercircleIconSvg
+    UsercircleIconSvg,
+    AlignJustifiedIconSvg,
+    CheckboxIconSvg,
+    BorderAllSvg,
+    ListNumbersSvg,
+    CopyIconSvg,
+    CircleXIconSvg,
+    RulerIconSvg
 }
