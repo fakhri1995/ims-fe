@@ -264,8 +264,8 @@ function Hardware({ }) {
                             <Checkbox name="checkbox" className={'gilroy-regular text-xl'}>By proceeding, I agree that MIG's representative may contact me by email, phone, or SMS (including by automatic telephone dialing system) at the email address or number I provide, including for marketing purposes.*</Checkbox>
                         </Form.Item >
                         <Form.Item>
-                        <div className={'w-full flex justify-start pt-8 pb-8'}>
-                            <button type={'submit'} className={'text-black text-lg border border-black px-4 py-1 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
+                        <div className={'w-full flex justify-start pb-8'}>
+                            <button type={'submit'} className={'text-black text-base border border-black px-4 py-1 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
                                 Submit
                             </button>
                             
