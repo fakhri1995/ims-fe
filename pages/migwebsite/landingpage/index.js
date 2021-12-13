@@ -393,7 +393,7 @@ function LandingPage({ }) {
                     </Slider>
                 </section> */}
 
-            <section className={'md:relative px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 text-center md:bottom-32'}>
+            <section className={'md:relative px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 text-center md:bottom-16'}>
 
                 <p className={'text-3xl md:text-4xl pb-2 md:pb-4 gilroy-medium font-semibold'}>
                     Show Cases
