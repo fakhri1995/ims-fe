@@ -22,7 +22,7 @@ function AboutUs({ }) {
             </section>
             <section className={'block md:flex px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                 <div className={'flex-col w-full py-4 md:py-4 pr-0 md:pr-10 m-auto'}>
-                    <p className={'gilroy-bold text-center md:text-left pb-0 md:pb-8 text-2xl md:text-3xl'}>Who are we</p>
+                    <p className={'gilroy-bold text-left pb-0 md:pb-8 text-2xl md:text-3xl'}>Who we are</p>
                     {/* <div className={'block md:hidden flex-col py-4 md:py-4 m-auto'}>
                         <img src="/image-aboutus.png" className={'block'} style={{width:'400px',height:'auto',margin:'0 auto'}}></img>
                     </div> */}
@@ -31,7 +31,7 @@ function AboutUs({ }) {
                     </p>
 
                     <p className={'pb-8 text-xl'}>
-                        <Link href="joinourteam"><em className={'cursor-pointer text-green-500 underline'}>Careers</em></Link> <em>at MIG</em> offer meaningful work to be better together
+                        <Link href="joinourteam"><em className={'cursor-pointer text-green-500 underline'}>Careers</em></Link> at MIG offer meaningful work to be better together
                     </p>
                 </div>
             </section>
@@ -43,9 +43,9 @@ function AboutUs({ }) {
                     <p className={'text-xl w-full md:w-2/5 gilroy-medium'}>One stop seamless technology solution to help you achieve business goals and optimize your cost </p>
                 </div>
                 <div className={'grid md:flex my-4 justify-center md:justify-between'}>
-                    <div className={'flex-col flex bg-white mr-0 md:mr-10 p-4 w-full border-2 border-black-300 rounded-lg hover:shadow-lg'}>
+                    <div className={'flex-col flex bg-white mr-0 p-4 w-full border-2 border-black-300 rounded-lg hover:shadow-lg'}>
                         <div className={'min-h-full relative pb-8'} style={{}}>
-                            <img style={{ height: '50px', width: 'auto' }} src="/image/navbar/hardware.png"></img>
+                            <img style={{ height: '40px', width: 'auto' }} src="/image/navbar/hardware.png"></img>
                             <p className={'text-left py-3 gilroy-bold text-xl'}>
                                 Hardware
                             </p>
@@ -59,9 +59,9 @@ function AboutUs({ }) {
                             </div>
                         </div>
                     </div>
-                    <div className={'flex-col bg-white my-5 md:my-0 mx-0 md:mx-10 p-4 w-full border-2 border-black-300 rounded-lg hover:shadow-lg'}>
+                    <div className={'flex-col bg-white my-5 md:my-0 mx-0 md:mx-5 p-4 w-full border-2 border-black-300 rounded-lg hover:shadow-lg'}>
                         <div className={'min-h-full relative pb-8'} style={{}}>
-                            <img style={{height:'50px', width:'auto', position:'relative', left:'-25px'}} src="/image/navbar/software.png"></img>
+                            <img style={{height:'40px', width:'auto', position:'relative', left:'-25px'}} src="/image/navbar/software.png"></img>
                             <p className={'text-left py-3 gilroy-bold text-xl'}>Software
                             </p>
                             <p className={'gilroy-regular text-xl'}>
@@ -74,9 +74,9 @@ function AboutUs({ }) {
                             </div>
                         </div>
                     </div>
-                    <div className={'flex-col bg-white mdl-0 md:ml-10 p-4 w-full border-2 border-black-300 rounded-lg hover:shadow-lg'}>
+                    <div className={'flex-col bg-white mdl-0 p-4 w-full border-2 border-black-300 rounded-lg hover:shadow-lg'}>
                         <div className={'min-h-full relative pb-8'} style={{}}>
-                            <img style={{height:'50px', width:'auto', position:'relative', left:'-10px'}} src="/image/navbar/talents.png"></img>
+                            <img style={{height:'40px', width:'auto', position:'relative', left:'-10px'}} src="/image/navbar/talents.png"></img>
                             <p className={'text-left py-3 gilroy-bold text-xl'}>Talents
                             </p>
                             <p className={'gilroy-regular text-xl'}>
@@ -97,7 +97,7 @@ function AboutUs({ }) {
                     <p className={'gilroy-bold text-2xl md:text-3xl pb-4'}>MIG Locations</p>
                     <p className={'gilroy-bold pb-4 text-xl'}>Headquarters</p>
                     <p className={'text-xl'}>Tebet raya  no. 42</p>
-                    <p className={'pb-4 text-xl'}>South Jakarta, DKI Jakarta,12820</p>
+                    <p className={'pb-4 text-lg'}>South Jakarta, DKI Jakarta,12820</p>
                     <Link href={{ pathname: '/contactus' }}>
                         <Button className={'hover:text-white hover:bg-black text-xl h-auto'} style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>Contact Us</Button>
                     </Link>
