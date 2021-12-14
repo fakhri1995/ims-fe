@@ -147,7 +147,7 @@ function layout({ children }) {
                                 <a href='/aboutus' className="text-lg gilroy-medium">About Us</a>
                             </Menu.Item>
                             <Menu.Item key='5'><a href='/joinourteam' className="text-lg gilroy-medium">Join Our Team</a></Menu.Item>
-                            <Menu.Item key='6'
+                            {/* <Menu.Item key='6'
                             style={{
                                 position: 'absolute',
                                 bottom: 0,
@@ -157,8 +157,44 @@ function layout({ children }) {
                             <ArrowRightOutlined style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/>
                             <LinkedinFilled style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/>
                             <InstagramFilled style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/>
-                            </a></Menu.Item>
+                            </a></Menu.Item> */}
+                            {/* <SubMenu key="sub 2" title="Contactus" className="text-lg gilroy-medium"style={{
+                                position: 'absolute',
+                                bottom: 0,
+                                zIndex: 1,
+                                transition: 'all 0.2s',
+                            }}>
+                                <Menu.Item key='1'>
+                                    <img className={'relative'} style={{ display: 'inline-block' }} width={40} src={'/image/navbar/hardware_black.png'}></img>
+                                    <a href='/hardware' className="text-lg gilroy-medium pl-3">
+                                        Hardware
+                                    </a>
+                                </Menu.Item>
+                                <Menu.Item key='2'>
+                                    <img className={'relative'} style={{ display: 'inline-block' }} width={40} src={'/image/navbar/software_black.png'}></img>
+                                    <a href='/software' className="text-lg gilroy-medium pl-3">
+                                        Software
+                                    </a>
+                                </Menu.Item>
+                                <Menu.Item key='3'>
+                                    <img className={'relative'} style={{ display: 'inline-block' }} width={40} src={'/image/navbar/talents_black.png'}></img>
+                                    <a href='/talents' className="text-lg gilroy-medium pl-3">
+                                        Talents
+                                    </a>
+                                </Menu.Item>
+                            </SubMenu> */}
                         </Menu>
+                        <div className="text-lg gilroy-medium"  className='mx-6' style={{
+                                position: 'absolute',
+                                bottom: 10,
+                                zIndex: 1,
+                                transition: 'all 0.2s',
+                            }}>
+                                <a href='/contactus' className="text-lg gilroy-medium menu-navbar">Contact Us </a>
+                                &nbsp;&nbsp;<ArrowRightOutlined style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/>&nbsp;&nbsp;
+                                <a className='menu-navbar' href='https://www.linkedin.com/company/pt-mitramas-infosys-global'><LinkedinFilled style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/></a>&nbsp;&nbsp;
+                                <a className='menu-navbar' href='https://instagram.com/mitramasglobal?utm_medium=copy_link'><InstagramFilled style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/></a>
+                        </div>
                     </div>
                 </section>
 

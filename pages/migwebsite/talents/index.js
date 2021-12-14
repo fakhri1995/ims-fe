@@ -220,7 +220,11 @@ function Talents({ }) {
                             >
                                 <Panel className={'gilroy-medium text-lg'} header={'Product'}>
                                     <div className={'py-4 px-4'}>
-                                        <p className={'text-base md:text-lg text-left'}>Lorem Ipsum</p>
+                                        <p className={'gilroy-bold text-base md:text-lg text-left'}>Typical Skills:</p>
+                                        <p className={'py-4 gilroy-medium text-base md:text-lg text-left'}>Proven experience with rapid prototyping tools and techniques, such as story mapping, design sprints, and product methodology. Excellent analytical skills and strong intuitions of user behaviors. Solid oral and written communications skills. Strong business requirement analysis.</p>
+                                        <p className={'gilroy-bold text-base md:text-lg text-left'}>Typical deliverable:</p>
+                                        <p className={'py-4 gilroy-medium text-base md:text-lg text-left'}>Doing the research and analysis of the competitive landscape, product metrics, and latest internet trends to identify and fill product gaps and generate new ideas that improve customer experience. Scope and prioritize activities based on business and customer impact. Analyzing user requirements into specification and architectural design for developers</p>
+                                    
                                     </div>
                                 </Panel>
                             </Collapse>
@@ -284,8 +288,8 @@ function Talents({ }) {
                             <Checkbox name="checkbox" className={'gilroy-regular text-xl'}>By proceeding, I agree that MIG's representative may contact me by email, phone, or SMS (including by automatic telephone dialing system) at the email address or number I provide, including for marketing purposes.*</Checkbox>
                         </Form.Item >
                         <Form.Item>
-                        <div className={'w-full flex justify-start pt-8 pb-8'}>
-                            <button type={'submit'} className={'text-black text-lg border border-black px-4 py-1 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
+                        <div className={'w-full flex justify-start pb-8'}>
+                            <button type={'submit'} className={'text-black text-base border border-black px-4 py-1 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
                                 Submit
                             </button>
                             
