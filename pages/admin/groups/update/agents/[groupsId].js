@@ -87,7 +87,7 @@ function GroupsAgentsDetail({ initProps, dataProfile, dataListAccount, dataDetai
     //------------------------------------------
 
     //------------populate list account-------------
-    const dataDD = dataListAccount.data.data.map((doc, idx) => {
+    const dataDD = dataListAccount.data.map((doc, idx) => {
         return ({
             value: doc.id,
             label: doc.name,
@@ -275,7 +275,7 @@ export async function getServerSideProps({ req, res, params }) {
     const dataDetailGroup = resjsonGetDetailGroup
 
     //get data list akun
-    const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList`, {
+    const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterUsers?type=${1}`, {
         method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps),

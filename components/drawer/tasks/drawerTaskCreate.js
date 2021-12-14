@@ -177,16 +177,40 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
     //Staff/group
     useEffect(() => {
         if (switchstaffgroup !== -1) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getAssignToList?assignable_type=${switchstaffgroup}`, {
-                method: `GET`,
-                headers: {
-                    'Authorization': JSON.parse(initProps),
-                },
-            })
-                .then(res => res.json())
-                .then(res2 => {
-                    setdatastaffgroup(res2.data)
+            if (switchstaffgroup === 0) {
+                fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterGroups`, {
+                    method: `GET`,
+                    headers: {
+                        'Authorization': JSON.parse(initProps),
+                    },
                 })
+                    .then(res => res.json())
+                    .then(res2 => {
+                        setdatastaffgroup(res2.data)
+                    })
+            }
+            else if (switchstaffgroup === 1) {
+                fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterUsers?type=${1}`, {
+                    method: `GET`,
+                    headers: {
+                        'Authorization': JSON.parse(initProps),
+                    },
+                })
+                    .then(res => res.json())
+                    .then(res2 => {
+                        setdatastaffgroup(res2.data)
+                    })
+            }
+            // fetch(`https://boiling-thicket-46501.herokuapp.com/getAssignToList?assignable_type=${switchstaffgroup}`, {
+            //     method: `GET`,
+            //     headers: {
+            //         'Authorization': JSON.parse(initProps),
+            //     },
+            // })
+            //     .then(res => res.json())
+            //     .then(res2 => {
+            //         setdatastaffgroup(res2.data)
+            //     })
         }
     }, [switchstaffgroup])
     useEffect(() => {
@@ -505,7 +529,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                     >
                                         {
                                             datastaffgroup.map((doc, idx) => (
-                                                <Select.Option key={idx} value={doc.id}>{doc.name}</Select.Option>
+                                                <Select.Option key={idx} value={doc.id} companyname={doc.company.full_name}>{doc.name}</Select.Option>
                                             ))
                                         }
                                     </Select>
@@ -555,7 +579,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                         {
                                             switchstaffgroup === 1 ?
                                                 <div className=' w-10 h-10 rounded-full'>
-                                                    <img src="/image/staffTask.png" className=' object-contain w-10 h-10' alt="" />
+                                                    <img src={doc.profile_image === "" || doc.profile_image === "-" ? "/image/staffTask.png" : `${doc.profile_image}`} className=' object-contain w-10 h-10' alt="" />
                                                 </div>
                                                 :
                                                 <UserIconSvg />
@@ -579,7 +603,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                             </div>
                                         </div>
                                         <div>
-                                            <Label>{switchstaffgroup === 0 ? `GROUP` : `STAFF`}</Label>
+                                            <Label>{switchstaffgroup === 0 ? `` : `${doc.companyname}`}</Label>
                                         </div>
                                     </div>
                                 </div>

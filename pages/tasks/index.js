@@ -3,7 +3,6 @@ import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import st from '../../components/layout-dashboard.module.css'
-import Link from 'next/link'
 import { Progress, Input, notification } from 'antd'
 import Buttonsys from '../../components/button'
 import { H1, H2, Label, Text } from '../../components/typography'
@@ -11,12 +10,12 @@ import { AlerttriangleIconSvg, BackIconSvg, CalendartimeIconSvg, ClipboardcheckI
 import { Chart, ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement } from 'chart.js'
 Chart.register(ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement);
 import { Doughnut, Bar, Line } from 'react-chartjs-2';
-import moment from 'moment'
-import { TableCustomTipeTask } from '../../components/table/tableCustom'
+import { TableCustomTask, TableCustomTipeTask } from '../../components/table/tableCustom'
 import { ModalHapusTipeTask } from '../../components/modal/modalCustom'
 import DrawerTaskTypesCreate from '../../components/drawer/tasks/drawerTaskTypesCreate'
 import DrawerTaskTypesUpdate from '../../components/drawer/tasks/drawerTaskTypesUpdate'
 import DrawerTaskCreate from '../../components/drawer/tasks/drawerTaskCreate'
+import moment from 'moment'
 
 const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     //1.Init
@@ -67,37 +66,55 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     })
     const [modaltipetaskdelete, setmodaltipetaskdelete] = useState(false)
     const [loadingtipetaskdelete, setloadingtipetaskdelete] = useState(false)
+    //Tasks
+    const [datarawtask, setdatarawtask] = useState({
+        current_page: "",
+        data: [],
+        first_page_url: "",
+        from: null,
+        last_page: null,
+        last_page_url: "",
+        next_page_url: "",
+        path: "",
+        per_page: null,
+        prev_page_url: null,
+        to: null,
+        total: null
+    })
+    const [currenttask, setcurrenttask] = useState({
+        id: null,
+        name: "",
+        description: "",
+        task_type_id: null,
+        location_id: null,
+        reference_id: null,
+        created_by: null,
+        group_id: null,
+        created_at: null,
+        on_hold_at: null,
+        deadline: null,
+        status: null,
+        is_replaceable: null,
+        deleted_at: null,
+        task_type: {
+            id: null,
+            name: "",
+            deleted_at: null
+        },
+        location: {
+            id: null,
+            name: "",
+            full_location: ""
+        },
+        users: []
+    })
+    const [datatasks, setdatatasks] = useState([])
+    const [loadingtasks, setloadingtasks] = useState(false)
+    const [viewdetailtask, setviewdetailtask] = useState(false)
+    const [pagetask, setpagetask] = useState(1)
+    const [rowstask, setrowstask] = useState(6)
 
     //2. columns table
-    const datadummies = [
-        {
-            task_id: `T-00001`,
-            task_type: `Insiden Aset`,
-            task_title: `Perbaikan ATM H2VLL`,
-            task_deadline: moment(new Date()).locale('id').format("LL"),
-            task_staff: [`Bintang`],
-            task_loc: `Wilayah 1`,
-            task_status: `Overdue`
-        },
-        {
-            task_id: `T-00002`,
-            task_type: `Insiden Aset 2`,
-            task_title: `Perbaikan ATM HGNKK`,
-            task_deadline: moment(new Date()).locale('id').format("LL"),
-            task_staff: [`Bintang`, `Yues`],
-            task_loc: `Wilayah 1`,
-            task_status: `Overdue`
-        },
-        {
-            task_id: `T-00001`,
-            task_type: `Insiden Aset`,
-            task_title: `Perbaikan ATM H2VLL`,
-            task_deadline: moment(new Date()).locale('id').format("LL"),
-            task_staff: [`Bintang`],
-            task_loc: `Wilayah 1`,
-            task_status: `Overdue`
-        }
-    ]
     const columnsTipetask = [
         {
             title: 'No',
@@ -143,7 +160,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                 return {
                     children:
                         <>
-                            -
+                            {record.tasks_count}
                         </>
                 }
             }
@@ -159,18 +176,6 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                 <Buttonsys type="default" onClick={() => {
                                     settriggertasktypupdate(record.id)
                                     setdrawertasktypupdate(true)
-                                    // setloadingtipetasks(true)
-                                    // fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskType?id=${record.id}`, {
-                                    //     method: `GET`,
-                                    //     headers: {
-                                    //         'Authorization': JSON.parse(initProps),
-                                    //     },
-                                    // })
-                                    //     .then(res => res.json())
-                                    //     .then(res2 => {
-                                    //         setcurrenttipetask(res2.data)
-                                    //         setloadingtipetasks(false)
-                                    //     })
                                 }}>
                                     <EditIconSvg size={15} color={`#35763B`} />
                                 </Buttonsys>
@@ -180,6 +185,130 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                     <TrashIconSvg size={15} color={`#BF4A40`} />
                                 </Buttonsys>
                             </div>
+                        </div>
+                }
+            }
+        },
+    ]
+    const columnsTask = [
+        {
+            title: 'No',
+            dataIndex: 'num',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <div className={record.status === 6 && `bg-bgBackdropOverdue`}>
+                            {datarawtask.from + index}
+                        </div>
+                }
+            }
+        },
+        {
+            title: 'Nomor Task',
+            dataIndex: 'id',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <div className={record.status === 6 && `bg-bgBackdropOverdue`}>
+                            T-000{record.id}
+                        </div>
+                }
+            },
+            sorter: (a, b) => a.id < b.id,
+        },
+        {
+            title: 'Tipe Task',
+            dataIndex: 'name',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <div className={record.status === 6 && `bg-bgBackdropOverdue`}>
+                            {record.task_type === null ? `-` : record.task_type.name}
+                        </div>
+                }
+            },
+            sorter: (a, b) => a.task_type.name.localeCompare(b.task_type.name),
+        },
+        {
+            title: 'Judul Task',
+            dataIndex: 'name',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <div className={record.status === 6 && `bg-bgBackdropOverdue`}>
+                            {record.name === "" || record.name === "-" ? `-` : record.name}
+                        </div>
+                }
+            }
+        },
+        {
+            title: 'Deadline',
+            dataIndex: 'deadline',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <div className={record.status === 6 && `bg-bgBackdropOverdue`}>
+                            {record.deadline === null ? `-` : moment(record.deadline).locale('id').format('lll')}
+                        </div>
+                }
+            }
+        },
+        {
+            title: 'Staff',
+            dataIndex: 'users',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <div className={record.status === 6 && `bg-bgBackdropOverdue`}>
+                            {record.users.length === 0 ? `-` : record.users.map(docmap => docmap.name).join(", ")}
+                        </div>
+                }
+            }
+        },
+        {
+            title: 'Lokasi',
+            dataIndex: 'location',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <div className={record.status === 6 && `bg-bgBackdropOverdue`}>
+                            {record.location === null ? `-` : record.location.full_location}
+                        </div>
+                }
+            }
+        },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            align: `center`,
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <div className={record.status === 6 && ` bg-bgBackdropOverdue`}>
+                            {
+                                record.status === 1 &&
+                                <div className="rounded-md h-auto px-1 text-center py-1 bg-open bg-opacity-10 border border-open text-open">Open</div>
+                            }
+                            {
+                                record.status === 2 &&
+                                <div className="rounded-md h-auto px-1 text-center py-1 bg-onprogress bg-opacity-10 border border-onprogress text-onprogress">On-Progress</div>
+                            }
+                            {
+                                record.status === 3 &&
+                                <div className="rounded-md h-auto px-1 text-center py-1 bg-onhold bg-opacity-10 border border-onhold text-onhold">On-Hold</div>
+                            }
+                            {
+                                record.status === 4 &&
+                                <div className="rounded-md h-auto px-1 text-center py-1 bg-completed bg-opacity-10 border border-completed text-completed">Completed</div>
+                            }
+                            {
+                                record.status === 5 &&
+                                <div className="rounded-md h-auto px-1 text-center py-1 bg-closed bg-opacity-10 border border-closed text-closed">Closed</div>
+                            }
+                            {
+                                record.status === 6 &&
+                                <div className="rounded-md h-auto px-1 text-center py-1 bg-overdue bg-opacity-10 border border-overdue text-overdue">Overdue</div>
+                            }
                         </div>
                 }
             }
@@ -236,6 +365,21 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                 })
         }
     }, [viewdetailtipetask, drawertasktypecreate, modaltipetaskdelete])
+    useEffect(() => {
+        setloadingtasks(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagetask}&rows=${rowstask}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatarawtask(res2.data)
+                setdatatasks(res2.data.data)
+                setloadingtasks(false)
+            })
+    }, [drawertaskcreate])
     useEffect(() => {
         if (triggertasktypupdate !== -1) {
             setidtasktypupdate(triggertasktypupdate)
@@ -362,20 +506,20 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                 {
                                                     data: [5, 4, 1, 2, 23, 138],
                                                     backgroundColor: [
-                                                        '#E5C471',
+                                                        '#2F80ED',
                                                         '#BF4A40',
                                                         '#ED962F',
-                                                        '#2F80ED',
+                                                        '#E5C471',
                                                         '#6AAA70',
-                                                        '#EE6DD9',
+                                                        '#808080',
                                                     ],
                                                     borderColor: [
-                                                        '#E5C471',
+                                                        '#2F80ED',
                                                         '#BF4A40',
                                                         '#ED962F',
-                                                        '#2F80ED',
+                                                        '#E5C471',
                                                         '#6AAA70',
-                                                        '#EE6DD9',
+                                                        '#808080',
                                                     ],
                                                     borderWidth: 1,
                                                 },
@@ -702,7 +846,18 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                     </div>
                                 </div>
                                 <div className="flex flex-col">
-
+                                    <TableCustomTask
+                                        dataSource={datatasks}
+                                        setDataSource={setdatatasks}
+                                        columns={columnsTask}
+                                        loading={loadingtasks}
+                                        setpraloading={setloadingtasks}
+                                        pageSize={rowstask}
+                                        total={datarawtask.total}
+                                        initProps={initProps}
+                                        setpage={setpagetask}
+                                        setdataraw={setdatarawtask}
+                                    />
                                 </div>
                             </div>
                         </div>
