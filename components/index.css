@@ -105,9 +105,11 @@ border-radius: 5px;
 /* SELECT */
 .ant-select:not(.ant-select-disabled):hover .ant-select-selector{
     border-color: #35763B;
+    border-radius: 5px;
 }
 .ant-select:not(.ant-select-customize-input) .ant-select-selector{
     border-color: #35763B;
+    border-radius: 5px;
 }
 .ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector{
     border-color: #65976a;
@@ -115,6 +117,11 @@ border-radius: 5px;
     -webkit-box-shadow: 0 0 0 1px #35763B;
     box-shadow: 0 0 0 1px #35763B;
 }
+
+/* TREE SELECT */
+.dontShow .ant-select-selection-item {
+    display: none !important;
+  }
 
 /* DATEPICKER */
 .ant-picker:hover, .ant-picker-focused{

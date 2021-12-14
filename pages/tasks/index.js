@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import st from '../../components/layout-dashboard.module.css'
 import Link from 'next/link'
-import { Progress, Input, Spin } from 'antd'
+import { Progress, Input, notification } from 'antd'
 import Buttonsys from '../../components/button'
 import { H1, H2, Label, Text } from '../../components/typography'
 import { AlerttriangleIconSvg, BackIconSvg, CalendartimeIconSvg, ClipboardcheckIconSvg, ClockIconSvg, EditIconSvg, ListcheckIconSvg, MappinIconSvg, TrashIconSvg } from '../../components/icon'
@@ -12,9 +12,11 @@ import { Chart, ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, Ba
 Chart.register(ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement);
 import { Doughnut, Bar, Line } from 'react-chartjs-2';
 import moment from 'moment'
-import { DrawerTaskTypesCreate, DrawerTaskTypesUpdate } from '../../components/drawer/drawerCustom'
 import { TableCustomTipeTask } from '../../components/table/tableCustom'
 import { ModalHapusTipeTask } from '../../components/modal/modalCustom'
+import DrawerTaskTypesCreate from '../../components/drawer/tasks/drawerTaskTypesCreate'
+import DrawerTaskTypesUpdate from '../../components/drawer/tasks/drawerTaskTypesUpdate'
+import DrawerTaskCreate from '../../components/drawer/tasks/drawerTaskCreate'
 
 const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     //1.Init
@@ -49,7 +51,10 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     const [pagetipetask, setpagetipetask] = useState(1)
     const [rowstipetask, setrowstipetask] = useState(6)
     //create
+    //create - task type
     const [drawertasktypecreate, setdrawertasktypecreate] = useState(false)
+    //create - task
+    const [drawertaskcreate, setdrawertaskcreate] = useState(false)
     //update
     const [triggertasktypupdate, settriggertasktypupdate] = useState(-1)
     const [idtasktypupdate, setidtasktypupdate] = useState(-1)
@@ -183,34 +188,34 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
 
     //HANDLER
     const handleDeleteTipeTask = () => {
-        // setloadingtipetaskdelete(true)
-        // fetch(`https://boiling-thicket-46501.herokuapp.com/deleteTaskType`, {
-        //     method: 'DELETE',
-        //     headers: {
-        //         'Authorization': JSON.parse(initProps),
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify({
-        //         id: datatipetaskdelete.id
-        //     })
-        // })
-        //     .then((res) => res.json())
-        //     .then(res2 => {
-        //         setloadingtipetaskdelete(false)
-        //         if (res2.success) {
-        //             setmodaltipetaskdelete(false)
-        //             notification['success']({
-        //                 message: res2.message,
-        //                 duration: 3
-        //             })
-        //         }
-        //         else {
-        //             notification['error']({
-        //                 message: res2.message,
-        //                 duration: 3
-        //             })
-        //         }
-        //     })
+        setloadingtipetaskdelete(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteTaskType`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: datatipetaskdelete.id
+            })
+        })
+            .then((res) => res.json())
+            .then(res2 => {
+                setloadingtipetaskdelete(false)
+                if (res2.success) {
+                    setmodaltipetaskdelete(false)
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+                else {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
     }
 
     //USEEFFECT
@@ -230,7 +235,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     setloadingtipetasks(false)
                 })
         }
-    }, [viewdetailtipetask, drawertasktypecreate])
+    }, [viewdetailtipetask, drawertasktypecreate, modaltipetaskdelete])
     useEffect(() => {
         if (triggertasktypupdate !== -1) {
             setidtasktypupdate(triggertasktypupdate)
@@ -253,7 +258,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                     </div>
                                     <div>
                                         <Buttonsys type="primary" onClick={() => { setdrawertasktypecreate(true) }}>
-                                            + Tambah Relasi
+                                            + Tambah Tipe Task
                                         </Buttonsys>
                                     </div>
                                 </div>
@@ -657,7 +662,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                     <H1>Kelola Task</H1>
                                 </div>
                                 <div className="flex flex-col">
-                                    <div className="flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2">
+                                    <div className="flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2" onClick={() => { setdrawertaskcreate(true) }}>
                                         <div className="flex p-1 bg-primary10 rounded mr-3">
                                             <ClipboardcheckIconSvg size={35} color={`#35763B`} />
                                         </div>
@@ -721,6 +726,14 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                 dataDisplay={currenttipetask}
                 loading={loadingtipetasks}
                 id={idtasktypupdate}
+            />
+            <DrawerTaskCreate
+                title={"Tambah Task"}
+                visible={drawertaskcreate}
+                onClose={() => { setdrawertaskcreate(false) }}
+                buttonOkText={"Simpan Task"}
+                initProps={initProps}
+                onvisible={setdrawertaskcreate}
             />
         </Layout>
     )

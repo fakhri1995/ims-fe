@@ -5,7 +5,7 @@ import { Label } from './typography'
 const InputRequired = ({ label, name, defaultValue, onChangeInput, value }) => {
     return (
         <div className="flex flex-col mb-5 px-3">
-            <div className="flex">
+            <div className="flex mb-1">
                 <Label>{label}</Label>
                 <span className="namaField"></span>
                 <style jsx>
@@ -25,7 +25,7 @@ const InputRequired = ({ label, name, defaultValue, onChangeInput, value }) => {
 const TextAreaRequired = ({ label, name, defaultValue, onChangeInput, value }) => {
     return (
         <div className="flex flex-col mb-5 px-3">
-            <div className="flex">
+            <div className="flex mb-1">
                 <Label>{label}</Label>
                 <span className="namaField"></span>
                 <style jsx>
@@ -42,10 +42,21 @@ const TextAreaRequired = ({ label, name, defaultValue, onChangeInput, value }) =
     )
 }
 
+const TextAreaNotRequired = ({ rows, label, name, defaultValue, onChangeInput, value }) => {
+    return (
+        <div className="flex flex-col mb-5 px-3">
+            <div className="flex mb-1">
+                <Label>{label}</Label>
+            </div>
+            <Input.TextArea rows={rows} name={name} defaultValue={defaultValue} value={value} onChange={onChangeInput}></Input.TextArea>
+        </div>
+    )
+}
+
 const InputNotRequired = ({ label, name, defaultValue, onChangeInput, value }) => {
     return (
         <div className="flex flex-col mb-5 px-3">
-            <div className="flex">
+            <div className="flex mb-1">
                 <Label>{label}</Label>
             </div>
             <Input name={name} defaultValue={defaultValue} value={value} onChange={onChangeInput}></Input>
@@ -76,7 +87,7 @@ const TreeSelectRequired = ({ label, name, defaultValue, onChangeTreeselect, val
 const SelectRequired = ({ label, name, defaultValue, onChangeSelect, value, children }) => {
     return (
         <div className="flex flex-col mb-5 px-3">
-            <div className="flex">
+            <div className="flex mb-1">
                 <Label>{label}</Label>
                 <span className="namaField"></span>
                 <style jsx>
@@ -196,5 +207,5 @@ const RadioNotRequired = ({ label, name, onChangeRadio, options, value, defaultV
 }
 
 export {
-    InputRequired, InputNotRequired, RadioRequired, RadioNotRequired, SelectRequired, SelectNotRequired, TreeSelectRequired, DateRequired, DateNotRequired, TextAreaRequired
+    InputRequired, InputNotRequired, RadioRequired, RadioNotRequired, SelectRequired, SelectNotRequired, TreeSelectRequired, DateRequired, DateNotRequired, TextAreaRequired, TextAreaNotRequired
 }
