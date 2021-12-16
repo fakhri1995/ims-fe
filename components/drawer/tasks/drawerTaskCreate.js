@@ -46,7 +46,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
     const [datastaffgroup, setdatastaffgroup] = useState([])
     const [selectedstaffgroup, setselectedstaffgroup] = useState([])
     const [fetchingstaffgroup, setfetchingstaffgroup] = useState(false)
-    const [switchstaffgroup, setswitchstaffgroup] = useState(-1)
+    const [switchstaffgroup, setswitchstaffgroup] = useState(1)
     //start date
     const [now, setnow] = useState(true)
     const [choosedate, setchoosedate] = useState(false)
@@ -201,18 +201,32 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                         setdatastaffgroup(res2.data)
                     })
             }
-            // fetch(`https://boiling-thicket-46501.herokuapp.com/getAssignToList?assignable_type=${switchstaffgroup}`, {
-            //     method: `GET`,
-            //     headers: {
-            //         'Authorization': JSON.parse(initProps),
-            //     },
-            // })
-            //     .then(res => res.json())
-            //     .then(res2 => {
-            //         setdatastaffgroup(res2.data)
-            //     })
         }
     }, [switchstaffgroup])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterGroups`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatastaffgroup(res2.data)
+            })
+    }, [])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterUsers?type=${1}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatastaffgroup(res2.data)
+            })
+    }, [])
     useEffect(() => {
         if (datacreate.task_type_id !== null && datacreate.name !== "" && datacreate.location_id !== null && datacreate.created_at !== null && datacreate.deadline !== null) {
             setdisabledcreate(false)
@@ -440,7 +454,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                             >
                                 {
                                     dataitems.map((doc, idx) => (
-                                        <Select.Option key={idx} migid={doc.mig_id} modelname={doc.model_inventory.name} assetname={doc.model_inventory.asset.name} value={doc.id}>{doc.mig_id}</Select.Option>
+                                        <Select.Option key={idx} migid={doc.mig_id} modelname={doc.model_name} assetname={doc.asset_name} value={doc.id}>{doc.mig_id}</Select.Option>
                                     ))
                                 }
                             </Select >
@@ -511,7 +525,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                         notFoundContent={fetchingstaffgroup ? <Spin size="small" /> : null}
                                         onSearch={(value) => {
                                             setfetchingstaffgroup(true)
-                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getAssignToList?assignable_type=${switchstaffgroup}&name=${value}`, {
+                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterUsers?type=${1}&name=${value}`, {
                                                 method: `GET`,
                                                 headers: {
                                                     'Authorization': JSON.parse(initProps),
@@ -529,7 +543,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                     >
                                         {
                                             datastaffgroup.map((doc, idx) => (
-                                                <Select.Option key={idx} value={doc.id} companyname={doc.company.full_name}>{doc.name}</Select.Option>
+                                                <Select.Option key={idx} value={doc.id} companyname={doc.company?.full_name} image={doc.profile_image}>{doc.name}</Select.Option>
                                             ))
                                         }
                                     </Select>
@@ -548,7 +562,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                         notFoundContent={fetchingstaffgroup ? <Spin size="small" /> : null}
                                         onSearch={(value) => {
                                             setfetchingstaffgroup(true)
-                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getAssignToList?assignable_type=${switchstaffgroup}&name=${value}`, {
+                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterGroups?name=${value}`, {
                                                 method: `GET`,
                                                 headers: {
                                                     'Authorization': JSON.parse(initProps),
@@ -579,7 +593,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                         {
                                             switchstaffgroup === 1 ?
                                                 <div className=' w-10 h-10 rounded-full'>
-                                                    <img src={doc.profile_image === "" || doc.profile_image === "-" ? "/image/staffTask.png" : `${doc.profile_image}`} className=' object-contain w-10 h-10' alt="" />
+                                                    <img src={doc.image === "" || doc.image === "-" ? "/image/staffTask.png" : `${doc.image}`} className=' object-contain w-10 h-10' alt="" />
                                                 </div>
                                                 :
                                                 <UserIconSvg />

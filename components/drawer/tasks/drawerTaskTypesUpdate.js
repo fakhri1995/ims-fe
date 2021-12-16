@@ -26,6 +26,7 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
     const [disabledupdate, setdisabledupdate] = useState(true)
     const [disabledtrigger, setdisabledtrigger] = useState(-1)
     const [deletestate, setdeletestate] = useState(false)
+    const [workslen, setworkslen] = useState(0)
     //checkbox
     const [tempcb, settempcb] = useState("")
     //matriks
@@ -46,7 +47,7 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
         setdisabledtrigger(prev => prev + 1)
     }
     const handleUpdateTipeTask = () => {
-        // console.log(datadisplay, dataupdate)
+        // console.log(datadisplay, dataupdate, workslen)
         setloadingupdate(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateTaskType`, {
             method: 'PUT',
@@ -95,6 +96,7 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                         delete temp.details
                         return (temp)
                     })
+                    setworkslen(worksmap.length)
                     setdatadisplay({
                         ...res2.data,
                         works: worksmap
@@ -181,11 +183,11 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                 <div key={idx} className="grid grid-cols-2 mb-3">
                                                                     <div className="col-span-1 mr-1">
                                                                         <Input value={doc.name} placeholder="Nama" onChange={(e) => {
-                                                                            var temp = [...datadisplay.works]
-                                                                            temp[idx].name = e.target.value
+                                                                            const tempdisplay = [...datadisplay.works]
+                                                                            tempdisplay[idx].name = e.target.value
                                                                             setdatadisplay(prev => ({
                                                                                 ...prev,
-                                                                                works: temp
+                                                                                works: tempdisplay
                                                                             }))
                                                                             if (doc.id) {
                                                                                 var idxdataupdate = dataupdate.update_works.map(docmap => docmap.id).indexOf(doc.id)
@@ -205,9 +207,8 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                 }
                                                                             }
                                                                             else {
-                                                                                var idxdataadd = dataupdate.add_works.map(docmap => docmap.id).indexOf(doc.name)
                                                                                 var temp = [...dataupdate.add_works]
-                                                                                idxdataadd === -1 ? temp[temp.length - 1].name = e.target.value : temp[idxdataadd].name = e.target.value
+                                                                                temp[idx - workslen].name = e.target.value
                                                                                 setdataupdate(prev => ({
                                                                                     ...prev,
                                                                                     add_works: temp
@@ -217,43 +218,43 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                     </div>
                                                                     <div className="col-span-1 ml-1 mb-3">
                                                                         <Select key={idx} name={`name`} value={doc.type} style={{ width: `100%` }} onChange={(value) => {
-                                                                            var temp = [...datadisplay.works]
-                                                                            delete temp[idx].lists
-                                                                            delete temp[idx].is_general
-                                                                            delete temp[idx].columns
-                                                                            delete temp[idx].rows
-                                                                            delete temp[idx].dropdown_name
-                                                                            temp[idx].type = value
+                                                                            const tempdisplay = [...datadisplay.works]
+                                                                            delete tempdisplay[idx].lists
+                                                                            delete tempdisplay[idx].is_general
+                                                                            delete tempdisplay[idx].columns
+                                                                            delete tempdisplay[idx].rows
+                                                                            delete tempdisplay[idx].dropdown_name
+                                                                            tempdisplay[idx].type = value
                                                                             if (value === 3) {
-                                                                                temp[idx].lists = []
+                                                                                tempdisplay[idx].lists = []
                                                                             }
                                                                             else if (value === 4) {
-                                                                                temp[idx].is_general = false
-                                                                                temp[idx].columns = []
-                                                                                temp[idx].rows = []
+                                                                                tempdisplay[idx].is_general = false
+                                                                                tempdisplay[idx].columns = []
+                                                                                tempdisplay[idx].rows = []
                                                                             }
                                                                             else if (value === 5) {
-                                                                                temp[idx].lists = []
+                                                                                tempdisplay[idx].lists = []
                                                                             }
                                                                             else if (value === 6) {
-                                                                                temp[idx].lists = []
-                                                                                temp[idx].dropdown_name = ""
+                                                                                tempdisplay[idx].lists = []
+                                                                                tempdisplay[idx].dropdown_name = ""
                                                                             }
                                                                             setdatadisplay(prev => ({
                                                                                 ...prev,
-                                                                                works: temp
+                                                                                works: tempdisplay
                                                                             }))
                                                                             if (doc.id) {
                                                                                 var idxdataupdate = dataupdate.update_works.map(docmap => docmap.id).indexOf(doc.id)
                                                                                 if (idxdataupdate === -1) {
                                                                                     setdataupdate(prev => ({
                                                                                         ...prev,
-                                                                                        update_works: [...prev.update_works, { ...temp[idx] }]
+                                                                                        update_works: [...prev.update_works, { ...tempdisplay[idx] }]
                                                                                     }))
                                                                                 }
                                                                                 else {
                                                                                     var temp2 = [...dataupdate.update_works]
-                                                                                    temp2[idxdataupdate] = temp[idx]
+                                                                                    temp2[idxdataupdate] = tempdisplay[idx]
                                                                                     setdataupdate(prev => ({
                                                                                         ...prev,
                                                                                         update_works: temp2
@@ -261,10 +262,8 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                 }
                                                                             }
                                                                             else {
-                                                                                var idxdataadd = dataupdate.add_works.map(docmap => docmap.id).indexOf(doc.name)
-                                                                                console.log(idxdataadd)
                                                                                 var temp2 = [...dataupdate.add_works]
-                                                                                idxdataadd === -1 ? temp2[temp2.length - 1] = temp[idx] : temp2[idxdataadd] = temp[idx]
+                                                                                temp2[idx - workslen] = tempdisplay[idx]
                                                                                 setdataupdate(prev => ({
                                                                                     ...prev,
                                                                                     add_works: temp2
@@ -311,11 +310,11 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                     </div>
                                                                     <div className="mb-5 col-span-2">
                                                                         <Input placeholder="Deskripsi" value={doc.description} onChange={(e) => {
-                                                                            var temp = [...datadisplay.works]
-                                                                            temp[idx].name = e.target.value
+                                                                            var tempdisplay = [...datadisplay.works]
+                                                                            tempdisplay[idx].description = e.target.value
                                                                             setdatadisplay(prev => ({
                                                                                 ...prev,
-                                                                                works: temp
+                                                                                works: tempdisplay
                                                                             }))
                                                                             if (doc.id) {
                                                                                 var idxdataupdate = dataupdate.update_works.map(docmap => docmap.id).indexOf(doc.id)
@@ -335,9 +334,8 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                 }
                                                                             }
                                                                             else {
-                                                                                var idxdataadd = dataupdate.add_works.map(docmap => docmap.id).indexOf(doc.name)
                                                                                 var temp = [...dataupdate.add_works]
-                                                                                idxdataadd === -1 ? temp[temp.length - 1].description = e.target.value : temp[idxdataadd].description = e.target.value
+                                                                                temp[idx - workslen].description = e.target.value
                                                                                 setdataupdate(prev => ({
                                                                                     ...prev,
                                                                                     add_works: temp
@@ -387,23 +385,23 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                 <div className="flex items-center">
                                                                                     <div className="mr-1 cursor-pointer hover:text-primary100" onClick={() => {
                                                                                         settempcb("")
-                                                                                        var temp = [...datadisplay.works]
-                                                                                        temp[idx].lists.push(tempcb)
+                                                                                        var tempdisplay = [...datadisplay.works]
+                                                                                        tempdisplay[idx].lists.push(tempcb)
                                                                                         setdatadisplay(prev => ({
                                                                                             ...prev,
-                                                                                            works: temp
+                                                                                            works: tempdisplay
                                                                                         }))
                                                                                         if (doc.id) {
                                                                                             var idxdataupdate = dataupdate.update_works.map(docmap => docmap.id).indexOf(doc.id)
                                                                                             if (idxdataupdate === -1) {
                                                                                                 setdataupdate(prev => ({
                                                                                                     ...prev,
-                                                                                                    update_works: [...prev.update_works, { ...doc, lists: temp[idx].lists }]
+                                                                                                    update_works: [...prev.update_works, { ...doc, lists: tempdisplay[idx].lists }]
                                                                                                 }))
                                                                                             }
                                                                                             else {
                                                                                                 var temp2 = [...dataupdate.update_works]
-                                                                                                temp2[idxdataupdate].lists = temp[idx].lists
+                                                                                                temp2[idxdataupdate].lists = tempdisplay[idx].lists
                                                                                                 setdataupdate(prev => ({
                                                                                                     ...prev,
                                                                                                     update_works: temp2
@@ -411,9 +409,8 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                             }
                                                                                         }
                                                                                         else {
-                                                                                            var idxdataadd = dataupdate.add_works.map(docmap => docmap.id).indexOf(doc.name)
                                                                                             var temp2 = [...dataupdate.add_works]
-                                                                                            idxdataadd === -1 ? temp2[temp2.length - 1].lists = temp[idx].lists : temp2[idxdataadd].lists = temp[idx].lists
+                                                                                            temp2[idx - workslen].lists = tempdisplay[idx].lists
                                                                                             setdataupdate(prev => ({
                                                                                                 ...prev,
                                                                                                 add_works: temp2
@@ -454,23 +451,23 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                 <div className="flex items-center">
                                                                                     <div className="mr-1 cursor-pointer hover:text-primary100" onClick={() => {
                                                                                         settempcolumnmatriks("")
-                                                                                        var temp = [...datadisplay.works]
-                                                                                        temp[idx].columns.push(tempcolumnmatriks)
+                                                                                        var tempdisplay = [...datadisplay.works]
+                                                                                        tempdisplay[idx].columns.push(tempcolumnmatriks)
                                                                                         setdatadisplay(prev => ({
                                                                                             ...prev,
-                                                                                            works: temp
+                                                                                            works: tempdisplay
                                                                                         }))
                                                                                         if (doc.id) {
                                                                                             var idxdataupdate = dataupdate.update_works.map(docmap => docmap.id).indexOf(doc.id)
                                                                                             if (idxdataupdate === -1) {
                                                                                                 setdataupdate(prev => ({
                                                                                                     ...prev,
-                                                                                                    update_works: [...prev.update_works, { ...doc, columns: temp[idx].columns }]
+                                                                                                    update_works: [...prev.update_works, { ...doc, columns: tempdisplay[idx].columns }]
                                                                                                 }))
                                                                                             }
                                                                                             else {
                                                                                                 var temp2 = [...dataupdate.update_works]
-                                                                                                temp2[idxdataupdate].columns = temp[idx].columns
+                                                                                                temp2[idxdataupdate].columns = tempdisplay[idx].columns
                                                                                                 setdataupdate(prev => ({
                                                                                                     ...prev,
                                                                                                     update_works: temp2
@@ -478,9 +475,8 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                             }
                                                                                         }
                                                                                         else {
-                                                                                            var idxdataadd = dataupdate.add_works.map(docmap => docmap.id).indexOf(doc.name)
                                                                                             var temp2 = [...dataupdate.add_works]
-                                                                                            idxdataadd === -1 ? temp2[temp2.length - 1].columns = temp[idx].columns : temp2[idxdataadd].columns = temp[idx].columns
+                                                                                            temp2[idx - workslen].columns = tempdisplay[idx].columns
                                                                                             setdataupdate(prev => ({
                                                                                                 ...prev,
                                                                                                 add_works: temp2
@@ -496,23 +492,23 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                 <div className="mb-2">
                                                                                     <RadioNotRequired label="Baris" value={doc.is_general} onChangeRadio={(e) => {
                                                                                         setisbarismatriks(e.target.value);
-                                                                                        var temp = [...datadisplay.works]
-                                                                                        temp[idx].is_general = e.target.value
+                                                                                        var tempdisplay = [...datadisplay.works]
+                                                                                        tempdisplay[idx].is_general = e.target.value
                                                                                         setdatadisplay(prev => ({
                                                                                             ...prev,
-                                                                                            works: temp
+                                                                                            works: tempdisplay
                                                                                         }))
                                                                                         if (doc.id) {
                                                                                             var idxdataupdate = dataupdate.update_works.map(docmap => docmap.id).indexOf(doc.id)
                                                                                             if (idxdataupdate === -1) {
                                                                                                 setdataupdate(prev => ({
                                                                                                     ...prev,
-                                                                                                    update_works: [...prev.update_works, { ...doc, is_general: temp[idx].is_general }]
+                                                                                                    update_works: [...prev.update_works, { ...doc, is_general: tempdisplay[idx].is_general }]
                                                                                                 }))
                                                                                             }
                                                                                             else {
                                                                                                 var temp2 = [...dataupdate.update_works]
-                                                                                                temp2[idxdataupdate].is_general = temp[idx].is_general
+                                                                                                temp2[idxdataupdate].is_general = tempdisplay[idx].is_general
                                                                                                 setdataupdate(prev => ({
                                                                                                     ...prev,
                                                                                                     update_works: temp2
@@ -520,9 +516,8 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                             }
                                                                                         }
                                                                                         else {
-                                                                                            var idxdataadd = dataupdate.add_works.map(docmap => docmap.id).indexOf(doc.name)
                                                                                             var temp2 = [...dataupdate.add_works]
-                                                                                            idxdataadd === -1 ? temp2[temp2.length - 1].is_general = temp[idx].is_general : temp2[idxdataadd].is_general = temp[idx].is_general
+                                                                                            temp2[idx - workslen].is_general = tempdisplay[idx].is_general
                                                                                             setdataupdate(prev => ({
                                                                                                 ...prev,
                                                                                                 add_works: temp2
@@ -564,23 +559,23 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                         <div className="flex items-center">
                                                                                             <div className="mr-1 cursor-pointer hover:text-primary100" onClick={() => {
                                                                                                 settemprowmatriks("")
-                                                                                                var temp = [...datadisplay.works]
-                                                                                                temp[idx].rows.push(temprowmatriks)
+                                                                                                var tempdisplay = [...datadisplay.works]
+                                                                                                tempdisplay[idx].rows.push(temprowmatriks)
                                                                                                 setdatadisplay(prev => ({
                                                                                                     ...prev,
-                                                                                                    works: temp
+                                                                                                    works: tempdisplay
                                                                                                 }))
                                                                                                 if (doc.id) {
                                                                                                     var idxdataupdate = dataupdate.update_works.map(docmap => docmap.id).indexOf(doc.id)
                                                                                                     if (idxdataupdate === -1) {
                                                                                                         setdataupdate(prev => ({
                                                                                                             ...prev,
-                                                                                                            update_works: [...prev.update_works, { ...doc, rows: temp[idx].rows }]
+                                                                                                            update_works: [...prev.update_works, { ...doc, rows: tempdisplay[idx].rows }]
                                                                                                         }))
                                                                                                     }
                                                                                                     else {
                                                                                                         var temp2 = [...dataupdate.update_works]
-                                                                                                        temp2[idxdataupdate].rows = temp[idx].rows
+                                                                                                        temp2[idxdataupdate].rows = tempdisplay[idx].rows
                                                                                                         setdataupdate(prev => ({
                                                                                                             ...prev,
                                                                                                             update_works: temp2
@@ -588,9 +583,8 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                                     }
                                                                                                 }
                                                                                                 else {
-                                                                                                    var idxdataadd = dataupdate.add_works.map(docmap => docmap.id).indexOf(doc.name)
                                                                                                     var temp2 = [...dataupdate.add_works]
-                                                                                                    idxdataadd === -1 ? temp2[temp2.length - 1].rows = temp[idx].rows : temp2[idxdataadd].rows = temp[idx].rows
+                                                                                                    temp2[idx - workslen].rows = tempdisplay[idx].rows
                                                                                                     setdataupdate(prev => ({
                                                                                                         ...prev,
                                                                                                         add_works: temp2
@@ -623,23 +617,23 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                                     </div>
                                                                                                     <div className="w-5/12">
                                                                                                         <Select placeholder={`Satuan`} name={`numeral`} value={doc3.type} style={{ width: `100%` }} onChange={async (value) => {
-                                                                                                            var temp = [...datadisplay.works]
-                                                                                                            temp[idx].lists[idx3] = ({ ...doc3, type: value })
+                                                                                                            var tempdisplay = [...datadisplay.works]
+                                                                                                            tempdisplay[idx].lists[idx3] = ({ ...doc3, type: value })
                                                                                                             setdatadisplay(prev => ({
                                                                                                                 ...prev,
-                                                                                                                works: temp
+                                                                                                                works: tempdisplay
                                                                                                             }))
                                                                                                             if (doc.id) {
                                                                                                                 var idxdataupdate = dataupdate.update_works.map(docmap => docmap.id).indexOf(doc.id)
                                                                                                                 if (idxdataupdate === -1) {
                                                                                                                     setdataupdate(prev => ({
                                                                                                                         ...prev,
-                                                                                                                        update_works: [...prev.update_works, { ...doc, lists: temp[idx].lists }]
+                                                                                                                        update_works: [...prev.update_works, { ...doc, lists: tempdisplay[idx].lists }]
                                                                                                                     }))
                                                                                                                 }
                                                                                                                 else {
                                                                                                                     var temp2 = [...dataupdate.update_works]
-                                                                                                                    temp2[idxdataupdate].lists = temp[idx].lists
+                                                                                                                    temp2[idxdataupdate].lists = tempdisplay[idx].lists
                                                                                                                     setdataupdate(prev => ({
                                                                                                                         ...prev,
                                                                                                                         update_works: temp2
@@ -647,9 +641,8 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                                                 }
                                                                                                             }
                                                                                                             else {
-                                                                                                                var idxdataadd = dataupdate.add_works.map(docmap => docmap.id).indexOf(doc.name)
                                                                                                                 var temp2 = [...dataupdate.add_works]
-                                                                                                                idxdataadd === -1 ? temp2[temp2.length - 1].lists = temp[idx].lists : temp2[idxdataadd].lists = temp[idx].lists
+                                                                                                                temp2[idx - workslen].lists = tempdisplay[idx].lists
                                                                                                                 setdataupdate(prev => ({
                                                                                                                     ...prev,
                                                                                                                     add_works: temp2
@@ -685,23 +678,23 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                                 </div>
                                                                                                 <div className="flex mb-2">
                                                                                                     <Input placeholder="Keterangan" value={doc3.description} onChange={(e) => {
-                                                                                                        var temp = [...datadisplay.works]
-                                                                                                        temp[idx].lists[idx3] = ({ ...doc3, description: e.target.value })
+                                                                                                        var tempdisplay = [...datadisplay.works]
+                                                                                                        tempdisplay[idx].lists[idx3] = ({ ...doc3, description: e.target.value })
                                                                                                         setdatadisplay(prev => ({
                                                                                                             ...prev,
-                                                                                                            works: temp
+                                                                                                            works: tempdisplay
                                                                                                         }))
                                                                                                         if (doc.id) {
                                                                                                             var idxdataupdate = dataupdate.update_works.map(docmap => docmap.id).indexOf(doc.id)
                                                                                                             if (idxdataupdate === -1) {
                                                                                                                 setdataupdate(prev => ({
                                                                                                                     ...prev,
-                                                                                                                    update_works: [...prev.update_works, { ...doc, lists: temp[idx].lists }]
+                                                                                                                    update_works: [...prev.update_works, { ...doc, lists: tempdisplay[idx].lists }]
                                                                                                                 }))
                                                                                                             }
                                                                                                             else {
                                                                                                                 var temp2 = [...dataupdate.update_works]
-                                                                                                                temp2[idxdataupdate].lists = temp[idx].lists
+                                                                                                                temp2[idxdataupdate].lists = tempdisplay[idx].lists
                                                                                                                 setdataupdate(prev => ({
                                                                                                                     ...prev,
                                                                                                                     update_works: temp2
@@ -709,9 +702,8 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                                             }
                                                                                                         }
                                                                                                         else {
-                                                                                                            var idxdataadd = dataupdate.add_works.map(docmap => docmap.id).indexOf(doc.name)
                                                                                                             var temp2 = [...dataupdate.add_works]
-                                                                                                            idxdataadd === -1 ? temp2[temp2.length - 1].lists = temp[idx].lists : temp2[idxdataadd].lists = temp[idx].lists
+                                                                                                            temp2[idx - workslen].lists = tempdisplay[idx].lists
                                                                                                             setdataupdate(prev => ({
                                                                                                                 ...prev,
                                                                                                                 add_works: temp2
@@ -726,23 +718,23 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                             }
                                                                             <div className='flex items-center'>
                                                                                 <div className="mr-1 cursor-pointer hover:text-primary100" onClick={() => {
-                                                                                    var temp = [...datadisplay.works]
-                                                                                    temp[idx].lists.push({ type: null, description: "" })
+                                                                                    var tempdisplay = [...datadisplay.works]
+                                                                                    tempdisplay[idx].lists.push({ type: null, description: "" })
                                                                                     setdatadisplay(prev => ({
                                                                                         ...prev,
-                                                                                        works: temp
+                                                                                        works: tempdisplay
                                                                                     }))
                                                                                     if (doc.id) {
                                                                                         var idxdataupdate = dataupdate.update_works.map(docmap => docmap.id).indexOf(doc.id)
                                                                                         if (idxdataupdate === -1) {
                                                                                             setdataupdate(prev => ({
                                                                                                 ...prev,
-                                                                                                update_works: [...prev.update_works, { ...doc, lists: temp[idx].lists }]
+                                                                                                update_works: [...prev.update_works, { ...doc, lists: tempdisplay[idx].lists }]
                                                                                             }))
                                                                                         }
                                                                                         else {
                                                                                             var temp2 = [...dataupdate.update_works]
-                                                                                            temp2[idxdataupdate].lists = temp[idx].lists
+                                                                                            temp2[idxdataupdate].lists = tempdisplay[idx].lists
                                                                                             setdataupdate(prev => ({
                                                                                                 ...prev,
                                                                                                 update_works: temp2
@@ -750,9 +742,8 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                         }
                                                                                     }
                                                                                     else {
-                                                                                        var idxdataadd = dataupdate.add_works.map(docmap => docmap.id).indexOf(doc.name)
                                                                                         var temp2 = [...dataupdate.add_works]
-                                                                                        idxdataadd === -1 ? temp2[temp2.length - 1].lists = temp[idx].lists : temp2[idxdataadd].lists = temp[idx].lists
+                                                                                        temp2[idx - workslen].lists = tempdisplay[idx].lists
                                                                                         setdataupdate(prev => ({
                                                                                             ...prev,
                                                                                             add_works: temp2
@@ -774,31 +765,31 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                         <span className="namaField"></span>
                                                                                         <style jsx>
                                                                                             {`
-                                                                        .namaField::before{
-                                                                            content: '*';
-                                                                            color: red;
-                                                                        }
-                                                                    `}
+                                                                                                .namaField::before{
+                                                                                                    content: '*';
+                                                                                                    color: red;
+                                                                                                }
+                                                                                            `}
                                                                                         </style>
                                                                                     </div>
                                                                                     <Input value={doc.dropdown_name} onChange={(e) => {
-                                                                                        var temp = [...datadisplay.works]
-                                                                                        temp[idx].dropdown_name = e.target.value
+                                                                                        var tempdisplay = [...datadisplay.works]
+                                                                                        tempdisplay[idx].dropdown_name = e.target.value
                                                                                         setdatadisplay(prev => ({
                                                                                             ...prev,
-                                                                                            works: temp
+                                                                                            works: tempdisplay
                                                                                         }))
                                                                                         if (doc.id) {
                                                                                             var idxdataupdate = dataupdate.update_works.map(docmap => docmap.id).indexOf(doc.id)
                                                                                             if (idxdataupdate === -1) {
                                                                                                 setdataupdate(prev => ({
                                                                                                     ...prev,
-                                                                                                    update_works: [...prev.update_works, { ...doc, dropdown_name: temp[idx].dropdown_name }]
+                                                                                                    update_works: [...prev.update_works, { ...doc, dropdown_name: tempdisplay[idx].dropdown_name }]
                                                                                                 }))
                                                                                             }
                                                                                             else {
                                                                                                 var temp2 = [...dataupdate.update_works]
-                                                                                                temp2[idxdataupdate].dropdown_name = temp[idx].dropdown_name
+                                                                                                temp2[idxdataupdate].dropdown_name = tempdisplay[idx].dropdown_name
                                                                                                 setdataupdate(prev => ({
                                                                                                     ...prev,
                                                                                                     update_works: temp2
@@ -806,9 +797,8 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                             }
                                                                                         }
                                                                                         else {
-                                                                                            var idxdataadd = dataupdate.add_works.map(docmap => docmap.id).indexOf(doc.name)
                                                                                             var temp2 = [...dataupdate.add_works]
-                                                                                            idxdataadd === -1 ? temp2[temp2.length - 1].dropdown_name = temp[idx].dropdown_name : temp2[idxdataadd].dropdown_name = temp[idx].dropdown_name
+                                                                                            temp2[idx - workslen].dropdown_name = tempdisplay[idx].dropdown_name
                                                                                             setdataupdate(prev => ({
                                                                                                 ...prev,
                                                                                                 add_works: temp2
@@ -826,23 +816,23 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                             </div>
                                                                                             <div className="flex items-center mr-2">
                                                                                                 <Input placeholder="Tambah" value={doc4} onChange={(e) => {
-                                                                                                    var temp = [...datadisplay.works]
-                                                                                                    temp[idx].lists[idx4] = e.target.value
+                                                                                                    var tempdisplay = [...datadisplay.works]
+                                                                                                    tempdisplay[idx].lists[idx4] = e.target.value
                                                                                                     setdatadisplay(prev => ({
                                                                                                         ...prev,
-                                                                                                        works: temp
+                                                                                                        works: tempdisplay
                                                                                                     }))
                                                                                                     if (doc.id) {
                                                                                                         var idxdataupdate = dataupdate.update_works.map(docmap => docmap.id).indexOf(doc.id)
                                                                                                         if (idxdataupdate === -1) {
                                                                                                             setdataupdate(prev => ({
                                                                                                                 ...prev,
-                                                                                                                update_works: [...prev.update_works, { ...doc, lists: temp[idx].lists }]
+                                                                                                                update_works: [...prev.update_works, { ...doc, lists: tempdisplay[idx].lists }]
                                                                                                             }))
                                                                                                         }
                                                                                                         else {
                                                                                                             var temp2 = [...dataupdate.update_works]
-                                                                                                            temp2[idxdataupdate].lists = temp[idx].lists
+                                                                                                            temp2[idxdataupdate].lists = tempdisplay[idx].lists
                                                                                                             setdataupdate(prev => ({
                                                                                                                 ...prev,
                                                                                                                 update_works: temp2
@@ -850,9 +840,8 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                                         }
                                                                                                     }
                                                                                                     else {
-                                                                                                        var idxdataadd = dataupdate.add_works.map(docmap => docmap.id).indexOf(doc.name)
                                                                                                         var temp2 = [...dataupdate.add_works]
-                                                                                                        idxdataadd === -1 ? temp2[temp2.length - 1].lists = temp[idx].lists : temp2[idxdataadd].lists = temp[idx].lists
+                                                                                                        temp2[idx - workslen].lists = tempdisplay[idx].lists
                                                                                                         setdataupdate(prev => ({
                                                                                                             ...prev,
                                                                                                             add_works: temp2
@@ -867,23 +856,23 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                             }
                                                                             <div className="flex items-center px-3">
                                                                                 <div className="mr-1 cursor-pointer hover:text-primary100" onClick={() => {
-                                                                                    var temp = [...datadisplay.works]
-                                                                                    temp[idx].lists.push("")
+                                                                                    var tempdisplay = [...datadisplay.works]
+                                                                                    tempdisplay[idx].lists.push("")
                                                                                     setdatadisplay(prev => ({
                                                                                         ...prev,
-                                                                                        works: temp
+                                                                                        works: tempdisplay
                                                                                     }))
                                                                                     if (doc.id) {
                                                                                         var idxdataupdate = dataupdate.update_works.map(docmap => docmap.id).indexOf(doc.id)
                                                                                         if (idxdataupdate === -1) {
                                                                                             setdataupdate(prev => ({
                                                                                                 ...prev,
-                                                                                                update_works: [...prev.update_works, { ...doc, lists: temp[idx].lists }]
+                                                                                                update_works: [...prev.update_works, { ...doc, lists: tempdisplay[idx].lists }]
                                                                                             }))
                                                                                         }
                                                                                         else {
                                                                                             var temp2 = [...dataupdate.update_works]
-                                                                                            temp2[idxdataupdate].lists = temp[idx].lists
+                                                                                            temp2[idxdataupdate].lists = tempdisplay[idx].lists
                                                                                             setdataupdate(prev => ({
                                                                                                 ...prev,
                                                                                                 update_works: temp2
@@ -891,9 +880,8 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                         }
                                                                                     }
                                                                                     else {
-                                                                                        var idxdataadd = dataupdate.add_works.map(docmap => docmap.id).indexOf(doc.name)
                                                                                         var temp2 = [...dataupdate.add_works]
-                                                                                        idxdataadd === -1 ? temp2[temp2.length - 1].lists = temp[idx].lists : temp2[idxdataadd].lists = temp[idx].lists
+                                                                                        temp2[idx - workslen].lists = tempdisplay[idx].lists
                                                                                         setdataupdate(prev => ({
                                                                                             ...prev,
                                                                                             add_works: temp2
@@ -968,16 +956,19 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                             setdeletestate(true)
                                                                             const temp = [...datadisplay.works]
                                                                             const temp2 = [...datadisplay.works]
-                                                                            var tempp = temp.filter(dfil => { console.log(dfil.id, doc.id); return dfil.id !== doc.id })
+                                                                            var tempp = temp.filter(dfil => { return dfil.id !== doc.id })
                                                                             setdatadisplay(prev => ({
                                                                                 ...prev,
                                                                                 works: [...tempp]
                                                                             }))
                                                                             temp2[idx].id ?
-                                                                                setdataupdate(prev => ({
-                                                                                    ...prev,
-                                                                                    delete_works: [...prev.delete_works, temp2[idx].id]
-                                                                                }))
+                                                                                (
+                                                                                    setdataupdate(prev => ({
+                                                                                        ...prev,
+                                                                                        delete_works: [...prev.delete_works, temp2[idx].id]
+                                                                                    })),
+                                                                                    setworkslen(prev => prev - 1)
+                                                                                )
                                                                                 :
                                                                                 setdataupdate(prev => ({
                                                                                     ...prev,

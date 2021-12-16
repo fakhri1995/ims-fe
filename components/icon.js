@@ -112,9 +112,9 @@ const AsetIconSvg = () => {
         <Icon component={asetIconSvg}></Icon>
     )
 }
-const SearchIconSvg = () => {
+const SearchIconSvg = ({ size, color }) => {
     const searchIconSvg = () => (
-        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-search" width={28} height={28} viewBox="0 0 24 24" strokeWidth="1.5" stroke="#000000" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-search" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <circle cx={10} cy={10} r={7} />
             <line x1={21} y1={21} x2={15} y2={15} />
@@ -561,6 +561,18 @@ const CopyIconSvg = ({ size, color }) => {
         <Icon component={copyIconSvg}></Icon>
     )
 }
+const ArrowsSortIconSvg = ({ size, color }) => {
+    const arrowsSortIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-arrows-sort" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 9l4 -4l4 4m-4 -4v14" />
+            <path d="M21 15l-4 4l-4 -4m4 4v-14" />
+        </svg>
+    )
+    return (
+        <Icon component={arrowsSortIconSvg}></Icon>
+    )
+}
 const UsercircleIconSvg = ({ size, color }) => {
     const usercircleIconSvg = () => (
         <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-user-circle" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
@@ -602,6 +614,82 @@ const RulerIconSvg = ({ size, color }) => {
     )
     return (
         <Icon component={rulerIconSvg}></Icon>
+    )
+}
+const UserPlusIconSvg = ({ size, color }) => {
+    const userPlusIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-user-plus" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <circle cx={9} cy={7} r={4} />
+            <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+            <path d="M16 11h6m-3 -3v6" />
+        </svg>
+    )
+    return (
+        <Icon component={userPlusIconSvg}></Icon>
+    )
+}
+const SortAscendingIconSvg = ({ size, color }) => {
+    const sortAscendingIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-sort-ascending-letters" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M15 10v-5c0 -1.38 .62 -2 2 -2s2 .62 2 2v5m0 -3h-4" />
+            <path d="M19 21h-4l4 -7h-4" />
+            <path d="M4 15l3 3l3 -3" />
+            <path d="M7 6v12" />
+        </svg>
+    )
+    return (
+        <Icon component={sortAscendingIconSvg}></Icon>
+    )
+}
+const SortDescendingIconSvg = ({ size, color }) => {
+    const sortDescendingIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-sort-descending-letters" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M15 21v-5c0 -1.38 .62 -2 2 -2s2 .62 2 2v5m0 -3h-4" />
+            <path d="M19 10h-4l4 -7h-4" />
+            <path d="M4 15l3 3l3 -3" />
+            <path d="M7 6v12" />
+        </svg>
+    )
+    return (
+        <Icon component={sortDescendingIconSvg}></Icon>
+    )
+}
+const ForbidIconSvg = ({ size, color }) => {
+    const forbidIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-forbid" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <circle cx={12} cy={12} r={9} />
+            <line x1={9} y1={9} x2={15} y2={15} />
+        </svg>
+    )
+    return (
+        <Icon component={forbidIconSvg}></Icon>
+    )
+}
+const PlayerPauseIconSvg = ({ size, color }) => {
+    const playerPauseIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-player-pause" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <rect x={6} y={5} width={4} height={14} rx={1} />
+            <rect x={14} y={5} width={4} height={14} rx={1} />
+        </svg>
+    )
+    return (
+        <Icon component={playerPauseIconSvg}></Icon>
+    )
+}
+const PlayerPlayIconSvg = ({ size, color }) => {
+    const playerPlayIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-player-play" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M7 4v16l13 -8z" />
+        </svg>
+    )
+    return (
+        <Icon component={playerPlayIconSvg}></Icon>
     )
 }
 const AssetIconSvg = ({ size, color }) => {
@@ -797,5 +885,12 @@ export {
     CopyIconSvg,
     CircleXIconSvg,
     RulerIconSvg,
-    AssetIconSvg
+    AssetIconSvg,
+    ArrowsSortIconSvg,
+    UserPlusIconSvg,
+    SortAscendingIconSvg,
+    SortDescendingIconSvg,
+    ForbidIconSvg,
+    PlayerPauseIconSvg,
+    PlayerPlayIconSvg
 }

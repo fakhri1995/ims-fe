@@ -71,7 +71,7 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
                 <IconBroadcast width={20} height={20} />
             </div> */}
             <div className="md:mr-8 mr-4 cursor-pointer">
-                <SearchIconSvg />
+                <SearchIconSvg size={28} color={`#000000`} />
             </div>
             <div className="md:mr-8 mr-4 cursor-pointer">
                 <NotifIconSvg />

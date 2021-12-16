@@ -94,7 +94,7 @@ const TableCustomTipeTask = ({ dataSource, setDataSource, columns, loading, page
     )
 }
 
-const TableCustomTask = ({ dataSource, setDataSource, columns, loading, pageSize, total, setpraloading, initProps, setpage, setdataraw }) => {
+const TableCustomTask = ({ dataSource, setDataSource, columns, loading, pageSize, total, setpraloading, initProps, setpage, setdataraw, sortstate, searchstate }) => {
     const rt = useRouter()
     const [rowstate, setrowstate] = useState(0)
     return (
@@ -109,7 +109,7 @@ const TableCustomTask = ({ dataSource, setDataSource, columns, loading, pageSize
                 onChange: (page, pageSize) => {
                     setpraloading(true)
                     setpage(page)
-                    fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${page}&rows=${pageSize}`, {
+                    fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${page}&rows=${pageSize}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}`, {
                         method: `GET`,
                         headers: {
                             'Authorization': JSON.parse(initProps),
@@ -129,13 +129,13 @@ const TableCustomTask = ({ dataSource, setDataSource, columns, loading, pageSize
                         setrowstate(record.id)
                     },
                     onClick: (event) => {
-                            rt.push(`/tasks/detail/${record.id}`)
+                        rt.push(`/tasks/detail/${record.id}`)
                     }
                 }
             }}
             rowClassName={(record, idx) => {
                 return (
-                    record.id === rowstate ? `cursor-pointer` : ``
+                    `${record.id === rowstate && `cursor-pointer`} ${record.status === 1 && `bg-bgBackdropOverdue`}`
                 )
             }}
         />

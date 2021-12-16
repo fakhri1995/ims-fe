@@ -5,7 +5,7 @@ import React from 'react'
 const ButtonSys = ({ size, type, children, color, submit, onClick, form, selected, onChangeGambar, disabled }) => {
     if (type === 'primary') {
         return (
-            <button disabled={disabled} form={form} onClick={onClick} type={submit && "submit"} className={`btn ${size === "large" ? "" : "btn-sm"} ${typeof (color) === 'undefined' ? "bg-primary100" : (color === "danger" && "bg-state1")}  hover:${typeof (color) === 'undefined' ? "bg-primary75" : (color === "danger" && "bg-state1")} ${typeof (color) === 'undefined' ? "border-primary100" : (color === "danger" && "border-state1")} hover:${typeof (color) === 'undefined' ? "border-primary75" : (color === "danger" && "border-state1")} px-6`}>
+            <button disabled={disabled} form={form} onClick={onClick} type={submit && "submit"} className={`btn ${size === "large" ? "" : "btn-sm"} ${typeof (color) === 'undefined' && "bg-primary100"} ${color === "danger" && "bg-state1"} ${color === "white" && "bg-white"}  ${typeof (color) === 'undefined' && "hover:bg-primary75"} ${color === "danger" && " hover:bg-state12"}  ${color === "white" && "hover:bg-gray-100"} ${typeof (color) === 'undefined' && "border-primary100"} ${color === "danger" && "border-state1"} ${color === "white" && "border-white"} ${typeof (color) === 'undefined' && "hover:border-primary75"} ${color === "danger" && "hover:border-state1"} ${color === "white" && "hover:border-gray-100"} px-6`}>
                 {children}
             </button>
         )

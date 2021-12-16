@@ -3,10 +3,10 @@ import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import st from '../../components/layout-dashboard.module.css'
-import { Progress, Input, notification } from 'antd'
+import { Progress, Input, notification, Select } from 'antd'
 import Buttonsys from '../../components/button'
 import { H1, H2, Label, Text } from '../../components/typography'
-import { AlerttriangleIconSvg, BackIconSvg, CalendartimeIconSvg, ClipboardcheckIconSvg, ClockIconSvg, EditIconSvg, ListcheckIconSvg, MappinIconSvg, TrashIconSvg } from '../../components/icon'
+import { AlerttriangleIconSvg, ArrowsSortIconSvg, BackIconSvg, CalendartimeIconSvg, ClipboardcheckIconSvg, ClockIconSvg, EditIconSvg, ListcheckIconSvg, MappinIconSvg, SearchIconSvg, SortAscendingIconSvg, SortDescendingIconSvg, TrashIconSvg } from '../../components/icon'
 import { Chart, ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement } from 'chart.js'
 Chart.register(ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement);
 import { Doughnut, Bar, Line } from 'react-chartjs-2';
@@ -110,7 +110,11 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     })
     const [datatasks, setdatatasks] = useState([])
     const [loadingtasks, setloadingtasks] = useState(false)
-    const [viewdetailtask, setviewdetailtask] = useState(false)
+    const [searchstate, setsearchstate] = useState("")
+    const [sortstate, setsortstate] = useState({
+        sort_by: "",
+        sort_type: "",
+    })
     const [pagetask, setpagetask] = useState(1)
     const [rowstask, setrowstask] = useState(6)
 
@@ -197,11 +201,11 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             render: (text, record, index) => {
                 return {
                     children:
-                        <div className={record.status === 6 && `bg-bgBackdropOverdue`}>
+                        <>
                             {datarawtask.from + index}
-                        </div>
+                        </>
                 }
-            }
+            },
         },
         {
             title: 'Nomor Task',
@@ -209,12 +213,12 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             render: (text, record, index) => {
                 return {
                     children:
-                        <div className={record.status === 6 && `bg-bgBackdropOverdue`}>
+                        <>
                             T-000{record.id}
-                        </div>
+                        </>
                 }
             },
-            sorter: (a, b) => a.id < b.id,
+            // sorter: (a, b) => a.id < b.id,
         },
         {
             title: 'Tipe Task',
@@ -222,12 +226,12 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             render: (text, record, index) => {
                 return {
                     children:
-                        <div className={record.status === 6 && `bg-bgBackdropOverdue`}>
+                        <>
                             {record.task_type === null ? `-` : record.task_type.name}
-                        </div>
+                        </>
                 }
             },
-            sorter: (a, b) => a.task_type.name.localeCompare(b.task_type.name),
+            // sorter: (a, b) => a.task_type.name.localeCompare(b.task_type.name),
         },
         {
             title: 'Judul Task',
@@ -235,11 +239,11 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             render: (text, record, index) => {
                 return {
                     children:
-                        <div className={record.status === 6 && `bg-bgBackdropOverdue`}>
+                        <>
                             {record.name === "" || record.name === "-" ? `-` : record.name}
-                        </div>
+                        </>
                 }
-            }
+            },
         },
         {
             title: 'Deadline',
@@ -247,9 +251,9 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             render: (text, record, index) => {
                 return {
                     children:
-                        <div className={record.status === 6 && `bg-bgBackdropOverdue`}>
+                        <>
                             {record.deadline === null ? `-` : moment(record.deadline).locale('id').format('lll')}
-                        </div>
+                        </>
                 }
             }
         },
@@ -259,9 +263,9 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             render: (text, record, index) => {
                 return {
                     children:
-                        <div className={record.status === 6 && `bg-bgBackdropOverdue`}>
+                        <>
                             {record.users.length === 0 ? `-` : record.users.map(docmap => docmap.name).join(", ")}
-                        </div>
+                        </>
                 }
             }
         },
@@ -271,9 +275,9 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             render: (text, record, index) => {
                 return {
                     children:
-                        <div className={record.status === 6 && `bg-bgBackdropOverdue`}>
+                        <>
                             {record.location === null ? `-` : record.location.full_location}
-                        </div>
+                        </>
                 }
             }
         },
@@ -284,38 +288,68 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             render: (text, record, index) => {
                 return {
                     children:
-                        <div className={record.status === 6 && ` bg-bgBackdropOverdue`}>
+                        <>
                             {
                                 record.status === 1 &&
-                                <div className="rounded-md h-auto px-1 text-center py-1 bg-open bg-opacity-10 border border-open text-open">Open</div>
+                                <div className="rounded-md h-auto px-3 text-center py-1 bg-overdue bg-opacity-10 text-overdue">Overdue</div>
                             }
                             {
                                 record.status === 2 &&
-                                <div className="rounded-md h-auto px-1 text-center py-1 bg-onprogress bg-opacity-10 border border-onprogress text-onprogress">On-Progress</div>
+                                <div className="rounded-md h-auto px-3 text-center py-1 bg-open bg-opacity-10 text-open">Open</div>
                             }
                             {
                                 record.status === 3 &&
-                                <div className="rounded-md h-auto px-1 text-center py-1 bg-onhold bg-opacity-10 border border-onhold text-onhold">On-Hold</div>
+                                <div className="rounded-md h-auto px-3 text-center py-1 bg-onprogress bg-opacity-10 text-onprogress">On-Progress</div>
                             }
                             {
                                 record.status === 4 &&
-                                <div className="rounded-md h-auto px-1 text-center py-1 bg-completed bg-opacity-10 border border-completed text-completed">Completed</div>
+                                <div className="rounded-md h-auto px-3 text-center py-1 bg-onhold bg-opacity-10 text-onhold">On-Hold</div>
                             }
                             {
                                 record.status === 5 &&
-                                <div className="rounded-md h-auto px-1 text-center py-1 bg-closed bg-opacity-10 border border-closed text-closed">Closed</div>
+                                <div className="rounded-md h-auto px-3 text-center py-1 bg-completed bg-opacity-10 text-completed">Completed</div>
                             }
                             {
                                 record.status === 6 &&
-                                <div className="rounded-md h-auto px-1 text-center py-1 bg-overdue bg-opacity-10 border border-overdue text-overdue">Overdue</div>
+                                <div className="rounded-md h-auto px-3 text-center py-1 bg-closed bg-opacity-10 text-closed">Closed</div>
                             }
-                        </div>
+                        </>
                 }
             }
         },
     ]
 
     //HANDLER
+    const onSortTask = () => {
+        setloadingtasks(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatarawtask(res2.data)
+                setdatatasks(res2.data.data)
+                setloadingtasks(false)
+            })
+    }
+    const onSearchTask = () => {
+        setloadingtasks(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatarawtask(res2.data)
+                setdatatasks(res2.data.data)
+                setloadingtasks(false)
+            })
+    }
     const handleDeleteTipeTask = () => {
         setloadingtipetaskdelete(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/deleteTaskType`, {
@@ -367,7 +401,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     }, [viewdetailtipetask, drawertasktypecreate, modaltipetaskdelete])
     useEffect(() => {
         setloadingtasks(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagetask}&rows=${rowstask}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -841,11 +875,91 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                     <H1>Semua Task</H1>
                                     <div className="w-8/12 flex justify-end">
                                         <div className="mx-2">
-                                            <Input style={{ width: `20rem` }} placeholder="Cari Task" allowClear />
+                                            <Input style={{ width: `20rem` }} placeholder="Cari Judul Task.." allowClear onChange={(e) => {
+                                                if (e.target.value === "") {
+                                                    setsearchstate("")
+                                                    setloadingtasks(true)
+                                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=`, {
+                                                        method: `GET`,
+                                                        headers: {
+                                                            'Authorization': JSON.parse(initProps),
+                                                        },
+                                                    })
+                                                        .then(res => res.json())
+                                                        .then(res2 => {
+                                                            setdatarawtask(res2.data)
+                                                            setdatatasks(res2.data.data)
+                                                            setloadingtasks(false)
+                                                        })
+                                                }
+                                                else {
+                                                    setsearchstate(e.target.value)
+                                                }
+                                            }} />
+                                        </div>
+                                        <div className='mx-2'>
+                                            <Buttonsys type={`primary`} onClick={onSearchTask}>
+                                                <div className='mr-1'>
+                                                    <SearchIconSvg size={15} color={`#ffffff`} />
+                                                </div>
+                                                Search
+                                            </Buttonsys>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="flex flex-col">
+                                    <div className='mb-4 flex'>
+                                        <div className='mr-3'>
+                                            <Select placeholder="Sort By" style={{ width: `10rem` }} onChange={(value) => {
+                                                setsortstate({ ...sortstate, sort_by: value })
+                                            }}>
+                                                <Select.Option value={''}>
+                                                    Default
+                                                </Select.Option>
+                                                <Select.Option value={'id'}>
+                                                    ID
+                                                </Select.Option>
+                                                <Select.Option value={'name'}>
+                                                    Judul Task
+                                                </Select.Option>
+                                                <Select.Option value={'deadline'}>
+                                                    Deadline
+                                                </Select.Option>
+                                                <Select.Option value={'status'}>
+                                                    Status
+                                                </Select.Option>
+                                            </Select>
+                                        </div>
+                                        <div className='mx-3'>
+                                            <Select placeholder="Sort Type" style={{ width: `10rem` }} onChange={(value) => {
+                                                setsortstate({ ...sortstate, sort_type: value })
+                                            }}>
+                                                <Select.Option value={''}>
+                                                    Default
+                                                </Select.Option>
+                                                <Select.Option value={'asc'}>
+                                                    <div className='mr-1 flex items-center'>
+                                                        <SortAscendingIconSvg size={15} color={`#35763B`} />
+                                                        Ascending
+                                                    </div>
+                                                </Select.Option>
+                                                <Select.Option value={'desc'}>
+                                                    <div className='mr-1 flex items-center'>
+                                                        <SortDescendingIconSvg size={15} color={`#35763B`} />
+                                                        Descending
+                                                    </div>
+                                                </Select.Option>
+                                            </Select>
+                                        </div>
+                                        <div className='mx-3'>
+                                            <Buttonsys type={`primary`} onClick={onSortTask}>
+                                                <div className='mr-1'>
+                                                    <ArrowsSortIconSvg size={15} color={`#ffffff`} />
+                                                </div>
+                                                Sort
+                                            </Buttonsys>
+                                        </div>
+                                    </div>
                                     <TableCustomTask
                                         dataSource={datatasks}
                                         setDataSource={setdatatasks}
@@ -857,6 +971,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                         initProps={initProps}
                                         setpage={setpagetask}
                                         setdataraw={setdatarawtask}
+                                        sortstate={sortstate}
+                                        searchstate={searchstate}
                                     />
                                 </div>
                             </div>
