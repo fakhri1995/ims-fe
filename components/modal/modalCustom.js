@@ -251,6 +251,33 @@ const ModalHapusTipeTask = ({ title, visible, onvisible, onOk, onCancel, loading
     )
 }
 
+const ModalHapusTask = ({ title, visible, onvisible, onOk, onCancel, loading, datadelete, children }) => {
+    return (
+        <ModalCore
+            title={title}
+            visible={visible}
+            onCancel={onCancel}
+            closeIcon={<AlertIconSvg size={20} color={`#BF4A40`} />}
+            footer={
+                <Spin spinning={loading}>
+                    <div className="flex justify-between items-center">
+                        <ButtonSys type="default" color="danger" onClick={() => { onvisible(false) }}>
+                            Batalkan
+                        </ButtonSys>
+                        <ButtonSys type="primary" color="danger" onClick={onOk}>
+                            <TrashIconSvg size={15} color={`#ffffff`} />
+                            Ya, Saya yakin dan hapus task
+                        </ButtonSys>
+                    </div>
+                </Spin>
+            }
+            loading={loading}
+        >
+            Apakah Anda yakin ingin melanjutkan penghapusan Tipe Task <strong>{datadelete.name}</strong>?
+        </ModalCore>
+    )
+}
+
 export {
-    ModalEdit, ModalHapus, ModalHapusLokasiCekChild, ModalHapusLokasiMoveChild, ModalHapusLokasiConfirm, ModalHapusInventoryExist, ModalStatus, ModalHapusTipeTask
+    ModalEdit, ModalHapus, ModalHapusLokasiCekChild, ModalHapusLokasiMoveChild, ModalHapusLokasiConfirm, ModalHapusInventoryExist, ModalStatus, ModalHapusTipeTask, ModalHapusTask
 }

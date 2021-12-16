@@ -3,19 +3,13 @@ import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import st from '../../../components/layout-dashboard.module.css'
-import { Select, Spin } from 'antd'
+import { Select, Spin, notification } from 'antd'
 import Buttonsys from '../../../components/button'
 import { H1, H2, Label, Text } from '../../../components/typography'
-import { AlerttriangleIconSvg, ArrowsSortIconSvg, AssetIconSvg, BackIconSvg, CalendartimeIconSvg, CheckIconSvg, CircleXIconSvg, ClipboardcheckIconSvg, ClockIconSvg, EditIconSvg, ForbidIconSvg, ListcheckIconSvg, MappinIconSvg, PlayerPauseIconSvg, PlayerPlayIconSvg, SortAscendingIconSvg, SortDescendingIconSvg, TrashIconSvg, UserPlusIconSvg } from '../../../components/icon'
-import { Chart, ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement } from 'chart.js'
-Chart.register(ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement);
-import { Doughnut, Bar, Line } from 'react-chartjs-2';
-import { TableCustomTask, TableCustomTipeTask } from '../../../components/table/tableCustom'
-import { ModalHapusTipeTask } from '../../../components/modal/modalCustom'
-import DrawerTaskTypesCreate from '../../../components/drawer/tasks/drawerTaskTypesCreate'
-import DrawerTaskTypesUpdate from '../../../components/drawer/tasks/drawerTaskTypesUpdate'
-import DrawerTaskCreate from '../../../components/drawer/tasks/drawerTaskCreate'
+import { ArrowsSortIconSvg, AssetIconSvg, BackIconSvg, CheckIconSvg, CircleXIconSvg, ClipboardcheckIconSvg, ClockIconSvg, EditIconSvg, ForbidIconSvg, PlayerPauseIconSvg, PlayerPlayIconSvg, SortAscendingIconSvg, SortDescendingIconSvg, TrashIconSvg, UserPlusIconSvg } from '../../../components/icon'
+import { ModalHapusTask } from '../../../components/modal/modalCustom'
 import moment from 'moment'
+import DrawerTaskUpdate from '../../../components/drawer/tasks/drawerTaskUpdate'
 
 const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     //1.Init
@@ -56,8 +50,22 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
         task_details: [],
         reference: []
     })
+    const [dataupdate, setdataupdate] = useState({
+        id: null,
+        name: "",
+        description: "",
+        location_id: null,
+        reference_id: null,
+        created_at: moment(new Date()).locale('id').format(),
+        deadline: moment(new Date()).add(3, 'h').locale('id').format(),
+        is_group: null,
+        is_replaceable: false,
+        assign_ids: [],
+        inventory_ids: [],
+        subloc_id: null,
+    })
     const [users2, setusers2] = useState([])
-    const [praloadingtask, setpraloadingtask] = useState(false)
+    const [praloadingtask, setpraloadingtask] = useState(true)
     const [timeleft, settimeleft] = useState({
         d: 0,
         h: 0,
@@ -70,6 +78,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
         border: ""
     })
     const [colorhexastatus, setcolorhexastatus] = useState("")
+    const [drawertaskupdate, setdrawertaskupdate] = useState(false)
     //staff
     const [sortstate, setsortstate] = useState(0)
     //task detail
@@ -77,6 +86,55 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     const [datatype4, setdatatype4] = useState([])
     const [datatype42, setdatatype42] = useState([])
     const [sort4state, setsort4state] = useState(0)
+    //update
+    const [selecteditems, setselecteditems] = useState([])
+    const [selectedstaffgroup, setselectedstaffgroup] = useState([])
+    const [switchstaffgroup, setswitchstaffgroup] = useState(1)
+    const [now, setnow] = useState(true)
+    const [choosedate, setchoosedate] = useState(false)
+    const [nowend, setnowend] = useState(3)
+    const [choosedateend, setchoosedateend] = useState(false)
+    //delete
+    const [datataskdelete, setdatataskdelete] = useState({
+        id: null,
+        name: ""
+    })
+    const [modaltaskdelete, setmodaltaskdelete] = useState(false)
+    const [loadingtaskdelete, setloadingtaskdelete] = useState(false)
+
+
+    //HANDLER
+    const handleDeleteTask = () => {
+        setloadingtaskdelete(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteTask`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: datataskdelete.id
+            })
+        })
+            .then((res) => res.json())
+            .then(res2 => {
+                setloadingtaskdelete(false)
+                if (res2.success) {
+                    setmodaltaskdelete(false)
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    rt.push(`/tasks`)
+                }
+                else {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
 
 
     //USEEFFECT
@@ -92,6 +150,53 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
             .then(res2 => {
                 setdisplaytask(res2.data)
                 setusers2(res2.data.users)
+                setdataupdate({
+                    ...dataupdate,
+                    id: taskid,
+                    task_type_id: res2.data.task_type_id,
+                    name: res2.data.name,
+                    description: res2.data.description,
+                    location_id: res2.data.location_id,
+                    reference_id: res2.data.reference_id,
+                    created_at: res2.data.created_at,
+                    deadline: res2.data.deadline,
+                    is_group: res2.data.is_group,
+                    is_replaceable: res2.data.is_replaceable,
+                    assign_ids: res2.data.users.map(doc => doc.id),
+                    inventory_ids: res2.data.inventories.map((doc) => doc.id),
+                    group_id: res2.data.group_id
+                })
+                var tempitems = res2.data.inventories.map((doc, idx) => ({
+                    ...doc,
+                    modelname: doc.model_name,
+                    migid: doc.mig_id,
+                    assetname: doc.asset_name
+                }))
+                setselecteditems(tempitems)
+                var tempstaffgroup = []
+                res2.data.group_id === null ?
+                    (
+                        tempstaffgroup = res2.data.users.map((doc, idx) => ({
+                            ...doc,
+                            children: doc.name,
+                            companyname: '-',
+                            image: doc.profile_image
+                        })),
+                        setswitchstaffgroup(1)
+                    )
+                    :
+                    (
+                        tempstaffgroup = [{
+                            children: res2.data.group.name
+                        }],
+                        setswitchstaffgroup(0)
+                    )
+                setselectedstaffgroup(tempstaffgroup)
+                setnow(false)
+                setchoosedate(true)
+                setnowend(-10)
+                setchoosedateend(true)
+                //data type 4
                 const data4map = res2.data.task_details.filter((docfil) => docfil.component.type === 4).map((docmap, idxmap) => {
                     var tasklistItem = docmap.component.rows.map((docmap2, idxmap2) => {
                         var colattr = {}
@@ -108,6 +213,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 })
                 setdatatype4(data4map)
                 setdatatype42(data4map)
+                //time_left
                 settimeleft({
                     ...timeleft,
                     // d: Math.abs((moment.utc().diff(moment().add(res2.data.time_left.y, 'y').locale('id').format(), 'days'))) + Math.abs((moment.utc().diff(moment().add(res2.data.time_left.m, 'M').locale('id').format(), 'days'))) + res2.data.time_left.d,
@@ -116,38 +222,9 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                     m: res2.data.time_left.i,
                     s: res2.data.time_left.s
                 })
-                if (displaytask.status === 1) {
-                    setcolorstatus({ text: "text-overdue", bg: "bg-overdue", border: "border-overdue" })
-                    setcolorhexastatus("#BF4A40")
-                }
-                else if (displaytask.status === 2) {
-                    setcolorstatus({ text: "text-open", bg: "bg-open", border: "border-open" })
-                    setcolorhexastatus("#2F80ED")
-
-                }
-                else if (displaytask.status === 3) {
-                    setcolorstatus({ text: "text-onprogress", bg: "bg-onprogress", border: "border-onprogress" })
-                    setcolorhexastatus("#ED962F")
-
-                }
-                else if (displaytask.status === 4) {
-                    setcolorstatus({ text: "text-onhold", bg: "bg-onhold", border: "border-onhold" })
-                    setcolorhexastatus("#E5C471")
-
-                }
-                else if (displaytask.status === 5) {
-                    setcolorstatus({ text: "text-completed", bg: "bg-completed", border: "border-completed" })
-                    setcolorhexastatus("#6AAA70")
-
-                }
-                else if (displaytask.status === 6) {
-                    setcolorstatus({ text: "text-closed", bg: "bg-closed", border: "border-closed" })
-                    setcolorhexastatus("#808080")
-
-                }
                 setpraloadingtask(false)
             })
-    }, [])
+    }, [loadingtaskdelete])
 
     return (
         <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
@@ -167,7 +244,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                 <div className="mr-1 flex items-center">
                                     <ClockIconSvg size={15} color={`#BF4A40`} />
                                 </div>
-                                Berakhir {moment(displaytask.deadline).locale('id').format('lll')}
+                                Berakir {moment(displaytask.deadline).locale('id').format('lll')}
                             </div>
                         </div>
                         <div className='flex flex-col mb-10'>
@@ -468,65 +545,76 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                     </div>
                 </div>
                 <div className=' col-span-3 flex flex-col'>
-                    <div className={`shadow-md rounded-md ${colorstatus.bg} p-4 mb-3 ml-3 flex items-center flex-col`}>
-                        <div className=' my-2 text-white'>
-                            <H2>Waktu Tersisa</H2>
-                        </div>
-                        <div className='my-4 flex flex-col items-center'>
-                            <p className='mb-1 text-4xl font-bold text-white'>
-                                {timeleft.d}
-                            </p>
-                            <p className='text-sm mb-0 text-white'>
-                                Hari
-                            </p>
-                        </div>
-                        <div className=' my-2 flex justify-around'>
-                            <div className='flex flex-col mx-3 items-center'>
-                                <p className='mb-1 text-xl font-bold text-white'>
-                                    {timeleft.h}
-                                </p>
-                                <p className='text-sm mb-0 text-white'>
-                                    Jam
-                                </p>
+                    {
+                        praloadingtask ?
+                            <>
+                                <Spin />
+                            </>
+                            :
+                            <div className={`shadow-md rounded-md ${displaytask.status === 1 && `bg-overdue`} ${displaytask.status === 2 && `bg-open`} ${displaytask.status === 3 && `bg-onprogress`} ${displaytask.status === 4 && `bg-onhold`} ${displaytask.status === 5 && `bg-completed`} ${displaytask.status === 6 && `bg-closed`} p-4 mb-3 ml-3 flex items-center flex-col`}>
+                                <div className=' my-2 text-white'>
+                                    <H2>Waktu Tersisa</H2>
+                                </div>
+                                <div className='my-4 flex flex-col items-center'>
+                                    <p className='mb-1 text-4xl font-bold text-white'>
+                                        {timeleft.d}
+                                    </p>
+                                    <p className='text-sm mb-0 text-white'>
+                                        Hari
+                                    </p>
+                                </div>
+                                <div className=' my-2 flex justify-around'>
+                                    <div className='flex flex-col mx-3 items-center'>
+                                        <p className='mb-1 text-xl font-bold text-white'>
+                                            {timeleft.h}
+                                        </p>
+                                        <p className='text-sm mb-0 text-white'>
+                                            Jam
+                                        </p>
+                                    </div>
+                                    <div className='flex flex-col mx-3 items-center'>
+                                        <p className='mb-1 text-xl font-bold text-white'>
+                                            {timeleft.m}
+                                        </p>
+                                        <p className='text-sm mb-0 text-white'>
+                                            Menit
+                                        </p>
+                                    </div>
+                                    <div className='flex flex-col mx-3 items-center'>
+                                        <p className='mb-1 text-xl font-bold text-white'>
+                                            {timeleft.s}
+                                        </p>
+                                        <p className='text-sm mb-0 text-white'>
+                                            Detik
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className={`mt-2 mb-3 ${displaytask.status === 1 && `text-overdue`} ${displaytask.status === 2 && `text-open`} ${displaytask.status === 3 && `text-onprogress`} ${displaytask.status === 4 && `text-onhold`} ${displaytask.status === 5 && `text-completed`} ${displaytask.status === 6 && `text-closed`}`}>
+                                    <Buttonsys type={`primary`} color={`white`}>
+                                        {
+                                            displaytask.status === 4 ?
+                                                <>
+                                                    <div className='mr-1'>
+                                                        <PlayerPlayIconSvg size={25} color={`#E5C471`} />
+                                                    </div>
+                                                    <p className='mb-0 text-onhold'>Lanjutkan Task</p>
+                                                </>
+                                                :
+                                                <>
+                                                    <div className='mr-1'>
+                                                        {displaytask.status === 1 && <PlayerPauseIconSvg size={25} color={`#BF4A40`} />}
+                                                        {displaytask.status === 2 && <PlayerPauseIconSvg size={25} color={`#2F80ED`} />}
+                                                        {displaytask.status === 3 && <PlayerPauseIconSvg size={25} color={`#ED962F`} />}
+                                                        {displaytask.status === 5 && <PlayerPauseIconSvg size={25} color={`#6AAA70`} />}
+                                                        {displaytask.status === 6 && <PlayerPauseIconSvg size={25} color={`#808080`} />}
+                                                    </div>
+                                                    <p className={`mb-0 ${displaytask.status === 1 && `text-overdue`} ${displaytask.status === 2 && `text-open`} ${displaytask.status === 3 && `text-onprogress`} ${displaytask.status === 4 && `text-onhold`} ${displaytask.status === 5 && `text-completed`} ${displaytask.status === 6 && `text-closed`}`}>Hold Task</p>
+                                                </>
+                                        }
+                                    </Buttonsys>
+                                </div>
                             </div>
-                            <div className='flex flex-col mx-3 items-center'>
-                                <p className='mb-1 text-xl font-bold text-white'>
-                                    {timeleft.m}
-                                </p>
-                                <p className='text-sm mb-0 text-white'>
-                                    Menit
-                                </p>
-                            </div>
-                            <div className='flex flex-col mx-3 items-center'>
-                                <p className='mb-1 text-xl font-bold text-white'>
-                                    {timeleft.s}
-                                </p>
-                                <p className='text-sm mb-0 text-white'>
-                                    Detik
-                                </p>
-                            </div>
-                        </div>
-                        <div className={`mt-2 mb-3 ${colorstatus.text}`}>
-                            <Buttonsys type={`primary`} color={`white`}>
-                                {
-                                    displaytask.status === 4 ?
-                                        <>
-                                            <div className='mr-1'>
-                                                <PlayerPlayIconSvg size={25} color={colorhexastatus} />
-                                            </div>
-                                            <p className='mb-0 text-onhold'>Lanjutkan Task</p>
-                                        </>
-                                        :
-                                        <>
-                                            <div className='mr-1'>
-                                                <PlayerPauseIconSvg size={25} color={colorhexastatus} />
-                                            </div>
-                                            <p className={`mb-0 ${colorstatus.text}`}>Lanjutkan Task</p>
-                                        </>
-                                }
-                            </Buttonsys>
-                        </div>
-                    </div>
+                    }
                     <div className='shadow-md rounded-md bg-white p-4 my-3 ml-3 flex flex-col'>
                         <div className='my-3 flex flex-col'>
                             <div className='mb-2'>
@@ -553,13 +641,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                 displaytask.reference_id === null ?
                                     `-`
                                     :
-                                    <ul>
-                                        {
-                                            displaytask.reference.map((doc, idx) => (
-                                                <li>{doc.name}</li>
-                                            ))
-                                        }
-                                    </ul>
+                                    <p className=' mb-0 text-sm text-gray-500'>Tiket {displaytask.reference.type.code}-{displaytask.reference.type.id}</p>
                             }
                         </div>
                         <div className='my-3 flex flex-col'>
@@ -581,7 +663,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                         </div>
                         <div className='my-5 flex flex-col items-center'>
                             <div className=' mb-3'>
-                                <Buttonsys type={`default`}>
+                                <Buttonsys type={`default`} onClick={() => { setdrawertaskupdate(true) }}>
                                     <div className='mr-1 flex items-center'>
                                         <EditIconSvg size={15} color={`#35763B`} />
                                         Edit Task
@@ -589,7 +671,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                 </Buttonsys>
                             </div>
                             <div className=' mb-3'>
-                                <Buttonsys type={`primary`} color={`danger`}>
+                                <Buttonsys type={`primary`} color={`danger`} onClick={() => { setmodaltaskdelete(true); setdatataskdelete({ id: taskid, name: displaytask.name }) }}>
                                     <div className='mr-1 flex items-center'>
                                         <TrashIconSvg size={15} color={`#ffffff`} />
                                         Hapus Task
@@ -597,7 +679,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                 </Buttonsys>
                             </div>
                             <div className=' mb-3'>
-                                <Buttonsys type={`primary`}>
+                                <Buttonsys type={`primary`} onClick={() => { console.log(colorstatus) }}>
                                     <div className='mr-1 flex items-center'>
                                         <ClipboardcheckIconSvg size={15} color={`#ffffff`} />
                                         Cetak Task
@@ -605,6 +687,15 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                 </Buttonsys>
                             </div>
                         </div>
+                        <ModalHapusTask
+                            title={"Konfirmasi Hapus Task"}
+                            visible={modaltaskdelete}
+                            onvisible={setmodaltaskdelete}
+                            onCancel={() => { setmodaltaskdelete(false) }}
+                            loading={loadingtaskdelete}
+                            datadelete={datataskdelete}
+                            onOk={handleDeleteTask}
+                        />
                     </div>
                     <div className='shadow-md rounded-md bg-white p-4 mt-3 ml-3 flex flex-col'>
                         <div className='mb-3'>
@@ -657,7 +748,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                             displaytask.inventories.filter(doc => doc.is_in === null && doc.is_from_task === false).length === 0 ?
                                 `-`
                                 :
-                                displaytask.inventories.filter(doc => doc.is_in === null && doc.is_from_task === false ).map((doc, idx) => (
+                                displaytask.inventories.filter(doc => doc.is_in === null && doc.is_from_task === false).map((doc, idx) => (
                                     <div className='my-3 flex items-center'>
                                         <div className='mr-2 flex items-center'>
                                             <AssetIconSvg size={50} />
@@ -678,6 +769,31 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                     </div>
                 </div>
             </div>
+            <DrawerTaskUpdate
+                title={"Tambah Task"}
+                visible={drawertaskupdate}
+                onClose={() => { setdrawertaskupdate(false) }}
+                buttonOkText={"Simpan Task"}
+                initProps={initProps}
+                onvisible={setdrawertaskupdate}
+                dataupdate={dataupdate}
+                setdataupdate={setdataupdate}
+                loading={praloadingtask}
+                selecteditems={selecteditems}
+                setselecteditems={setselecteditems}
+                selectedstaffgroup={selectedstaffgroup}
+                setselectedstaffgroup={setselectedstaffgroup}
+                switchstaffgroup={switchstaffgroup}
+                setswitchstaffgroup={setswitchstaffgroup}
+                now={now}
+                setnow={setnow}
+                choosedate={choosedate}
+                setchoosedate={setchoosedate}
+                nowend={nowend}
+                setnowend={setnowend}
+                choosedateend={choosedateend}
+                setchoosedateend={setchoosedateend}
+            />
         </Layout>
     )
 }
@@ -723,3 +839,34 @@ export async function getServerSideProps({ req, res, params }) {
 }
 
 export default TaskDetail
+
+                // //color status
+                // if (displaytask.status === 1) {
+                //     setcolorstatus({ text: "text-overdue", bg: "bg-overdue", border: "border-overdue" })
+                //     setcolorhexastatus("#BF4A40")
+                // }
+                // else if (displaytask.status === 2) {
+                //     setcolorstatus({ text: "text-open", bg: "bg-open", border: "border-open" })
+                //     setcolorhexastatus("#2F80ED")
+
+                // }
+                // else if (displaytask.status === 3) {
+                //     setcolorstatus({ text: "text-onprogress", bg: "bg-onprogress", border: "border-onprogress" })
+                //     setcolorhexastatus("#ED962F")
+
+                // }
+                // else if (displaytask.status === 4) {
+                //     setcolorstatus({ text: "text-onhold", bg: "bg-onhold", border: "border-onhold" })
+                //     setcolorhexastatus("#E5C471")
+
+                // }
+                // else if (displaytask.status === 5) {
+                //     setcolorstatus({ text: "text-completed", bg: "bg-completed", border: "border-completed" })
+                //     setcolorhexastatus("#6AAA70")
+
+                // }
+                // else if (displaytask.status === 6) {
+                //     setcolorstatus({ text: "text-closed", bg: "bg-closed", border: "border-closed" })
+                //     setcolorhexastatus("#808080")
+
+                // }
