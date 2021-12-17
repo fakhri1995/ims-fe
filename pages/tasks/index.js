@@ -10,7 +10,7 @@ import { AlerttriangleIconSvg, ArrowsSortIconSvg, BackIconSvg, CalendartimeIconS
 import { Chart, ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement } from 'chart.js'
 Chart.register(ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement);
 import { Doughnut, Bar, Line } from 'react-chartjs-2';
-import { TableCustomTask, TableCustomTipeTask } from '../../components/table/tableCustom'
+import { TableCustomStaffTask, TableCustomTask, TableCustomTipeTask } from '../../components/table/tableCustom'
 import { ModalHapusTipeTask } from '../../components/modal/modalCustom'
 import DrawerTaskTypesCreate from '../../components/drawer/tasks/drawerTaskTypesCreate'
 import DrawerTaskTypesUpdate from '../../components/drawer/tasks/drawerTaskTypesUpdate'
@@ -143,6 +143,35 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     const [rowstask, setrowstask] = useState(6)
     //create - task
     const [drawertaskcreate, setdrawertaskcreate] = useState(false)
+    //Staff
+    const [datarawstaff, setdatarawstaff] = useState({
+        current_page: "",
+        data: [],
+        first_page_url: "",
+        from: null,
+        last_page: null,
+        last_page_url: "",
+        next_page_url: "",
+        path: "",
+        per_page: null,
+        prev_page_url: null,
+        to: null,
+        total: null
+    })
+    const [datastaff, setdatastaff] = useState([])
+    const [loadingstaff, setloadingstaff] = useState(true)
+    const [viewdetailstaff, setviewdetailstaff] = useState(false)
+    const [pagestaff, setpagestaff] = useState(1)
+    const [rowsstaff, setrowsstaff] = useState(6)
+    const [searcingstaff, setsearcingstaff] = useState("")
+    const [sortingstaff, setsortingstaff] = useState({
+        sort_by: "",
+        sort_type: ""
+    })
+    const [intervaldatestaff, setintervaldatestaff] = useState({
+        from: "",
+        to: ""
+    })
 
     //2. columns table
     const columnsTipetask = [
@@ -376,23 +405,124 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             filterMultiple: false
         },
     ]
+    const columnsStaffTask = [
+        {
+            title: 'No',
+            dataIndex: 'num',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {datarawstaff.from + index}
+                        </>
+                }
+            }
+        },
+        {
+            title: 'Nama Staff',
+            dataIndex: 'name',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <div className=' flex items-center'>
+                            <div className=' rounded-full w-10 h-10 mr-1'>
+                                <img src={record.profile_image === "-" ? "/image/staffTask.png" : record.profile_image} className=' object-contain' alt="" />
+                            </div>
+                            <p className=' mb-0 text-sm font-semibold'>
+                                {record.name}
+                            </p>
+                        </div>
+                }
+            },
+            sorter: (a, b) => a.name.localeCompare(b.name),
+        },
+        {
+            title: 'Overdue',
+            dataIndex: 'overdue',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.status_list[0].status_count}
+                        </>
+                }
+            }
+        },
+        {
+            title: 'Open',
+            dataIndex: 'open',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.status_list[1].status_count}
+                        </>
+                }
+            }
+        },
+        {
+            title: 'On Progess',
+            dataIndex: 'onprogress',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.status_list[2].status_count}
+                        </>
+                }
+            }
+        },
+        {
+            title: 'On Hold',
+            dataIndex: 'onhold',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.status_list[3].status_count}
+                        </>
+                }
+            }
+        },
+        {
+            title: 'Completed',
+            dataIndex: 'completed',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.status_list[4].status_count}
+                        </>
+                }
+            }
+        },
+        {
+            title: 'Closed',
+            dataIndex: 'closed',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.status_list[5].status_count}
+                        </>
+                }
+            }
+        },
+        {
+            title: 'Jumlah Task',
+            dataIndex: 'sum_task',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.sum_task}
+                        </>
+                }
+            },
+        },
+    ]
 
     //HANDLER
-    const onSortTask = () => {
-        setloadingtasks(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}`, {
-            method: `GET`,
-            headers: {
-                'Authorization': JSON.parse(initProps),
-            },
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setdatarawtask(res2.data)
-                setdatatasks(res2.data.data)
-                setloadingtasks(false)
-            })
-    }
     const onSearchTask = () => {
         setloadingtasks(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&status=${filterstate}`, {
@@ -525,6 +655,20 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             })
     }, [])
     useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getStaffTaskStatuses`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatarawstaff(res2.data)
+                setdatastaff(res2.data.data)
+                setloadingstaff(false)
+            })
+    }, [])
+    useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
             method: `GET`,
             headers: {
@@ -549,70 +693,133 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
             <div className="flex flex-col" id="mainWrapper">
                 {
-                    viewdetailtipetask ?
-                        <div className='px-5'>
-                            <div className='flex flex-col shadow-md rounded-lg bg-white p-5 mb-6 mx-3'>
-                                <div className="flex justify-between items-center mb-5">
-                                    <div className="flex">
-                                        <div className="mr-2 cursor-pointer" onClick={() => { setviewdetailtipetask(false) }}>
-                                            <BackIconSvg size={15} color={`#000000`} />
+                    viewdetailtipetask || viewdetailstaff ?
+                        <>
+                            {
+                                viewdetailtipetask &&
+                                <div className='px-5'>
+                                    <div className='flex flex-col shadow-md rounded-lg bg-white p-5 mb-6 mx-3'>
+                                        <div className="flex justify-between items-center mb-5">
+                                            <div className="flex">
+                                                <div className="mr-2 cursor-pointer" onClick={() => { setviewdetailtipetask(false) }}>
+                                                    <BackIconSvg size={15} color={`#000000`} />
+                                                </div>
+                                                <H1>Semua Tipe Task</H1>
+                                            </div>
+                                            <div className="w-8/12 flex justify-end">
+                                                <div className=' mx-2'>
+                                                    <Buttonsys type="primary" onClick={() => { setdrawertasktypecreate(true) }}>
+                                                        + Tambah Tipe Task
+                                                    </Buttonsys>
+                                                </div>
+                                                <div className="mx-2">
+                                                    <Input style={{ width: `20rem` }} placeholder="Nama tipe task.." allowClear onChange={(e) => {
+                                                        setsearcingtipetask(e.target.value)
+                                                        setloadingtipetasks(true)
+                                                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskTypes?page=${pagetipetask}&rows=${rowstipetask}&name=${e.target.value}&sort_by=${sortingtipetask.sort_by}&sort_type=${sortingtipetask.sort_type}`, {
+                                                            method: `GET`,
+                                                            headers: {
+                                                                'Authorization': JSON.parse(initProps),
+                                                            },
+                                                        })
+                                                            .then(res => res.json())
+                                                            .then(res2 => {
+                                                                setdatarawtipetask(res2.data)
+                                                                setdatatipetasks(res2.data.data)
+                                                                setloadingtipetasks(false)
+                                                            })
+                                                    }} />
+                                                </div>
+                                            </div>
                                         </div>
-                                        <H1>Semua Tipe Task</H1>
+                                        <div>
+                                            <TableCustomTipeTask
+                                                dataSource={datatipetasks}
+                                                setDataSource={setdatatipetasks}
+                                                columns={columnsTipetask}
+                                                loading={loadingtipetasks}
+                                                setpraloading={setloadingtipetasks}
+                                                pageSize={rowstipetask}
+                                                total={datarawtipetask.total}
+                                                initProps={initProps}
+                                                setpage={setpagetipetask}
+                                                pagefromsearch={pagetipetask}
+                                                setdataraw={setdatarawtipetask}
+                                                setsortingtipetask={setsortingtipetask}
+                                                searcingtipetask={searcingtipetask}
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="w-8/12 flex justify-end">
-                                        <div className=' mx-2'>
-                                            <Buttonsys type="primary" onClick={() => { setdrawertasktypecreate(true) }}>
-                                                + Tambah Tipe Task
-                                            </Buttonsys>
-                                        </div>
-                                        <div className="mx-2">
-                                            <Input style={{ width: `20rem` }} placeholder="Nama tipe task.." allowClear onChange={(e) => {
-                                                setsearcingtipetask(e.target.value)
-                                                setloadingtipetasks(true)
-                                                fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskTypes?page=${pagetipetask}&rows=${rowstipetask}&name=${e.target.value}&sort_by=${sortingtipetask.sort_by}&sort_type=${sortingtipetask.sort_type}`, {
-                                                    method: `GET`,
-                                                    headers: {
-                                                        'Authorization': JSON.parse(initProps),
-                                                    },
-                                                })
-                                                    .then(res => res.json())
-                                                    .then(res2 => {
-                                                        setdatarawtipetask(res2.data)
-                                                        setdatatipetasks(res2.data.data)
-                                                        setloadingtipetasks(false)
-                                                    })
-                                            }} />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <TableCustomTipeTask
-                                        dataSource={datatipetasks}
-                                        setDataSource={setdatatipetasks}
-                                        columns={columnsTipetask}
-                                        loading={loadingtipetasks}
-                                        setpraloading={setloadingtipetasks}
-                                        pageSize={rowstipetask}
-                                        total={datarawtipetask.total}
-                                        initProps={initProps}
-                                        setpage={setpagetipetask}
-                                        pagefromsearch={pagetipetask}
-                                        setdataraw={setdatarawtipetask}
-                                        setsortingtipetask={setsortingtipetask}
-                                        searcingtipetask={searcingtipetask}
+                                    <ModalHapusTipeTask
+                                        title={"Konfirmasi Hapus Tipe Task"}
+                                        visible={modaltipetaskdelete}
+                                        onvisible={setmodaltipetaskdelete}
+                                        onCancel={() => { setmodaltipetaskdelete(false) }}
+                                        loading={loadingtipetaskdelete}
+                                        datadelete={datatipetaskdelete}
+                                        onOk={handleDeleteTipeTask}
                                     />
                                 </div>
-                            </div>
-                            <ModalHapusTipeTask
-                                title={"Konfirmasi Hapus Tipe Task"}
-                                visible={modaltipetaskdelete}
-                                onvisible={setmodaltipetaskdelete}
-                                onCancel={() => { setmodaltipetaskdelete(false) }}
-                                loading={loadingtipetaskdelete}
-                                datadelete={datatipetaskdelete}
-                                onOk={handleDeleteTipeTask}
-                            />
-                        </div>
+                            }
+                            {
+                                viewdetailstaff &&
+                                <div className="px-5">
+                                    <div className='flex flex-col shadow-md rounded-lg bg-white p-5 mb-6 mx-3'>
+                                        <div className="flex justify-between items-center mb-5">
+                                            <div className="flex">
+                                                <div className="mr-2 cursor-pointer" onClick={() => { setviewdetailstaff(false) }}>
+                                                    <BackIconSvg size={15} color={`#000000`} />
+                                                </div>
+                                                <H1>Semua Staff</H1>
+                                            </div>
+                                            <div className="w-8/12 flex justify-end">
+                                                <div className=' mx-2 cursor-pointer flex items-center'>
+                                                    <div className='mr-1'>
+                                                        <SortAscendingIconSvg size={15} color={`#35763B`} />
+                                                    </div>
+                                                    <p className='mb-0 font-semibold text-sm text-primary100 hover:text-primary75'>Interval Tanggal</p>
+                                                </div>
+                                                <div className="mx-2">
+                                                    <Input style={{ width: `20rem` }} placeholder="Nama Staff.." allowClear onChange={(e) => {
+                                                        setsearcingstaff(e.target.value)
+                                                        setloadingstaff(true)
+                                                        fetch(`https://boiling-thicket-46501.herokuapp.com/getStaffTaskStatuses?page=${pagestaff}&rows=${rowsstaff}&name=${e.target.value}&from=${intervaldatestaff.from}&to=${intervaldatestaff.to}`, {
+                                                            method: `GET`,
+                                                            headers: {
+                                                                'Authorization': JSON.parse(initProps),
+                                                            },
+                                                        })
+                                                            .then(res => res.json())
+                                                            .then(res2 => {
+                                                                setdatarawstaff(res2.data)
+                                                                setdatastaff(res2.data.data)
+                                                                setloadingstaff(false)
+                                                            })
+                                                    }} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <TableCustomStaffTask
+                                                dataSource={datastaff}
+                                                setDataSource={setdatastaff}
+                                                columns={columnsStaffTask}
+                                                loading={loadingstaff}
+                                                setpraloading={setloadingstaff}
+                                                pageSize={rowsstaff}
+                                                total={datarawstaff.total}
+                                                initProps={initProps}
+                                                setpage={setpagestaff}
+                                                pagefromsearch={pagestaff}
+                                                setdataraw={setdatarawstaff}
+                                                setsortingstaff={setsortingstaff}
+                                                searcingstaff={searcingstaff}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </>
                         :
                         <div className="grid grid-cols-11 px-5" id="wrapper1">
                             {/* SEGERA BERAKHIR */}
@@ -1137,7 +1344,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                 <div className="flex items-center justify-between mb-4">
                                     <H1>Staff</H1>
                                     <div className="flex items-center">
-                                        <div>
+                                        <div className=' cursor-pointer' onClick={() => { setviewdetailstaff(true) }}>
                                             <Label color="green" cursor="pointer">Lihat Semua</Label>
                                         </div>
                                     </div>
@@ -1281,58 +1488,6 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                     </div>
                                 </div>
                                 <div className="flex flex-col">
-                                    {/* <div className='mb-4 flex'>
-                                        <div className='mr-3'>
-                                            <Select placeholder="Sort By" style={{ width: `10rem` }} onChange={(value) => {
-                                                setsortstate({ ...sortstate, sort_by: value })
-                                            }}>
-                                                <Select.Option value={''}>
-                                                    Default
-                                                </Select.Option>
-                                                <Select.Option value={'id'}>
-                                                    ID
-                                                </Select.Option>
-                                                <Select.Option value={'name'}>
-                                                    Judul Task
-                                                </Select.Option>
-                                                <Select.Option value={'deadline'}>
-                                                    Deadline
-                                                </Select.Option>
-                                                <Select.Option value={'status'}>
-                                                    Status
-                                                </Select.Option>
-                                            </Select>
-                                        </div>
-                                        <div className='mx-3'>
-                                            <Select placeholder="Sort Type" style={{ width: `10rem` }} onChange={(value) => {
-                                                setsortstate({ ...sortstate, sort_type: value })
-                                            }}>
-                                                <Select.Option value={''}>
-                                                    Default
-                                                </Select.Option>
-                                                <Select.Option value={'asc'}>
-                                                    <div className='mr-1 flex items-center'>
-                                                        <SortAscendingIconSvg size={15} color={`#35763B`} />
-                                                        Ascending
-                                                    </div>
-                                                </Select.Option>
-                                                <Select.Option value={'desc'}>
-                                                    <div className='mr-1 flex items-center'>
-                                                        <SortDescendingIconSvg size={15} color={`#35763B`} />
-                                                        Descending
-                                                    </div>
-                                                </Select.Option>
-                                            </Select>
-                                        </div>
-                                        <div className='mx-3'>
-                                            <Buttonsys type={`primary`} onClick={onSortTask}>
-                                                <div className='mr-1'>
-                                                    <ArrowsSortIconSvg size={15} color={`#ffffff`} />
-                                                </div>
-                                                Sort
-                                            </Buttonsys>
-                                        </div>
-                                    </div> */}
                                     <TableCustomTask
                                         dataSource={datatasks}
                                         setDataSource={setdatatasks}
