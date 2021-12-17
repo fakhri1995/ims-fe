@@ -165,6 +165,32 @@ border-radius: 5px;
     border-color: #35763B;
 }
 
+/* TABLE */
+.tableTypeTask .ant-table-column-sorter-up.active, .tableTypeTask .ant-table-column-sorter-down.active{
+    color: #35763B;
+}
+
+.tableTask .ant-table-column-sorter-up.active, .tableTask .ant-table-column-sorter-down.active{
+    color: #35763B;
+}
+
+.tableTypeTask td.ant-table-column-sort, .tableTask td.ant-table-column-sort{
+    background: #ffffff;
+}
+.ant-btn-primary:hover, .ant-btn-primary:focus, .ant-btn-primary{
+    background: #35763B;
+    border-color: #35763B;
+}
+.ant-btn-link{
+    color: #35763B;
+}
+.ant-dropdown-menu-item-selected, .ant-dropdown-menu-submenu-title-selected{
+    color: #35763B;
+    background-color: #d8e8da;
+}
+.ant-table-filter-trigger.active{
+    color: #35763B;
+}
 
 
 .slick-dots li button:before {

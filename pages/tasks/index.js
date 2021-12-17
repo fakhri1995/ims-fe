@@ -98,6 +98,11 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     const [viewdetailtipetask, setviewdetailtipetask] = useState(false)
     const [pagetipetask, setpagetipetask] = useState(1)
     const [rowstipetask, setrowstipetask] = useState(6)
+    const [sortingtipetask, setsortingtipetask] = useState({
+        sort_by: "",
+        sort_type: ""
+    })
+    const [searcingtipetask, setsearcingtipetask] = useState("")
     //create - task type
     const [drawertasktypecreate, setdrawertasktypecreate] = useState(false)
     //update - task type
@@ -133,6 +138,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         sort_by: "",
         sort_type: "",
     })
+    const [filterstate, setfilterstate] = useState("")
     const [pagetask, setpagetask] = useState(1)
     const [rowstask, setrowstask] = useState(6)
     //create - task
@@ -179,7 +185,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         },
         {
             title: 'Jumlah Task',
-            dataIndex: 'task_count',
+            dataIndex: 'count',
             render: (text, record, index) => {
                 return {
                     children:
@@ -187,7 +193,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                             {record.tasks_count}
                         </>
                 }
-            }
+            },
+            sorter: (a, b) => a.tasks_count < b.tasks_count,
         },
         {
             title: 'Opsi',
@@ -238,7 +245,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                         </>
                 }
             },
-            // sorter: (a, b) => a.id < b.id,
+            sorter: (a, b) => a.id < b.id,
         },
         {
             title: 'Tipe Task',
@@ -264,6 +271,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                         </>
                 }
             },
+            sorter: (a, b) => a.name.localeCompare(b.name),
         },
         {
             title: 'Deadline',
@@ -275,7 +283,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                             {record.deadline === null ? `-` : moment(record.deadline).locale('id').format('lll')}
                         </>
                 }
-            }
+            },
+            sorter: (a, b) => a.name.localeCompare(b.name),
         },
         {
             title: 'Staff',
@@ -335,7 +344,36 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                             }
                         </>
                 }
-            }
+            },
+            sorter: (a, b) => a.status < b.status,
+            filters: [
+                {
+                    text: 'Overdue',
+                    value: 1,
+                },
+                {
+                    text: 'Open',
+                    value: 2,
+                },
+                {
+                    text: 'On Progress',
+                    value: 3,
+                },
+                {
+                    text: 'On Hold',
+                    value: 4,
+                },
+                {
+                    text: 'Completed',
+                    value: 5,
+                },
+                {
+                    text: 'Closed',
+                    value: 6,
+                },
+            ],
+            onFilter: (value, record) => record.status === value,
+            filterMultiple: false
         },
     ]
 
@@ -357,7 +395,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
     const onSearchTask = () => {
         setloadingtasks(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&status=${filterstate}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -521,10 +559,30 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                         </div>
                                         <H1>Semua Tipe Task</H1>
                                     </div>
-                                    <div>
-                                        <Buttonsys type="primary" onClick={() => { setdrawertasktypecreate(true) }}>
-                                            + Tambah Tipe Task
-                                        </Buttonsys>
+                                    <div className="w-8/12 flex justify-end">
+                                        <div className=' mx-2'>
+                                            <Buttonsys type="primary" onClick={() => { setdrawertasktypecreate(true) }}>
+                                                + Tambah Tipe Task
+                                            </Buttonsys>
+                                        </div>
+                                        <div className="mx-2">
+                                            <Input style={{ width: `20rem` }} placeholder="Nama tipe task.." allowClear onChange={(e) => {
+                                                setsearcingtipetask(e.target.value)
+                                                setloadingtipetasks(true)
+                                                fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskTypes?page=${pagetipetask}&rows=${rowstipetask}&name=${e.target.value}&sort_by=${sortingtipetask.sort_by}&sort_type=${sortingtipetask.sort_type}`, {
+                                                    method: `GET`,
+                                                    headers: {
+                                                        'Authorization': JSON.parse(initProps),
+                                                    },
+                                                })
+                                                    .then(res => res.json())
+                                                    .then(res2 => {
+                                                        setdatarawtipetask(res2.data)
+                                                        setdatatipetasks(res2.data.data)
+                                                        setloadingtipetasks(false)
+                                                    })
+                                            }} />
+                                        </div>
                                     </div>
                                 </div>
                                 <div>
@@ -538,7 +596,10 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                         total={datarawtipetask.total}
                                         initProps={initProps}
                                         setpage={setpagetipetask}
+                                        pagefromsearch={pagetipetask}
                                         setdataraw={setdatarawtipetask}
+                                        setsortingtipetask={setsortingtipetask}
+                                        searcingtipetask={searcingtipetask}
                                     />
                                 </div>
                             </div>
@@ -1187,7 +1248,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                     <H1>Semua Task</H1>
                                     <div className="w-8/12 flex justify-end">
                                         <div className="mx-2">
-                                            <Input style={{ width: `20rem` }} placeholder="Cari Judul Task.." allowClear onChange={(e) => {
+                                            <Input style={{ width: `20rem` }} placeholder="Cari Judul atau ID.." allowClear onChange={(e) => {
                                                 if (e.target.value === "") {
                                                     setsearchstate("")
                                                     setloadingtasks(true)
@@ -1220,7 +1281,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                     </div>
                                 </div>
                                 <div className="flex flex-col">
-                                    <div className='mb-4 flex'>
+                                    {/* <div className='mb-4 flex'>
                                         <div className='mr-3'>
                                             <Select placeholder="Sort By" style={{ width: `10rem` }} onChange={(value) => {
                                                 setsortstate({ ...sortstate, sort_by: value })
@@ -1271,7 +1332,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                 Sort
                                             </Buttonsys>
                                         </div>
-                                    </div>
+                                    </div> */}
                                     <TableCustomTask
                                         dataSource={datatasks}
                                         setDataSource={setdatatasks}
@@ -1282,9 +1343,13 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                         total={datarawtask.total}
                                         initProps={initProps}
                                         setpage={setpagetask}
+                                        pagefromsearch={pagetask}
                                         setdataraw={setdatarawtask}
                                         sortstate={sortstate}
                                         searchstate={searchstate}
+                                        setsortstate={setsortstate}
+                                        filterstate={filterstate}
+                                        setfilterstate={setfilterstate}
                                     />
                                 </div>
                             </div>
