@@ -6,7 +6,7 @@ import st from '../../components/layout-dashboard.module.css'
 import { Progress, Input, notification, Select, DatePicker, Spin, Tree } from 'antd'
 import Buttonsys from '../../components/button'
 import { H1, H2, Label, Text } from '../../components/typography'
-import { AlerttriangleIconSvg, ArrowsSortIconSvg, BackIconSvg, CalendartimeIconSvg, CircleXIconSvg, ClipboardcheckIconSvg, ClockIconSvg, EditIconSvg, ListcheckIconSvg, LocationIconSvg, MappinIconSvg, SearchIconSvg, SortAscendingIconSvg, SortDescendingIconSvg, TrashIconSvg } from '../../components/icon'
+import { AlerttriangleIconSvg, ArrowsSortIconSvg, BackIconSvg, CalendartimeIconSvg, CircleXIconSvg, ClipboardcheckIconSvg, ClockIconSvg, EditIconSvg, ListcheckIconSvg, LocationIconSvg, MappinIconSvg, SearchIconSvg, SortAscendingIconSvg, SortDescendingIconSvg, TrashIconSvg, UserIconSvg } from '../../components/icon'
 import { Chart, ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement } from 'chart.js'
 Chart.register(ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement);
 import { Doughnut, Bar, Line } from 'react-chartjs-2';
@@ -25,28 +25,59 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
 
     //useState
     //1.statistik
-    //1.1.status list
+    //1.1.STATUS LIST
     const [statustaskdata, setstatustaskdata] = useState([])
     const [loadingstatustaskdata, setloadingstatustaskdata] = useState(true)
-    //1.1.1.status date
+    //1.1.1.status - date
     const [statustaskdatefilter, setstatustaskdatefilter] = useState(false)
     const [statustaskdatestate, setstatustaskdatestate] = useState({
         from: "",
         to: ""
     })
-    //1.1.2.status location
+    //1.1.2.status - location
     const [statustaskloc, setstatustaskloc] = useState([])
-    const [statustasklocfilter, setstatustasklocfilter] = useState(false)
     const [statustasklocstate, setstatustasklocstate] = useState("")
-    //1.2.task type count
+    //1.2.TASK TYPE COUNT
     const [ttccolorbar, setttccolorbar] = useState(['#2F80ED', '#E5C471', '#BF4A40', '#6AAA70',])
     const [ttcdata, setttcdata] = useState([])
     const [loadingttcdata, setloadingttcdata] = useState(true)
-    //1.2.2.tas type location
+    //1.2.2.task type count - location
     const [ttcloc, setttcloc] = useState([])
-    const [ttclocfilter, setttclocfilter] = useState(false)
-    const [ttclocstate, setttclocstate] = useState("")
-
+    //1.3.DEADLINE TASK
+    const [dtdata, setdtdata] = useState({
+        deadline: {
+            today_deadline: 0,
+            tomorrow_deadline: 0,
+            first_range_deadline: 0,
+            second_range_deadline: 0,
+            third_range_deadline: 0
+        },
+        date: {
+            first_start_date: "",
+            first_end_date: "",
+            second_start_date: "",
+            second_end_date: "",
+            third_start_date: "",
+            third_end_date: ""
+        }
+    })
+    const [loadingdtdata, setloadingdtdata] = useState(true)
+    //1.3.1.deadline task - date
+    const [dtdatestate, setdtdatestate] = useState({
+        from: "",
+        to: ""
+    })
+    const [dtdatefilter, setdtdatefilter] = useState(false)
+    //1.3.2.deadline task - location
+    const [dtloc, setdtloc] = useState([])
+    const [dtlocstate, setdtlocstate] = useState("")
+    //1.4.STAFF COUNT
+    const [scdata, setscdata] = useState({
+        total_staff: 0,
+        total_staff_without_task: 0,
+        percentage: 0
+    })
+    const [loadingscdata, setloadingscdata] = useState(true)
     //2.tipe task
     const [datarawtipetask, setdatarawtipetask] = useState({
         current_page: "",
@@ -61,12 +92,6 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         prev_page_url: null,
         to: null,
         total: null
-    })
-    const [currenttipetask, setcurrenttipetask] = useState({
-        id: null,
-        name: "",
-        description: "",
-        works: []
     })
     const [datatipetasks, setdatatipetasks] = useState([])
     const [loadingtipetasks, setloadingtipetasks] = useState(false)
@@ -100,33 +125,6 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         prev_page_url: null,
         to: null,
         total: null
-    })
-    const [currenttask, setcurrenttask] = useState({
-        id: null,
-        name: "",
-        description: "",
-        task_type_id: null,
-        location_id: null,
-        reference_id: null,
-        created_by: null,
-        group_id: null,
-        created_at: null,
-        on_hold_at: null,
-        deadline: null,
-        status: null,
-        is_replaceable: null,
-        deleted_at: null,
-        task_type: {
-            id: null,
-            name: "",
-            deleted_at: null
-        },
-        location: {
-            id: null,
-            name: "",
-            full_location: ""
-        },
-        users: []
     })
     const [datatasks, setdatatasks] = useState([])
     const [loadingtasks, setloadingtasks] = useState(false)
@@ -463,6 +461,32 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             })
     }, [])
     useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getDeadlineTasks`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdtdata(res2.data)
+                setloadingdtdata(false)
+            })
+    }, [])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskStaffCounts`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setscdata(res2.data)
+                setloadingscdata(false)
+            })
+    }, [])
+    useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
             method: `GET`,
             headers: {
@@ -472,6 +496,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             .then(res => res.json())
             .then(res2 => {
                 setstatustaskloc(res2.data.companies.children)
+                setttcloc(res2.data.companies.children)
+                setdtloc(res2.data.companies.children)
                 setloadingstatustaskdata(false)
             })
     }, [])
@@ -586,7 +612,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                     <H1>Status Task</H1>
                                     <div className="flex items-center">
                                         <div className=' dropdown'>
-                                            <div tabIndex={`0`} className="mx-1 cursor-pointer" onClick={() => { setstatustasklocfilter(prev => !prev) }}>
+                                            <div tabIndex={`0`} className="mx-1 cursor-pointer">
                                                 <MappinIconSvg color={`#000000`} size={25} />
                                             </div>
                                             <div tabIndex={`0`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col'>
@@ -758,7 +784,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                     <H1>Tipe Task Terbanyak</H1>
                                     <div className="flex items-center">
                                         <div className="dropdown dropdown-left">
-                                            <div tabIndex={`1`} className="mx-1 cursor-pointer" onClick={() => { setttclocfilter(prev => !prev) }}>
+                                            <div tabIndex={`1`} className="mx-1 cursor-pointer">
                                                 <MappinIconSvg color={`#000000`} size={25} />
                                             </div>
                                             <div tabIndex={`1`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col'>
@@ -782,7 +808,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                 <Tree
                                                     className='treeTaskStatusList'
                                                     defaultExpandAll
-                                                    treeData={statustaskloc}
+                                                    treeData={ttcloc}
                                                     switcherIcon={<DownOutlined />}
                                                     showIcon
                                                     blockNode={true}
@@ -886,69 +912,164 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                 <div className="flex items-center justify-between mb-4">
                                     <H1>Deadline Task</H1>
                                     <div className="flex items-center">
-                                        <div className="mx-1">
-                                            <MappinIconSvg color={`#000000`} size={25} />
+                                        <div className=' dropdown'>
+                                            <div tabIndex={`2`} className="mx-1 cursor-pointer">
+                                                <MappinIconSvg color={`#000000`} size={25} />
+                                            </div>
+                                            <div tabIndex={`2`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col'>
+                                                <div className=' flex justify-end mb-1 cursor-pointer' onClick={() => {
+                                                    setloadingdtdata(true)
+                                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getDeadlineTasks?from=${dtdatestate.from}&to=${dtdatestate.to}&location=`, {
+                                                        method: `GET`,
+                                                        headers: {
+                                                            'Authorization': JSON.parse(initProps),
+                                                        },
+                                                    })
+                                                        .then(res => res.json())
+                                                        .then(res2 => {
+                                                            setdtlocstate('')
+                                                            setdtdata(res2.data)
+                                                            setloadingdtdata(false)
+                                                        })
+                                                }}>
+                                                    <p className=' text-xs text-gray-500 mr-1'>Reset</p>
+                                                    <CircleXIconSvg size={15} color={`#BF4A40`} />
+                                                </div>
+                                                <Tree
+                                                    className='treeTaskStatusList'
+                                                    defaultExpandAll
+                                                    treeData={dtloc}
+                                                    switcherIcon={<DownOutlined />}
+                                                    showIcon
+                                                    blockNode={true}
+                                                    titleRender={(nodeData) => (
+                                                        <div className="flex items-start w-full py-3 rounded-md px-2" onClick={() => {
+                                                            setloadingdtdata(true)
+                                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getDeadlineTasks?from=${dtdatestate.from}&to=${dtdatestate.to}&location=${nodeData.key}`, {
+                                                                method: `GET`,
+                                                                headers: {
+                                                                    'Authorization': JSON.parse(initProps),
+                                                                },
+                                                            })
+                                                                .then(res => res.json())
+                                                                .then(res2 => {
+                                                                    setdtlocstate(nodeData.key)
+                                                                    setdtdata(res2.data)
+                                                                    setloadingdtdata(false)
+                                                                })
+                                                        }}>
+                                                            <div className="mr-3 flex items-start">
+                                                                <LocationIconSvg id={`icon${nodeData.key}`} size={15} color={`#808080`} />
+                                                            </div>
+                                                            <div className="mr-3">
+                                                                <p className=' text-gray-500 mb-0' id={`text${nodeData.key}`}>
+                                                                    {nodeData.title}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                    }
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="mx-1">
+                                        <div className="mx-1 cursor-pointer" onClick={() => { setdtdatefilter(prev => !prev) }}>
                                             <CalendartimeIconSvg color={`#000000`} size={25} />
                                         </div>
+                                        <DatePicker.RangePicker allowEmpty style={{ visibility: `hidden`, width: `0`, padding: `0` }} className="datepickerStatus" open={dtdatefilter} onChange={(dates, datestrings) => {
+                                            setloadingdtdata(true)
+                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getDeadlineTasks?from=${datestrings[0]}&to=${datestrings[1]}&location=${dtlocstate}`, {
+                                                method: `GET`,
+                                                headers: {
+                                                    'Authorization': JSON.parse(initProps),
+                                                },
+                                            })
+                                                .then(res => res.json())
+                                                .then(res2 => {
+                                                    if (res2.success) {
+                                                        setdtdatestate({ from: datestrings[0], to: datestrings[1] })
+                                                        setdtdata(res2.data)
+                                                        setloadingdtdata(false)
+                                                    }
+                                                    else {
+                                                        notification['error']({
+                                                            message: res2.message,
+                                                            duration: 3
+                                                        })
+                                                        setloadingdtdata(false)
+                                                    }
+                                                })
+                                        }}
+                                        />
                                     </div>
                                 </div>
-                                <div className="flex justify-center mb-4">
-                                    <Line
-                                        data={{
-                                            labels: [`1-10 Nov`, `11-20 Nov`, `21-30 Nov`],
-                                            datasets: [
-                                                {
-                                                    data: [8, 4, 12],
-                                                    borderColor: '#35763B',
-                                                    tension: 0.5,
-                                                    fill: false
-                                                },
-                                            ]
-                                        }}
-                                        options={{
-                                            title: {
-                                                display: false,
+                                {
+                                    loadingdtdata ?
+                                        <>
+                                            <Spin />
+                                        </>
+                                        :
+                                        <>
+                                            <div className="flex justify-center mb-4">
+                                                <Line
+                                                    data={{
+                                                        labels: [
+                                                            `${moment(dtdata.date.first_start_date).locale('id').format('Do MMM')}-${moment(dtdata.date.first_end_date).locale('id').format('Do MMM')}`,
+                                                            `${moment(dtdata.date.second_start_date).locale('id').format('Do MMM')}-${moment(dtdata.date.second_end_date).locale('id').format('Do MMM')}`,
+                                                            `${moment(dtdata.date.third_start_date).locale('id').format('Do MMM')}-${moment(dtdata.date.third_end_date).locale('id').format('Do MMM')}`,
+                                                        ],
+                                                        datasets: [
+                                                            {
+                                                                data: [dtdata.deadline.first_range_deadline, dtdata.deadline.second_range_deadline, dtdata.deadline.third_range_deadline],
+                                                                borderColor: '#35763B',
+                                                                tension: 0.5,
+                                                                fill: false
+                                                            },
+                                                        ]
+                                                    }}
+                                                    options={{
+                                                        title: {
+                                                            display: false,
 
-                                            },
-                                            legend: {
-                                                display: false,
-                                            },
-                                            maintainAspectRatio: false,
-                                            scales: {
-                                                x: {
-                                                    grid: {
-                                                        display: false
-                                                    }
-                                                },
-                                                y: {
-                                                    grid: {
-                                                        display: false
-                                                    }
-                                                }
-                                            }
-                                        }}
-                                    />
-                                </div>
-                                <div className="flex flex-col">
-                                    <div className="flex justify-between items-center mb-1">
-                                        <div className="flex">
-                                            <Text>Berakhir hari ini</Text>
-                                        </div>
-                                        <div className="flex">
-                                            <H2>4</H2>
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-between items-center mb-1">
-                                        <div className="flex">
-                                            <Text>Berakhir besok</Text>
-                                        </div>
-                                        <div className="flex">
-                                            <H2>12</H2>
-                                        </div>
-                                    </div>
-                                </div>
+                                                        },
+                                                        legend: {
+                                                            display: false,
+                                                        },
+                                                        maintainAspectRatio: false,
+                                                        scales: {
+                                                            x: {
+                                                                grid: {
+                                                                    display: false
+                                                                }
+                                                            },
+                                                            y: {
+                                                                grid: {
+                                                                    display: false
+                                                                }
+                                                            }
+                                                        }
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <div className="flex justify-between items-center mb-1">
+                                                    <div className="flex">
+                                                        <Text>Berakhir hari ini</Text>
+                                                    </div>
+                                                    <div className="flex">
+                                                        <H2>{dtdata.deadline.today_deadline}</H2>
+                                                    </div>
+                                                </div>
+                                                <div className="flex justify-between items-center mb-1">
+                                                    <div className="flex">
+                                                        <Text>Berakhir besok</Text>
+                                                    </div>
+                                                    <div className="flex">
+                                                        <H2>{dtdata.deadline.tomorrow_deadline}</H2>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </>
+                                }
                             </div>
                             {/* STAFF TASK */}
                             <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mr-3">
@@ -960,34 +1081,70 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex justify-center mb-4 h-36">
-                                    <Progress
-                                        type="dashboard"
-                                        percent={80}
-                                        strokeColor={{
-                                            from: `#65976a`,
-                                            to: `#35763B`
-                                        }}
-                                    />
-                                </div>
-                                <div className="flex flex-col">
-                                    <div className="flex justify-between items-center mb-1">
-                                        <div className="flex">
-                                            <Text>Total Staff</Text>
-                                        </div>
-                                        <div className="flex">
-                                            <H2>100</H2>
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-between items-center mb-1">
-                                        <div className="flex">
-                                            <Text>Staff tidak memiliki task</Text>
-                                        </div>
-                                        <div className="flex">
-                                            <H2>10</H2>
-                                        </div>
-                                    </div>
-                                </div>
+                                {
+                                    loadingscdata ?
+                                        <>
+                                            <Spin />
+                                        </>
+                                        :
+                                        <>
+                                            <div className="flex justify-center mb-4 h-36">
+                                                <Progress
+                                                    type="dashboard"
+                                                    percent={scdata.percentage}
+                                                    strokeColor={{
+                                                        from: `#65976a`,
+                                                        to: `#35763B`
+                                                    }}
+                                                    strokeWidth={8}
+                                                    width={170}
+                                                    format={(percent) => (
+                                                        <div className=' flex flex-col items-center'>
+                                                            <div>
+                                                                <p className=' mb-0 font-bold text-3xl'>{percent}%</p>
+                                                            </div>
+                                                            <div>
+                                                                <p className=' mb-0 text-xs text-gray-500'>
+                                                                    Persentase staff tidak memiliki task
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                />
+                                            </div>
+                                            <div className=' mb-4 flex flex-col items-center'>
+                                                <div className=' flex items-center'>
+                                                    <div className=' mb-1 mr-1'>
+                                                        <UserIconSvg />
+                                                    </div>
+                                                    <div>
+                                                        <H2>{scdata.total_staff_without_task} / {scdata.total_staff}</H2>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <Label>Staff tidak memiliki task</Label>
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <div className="flex justify-between items-center mb-1">
+                                                    <div className="flex">
+                                                        <Text>Total Staff</Text>
+                                                    </div>
+                                                    <div className="flex">
+                                                        <H2>{scdata.total_staff}</H2>
+                                                    </div>
+                                                </div>
+                                                <div className="flex justify-between items-center mb-1">
+                                                    <div className="flex">
+                                                        <Text>Staff tidak memiliki task</Text>
+                                                    </div>
+                                                    <div className="flex">
+                                                        <H2>{scdata.total_staff_without_task}</H2>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </>
+                                }
                             </div>
                             {/* KELOLA TASK */}
                             <div className="col-span-5 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mr-3">
@@ -1149,7 +1306,6 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                 buttonOkText={"Simpan Tipe Task"}
                 initProps={initProps}
                 onvisible={setdrawertasktypupdate}
-                dataDisplay={currenttipetask}
                 loading={loadingtipetasks}
                 id={idtasktypupdate}
             />
