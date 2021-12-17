@@ -1060,7 +1060,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
                                             :
                                             <Tree
                                                 onExpand={onExpand}
-                                                className="treeSublokasi"
+                                                className="treeClientSublokasi"
                                                 showIcon
                                                 filterTreeNode={filterTreeNode}
                                                 autoExpandParent={true}

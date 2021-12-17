@@ -115,12 +115,12 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                 .then(res => res.json())
                 .then(res2 => {
                     // res2.data.children ? setbranchdata(res2.data.children) : setbranchdata([])
-                    if(res2.data.children){
+                    if (res2.data.children) {
                         var temp = res2.data.children.sort((a, b) => a.title < b.title ? 1 : -1)
                         setbranchdata(temp)
                         setsortedname("Z-A")
                     }
-                    else{
+                    else {
                         setbranchdata([])
                     }
                 })
@@ -339,6 +339,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                                     </>
                                     :
                                     <Tree
+                                        className='treeMyCompanyMain'
                                         showIcon
                                         onExpand={onExpand}
                                         filterTreeNode={filterTreeNode}

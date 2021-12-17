@@ -1056,7 +1056,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                             :
                                             <Tree
                                                 onExpand={onExpand}
-                                                className="treeSublokasi"
+                                                className="treeMyCompanySublokasi"
                                                 showIcon
                                                 filterTreeNode={filterTreeNode}
                                                 autoExpandParent={true}

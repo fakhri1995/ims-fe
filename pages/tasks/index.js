@@ -3,10 +3,10 @@ import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import st from '../../components/layout-dashboard.module.css'
-import { Progress, Input, notification, Select } from 'antd'
+import { Progress, Input, notification, Select, DatePicker, Spin, Tree } from 'antd'
 import Buttonsys from '../../components/button'
 import { H1, H2, Label, Text } from '../../components/typography'
-import { AlerttriangleIconSvg, ArrowsSortIconSvg, BackIconSvg, CalendartimeIconSvg, ClipboardcheckIconSvg, ClockIconSvg, EditIconSvg, ListcheckIconSvg, MappinIconSvg, SearchIconSvg, SortAscendingIconSvg, SortDescendingIconSvg, TrashIconSvg } from '../../components/icon'
+import { AlerttriangleIconSvg, ArrowsSortIconSvg, BackIconSvg, CalendartimeIconSvg, CircleXIconSvg, ClipboardcheckIconSvg, ClockIconSvg, EditIconSvg, ListcheckIconSvg, LocationIconSvg, MappinIconSvg, SearchIconSvg, SortAscendingIconSvg, SortDescendingIconSvg, TrashIconSvg } from '../../components/icon'
 import { Chart, ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement } from 'chart.js'
 Chart.register(ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement);
 import { Doughnut, Bar, Line } from 'react-chartjs-2';
@@ -16,6 +16,7 @@ import DrawerTaskTypesCreate from '../../components/drawer/tasks/drawerTaskTypes
 import DrawerTaskTypesUpdate from '../../components/drawer/tasks/drawerTaskTypesUpdate'
 import DrawerTaskCreate from '../../components/drawer/tasks/drawerTaskCreate'
 import moment from 'moment'
+import { DownOutlined } from '@ant-design/icons'
 
 const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     //1.Init
@@ -23,7 +24,30 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     const pathArr = rt.pathname.split("/").slice(1)
 
     //useState
-    //tipe task
+    //1.statistik
+    //1.1.status list
+    const [statustaskdata, setstatustaskdata] = useState([])
+    const [loadingstatustaskdata, setloadingstatustaskdata] = useState(true)
+    //1.1.1.status date
+    const [statustaskdatefilter, setstatustaskdatefilter] = useState(false)
+    const [statustaskdatestate, setstatustaskdatestate] = useState({
+        from: "",
+        to: ""
+    })
+    //1.1.2.status location
+    const [statustaskloc, setstatustaskloc] = useState([])
+    const [statustasklocfilter, setstatustasklocfilter] = useState(false)
+    const [statustasklocstate, setstatustasklocstate] = useState("")
+    //1.2.task type count
+    const [ttccolorbar, setttccolorbar] = useState(['#2F80ED', '#E5C471', '#BF4A40', '#6AAA70',])
+    const [ttcdata, setttcdata] = useState([])
+    const [loadingttcdata, setloadingttcdata] = useState(true)
+    //1.2.2.tas type location
+    const [ttcloc, setttcloc] = useState([])
+    const [ttclocfilter, setttclocfilter] = useState(false)
+    const [ttclocstate, setttclocstate] = useState("")
+
+    //2.tipe task
     const [datarawtipetask, setdatarawtipetask] = useState({
         current_page: "",
         data: [],
@@ -49,17 +73,13 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     const [viewdetailtipetask, setviewdetailtipetask] = useState(false)
     const [pagetipetask, setpagetipetask] = useState(1)
     const [rowstipetask, setrowstipetask] = useState(6)
-    //create
     //create - task type
     const [drawertasktypecreate, setdrawertasktypecreate] = useState(false)
-    //create - task
-    const [drawertaskcreate, setdrawertaskcreate] = useState(false)
-    //update
+    //update - task type
     const [triggertasktypupdate, settriggertasktypupdate] = useState(-1)
     const [idtasktypupdate, setidtasktypupdate] = useState(-1)
     const [drawertasktypupdate, setdrawertasktypupdate] = useState(false)
-    const [loadingdetailtipetaskupdate, setloadingdetailtipetaskupdate] = useState(false)
-    //delete
+    //delete - task type
     const [datatipetaskdelete, setdatatipetaskdelete] = useState({
         id: null,
         name: ""
@@ -117,6 +137,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     })
     const [pagetask, setpagetask] = useState(1)
     const [rowstask, setrowstask] = useState(6)
+    //create - task
+    const [drawertaskcreate, setdrawertaskcreate] = useState(false)
 
     //2. columns table
     const columnsTipetask = [
@@ -415,6 +437,45 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             })
     }, [drawertaskcreate])
     useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getStatusTaskList`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setstatustaskdata(res2.data)
+                setloadingstatustaskdata(false)
+            })
+    }, [])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskTypeCounts`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setttcdata(res2.data)
+                setloadingttcdata(false)
+            })
+    }, [])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setstatustaskloc(res2.data.companies.children)
+                setloadingstatustaskdata(false)
+            })
+    }, [])
+    useEffect(() => {
         if (triggertasktypupdate !== -1) {
             setidtasktypupdate(triggertasktypupdate)
         }
@@ -524,207 +585,301 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                 <div className="flex items-center justify-between mb-4">
                                     <H1>Status Task</H1>
                                     <div className="flex items-center">
-                                        <div className="mx-1">
-                                            <MappinIconSvg color={`#000000`} size={25} />
+                                        <div className=' dropdown'>
+                                            <div tabIndex={`0`} className="mx-1 cursor-pointer" onClick={() => { setstatustasklocfilter(prev => !prev) }}>
+                                                <MappinIconSvg color={`#000000`} size={25} />
+                                            </div>
+                                            <div tabIndex={`0`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col'>
+                                                <div className=' flex justify-end mb-1 cursor-pointer' onClick={() => {
+                                                    setloadingstatustaskdata(true)
+                                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getStatusTaskList?from=${statustaskdatestate.from}&to=${statustaskdatestate.to}&location=`, {
+                                                        method: `GET`,
+                                                        headers: {
+                                                            'Authorization': JSON.parse(initProps),
+                                                        },
+                                                    })
+                                                        .then(res => res.json())
+                                                        .then(res2 => {
+                                                            setstatustasklocstate('')
+                                                            setstatustaskdata(res2.data)
+                                                            setloadingstatustaskdata(false)
+                                                        })
+                                                }}>
+                                                    <p className=' text-xs text-gray-500 mr-1'>Reset</p>
+                                                    <CircleXIconSvg size={15} color={`#BF4A40`} />
+                                                </div>
+                                                <Tree
+                                                    className='treeTaskStatusList'
+                                                    defaultExpandAll
+                                                    treeData={statustaskloc}
+                                                    switcherIcon={<DownOutlined />}
+                                                    showIcon
+                                                    blockNode={true}
+                                                    titleRender={(nodeData) => (
+                                                        <div className="flex items-start w-full py-3 rounded-md px-2" onClick={() => {
+                                                            setloadingstatustaskdata(true)
+                                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getStatusTaskList?from=${statustaskdatestate.from}&to=${statustaskdatestate.to}&location=${nodeData.key}`, {
+                                                                method: `GET`,
+                                                                headers: {
+                                                                    'Authorization': JSON.parse(initProps),
+                                                                },
+                                                            })
+                                                                .then(res => res.json())
+                                                                .then(res2 => {
+                                                                    setstatustasklocstate(nodeData.key)
+                                                                    setstatustaskdata(res2.data)
+                                                                    setloadingstatustaskdata(false)
+                                                                })
+                                                        }}>
+                                                            <div className="mr-3 flex items-start">
+                                                                <LocationIconSvg id={`icon${nodeData.key}`} size={15} color={`#808080`} />
+                                                            </div>
+                                                            <div className="mr-3">
+                                                                <p className=' text-gray-500 mb-0' id={`text${nodeData.key}`}>
+                                                                    {nodeData.title}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                    }
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="mx-1">
+                                        <div className="mx-1 cursor-pointer" onClick={() => { setstatustaskdatefilter(prev => !prev) }}>
                                             <CalendartimeIconSvg color={`#000000`} size={25} />
                                         </div>
-                                    </div>
-                                </div>
-                                <div className="flex justify-center mb-4">
-                                    <Doughnut
-                                        data={{
-                                            labels: [`Open`, `Overdue`, `On-Progress`, `On-Hold`, `Completed`, `Closed`],
-                                            datasets: [
-                                                {
-                                                    data: [5, 4, 1, 2, 23, 138],
-                                                    backgroundColor: [
-                                                        '#2F80ED',
-                                                        '#BF4A40',
-                                                        '#ED962F',
-                                                        '#E5C471',
-                                                        '#6AAA70',
-                                                        '#808080',
-                                                    ],
-                                                    borderColor: [
-                                                        '#2F80ED',
-                                                        '#BF4A40',
-                                                        '#ED962F',
-                                                        '#E5C471',
-                                                        '#6AAA70',
-                                                        '#808080',
-                                                    ],
-                                                    borderWidth: 1,
+                                        <DatePicker.RangePicker allowEmpty style={{ visibility: `hidden`, width: `0`, padding: `0` }} className="datepickerStatus" open={statustaskdatefilter} onChange={(dates, datestrings) => {
+                                            setloadingstatustaskdata(true)
+                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getStatusTaskList?from=${datestrings[0]}&to=${datestrings[1]}&location=${statustasklocstate}`, {
+                                                method: `GET`,
+                                                headers: {
+                                                    'Authorization': JSON.parse(initProps),
                                                 },
-                                            ]
+                                            })
+                                                .then(res => res.json())
+                                                .then(res2 => {
+                                                    setstatustaskdatestate({ from: datestrings[0], to: datestrings[1] })
+                                                    setstatustaskdata(res2.data)
+                                                    setloadingstatustaskdata(false)
+                                                })
                                         }}
-                                        options={{
-                                            title: {
-                                                display: false,
+                                        />
+                                    </div>
+                                </div>
+                                {
+                                    loadingstatustaskdata ?
+                                        <>
+                                            <Spin />
+                                        </>
+                                        :
+                                        <>
+                                            <div className="flex justify-center mb-4">
+                                                <Doughnut
+                                                    data={{
+                                                        labels: statustaskdata.map((doc) => doc.status_name),
+                                                        datasets: [
+                                                            {
+                                                                data: statustaskdata.map((doc) => doc.status_count),
+                                                                backgroundColor: [
+                                                                    '#BF4A40',
+                                                                    '#2F80ED',
+                                                                    '#ED962F',
+                                                                    '#E5C471',
+                                                                    '#6AAA70',
+                                                                    '#808080',
+                                                                ],
+                                                                borderColor: [
+                                                                    '#BF4A40',
+                                                                    '#2F80ED',
+                                                                    '#ED962F',
+                                                                    '#E5C471',
+                                                                    '#6AAA70',
+                                                                    '#808080',
+                                                                ],
+                                                                borderWidth: 1,
+                                                            },
+                                                        ]
+                                                    }}
+                                                    options={{
+                                                        title: {
+                                                            display: false,
 
-                                            },
-                                            legend: {
-                                                display: false,
-                                            },
-                                            maintainAspectRatio: false,
-                                            cutout: 55,
-                                            spacing: 5
-                                        }}
-                                    />
-                                </div>
-                                <div className="flex flex-col">
-                                    <div className="flex justify-between items-center mb-1">
-                                        <div className="flex">
-                                            <div className=" w-1 bg-open mr-1"></div>
-                                            <Text>Open</Text>
-                                        </div>
-                                        <div className="flex">
-                                            <H2>5</H2>
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-between items-center mb-1">
-                                        <div className="flex">
-                                            <div className=" w-1 bg-overdue mr-1"></div>
-                                            <Text>Overdue</Text>
-                                            <AlerttriangleIconSvg size={15} color={`#BF4A40`} />
-                                        </div>
-                                        <div className="flex">
-                                            <H2>4</H2>
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-between items-center mb-1">
-                                        <div className="flex">
-                                            <div className=" w-1 bg-onprogress mr-1"></div>
-                                            <Text>On-Progress</Text>
-                                        </div>
-                                        <div className="flex">
-                                            <H2>1</H2>
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-between items-center mb-1">
-                                        <div className="flex">
-                                            <div className=" w-1 bg-onhold mr-1"></div>
-                                            <Text>On-Hold</Text>
-                                        </div>
-                                        <div className="flex">
-                                            <H2>2</H2>
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-between items-center mb-1">
-                                        <div className="flex">
-                                            <div className=" w-1 bg-completed mr-1"></div>
-                                            <Text>Completed</Text>
-                                        </div>
-                                        <div className="flex">
-                                            <H2>23</H2>
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-between items-center mb-1">
-                                        <div className="flex">
-                                            <div className=" w-1 bg-closed mr-1"></div>
-                                            <Text>Closed</Text>
-                                        </div>
-                                        <div className="flex">
-                                            <H2>138</H2>
-                                        </div>
-                                    </div>
-                                </div>
+                                                        },
+                                                        legend: {
+                                                            display: false,
+                                                        },
+                                                        maintainAspectRatio: false,
+                                                        cutout: 55,
+                                                        spacing: 5
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col">
+                                                {
+                                                    statustaskdata.map((doc, idx) => {
+                                                        if (doc.status === 1) {
+                                                            return (
+                                                                <div className="flex justify-between items-center mb-1">
+                                                                    <div className="flex">
+                                                                        <div className=" w-1 bg-overdue mr-1"></div>
+                                                                        <div className='mr-1'>
+                                                                            <Text>{doc.status_name}</Text>
+                                                                        </div>
+                                                                        <AlerttriangleIconSvg size={15} color={`#BF4A40`} />
+                                                                    </div>
+                                                                    <div className="flex">
+                                                                        <H2>{doc.status_count}</H2>
+                                                                    </div>
+                                                                </div>
+                                                            )
+                                                        }
+                                                        else {
+                                                            return (
+                                                                <div className="flex justify-between items-center mb-1">
+                                                                    <div className="flex">
+                                                                        <div className={`w-1 mr-1 ${doc.status === 1 && `bg-overdue`} ${doc.status === 2 && `bg-open`} ${doc.status === 3 && `bg-onprogress`} ${doc.status === 4 && `bg-onhold`} ${doc.status === 5 && `bg-completed`} ${doc.status === 6 && `bg-closed`}`}></div>
+                                                                        <Text>{doc.status_name}</Text>
+                                                                    </div>
+                                                                    <div className="flex">
+                                                                        <H2>{doc.status_count}</H2>
+                                                                    </div>
+                                                                </div>
+                                                            )
+                                                        }
+                                                    })
+                                                }
+                                            </div>
+                                        </>
+                                }
                             </div>
                             {/* TIPE TASK */}
                             <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mx-3">
                                 <div className="flex items-center justify-between mb-4">
                                     <H1>Tipe Task Terbanyak</H1>
                                     <div className="flex items-center">
-                                        <div className="mx-1">
-                                            <MappinIconSvg color={`#000000`} size={25} />
+                                        <div className="dropdown dropdown-left">
+                                            <div tabIndex={`1`} className="mx-1 cursor-pointer" onClick={() => { setttclocfilter(prev => !prev) }}>
+                                                <MappinIconSvg color={`#000000`} size={25} />
+                                            </div>
+                                            <div tabIndex={`1`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col'>
+                                                <div className=' flex justify-end mb-1 cursor-pointer' onClick={() => {
+                                                    setloadingttcdata(true)
+                                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskTypeCounts?location=`, {
+                                                        method: `GET`,
+                                                        headers: {
+                                                            'Authorization': JSON.parse(initProps),
+                                                        },
+                                                    })
+                                                        .then(res => res.json())
+                                                        .then(res2 => {
+                                                            setttcdata(res2.data)
+                                                            setloadingttcdata(false)
+                                                        })
+                                                }}>
+                                                    <p className=' text-xs text-gray-500 mr-1'>Reset</p>
+                                                    <CircleXIconSvg size={15} color={`#BF4A40`} />
+                                                </div>
+                                                <Tree
+                                                    className='treeTaskStatusList'
+                                                    defaultExpandAll
+                                                    treeData={statustaskloc}
+                                                    switcherIcon={<DownOutlined />}
+                                                    showIcon
+                                                    blockNode={true}
+                                                    titleRender={(nodeData) => (
+                                                        <div className="flex items-start w-full py-3 rounded-md px-2" onClick={() => {
+                                                            setloadingttcdata(true)
+                                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskTypeCounts?location=${nodeData.key}`, {
+                                                                method: `GET`,
+                                                                headers: {
+                                                                    'Authorization': JSON.parse(initProps),
+                                                                },
+                                                            })
+                                                                .then(res => res.json())
+                                                                .then(res2 => {
+                                                                    setttcdata(res2.data)
+                                                                    setloadingttcdata(false)
+                                                                })
+                                                        }}>
+                                                            <div className="mr-3 flex items-start">
+                                                                <LocationIconSvg id={`icon${nodeData.key}`} size={15} color={`#808080`} />
+                                                            </div>
+                                                            <div className="mr-3">
+                                                                <p className=' text-gray-500 mb-0' id={`text${nodeData.key}`}>
+                                                                    {nodeData.title}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex justify-center mb-4">
-                                    <Bar
-                                        data={{
-                                            labels: [`PM1`, `PM2`, `SUP`, `INC`],
-                                            datasets: [
-                                                {
-                                                    data: [5, 4, 1, 2],
-                                                    backgroundColor: [
-                                                        '#2F80ED',
-                                                        '#E5C471',
-                                                        '#BF4A40',
-                                                        '#6AAA70',
-                                                    ],
-                                                    borderColor: [
-                                                        '#2F80ED',
-                                                        '#E5C471',
-                                                        '#BF4A40',
-                                                        '#6AAA70',
-                                                    ],
-                                                    barPercentage: 0.5,
-                                                    barThickness: 15,
-                                                    maxBarThickness: 8,
-                                                    minBarLength: 2,
-                                                },
-                                            ]
-                                        }}
-                                        options={{
-                                            title: {
-                                                display: false,
+                                {
+                                    loadingttcdata ?
+                                        <>
+                                            <Spin />
+                                        </>
+                                        :
+                                        <>
+                                            <div className="flex justify-center mb-5">
+                                                <Bar
+                                                    data={{
+                                                        labels: ttcdata.map(doc => doc.name),
+                                                        datasets: [
+                                                            {
+                                                                data: ttcdata.map(doc => doc.tasks_count),
+                                                                backgroundColor: ttcdata.map((doc, idx) => ttccolorbar[(idx + 1 % ttccolorbar.length) - 1]),
+                                                                borderColor: ttcdata.map((doc, idx) => ttccolorbar[(idx + 1 % ttccolorbar.length) - 1]),
+                                                                barPercentage: 1.0,
+                                                                barThickness: 18,
+                                                                maxBarThickness: 15,
+                                                                minBarLength: 2,
+                                                            },
+                                                        ]
+                                                    }}
+                                                    options={{
+                                                        title: {
+                                                            display: false,
 
-                                            },
-                                            legend: {
-                                                display: false,
-                                            },
-                                            maintainAspectRatio: false,
-                                            scales: {
-                                                x: {
-                                                    grid: {
-                                                        display: false
-                                                    }
-                                                },
-                                                y: {
-                                                    grid: {
-                                                        display: false
-                                                    }
+                                                        },
+                                                        legend: {
+                                                            display: false,
+                                                        },
+                                                        maintainAspectRatio: false,
+                                                        scales: {
+                                                            x: {
+                                                                grid: {
+                                                                    display: false
+                                                                }
+                                                            },
+                                                            y: {
+                                                                grid: {
+                                                                    display: false
+                                                                }
+                                                            }
+                                                        }
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col">
+                                                {
+                                                    ttcdata.map((doc, idx) => (
+                                                        <div key={idx} className="flex justify-between items-center mb-1">
+                                                            <div className="flex">
+                                                                <div className=" w-1 mr-2" style={{ backgroundColor: `${ttccolorbar[(idx + 1 % ttccolorbar.length) - 1]}` }}></div>
+                                                                <Text>{doc.name}</Text>
+                                                            </div>
+                                                            <div className="flex">
+                                                                <H2>{doc.tasks_count}</H2>
+                                                            </div>
+                                                        </div>
+                                                    ))
                                                 }
-                                            }
-                                        }}
-                                    />
-                                </div>
-                                <div className="flex flex-col">
-                                    <div className="flex justify-between items-center mb-1">
-                                        <div className="flex">
-                                            <Text>PM1</Text>
-                                        </div>
-                                        <div className="flex">
-                                            <H2>5</H2>
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-between items-center mb-1">
-                                        <div className="flex">
-                                            <Text>PM2</Text>
-                                        </div>
-                                        <div className="flex">
-                                            <H2>4</H2>
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-between items-center mb-1">
-                                        <div className="flex">
-                                            <Text>SUP</Text>
-                                        </div>
-                                        <div className="flex">
-                                            <H2>1</H2>
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-between items-center mb-1">
-                                        <div className="flex">
-                                            <Text>INC</Text>
-                                        </div>
-                                        <div className="flex">
-                                            <H2>2</H2>
-                                        </div>
-                                    </div>
-                                </div>
+                                            </div>
+                                        </>
+                                }
                             </div>
                             {/* DEADLINE TASK */}
                             <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mr-3">
