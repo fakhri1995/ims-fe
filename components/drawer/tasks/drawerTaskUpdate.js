@@ -129,7 +129,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
     }, [])
     //Lokasi
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryRelations`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -137,7 +137,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
         })
             .then(res => res.json())
             .then(res2 => {
-                setdatalocations(res2.data.companies.children)
+                setdatalocations(res2.data.tree_companies.children)
             })
     }, [])
     //Sublokasi
@@ -242,7 +242,9 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
             {
                 loading ?
                     <>
-                        <Spin />
+                        <div id={`card-1`} className=" flex justify-center">
+                            <Spin />
+                        </div>
                     </>
                     :
                     <Spin spinning={loadingupdate}>
@@ -300,7 +302,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                     </Select >
                                 </div>
                             </div> */}
-                            <div className='mb-5 flex flex-col px-3'>
+                            <div id={`card${0}`} className='mb-5 flex flex-col px-3'>
                                 <div className="flex mb-1">
                                     <Label>Referensi</Label>
                                     <span className="tasktype"></span>
@@ -332,9 +334,13 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                     </Select >
                                 </div>
                             </div>
-                            <InputRequired value={dataupdate.name} label={`Judul Task`} onChangeInput={(e) => { setdataupdate({ ...dataupdate, name: e.target.value }); setdisabledtrigger(prev => prev + 1) }}></InputRequired>
-                            <TextAreaNotRequired value={dataupdate.description} rows={4} label={`Deskripsi Task`} onChangeInput={(e) => { setdataupdate({ ...dataupdate, description: e.target.value }) }}></TextAreaNotRequired>
-                            <div className='mb-6 px-3 flex flex-col'>
+                            <div id={`card${1}`}>
+                                <InputRequired value={dataupdate.name} label={`Judul Task`} onChangeInput={(e) => { setdataupdate({ ...dataupdate, name: e.target.value }); setdisabledtrigger(prev => prev + 1) }}></InputRequired>
+                            </div>
+                            <div id={`card${2}`}>
+                                <TextAreaNotRequired value={dataupdate.description} rows={4} label={`Deskripsi Task`} onChangeInput={(e) => { setdataupdate({ ...dataupdate, description: e.target.value }) }}></TextAreaNotRequired>
+                            </div>
+                            <div id={`card${3}`} className='mb-6 px-3 flex flex-col'>
                                 <div className="flex mb-2">
                                     <Label>Lokasi</Label>
                                     <span className="locations"></span>
@@ -362,7 +368,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                             </div>
                             {
                                 dataupdate.location_id !== null ?
-                                    <div className='mb-6 px-3 flex flex-col'>
+                                    <div id={`card${4}`} className='mb-6 px-3 flex flex-col'>
                                         <div className="flex mb-2">
                                             <Label>Sublokasi</Label>
                                         </div>
@@ -382,7 +388,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                     :
                                     null
                             }
-                            <div className="mb-6 px-3 flex justify-between items-center">
+                            <div id={`card${4}`} className="mb-6 px-3 flex justify-between items-center">
                                 <div>
                                     <Label>Pergantian Suku Cadang</Label>
                                 </div>
@@ -390,7 +396,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                     <Switch checked={dataupdate.is_replaceable} onChange={(checked) => { setdataupdate({ ...dataupdate, is_replaceable: checked }) }}></Switch>
                                 </div>
                             </div>
-                            <div className="mb-6 px-3 flex flex-col">
+                            <div id={`card${5}`} className="mb-6 px-3 flex flex-col">
                                 <div className='mb-2'>
                                     <Label>Aset</Label>
                                 </div>
@@ -464,7 +470,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                     ))
                                 }
                             </div>
-                            <div className="mb-6 px-3 flex flex-col">
+                            <div id={`card${6}`} className="mb-6 px-3 flex flex-col">
                                 <div className='mb-2 flex items-center justify-between'>
                                     <div>
                                         <Label>{switchstaffgroup === 0 ? `Group` : `Staff`}</Label>
@@ -598,7 +604,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                     ))
                                 }
                             </div>
-                            <div className="mb-6 px-3 flex flex-col">
+                            <div id={`card${7}`} className="mb-6 px-3 flex flex-col">
                                 <div className=' flex mb-2'>
                                     <Label>Jadwal Mulai</Label>
                                     <span className="jadwal"></span>
@@ -650,7 +656,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                     }
                                 </div>
                             </div>
-                            <div className="mb-6 px-3 flex flex-col">
+                            <div id={`card${8}`} className="mb-6 px-3 flex flex-col">
                                 <div className=' flex mb-2'>
                                     <Label>Jadwal Berakhir</Label>
                                     <span className="jadwal"></span>

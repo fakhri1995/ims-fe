@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { AlertIconSvg, TrashIconSvg } from '../icon'
-import { TreeSelectRequired } from '../input'
+import { TextAreaRequired, TreeSelectRequired } from '../input'
 import { Text } from '../typography'
 import ModalCore from './modalCore'
 import { Spin } from 'antd'
@@ -278,6 +278,40 @@ const ModalHapusTask = ({ title, visible, onvisible, onOk, onCancel, loading, da
     )
 }
 
+const ModalUbahOnHoldTask = ({ title, visible, onvisible, onOk, onCancel, loading, datastatustoggle, setdatastatustoggle, displaytask, children }) => {
+    return (
+        <ModalCore
+            title={title}
+            visible={visible}
+            onCancel={onCancel}
+            closeIcon={<AlertIconSvg size={20} color={`#DDB44A`} />}
+            footer={
+                <Spin spinning={loading}>
+                    <div className="flex justify-between items-center">
+                        <ButtonSys type="default" onClick={() => { onvisible(false) }}>
+                            Batalkan
+                        </ButtonSys>
+                        <ButtonSys type="primary" onClick={onOk}>
+                            <TrashIconSvg size={15} color={`#ffffff`} />
+                            Ubah
+                        </ButtonSys>
+                    </div>
+                </Spin>
+            }
+            loading={loading}
+        >
+            {
+                displaytask.status !== 4 ?
+                    <TextAreaRequired label={`Silahkan cantumkan keterangan`} onChangeInput={(e) => { setdatastatustoggle({ ...datastatustoggle, notes: e.target.value }) }}></TextAreaRequired>
+                    :
+                    <>
+                        Apakah Anda yakin ingin melanjutkan Task <strong>{displaytask.name}</strong>?
+                    </>
+            }
+        </ModalCore>
+    )
+}
+
 export {
-    ModalEdit, ModalHapus, ModalHapusLokasiCekChild, ModalHapusLokasiMoveChild, ModalHapusLokasiConfirm, ModalHapusInventoryExist, ModalStatus, ModalHapusTipeTask, ModalHapusTask
+    ModalEdit, ModalHapus, ModalHapusLokasiCekChild, ModalHapusLokasiMoveChild, ModalHapusLokasiConfirm, ModalHapusInventoryExist, ModalStatus, ModalHapusTipeTask, ModalHapusTask, ModalUbahOnHoldTask
 }

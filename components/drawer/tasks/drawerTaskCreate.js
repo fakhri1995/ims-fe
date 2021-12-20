@@ -135,7 +135,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
     }, [])
     //Lokasi
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryRelations`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -143,7 +143,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
         })
             .then(res => res.json())
             .then(res2 => {
-                setdatalocations(res2.data.companies.children)
+                setdatalocations(res2.data.tree_companies.children)
             })
     }, [])
     //Sublokasi

@@ -7,7 +7,7 @@ import { Select, Spin, notification } from 'antd'
 import Buttonsys from '../../../components/button'
 import { H1, H2, Label, Text } from '../../../components/typography'
 import { ArrowsSortIconSvg, AssetIconSvg, BackIconSvg, CheckIconSvg, CircleXIconSvg, ClipboardcheckIconSvg, ClockIconSvg, EditIconSvg, ForbidIconSvg, PlayerPauseIconSvg, PlayerPlayIconSvg, SortAscendingIconSvg, SortDescendingIconSvg, TrashIconSvg, UserPlusIconSvg } from '../../../components/icon'
-import { ModalHapusTask } from '../../../components/modal/modalCustom'
+import { ModalHapusTask, ModalUbahOnHoldTask } from '../../../components/modal/modalCustom'
 import moment from 'moment'
 import DrawerTaskUpdate from '../../../components/drawer/tasks/drawerTaskUpdate'
 
@@ -77,10 +77,16 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
         bg: "",
         border: ""
     })
-    const [colorhexastatus, setcolorhexastatus] = useState("")
     const [drawertaskupdate, setdrawertaskupdate] = useState(false)
+    const [loadingchange, setloadingchange] = useState(false)
     //staff
     const [sortstate, setsortstate] = useState(0)
+    //status
+    const [datastatustoggle, setdatastatustoggle] = useState({
+        notes: "",
+        id: Number(taskid)
+    })
+    const [modalstatustoggle, setmodalstatustoggle] = useState(false)
     //task detail
     //4(matriks)
     const [datatype4, setdatatype4] = useState([])
@@ -94,6 +100,8 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     const [choosedate, setchoosedate] = useState(false)
     const [nowend, setnowend] = useState(3)
     const [choosedateend, setchoosedateend] = useState(false)
+    const [scrollidupdate, setscrollidupdate] = useState(-1)
+    const [scrolltriggerupdate, setscrolltriggerupdate] = useState(true)
     //delete
     const [datataskdelete, setdatataskdelete] = useState({
         id: null,
@@ -126,6 +134,35 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                         duration: 3
                     })
                     rt.push(`/tasks`)
+                }
+                else {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
+    const handleSwitchToOnHold = () => {
+        setloadingchange(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/changeStatusToggle`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datastatustoggle)
+        })
+            .then((res) => res.json())
+            .then(res2 => {
+                setloadingchange(false)
+                if (res2.success) {
+                    setmodalstatustoggle(false)
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    rt.push(`/tasks/detail/${taskid}`)
                 }
                 else {
                     notification['error']({
@@ -224,7 +261,10 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 })
                 setpraloadingtask(false)
             })
-    }, [loadingtaskdelete])
+    }, [loadingtaskdelete, loadingchange])
+    useEffect(() => {
+        document.getElementById(`card${scrollidupdate}`).scrollIntoView(true)
+    }, [scrolltriggerupdate])
 
     return (
         <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
@@ -323,7 +363,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                 </div>
                             </div>
                             <div className=' flex justify-end'>
-                                <Buttonsys type={`primary`}>
+                                <Buttonsys type={`primary`} onClick={() => { setdrawertaskupdate(true); setscrollidupdate(6); setscrolltriggerupdate(prev => !prev) }}>
                                     <div className='mb-1'>
                                         <UserPlusIconSvg size={15} color={`#ffffff`} />
                                     </div>
@@ -590,7 +630,12 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                     </div>
                                 </div>
                                 <div className={`mt-2 mb-3 ${displaytask.status === 1 && `text-overdue`} ${displaytask.status === 2 && `text-open`} ${displaytask.status === 3 && `text-onprogress`} ${displaytask.status === 4 && `text-onhold`} ${displaytask.status === 5 && `text-completed`} ${displaytask.status === 6 && `text-closed`}`}>
-                                    <Buttonsys type={`primary`} color={`white`}>
+                                    <Buttonsys type={`primary`} color={`white`} onClick={() => {
+                                        displaytask.status !== 4 ?
+                                            setmodalstatustoggle(true)
+                                            :
+                                            handleSwitchToOnHold()
+                                    }}>
                                         {
                                             displaytask.status === 4 ?
                                                 <>
@@ -613,6 +658,17 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                         }
                                     </Buttonsys>
                                 </div>
+                                <ModalUbahOnHoldTask
+                                    title={displaytask.status !== 4 ? "Ubah Status On Hold" : "Lanjutkan Task"}
+                                    visible={modalstatustoggle}
+                                    onvisible={setmodalstatustoggle}
+                                    onCancel={() => { setmodalstatustoggle(false) }}
+                                    loading={loadingchange}
+                                    onOk={handleSwitchToOnHold}
+                                    datastatustoggle={datastatustoggle}
+                                    setdatastatustoggle={setdatastatustoggle}
+                                    displaytask={displaytask}
+                                />
                             </div>
                     }
                     <div className='shadow-md rounded-md bg-white p-4 my-3 ml-3 flex flex-col'>
@@ -769,31 +825,38 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                     </div>
                 </div>
             </div>
-            <DrawerTaskUpdate
-                title={"Tambah Task"}
-                visible={drawertaskupdate}
-                onClose={() => { setdrawertaskupdate(false) }}
-                buttonOkText={"Simpan Task"}
-                initProps={initProps}
-                onvisible={setdrawertaskupdate}
-                dataupdate={dataupdate}
-                setdataupdate={setdataupdate}
-                loading={praloadingtask}
-                selecteditems={selecteditems}
-                setselecteditems={setselecteditems}
-                selectedstaffgroup={selectedstaffgroup}
-                setselectedstaffgroup={setselectedstaffgroup}
-                switchstaffgroup={switchstaffgroup}
-                setswitchstaffgroup={setswitchstaffgroup}
-                now={now}
-                setnow={setnow}
-                choosedate={choosedate}
-                setchoosedate={setchoosedate}
-                nowend={nowend}
-                setnowend={setnowend}
-                choosedateend={choosedateend}
-                setchoosedateend={setchoosedateend}
-            />
+            {
+                praloadingtask ?
+                    <div id={`card-1`} className=" flex justify-center"></div>
+                    :
+                    <DrawerTaskUpdate
+                        title={"Tambah Task"}
+                        visible={drawertaskupdate}
+                        onClose={() => { setdrawertaskupdate(false) }}
+                        buttonOkText={"Simpan Task"}
+                        initProps={initProps}
+                        onvisible={setdrawertaskupdate}
+                        dataupdate={dataupdate}
+                        setdataupdate={setdataupdate}
+                        loading={praloadingtask}
+                        selecteditems={selecteditems}
+                        setselecteditems={setselecteditems}
+                        selectedstaffgroup={selectedstaffgroup}
+                        setselectedstaffgroup={setselectedstaffgroup}
+                        switchstaffgroup={switchstaffgroup}
+                        setswitchstaffgroup={setswitchstaffgroup}
+                        now={now}
+                        setnow={setnow}
+                        choosedate={choosedate}
+                        setchoosedate={setchoosedate}
+                        nowend={nowend}
+                        setnowend={setnowend}
+                        choosedateend={choosedateend}
+                        setchoosedateend={setchoosedateend}
+                        scrolltriggerupdate={scrolltriggerupdate}
+                        setscrolltriggerupdate={setscrolltriggerupdate}
+                    />
+            }
         </Layout>
     )
 }

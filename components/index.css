@@ -177,11 +177,11 @@ border-radius: 5px;
 .tableTypeTask td.ant-table-column-sort, .tableTask td.ant-table-column-sort{
     background: #ffffff;
 }
-.ant-btn-primary:hover, .ant-btn-primary:focus, .ant-btn-primary{
+ .tableTask .ant-btn-primary:hover, .tableTask .ant-btn-primary:focus, .tableTask .ant-btn-primary{
     background: #35763B;
     border-color: #35763B;
 }
-.ant-btn-link{
+.tableTask .ant-btn-link{
     color: #35763B;
 }
 .ant-dropdown-menu-item-selected, .ant-dropdown-menu-submenu-title-selected{
