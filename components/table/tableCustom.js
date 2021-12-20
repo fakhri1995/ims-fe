@@ -180,7 +180,7 @@ const TableCustomTask = ({ dataSource, setDataSource, columns, loading, pageSize
                 )
             }}
             onChange={(pagination, filters, sorter, extra) => {
-                console.log('params', pagination, filters, sorter, extra, pagefromsearch, searchstate);
+                // console.log('params', pagination, filters, sorter, extra, pagefromsearch, searchstate);
                 if (extra.action === "sort") {
                     if (sorter.column) {
                         setpraloading(true)
@@ -219,7 +219,7 @@ const TableCustomTask = ({ dataSource, setDataSource, columns, loading, pageSize
                     if (filters.status !== null) {
                         setpraloading(true)
                         setfilterstate(filters.status[0])
-                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=${sorter.column.dataIndex}&sort_type=${sorter.order === "ascend" ? "asc" : "desc"}&keyword=${searchstate}&status=${filters.status[0]}`, {
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&status=${filters.status[0]}`, {
                             method: `GET`,
                             headers: {
                                 'Authorization': JSON.parse(initProps),

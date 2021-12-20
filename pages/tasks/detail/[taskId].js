@@ -3,13 +3,17 @@ import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import st from '../../../components/layout-dashboard.module.css'
-import { Select, Spin, notification } from 'antd'
+import { Select, Spin, notification, Input, Empty } from 'antd'
 import Buttonsys from '../../../components/button'
 import { H1, H2, Label, Text } from '../../../components/typography'
 import { ArrowsSortIconSvg, AssetIconSvg, BackIconSvg, CheckIconSvg, CircleXIconSvg, ClipboardcheckIconSvg, ClockIconSvg, EditIconSvg, ForbidIconSvg, PlayerPauseIconSvg, PlayerPlayIconSvg, SortAscendingIconSvg, SortDescendingIconSvg, TrashIconSvg, UserPlusIconSvg } from '../../../components/icon'
 import { ModalHapusTask, ModalUbahOnHoldTask } from '../../../components/modal/modalCustom'
 import moment from 'moment'
+import { SearchOutlined } from '@ant-design/icons'
 import DrawerTaskUpdate from '../../../components/drawer/tasks/drawerTaskUpdate'
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Slider from "react-slick";
 
 const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     //1.Init
@@ -88,6 +92,12 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     })
     const [modalstatustoggle, setmodalstatustoggle] = useState(false)
     //task detail
+    //tambah staff
+    const [currentidstafftask, setcurrentidstafftask] = useState(null)
+    const [currentstafftask, setcurrentstafftask] = useState([])
+    const [displaycurrentstafftask, setdisplaycurrentstafftask] = useState([])
+    const [displaycurrentstafftask2, setdisplaycurrentstafftask2] = useState([])
+    const [loadingstafftask, setloadingstafftask] = useState(false)
     //4(matriks)
     const [datatype4, setdatatype4] = useState([])
     const [datatype42, setdatatype42] = useState([])
@@ -158,6 +168,38 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 setloadingchange(false)
                 if (res2.success) {
                     setmodalstatustoggle(false)
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    rt.push(`/tasks/detail/${taskid}`)
+                }
+                else {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
+    const handleAssignStaffTaskDetail = () => {
+        const finaldata = currentstafftask.map(doc => doc.id)
+        setloadingstafftask(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/assignTaskDetail`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: Number(currentidstafftask),
+                assign_ids: finaldata
+            })
+        })
+            .then((res) => res.json())
+            .then(res2 => {
+                setloadingstafftask(false)
+                if (res2.success) {
                     notification['success']({
                         message: res2.message,
                         duration: 3
@@ -261,7 +303,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 })
                 setpraloadingtask(false)
             })
-    }, [loadingtaskdelete, loadingchange])
+    }, [loadingtaskdelete, loadingchange, loadingstafftask])
     useEffect(() => {
         document.getElementById(`card${scrollidupdate}`).scrollIntoView(true)
     }, [scrolltriggerupdate])
@@ -403,8 +445,107 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                             ))
                                                         }
                                                     </div>
-                                                    <div onClick={() => { }}>
-                                                        <p className='mb-0 font-semibold text-sm text-primary100 hover:text-primary75 cursor-pointer'>+ Assign Staff</p>
+                                                    <div className="dropdown">
+                                                        <div tabIndex={`0`} onClick={() => {
+                                                            setcurrentidstafftask(doctask.id)
+                                                            setdisplaycurrentstafftask(displaytask.users)
+                                                            setdisplaycurrentstafftask2(displaytask.users)
+                                                            setcurrentstafftask(doctask.users)
+                                                        }}>
+                                                            <p className='mb-0 font-semibold text-sm text-primary100 hover:text-primary75 cursor-pointer'>+ Assign Staff</p>
+                                                        </div>
+                                                        <div tabIndex={`0`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-80 flex flex-col'>
+                                                            <Spin spinning={loadingstafftask}>
+                                                                {
+                                                                    currentstafftask.length === 0 ?
+                                                                        <>
+                                                                            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                                                        </>
+                                                                        :
+                                                                        currentstafftask.map((doc, idx) => {
+                                                                            return (
+                                                                                <>
+                                                                                    <div className=' mb-4 flex items-center'>
+                                                                                        <div className=' w-10 h-10 rounded-full'>
+                                                                                            <img src={currentstafftask[idx].profile_image === "" || doc.profile_image === "-" ? "/image/staffTask.png" : `${doc.profile_image}`} className=' object-contain w-10 h-10' alt="" />
+                                                                                        </div>
+                                                                                        <div className=' flex flex-col justify-center'>
+                                                                                            <div className='mb-1 flex'>
+                                                                                                <div className='mr-1'>
+                                                                                                    <H2>{doc.name}</H2>
+                                                                                                </div>
+                                                                                                <div className=' cursor-pointer' onClick={() => {
+                                                                                                    var temp = [...currentstafftask]
+                                                                                                    temp.splice(idx, 1)
+                                                                                                    setcurrentstafftask(temp)
+                                                                                                    setdisplaycurrentstafftask([...displaycurrentstafftask, doc])
+                                                                                                }}>
+                                                                                                    <CircleXIconSvg size={15} color={`#BF4A40`} />
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div>
+                                                                                                <Label>-</Label>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </>
+                                                                            )
+                                                                        })
+                                                                }
+                                                                <div className=' mb-4'>
+                                                                    <Input
+                                                                        allowClear
+                                                                        placeholder='Nama Staff, Group..'
+                                                                        onChange={(e) => {
+                                                                            if (e.target.value === "") {
+                                                                                setdisplaycurrentstafftask(displaycurrentstafftask2.filter(docfil => currentstafftask.map(doc => doc.id).includes(docfil.id) === false))
+                                                                            }
+                                                                            else {
+                                                                                var temp = [...displaycurrentstafftask]
+                                                                                var tempfil = temp.filter((docfil) => docfil.name.toLowerCase().includes(e.target.value.toLowerCase()))
+                                                                                setdisplaycurrentstafftask(tempfil)
+                                                                            }
+                                                                        }
+                                                                        }
+                                                                    ></Input>
+                                                                </div>
+                                                                {
+                                                                    displaycurrentstafftask.length === 0 ?
+                                                                        <>
+                                                                            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                                                        </>
+                                                                        :
+                                                                        displaycurrentstafftask.map((doc, idx) => (
+                                                                            <div className=' mb-4 flex items-center cursor-pointer' onClick={() => {
+                                                                                setcurrentstafftask([...currentstafftask, doc])
+                                                                                var temp = [...displaycurrentstafftask]
+                                                                                temp.splice(idx, 1)
+                                                                                setdisplaycurrentstafftask(temp)
+                                                                            }}>
+                                                                                <div className=' w-10 h-10 rounded-full'>
+                                                                                    <img src={doc.profile_image === "" || doc.profile_image === "-" ? "/image/staffTask.png" : `${doc.profile_image}`} className=' object-contain w-10 h-10' alt="" />
+                                                                                </div>
+                                                                                <div className=' flex flex-col justify-center'>
+                                                                                    <div className='mb-1 flex'>
+                                                                                        <div className='mr-1'>
+                                                                                            <H2>{doc.name}</H2>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        <Label>-</Label>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        ))
+                                                                }
+                                                                <div className=' flex justify-end'>
+                                                                    <Buttonsys type={`primary`} onClick={handleAssignStaffTaskDetail}>
+                                                                        <CheckIconSvg size={15} color={`#ffffff`} />
+                                                                        Simpan Perubahan
+                                                                    </Buttonsys>
+                                                                </div>
+                                                            </Spin>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 {
