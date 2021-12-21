@@ -7,13 +7,11 @@ import { Select, Spin, notification, Input, Empty } from 'antd'
 import Buttonsys from '../../../components/button'
 import { H1, H2, Label, Text } from '../../../components/typography'
 import { ArrowsSortIconSvg, AssetIconSvg, BackIconSvg, CheckIconSvg, CircleXIconSvg, ClipboardcheckIconSvg, ClockIconSvg, EditIconSvg, ForbidIconSvg, PlayerPauseIconSvg, PlayerPlayIconSvg, SortAscendingIconSvg, SortDescendingIconSvg, TrashIconSvg, UserPlusIconSvg } from '../../../components/icon'
-import { ModalHapusTask, ModalUbahOnHoldTask } from '../../../components/modal/modalCustom'
+import { ModalHapusTask, ModalHapusTaskDetail, ModalUbahOnHoldTask } from '../../../components/modal/modalCustom'
 import moment from 'moment'
 import { SearchOutlined } from '@ant-design/icons'
 import DrawerTaskUpdate from '../../../components/drawer/tasks/drawerTaskUpdate'
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import Slider from "react-slick";
+import DrawerTaskDetailUpdate from '../../../components/drawer/tasks/drawerTaskDetailUpdate'
 
 const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     //1.Init
@@ -82,6 +80,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
         border: ""
     })
     const [drawertaskupdate, setdrawertaskupdate] = useState(false)
+    const [drawertaskdetailupdate, setdrawertaskdetailupdate] = useState(false)
     const [loadingchange, setloadingchange] = useState(false)
     //staff
     const [sortstate, setsortstate] = useState(0)
@@ -102,7 +101,18 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     const [datatype4, setdatatype4] = useState([])
     const [datatype42, setdatatype42] = useState([])
     const [sort4state, setsort4state] = useState(0)
-    //update
+    //update task detail
+    const [idtaskdetailupdate, setidtaskdetailupdate] = useState(-1)
+    const [triggertaskdetailupdate, settriggertaskdetailupdate] = useState(-1)
+    //delete task detail
+    const [datataskdetaildelete, setdatatasktaildelete] = useState({
+        id: null,
+        name: "",
+        task_id: Number(taskid)
+    })
+    const [modaltaskdetaildelete, setmodaltaskdetaildelete] = useState(false)
+    const [loadingtaskdetaildelete, setloadingtaskdetaildelete] = useState(false)
+    //update task
     const [selecteditems, setselecteditems] = useState([])
     const [selectedstaffgroup, setselectedstaffgroup] = useState([])
     const [switchstaffgroup, setswitchstaffgroup] = useState(1)
@@ -214,6 +224,35 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 }
             })
     }
+    const handleDeleteTaskDetail = () => {
+        setloadingtaskdetaildelete(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/deleteTaskDetail`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datataskdetaildelete)
+        })
+            .then((res) => res.json())
+            .then(res2 => {
+                setloadingtaskdetaildelete(false)
+                if (res2.success) {
+                    setmodaltaskdetaildelete(false)
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    rt.push(`/tasks/detail/${taskid}`)
+                }
+                else {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
 
 
     //USEEFFECT
@@ -303,7 +342,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 })
                 setpraloadingtask(false)
             })
-    }, [loadingtaskdelete, loadingchange, loadingstafftask])
+    }, [loadingtaskdelete, loadingchange, loadingstafftask, triggertaskdetailupdate, loadingtaskdetaildelete])
     useEffect(() => {
         document.getElementById(`card${scrollidupdate}`).scrollIntoView(true)
     }, [scrolltriggerupdate])
@@ -552,7 +591,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                     doctask.component.type === 1 &&
                                                     <div className='mb-3 flex flex-col'>
                                                         <p className='mb-2 font-bold text-sm'>Catatan Pekerjaan</p>
-                                                        <div className=' w-full rounded-md h-28 flex overflow-hidden p-2 text-gray-600 border '>
+                                                        <div className=' w-full rounded-md flex overflow-hidden p-2 text-gray-600 border '>
                                                             {doctask.component.values}
                                                         </div>
                                                     </div>
@@ -561,7 +600,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                     doctask.component.type === 2 &&
                                                     <div className='mb-3 flex flex-col'>
                                                         <p className='mb-2 font-bold text-sm'>Catatan Pekerjaan</p>
-                                                        <div className=' w-full rounded-md flex overflow-hidden p-3 text-gray-600 border '>
+                                                        <div className=' w-full rounded-md flex overflow-hidden p-3 text-gray-600 border h-28'>
                                                             {doctask.component.values}
                                                         </div>
                                                     </div>
@@ -711,10 +750,10 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                     </div>
                                                 }
                                                 <div className='mb-3 flex justify-end items-center px-4'>
-                                                    <div className='mr-2 cursor-pointer'>
+                                                    <div className='mr-2 cursor-pointer' onClick={() => { setidtaskdetailupdate(doctask.id); setdrawertaskdetailupdate(true) }}>
                                                         <EditIconSvg size={20} color={`#000000`} />
                                                     </div>
-                                                    <div className='ml-2 cursor-pointer'>
+                                                    <div className='ml-2 cursor-pointer' onClick={() => { setdatatasktaildelete({ ...datataskdetaildelete, name: doctask.component.name, id: doctask.id }); setmodaltaskdetaildelete(true) }}>
                                                         <TrashIconSvg size={20} color={`#000000`} />
                                                     </div>
                                                 </div>
@@ -723,6 +762,15 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                     })
                             }
                         </div>
+                        <ModalHapusTaskDetail
+                            title={"Konfirmasi Hapus Task Detail"}
+                            visible={modaltaskdetaildelete}
+                            onvisible={setmodaltaskdetaildelete}
+                            onCancel={() => { setmodaltaskdetaildelete(false) }}
+                            loading={loadingtaskdetaildelete}
+                            datadelete={datataskdetaildelete}
+                            onOk={handleDeleteTaskDetail}
+                        />
                     </div>
                 </div>
                 <div className=' col-span-3 flex flex-col'>
@@ -998,6 +1046,17 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                         setscrolltriggerupdate={setscrolltriggerupdate}
                     />
             }
+            <DrawerTaskDetailUpdate
+                title={"Ubah Task Detail"}
+                visible={drawertaskdetailupdate}
+                onClose={() => { setdrawertaskdetailupdate(false) }}
+                buttonOkText={"Simpan Task Detail"}
+                initProps={initProps}
+                onvisible={setdrawertaskdetailupdate}
+                id={idtaskdetailupdate}
+                taskid={taskid}
+                settriggertaskdetailupdate={settriggertaskdetailupdate}
+            />
         </Layout>
     )
 }

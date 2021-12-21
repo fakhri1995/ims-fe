@@ -3,7 +3,7 @@ import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import st from '../../components/layout-dashboard.module.css'
-import { Progress, Input, notification, Select, DatePicker, Spin, Tree } from 'antd'
+import { Progress, Input, notification, Select, DatePicker, Spin, Tree, Empty } from 'antd'
 import Buttonsys from '../../components/button'
 import { H1, H2, Label, Text } from '../../components/typography'
 import { AlerttriangleIconSvg, ArrowsSortIconSvg, BackIconSvg, CalendartimeIconSvg, CircleXIconSvg, ClipboardcheckIconSvg, ClockIconSvg, EditIconSvg, ListcheckIconSvg, LocationIconSvg, MappinIconSvg, SearchIconSvg, SortAscendingIconSvg, SortDescendingIconSvg, TrashIconSvg, UserIconSvg } from '../../components/icon'
@@ -24,7 +24,9 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     const pathArr = rt.pathname.split("/").slice(1)
 
     //useState
-    //1.statistik
+    //1.0.SEGERA BERAKHIR
+    const [userlasttwo, setuserlasttwo] = useState([])
+    const [loadinguserlasttwo, setloadinguserlasttwo] = useState(true)
     //1.1.STATUS LIST
     const [statustaskdata, setstatustaskdata] = useState([])
     const [loadingstatustaskdata, setloadingstatustaskdata] = useState(true)
@@ -116,7 +118,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     })
     const [modaltipetaskdelete, setmodaltipetaskdelete] = useState(false)
     const [loadingtipetaskdelete, setloadingtipetaskdelete] = useState(false)
-    //Tasks
+    //TASKS
     const [datarawtask, setdatarawtask] = useState({
         current_page: "",
         data: [],
@@ -143,7 +145,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     const [rowstask, setrowstask] = useState(6)
     //create - task
     const [drawertaskcreate, setdrawertaskcreate] = useState(false)
-    //Staff
+    //STAFF
     const [datarawstaff, setdatarawstaff] = useState({
         current_page: "",
         data: [],
@@ -603,6 +605,20 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             })
     }, [drawertaskcreate])
     useEffect(() => {
+        setloadingtasks(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getUserLastTwoTasks`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setuserlasttwo(res2.data)
+                setloadinguserlasttwo(false)
+            })
+    }, [])
+    useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getStatusTaskList`, {
             method: `GET`,
             headers: {
@@ -824,55 +840,83 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                         <div className="grid grid-cols-11 px-5" id="wrapper1">
                             {/* SEGERA BERAKHIR */}
                             <div className=" col-span-5 flex flex-col shadow-md rounded-md bg-gray-50 p-5 mb-6 mr-3">
-                                <div className="flex items-center justify-between mb-4">
-                                    <H1>Segera Berakhir</H1>
-                                    <div className="p-2 rounded bg-red-50 text-state1 text-xs flex">
-                                        <div className="mr-1 flex items-center">
-                                            <ClockIconSvg size={15} color={`#BF4A40`} />
-                                        </div>
-                                        Jumat, 10 November 2021
-                                    </div>
-                                </div>
-                                <div className="rounded bg-state1 shadow text-white p-5 flex justify-between mb-8 cursor-pointer">
-                                    <div className="flex flex-col">
-                                        <div>
-                                            <ClipboardcheckIconSvg size={50} color={`#ffffff`} />
-                                        </div>
-                                        <div className="flex flex-col mt-2">
-                                            <Text color={`white`}>Berakhir 11 Nov</Text>
-                                            <Progress trailColor={`#4D4D4D`} strokeColor={`#ffffff`} percent={50} showInfo={false} />
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <div className="flex flex-col text-right">
-                                            <p className={`font-bold text-xl mb-0 text-white`}>Perbaikan ATM H2VLL</p>
-                                            <Label>T-00001</Label>
-                                        </div>
-                                        <div className="flex flex-col mt-4 text-right">
-                                            <H2 color={`white`}>Sisa 1 Jam 21 Menit</H2>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="rounded bg-white shadow p-5 flex justify-between cursor-pointer">
-                                    <div className="flex flex-col">
-                                        <div>
-                                            <ClipboardcheckIconSvg size={50} color={`#35763B`} />
-                                        </div>
-                                        <div className="flex flex-col mt-2">
-                                            <Text>Berakhir hari ini</Text>
-                                            <Progress trailColor={`#d8e8da`} strokeColor={`#35763B`} percent={50} showInfo={false} />
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <div className="flex flex-col text-right">
-                                            <H1>Perbaikan ATM H2VLL</H1>
-                                            <Label>T-00001</Label>
-                                        </div>
-                                        <div className="flex flex-col mt-4 text-right">
-                                            <H2 color={`primary`}>Sisa 1 Jam 21 Menit</H2>
-                                        </div>
-                                    </div>
-                                </div>
+                                {
+                                    loadinguserlasttwo ?
+                                        <>
+                                            <Spin />
+                                        </>
+                                        :
+                                        <>
+
+                                            <div className="flex items-center justify-between mb-4">
+                                                <H1>Segera Berakhir</H1>
+                                                {
+                                                    userlasttwo.length > 0 &&
+                                                    <div className="p-2 rounded bg-red-50 text-state1 text-xs flex">
+                                                        <div className="mr-1 flex items-center">
+                                                            <ClockIconSvg size={15} color={`#BF4A40`} />
+                                                        </div>
+                                                        {moment(userlasttwo[0].deadline).locale('id').format('lll')}
+                                                    </div>
+                                                }
+                                            </div>
+                                            {
+                                                userlasttwo.length < 1 ?
+                                                    <div className=' flex w-full h-full items-center justify-center'>
+                                                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                                    </div>
+                                                    :
+                                                    <>
+                                                        {
+                                                            userlasttwo.length >= 1 &&
+                                                            <div className="rounded bg-state1 shadow text-white p-5 flex justify-between mb-8 cursor-pointer" onClick={()=>{rt.push(`/tasks/detail/${userlasttwo[0].id}`)}}>
+                                                                <div className="flex flex-col">
+                                                                    <div>
+                                                                        <ClipboardcheckIconSvg size={50} color={`#ffffff`} />
+                                                                    </div>
+                                                                    <div className="flex flex-col mt-2">
+                                                                        <Text color={`white`}>Berakhir {(new Date() - new Date(userlasttwo[0].deadline)) / (1000 * 60 * 60 * 24) < 1 ? `Hari Ini` : `${moment(userlasttwo[0].deadline).locale('id').format('Do MMM')}`}</Text>
+                                                                        <Progress trailColor={`#4D4D4D`} strokeColor={`#ffffff`} percent={50} showInfo={false} />
+                                                                    </div>
+                                                                </div>
+                                                                <div className="flex flex-col">
+                                                                    <div className="flex flex-col text-right">
+                                                                        <p className={`font-bold text-xl mb-0 text-white`}>{userlasttwo[0].name}</p>
+                                                                        <Label>T-000{userlasttwo[0].id}</Label>
+                                                                    </div>
+                                                                    <div className="flex flex-col mt-4 text-right">
+                                                                        <H2 color={`white`}>Sisa {userlasttwo[0].time_left}</H2>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                        {
+                                                            userlasttwo.length >= 2 &&
+                                                            <div className="rounded bg-white shadow p-5 flex justify-between cursor-pointer" onClick={()=>{rt.push(`/tasks/detail/${userlasttwo[1].id}`)}}>
+                                                                <div className="flex flex-col">
+                                                                    <div>
+                                                                        <ClipboardcheckIconSvg size={50} color={`#35763B`} />
+                                                                    </div>
+                                                                    <div className="flex flex-col mt-2">
+                                                                        <Text>Berakhir {(new Date() - new Date(userlasttwo[1].deadline)) / (1000 * 60 * 60 * 24) < 1 ? `Hari Ini` : `${moment(userlasttwo[1].deadline).locale('id').format('Do MMM')}`}</Text>
+                                                                        <Progress trailColor={`#d8e8da`} strokeColor={`#35763B`} percent={50} showInfo={false} />
+                                                                    </div>
+                                                                </div>
+                                                                <div className="flex flex-col">
+                                                                    <div className="flex flex-col text-right">
+                                                                        <H1>{userlasttwo[1].name}</H1>
+                                                                        <Label>T-000{userlasttwo[1].id}</Label>
+                                                                    </div>
+                                                                    <div className="flex flex-col mt-4 text-right">
+                                                                        <H2 color={`primary`}>Sisa {userlasttwo[1].time_left}</H2>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </>
+                                            }
+                                        </>
+                                }
                             </div>
                             {/* STATUS TASK */}
                             <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mx-3">
