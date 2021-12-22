@@ -20,7 +20,7 @@ function recursiveModifData(dataa) {
     return dataa
 }
 
-const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, dataupdate, setdataupdate, loading, selecteditems, setselecteditems, selectedstaffgroup, setselectedstaffgroup, switchstaffgroup, setswitchstaffgroup, now, setnow, choosedate, setchoosedate, nowend, setnowend, choosedateend, setchoosedateend }) => {
+const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, dataupdate, setdataupdate, loading, selecteditems, setselecteditems, selectedstaffgroup, setselectedstaffgroup, switchstaffgroup, setswitchstaffgroup, now, setnow, choosedate, setchoosedate, nowend, setnowend, choosedateend, setchoosedateend, repeatable, setrepeatable, regular, setregular, choosedateendrepeat, setchoosedateendrepeat }) => {
     //USESTATE
     const [loadingupdate, setloadingupdate] = useState(false)
     const [disabledupdate, setdisabledupdate] = useState(true)
@@ -43,7 +43,6 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
     //staff/group
     const [datastaffgroup, setdatastaffgroup] = useState([])
     const [fetchingstaffgroup, setfetchingstaffgroup] = useState(false)
-    //start date
     //end date
 
     //HANDLER
@@ -74,16 +73,19 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                         id: "",
                         name: "",
                         description: "",
-                        task_type_id: null,
                         location_id: null,
-                        subloc_id: null,
                         reference_id: null,
-                        is_replaceable: false,
                         created_at: moment(new Date()).locale('id').format(),
                         deadline: moment(new Date()).add(3, 'h').locale('id').format(),
                         is_group: null,
+                        is_replaceable: false,
                         assign_ids: [],
-                        inventory_ids: []
+                        inventory_ids: [],
+                        is_uploadable: false,
+                        repeat: 0,
+                        files: [],
+                        end_repeat_at: null,
+                        subloc_id: null,
                     })
                     setdataitems([])
                     setdatastaffgroup([])
@@ -129,7 +131,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
     }, [])
     //Lokasi
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryRelations`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getAllCompanyList`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -137,7 +139,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
         })
             .then(res => res.json())
             .then(res2 => {
-                setdatalocations(res2.data.tree_companies.children)
+                setdatalocations(res2.data.children)
             })
     }, [])
     //Sublokasi
@@ -222,7 +224,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
             })
     }, [])
     useEffect(() => {
-        if (dataupdate.task_type_id !== null && dataupdate.name !== "" && dataupdate.location_id !== null && dataupdate.created_at !== null && dataupdate.deadline !== null) {
+        if (dataupdate.task_type_id !== null && dataupdate.name !== "" && dataupdate.location_id !== null && dataupdate.created_at !== null && dataupdate.deadline !== null && dataupdate.repeat !== -1) {
             setdisabledupdate(false)
         }
         else {
@@ -480,7 +482,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                             <Label>Staff</Label>
                                         </div>
                                         <div className="mx-1">
-                                            <Switch value={dataupdate.is_group} onChange={(checked) => { setswitchstaffgroup(checked ? 0 : 1); setdataupdate({ ...dataupdate, is_group: checked, assign_ids: [] }); setselectedstaffgroup([]) }}></Switch>
+                                            <Switch defaultChecked={dataupdate.is_group} onChange={(checked) => { setswitchstaffgroup(checked ? 0 : 1); setdataupdate({ ...dataupdate, is_group: checked, assign_ids: [] }); setselectedstaffgroup([]) }}></Switch>
                                         </div>
                                         <div className="ml-1">
                                             <Label>Group</Label>
@@ -728,6 +730,100 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                             }}></DatePicker>
                                         </div>
                                     }
+                                </div>
+                            </div>
+                            <div id={`card${9}`} className="mb-6 px-3 flex flex-col">
+                                <div className=' flex mb-2 justify-between'>
+                                    <div>
+                                        <Label>Jadwal Berulang</Label>
+                                    </div>
+                                    <div>
+                                        <Switch checked={repeatable} onChange={(checked) => { setrepeatable(checked); setchoosedateendrepeat(false); checked === false ? (setdataupdate({ ...dataupdate, repeat: 0, end_repeat_at: null })) : null }} />
+                                    </div>
+                                </div>
+                                {
+                                    repeatable ?
+                                        <>
+                                            <div className=' mb-2'>
+                                                <Select style={{ width: `100%` }} placeholder="Reguler, Setelah Selesai" defaultValue={dataupdate.repeat === 1 ? 1 : -1} onChange={(value) => {
+                                                    setdataupdate({ ...dataupdate, repeat: value })
+                                                    value === -1 ? setregular(true) : (setdataupdate({ ...dataupdate, repeat: 1 }), setregular(false))
+                                                    setdisabledtrigger(prev => prev + 1)
+                                                }}>
+                                                    <Select.Option value={-1}>Reguler</Select.Option>
+                                                    <Select.Option value={1}>Setelah Selesai</Select.Option>
+                                                </Select>
+                                            </div>
+                                            {
+                                                regular &&
+                                                <>
+                                                    <div className='mb-2'>
+                                                        <Radio.Group
+                                                            defaultValue={dataupdate.repeat}
+                                                            name={`repeat`}
+                                                            onChange={(e) => {
+                                                                setdataupdate({ ...dataupdate, repeat: e.target.value })
+                                                                setdisabledtrigger(prev => prev + 1)
+                                                            }}
+                                                            value={dataupdate.repeat < 2 ? null : dataupdate.repeat}
+                                                        >
+                                                            <div className="flex flex-col">
+                                                                <div className='mb-1'>
+                                                                    <Radio value={2}>Setiap Hari</Radio>
+                                                                </div>
+                                                                <div className='mb-1'>
+                                                                    <Radio value={3}>Setiap Minggu</Radio>
+                                                                </div>
+                                                                <div className='mb-1'>
+                                                                    <Radio value={4}>Setiap 2 Minggu</Radio>
+                                                                </div>
+                                                                <div className='mb-1'>
+                                                                    <Radio value={5}>Setiap Bulan</Radio>
+                                                                </div>
+                                                                <div className='mb-1'>
+                                                                    <Radio value={6}>Setiap 3 Bulan</Radio>
+                                                                </div>
+                                                                <div className='mb-1'>
+                                                                    <Radio value={7}>Setiap 4 Bulan</Radio>
+                                                                </div>
+                                                            </div>
+                                                        </Radio.Group>
+                                                    </div>
+
+                                                </>
+                                            }
+                                            <div className=' pl-4 mb-2'>
+                                                <Label>Selesai Pada</Label>
+                                            </div>
+                                            <div className='pl-4 flex flex-col'>
+                                                <div className='mb-2'>
+                                                    <ButtonSys type={`primary`} onClick={() => { setchoosedateendrepeat(true) }}>
+                                                        <CalendartimeIconSvg size={15} color={`#ffffff`} />
+                                                        Pilih Tanggal
+                                                    </ButtonSys>
+                                                </div>
+                                                {
+                                                    choosedateendrepeat &&
+                                                    <div>
+                                                        <DatePicker defaultValue={dataupdate.end_repeat_at === null ? null : moment(dataupdate.end_repeat_at)} showTime placeholder="Selesai pada" style={{ width: `100%` }} onChange={(date, datestring) => {
+                                                            setdataupdate({ ...dataupdate, end_repeat_at: datestring })
+                                                        }}></DatePicker>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </>
+                                        :
+                                        null
+                                }
+                            </div>
+                            <div id={`card${10}`} className="mb-6 px-3 flex justify-between">
+                                <div>
+                                    <Label>
+                                        Unggah Dokumen Pelengkap (PDF, JPG)
+                                    </Label>
+                                </div>
+                                <div>
+                                    <Switch checked={dataupdate.is_uploadable} onChange={(checked) => { setdataupdate({ ...dataupdate, is_uploadable: checked }) }} />
                                 </div>
                             </div>
                         </div>

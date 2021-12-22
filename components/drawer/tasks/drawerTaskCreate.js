@@ -15,14 +15,18 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
         description: "",
         task_type_id: null,
         location_id: null,
-        subloc_id: null,
         reference_id: null,
-        is_replaceable: false,
         created_at: moment(new Date()).locale('id').format(),
         deadline: moment(new Date()).add(3, 'h').locale('id').format(),
         is_group: null,
+        is_replaceable: false,
         assign_ids: [],
-        inventory_ids: []
+        inventory_ids: [],
+        is_uploadable: false,
+        repeat: 0,
+        files: [],
+        end_repeat_at: null,
+        subloc_id: null,
     })
     const [loadingcreate, setloadingcreate] = useState(false)
     const [disabledcreate, setdisabledcreate] = useState(true)
@@ -51,9 +55,12 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
     const [now, setnow] = useState(true)
     const [choosedate, setchoosedate] = useState(false)
     //end date
-    //start date
     const [nowend, setnowend] = useState(3)
     const [choosedateend, setchoosedateend] = useState(false)
+    //repeat date
+    const [repeatable, setrepeatable] = useState(false)
+    const [regular, setregular] = useState(null)
+    const [choosedateendrepeat, setchoosedateendrepeat] = useState(false)
 
     //HANDLER
     const handleAddTask = () => {
@@ -84,14 +91,18 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                         description: "",
                         task_type_id: null,
                         location_id: null,
-                        subloc_id: null,
                         reference_id: null,
-                        is_replaceable: false,
                         created_at: moment(new Date()).locale('id').format(),
                         deadline: moment(new Date()).add(3, 'h').locale('id').format(),
                         is_group: null,
+                        is_replaceable: false,
                         assign_ids: [],
-                        inventory_ids: []
+                        inventory_ids: [],
+                        is_uploadable: false,
+                        repeat: 0,
+                        files: [],
+                        end_repeat_at: null,
+                        subloc_id: null,
                     })
                     setdataitems([])
                     setdatastaffgroup([])
@@ -135,7 +146,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
     }, [])
     //Lokasi
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryRelations`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getAllCompanyList`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -143,7 +154,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
         })
             .then(res => res.json())
             .then(res2 => {
-                setdatalocations(res2.data.tree_companies.children)
+                setdatalocations(res2.data.children)
             })
     }, [])
     //Sublokasi
@@ -228,7 +239,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
             })
     }, [])
     useEffect(() => {
-        if (datacreate.task_type_id !== null && datacreate.name !== "" && datacreate.location_id !== null && datacreate.created_at !== null && datacreate.deadline !== null) {
+        if (datacreate.task_type_id !== null && datacreate.name !== "" && datacreate.location_id !== null && datacreate.created_at !== null && datacreate.deadline !== null && datacreate.repeat !== -1) {
             setdisabledcreate(false)
         }
         else {
@@ -748,6 +759,99 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                     }}></DatePicker>
                                 </div>
                             }
+                        </div>
+                    </div>
+                    <div className="mb-6 px-3 flex flex-col">
+                        <div className=' flex mb-2 justify-between'>
+                            <div>
+                                <Label>Jadwal Berulang</Label>
+                            </div>
+                            <div>
+                                <Switch checked={repeatable} onChange={(checked) => { setrepeatable(checked); setchoosedateendrepeat(false); checked === false ? (setdatacreate({ ...datacreate, repeat: 0, end_repeat_at: null })) : null }} />
+                            </div>
+                        </div>
+                        {
+                            repeatable ?
+                                <>
+                                    <div className=' mb-2'>
+                                        <Select style={{ width: `100%` }} placeholder="Reguler, Setelah Selesai" onChange={(value) => {
+                                            setdatacreate({ ...datacreate, repeat: value })
+                                            value === -1 ? setregular(true) : (setdatacreate({ ...datacreate, repeat: 1 }), setregular(false))
+                                            setdisabledtrigger(prev => prev + 1)
+                                        }}>
+                                            <Select.Option value={-1}>Reguler</Select.Option>
+                                            <Select.Option value={1}>Setelah Selesai</Select.Option>
+                                        </Select>
+                                    </div>
+                                    {
+                                        regular &&
+                                        <>
+                                            <div className='mb-2'>
+                                                <Radio.Group
+                                                    name={`repeat`}
+                                                    onChange={(e) => {
+                                                        setdatacreate({ ...datacreate, repeat: e.target.value })
+                                                        setdisabledtrigger(prev => prev + 1)
+                                                    }}
+                                                    value={datacreate.repeat < 2 ? null : datacreate.repeat}
+                                                >
+                                                    <div className="flex flex-col">
+                                                        <div className='mb-1'>
+                                                            <Radio value={2}>Setiap Hari</Radio>
+                                                        </div>
+                                                        <div className='mb-1'>
+                                                            <Radio value={3}>Setiap Minggu</Radio>
+                                                        </div>
+                                                        <div className='mb-1'>
+                                                            <Radio value={4}>Setiap 2 Minggu</Radio>
+                                                        </div>
+                                                        <div className='mb-1'>
+                                                            <Radio value={5}>Setiap Bulan</Radio>
+                                                        </div>
+                                                        <div className='mb-1'>
+                                                            <Radio value={6}>Setiap 3 Bulan</Radio>
+                                                        </div>
+                                                        <div className='mb-1'>
+                                                            <Radio value={7}>Setiap 4 Bulan</Radio>
+                                                        </div>
+                                                    </div>
+                                                </Radio.Group>
+                                            </div>
+
+                                        </>
+                                    }
+                                    <div className=' pl-4 mb-2'>
+                                        <Label>Selesai Pada</Label>
+                                    </div>
+                                    <div className='pl-4 flex flex-col'>
+                                        <div className='mb-2'>
+                                            <ButtonSys type={`primary`} onClick={() => { setchoosedateendrepeat(true) }}>
+                                                <CalendartimeIconSvg size={15} color={`#ffffff`} />
+                                                Pilih Tanggal
+                                            </ButtonSys>
+                                        </div>
+                                        {
+                                            choosedateendrepeat &&
+                                            <div>
+                                                <DatePicker showTime placeholder="Selesai pada" style={{ width: `100%` }} onChange={(date, datestring) => {
+                                                    setdatacreate({ ...datacreate, end_repeat_at: datestring })
+                                                }}></DatePicker>
+                                            </div>
+                                        }
+                                    </div>
+                                </>
+                                :
+                                null
+                        }
+                    </div>
+                    <div className="mb-6 px-3 flex justify-between">
+                        <div>
+                            <Label>
+                                Unggah Dokumen Pelengkap (PDF, JPG)
+                            </Label>
+                        </div>
+                        <div>
+                            <Switch checked={datacreate.is_uploadable} onChange={(checked) => { setdatacreate({ ...datacreate, is_uploadable: checked }) }} />
                         </div>
                     </div>
                 </div>

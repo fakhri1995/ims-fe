@@ -12,6 +12,7 @@ import moment from 'moment'
 import { SearchOutlined } from '@ant-design/icons'
 import DrawerTaskUpdate from '../../../components/drawer/tasks/drawerTaskUpdate'
 import DrawerTaskDetailUpdate from '../../../components/drawer/tasks/drawerTaskDetailUpdate'
+import DrawerTaskDetailCreate from '../../../components/drawer/tasks/drawerTaskDetailCreate'
 
 const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     //1.Init
@@ -46,6 +47,11 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
             name: "",
             full_location: ""
         },
+        creator: {
+            id: null,
+            name: "",
+            profile_image: ""
+        },
         users: [],
         group: [],
         inventories: [],
@@ -64,6 +70,10 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
         is_replaceable: false,
         assign_ids: [],
         inventory_ids: [],
+        is_uploadable: false,
+        repeat: 0,
+        files: [],
+        end_repeat_at: null,
         subloc_id: null,
     })
     const [users2, setusers2] = useState([])
@@ -80,7 +90,9 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
         border: ""
     })
     const [drawertaskupdate, setdrawertaskupdate] = useState(false)
+    const [drawertaskdetailcreate, setdrawertaskdetailcreate] = useState(false)
     const [drawertaskdetailupdate, setdrawertaskdetailupdate] = useState(false)
+    const [modaltaskdetaildelete, setmodaltaskdetaildelete] = useState(false)
     const [loadingchange, setloadingchange] = useState(false)
     //staff
     const [sortstate, setsortstate] = useState(0)
@@ -101,6 +113,8 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     const [datatype4, setdatatype4] = useState([])
     const [datatype42, setdatatype42] = useState([])
     const [sort4state, setsort4state] = useState(0)
+    //create task detail
+    const [triggertaskdetailcreate, settriggertaskdetailcreate] = useState(-1)
     //update task detail
     const [idtaskdetailupdate, setidtaskdetailupdate] = useState(-1)
     const [triggertaskdetailupdate, settriggertaskdetailupdate] = useState(-1)
@@ -110,7 +124,6 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
         name: "",
         task_id: Number(taskid)
     })
-    const [modaltaskdetaildelete, setmodaltaskdetaildelete] = useState(false)
     const [loadingtaskdetaildelete, setloadingtaskdetaildelete] = useState(false)
     //update task
     const [selecteditems, setselecteditems] = useState([])
@@ -122,7 +135,10 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     const [choosedateend, setchoosedateend] = useState(false)
     const [scrollidupdate, setscrollidupdate] = useState(-1)
     const [scrolltriggerupdate, setscrolltriggerupdate] = useState(true)
-    //delete
+    const [repeatable, setrepeatable] = useState(false)
+    const [regular, setregular] = useState(null)
+    const [choosedateendrepeat, setchoosedateendrepeat] = useState(false)
+    //delete task
     const [datataskdelete, setdatataskdelete] = useState({
         id: null,
         name: ""
@@ -270,7 +286,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 setusers2(res2.data.users)
                 setdataupdate({
                     ...dataupdate,
-                    id: taskid,
+                    id: Number(taskid),
                     task_type_id: res2.data.task_type_id,
                     name: res2.data.name,
                     description: res2.data.description,
@@ -278,11 +294,15 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                     reference_id: res2.data.reference_id,
                     created_at: res2.data.created_at,
                     deadline: res2.data.deadline,
-                    is_group: res2.data.is_group,
+                    is_group: res2.data.group_id === null ? false : true,
                     is_replaceable: res2.data.is_replaceable,
-                    assign_ids: res2.data.users.map(doc => doc.id),
+                    assign_ids: res2.data.group_id === null ? res2.data.users.map(doc => doc.id) : [res2.data.group.id],
                     inventory_ids: res2.data.inventories.map((doc) => doc.id),
-                    group_id: res2.data.group_id
+                    group_id: res2.data.group_id,
+                    is_uploadable: res2.data.is_uploadable,
+                    repeat: res2.data.repeat,
+                    end_repeat_at: res2.data.end_repeat_at,
+                    files: res2.data.files
                 })
                 var tempitems = res2.data.inventories.map((doc, idx) => ({
                     ...doc,
@@ -291,6 +311,9 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                     assetname: doc.asset_name
                 }))
                 setselecteditems(tempitems)
+                setrepeatable(res2.data.repeat === 0 ? false : true)
+                setregular(res2.data.repeat > 1 ? true : false)
+                setchoosedateendrepeat(res2.data.end_repeat_at !== null ? true : false)
                 var tempstaffgroup = []
                 res2.data.group_id === null ?
                     (
@@ -342,7 +365,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 })
                 setpraloadingtask(false)
             })
-    }, [loadingtaskdelete, loadingchange, loadingstafftask, triggertaskdetailupdate, loadingtaskdetaildelete])
+    }, [loadingtaskdelete, loadingchange, loadingstafftask, triggertaskdetailupdate, loadingtaskdetaildelete, triggertaskdetailcreate])
     useEffect(() => {
         document.getElementById(`card${scrollidupdate}`).scrollIntoView(true)
     }, [scrolltriggerupdate])
@@ -762,6 +785,11 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                     })
                             }
                         </div>
+                        <div className="mb-4 border border-dashed border-primary100 hover:border-primary75 hover:text-primary75 py-2 flex justify-center items-center w-full rounded-md cursor-pointer" onClick={() => { setdrawertaskdetailcreate(true) }}>
+                            <div className="text-primary100">
+                                + Tambah Pekerjaan Baru
+                            </div>
+                        </div>
                         <ModalHapusTaskDetail
                             title={"Konfirmasi Hapus Task Detail"}
                             visible={modaltaskdetaildelete}
@@ -865,7 +893,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                             <div className='mb-2'>
                                 <Label>Tipe Task</Label>
                             </div>
-                            <p className='mb-0 text-sm text-gray-500'>-</p>
+                            <p className='mb-0 text-sm text-gray-500'>{displaytask.task_type.name}</p>
                         </div>
                         <div className='my-3 flex flex-col'>
                             <div className='mb-2'>
@@ -895,16 +923,16 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                             </div>
                             <div className=' flex items-center'>
                                 <div className=' rounded-full w-8 h-8'>
-                                    <img src={`/image/staffTask.png`} className=' object-contain' alt="" />
+                                    <img src={displaytask.creator.profile_image === "-" ? `/image/staffTask.png` : displaytask.creator.profile_image} className=' object-contain' alt="" />
                                 </div>
-                                <p className='mb-0 text-sm text-gray-500 ml-1'>{displaytask.created_by}</p>
+                                <p className='mb-0 text-sm text-gray-500 ml-1'>{displaytask.creator.name}</p>
                             </div>
                         </div>
                         <div className='my-3 flex flex-col'>
                             <div className='mb-2'>
                                 <Label>Tanggal Pembuatan</Label>
                             </div>
-                            <p className='mb-0 text-sm text-gray-500'>{moment(displaytask.created_at).locale('id').format('lll')}</p>
+                            <p className='mb-0 text-sm text-gray-500'>{displaytask.created_at === null ? `-` : moment(displaytask.created_at).locale('id').format('lll')}</p>
                         </div>
                         <div className='my-5 flex flex-col items-center'>
                             <div className=' mb-3'>
@@ -1044,6 +1072,12 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                         setchoosedateend={setchoosedateend}
                         scrolltriggerupdate={scrolltriggerupdate}
                         setscrolltriggerupdate={setscrolltriggerupdate}
+                        repeatable={repeatable}
+                        setrepeatable={setrepeatable}
+                        regular={regular}
+                        setregular={setregular}
+                        choosedateendrepeat={choosedateendrepeat}
+                        setchoosedateendrepeat={setchoosedateendrepeat}
                     />
             }
             <DrawerTaskDetailUpdate
@@ -1056,6 +1090,17 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 id={idtaskdetailupdate}
                 taskid={taskid}
                 settriggertaskdetailupdate={settriggertaskdetailupdate}
+            />
+            <DrawerTaskDetailCreate
+                title={"Buat Task Detail"}
+                visible={drawertaskdetailcreate}
+                onClose={() => { setdrawertaskdetailcreate(false) }}
+                buttonOkText={"Simpan Task Detail"}
+                initProps={initProps}
+                onvisible={setdrawertaskdetailcreate}
+                taskid={taskid}
+                settriggertaskdetailcreate={settriggertaskdetailcreate}
+                taskid={taskid}
             />
         </Layout>
     )

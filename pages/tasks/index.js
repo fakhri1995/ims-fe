@@ -142,7 +142,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     })
     const [filterstate, setfilterstate] = useState("")
     const [pagetask, setpagetask] = useState(1)
-    const [rowstask, setrowstask] = useState(6)
+    const [rowstask, setrowstask] = useState(10)
     //create - task
     const [drawertaskcreate, setdrawertaskcreate] = useState(false)
     //STAFF
