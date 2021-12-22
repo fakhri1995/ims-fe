@@ -447,7 +447,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                 notFoundContent={fetchingitems ? <Spin size="small" /> : null}
                                 onSearch={(value) => {
                                     setfetchingitems(true)
-                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterInventories?mig_id=${value}`, {
+                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterInventories?keyword=${value}`, {
                                         method: `GET`,
                                         headers: {
                                             'Authorization': JSON.parse(initProps),

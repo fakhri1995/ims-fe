@@ -254,7 +254,7 @@ const TableCustomTask = ({ dataSource, setDataSource, columns, loading, pageSize
     )
 }
 
-const TableCustomStaffTask = ({ dataSource, setDataSource, columns, loading, pageSize, total, setpraloading, initProps, setpage, pagefromsearch, setdataraw, setsortingstaff, searcingstaff }) => {
+const TableCustomStaffTask = ({ dataSource, setDataSource, columns, loading, pageSize, total, setpraloading, initProps, setpage, pagefromsearch, setdataraw, setsortingstaff, searcingstaff, intervaldatestaff }) => {
     return (
         <Table
             className='tableTypeTask'
@@ -269,7 +269,7 @@ const TableCustomStaffTask = ({ dataSource, setDataSource, columns, loading, pag
                 onChange: (page, pageSize) => {
                     setpraloading(true)
                     setpage(page)
-                    fetch(`https://boiling-thicket-46501.herokuapp.com/getStaffTaskStatuses?page=${page}&rows=${pageSize}&name=${searcingstaff}&from=&to=`, {
+                    fetch(`https://boiling-thicket-46501.herokuapp.com/getStaffTaskStatuses?page=${page}&rows=${pageSize}&name=${searcingstaff}&from=${intervaldatestaff.from}&to=${intervaldatestaff.to}`, {
                         method: `GET`,
                         headers: {
                             'Authorization': JSON.parse(initProps),
@@ -289,7 +289,7 @@ const TableCustomStaffTask = ({ dataSource, setDataSource, columns, loading, pag
                     if (sorter.column) {
                         setpraloading(true)
                         setsortingstaff({ sort_by: sorter.column.dataIndex, sort_type: sorter.order === "ascend" ? "asc" : "desc" })
-                        fetch(`https://boiling-thicket-46501.herokuapp.com/getStaffTaskStatuses?page=${pagination.current}&rows=${pagination.pageSize}&name=${searcingstaff}&from=&to=`, {
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getStaffTaskStatuses?page=${pagination.current}&rows=${pagination.pageSize}&name=${searcingstaff}&from=${intervaldatestaff.from}&to=${intervaldatestaff.to}`, {
                             method: `GET`,
                             headers: {
                                 'Authorization': JSON.parse(initProps),
@@ -305,7 +305,7 @@ const TableCustomStaffTask = ({ dataSource, setDataSource, columns, loading, pag
                     else {
                         setpraloading(true)
                         setsortingstaff({ sort_by: "", sort_type: "" })
-                        fetch(`https://boiling-thicket-46501.herokuapp.com/getStaffTaskStatuses?page=${pagination.current}&rows=${pagination.pageSize}&name=${searcingstaff}&from=&to=`, {
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getStaffTaskStatuses?page=${pagination.current}&rows=${pagination.pageSize}&name=${searcingstaff}&from=${intervaldatestaff.from}&to=${intervaldatestaff.to}`, {
                             method: `GET`,
                             headers: {
                                 'Authorization': JSON.parse(initProps),

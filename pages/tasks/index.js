@@ -166,6 +166,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     const [pagestaff, setpagestaff] = useState(1)
     const [rowsstaff, setrowsstaff] = useState(6)
     const [searcingstaff, setsearcingstaff] = useState("")
+    const [intervaldatestafffilter, setintervaldatestafffilter] = useState(false)
     const [sortingstaff, setsortingstaff] = useState({
         sort_by: "",
         sort_type: ""
@@ -591,7 +592,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     }, [viewdetailtipetask, drawertasktypecreate, modaltipetaskdelete])
     useEffect(() => {
         setloadingtasks(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -789,14 +790,37 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                 <H1>Semua Staff</H1>
                                             </div>
                                             <div className="w-8/12 flex justify-end">
-                                                <div className=' mx-2 cursor-pointer flex items-center'>
-                                                    <div className='mr-1'>
-                                                        <SortAscendingIconSvg size={15} color={`#35763B`} />
+                                                {
+                                                    intervaldatestafffilter === false &&
+                                                    <div className=' mx-2 cursor-pointer flex items-center' onClick={() => { setintervaldatestafffilter(prev => !prev) }}>
+                                                        <div className='mr-1'>
+                                                            <SortAscendingIconSvg size={15} color={`#35763B`} />
+                                                        </div>
+                                                        <p className='mb-0 font-semibold text-sm text-primary100 hover:text-primary75'>Interval Tanggal</p>
                                                     </div>
-                                                    <p className='mb-0 font-semibold text-sm text-primary100 hover:text-primary75'>Interval Tanggal</p>
-                                                </div>
+                                                }
+                                                {
+                                                    intervaldatestafffilter &&
+                                                    <DatePicker.RangePicker showTime allowEmpty className="datepickerStatus" onChange={(dates, datestrings) => {
+                                                        setintervaldatestaff({ from: datestrings[0], to: datestrings[1] })
+                                                        setloadingstaff(true)
+                                                        fetch(`https://boiling-thicket-46501.herokuapp.com/getStaffTaskStatuses?page=${pagestaff}&rows=${rowsstaff}&from=${datestrings[0]}&to=${datestrings[1]}&name=${searcingstaff}`, {
+                                                            method: `GET`,
+                                                            headers: {
+                                                                'Authorization': JSON.parse(initProps),
+                                                            },
+                                                        })
+                                                            .then(res => res.json())
+                                                            .then(res2 => {
+                                                                setdatarawstaff(res2.data)
+                                                                setdatastaff(res2.data.data)
+                                                                setloadingstaff(false)
+                                                                datestrings[0] === "" && datestrings[1] === "" ? setintervaldatestafffilter(false) : null
+                                                            })
+                                                    }} />
+                                                }
                                                 <div className="mx-2">
-                                                    <Input style={{ width: `20rem` }} placeholder="Nama Staff.." allowClear onChange={(e) => {
+                                                    <Input style={{ width: `20rem`, height: `100%` }} placeholder="Nama Staff.." allowClear onChange={(e) => {
                                                         setsearcingstaff(e.target.value)
                                                         setloadingstaff(true)
                                                         fetch(`https://boiling-thicket-46501.herokuapp.com/getStaffTaskStatuses?page=${pagestaff}&rows=${rowsstaff}&name=${e.target.value}&from=${intervaldatestaff.from}&to=${intervaldatestaff.to}`, {
@@ -830,6 +854,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                 setdataraw={setdatarawstaff}
                                                 setsortingstaff={setsortingstaff}
                                                 searcingstaff={searcingstaff}
+                                                intervaldatestaff={intervaldatestaff}
                                             />
                                         </div>
                                     </div>
@@ -869,7 +894,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                     <>
                                                         {
                                                             userlasttwo.length >= 1 &&
-                                                            <div className="rounded bg-state1 shadow text-white p-5 flex justify-between mb-8 cursor-pointer" onClick={()=>{rt.push(`/tasks/detail/${userlasttwo[0].id}`)}}>
+                                                            <div className="rounded bg-state1 shadow text-white p-5 flex justify-between mb-8 cursor-pointer" onClick={() => { rt.push(`/tasks/detail/${userlasttwo[0].id}`) }}>
                                                                 <div className="flex flex-col">
                                                                     <div>
                                                                         <ClipboardcheckIconSvg size={50} color={`#ffffff`} />
@@ -892,7 +917,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                         }
                                                         {
                                                             userlasttwo.length >= 2 &&
-                                                            <div className="rounded bg-white shadow p-5 flex justify-between cursor-pointer" onClick={()=>{rt.push(`/tasks/detail/${userlasttwo[1].id}`)}}>
+                                                            <div className="rounded bg-white shadow p-5 flex justify-between cursor-pointer" onClick={() => { rt.push(`/tasks/detail/${userlasttwo[1].id}`) }}>
                                                                 <div className="flex flex-col">
                                                                     <div>
                                                                         <ClipboardcheckIconSvg size={50} color={`#35763B`} />
