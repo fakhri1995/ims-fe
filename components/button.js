@@ -20,7 +20,7 @@ const ButtonSys = ({ size, type, children, color, submit, onClick, form, selecte
     }
     else if (type === 'default') {
         return (
-            <button form={form} onClick={onClick} type={submit ? "submit" : "button"} className={`btn btn-outline ${size === "large" ? "" : "btn-sm"} ${typeof (color) === 'undefined' ? "text-primary100" : (color === "danger" && "text-state1")} hover:text-white hover:${typeof (color) === 'undefined' ? "bg-primary75" : (color === "danger" && "bg-state1")} ${typeof (color) === 'undefined' ? "border-primary100" : (color === "danger" && "border-state1")} hover:${typeof (color) === 'undefined' ? "border-primary75" : (color === "danger" && "border-state1")} px-6`}>
+            <button disabled={disabled} form={form} onClick={onClick} type={submit ? "submit" : "button"} className={`btn btn-outline ${size === "large" ? "" : "btn-sm"} ${typeof (color) === 'undefined' ? "text-primary100" : (color === "danger" && "text-state1")} hover:text-white hover:${typeof (color) === 'undefined' ? "bg-primary75" : (color === "danger" && "bg-state1")} ${typeof (color) === 'undefined' ? "border-primary100" : (color === "danger" && "border-state1")} hover:${typeof (color) === 'undefined' ? "border-primary75" : (color === "danger" && "border-state1")} px-6`}>
                 {children}
             </button>
         )

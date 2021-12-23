@@ -692,6 +692,48 @@ const PlayerPlayIconSvg = ({ size, color }) => {
         <Icon component={playerPlayIconSvg}></Icon>
     )
 }
+const CloudUploadIconSvg = ({ size, color }) => {
+    const cloudUploadIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-cloud-upload" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M7 18a4.6 4.4 0 0 1 0 -9a5 4.5 0 0 1 11 2h1a3.5 3.5 0 0 1 0 7h-1" />
+            <polyline points="9 15 12 12 15 15" />
+            <line x1={12} y1={12} x2={12} y2={21} />
+        </svg>
+    )
+    return (
+        <Icon component={cloudUploadIconSvg}></Icon>
+    )
+}
+const PhotoIconSvg = ({ size, color }) => {
+    const photoIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-photo" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <line x1={15} y1={8} x2="15.01" y2={8} />
+            <rect x={4} y={4} width={16} height={16} rx={3} />
+            <path d="M4 15l4 -4a3 5 0 0 1 3 0l5 5" />
+            <path d="M14 14l1 -1a3 5 0 0 1 3 0l2 2" />
+        </svg>
+    )
+    return (
+        <Icon component={photoIconSvg}></Icon>
+    )
+}
+const FileTextIconSvg = ({ size, color }) => {
+    const fileTextIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-file-text" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+            <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
+            <line x1={9} y1={9} x2={10} y2={9} />
+            <line x1={9} y1={13} x2={15} y2={13} />
+            <line x1={9} y1={17} x2={15} y2={17} />
+        </svg>
+    )
+    return (
+        <Icon component={fileTextIconSvg}></Icon>
+    )
+}
 const AssetIconSvg = ({ size, color }) => {
     const assetIconSvg = () => (
         <svg width={size} height={size} viewBox="0 0 72 73" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -892,5 +934,8 @@ export {
     SortDescendingIconSvg,
     ForbidIconSvg,
     PlayerPauseIconSvg,
-    PlayerPlayIconSvg
+    PlayerPlayIconSvg,
+    CloudUploadIconSvg,
+    PhotoIconSvg,
+    FileTextIconSvg
 }
