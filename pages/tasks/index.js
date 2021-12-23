@@ -3,7 +3,7 @@ import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import st from '../../components/layout-dashboard.module.css'
-import { Progress, Input, notification, Select, DatePicker, Spin, Tree, Empty } from 'antd'
+import { Progress, Input, notification, Select, DatePicker, Spin, Tree, Empty, TreeSelect } from 'antd'
 import Buttonsys from '../../components/button'
 import { H1, H2, Label, Text } from '../../components/typography'
 import { AlerttriangleIconSvg, ArrowsSortIconSvg, BackIconSvg, CalendartimeIconSvg, CircleXIconSvg, ClipboardcheckIconSvg, ClockIconSvg, EditIconSvg, ListcheckIconSvg, LocationIconSvg, MappinIconSvg, SearchIconSvg, SortAscendingIconSvg, SortDescendingIconSvg, TrashIconSvg, UserIconSvg } from '../../components/icon'
@@ -16,7 +16,7 @@ import DrawerTaskTypesCreate from '../../components/drawer/tasks/drawerTaskTypes
 import DrawerTaskTypesUpdate from '../../components/drawer/tasks/drawerTaskTypesUpdate'
 import DrawerTaskCreate from '../../components/drawer/tasks/drawerTaskCreate'
 import moment from 'moment'
-import { DownOutlined } from '@ant-design/icons'
+import { DownOutlined, SearchOutlined } from '@ant-design/icons'
 
 const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     //1.Init
@@ -135,15 +135,23 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     })
     const [datatasks, setdatatasks] = useState([])
     const [loadingtasks, setloadingtasks] = useState(false)
+    //filter dan sort - tasks
+    const [datafiltertipetasks, setdatafiltertipetasks] = useState([])
+    const [datafilterlokasi, setdatafilterlokasi] = useState([])
     const [searchstate, setsearchstate] = useState("")
     const [sortstate, setsortstate] = useState({
         sort_by: "",
         sort_type: "",
     })
-    const [filterstate, setfilterstate] = useState("")
+    const [statusfilterstate, setstatusfilterstate] = useState("")
+    const [lokasifilterstate, setlokasifilterstate] = useState("")
+    const [fromdatefilterstate, setfromdatefilterstate] = useState("")
+    const [todatefilterstate, settodatefilterstate] = useState("")
+    const [tasktypefilterstate, settasktypefilterstate] = useState("")
+    const [fetchingtasktypes, setfetchingtasktypes] = useState(false)
     const [pagetask, setpagetask] = useState(1)
     const [rowstask, setrowstask] = useState(10)
-    //create - task
+    //create - tasks
     const [drawertaskcreate, setdrawertaskcreate] = useState(false)
     //STAFF
     const [datarawstaff, setdatarawstaff] = useState({
@@ -526,9 +534,9 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     ]
 
     //HANDLER
-    const onSearchTask = () => {
+    const onFilterTask = () => {
         setloadingtasks(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&status=${filterstate}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -586,13 +594,14 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                 .then(res2 => {
                     setdatarawtipetask(res2.data)
                     setdatatipetasks(res2.data.data)
+                    setdatafiltertipetasks(res2.data.data)
                     setloadingtipetasks(false)
                 })
         }
     }, [viewdetailtipetask, drawertasktypecreate, modaltipetaskdelete])
     useEffect(() => {
         setloadingtasks(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -605,6 +614,22 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                 setloadingtasks(false)
             })
     }, [drawertaskcreate])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getAllCompanyList`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatafilterlokasi(res2.data.children)
+                setstatustaskloc(res2.data.children)
+                setttcloc(res2.data.children)
+                setdtloc(res2.data.children)
+                setloadingstatustaskdata(false)
+            })
+    }, [])
     useEffect(() => {
         setloadingtasks(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/getUserLastTwoTasks`, {
@@ -685,21 +710,21 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                 setloadingstaff(false)
             })
     }, [])
-    useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
-            method: `GET`,
-            headers: {
-                'Authorization': JSON.parse(initProps),
-            },
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setstatustaskloc(res2.data.companies.children)
-                setttcloc(res2.data.companies.children)
-                setdtloc(res2.data.companies.children)
-                setloadingstatustaskdata(false)
-            })
-    }, [])
+    // useEffect(() => {
+    //     fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
+    //         method: `GET`,
+    //         headers: {
+    //             'Authorization': JSON.parse(initProps),
+    //         },
+    //     })
+    //         .then(res => res.json())
+    //         .then(res2 => {
+    //             setstatustaskloc(res2.data.companies.children)
+    //             setttcloc(res2.data.companies.children)
+    //             setdtloc(res2.data.companies.children)
+    //             setloadingstatustaskdata(false)
+    //         })
+    // }, [])
     useEffect(() => {
         if (triggertasktypupdate !== -1) {
             setidtasktypupdate(triggertasktypupdate)
@@ -1035,84 +1060,89 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                             <Spin />
                                         </>
                                         :
-                                        <>
-                                            <div className="flex justify-center mb-4">
-                                                <Doughnut
-                                                    data={{
-                                                        labels: statustaskdata.map((doc) => doc.status_name),
-                                                        datasets: [
-                                                            {
-                                                                data: statustaskdata.map((doc) => doc.status_count),
-                                                                backgroundColor: [
-                                                                    '#BF4A40',
-                                                                    '#2F80ED',
-                                                                    '#ED962F',
-                                                                    '#E5C471',
-                                                                    '#6AAA70',
-                                                                    '#808080',
-                                                                ],
-                                                                borderColor: [
-                                                                    '#BF4A40',
-                                                                    '#2F80ED',
-                                                                    '#ED962F',
-                                                                    '#E5C471',
-                                                                    '#6AAA70',
-                                                                    '#808080',
-                                                                ],
-                                                                borderWidth: 1,
-                                                            },
-                                                        ]
-                                                    }}
-                                                    options={{
-                                                        title: {
-                                                            display: false,
+                                        statustaskdata.every(docevery => docevery.status_count === 0) ?
+                                            <>
+                                                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                            </>
+                                            :
+                                            <>
+                                                <div className="flex justify-center mb-4">
+                                                    <Doughnut
+                                                        data={{
+                                                            labels: statustaskdata.map((doc) => doc.status_name),
+                                                            datasets: [
+                                                                {
+                                                                    data: statustaskdata.map((doc) => doc.status_count),
+                                                                    backgroundColor: [
+                                                                        '#BF4A40',
+                                                                        '#2F80ED',
+                                                                        '#ED962F',
+                                                                        '#E5C471',
+                                                                        '#6AAA70',
+                                                                        '#808080',
+                                                                    ],
+                                                                    borderColor: [
+                                                                        '#BF4A40',
+                                                                        '#2F80ED',
+                                                                        '#ED962F',
+                                                                        '#E5C471',
+                                                                        '#6AAA70',
+                                                                        '#808080',
+                                                                    ],
+                                                                    borderWidth: 1,
+                                                                },
+                                                            ]
+                                                        }}
+                                                        options={{
+                                                            title: {
+                                                                display: false,
 
-                                                        },
-                                                        legend: {
-                                                            display: false,
-                                                        },
-                                                        maintainAspectRatio: false,
-                                                        cutout: 55,
-                                                        spacing: 5
-                                                    }}
-                                                />
-                                            </div>
-                                            <div className="flex flex-col">
-                                                {
-                                                    statustaskdata.map((doc, idx) => {
-                                                        if (doc.status === 1) {
-                                                            return (
-                                                                <div className="flex justify-between items-center mb-1">
-                                                                    <div className="flex">
-                                                                        <div className=" w-1 bg-overdue mr-1"></div>
-                                                                        <div className='mr-1'>
+                                                            },
+                                                            legend: {
+                                                                display: false,
+                                                            },
+                                                            maintainAspectRatio: false,
+                                                            cutout: 55,
+                                                            spacing: 5
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    {
+                                                        statustaskdata.map((doc, idx) => {
+                                                            if (doc.status === 1) {
+                                                                return (
+                                                                    <div className="flex justify-between items-center mb-1">
+                                                                        <div className="flex">
+                                                                            <div className=" w-1 bg-overdue mr-1"></div>
+                                                                            <div className='mr-1'>
+                                                                                <Text>{doc.status_name}</Text>
+                                                                            </div>
+                                                                            <AlerttriangleIconSvg size={15} color={`#BF4A40`} />
+                                                                        </div>
+                                                                        <div className="flex">
+                                                                            <H2>{doc.status_count}</H2>
+                                                                        </div>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                            else {
+                                                                return (
+                                                                    <div className="flex justify-between items-center mb-1">
+                                                                        <div className="flex">
+                                                                            <div className={`w-1 mr-1 ${doc.status === 1 && `bg-overdue`} ${doc.status === 2 && `bg-open`} ${doc.status === 3 && `bg-onprogress`} ${doc.status === 4 && `bg-onhold`} ${doc.status === 5 && `bg-completed`} ${doc.status === 6 && `bg-closed`}`}></div>
                                                                             <Text>{doc.status_name}</Text>
                                                                         </div>
-                                                                        <AlerttriangleIconSvg size={15} color={`#BF4A40`} />
+                                                                        <div className="flex">
+                                                                            <H2>{doc.status_count}</H2>
+                                                                        </div>
                                                                     </div>
-                                                                    <div className="flex">
-                                                                        <H2>{doc.status_count}</H2>
-                                                                    </div>
-                                                                </div>
-                                                            )
-                                                        }
-                                                        else {
-                                                            return (
-                                                                <div className="flex justify-between items-center mb-1">
-                                                                    <div className="flex">
-                                                                        <div className={`w-1 mr-1 ${doc.status === 1 && `bg-overdue`} ${doc.status === 2 && `bg-open`} ${doc.status === 3 && `bg-onprogress`} ${doc.status === 4 && `bg-onhold`} ${doc.status === 5 && `bg-completed`} ${doc.status === 6 && `bg-closed`}`}></div>
-                                                                        <Text>{doc.status_name}</Text>
-                                                                    </div>
-                                                                    <div className="flex">
-                                                                        <H2>{doc.status_count}</H2>
-                                                                    </div>
-                                                                </div>
-                                                            )
-                                                        }
-                                                    })
-                                                }
-                                            </div>
-                                        </>
+                                                                )
+                                                            }
+                                                        })
+                                                    }
+                                                </div>
+                                            </>
                                 }
                             </div>
                             {/* TIPE TASK */}
@@ -1522,38 +1552,131 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                             <div className="col-span-11 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mr-3">
                                 <div className="flex items-center justify-between mb-4">
                                     <H1>Semua Task</H1>
-                                    <div className="w-8/12 flex justify-end">
-                                        <div className="mx-2">
-                                            <Input style={{ width: `20rem` }} placeholder="Cari Judul atau ID.." allowClear onChange={(e) => {
-                                                if (e.target.value === "") {
-                                                    setsearchstate("")
-                                                    setloadingtasks(true)
-                                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=`, {
-                                                        method: `GET`,
-                                                        headers: {
-                                                            'Authorization': JSON.parse(initProps),
-                                                        },
+                                </div>
+                                <div className=' flex items-center mb-4'>
+                                    <div className="mx-1 w-2/12">
+                                        <Input value={searchstate} style={{ width: `100%` }} placeholder="Judul atau ID.." allowClear onChange={(e) => {
+                                            if (e.target.value === "") {
+                                                setsearchstate("")
+                                            }
+                                            else {
+                                                setsearchstate(e.target.value)
+                                            }
+                                        }} />
+                                    </div>
+                                    <div className='mx-1 w-2/12'>
+                                        <Select
+                                            value={tasktypefilterstate === "" ? null : tasktypefilterstate}
+                                            placeholder="Semua Tipe Task"
+                                            style={{ width: `100%` }}
+                                            allowClear
+                                            showSearch
+                                            optionFilterProp="children"
+                                            notFoundContent={fetchingtasktypes ? <Spin size="small" /> : null}
+                                            onSearch={(value) => {
+                                                setfetchingtasktypes(true)
+                                                fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterTaskTypes?name=${value}`, {
+                                                    method: `GET`,
+                                                    headers: {
+                                                        'Authorization': JSON.parse(initProps),
+                                                    },
+                                                })
+                                                    .then(res => res.json())
+                                                    .then(res2 => {
+                                                        setdatafiltertipetasks(res2.data)
+                                                        setfetchingtasktypes(false)
                                                     })
-                                                        .then(res => res.json())
-                                                        .then(res2 => {
-                                                            setdatarawtask(res2.data)
-                                                            setdatatasks(res2.data.data)
-                                                            setloadingtasks(false)
-                                                        })
-                                                }
-                                                else {
-                                                    setsearchstate(e.target.value)
-                                                }
-                                            }} />
-                                        </div>
-                                        <div className='mx-2'>
-                                            <Buttonsys type={`primary`} onClick={onSearchTask}>
-                                                <div className='mr-1'>
-                                                    <SearchIconSvg size={15} color={`#ffffff`} />
+                                            }}
+                                            filterOption={(input, opt) => (
+                                                opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                            )}
+                                            name={`task_type_id`}
+                                            onChange={(value) => { typeof (value) === 'undefined' ? settasktypefilterstate("") : settasktypefilterstate(value) }}
+                                        >
+                                            {
+                                                datafiltertipetasks.map((doc, idx) => (
+                                                    <Select.Option key={idx} value={doc.id}>{doc.name}</Select.Option>
+                                                ))
+                                            }
+                                        </Select>
+                                    </div>
+                                    <div className=' w-3/12 mx-1'>
+                                        <DatePicker.RangePicker showTime allowEmpty className="datepickerStatus" value={fromdatefilterstate === "" ? [null, null] : [moment(fromdatefilterstate), moment(todatefilterstate)]} onChange={(dates, datestrings) => {
+                                            setfromdatefilterstate(datestrings[0])
+                                            settodatefilterstate(datestrings[1])
+                                            setloadingstaff(true)
+                                        }}
+                                        />
+                                    </div>
+                                    <div className=' mx-1 w-2/12'>
+                                        <TreeSelect
+                                            style={{ width: `100%` }}
+                                            allowClear
+                                            placeholder="Semua Lokasi"
+                                            showSearch
+                                            suffixIcon={<SearchOutlined />}
+                                            showArrow
+                                            name={`locations_id`}
+                                            onChange={(value) => { typeof (value) === 'undefined' ? setlokasifilterstate("") : setlokasifilterstate(value) }}
+                                            treeData={datafilterlokasi}
+                                            treeDefaultExpandAll
+                                            value={lokasifilterstate === "" ? null : lokasifilterstate}
+                                        ></TreeSelect >
+                                    </div>
+                                    <div className=' mx-1 w-2/12'>
+                                        <Select
+                                            style={{ width: `100%` }}
+                                            value={statusfilterstate === "" ? null : statusfilterstate}
+                                            placeholder="Semua Status"
+                                            allowClear
+                                            name={`status`}
+                                            onChange={(value) => { typeof (value) === 'undefined' ? setstatusfilterstate("") : setstatusfilterstate(value) }}
+                                        >
+                                            <Select.Option value={1}>
+                                                <div className=' flex items-center'>
+                                                    <div className="rounded-md h-auto px-1 mr-1 text-center py-1 bg-overdue border border-overdue"></div>
+                                                    Overdue
                                                 </div>
-                                                Search
-                                            </Buttonsys>
-                                        </div>
+                                            </Select.Option>
+                                            <Select.Option value={2}>
+                                                <div className=' flex items-center'>
+                                                    <div className="rounded-md h-auto px-1 mr-1 text-center py-1 bg-open border border-open"></div>
+                                                    Open
+                                                </div>
+                                            </Select.Option>
+                                            <Select.Option value={3}>
+                                                <div className=' flex items-center'>
+                                                    <div className="rounded-md h-auto px-1 mr-1 text-center py-1 bg-onprogress border border-onprogress"></div>
+                                                    On Progress
+                                                </div>
+                                            </Select.Option>
+                                            <Select.Option value={4}>
+                                                <div className=' flex items-center'>
+                                                    <div className="rounded-md h-auto px-1 mr-1 text-center py-1 bg-onhold border border-onhold"></div>
+                                                    On Hold
+                                                </div>
+                                            </Select.Option>
+                                            <Select.Option value={5}>
+                                                <div className=' flex items-center'>
+                                                    <div className="rounded-md h-auto px-1 mr-1 text-center py-1 bg-completed border border-completed"></div>
+                                                    Completed
+                                                </div>
+                                            </Select.Option>
+                                            <Select.Option value={6}>
+                                                <div className=' flex items-center'>
+                                                    <div className="rounded-md h-auto px-1 mr-1 text-center py-1 bg-closed border border-closed"></div>
+                                                    Closed
+                                                </div>
+                                            </Select.Option>
+                                        </Select>
+                                    </div>
+                                    <div className='mx-1 w-1/12'>
+                                        <Buttonsys type={`primary`} onClick={onFilterTask}>
+                                            <div className='mr-1'>
+                                                <SearchIconSvg size={15} color={`#ffffff`} />
+                                            </div>
+                                            Cari
+                                        </Buttonsys>
                                     </div>
                                 </div>
                                 <div className="flex flex-col">
@@ -1570,10 +1693,13 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                         pagefromsearch={pagetask}
                                         setdataraw={setdatarawtask}
                                         sortstate={sortstate}
-                                        searchstate={searchstate}
                                         setsortstate={setsortstate}
-                                        filterstate={filterstate}
-                                        setfilterstate={setfilterstate}
+                                        searchstate={searchstate}
+                                        tasktypefilterstate={tasktypefilterstate}
+                                        fromdatefilterstate={fromdatefilterstate}
+                                        todatefilterstate={todatefilterstate}
+                                        lokasifilterstate={lokasifilterstate}
+                                        statusfilterstate={statusfilterstate}
                                     />
                                 </div>
                             </div>
@@ -1649,3 +1775,18 @@ export async function getServerSideProps({ req, res }) {
 }
 
 export default TaskIndex
+
+                                                // setsearchstate("")
+                                                // setloadingtasks(true)
+                                                // fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=&status=${statusfilterstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}`, {
+                                                //     method: `GET`,
+                                                //     headers: {
+                                                //         'Authorization': JSON.parse(initProps),
+                                                //     },
+                                                // })
+                                                //     .then(res => res.json())
+                                                //     .then(res2 => {
+                                                //         setdatarawtask(res2.data)
+                                                //         setdatatasks(res2.data.data)
+                                                //         setloadingtasks(false)
+                                                //     })

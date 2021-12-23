@@ -133,7 +133,7 @@ const TableCustomTipeTask = ({ dataSource, setDataSource, columns, loading, page
     )
 }
 
-const TableCustomTask = ({ dataSource, setDataSource, columns, loading, pageSize, total, setpraloading, initProps, setpage, pagefromsearch, setdataraw, sortstate, searchstate, setsortstate, filterstate, setfilterstate }) => {
+const TableCustomTask = ({ dataSource, setDataSource, columns, loading, pageSize, total, setpraloading, initProps, setpage, pagefromsearch, setdataraw, sortstate, searchstate, setsortstate, tasktypefilterstate, fromdatefilterstate, todatefilterstate, lokasifilterstate, statusfilterstate }) => {
     const rt = useRouter()
     const [rowstate, setrowstate] = useState(0)
     return (
@@ -150,7 +150,7 @@ const TableCustomTask = ({ dataSource, setDataSource, columns, loading, pageSize
                 onChange: (page, pageSize) => {
                     setpraloading(true)
                     setpage(page)
-                    fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${page}&rows=${pageSize}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&status${filterstate}`, {
+                    fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTasks?page=${page}&rows=${pageSize}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}`, {
                         method: `GET`,
                         headers: {
                             'Authorization': JSON.parse(initProps),
@@ -185,7 +185,7 @@ const TableCustomTask = ({ dataSource, setDataSource, columns, loading, pageSize
                     if (sorter.column) {
                         setpraloading(true)
                         setsortstate({ sort_by: sorter.column.dataIndex, sort_type: sorter.order === "ascend" ? "asc" : "desc" })
-                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=${sorter.column.dataIndex}&sort_type=${sorter.order === "ascend" ? "asc" : "desc"}&keyword=${searchstate}&status=${filterstate}`, {
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTasks?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=${sorter.column.dataIndex}&sort_type=${sorter.order === "ascend" ? "asc" : "desc"}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}`, {
                             method: `GET`,
                             headers: {
                                 'Authorization': JSON.parse(initProps),
@@ -201,7 +201,7 @@ const TableCustomTask = ({ dataSource, setDataSource, columns, loading, pageSize
                     else {
                         setpraloading(true)
                         setsortstate({ sort_by: "", sort_type: "" })
-                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=&sort_type=&keyword=${searchstate}&status=${filterstate}`, {
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTasks?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=&sort_type=&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}`, {
                             method: `GET`,
                             headers: {
                                 'Authorization': JSON.parse(initProps),
@@ -215,40 +215,40 @@ const TableCustomTask = ({ dataSource, setDataSource, columns, loading, pageSize
                             })
                     }
                 }
-                else if (extra.action === "filter") {
-                    if (filters.status !== null) {
-                        setpraloading(true)
-                        setfilterstate(filters.status[0])
-                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&status=${filters.status[0]}`, {
-                            method: `GET`,
-                            headers: {
-                                'Authorization': JSON.parse(initProps),
-                            },
-                        })
-                            .then(res => res.json())
-                            .then(res2 => {
-                                setdataraw(res2.data)
-                                setDataSource(res2.data.data)
-                                setpraloading(false)
-                            })
-                    }
-                    else {
-                        setpraloading(true)
-                        setfilterstate("")
-                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&status=`, {
-                            method: `GET`,
-                            headers: {
-                                'Authorization': JSON.parse(initProps),
-                            },
-                        })
-                            .then(res => res.json())
-                            .then(res2 => {
-                                setdataraw(res2.data)
-                                setDataSource(res2.data.data)
-                                setpraloading(false)
-                            })
-                    }
-                }
+                // else if (extra.action === "filter") {
+                //     if (filters.status !== null) {
+                //         setpraloading(true)
+                //         setstatusfilterstate(filters.status[0])
+                //         fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&status=${filters.status[0]}`, {
+                //             method: `GET`,
+                //             headers: {
+                //                 'Authorization': JSON.parse(initProps),
+                //             },
+                //         })
+                //             .then(res => res.json())
+                //             .then(res2 => {
+                //                 setdataraw(res2.data)
+                //                 setDataSource(res2.data.data)
+                //                 setpraloading(false)
+                //             })
+                //     }
+                //     else {
+                //         setpraloading(true)
+                //         setstatusfilterstate("")
+                //         fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&status=`, {
+                //             method: `GET`,
+                //             headers: {
+                //                 'Authorization': JSON.parse(initProps),
+                //             },
+                //         })
+                //             .then(res => res.json())
+                //             .then(res2 => {
+                //                 setdataraw(res2.data)
+                //                 setDataSource(res2.data.data)
+                //                 setpraloading(false)
+                //             })
+                //     }
+                // }
             }}
         />
     )
