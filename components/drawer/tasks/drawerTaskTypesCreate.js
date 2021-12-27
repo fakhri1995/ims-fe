@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import DrawerCore from '../drawerCore'
-import {InputRequired, TextAreaRequired, RadioNotRequired } from '../../input'
+import { InputRequired, TextAreaRequired, RadioNotRequired } from '../../input'
 import { Spin, notification, Input, Select, Empty, Checkbox } from 'antd'
-import { AlignJustifiedIconSvg, BorderAllSvg, CheckboxIconSvg, CopyIconSvg, ListNumbersSvg, RulerIconSvg, TrashIconSvg } from '../../icon'
+import { AlertIconSvg, AlignJustifiedIconSvg, BorderAllSvg, CheckboxIconSvg, CheckIconSvg, CircleXIconSvg, CopyIconSvg, ListNumbersSvg, RulerIconSvg, TrashIconSvg } from '../../icon'
 import { Label, H2 } from '../../typography'
 
 const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps }) => {
@@ -15,6 +15,8 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
     const [loadingcreate, setloadingcreate] = useState(false)
     const [disabledcreate, setdisabledcreate] = useState(true)
     const [disabledtrigger, setdisabledtrigger] = useState(-1)
+    const [tasktypenameexist, settasktypenameexist] = useState(null)
+    const [loadingtasktypenameexist, setloadingtasktypenameexist] = useState(false)
     //checkbox
     const [tempcb, settempcb] = useState("")
     //matriks
@@ -67,7 +69,7 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
     //USEEFFECT
     useEffect(() => {
         if (disabledtrigger !== -1) {
-            if (datacreate.name !== "" && datacreate.description !== "") {
+            if (datacreate.name !== "" && datacreate.description !== "" && tasktypenameexist === false) {
                 setdisabledcreate(false)
             }
             else {
@@ -91,12 +93,78 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                         <p className="mb-0 text-red-500 text-xs italic">*Informasi ini harus diisi</p>
                     </div>
                     <div className="flex flex-col">
-                        <InputRequired name="name" defaultValue={datacreate.name} onChangeInput={onChangeInput} label="Judul Tipe Task"></InputRequired>
+                        <div className=' mb-5 px-3 flex flex-col'>
+                            <div className="flex mb-1">
+                                <Label>{`Judul Tipe Task`}</Label>
+                                <span className="namaField"></span>
+                                <style jsx>
+                                    {`
+                                        .namaField::before{
+                                            content: '*';
+                                            color: red;
+                                        }
+                                    `}
+                                </style>
+                            </div>
+                            <div className=' flex items-center'>
+                                <div className="mr-2">
+                                    <Input name='name' defaultValue={datacreate.name} onChange={onChangeInput}
+                                        onBlur={(e) => {
+                                            setloadingtasktypenameexist(true)
+                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterTaskTypes?name=${e.target.value}`, {
+                                                method: 'GET',
+                                                headers: {
+                                                    'Authorization': JSON.parse(initProps),
+                                                },
+                                            })
+                                                .then((res) => res.json())
+                                                .then(res2 => {
+                                                    setloadingtasktypenameexist(false)
+                                                    res2.data.length === 0 ? settasktypenameexist(false) : settasktypenameexist(true)
+                                                    setdisabledtrigger(prev => prev + 1)
+                                                })
+                                        }}
+                                    ></Input>
+                                </div>
+                                {
+                                    loadingtasktypenameexist ?
+                                        <>
+                                            <Spin />
+                                        </>
+                                        :
+                                        tasktypenameexist !== null ?
+                                            (
+                                                tasktypenameexist === true ?
+                                                    <div className=' bg-overdue bg-opacity-10 text-overdue p-1 rounded flex justify-center items-center text-2xs'>
+                                                        <div className=' mr-1'><AlertIconSvg size={12} color={`#BF4A40`} /></div>
+                                                        Tipe task sudah ada
+                                                    </div>
+                                                    :
+                                                    <div className=' bg-open bg-opacity-10 text-open p-1 rounded flex justify-center items-center text-2xs'>
+                                                        <div className=' mr-1'><CheckIconSvg size={12} color={`#2F80ED`} /></div>
+                                                        Tipe task masih kosong
+                                                    </div>
+                                            )
+                                            :
+                                            null
+                                }
+                            </div>
+                        </div>
+                        {/* <InputRequired name="name" defaultValue={datacreate.name} onChangeInput={onChangeInput} label="Judul Tipe Task"></InputRequired> */}
                         <TextAreaRequired name="description" defaultValue={datacreate.description} onChangeInput={onChangeInput} label="Deskripsi Tipe Task"></TextAreaRequired>
                     </div>
                     <div className="flex flex-col px-3 mb-5">
                         <div className="flex mb-5">
                             <Label>Pekerjaan</Label>
+                            <span className="pekerjaan"></span>
+                            <style jsx>
+                                {`
+                                    .pekerjaan::before{
+                                        content: '*';
+                                        color: red;
+                                    }
+                                `}
+                            </style>
                         </div>
                         {
                             datacreate.works.length === 0 ?
@@ -107,21 +175,23 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                 datacreate.works.map((doc, idx) => {
                                     return (
                                         <div key={idx} className='bg-white flex flex-col shadow-md rounded-md p-3 mb-4 border'>
-                                            <div className="flex justify-center text-lg font-bold mb-3">
+                                            {/* <div className="flex justify-center text-lg font-bold mb-3">
                                                 <div className="cursor-pointer">
                                                     :::
                                                 </div>
-                                            </div>
+                                            </div> */}
                                             <div key={idx} className="grid grid-cols-2 mb-3">
-                                                <div className="col-span-1 mr-1">
-                                                    <Input value={doc.name} placeholder="Nama" onChange={(e) => {
-                                                        var temp = [...datacreate.works]
-                                                        temp[idx].name = e.target.value
-                                                        setdatacreate(prev => ({
-                                                            ...prev,
-                                                            works: temp
-                                                        }))
-                                                    }}></Input>
+                                                <div className="col-span-1 mr-1 flex items-center">
+                                                    <div className=' mr-2'>
+                                                        <Input value={doc.name} placeholder="Nama" onChange={(e) => {
+                                                            var temp = [...datacreate.works]
+                                                            temp[idx].name = e.target.value
+                                                            setdatacreate(prev => ({
+                                                                ...prev,
+                                                                works: temp
+                                                            }))
+                                                        }}></Input>
+                                                    </div>
                                                 </div>
                                                 <div className="col-span-1 ml-1 mb-3">
                                                     <Select key={idx} name={`name`} value={doc.type} style={{ width: `100%` }} onChange={(value) => {
@@ -235,6 +305,16 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                                                                 <Checkbox style={{ marginRight: `0.5rem` }} checked />
                                                                                 {doc2}
                                                                             </div>
+                                                                            <div className=' cursor-pointer' onClick={() => {
+                                                                                var temp = [...datacreate.works]
+                                                                                temp[idx].lists.splice(idx2, 1)
+                                                                                setdatacreate(prev => ({
+                                                                                    ...prev,
+                                                                                    works: temp
+                                                                                }))
+                                                                            }}>
+                                                                                <CircleXIconSvg size={15} color={`#BF4A40`} />
+                                                                            </div>
                                                                         </div>
                                                                     )
                                                                 })
@@ -275,6 +355,16 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                                                             </div>
                                                                             <div className="flex items-center mr-2">
                                                                                 {doc2}
+                                                                            </div>
+                                                                            <div className=' cursor-pointer' onClick={() => {
+                                                                                var temp = [...datacreate.works]
+                                                                                temp[idx].columns.splice(idx2, 1)
+                                                                                setdatacreate(prev => ({
+                                                                                    ...prev,
+                                                                                    works: temp
+                                                                                }))
+                                                                            }}>
+                                                                                <CircleXIconSvg size={15} color={`#BF4A40`} />
                                                                             </div>
                                                                         </div>
                                                                     )
@@ -333,6 +423,16 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                                                                     </div>
                                                                                     <div className="flex items-center mr-2">
                                                                                         {doc2}
+                                                                                    </div>
+                                                                                    <div className=' cursor-pointer' onClick={() => {
+                                                                                        var temp = [...datacreate.works]
+                                                                                        temp[idx].rows.splice(idx2, 1)
+                                                                                        setdatacreate(prev => ({
+                                                                                            ...prev,
+                                                                                            works: temp
+                                                                                        }))
+                                                                                    }}>
+                                                                                        <CircleXIconSvg size={15} color={`#BF4A40`} />
                                                                                     </div>
                                                                                 </div>
                                                                             )
