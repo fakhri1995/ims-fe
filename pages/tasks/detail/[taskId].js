@@ -6,13 +6,14 @@ import st from '../../../components/layout-dashboard.module.css'
 import { Select, Spin, notification, Input, Empty, Tooltip, Checkbox } from 'antd'
 import Buttonsys from '../../../components/button'
 import { H1, H2, Label, Text } from '../../../components/typography'
-import { ArrowsSortIconSvg, AssetIconSvg, BackIconSvg, CheckIconSvg, CircleXIconSvg, ClipboardcheckIconSvg, ClockIconSvg, CloudUploadIconSvg, EditIconSvg, ForbidIconSvg, PlayerPauseIconSvg, PlayerPlayIconSvg, RefreshIconSvg, SortAscendingIconSvg, SortDescendingIconSvg, TrashIconSvg, UserPlusIconSvg } from '../../../components/icon'
+import { ArrowsSortIconSvg, AssetIconSvg, BackIconSvg, CheckIconSvg, CircleXIconSvg, ClipboardcheckIconSvg, ClockIconSvg, CloudUploadIconSvg, EditIconSvg, ForbidIconSvg, PlayerPauseIconSvg, PlayerPlayIconSvg, RefreshIconSvg, SearchIconSvg, SendIconSvg, SortAscendingIconSvg, SortDescendingIconSvg, TrashIconSvg, UserPlusIconSvg } from '../../../components/icon'
 import { ModalHapusTask, ModalHapusTaskDetail, ModalUbahOnHoldTask } from '../../../components/modal/modalCustom'
 import moment from 'moment'
 import { SearchOutlined } from '@ant-design/icons'
 import DrawerTaskUpdate from '../../../components/drawer/tasks/drawerTaskUpdate'
 import DrawerTaskDetailUpdate from '../../../components/drawer/tasks/drawerTaskDetailUpdate'
 import DrawerTaskDetailCreate from '../../../components/drawer/tasks/drawerTaskDetailCreate'
+import { TextAreaRequired } from '../../../components/input'
 
 const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     //1.Init
@@ -102,6 +103,14 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     })
     const [editable, seteditable] = useState([])
     const [disablededitable, setdisablededitable] = useState(true)
+    const [completeclose, setcompleteclose] = useState(false)
+    const [revise, setrevise] = useState({
+        display: false,
+        data: {
+            id: Number(taskid),
+            notes: ""
+        }
+    })
     const [loadingeditable, setloadingeditable] = useState(false)
     // CheckIn Task
     const [loadingcheckin, setloadingcheckin] = useState(false)
@@ -113,6 +122,8 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
         id: Number(taskid)
     })
     const [modalstatustoggle, setmodalstatustoggle] = useState(false)
+    //task submit
+    const [loadingsubmittask, setloadingsubmittask] = useState(false)
     //task detail
     //tambah staff
     const [currentidstafftask, setcurrentidstafftask] = useState(null)
@@ -340,6 +351,90 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 }
             })
     }
+    const handleSubmitTask = () => {
+        setloadingsubmittask(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/submitTask`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: Number(taskid)
+            })
+        })
+            .then((res) => res.json())
+            .then(res2 => {
+                setloadingsubmittask(false)
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    window.location.href = `/tasks/detail/${taskid}`
+                }
+                else {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
+    const handleReviseTask = () => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/declineTask`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(revise.data)
+        })
+            .then((res) => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    window.location.href = `/tasks`
+                }
+                else {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
+    const handleApproveTask = () => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/approveTask`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: Number(taskid)
+            })
+        })
+            .then((res) => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                    window.location.href = `/tasks`
+                }
+                else {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
 
 
     //USEEFFECT
@@ -437,8 +532,9 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                     s: res2.data.time_left.s
                 })
                 if (res2.data.created_by !== dataProfile.data.id) {
-                    res2.data.users.filter(docfil => docfil.id === dataProfile.data.id)[0].check_in === null ? setdisablededitable(true) : setdisablededitable(false)
+                    res2.data.users.filter(docfil => docfil.id === dataProfile.data.id)[0].check_in === null || res2.data.status === 4 ? setdisablededitable(true) : setdisablededitable(false)
                 }
+                res2.data.status === 5 || res2.data.status === 6 ? setcompleteclose(true) : setcompleteclose(false)
                 setpraloadingtask(false)
             })
     }, [loadingtaskdelete, loadingchange, loadingstafftask, triggertaskdetailupdate, loadingtaskdetaildelete, triggertaskdetailcreate, loadingeditable, loadingcheckin])
@@ -544,14 +640,17 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                             }
                                         </div>
                                     </div>
-                                    <div className=' flex justify-end'>
-                                        <Buttonsys type={`primary`} onClick={() => { setdrawertaskupdate(true); setscrollidupdate(6); setscrolltriggerupdate(prev => !prev) }}>
-                                            <div className='mb-1'>
-                                                <UserPlusIconSvg size={15} color={`#ffffff`} />
-                                            </div>
-                                            Tambah Staff
-                                        </Buttonsys>
-                                    </div>
+                                    {
+                                        completeclose === false &&
+                                        <div className=' flex justify-end'>
+                                            <Buttonsys type={`primary`} onClick={() => { setdrawertaskupdate(true); setscrollidupdate(6); setscrolltriggerupdate(prev => !prev) }}>
+                                                <div className='mb-1'>
+                                                    <UserPlusIconSvg size={15} color={`#ffffff`} />
+                                                </div>
+                                                Tambah Staff
+                                            </Buttonsys>
+                                        </div>
+                                    }
                                 </div>
                                 :
                                 <div className=' flex flex-col mb-7'>
@@ -591,11 +690,18 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                 praloadingtask ?
                                                     null
                                                     :
-                                                    <dir>
-                                                        <Buttonsys onClick={handleCheckInTask} disabled={disablededitable === true ? false : true} type={`primary`}>
-                                                            Check In
-                                                        </Buttonsys>
-                                                    </dir>
+                                                    displaytask.status === 4 ?
+                                                        <dir>
+                                                            <Buttonsys onClick={handleCheckInTask} disabled={true} type={`primary`}>
+                                                                Check In
+                                                            </Buttonsys>
+                                                        </dir>
+                                                        :
+                                                        <dir>
+                                                            <Buttonsys onClick={handleCheckInTask} disabled={disablededitable === true ? false : true} type={`primary`}>
+                                                                Check In
+                                                            </Buttonsys>
+                                                        </dir>
                                             }
                                         </div>
                                     </div>
@@ -616,252 +722,209 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                         <Spin />
                                     </>
                                     :
-                                    displaytask.task_details.filter(docfil => docfil.users.some(docsome => docsome.id === dataProfile.data.id)).map((doctask, idxtask) => {
-                                        return (
-                                            <div className='flex flex-col mb-5'>
-                                                <div className='mb-3'>
-                                                    <p className={`font-bold text-lg text-gray-600 mb-0`}>{doctask.component.name}</p>
-                                                </div>
-                                                {
-                                                    doctask.component.description !== "" &&
+                                    displaytask.task_details.filter(docfil => docfil.users.some(docsome => docsome.id === dataProfile.data.id) || (displaytask.created_by === dataProfile.data.id)).length === 0 ?
+                                        <>
+                                            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Belum ada pekerjaan yang ditugaskan" />
+                                        </>
+                                        :
+                                        displaytask.task_details.filter(docfil => docfil.users.some(docsome => docsome.id === dataProfile.data.id) || (displaytask.created_by === dataProfile.data.id)).map((doctask, idxtask) => {
+                                            return (
+                                                <div className='flex flex-col mb-5'>
                                                     <div className='mb-3'>
-                                                        <p className='mb-0 text-sm text-gray-500'>{doctask.component.description}</p>
+                                                        <p className={`font-bold text-lg text-gray-600 mb-0`}>{doctask.component.name}</p>
                                                     </div>
-                                                }
-                                                {
-                                                    displaytask.created_by === dataProfile.data.id &&
-                                                    <div className='mb-3 flex items-center'>
-                                                        <div className='flex items-center'>
-                                                            {
-                                                                doctask.users.map((doctaskuser, idxtaskuser) => (
-                                                                    <div className=' bg-primary100 bg-opacity-10 rounded p-1 flex items-center mr-2'>
-                                                                        <div className='w-6 h-6 rounded-full mr-1'>
-                                                                            <img src={doctaskuser.profile_image === "-" ? "/image/staffTask.png" : doctaskuser.profile_image} alt="" className=' object-contain' />
-                                                                        </div>
-                                                                        <p className='mb-0 text-primary100 mr-1'>{doctaskuser.name}</p>
-                                                                        <div className=' cursor-pointer flex items-center'>
+                                                    {
+                                                        doctask.component.description !== "" &&
+                                                        <div className='mb-3'>
+                                                            <p className='mb-0 text-sm text-gray-500'>{doctask.component.description}</p>
+                                                        </div>
+                                                    }
+                                                    {
+                                                        displaytask.created_by === dataProfile.data.id &&
+                                                        <div className='mb-3 flex items-center'>
+                                                            <div className='flex items-center'>
+                                                                {
+                                                                    doctask.users.map((doctaskuser, idxtaskuser) => (
+                                                                        <div className=' bg-primary100 bg-opacity-10 rounded p-1 flex items-center mr-2'>
+                                                                            <div className='w-6 h-6 rounded-full mr-1'>
+                                                                                <img src={doctaskuser.profile_image === "-" ? "/image/staffTask.png" : doctaskuser.profile_image} alt="" className=' object-contain' />
+                                                                            </div>
+                                                                            <p className='mb-0 text-primary100 mr-1'>{doctaskuser.name}</p>
+                                                                            {/* <div className=' cursor-pointer flex items-center'>
                                                                             <CircleXIconSvg size={15} color={`#BF4A40`} />
+                                                                        </div> */}
                                                                         </div>
-                                                                    </div>
-                                                                ))
-                                                            }
-                                                        </div>
-                                                        <div className="dropdown">
-                                                            <div tabIndex={`0`} onClick={() => {
-                                                                setcurrentidstafftask(doctask.id)
-                                                                setdisplaycurrentstafftask(displaytask.users)
-                                                                setdisplaycurrentstafftask2(displaytask.users)
-                                                                setcurrentstafftask(doctask.users)
-                                                            }}>
-                                                                <p className='mb-0 font-semibold text-sm text-primary100 hover:text-primary75 cursor-pointer'>+ Assign Staff</p>
+                                                                    ))
+                                                                }
                                                             </div>
-                                                            <div tabIndex={`0`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-80 flex flex-col'>
-                                                                <Spin spinning={loadingstafftask}>
-                                                                    {
-                                                                        currentstafftask.length === 0 ?
-                                                                            <>
-                                                                                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                                                                            </>
-                                                                            :
-                                                                            currentstafftask.map((doc, idx) => {
-                                                                                return (
-                                                                                    <>
-                                                                                        <div className=' mb-4 flex items-center'>
-                                                                                            <div className=' w-10 h-10 rounded-full'>
-                                                                                                <img src={currentstafftask[idx].profile_image === "" || doc.profile_image === "-" ? "/image/staffTask.png" : `${doc.profile_image}`} className=' object-contain w-10 h-10' alt="" />
-                                                                                            </div>
-                                                                                            <div className=' flex flex-col justify-center'>
-                                                                                                <div className='mb-1 flex'>
-                                                                                                    <div className='mr-1'>
-                                                                                                        <H2>{doc.name}</H2>
-                                                                                                    </div>
-                                                                                                    <div className=' cursor-pointer' onClick={() => {
-                                                                                                        var temp = [...currentstafftask]
-                                                                                                        temp.splice(idx, 1)
-                                                                                                        setcurrentstafftask(temp)
-                                                                                                        setdisplaycurrentstafftask([...displaycurrentstafftask, doc])
-                                                                                                    }}>
-                                                                                                        <CircleXIconSvg size={15} color={`#BF4A40`} />
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div>
-                                                                                                    <Label>-</Label>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </>
-                                                                                )
-                                                                            })
-                                                                    }
-                                                                    <div className=' mb-4'>
-                                                                        <Input
-                                                                            allowClear
-                                                                            placeholder='Nama Staff, Group..'
-                                                                            onChange={(e) => {
-                                                                                if (e.target.value === "") {
-                                                                                    setdisplaycurrentstafftask(displaycurrentstafftask2.filter(docfil => currentstafftask.map(doc => doc.id).includes(docfil.id) === false))
-                                                                                }
-                                                                                else {
-                                                                                    var temp = [...displaycurrentstafftask]
-                                                                                    var tempfil = temp.filter((docfil) => docfil.name.toLowerCase().includes(e.target.value.toLowerCase()))
-                                                                                    setdisplaycurrentstafftask(tempfil)
-                                                                                }
-                                                                            }
-                                                                            }
-                                                                        ></Input>
+                                                            <div className="dropdown">
+                                                                {
+                                                                    completeclose === false &&
+                                                                    <div tabIndex={`0`} onClick={() => {
+                                                                        setcurrentidstafftask(doctask.id)
+                                                                        setdisplaycurrentstafftask(displaytask.users)
+                                                                        setdisplaycurrentstafftask2(displaytask.users)
+                                                                        setcurrentstafftask(doctask.users)
+                                                                    }}>
+                                                                        <p className='mb-0 font-semibold text-sm text-primary100 hover:text-primary75 cursor-pointer flex items-center'><EditIconSvg size={15} color={`#35763B`} />Atur Staff</p>
                                                                     </div>
-                                                                    {
-                                                                        displaycurrentstafftask.length === 0 ?
-                                                                            <>
-                                                                                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                                                                            </>
-                                                                            :
-                                                                            displaycurrentstafftask.map((doc, idx) => (
-                                                                                <div className=' mb-4 flex items-center cursor-pointer' onClick={() => {
-                                                                                    setcurrentstafftask([...currentstafftask, doc])
-                                                                                    var temp = [...displaycurrentstafftask]
-                                                                                    temp.splice(idx, 1)
-                                                                                    setdisplaycurrentstafftask(temp)
-                                                                                }}>
-                                                                                    <div className=' w-10 h-10 rounded-full'>
-                                                                                        <img src={doc.profile_image === "" || doc.profile_image === "-" ? "/image/staffTask.png" : `${doc.profile_image}`} className=' object-contain w-10 h-10' alt="" />
-                                                                                    </div>
-                                                                                    <div className=' flex flex-col justify-center'>
-                                                                                        <div className='mb-1 flex'>
-                                                                                            <div className='mr-1'>
-                                                                                                <H2>{doc.name}</H2>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div>
-                                                                                            <Label>-</Label>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            ))
-                                                                    }
-                                                                    <div className=' flex justify-end'>
-                                                                        <Buttonsys type={`primary`} onClick={handleAssignStaffTaskDetail}>
-                                                                            <CheckIconSvg size={15} color={`#ffffff`} />
-                                                                            Simpan Perubahan
-                                                                        </Buttonsys>
-                                                                    </div>
-                                                                </Spin>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                }
-                                                {
-                                                    doctask.component.type === 1 &&
-                                                    <>
-                                                        {
-                                                            displaytask.created_by === dataProfile.data.id ?
-                                                                <div className='mb-3 flex flex-col'>
-                                                                    <p className='mb-2 font-bold text-sm'>Catatan Pekerjaan</p>
-                                                                    <div className=' w-full rounded-md flex overflow-hidden p-2 text-gray-600 border '>
-                                                                        {doctask.component.values}
-                                                                    </div>
-                                                                </div>
-                                                                :
-                                                                <div className='mb-3 flex flex-col'>
-                                                                    <p className='mb-2 font-bold text-sm'>Catatan Pekerjaan</p>
-                                                                    {
-                                                                        editable[idxtask] ?
-                                                                            <Input defaultValue={doctask.component.values} onChange={(e) => {
-                                                                                setcurrentdataeditable({ ...currentdataeditable, id: doctask.id, values: e.target.value })
-                                                                            }}></Input>
-                                                                            :
-                                                                            <div className=' w-full rounded-md flex overflow-hidden p-2 text-gray-600 border '>
-                                                                                {doctask.component.values}
-                                                                            </div>
-                                                                    }
-                                                                </div>
-                                                        }
-                                                    </>
-                                                }
-                                                {
-                                                    doctask.component.type === 2 &&
-                                                    <>
-                                                        {
-                                                            displaytask.created_by === dataProfile.data.id ?
-                                                                <div className='mb-3 flex flex-col'>
-                                                                    <p className='mb-2 font-bold text-sm'>Catatan Pekerjaan</p>
-                                                                    <div className=' w-full rounded-md flex overflow-hidden p-3 text-gray-600 border h-28 '>
-                                                                        {doctask.component.values}
-                                                                    </div>
-                                                                </div>
-                                                                :
-                                                                <div className='mb-3 flex flex-col'>
-                                                                    <p className='mb-2 font-bold text-sm'>Catatan Pekerjaan</p>
-                                                                    {
-                                                                        editable[idxtask] ?
-                                                                            <Input.TextArea rows={4} defaultValue={doctask.component.values} onChange={(e) => {
-                                                                                setcurrentdataeditable({ ...currentdataeditable, id: doctask.id, values: e.target.value })
-                                                                            }}></Input.TextArea>
-                                                                            :
-                                                                            <div className=' w-full rounded-md flex overflow-hidden p-3 text-gray-600 border h-28'>
-                                                                                {doctask.component.values}
-                                                                            </div>
-                                                                    }
-                                                                </div>
-                                                        }
-                                                    </>
-                                                }
-                                                {
-                                                    doctask.component.type === 3 &&
-                                                    <>
-                                                        {
-                                                            displaytask.created_by === dataProfile.data.id ?
-                                                                <div className=' border rounded-md mb-3 w-full p-2'>
-                                                                    <div className="grid grid-cols-12 w-full">
-                                                                        <div className=' col-span-5 flex items-center p-2'>
-                                                                            <H2>Pekerjaan</H2>
-                                                                        </div>
-                                                                        <div className=' col-span-7 flex items-center p-2'>
-                                                                            <H2>Staf</H2>
-                                                                        </div>
+                                                                }
+                                                                <div tabIndex={`0`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-80 flex flex-col'>
+                                                                    <Spin spinning={loadingstafftask}>
                                                                         {
-                                                                            doctask.component.lists.map((doc3, idx3) => (
+                                                                            currentstafftask.length === 0 ?
                                                                                 <>
-                                                                                    <div className=' col-span-5 flex items-center py-2 px-2'>
-                                                                                        <p className=' mb-0 text-sm text-gray-700'>{doc3}</p>
-                                                                                    </div>
-                                                                                    <div className=' col-span-7 flex items-center py-2 px-2'>
-                                                                                        <div className='mr-1 flex items-center'>
-                                                                                            {
-                                                                                                doctask.component.values[idx3] ?
-                                                                                                    <CheckIconSvg size={18} color={`#35763B`} />
-                                                                                                    :
-                                                                                                    <ForbidIconSvg size={18} color={`#CCCCCC`} />
-                                                                                            }
-                                                                                        </div>
-                                                                                        <div className='flex items-center'>
-                                                                                            {
-                                                                                                doctask.component.values[idx3] ?
-                                                                                                    <p className=' mb-0 text-sm text-gray-500'>Telah diceklis</p>
-                                                                                                    :
-                                                                                                    <p className=' mb-0 text-sm text-gray-500'>Belum diceklis</p>
-                                                                                            }
-                                                                                        </div>
-                                                                                    </div>
+                                                                                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                                                                                 </>
-                                                                            ))
+                                                                                :
+                                                                                currentstafftask.map((doc, idx) => {
+                                                                                    return (
+                                                                                        <>
+                                                                                            <div className=' mb-4 flex items-center'>
+                                                                                                <div className=' w-10 h-10 rounded-full'>
+                                                                                                    <img src={currentstafftask[idx].profile_image === "" || doc.profile_image === "-" ? "/image/staffTask.png" : `${doc.profile_image}`} className=' object-contain w-10 h-10' alt="" />
+                                                                                                </div>
+                                                                                                <div className=' flex flex-col justify-center'>
+                                                                                                    <div className='mb-1 flex'>
+                                                                                                        <div className='mr-1'>
+                                                                                                            <H2>{doc.name}</H2>
+                                                                                                        </div>
+                                                                                                        <div className=' cursor-pointer' onClick={() => {
+                                                                                                            var temp = [...currentstafftask]
+                                                                                                            temp.splice(idx, 1)
+                                                                                                            setcurrentstafftask(temp)
+                                                                                                            setdisplaycurrentstafftask([...displaycurrentstafftask, doc])
+                                                                                                        }}>
+                                                                                                            <CircleXIconSvg size={15} color={`#BF4A40`} />
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <div>
+                                                                                                        <Label>-</Label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </>
+                                                                                    )
+                                                                                })
                                                                         }
-                                                                    </div>
-                                                                </div>
-                                                                :
-                                                                editable[idxtask] ?
-                                                                    <div className=' mb-3 flex flex-col'>
+                                                                        <div className=' mb-4'>
+                                                                            <Input
+                                                                                allowClear
+                                                                                placeholder='Nama Staff, Group..'
+                                                                                onChange={(e) => {
+                                                                                    if (e.target.value === "") {
+                                                                                        setdisplaycurrentstafftask(displaycurrentstafftask2.filter(docfil => currentstafftask.map(doc => doc.id).includes(docfil.id) === false))
+                                                                                    }
+                                                                                    else {
+                                                                                        var temp = [...displaycurrentstafftask]
+                                                                                        var tempfil = temp.filter((docfil) => docfil.name.toLowerCase().includes(e.target.value.toLowerCase()))
+                                                                                        setdisplaycurrentstafftask(tempfil)
+                                                                                    }
+                                                                                }
+                                                                                }
+                                                                            ></Input>
+                                                                        </div>
                                                                         {
-                                                                            doctask.component.lists.map((doc3, idx3) => (
-                                                                                <Checkbox defaultChecked={doctask.component.values[idx3]} style={{ marginBottom: `0.5rem` }} onChange={(e) => {
-                                                                                    var temp = [...currentdataeditable.values]
-                                                                                    temp[idx3] = e.target.checked
-                                                                                    setcurrentdataeditable({ ...currentdataeditable, values: temp })
-                                                                                }}>{doc3}</Checkbox>
-                                                                            ))
+                                                                            displaycurrentstafftask.length === 0 ?
+                                                                                <>
+                                                                                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                                                                </>
+                                                                                :
+                                                                                displaycurrentstafftask.map((doc, idx) => (
+                                                                                    <div className=' mb-4 flex items-center cursor-pointer' onClick={() => {
+                                                                                        setcurrentstafftask([...currentstafftask, doc])
+                                                                                        var temp = [...displaycurrentstafftask]
+                                                                                        temp.splice(idx, 1)
+                                                                                        setdisplaycurrentstafftask(temp)
+                                                                                    }}>
+                                                                                        <div className=' w-10 h-10 rounded-full'>
+                                                                                            <img src={doc.profile_image === "" || doc.profile_image === "-" ? "/image/staffTask.png" : `${doc.profile_image}`} className=' object-contain w-10 h-10' alt="" />
+                                                                                        </div>
+                                                                                        <div className=' flex flex-col justify-center'>
+                                                                                            <div className='mb-1 flex'>
+                                                                                                <div className='mr-1'>
+                                                                                                    <H2>{doc.name}</H2>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div>
+                                                                                                <Label>-</Label>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                ))
                                                                         }
+                                                                        <div className=' flex justify-end'>
+                                                                            <Buttonsys type={`primary`} onClick={handleAssignStaffTaskDetail}>
+                                                                                <CheckIconSvg size={15} color={`#ffffff`} />
+                                                                                Simpan Perubahan
+                                                                            </Buttonsys>
+                                                                        </div>
+                                                                    </Spin>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    {
+                                                        doctask.component.type === 1 &&
+                                                        <>
+                                                            {
+                                                                displaytask.created_by === dataProfile.data.id ?
+                                                                    <div className='mb-3 flex flex-col'>
+                                                                        <p className='mb-2 font-bold text-sm'>Catatan Pekerjaan</p>
+                                                                        <div className=' w-full rounded-md flex overflow-hidden p-2 text-gray-600 border '>
+                                                                            {doctask.component.values}
+                                                                        </div>
                                                                     </div>
                                                                     :
+                                                                    <div className='mb-3 flex flex-col'>
+                                                                        <p className='mb-2 font-bold text-sm'>Catatan Pekerjaan</p>
+                                                                        {
+                                                                            editable[idxtask] ?
+                                                                                <Input defaultValue={doctask.component.values} onChange={(e) => {
+                                                                                    setcurrentdataeditable({ ...currentdataeditable, id: doctask.id, values: e.target.value })
+                                                                                }}></Input>
+                                                                                :
+                                                                                <div className=' w-full rounded-md flex overflow-hidden p-2 text-gray-600 border '>
+                                                                                    {doctask.component.values}
+                                                                                </div>
+                                                                        }
+                                                                    </div>
+                                                            }
+                                                        </>
+                                                    }
+                                                    {
+                                                        doctask.component.type === 2 &&
+                                                        <>
+                                                            {
+                                                                displaytask.created_by === dataProfile.data.id ?
+                                                                    <div className='mb-3 flex flex-col'>
+                                                                        <p className='mb-2 font-bold text-sm'>Catatan Pekerjaan</p>
+                                                                        <div className=' w-full rounded-md flex overflow-hidden p-3 text-gray-600 border h-28 '>
+                                                                            {doctask.component.values}
+                                                                        </div>
+                                                                    </div>
+                                                                    :
+                                                                    <div className='mb-3 flex flex-col'>
+                                                                        <p className='mb-2 font-bold text-sm'>Catatan Pekerjaan</p>
+                                                                        {
+                                                                            editable[idxtask] ?
+                                                                                <Input.TextArea rows={4} defaultValue={doctask.component.values} onChange={(e) => {
+                                                                                    setcurrentdataeditable({ ...currentdataeditable, id: doctask.id, values: e.target.value })
+                                                                                }}></Input.TextArea>
+                                                                                :
+                                                                                <div className=' w-full rounded-md flex overflow-hidden p-3 text-gray-600 border h-28'>
+                                                                                    {doctask.component.values}
+                                                                                </div>
+                                                                        }
+                                                                    </div>
+                                                            }
+                                                        </>
+                                                    }
+                                                    {
+                                                        doctask.component.type === 3 &&
+                                                        <>
+                                                            {
+                                                                displaytask.created_by === dataProfile.data.id ?
                                                                     <div className=' border rounded-md mb-3 w-full p-2'>
                                                                         <div className="grid grid-cols-12 w-full">
                                                                             <div className=' col-span-5 flex items-center p-2'>
@@ -899,132 +962,65 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                                             }
                                                                         </div>
                                                                     </div>
-                                                        }
-                                                    </>
-                                                }
-                                                {
-                                                    doctask.component.type === 4 &&
-                                                    <>
-                                                        {
-                                                            displaytask.created_by === dataProfile.data.id ?
-                                                                <div className=' border rounded-md mb-3 w-full p-2'>
-                                                                    <div className={`grid grid-cols-12 w-full`}>
-                                                                        <div className=' col-span-4 flex items-center p-2'>
-                                                                            <div className='mr-1 flex items-center cursor-pointer' onClick={() => {
-                                                                                var awaltemp = datatype4.filter((docfil, idxfil) => docfil[0].id === doctask.id)[0]
-                                                                                var temp = [...awaltemp]
-                                                                                var temp2 = []
-                                                                                if (sort4state === 0)
-                                                                                    temp2 = temp.sort((a, b) => a.model > b.model ? 1 : -1)
-                                                                                else if (sort4state === 1)
-                                                                                    temp2 = temp.sort((a, b) => a.model < b.model ? 1 : -1)
-                                                                                else if (sort4state === -1)
-                                                                                    temp2 = datatype42.filter((docfil, idxfil) => docfil[0].id === doctask.id)[0]
-                                                                                setdatatype4([...[temp2]])
-                                                                                var tempsort = sort4state
-                                                                                tempsort === 0 ? setsort4state(1) : null
-                                                                                tempsort === 1 ? setsort4state(-1) : null
-                                                                                tempsort === -1 ? setsort4state(0) : null
-                                                                            }}>
-                                                                                {sort4state === -1 && <SortDescendingIconSvg size={15} color={`#8f8f8f`} />}
-                                                                                {sort4state === 0 && <ArrowsSortIconSvg size={15} color={`#CCCCCC`} />}
-                                                                                {sort4state === 1 && <SortAscendingIconSvg size={15} color={`#8f8f8f`} />}
-                                                                            </div>
-                                                                            <div className='flex items-center'>
-                                                                                <H2>Model</H2>
-                                                                            </div>
-                                                                        </div>
-                                                                        {
-                                                                            doctask.component.columns.map((doccol, idxcol) => (
-                                                                                <div className=' col-span-1 flex items-center justify-center p-2'>
-                                                                                    <H2>{doccol}</H2>
-                                                                                </div>
-                                                                            ))
-                                                                        }
-                                                                    </div>
-                                                                    {
-                                                                        datatype4.filter((docfil, idxfil) => docfil[0].id === doctask.id)[0].map((doc4, idx4) => (
-                                                                            <div className='grid grid-cols-12'>
-                                                                                <div className=' col-span-4 flex items-center py-2 px-2'>
-                                                                                    <p className=' mb-0 text-sm text-gray-700'>{doc4.model}</p>
-                                                                                </div>
-                                                                                {
-                                                                                    doctask.component.columns.map((doc41, idx41) => (
-                                                                                        <div className=' col-span-1 flex items-center justify-center py-2 px-2'>
-                                                                                            {
-                                                                                                doc4[doc41] ?
-                                                                                                    <CheckIconSvg size={18} color={`#35763B`} />
-                                                                                                    :
-                                                                                                    <CheckIconSvg size={18} color={`#CCCCCC`} />
-                                                                                            }
-                                                                                        </div>
-                                                                                    ))
-                                                                                }
-                                                                            </div>
-                                                                        ))
-                                                                    }
-                                                                </div>
-                                                                :
-                                                                editable[idxtask] ?
-                                                                    <div className='border rounded-md mb-3 w-full p-2'>
-                                                                        <div className={`grid grid-cols-12 w-full`}>
-                                                                            <div className=' col-span-3 flex items-center p-2'>
-                                                                                <H2>Model</H2>
-                                                                            </div>
+                                                                    :
+                                                                    editable[idxtask] ?
+                                                                        <div className=' mb-3 flex flex-col'>
                                                                             {
-                                                                                doctask.component.columns.map((doccol, idxcol) => (
-                                                                                    <div className=' col-span-2 flex items-center justify-center p-2'>
-                                                                                        <H2>{doccol}</H2>
-                                                                                    </div>
+                                                                                doctask.component.lists.map((doc3, idx3) => (
+                                                                                    <Checkbox defaultChecked={doctask.component.values[idx3]} style={{ marginBottom: `0.5rem` }} onChange={(e) => {
+                                                                                        var temp = [...currentdataeditable.values]
+                                                                                        temp[idx3] = e.target.checked
+                                                                                        setcurrentdataeditable({ ...currentdataeditable, values: temp })
+                                                                                    }}>{doc3}</Checkbox>
                                                                                 ))
                                                                             }
                                                                         </div>
-                                                                        {
-                                                                            datatype4.filter((docfil, idxfil) => docfil[0].id === doctask.id)[0].map((doc4, idx4) => (
-                                                                                <div className='grid grid-cols-12'>
-                                                                                    <div className=' col-span-3 flex items-center py-2 px-2'>
-                                                                                        <p className=' mb-0 text-sm text-gray-700'>{doc4.model}</p>
-                                                                                    </div>
-                                                                                    {
-                                                                                        doctask.component.columns.map((doc41, idx41) => (
-                                                                                            <div className=' col-span-2 flex items-center justify-center py-2 px-2'>
-                                                                                                {
-                                                                                                    doc4[doc41] ?
-                                                                                                        <Buttonsys type={`primary`} color={`danger`} onClick={() => {
-                                                                                                            var temp = [...currentdataeditable.values]
-                                                                                                            temp[idx41][idx4] = false
-                                                                                                            setcurrentdataeditable({ ...currentdataeditable, values: temp })
-                                                                                                            var temp2 = [...datatype4]
-                                                                                                            var idxtemp2 = temp2.map(docmap => docmap[0].id).indexOf(doctask.id)
-                                                                                                            temp2[idxtemp2][idx4][doc41] = false
-                                                                                                            setdatatype4(temp2)
-                                                                                                        }}>
-                                                                                                            <div className=' mr-1'><RefreshIconSvg size={15} color={`#ffffff`} /></div>
-                                                                                                            Uncheck
-                                                                                                        </Buttonsys>
-                                                                                                        :
-
-                                                                                                        <Buttonsys type={`primary`} onClick={() => {
-                                                                                                            var temp = [...currentdataeditable.values]
-                                                                                                            temp[idx41][idx4] = true
-                                                                                                            setcurrentdataeditable({ ...currentdataeditable, values: temp })
-                                                                                                            var temp2 = [...datatype4]
-                                                                                                            var idxtemp2 = temp2.map(docmap => docmap[0].id).indexOf(doctask.id)
-                                                                                                            temp2[idxtemp2][idx4][doc41] = true
-                                                                                                            setdatatype4(temp2)
-                                                                                                        }}>
-                                                                                                            <div className=' mr-1'><CheckIconSvg size={15} color={`#ffffff`} /></div>
-                                                                                                            Check
-                                                                                                        </Buttonsys>
-                                                                                                }
-                                                                                            </div>
-                                                                                        ))
-                                                                                    }
+                                                                        :
+                                                                        <div className=' border rounded-md mb-3 w-full p-2'>
+                                                                            <div className="grid grid-cols-12 w-full">
+                                                                                <div className=' col-span-5 flex items-center p-2'>
+                                                                                    <H2>Pekerjaan</H2>
                                                                                 </div>
-                                                                            ))
-                                                                        }
-                                                                    </div>
-                                                                    :
+                                                                                <div className=' col-span-7 flex items-center p-2'>
+                                                                                    <H2>Staf</H2>
+                                                                                </div>
+                                                                                {
+                                                                                    doctask.component.lists.map((doc3, idx3) => (
+                                                                                        <>
+                                                                                            <div className=' col-span-5 flex items-center py-2 px-2'>
+                                                                                                <p className=' mb-0 text-sm text-gray-700'>{doc3}</p>
+                                                                                            </div>
+                                                                                            <div className=' col-span-7 flex items-center py-2 px-2'>
+                                                                                                <div className='mr-1 flex items-center'>
+                                                                                                    {
+                                                                                                        doctask.component.values[idx3] ?
+                                                                                                            <CheckIconSvg size={18} color={`#35763B`} />
+                                                                                                            :
+                                                                                                            <ForbidIconSvg size={18} color={`#CCCCCC`} />
+                                                                                                    }
+                                                                                                </div>
+                                                                                                <div className='flex items-center'>
+                                                                                                    {
+                                                                                                        doctask.component.values[idx3] ?
+                                                                                                            <p className=' mb-0 text-sm text-gray-500'>Telah diceklis</p>
+                                                                                                            :
+                                                                                                            <p className=' mb-0 text-sm text-gray-500'>Belum diceklis</p>
+                                                                                                    }
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </>
+                                                                                    ))
+                                                                                }
+                                                                            </div>
+                                                                        </div>
+                                                            }
+                                                        </>
+                                                    }
+                                                    {
+                                                        doctask.component.type === 4 &&
+                                                        <>
+                                                            {
+                                                                displaytask.created_by === dataProfile.data.id ?
                                                                     <div className=' border rounded-md mb-3 w-full p-2'>
                                                                         <div className={`grid grid-cols-12 w-full`}>
                                                                             <div className=' col-span-4 flex items-center p-2'>
@@ -1054,21 +1050,21 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                                             </div>
                                                                             {
                                                                                 doctask.component.columns.map((doccol, idxcol) => (
-                                                                                    <div className=' col-span-1 flex items-center justify-center p-2'>
+                                                                                    <div className=' col-span-2 flex items-center justify-center p-2'>
                                                                                         <H2>{doccol}</H2>
                                                                                     </div>
                                                                                 ))
                                                                             }
                                                                         </div>
                                                                         {
-                                                                            datatype4.filter((docfil, idxfil) => docfil[0].id === doctask.id)[0].map((doc4, idx4) => (
+                                                                            datatype4?.filter((docfil, idxfil) => docfil[0].id === doctask.id)[0].map((doc4, idx4) => (
                                                                                 <div className='grid grid-cols-12'>
                                                                                     <div className=' col-span-4 flex items-center py-2 px-2'>
                                                                                         <p className=' mb-0 text-sm text-gray-700'>{doc4.model}</p>
                                                                                     </div>
                                                                                     {
                                                                                         doctask.component.columns.map((doc41, idx41) => (
-                                                                                            <div className=' col-span-1 flex items-center justify-center py-2 px-2'>
+                                                                                            <div className=' col-span-2 flex items-center justify-center py-2 px-2'>
                                                                                                 {
                                                                                                     doc4[doc41] ?
                                                                                                         <CheckIconSvg size={18} color={`#35763B`} />
@@ -1082,77 +1078,132 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                                             ))
                                                                         }
                                                                     </div>
-                                                        }
-                                                    </>
-                                                }
-                                                {
-                                                    doctask.component.type === 5 &&
-                                                    <>
-                                                        {
-                                                            displaytask.created_by === dataProfile.data.id ?
-                                                                <div className=' border rounded-md mb-3 w-full p-2'>
-                                                                    <div className="grid grid-cols-12 w-full">
-                                                                        <div className=' col-span-4 flex items-center p-2'>
-                                                                            <H2>Keterangan</H2>
-                                                                        </div>
-                                                                        <div className=' col-span-2 flex items-center p-2'>
-                                                                            <H2>Nilai</H2>
-                                                                        </div>
-                                                                        <div className=' col-span-2 flex items-center p-2'>
-                                                                            <H2>Satuan</H2>
-                                                                        </div>
-                                                                    </div>
-                                                                    {
-                                                                        doctask.component.lists.map((doc3, idx3) => (
-                                                                            <div className='grid grid-cols-12'>
-                                                                                <div className=' col-span-4 flex items-center py-2 px-2'>
-                                                                                    <p className=' mb-0 text-sm text-gray-700'>{doc3.description}</p>
-                                                                                </div>
-                                                                                <div className=' col-span-2 flex items-center py-2 px-2'>
-                                                                                    <p className=' mb-0 text-sm text-gray-700'>{doc3.values}</p>
-                                                                                </div>
-                                                                                <div className=' col-span-2 flex items-center py-2 px-2'>
-                                                                                    <p className=' mb-0 text-sm font-semibold text-gray-700'>{doc3.type}</p>
-                                                                                </div>
-                                                                            </div>
-                                                                        ))
-                                                                    }
-                                                                </div>
-                                                                :
-                                                                editable[idxtask] ?
-                                                                    <div className=' border rounded-md mb-3 w-full p-2'>
-                                                                        <div className="grid grid-cols-12 w-full">
-                                                                            <div className=' col-span-2 flex items-center p-2'>
-                                                                                <H2>Nilai</H2>
-                                                                            </div>
-                                                                            <div className=' col-span-4 flex items-center p-2'>
-                                                                                <H2>Keterangan</H2>
-                                                                            </div>
-                                                                            <div className=' col-span-2 flex items-center p-2'>
-                                                                                <H2>Satuan</H2>
-                                                                            </div>
-                                                                        </div>
-                                                                        {
-                                                                            doctask.component.lists.map((doc3, idx3) => (
-                                                                                <div className='grid grid-cols-12'>
-                                                                                    <div className=' col-span-2 flex items-center py-2 px-2'>
-                                                                                        <Input bordered={false} defaultValue={doc3.values} onChange={(e) => {
-                                                                                            var temp = [...currentdataeditable.values]
-                                                                                            temp[idx3] = e.target.value
-                                                                                            setcurrentdataeditable({ ...currentdataeditable, values: temp })
-                                                                                        }}></Input>
-                                                                                    </div>
-                                                                                    <div className=' col-span-4 flex items-center py-2 px-2'>
-                                                                                        <p className=' mb-0 text-sm text-gray-700'>{doc3.description}</p>
-                                                                                    </div>
-                                                                                    <div className=' col-span-2 flex items-center py-2 px-2'>
-                                                                                        <p className=' mb-0 text-sm font-semibold text-gray-700'>{doc3.type}</p>
-                                                                                    </div>
-                                                                                </div>
-                                                                            ))
-                                                                        }
-                                                                    </div>
                                                                     :
+                                                                    editable[idxtask] ?
+                                                                        <div className='border rounded-md mb-3 w-full p-2'>
+                                                                            <div className={`grid grid-cols-12 w-full`}>
+                                                                                <div className=' col-span-3 flex items-center p-2'>
+                                                                                    <H2>Model</H2>
+                                                                                </div>
+                                                                                {
+                                                                                    doctask.component.columns.map((doccol, idxcol) => (
+                                                                                        <div className=' col-span-2 flex items-center justify-center p-2'>
+                                                                                            <H2>{doccol}</H2>
+                                                                                        </div>
+                                                                                    ))
+                                                                                }
+                                                                            </div>
+                                                                            {
+                                                                                datatype4.filter((docfil, idxfil) => docfil[0].id === doctask.id)[0].map((doc4, idx4) => (
+                                                                                    <div className='grid grid-cols-12'>
+                                                                                        <div className=' col-span-3 flex items-center py-2 px-2'>
+                                                                                            <p className=' mb-0 text-sm text-gray-700'>{doc4.model}</p>
+                                                                                        </div>
+                                                                                        {
+                                                                                            doctask.component.columns.map((doc41, idx41) => (
+                                                                                                <div className=' col-span-2 flex items-center justify-center py-2 px-2'>
+                                                                                                    {
+                                                                                                        doc4[doc41] ?
+                                                                                                            <Buttonsys type={`primary`} color={`danger`} onClick={() => {
+                                                                                                                var temp = [...currentdataeditable.values]
+                                                                                                                temp[idx41][idx4] = false
+                                                                                                                setcurrentdataeditable({ ...currentdataeditable, values: temp })
+                                                                                                                var temp2 = [...datatype4]
+                                                                                                                var idxtemp2 = temp2.map(docmap => docmap[0].id).indexOf(doctask.id)
+                                                                                                                temp2[idxtemp2][idx4][doc41] = false
+                                                                                                                setdatatype4(temp2)
+                                                                                                            }}>
+                                                                                                                <div className=' mr-1'><RefreshIconSvg size={15} color={`#ffffff`} /></div>
+                                                                                                                Uncheck
+                                                                                                            </Buttonsys>
+                                                                                                            :
+
+                                                                                                            <Buttonsys type={`primary`} onClick={() => {
+                                                                                                                var temp = [...currentdataeditable.values]
+                                                                                                                temp[idx41][idx4] = true
+                                                                                                                setcurrentdataeditable({ ...currentdataeditable, values: temp })
+                                                                                                                var temp2 = [...datatype4]
+                                                                                                                var idxtemp2 = temp2.map(docmap => docmap[0].id).indexOf(doctask.id)
+                                                                                                                temp2[idxtemp2][idx4][doc41] = true
+                                                                                                                setdatatype4(temp2)
+                                                                                                            }}>
+                                                                                                                <div className=' mr-1'><CheckIconSvg size={15} color={`#ffffff`} /></div>
+                                                                                                                Check
+                                                                                                            </Buttonsys>
+                                                                                                    }
+                                                                                                </div>
+                                                                                            ))
+                                                                                        }
+                                                                                    </div>
+                                                                                ))
+                                                                            }
+                                                                        </div>
+                                                                        :
+                                                                        <div className=' border rounded-md mb-3 w-full p-2'>
+                                                                            <div className={`grid grid-cols-12 w-full`}>
+                                                                                <div className=' col-span-4 flex items-center p-2'>
+                                                                                    <div className='mr-1 flex items-center cursor-pointer' onClick={() => {
+                                                                                        var awaltemp = datatype4.filter((docfil, idxfil) => docfil[0].id === doctask.id)[0]
+                                                                                        var temp = [...awaltemp]
+                                                                                        var temp2 = []
+                                                                                        if (sort4state === 0)
+                                                                                            temp2 = temp.sort((a, b) => a.model > b.model ? 1 : -1)
+                                                                                        else if (sort4state === 1)
+                                                                                            temp2 = temp.sort((a, b) => a.model < b.model ? 1 : -1)
+                                                                                        else if (sort4state === -1)
+                                                                                            temp2 = datatype42.filter((docfil, idxfil) => docfil[0].id === doctask.id)[0]
+                                                                                        setdatatype4([...[temp2]])
+                                                                                        var tempsort = sort4state
+                                                                                        tempsort === 0 ? setsort4state(1) : null
+                                                                                        tempsort === 1 ? setsort4state(-1) : null
+                                                                                        tempsort === -1 ? setsort4state(0) : null
+                                                                                    }}>
+                                                                                        {sort4state === -1 && <SortDescendingIconSvg size={15} color={`#8f8f8f`} />}
+                                                                                        {sort4state === 0 && <ArrowsSortIconSvg size={15} color={`#CCCCCC`} />}
+                                                                                        {sort4state === 1 && <SortAscendingIconSvg size={15} color={`#8f8f8f`} />}
+                                                                                    </div>
+                                                                                    <div className='flex items-center'>
+                                                                                        <H2>Model</H2>
+                                                                                    </div>
+                                                                                </div>
+                                                                                {
+                                                                                    doctask.component.columns.map((doccol, idxcol) => (
+                                                                                        <div className=' col-span-1 flex items-center justify-center p-2'>
+                                                                                            <H2>{doccol}</H2>
+                                                                                        </div>
+                                                                                    ))
+                                                                                }
+                                                                            </div>
+                                                                            {
+                                                                                datatype4.filter((docfil, idxfil) => docfil[0].id === doctask.id)[0].map((doc4, idx4) => (
+                                                                                    <div className='grid grid-cols-12'>
+                                                                                        <div className=' col-span-4 flex items-center py-2 px-2'>
+                                                                                            <p className=' mb-0 text-sm text-gray-700'>{doc4.model}</p>
+                                                                                        </div>
+                                                                                        {
+                                                                                            doctask.component.columns.map((doc41, idx41) => (
+                                                                                                <div className=' col-span-1 flex items-center justify-center py-2 px-2'>
+                                                                                                    {
+                                                                                                        doc4[doc41] ?
+                                                                                                            <CheckIconSvg size={18} color={`#35763B`} />
+                                                                                                            :
+                                                                                                            <CheckIconSvg size={18} color={`#CCCCCC`} />
+                                                                                                    }
+                                                                                                </div>
+                                                                                            ))
+                                                                                        }
+                                                                                    </div>
+                                                                                ))
+                                                                            }
+                                                                        </div>
+                                                            }
+                                                        </>
+                                                    }
+                                                    {
+                                                        doctask.component.type === 5 &&
+                                                        <>
+                                                            {
+                                                                displaytask.created_by === dataProfile.data.id ?
                                                                     <div className=' border rounded-md mb-3 w-full p-2'>
                                                                         <div className="grid grid-cols-12 w-full">
                                                                             <div className=' col-span-4 flex items-center p-2'>
@@ -1181,39 +1232,77 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                                             ))
                                                                         }
                                                                     </div>
-                                                        }
-                                                    </>
-                                                }
-                                                {
-                                                    doctask.component.type === 6 &&
-                                                    <>
-                                                        {
-                                                            displaytask.created_by === dataProfile.data.id ?
-                                                                <div className=' mb-3 flex flex-col pointer-events-none'>
-                                                                    <p className=' mb-2 text-sm text-gray-800'>{doctask.component.dropdown_name}</p>
-                                                                    <Select style={{ width: `100%` }} placeholder="Nilai masih kosong" defaultValue={doctask.component.values === "-" ? null : doctask.component.values}>
-                                                                        {
-                                                                            doctask.component.lists.map(docmap => (
-                                                                                <Select.Option value={docmap}>{docmap}</Select.Option>
-                                                                            ))
-                                                                        }
-                                                                    </Select>
-                                                                </div>
-                                                                :
-                                                                editable[idxtask] ?
-                                                                    <div className=' mb-3 flex flex-col'>
-                                                                        <p className=' mb-2 text-sm text-gray-800'>{doctask.component.dropdown_name}</p>
-                                                                        <Select style={{ width: `100%` }} placeholder="Nilai masih kosong" defaultValue={doctask.component.values === "-" ? null : doctask.component.values} onChange={(value) => {
-                                                                            setcurrentdataeditable({ ...currentdataeditable, values: value })
-                                                                        }}>
+                                                                    :
+                                                                    editable[idxtask] ?
+                                                                        <div className=' border rounded-md mb-3 w-full p-2'>
+                                                                            <div className="grid grid-cols-12 w-full">
+                                                                                <div className=' col-span-2 flex items-center p-2'>
+                                                                                    <H2>Nilai</H2>
+                                                                                </div>
+                                                                                <div className=' col-span-4 flex items-center p-2'>
+                                                                                    <H2>Keterangan</H2>
+                                                                                </div>
+                                                                                <div className=' col-span-2 flex items-center p-2'>
+                                                                                    <H2>Satuan</H2>
+                                                                                </div>
+                                                                            </div>
                                                                             {
-                                                                                doctask.component.lists.map(docmap => (
-                                                                                    <Select.Option value={docmap}>{docmap}</Select.Option>
+                                                                                doctask.component.lists.map((doc3, idx3) => (
+                                                                                    <div className='grid grid-cols-12'>
+                                                                                        <div className=' col-span-2 flex items-center py-2 px-2'>
+                                                                                            <Input bordered={false} defaultValue={doc3.values} onChange={(e) => {
+                                                                                                var temp = [...currentdataeditable.values]
+                                                                                                temp[idx3] = e.target.value
+                                                                                                setcurrentdataeditable({ ...currentdataeditable, values: temp })
+                                                                                            }}></Input>
+                                                                                        </div>
+                                                                                        <div className=' col-span-4 flex items-center py-2 px-2'>
+                                                                                            <p className=' mb-0 text-sm text-gray-700'>{doc3.description}</p>
+                                                                                        </div>
+                                                                                        <div className=' col-span-2 flex items-center py-2 px-2'>
+                                                                                            <p className=' mb-0 text-sm font-semibold text-gray-700'>{doc3.type}</p>
+                                                                                        </div>
+                                                                                    </div>
                                                                                 ))
                                                                             }
-                                                                        </Select>
-                                                                    </div>
-                                                                    :
+                                                                        </div>
+                                                                        :
+                                                                        <div className=' border rounded-md mb-3 w-full p-2'>
+                                                                            <div className="grid grid-cols-12 w-full">
+                                                                                <div className=' col-span-4 flex items-center p-2'>
+                                                                                    <H2>Keterangan</H2>
+                                                                                </div>
+                                                                                <div className=' col-span-2 flex items-center p-2'>
+                                                                                    <H2>Nilai</H2>
+                                                                                </div>
+                                                                                <div className=' col-span-2 flex items-center p-2'>
+                                                                                    <H2>Satuan</H2>
+                                                                                </div>
+                                                                            </div>
+                                                                            {
+                                                                                doctask.component.lists.map((doc3, idx3) => (
+                                                                                    <div className='grid grid-cols-12'>
+                                                                                        <div className=' col-span-4 flex items-center py-2 px-2'>
+                                                                                            <p className=' mb-0 text-sm text-gray-700'>{doc3.description}</p>
+                                                                                        </div>
+                                                                                        <div className=' col-span-2 flex items-center py-2 px-2'>
+                                                                                            <p className=' mb-0 text-sm text-gray-700'>{doc3.values}</p>
+                                                                                        </div>
+                                                                                        <div className=' col-span-2 flex items-center py-2 px-2'>
+                                                                                            <p className=' mb-0 text-sm font-semibold text-gray-700'>{doc3.type}</p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                ))
+                                                                            }
+                                                                        </div>
+                                                            }
+                                                        </>
+                                                    }
+                                                    {
+                                                        doctask.component.type === 6 &&
+                                                        <>
+                                                            {
+                                                                displaytask.created_by === dataProfile.data.id ?
                                                                     <div className=' mb-3 flex flex-col pointer-events-none'>
                                                                         <p className=' mb-2 text-sm text-gray-800'>{doctask.component.dropdown_name}</p>
                                                                         <Select style={{ width: `100%` }} placeholder="Nilai masih kosong" defaultValue={doctask.component.values === "-" ? null : doctask.component.values}>
@@ -1224,119 +1313,232 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                                             }
                                                                         </Select>
                                                                     </div>
-                                                        }
-                                                    </>
-                                                }
-                                                {
-                                                    displaytask.created_by === dataProfile.data.id ?
-                                                        <div className='mb-3 flex justify-end items-center px-4'>
-                                                            <div className='mr-2 cursor-pointer' onClick={() => { setidtaskdetailupdate(doctask.id); setdrawertaskdetailupdate(true) }}>
-                                                                <EditIconSvg size={20} color={`#000000`} />
-                                                            </div>
-                                                            <div className='ml-2 cursor-pointer' onClick={() => { setdatatasktaildelete({ ...datataskdetaildelete, name: doctask.component.name, id: doctask.id }); setmodaltaskdetaildelete(true) }}>
-                                                                <TrashIconSvg size={20} color={`#000000`} />
-                                                            </div>
-                                                        </div>
-                                                        :
-                                                        editable[idxtask] ?
-                                                            <div className=' mb-3 flex justify-end items-center'>
-                                                                <div className=' mr-2'>
-                                                                    <Buttonsys type={`default`} onClick={() => {
-                                                                        var temp = [...editable]
-                                                                        temp[idxtask] = false
-                                                                        seteditable(temp)
-                                                                    }}>
-                                                                        Batalkan
-                                                                    </Buttonsys>
+                                                                    :
+                                                                    editable[idxtask] ?
+                                                                        <div className=' mb-3 flex flex-col'>
+                                                                            <p className=' mb-2 text-sm text-gray-800'>{doctask.component.dropdown_name}</p>
+                                                                            <Select style={{ width: `100%` }} placeholder="Nilai masih kosong" defaultValue={doctask.component.values === "-" ? null : doctask.component.values} onChange={(value) => {
+                                                                                setcurrentdataeditable({ ...currentdataeditable, values: value })
+                                                                            }}>
+                                                                                {
+                                                                                    doctask.component.lists.map(docmap => (
+                                                                                        <Select.Option value={docmap}>{docmap}</Select.Option>
+                                                                                    ))
+                                                                                }
+                                                                            </Select>
+                                                                        </div>
+                                                                        :
+                                                                        <div className=' mb-3 flex flex-col pointer-events-none'>
+                                                                            <p className=' mb-2 text-sm text-gray-800'>{doctask.component.dropdown_name}</p>
+                                                                            <Select style={{ width: `100%` }} placeholder="Nilai masih kosong" defaultValue={doctask.component.values === "-" ? null : doctask.component.values}>
+                                                                                {
+                                                                                    doctask.component.lists.map(docmap => (
+                                                                                        <Select.Option value={docmap}>{docmap}</Select.Option>
+                                                                                    ))
+                                                                                }
+                                                                            </Select>
+                                                                        </div>
+                                                            }
+                                                        </>
+                                                    }
+                                                    {
+                                                        displaytask.created_by === dataProfile.data.id ?
+                                                            <div className='mb-3 flex justify-end items-center px-4'>
+                                                                <div className='mr-2 cursor-pointer' onClick={() => { setidtaskdetailupdate(doctask.id); setdrawertaskdetailupdate(true) }}>
+                                                                    <EditIconSvg size={20} color={`#000000`} />
                                                                 </div>
-                                                                <Buttonsys type={`primary`} onClick={handleFillTaskDetail}>
-                                                                    <div className=' mr-1'>
-                                                                        <CheckIconSvg size={15} color={`#ffffff`} />
-                                                                    </div>
-                                                                    Simpan
-                                                                </Buttonsys>
+                                                                <div className='ml-2 cursor-pointer' onClick={() => { setdatatasktaildelete({ ...datataskdetaildelete, name: doctask.component.name, id: doctask.id }); setmodaltaskdetaildelete(true) }}>
+                                                                    <TrashIconSvg size={20} color={`#000000`} />
+                                                                </div>
                                                             </div>
                                                             :
-                                                            <div className=' mb-3 flex justify-end items-center'>
-                                                                <Buttonsys disabled={disablededitable} type={`default`} onClick={() => {
-                                                                    if (doctask.component.type === 1 || doctask.component.type === 2) {
-                                                                        setcurrentdataeditable({ id: doctask.id, values: doctask.component.values })
-                                                                    }
-                                                                    else if (doctask.component.type === 3) {
-                                                                        setcurrentdataeditable({ id: doctask.id, values: doctask.component.values })
-                                                                    }
-                                                                    else if (doctask.component.type === 4) {
-                                                                        setcurrentdataeditable({ id: doctask.id, values: doctask.component.values })
-                                                                    }
-                                                                    else if (doctask.component.type === 5) {
-                                                                        setcurrentdataeditable({ id: doctask.id, values: doctask.component.lists.map(docmap => docmap.values) })
-                                                                    }
-                                                                    else if (doctask.component.type === 6) {
-                                                                        setcurrentdataeditable({ id: doctask.id, values: doctask.component.values })
-                                                                    }
-                                                                    var temp = [...editable]
-                                                                    temp[idxtask] = true
-                                                                    seteditable(temp)
-                                                                }}>
-                                                                    <div className=' mr-1'>
-                                                                        <EditIconSvg size={15} color={`#35763B`} />
+                                                            completeclose ?
+                                                                null
+                                                                :
+                                                                editable[idxtask] ?
+                                                                    <div className=' mb-3 flex justify-end items-center'>
+                                                                        <div className=' mr-2'>
+                                                                            <Buttonsys type={`default`} onClick={() => {
+                                                                                var temp = [...editable]
+                                                                                temp[idxtask] = false
+                                                                                seteditable(temp)
+                                                                            }}>
+                                                                                Batalkan
+                                                                            </Buttonsys>
+                                                                        </div>
+                                                                        <Buttonsys type={`primary`} onClick={handleFillTaskDetail}>
+                                                                            <div className=' mr-1'>
+                                                                                <CheckIconSvg size={15} color={`#ffffff`} />
+                                                                            </div>
+                                                                            Simpan
+                                                                        </Buttonsys>
                                                                     </div>
-                                                                    Ubah
-                                                                </Buttonsys>
-                                                            </div>
-                                                }
-                                            </div>
-                                        )
-                                    })
+                                                                    :
+                                                                    <div className=' mb-3 flex justify-end items-center'>
+                                                                        <Buttonsys disabled={disablededitable} type={`default`} onClick={() => {
+                                                                            if (doctask.component.type === 1 || doctask.component.type === 2) {
+                                                                                setcurrentdataeditable({ id: doctask.id, values: doctask.component.values })
+                                                                            }
+                                                                            else if (doctask.component.type === 3) {
+                                                                                setcurrentdataeditable({ id: doctask.id, values: doctask.component.values })
+                                                                            }
+                                                                            else if (doctask.component.type === 4) {
+                                                                                setcurrentdataeditable({ id: doctask.id, values: doctask.component.values })
+                                                                            }
+                                                                            else if (doctask.component.type === 5) {
+                                                                                setcurrentdataeditable({ id: doctask.id, values: doctask.component.lists.map(docmap => docmap.values) })
+                                                                            }
+                                                                            else if (doctask.component.type === 6) {
+                                                                                setcurrentdataeditable({ id: doctask.id, values: doctask.component.values })
+                                                                            }
+                                                                            var temp = [...editable]
+                                                                            temp[idxtask] = true
+                                                                            seteditable(temp)
+                                                                        }}>
+                                                                            <div className=' mr-1'>
+                                                                                <EditIconSvg size={15} color={`#35763B`} />
+                                                                            </div>
+                                                                            Ubah
+                                                                        </Buttonsys>
+                                                                    </div>
+                                                    }
+                                                </div>
+                                            )
+                                        })
                             }
                         </div>
                         {
-                            displaytask.created_by !== dataProfile.data.id &&
-                            <div className=' mb-7 flex flex-col'>
-                                <div className=' flex items-center justify-between mb-4'>
-                                    <div>
-                                        <H2>Lampiran</H2>
-                                    </div>
-                                    <div>
-                                        <Buttonsys type={`default`}>
-                                            <div className="mr-1">
-                                                <CloudUploadIconSvg size={15} color={`#35763B`} />
-                                            </div>
-                                            Unggah Lampiran
-                                        </Buttonsys>
-                                    </div>
-                                </div>
-                                <div className=' flex flex-col mb-4'>
+                            displaytask.created_by !== dataProfile.data.id ?
+                                <>
                                     {
-                                        displaytask.files.length === 0 ?
-                                            <>
-                                                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Belum ada file yang di upload"></Empty>
-                                            </>
-                                            :
-                                            displaytask.files.map((doc, idx) => (
-                                                <div className=' flex items-center mb-2'>
+                                        displaytask.is_uploadable &&
+                                        <div className=' mb-7 flex flex-col'>
+                                            <div className=' flex items-center justify-between mb-4'>
+                                                <div>
+                                                    <H2>Lampiran</H2>
                                                 </div>
-                                            ))
+                                                {
+                                                    completeclose === false &&
+                                                    <div>
+                                                        <Buttonsys disabled={disablededitable} type={`default`}>
+                                                            <div className="mr-1">
+                                                                <CloudUploadIconSvg size={15} color={`#35763B`} />
+                                                            </div>
+                                                            Unggah Lampiran
+                                                        </Buttonsys>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div className=' flex flex-col mb-4'>
+                                                {
+                                                    displaytask.files === null ?
+                                                        <>
+                                                            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Belum ada file yang di upload"></Empty>
+                                                        </>
+                                                        :
+                                                        displaytask.files.map((doc, idx) => (
+                                                            <div className=' flex items-center mb-2'>
+                                                            </div>
+                                                        ))
+                                                }
+                                            </div>
+                                        </div>
                                     }
+                                </>
+                                :
+                                completeclose &&
+                                <div className='mb-7 flex flex-col'>
+                                    <div className=' flex flex-col mb-4'>
+                                        {
+                                            displaytask.files.length === 0 ?
+                                                <>
+                                                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Belum ada file yang di upload"></Empty>
+                                                </>
+                                                :
+                                                displaytask.files.map((doc, idx) => (
+                                                    <div className=' flex items-center mb-2'>
+                                                    </div>
+                                                ))
+                                        }
+                                    </div>
                                 </div>
-                            </div>
                         }
                         {
                             displaytask.created_by === dataProfile.data.id ?
-                                <div className="mb-4 border border-dashed border-primary100 hover:border-primary75 hover:text-primary75 py-2 flex justify-center items-center w-full rounded-md cursor-pointer" onClick={() => { setdrawertaskdetailcreate(true) }}>
-                                    <div className="text-primary100">
-                                        + Tambah Pekerjaan Baru
-                                    </div>
-                                </div>
-                                :
-                                <div className=' flex justify-center w-full'>
-                                    <Buttonsys type={`primary`}>
-                                        <div className="mr-1">
-                                            <CheckIconSvg size={15} color={`#ffffff`} />
+                                completeclose ?
+                                    <div className=' mb-7 flex flex-col'>
+                                        <div className=' mb-4 flex items-center'>
+                                            <p className=' mb-0 text-lg text-gray-500'>
+                                                Setujui Task
+                                            </p>
                                         </div>
-                                        Selesai dan Submit
-                                    </Buttonsys>
-                                </div>
+                                        <div className=' mb-4 flex items-center justify-end'>
+                                            <div className="mx-1">
+                                                <Buttonsys type={`primary`} color={`danger`} onClick={() => { setrevise({ ...revise, display: true }) }}>
+                                                    <div className='mr-1'><SearchIconSvg size={15} color={`#ffffff`} /></div>
+                                                    Revisi Task
+                                                </Buttonsys>
+                                            </div>
+                                            <div className="mx-1">
+                                                <Buttonsys type={`primary`} disabled={revise.display} onClick={handleApproveTask}>
+                                                    <div className='mr-1'><SearchIconSvg size={15} color={`#ffffff`} /></div>
+                                                    Approve Task
+                                                </Buttonsys>
+                                            </div>
+                                        </div>
+                                        {
+                                            revise.display &&
+                                            <>
+                                                <div className="mb-4">
+                                                    <TextAreaRequired label={`Deskripsi Perbaikan Task`} onChangeInput={(e) => {
+                                                        setrevise({
+                                                            ...revise,
+                                                            data: {
+                                                                ...revise.data,
+                                                                notes: e.target.value
+                                                            }
+                                                        })
+                                                    }}></TextAreaRequired>
+                                                </div>
+                                                <div className=' mb-4 flex justify-end'>
+                                                    <div className="mx-1">
+                                                        <Buttonsys type={`default`} onClick={() => { setrevise({ ...revise, display: false }) }}>
+                                                            Batalkan
+                                                        </Buttonsys>
+                                                    </div>
+                                                    <div className="mx-1">
+                                                        <Buttonsys type={`primary`} disabled={revise.data.notes === "" ? true : false} onClick={handleReviseTask}>
+                                                            <div className="mr-1"><SendIconSvg size={15} color={`#ffffff`} /></div>
+                                                            Kirim Revisi
+                                                        </Buttonsys>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        }
+                                    </div>
+                                    :
+                                    <div className="mb-4 border border-dashed border-primary100 hover:border-primary75 hover:text-primary75 py-2 flex justify-center items-center w-full rounded-md cursor-pointer" onClick={() => { setdrawertaskdetailcreate(true) }}>
+                                        <div className="text-primary100">
+                                            + Tambah Pekerjaan Baru
+                                        </div>
+                                    </div>
+                                :
+                                completeclose ?
+                                    <div className=' flex justify-center w-full text-center'>
+                                        <div className=' mr-2'><CheckIconSvg size={30} color={`#35763B`} /></div>
+                                        <div>
+                                            <p className=' mb-0 text-primary100 text-xl'>Task telah disubmit</p>
+                                        </div>
+                                    </div>
+                                    :
+                                    <div className=' flex justify-center w-full'>
+                                        <Buttonsys disabled={disablededitable} type={`primary`} onClick={handleSubmitTask}>
+                                            <div className="mr-1">
+                                                <CheckIconSvg size={15} color={`#ffffff`} />
+                                            </div>
+                                            Selesai dan Submit
+                                        </Buttonsys>
+                                    </div>
                         }
                         <ModalHapusTaskDetail
                             title={"Konfirmasi Hapus Task Detail"}
@@ -1394,47 +1596,52 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                         </p>
                                     </div>
                                 </div>
-                                <div className={`mt-2 mb-3 ${displaytask.status === 1 && `text-overdue`} ${displaytask.status === 2 && `text-open`} ${displaytask.status === 3 && `text-onprogress`} ${displaytask.status === 4 && `text-onhold`} ${displaytask.status === 5 && `text-completed`} ${displaytask.status === 6 && `text-closed`}`}>
-                                    <Buttonsys type={`primary`} color={`white`} onClick={() => {
-                                        displaytask.status !== 4 ?
-                                            setmodalstatustoggle(true)
-                                            :
-                                            handleSwitchToOnHold()
-                                    }}>
-                                        {
-                                            displaytask.status === 4 ?
-                                                <>
-                                                    <div className='mr-1'>
-                                                        <PlayerPlayIconSvg size={25} color={`#E5C471`} />
-                                                    </div>
-                                                    <p className='mb-0 text-onhold'>Lanjutkan Task</p>
-                                                </>
-                                                :
-                                                displaytask.created_by !== dataProfile.data.id ?
-                                                    <>
-                                                        <div className='mr-1'>
-                                                            {displaytask.status === 1 && <ClockIconSvg size={25} color={`#BF4A40`} />}
-                                                            {displaytask.status === 2 && <ClockIconSvg size={25} color={`#2F80ED`} />}
-                                                            {displaytask.status === 3 && <ClockIconSvg size={25} color={`#ED962F`} />}
-                                                            {displaytask.status === 5 && <ClockIconSvg size={25} color={`#6AAA70`} />}
-                                                            {displaytask.status === 6 && <ClockIconSvg size={25} color={`#808080`} />}
-                                                        </div>
-                                                        <p className={`mb-0 ${displaytask.status === 1 && `text-overdue`} ${displaytask.status === 2 && `text-open`} ${displaytask.status === 3 && `text-onprogress`} ${displaytask.status === 4 && `text-onhold`} ${displaytask.status === 5 && `text-completed`} ${displaytask.status === 6 && `text-closed`}`}>Request On Hold</p>
-                                                    </>
+                                {
+                                    displaytask.status === 5 || displaytask.status === 6 ?
+                                        null
+                                        :
+                                        <div className={`mt-2 mb-3 ${displaytask.status === 1 && `text-overdue`} ${displaytask.status === 2 && `text-open`} ${displaytask.status === 3 && `text-onprogress`} ${displaytask.status === 4 && `text-onhold`} ${displaytask.status === 5 && `text-completed`} ${displaytask.status === 6 && `text-closed`}`}>
+                                            <Buttonsys type={`primary`} color={`white`} onClick={() => {
+                                                displaytask.status !== 4 ?
+                                                    setmodalstatustoggle(true)
                                                     :
-                                                    <>
-                                                        <div className='mr-1'>
-                                                            {displaytask.status === 1 && <PlayerPauseIconSvg size={25} color={`#BF4A40`} />}
-                                                            {displaytask.status === 2 && <PlayerPauseIconSvg size={25} color={`#2F80ED`} />}
-                                                            {displaytask.status === 3 && <PlayerPauseIconSvg size={25} color={`#ED962F`} />}
-                                                            {displaytask.status === 5 && <PlayerPauseIconSvg size={25} color={`#6AAA70`} />}
-                                                            {displaytask.status === 6 && <PlayerPauseIconSvg size={25} color={`#808080`} />}
-                                                        </div>
-                                                        <p className={`mb-0 ${displaytask.status === 1 && `text-overdue`} ${displaytask.status === 2 && `text-open`} ${displaytask.status === 3 && `text-onprogress`} ${displaytask.status === 4 && `text-onhold`} ${displaytask.status === 5 && `text-completed`} ${displaytask.status === 6 && `text-closed`}`}>Hold Task</p>
-                                                    </>
-                                        }
-                                    </Buttonsys>
-                                </div>
+                                                    handleSwitchToOnHold()
+                                            }}>
+                                                {
+                                                    displaytask.status === 4 ?
+                                                        <>
+                                                            <div className='mr-1'>
+                                                                <PlayerPlayIconSvg size={25} color={`#E5C471`} />
+                                                            </div>
+                                                            <p className='mb-0 text-onhold'>Lanjutkan Task</p>
+                                                        </>
+                                                        :
+                                                        displaytask.created_by !== dataProfile.data.id ?
+                                                            <>
+                                                                <div className='mr-1'>
+                                                                    {displaytask.status === 1 && <ClockIconSvg size={25} color={`#BF4A40`} />}
+                                                                    {displaytask.status === 2 && <ClockIconSvg size={25} color={`#2F80ED`} />}
+                                                                    {displaytask.status === 3 && <ClockIconSvg size={25} color={`#ED962F`} />}
+                                                                    {displaytask.status === 5 && <ClockIconSvg size={25} color={`#6AAA70`} />}
+                                                                    {displaytask.status === 6 && <ClockIconSvg size={25} color={`#808080`} />}
+                                                                </div>
+                                                                <p className={`mb-0 ${displaytask.status === 1 && `text-overdue`} ${displaytask.status === 2 && `text-open`} ${displaytask.status === 3 && `text-onprogress`} ${displaytask.status === 4 && `text-onhold`} ${displaytask.status === 5 && `text-completed`} ${displaytask.status === 6 && `text-closed`}`}>Request On Hold</p>
+                                                            </>
+                                                            :
+                                                            <>
+                                                                <div className='mr-1'>
+                                                                    {displaytask.status === 1 && <PlayerPauseIconSvg size={25} color={`#BF4A40`} />}
+                                                                    {displaytask.status === 2 && <PlayerPauseIconSvg size={25} color={`#2F80ED`} />}
+                                                                    {displaytask.status === 3 && <PlayerPauseIconSvg size={25} color={`#ED962F`} />}
+                                                                    {displaytask.status === 5 && <PlayerPauseIconSvg size={25} color={`#6AAA70`} />}
+                                                                    {displaytask.status === 6 && <PlayerPauseIconSvg size={25} color={`#808080`} />}
+                                                                </div>
+                                                                <p className={`mb-0 ${displaytask.status === 1 && `text-overdue`} ${displaytask.status === 2 && `text-open`} ${displaytask.status === 3 && `text-onprogress`} ${displaytask.status === 4 && `text-onhold`} ${displaytask.status === 5 && `text-completed`} ${displaytask.status === 6 && `text-closed`}`}>Hold Task</p>
+                                                            </>
+                                                }
+                                            </Buttonsys>
+                                        </div>
+                                }
                                 <ModalUbahOnHoldTask
                                     title={displaytask.status !== 4 ? "Ubah Status On Hold" : "Lanjutkan Task"}
                                     visible={modalstatustoggle}
@@ -1494,32 +1701,35 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                             </div>
                             <p className='mb-0 text-sm text-gray-500'>{displaytask.created_at === null ? `-` : moment(displaytask.created_at).locale('id').format('lll')}</p>
                         </div>
-                        <div className='my-5 flex flex-col items-center'>
-                            <div className=' mb-3'>
-                                <Buttonsys type={`default`} onClick={() => { setdrawertaskupdate(true) }}>
-                                    <div className='mr-1 flex items-center'>
-                                        <EditIconSvg size={15} color={`#35763B`} />
-                                        Edit Task
-                                    </div>
-                                </Buttonsys>
+                        {
+                            displaytask.created_by === dataProfile.data.id &&
+                            <div className='my-5 flex flex-col items-center'>
+                                <div className=' mb-3'>
+                                    <Buttonsys type={`default`} onClick={() => { setdrawertaskupdate(true) }}>
+                                        <div className='mr-1 flex items-center'>
+                                            <EditIconSvg size={15} color={`#35763B`} />
+                                            Edit Task
+                                        </div>
+                                    </Buttonsys>
+                                </div>
+                                <div className=' mb-3'>
+                                    <Buttonsys type={`primary`} color={`danger`} onClick={() => { setmodaltaskdelete(true); setdatataskdelete({ id: taskid, name: displaytask.name }) }}>
+                                        <div className='mr-1 flex items-center'>
+                                            <TrashIconSvg size={15} color={`#ffffff`} />
+                                            Hapus Task
+                                        </div>
+                                    </Buttonsys>
+                                </div>
+                                <div className=' mb-3'>
+                                    <Buttonsys type={`primary`} onClick={() => { console.log(currentdataeditable) }}>
+                                        <div className='mr-1 flex items-center'>
+                                            <ClipboardcheckIconSvg size={15} color={`#ffffff`} />
+                                            Cetak Task
+                                        </div>
+                                    </Buttonsys>
+                                </div>
                             </div>
-                            <div className=' mb-3'>
-                                <Buttonsys type={`primary`} color={`danger`} onClick={() => { setmodaltaskdelete(true); setdatataskdelete({ id: taskid, name: displaytask.name }) }}>
-                                    <div className='mr-1 flex items-center'>
-                                        <TrashIconSvg size={15} color={`#ffffff`} />
-                                        Hapus Task
-                                    </div>
-                                </Buttonsys>
-                            </div>
-                            <div className=' mb-3'>
-                                <Buttonsys type={`primary`} onClick={() => { console.log(currentdataeditable) }}>
-                                    <div className='mr-1 flex items-center'>
-                                        <ClipboardcheckIconSvg size={15} color={`#ffffff`} />
-                                        Cetak Task
-                                    </div>
-                                </Buttonsys>
-                            </div>
-                        </div>
+                        }
                         <ModalHapusTask
                             title={"Konfirmasi Hapus Task"}
                             visible={modaltaskdelete}
@@ -1598,6 +1808,24 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                         </div>
                                     </div>
                                 ))
+                        }
+                        {
+                            displaytask.created_by !== dataProfile.data.id &&
+                            <>
+                                {
+                                    completeclose ?
+                                        null
+                                        :
+                                        <div className="my-3 flex items-center justify-center">
+                                            <Buttonsys disabled={disablededitable} type={`default`}>
+                                                <div className="mr-1">
+                                                    <EditIconSvg size={18} color={`#35763B`} />
+                                                </div>
+                                                Pergantian Suku Cadang
+                                            </Buttonsys>
+                                        </div>
+                                }
+                            </>
                         }
                     </div>
                 </div>
