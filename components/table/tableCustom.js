@@ -324,6 +324,75 @@ const TableCustomStaffTask = ({ dataSource, setDataSource, columns, loading, pag
     )
 }
 
+const TableCustomTaskPick = ({ dataSource, setDataSource, columns, loading, pageSize, total, setpraloading, initProps, setpage, pagefromsearch, setdataraw, sortstate, setsortstate, searchstate, tasktypefilterstate, fromdatefilterstate, todatefilterstate, lokasifilterstate, }) => {
+    return (
+        <Table
+            className='tableTypeTask'
+            dataSource={dataSource}
+            columns={columns}
+            loading={loading}
+            scroll={{ x: 200 }}
+            pagination={{
+                current: pagefromsearch,
+                pageSize: pageSize,
+                total: total,
+                onChange: (page, pageSize) => {
+                    setpraloading(true)
+                    setpage(page)
+                    fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskPickList?page=${page}&rows=${pageSize}&name=${searchstate}`, {
+                        method: `GET`,
+                        headers: {
+                            'Authorization': JSON.parse(initProps),
+                        },
+                    })
+                        .then(res => res.json())
+                        .then(res2 => {
+                            setdataraw(res2.data)
+                            setDataSource(res2.data.data)
+                            setpraloading(false)
+                        })
+                }
+            }}
+            onChange={(pagination, filters, sorter, extra) => {
+                if (extra.action === "sort") {
+                    if (sorter.column) {
+                        setpraloading(true)
+                        setsortstate({ sort_by: sorter.column.dataIndex, sort_type: sorter.order === "ascend" ? "asc" : "desc" })
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskPickList?page=${pagination.current}&rows=${pagination.pageSize}&name=${searchstate}`, {
+                            method: `GET`,
+                            headers: {
+                                'Authorization': JSON.parse(initProps),
+                            },
+                        })
+                            .then(res => res.json())
+                            .then(res2 => {
+                                setdataraw(res2.data)
+                                setDataSource(res2.data.data)
+                                setpraloading(false)
+                            })
+                    }
+                    else {
+                        setpraloading(true)
+                        setsortstate({ sort_by: "", sort_type: "" })
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskPickList?page=${pagination.current}&rows=${pagination.pageSize}&name=${searchstate}`, {
+                            method: `GET`,
+                            headers: {
+                                'Authorization': JSON.parse(initProps),
+                            },
+                        })
+                            .then(res => res.json())
+                            .then(res2 => {
+                                setdataraw(res2.data)
+                                setDataSource(res2.data.data)
+                                setpraloading(false)
+                            })
+                    }
+                }
+            }}
+        />
+    )
+}
+
 export {
-    TableCustom, TableCustomRelasi, TableCustomTipeTask, TableCustomTask, TableCustomStaffTask
+    TableCustom, TableCustomRelasi, TableCustomTipeTask, TableCustomTask, TableCustomStaffTask, TableCustomTaskPick
 }

@@ -746,6 +746,20 @@ const SendIconSvg = ({ size, color }) => {
         <Icon component={sendIconSvg}></Icon>
     )
 }
+const LayoutGridAddSvg = ({ size, color }) => {
+    const layoutGridAddSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-layout-grid-add" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <rect x={4} y={4} width={6} height={6} rx={1} />
+            <rect x={14} y={4} width={6} height={6} rx={1} />
+            <rect x={4} y={14} width={6} height={6} rx={1} />
+            <path d="M14 17h6m-3 -3v6" />
+        </svg>
+    )
+    return (
+        <Icon component={layoutGridAddSvg}></Icon>
+    )
+}
 const AssetIconSvg = ({ size, color }) => {
     const assetIconSvg = () => (
         <svg width={size} height={size} viewBox="0 0 72 73" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -950,5 +964,6 @@ export {
     CloudUploadIconSvg,
     PhotoIconSvg,
     FileTextIconSvg,
-    SendIconSvg
+    SendIconSvg,
+    LayoutGridAddSvg
 }
