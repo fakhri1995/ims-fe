@@ -508,15 +508,27 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                                                                     </Select>
                                                                                 </div>
                                                                             </div>
-                                                                            <div className="flex mb-2">
-                                                                                <Input placeholder="Keterangan" value={doc3.description} onChange={(e) => {
+                                                                            <div className="flex mb-2 items-center">
+                                                                                <div className=' w-10/12'>
+                                                                                    <Input placeholder="Keterangan" value={doc3.description} onChange={(e) => {
+                                                                                        var temp = [...datacreate.works]
+                                                                                        temp[idx].lists[idx3] = ({ ...doc3, description: e.target.value })
+                                                                                        setdatacreate(prev => ({
+                                                                                            ...prev,
+                                                                                            works: temp
+                                                                                        }))
+                                                                                    }}></Input>
+                                                                                </div>
+                                                                                <div className=' w-2/12 cursor-pointer flex items-center text-center justify-center' onClick={() => {
                                                                                     var temp = [...datacreate.works]
-                                                                                    temp[idx].lists[idx3] = ({ ...doc3, description: e.target.value })
+                                                                                    temp[idx].lists.splice(idx3, 1)
                                                                                     setdatacreate(prev => ({
                                                                                         ...prev,
                                                                                         works: temp
                                                                                     }))
-                                                                                }}></Input>
+                                                                                }}>
+                                                                                    <CircleXIconSvg size={15} color={`#BF4A40`} />
+                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -572,7 +584,7 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                                                             ::
                                                                         </div>
                                                                         <div className="flex items-center mr-2">
-                                                                            <Input placeholder="Tambah" value={doc4} onChange={(e) => {
+                                                                            <Input placeholder="Tambah" style={{ marginRight: `0.5rem` }} value={doc4} onChange={(e) => {
                                                                                 var temp = [...datacreate.works]
                                                                                 temp[idx].lists[idx4] = e.target.value
                                                                                 setdatacreate(prev => ({
@@ -581,6 +593,16 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                                                                 }))
                                                                             }} bordered={false}
                                                                             />
+                                                                            <div className='cursor-pointer flex items-center text-center justify-center' onClick={() => {
+                                                                                var temp = [...datacreate.works]
+                                                                                temp[idx].lists.splice(idx4, 1)
+                                                                                setdatacreate(prev => ({
+                                                                                    ...prev,
+                                                                                    works: temp
+                                                                                }))
+                                                                            }}>
+                                                                                <CircleXIconSvg size={15} color={`#BF4A40`} />
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 )

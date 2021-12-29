@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import DrawerCore from '../drawerCore'
 import { InputRequired, TextAreaRequired, RadioNotRequired } from '../../input'
 import { Spin, notification, Input, Select, Empty, Checkbox } from 'antd'
-import { AlignJustifiedIconSvg, BorderAllSvg, CheckboxIconSvg, CopyIconSvg, ListNumbersSvg, RulerIconSvg, TrashIconSvg } from '../../icon'
+import { AlignJustifiedIconSvg, BorderAllSvg, CheckboxIconSvg, CircleXIconSvg, CopyIconSvg, ListNumbersSvg, RulerIconSvg, TrashIconSvg } from '../../icon'
 import { Label, H2 } from '../../typography'
 
 const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvisible, onClose, buttonOkText, disabled, initProps }) => {
@@ -30,7 +30,7 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
     //checkbox
     const [tempcb, settempcb] = useState("")
     //matriks
-    const [isbarismatriks, setisbarismatriks] = useState(false)
+    const [isbarismatriks, setisbarismatriks] = useState([])
     const [tempcolumnmatriks, settempcolumnmatriks] = useState("")
     const [temprowmatriks, settemprowmatriks] = useState("")
 
@@ -108,6 +108,8 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                         description: res2.data.description
                     }))
                     res2.data.name !== "" && res2.data.description !== "" ? setdisabledupdate(false) : setdisabledupdate(true)
+                    var tempisbarismatriks = res2.data.works.map(m => m.details.is_general ? (m.details.is_general === true ? true : false) : 1)
+                    setisbarismatriks(tempisbarismatriks)
                     setloadingdetailtipetaskupdate(false)
                 })
         }
@@ -378,6 +380,41 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                                     <Checkbox style={{ marginRight: `0.5rem` }} checked />
                                                                                                     {doc2}
                                                                                                 </div>
+                                                                                                <div className='cursor-pointer flex items-center text-center justify-center' onClick={() => {
+                                                                                                    var tempdisplay = [...datadisplay.works]
+                                                                                                    tempdisplay[idx].lists.splice(idx2, 1)
+                                                                                                    setdatadisplay(prev => ({
+                                                                                                        ...prev,
+                                                                                                        works: tempdisplay
+                                                                                                    }))
+                                                                                                    if (doc.id) {
+                                                                                                        var idxdataupdate = dataupdate.update_works.map(docmap => docmap.id).indexOf(doc.id)
+                                                                                                        if (idxdataupdate === -1) {
+                                                                                                            setdataupdate(prev => ({
+                                                                                                                ...prev,
+                                                                                                                update_works: [...prev.update_works, { ...doc, lists: tempdisplay[idx].lists }]
+                                                                                                            }))
+                                                                                                        }
+                                                                                                        else {
+                                                                                                            var temp2 = [...dataupdate.update_works]
+                                                                                                            temp2[idxdataupdate].lists = tempdisplay[idx].lists
+                                                                                                            setdataupdate(prev => ({
+                                                                                                                ...prev,
+                                                                                                                update_works: temp2
+                                                                                                            }))
+                                                                                                        }
+                                                                                                    }
+                                                                                                    else {
+                                                                                                        var temp2 = [...dataupdate.add_works]
+                                                                                                        temp2[idx - workslen].lists = tempdisplay[idx].lists
+                                                                                                        setdataupdate(prev => ({
+                                                                                                            ...prev,
+                                                                                                            add_works: temp2
+                                                                                                        }))
+                                                                                                    }
+                                                                                                }}>
+                                                                                                    <CircleXIconSvg size={15} color={`#BF4A40`} />
+                                                                                                </div>
                                                                                             </div>
                                                                                         )
                                                                                     })
@@ -444,6 +481,41 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                                 <div className="flex items-center mr-2">
                                                                                                     {doc2}
                                                                                                 </div>
+                                                                                                <div className='cursor-pointer flex items-center text-center justify-center' onClick={() => {
+                                                                                                    var tempdisplay = [...datadisplay.works]
+                                                                                                    tempdisplay[idx].columns.splice(idx2, 1)
+                                                                                                    setdatadisplay(prev => ({
+                                                                                                        ...prev,
+                                                                                                        works: tempdisplay
+                                                                                                    }))
+                                                                                                    if (doc.id) {
+                                                                                                        var idxdataupdate = dataupdate.update_works.map(docmap => docmap.id).indexOf(doc.id)
+                                                                                                        if (idxdataupdate === -1) {
+                                                                                                            setdataupdate(prev => ({
+                                                                                                                ...prev,
+                                                                                                                update_works: [...prev.update_works, { ...doc, columns: tempdisplay[idx].columns }]
+                                                                                                            }))
+                                                                                                        }
+                                                                                                        else {
+                                                                                                            var temp2 = [...dataupdate.update_works]
+                                                                                                            temp2[idxdataupdate].columns = tempdisplay[idx].columns
+                                                                                                            setdataupdate(prev => ({
+                                                                                                                ...prev,
+                                                                                                                update_works: temp2
+                                                                                                            }))
+                                                                                                        }
+                                                                                                    }
+                                                                                                    else {
+                                                                                                        var temp2 = [...dataupdate.add_works]
+                                                                                                        temp2[idx - workslen].columns = tempdisplay[idx].columns
+                                                                                                        setdataupdate(prev => ({
+                                                                                                            ...prev,
+                                                                                                            add_works: temp2
+                                                                                                        }))
+                                                                                                    }
+                                                                                                }}>
+                                                                                                    <CircleXIconSvg size={15} color={`#BF4A40`} />
+                                                                                                </div>
                                                                                             </div>
                                                                                         )
                                                                                     })
@@ -490,7 +562,7 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                             </div>
                                                                             <div className="mb-3 flex flex-col">
                                                                                 <div className="mb-2">
-                                                                                    <RadioNotRequired label="Baris" value={doc.is_general} onChangeRadio={(e) => {
+                                                                                    <RadioNotRequired label="Baris" defaultValue={doc.is_general} onChangeRadio={(e) => {
                                                                                         setisbarismatriks(e.target.value);
                                                                                         var tempdisplay = [...datadisplay.works]
                                                                                         tempdisplay[idx].is_general = e.target.value
@@ -539,7 +611,7 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                     ></RadioNotRequired>
                                                                                 </div>
                                                                                 {
-                                                                                    isbarismatriks &&
+                                                                                    isbarismatriks[idx] &&
                                                                                     <div className="mb-2">
                                                                                         {
                                                                                             doc.rows.map((doc2, idx2) => {
@@ -551,6 +623,41 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                                         </div>
                                                                                                         <div className="flex items-center mr-2">
                                                                                                             {doc2}
+                                                                                                        </div>
+                                                                                                        <div className='cursor-pointer flex items-center text-center justify-center' onClick={() => {
+                                                                                                            var tempdisplay = [...datadisplay.works]
+                                                                                                            tempdisplay[idx].rows.splice(idx2, 1)
+                                                                                                            setdatadisplay(prev => ({
+                                                                                                                ...prev,
+                                                                                                                works: tempdisplay
+                                                                                                            }))
+                                                                                                            if (doc.id) {
+                                                                                                                var idxdataupdate = dataupdate.update_works.map(docmap => docmap.id).indexOf(doc.id)
+                                                                                                                if (idxdataupdate === -1) {
+                                                                                                                    setdataupdate(prev => ({
+                                                                                                                        ...prev,
+                                                                                                                        update_works: [...prev.update_works, { ...doc, rows: tempdisplay[idx].rows }]
+                                                                                                                    }))
+                                                                                                                }
+                                                                                                                else {
+                                                                                                                    var temp2 = [...dataupdate.update_works]
+                                                                                                                    temp2[idxdataupdate].rows = tempdisplay[idx].rows
+                                                                                                                    setdataupdate(prev => ({
+                                                                                                                        ...prev,
+                                                                                                                        update_works: temp2
+                                                                                                                    }))
+                                                                                                                }
+                                                                                                            }
+                                                                                                            else {
+                                                                                                                var temp2 = [...dataupdate.add_works]
+                                                                                                                temp2[idx - workslen].rows = tempdisplay[idx].rows
+                                                                                                                setdataupdate(prev => ({
+                                                                                                                    ...prev,
+                                                                                                                    add_works: temp2
+                                                                                                                }))
+                                                                                                            }
+                                                                                                        }}>
+                                                                                                            <CircleXIconSvg size={15} color={`#BF4A40`} />
                                                                                                         </div>
                                                                                                     </div>
                                                                                                 )
@@ -676,10 +783,45 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                                         </Select>
                                                                                                     </div>
                                                                                                 </div>
-                                                                                                <div className="flex mb-2">
-                                                                                                    <Input placeholder="Keterangan" value={doc3.description} onChange={(e) => {
+                                                                                                <div className="flex mb-2 items-center">
+                                                                                                    <div className="w-10/12">
+                                                                                                        <Input placeholder="Keterangan" value={doc3.description} onChange={(e) => {
+                                                                                                            var tempdisplay = [...datadisplay.works]
+                                                                                                            tempdisplay[idx].lists[idx3] = ({ ...doc3, description: e.target.value })
+                                                                                                            setdatadisplay(prev => ({
+                                                                                                                ...prev,
+                                                                                                                works: tempdisplay
+                                                                                                            }))
+                                                                                                            if (doc.id) {
+                                                                                                                var idxdataupdate = dataupdate.update_works.map(docmap => docmap.id).indexOf(doc.id)
+                                                                                                                if (idxdataupdate === -1) {
+                                                                                                                    setdataupdate(prev => ({
+                                                                                                                        ...prev,
+                                                                                                                        update_works: [...prev.update_works, { ...doc, lists: tempdisplay[idx].lists }]
+                                                                                                                    }))
+                                                                                                                }
+                                                                                                                else {
+                                                                                                                    var temp2 = [...dataupdate.update_works]
+                                                                                                                    temp2[idxdataupdate].lists = tempdisplay[idx].lists
+                                                                                                                    setdataupdate(prev => ({
+                                                                                                                        ...prev,
+                                                                                                                        update_works: temp2
+                                                                                                                    }))
+                                                                                                                }
+                                                                                                            }
+                                                                                                            else {
+                                                                                                                var temp2 = [...dataupdate.add_works]
+                                                                                                                temp2[idx - workslen].lists = tempdisplay[idx].lists
+                                                                                                                setdataupdate(prev => ({
+                                                                                                                    ...prev,
+                                                                                                                    add_works: temp2
+                                                                                                                }))
+                                                                                                            }
+                                                                                                        }}></Input>
+                                                                                                    </div>
+                                                                                                    <div className=' w-2/12 cursor-pointer flex items-center text-center justify-center' onClick={() => {
                                                                                                         var tempdisplay = [...datadisplay.works]
-                                                                                                        tempdisplay[idx].lists[idx3] = ({ ...doc3, description: e.target.value })
+                                                                                                        tempdisplay[idx].lists.splice(idx3, 1)
                                                                                                         setdatadisplay(prev => ({
                                                                                                             ...prev,
                                                                                                             works: tempdisplay
@@ -709,7 +851,9 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                                                 add_works: temp2
                                                                                                             }))
                                                                                                         }
-                                                                                                    }}></Input>
+                                                                                                    }}>
+                                                                                                        <CircleXIconSvg size={15} color={`#BF4A40`} />
+                                                                                                    </div>
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div>
@@ -849,6 +993,41 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                                     }
                                                                                                 }} bordered={false}
                                                                                                 />
+                                                                                            </div>
+                                                                                            <div className='cursor-pointer flex items-center text-center justify-center' onClick={() => {
+                                                                                                var tempdisplay = [...datadisplay.works]
+                                                                                                tempdisplay[idx].lists.splice(idx4, 1)
+                                                                                                setdatadisplay(prev => ({
+                                                                                                    ...prev,
+                                                                                                    works: tempdisplay
+                                                                                                }))
+                                                                                                if (doc.id) {
+                                                                                                    var idxdataupdate = dataupdate.update_works.map(docmap => docmap.id).indexOf(doc.id)
+                                                                                                    if (idxdataupdate === -1) {
+                                                                                                        setdataupdate(prev => ({
+                                                                                                            ...prev,
+                                                                                                            update_works: [...prev.update_works, { ...doc, lists: tempdisplay[idx].lists }]
+                                                                                                        }))
+                                                                                                    }
+                                                                                                    else {
+                                                                                                        var temp2 = [...dataupdate.update_works]
+                                                                                                        temp2[idxdataupdate].lists = tempdisplay[idx].lists
+                                                                                                        setdataupdate(prev => ({
+                                                                                                            ...prev,
+                                                                                                            update_works: temp2
+                                                                                                        }))
+                                                                                                    }
+                                                                                                }
+                                                                                                else {
+                                                                                                    var temp2 = [...dataupdate.add_works]
+                                                                                                    temp2[idx - workslen].lists = tempdisplay[idx].lists
+                                                                                                    setdataupdate(prev => ({
+                                                                                                        ...prev,
+                                                                                                        add_works: temp2
+                                                                                                    }))
+                                                                                                }
+                                                                                            }}>
+                                                                                                <CircleXIconSvg size={15} color={`#BF4A40`} />
                                                                                             </div>
                                                                                         </div>
                                                                                     )
