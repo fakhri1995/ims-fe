@@ -71,15 +71,28 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                                 }
                             </>
                     }
-                    <Menu.Item key="20" icon={<TaskIconSvg />} title="Task">
-                        <Link href="/tasks">
-                            Task
-                        </Link>
-                    </Menu.Item>
+                    <SubMenu title="Task" key="20" icon={<TaskIconSvg />}>
+                        {
+                            // [144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                            <Menu.Item key="201" icon={<TaskIconSvg />} title="Admin Task">
+                                <Link href="/tasks/admin">
+                                    Admin Task
+                                </Link>
+                            </Menu.Item>
+                        }
+                        {
+                            // [144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                            <Menu.Item key="202" icon={<TaskIconSvg />} title="My Task">
+                                <Link href="/tasks/mytask">
+                                    My Task
+                                </Link>
+                            </Menu.Item>
+                        }
+                    </SubMenu>
                     <Menu.Item key="3" icon={<ItemIconSvg />} title="Items">
                         {/* <Menu.Item key="31"> */}
                         <Link href="/items">
-                            Inventori
+                            Items
                         </Link>
                         {/* </Menu.Item> */}
                     </Menu.Item>

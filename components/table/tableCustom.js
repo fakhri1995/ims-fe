@@ -133,7 +133,7 @@ const TableCustomTipeTask = ({ dataSource, setDataSource, columns, loading, page
     )
 }
 
-const TableCustomTask = ({ dataSource, setDataSource, columns, loading, pageSize, total, setpraloading, initProps, setpage, pagefromsearch, setdataraw, sortstate, searchstate, setsortstate, tasktypefilterstate, fromdatefilterstate, todatefilterstate, lokasifilterstate, statusfilterstate }) => {
+const TableCustomTask = ({ dataSource, setDataSource, columns, loading, pageSize, total, setpraloading, initProps, setpage, pagefromsearch, setdataraw, sortstate, searchstate, setsortstate, tasktypefilterstate, fromdatefilterstate, todatefilterstate, lokasifilterstate, statusfilterstate, prevpath }) => {
     const rt = useRouter()
     const [rowstate, setrowstate] = useState(0)
     return (
@@ -170,7 +170,7 @@ const TableCustomTask = ({ dataSource, setDataSource, columns, loading, pageSize
                         setrowstate(record.id)
                     },
                     onClick: (event) => {
-                        rt.push(`/tasks/detail/${record.id}`)
+                        rt.push(`/tasks/detail/${record.id}?prevpath=${prevpath}`)
                     }
                 }
             }}

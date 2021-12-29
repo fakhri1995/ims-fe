@@ -21,6 +21,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     const pathArr = rt.pathname.split("/").slice(1)
     pathArr.splice(2, 1)
     pathArr.push(`Task ${taskid}`)
+    const { prevpath } = rt.query
 
     //USESTATE
     const [displaytask, setdisplaytask] = useState({
@@ -104,6 +105,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     const [editable, seteditable] = useState([])
     const [disablededitable, setdisablededitable] = useState(true)
     const [completeclose, setcompleteclose] = useState(false)
+    const [isselfcheckout, setisselfcheckout] = useState(false)
     const [revise, setrevise] = useState({
         display: false,
         data: {
@@ -191,7 +193,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                         message: res2.message,
                         duration: 3
                     })
-                    rt.push(`/tasks`)
+                    prevpath ? rt.push(`/tasks/${prevpath}`) : rt.push(`/tasks`)
                 }
                 else {
                     notification['error']({
@@ -220,7 +222,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                         message: res2.message,
                         duration: 3
                     })
-                    rt.push(`/tasks/detail/${taskid}`)
+                    // rt.push(`/tasks/detail/${taskid}`)
                 }
                 else {
                     notification['error']({
@@ -532,9 +534,10 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                     s: res2.data.time_left.s
                 })
                 if (res2.data.created_by !== dataProfile.data.id) {
-                    res2.data.users.filter(docfil => docfil.id === dataProfile.data.id)[0].check_in === null || res2.data.status === 4 ? setdisablededitable(true) : setdisablededitable(false)
+                    res2.data.users.filter(docfil => docfil.id === dataProfile.data.id)[0]?.check_in === null || res2.data.status === 4 ? setdisablededitable(true) : setdisablededitable(false)
                 }
                 res2.data.status === 5 || res2.data.status === 6 ? setcompleteclose(true) : setcompleteclose(false)
+                res2.data.users.filter(docsome => docsome.id === dataProfile.data.id)[0]?.check_out !== null ? setisselfcheckout(true) : setisselfcheckout(false)
                 setpraloadingtask(false)
             })
     }, [loadingtaskdelete, loadingchange, loadingstafftask, triggertaskdetailupdate, loadingtaskdetaildelete, triggertaskdetailcreate, loadingeditable, loadingcheckin])
@@ -543,13 +546,18 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     }, [scrolltriggerupdate])
 
     return (
-        <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
+        <Layout tok={initProps} dataProfile={dataProfile} sidemenu={prevpath === "admin" ? "201" : "202"} pathArr={pathArr} st={st}>
             <div className='grid grid-cols-12 px-5'>
                 <div className=' col-span-9 flex flex-col'>
                     <div className='shadow-md rounded-md bg-white p-5 mb-6 mr-3 flex flex-col'>
                         <div className='flex justify-between items-center mb-10'>
                             <div className='flex items-center'>
-                                <div className='mr-3 cursor-pointer' onClick={() => { rt.push(`/tasks`) }}>
+                                <div className='mr-3 cursor-pointer' onClick={() => {
+                                    if (prevpath) {
+                                        prevpath === "admin" && rt.push(`/tasks/admin`)
+                                        prevpath === "mytask" && rt.push(`/tasks/mytask`)
+                                    }
+                                }}>
                                     <BackIconSvg size={20} color={`#000000`} />
                                 </div>
                                 <div className='ml-3'>
@@ -654,7 +662,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                 </div>
                                 :
                                 <div className=' flex flex-col mb-7'>
-                                    <div className=' mb-4 flex justify-between items-center'>
+                                    {/* <div className=' mb-4 flex justify-between items-center'>
                                         <div className=' flex flex-col'>
                                             <div className=' flex items-center mb-2'>
                                                 {
@@ -702,6 +710,87 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                                 Check In
                                                             </Buttonsys>
                                                         </dir>
+                                            }
+                                        </div>
+                                    </div> */}
+                                    <div className='flex flex-col mb-7'>
+                                        <div className='mb-3'>
+                                            <Label>Daftar Staff</Label>
+                                        </div>
+                                        <div className=' border rounded-md mb-3'>
+                                            <div className="grid grid-cols-12 mb-3">
+                                                <div className=' col-span-1 flex items-center p-2'>
+                                                    <H2>No.</H2>
+                                                </div>
+                                                <div className=' col-span-5 flex items-center p-2'>
+                                                    <div className='mr-1 flex items-center cursor-pointer' onClick={() => {
+                                                        var temp = [...displaytask.users]
+                                                        var temp2 = []
+                                                        if (sortstate === 0)
+                                                            temp2 = temp.sort((a, b) => a.name > b.name ? 1 : -1)
+                                                        else if (sortstate === 1)
+                                                            temp2 = temp.sort((a, b) => a.name < b.name ? 1 : -1)
+                                                        else if (sortstate === -1)
+                                                            temp2 = users2
+                                                        setdisplaytask(prev => ({
+                                                            ...prev,
+                                                            users: temp2
+                                                        }))
+                                                        var tempsort = sortstate
+                                                        tempsort === 0 ? setsortstate(1) : null
+                                                        tempsort === 1 ? setsortstate(-1) : null
+                                                        tempsort === -1 ? setsortstate(0) : null
+                                                    }}>
+                                                        {sortstate === -1 && <SortDescendingIconSvg size={15} color={`#8f8f8f`} />}
+                                                        {sortstate === 0 && <ArrowsSortIconSvg size={15} color={`#CCCCCC`} />}
+                                                        {sortstate === 1 && <SortAscendingIconSvg size={15} color={`#8f8f8f`} />}
+                                                    </div>
+                                                    <div className='flex items-center'>
+                                                        <H2>Staf</H2>
+                                                    </div>
+                                                </div>
+                                                <div className=' col-span-3 flex items-center p-2'>
+                                                    <H2>Check In</H2>
+                                                </div>
+                                                <div className=' col-span-3 flex items-center p-2'>
+                                                    <H2>Check Out</H2>
+                                                </div>
+                                                {
+                                                    displaytask.users.map((docusers, idxusers) => (
+                                                        <>
+                                                            <div className=' col-span-1 flex items-center py-2 pl-3'>
+                                                                <Text>{idxusers + 1}</Text>
+                                                            </div>
+                                                            <div className=' col-span-5 flex items-center p-2'>
+                                                                <div className='mr-1 flex items-center w-10 h-10 rounded-full'>
+                                                                    <img src={docusers.profile_image === "-" || docusers.profile_image === "" ? "/image/staffTask.png" : docusers.profile_image} className=' object-contain' alt="" />
+                                                                </div>
+                                                                <div className='flex items-center'>
+                                                                    <Text>{docusers.name}</Text>
+                                                                </div>
+                                                            </div>
+                                                            <div className=' col-span-3 flex items-center p-2'>
+                                                                <Text>{docusers.check_in === null ? `-` : moment(docusers.check_in).locale('id').format('lll')}</Text>
+                                                            </div>
+                                                            <div className=' col-span-3 flex items-center p-2'>
+                                                                <Text>{docusers.check_out === null ? `-` : moment(docusers.check_out).locale('id').format('lll')}</Text>
+                                                            </div>
+                                                        </>
+                                                    ))
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col mb-7">
+                                        <div className='mb-1'>
+                                            <Label>Jenis Task</Label>
+                                        </div>
+                                        <div>
+                                            {
+                                                displaytask.users.length <= 1 ?
+                                                    <H2>Task Individu</H2>
+                                                    :
+                                                    <H2>Task Kelompok</H2>
                                             }
                                         </div>
                                     </div>
@@ -1168,7 +1257,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                                                 </div>
                                                                                 {
                                                                                     doctask.component.columns.map((doccol, idxcol) => (
-                                                                                        <div className=' col-span-1 flex items-center justify-center p-2'>
+                                                                                        <div className=' col-span-2 flex items-center justify-center p-2'>
                                                                                             <H2>{doccol}</H2>
                                                                                         </div>
                                                                                     ))
@@ -1182,7 +1271,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                                                         </div>
                                                                                         {
                                                                                             doctask.component.columns.map((doc41, idx41) => (
-                                                                                                <div className=' col-span-1 flex items-center justify-center py-2 px-2'>
+                                                                                                <div className=' col-span-2 flex items-center justify-center py-2 px-2'>
                                                                                                     {
                                                                                                         doc4[doc41] ?
                                                                                                             <CheckIconSvg size={18} color={`#35763B`} />
@@ -1352,7 +1441,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                                 </div>
                                                             </div>
                                                             :
-                                                            completeclose ?
+                                                            completeclose || isselfcheckout ?
                                                                 null
                                                                 :
                                                                 editable[idxtask] ?
@@ -1418,15 +1507,17 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                     <H2>Lampiran</H2>
                                                 </div>
                                                 {
-                                                    completeclose === false &&
-                                                    <div>
-                                                        <Buttonsys disabled={disablededitable} type={`default`}>
-                                                            <div className="mr-1">
-                                                                <CloudUploadIconSvg size={15} color={`#35763B`} />
-                                                            </div>
-                                                            Unggah Lampiran
-                                                        </Buttonsys>
-                                                    </div>
+                                                    completeclose || isselfcheckout ?
+                                                        null
+                                                        :
+                                                        <div>
+                                                            <Buttonsys disabled={disablededitable} type={`default`}>
+                                                                <div className="mr-1">
+                                                                    <CloudUploadIconSvg size={15} color={`#35763B`} />
+                                                                </div>
+                                                                Unggah Lampiran
+                                                            </Buttonsys>
+                                                        </div>
                                                 }
                                             </div>
                                             <div className=' flex flex-col mb-4'>
@@ -1465,7 +1556,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                         }
                         {
                             displaytask.created_by === dataProfile.data.id ?
-                                completeclose ?
+                                displaytask.status === 5 ?
                                     <div className=' mb-7 flex flex-col'>
                                         <div className=' mb-4 flex items-center'>
                                             <p className=' mb-0 text-lg text-gray-500'>
@@ -1517,28 +1608,34 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                         }
                                     </div>
                                     :
-                                    <div className="mb-4 border border-dashed border-primary100 hover:border-primary75 hover:text-primary75 py-2 flex justify-center items-center w-full rounded-md cursor-pointer" onClick={() => { setdrawertaskdetailcreate(true) }}>
-                                        <div className="text-primary100">
-                                            + Tambah Pekerjaan Baru
-                                        </div>
-                                    </div>
-                                :
-                                completeclose ?
-                                    <div className=' flex justify-center w-full text-center'>
-                                        <div className=' mr-2'><CheckIconSvg size={30} color={`#35763B`} /></div>
-                                        <div>
-                                            <p className=' mb-0 text-primary100 text-xl'>Task telah disubmit</p>
-                                        </div>
-                                    </div>
-                                    :
-                                    <div className=' flex justify-center w-full'>
-                                        <Buttonsys disabled={disablededitable} type={`primary`} onClick={handleSubmitTask}>
-                                            <div className="mr-1">
-                                                <CheckIconSvg size={15} color={`#ffffff`} />
+                                    displaytask.status === 6 ?
+                                        null
+                                        :
+                                        <div className="mb-4 border border-dashed border-primary100 hover:border-primary75 hover:text-primary75 py-2 flex justify-center items-center w-full rounded-md cursor-pointer" onClick={() => { setdrawertaskdetailcreate(true) }}>
+                                            <div className="text-primary100">
+                                                + Tambah Pekerjaan Baru
                                             </div>
-                                            Selesai dan Submit
-                                        </Buttonsys>
-                                    </div>
+                                        </div>
+                                :
+                                displaytask.users.some(docsome => docsome.id === dataProfile.data.id) ?
+                                    completeclose || isselfcheckout ?
+                                        <div className=' flex justify-center w-full text-center'>
+                                            <div className=' mr-2'><CheckIconSvg size={30} color={`#35763B`} /></div>
+                                            <div>
+                                                <p className=' mb-0 text-primary100 text-xl'>Task telah disubmit</p>
+                                            </div>
+                                        </div>
+                                        :
+                                        <div className=' flex justify-center w-full'>
+                                            <Buttonsys disabled={disablededitable} type={`primary`} onClick={handleSubmitTask}>
+                                                <div className="mr-1">
+                                                    <CheckIconSvg size={15} color={`#ffffff`} />
+                                                </div>
+                                                Selesai dan Submit
+                                            </Buttonsys>
+                                        </div>
+                                    :
+                                    null
                         }
                         <ModalHapusTaskDetail
                             title={"Konfirmasi Hapus Task Detail"}
@@ -1600,47 +1697,50 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                     displaytask.status === 5 || displaytask.status === 6 ?
                                         null
                                         :
-                                        <div className={`mt-2 mb-3 ${displaytask.status === 1 && `text-overdue`} ${displaytask.status === 2 && `text-open`} ${displaytask.status === 3 && `text-onprogress`} ${displaytask.status === 4 && `text-onhold`} ${displaytask.status === 5 && `text-completed`} ${displaytask.status === 6 && `text-closed`}`}>
-                                            <Buttonsys type={`primary`} color={`white`} onClick={() => {
-                                                displaytask.status !== 4 ?
-                                                    setmodalstatustoggle(true)
-                                                    :
-                                                    handleSwitchToOnHold()
-                                            }}>
-                                                {
-                                                    displaytask.status === 4 ?
-                                                        <>
-                                                            <div className='mr-1'>
-                                                                <PlayerPlayIconSvg size={25} color={`#E5C471`} />
-                                                            </div>
-                                                            <p className='mb-0 text-onhold'>Lanjutkan Task</p>
-                                                        </>
+                                        displaytask.users.every(docsome => docsome.id !== dataProfile.data.id) ?
+                                            null
+                                            :
+                                            <div className={`mt-2 mb-3 ${displaytask.status === 1 && `text-overdue`} ${displaytask.status === 2 && `text-open`} ${displaytask.status === 3 && `text-onprogress`} ${displaytask.status === 4 && `text-onhold`} ${displaytask.status === 5 && `text-completed`} ${displaytask.status === 6 && `text-closed`}`}>
+                                                <Buttonsys type={`primary`} color={`white`} onClick={() => {
+                                                    displaytask.status !== 4 ?
+                                                        setmodalstatustoggle(true)
                                                         :
-                                                        displaytask.created_by !== dataProfile.data.id ?
+                                                        handleSwitchToOnHold()
+                                                }}>
+                                                    {
+                                                        displaytask.status === 4 ?
                                                             <>
                                                                 <div className='mr-1'>
-                                                                    {displaytask.status === 1 && <ClockIconSvg size={25} color={`#BF4A40`} />}
-                                                                    {displaytask.status === 2 && <ClockIconSvg size={25} color={`#2F80ED`} />}
-                                                                    {displaytask.status === 3 && <ClockIconSvg size={25} color={`#ED962F`} />}
-                                                                    {displaytask.status === 5 && <ClockIconSvg size={25} color={`#6AAA70`} />}
-                                                                    {displaytask.status === 6 && <ClockIconSvg size={25} color={`#808080`} />}
+                                                                    <PlayerPlayIconSvg size={25} color={`#E5C471`} />
                                                                 </div>
-                                                                <p className={`mb-0 ${displaytask.status === 1 && `text-overdue`} ${displaytask.status === 2 && `text-open`} ${displaytask.status === 3 && `text-onprogress`} ${displaytask.status === 4 && `text-onhold`} ${displaytask.status === 5 && `text-completed`} ${displaytask.status === 6 && `text-closed`}`}>Request On Hold</p>
+                                                                <p className='mb-0 text-onhold'>Lanjutkan Task</p>
                                                             </>
                                                             :
-                                                            <>
-                                                                <div className='mr-1'>
-                                                                    {displaytask.status === 1 && <PlayerPauseIconSvg size={25} color={`#BF4A40`} />}
-                                                                    {displaytask.status === 2 && <PlayerPauseIconSvg size={25} color={`#2F80ED`} />}
-                                                                    {displaytask.status === 3 && <PlayerPauseIconSvg size={25} color={`#ED962F`} />}
-                                                                    {displaytask.status === 5 && <PlayerPauseIconSvg size={25} color={`#6AAA70`} />}
-                                                                    {displaytask.status === 6 && <PlayerPauseIconSvg size={25} color={`#808080`} />}
-                                                                </div>
-                                                                <p className={`mb-0 ${displaytask.status === 1 && `text-overdue`} ${displaytask.status === 2 && `text-open`} ${displaytask.status === 3 && `text-onprogress`} ${displaytask.status === 4 && `text-onhold`} ${displaytask.status === 5 && `text-completed`} ${displaytask.status === 6 && `text-closed`}`}>Hold Task</p>
-                                                            </>
-                                                }
-                                            </Buttonsys>
-                                        </div>
+                                                            displaytask.created_by !== dataProfile.data.id ?
+                                                                <>
+                                                                    <div className='mr-1'>
+                                                                        {displaytask.status === 1 && <ClockIconSvg size={25} color={`#BF4A40`} />}
+                                                                        {displaytask.status === 2 && <ClockIconSvg size={25} color={`#2F80ED`} />}
+                                                                        {displaytask.status === 3 && <ClockIconSvg size={25} color={`#ED962F`} />}
+                                                                        {displaytask.status === 5 && <ClockIconSvg size={25} color={`#6AAA70`} />}
+                                                                        {displaytask.status === 6 && <ClockIconSvg size={25} color={`#808080`} />}
+                                                                    </div>
+                                                                    <p className={`mb-0 ${displaytask.status === 1 && `text-overdue`} ${displaytask.status === 2 && `text-open`} ${displaytask.status === 3 && `text-onprogress`} ${displaytask.status === 4 && `text-onhold`} ${displaytask.status === 5 && `text-completed`} ${displaytask.status === 6 && `text-closed`}`}>Request On Hold</p>
+                                                                </>
+                                                                :
+                                                                <>
+                                                                    <div className='mr-1'>
+                                                                        {displaytask.status === 1 && <PlayerPauseIconSvg size={25} color={`#BF4A40`} />}
+                                                                        {displaytask.status === 2 && <PlayerPauseIconSvg size={25} color={`#2F80ED`} />}
+                                                                        {displaytask.status === 3 && <PlayerPauseIconSvg size={25} color={`#ED962F`} />}
+                                                                        {displaytask.status === 5 && <PlayerPauseIconSvg size={25} color={`#6AAA70`} />}
+                                                                        {displaytask.status === 6 && <PlayerPauseIconSvg size={25} color={`#808080`} />}
+                                                                    </div>
+                                                                    <p className={`mb-0 ${displaytask.status === 1 && `text-overdue`} ${displaytask.status === 2 && `text-open`} ${displaytask.status === 3 && `text-onprogress`} ${displaytask.status === 4 && `text-onhold`} ${displaytask.status === 5 && `text-completed`} ${displaytask.status === 6 && `text-closed`}`}>Hold Task</p>
+                                                                </>
+                                                    }
+                                                </Buttonsys>
+                                            </div>
                                 }
                                 <ModalUbahOnHoldTask
                                     title={displaytask.status !== 4 ? "Ubah Status On Hold" : "Lanjutkan Task"}
@@ -1655,6 +1755,25 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                 />
                             </div>
                     }
+                    <div className=' my-3 ml-3'>
+                        {
+                            praloadingtask ?
+                                null
+                                :
+                                displaytask.status === 4 ?
+                                    <div>
+                                        <Buttonsys onClick={handleCheckInTask} disabled={true} type={`primary`} fullWidth={true}>
+                                            Check In
+                                        </Buttonsys>
+                                    </div>
+                                    :
+                                    <div>
+                                        <Buttonsys onClick={handleCheckInTask} disabled={disablededitable === true ? false : true} type={`primary`} fullWidth={true}>
+                                            Check In
+                                        </Buttonsys>
+                                    </div>
+                        }
+                    </div>
                     <div className='shadow-md rounded-md bg-white p-4 my-3 ml-3 flex flex-col'>
                         <div className='my-3 flex flex-col'>
                             <div className='mb-2'>
@@ -1702,33 +1821,38 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                             <p className='mb-0 text-sm text-gray-500'>{displaytask.created_at === null ? `-` : moment(displaytask.created_at).locale('id').format('lll')}</p>
                         </div>
                         {
-                            displaytask.created_by === dataProfile.data.id &&
-                            <div className='my-5 flex flex-col items-center'>
-                                <div className=' mb-3'>
-                                    <Buttonsys type={`default`} onClick={() => { setdrawertaskupdate(true) }}>
-                                        <div className='mr-1 flex items-center'>
-                                            <EditIconSvg size={15} color={`#35763B`} />
-                                            Edit Task
+                            displaytask.created_by === dataProfile.data.id ?
+                                displaytask.status === 6 ?
+                                    null
+                                    :
+                                    <div className='my-5 flex flex-col items-center'>
+                                        <div className=' mb-3'>
+                                            <Buttonsys type={`default`} onClick={() => { setdrawertaskupdate(true) }}>
+                                                <div className='mr-1 flex items-center'>
+                                                    <EditIconSvg size={15} color={`#35763B`} />
+                                                    Edit Task
+                                                </div>
+                                            </Buttonsys>
                                         </div>
-                                    </Buttonsys>
-                                </div>
-                                <div className=' mb-3'>
-                                    <Buttonsys type={`primary`} color={`danger`} onClick={() => { setmodaltaskdelete(true); setdatataskdelete({ id: taskid, name: displaytask.name }) }}>
-                                        <div className='mr-1 flex items-center'>
-                                            <TrashIconSvg size={15} color={`#ffffff`} />
-                                            Hapus Task
+                                        <div className=' mb-3'>
+                                            <Buttonsys type={`primary`} color={`danger`} onClick={() => { setmodaltaskdelete(true); setdatataskdelete({ id: taskid, name: displaytask.name }) }}>
+                                                <div className='mr-1 flex items-center'>
+                                                    <TrashIconSvg size={15} color={`#ffffff`} />
+                                                    Hapus Task
+                                                </div>
+                                            </Buttonsys>
                                         </div>
-                                    </Buttonsys>
-                                </div>
-                                <div className=' mb-3'>
-                                    <Buttonsys type={`primary`} onClick={() => { console.log(currentdataeditable) }}>
-                                        <div className='mr-1 flex items-center'>
-                                            <ClipboardcheckIconSvg size={15} color={`#ffffff`} />
-                                            Cetak Task
+                                        <div className=' mb-3'>
+                                            <Buttonsys type={`primary`} onClick={() => { console.log(currentdataeditable) }}>
+                                                <div className='mr-1 flex items-center'>
+                                                    <ClipboardcheckIconSvg size={15} color={`#ffffff`} />
+                                                    Cetak Task
+                                                </div>
+                                            </Buttonsys>
                                         </div>
-                                    </Buttonsys>
-                                </div>
-                            </div>
+                                    </div>
+                                :
+                                null
                         }
                         <ModalHapusTask
                             title={"Konfirmasi Hapus Task"}
@@ -1813,7 +1937,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                             displaytask.created_by !== dataProfile.data.id &&
                             <>
                                 {
-                                    completeclose ?
+                                    completeclose || isselfcheckout ?
                                         null
                                         :
                                         <div className="my-3 flex items-center justify-center">
