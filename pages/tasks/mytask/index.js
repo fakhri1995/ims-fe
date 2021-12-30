@@ -486,7 +486,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             })
     }, [])
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getStatusTaskList`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTaskStatusList`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -494,7 +494,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                setstatustaskdata(res2.data)
+                setstatustaskdata(res2.data.status_list)
                 setloadingstatustaskdata(false)
             })
     }, [])

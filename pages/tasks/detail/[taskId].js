@@ -14,6 +14,7 @@ import DrawerTaskUpdate from '../../../components/drawer/tasks/drawerTaskUpdate'
 import DrawerTaskDetailUpdate from '../../../components/drawer/tasks/drawerTaskDetailUpdate'
 import DrawerTaskDetailCreate from '../../../components/drawer/tasks/drawerTaskDetailCreate'
 import { TextAreaRequired } from '../../../components/input'
+import DrawerTaskSpareParts from '../../../components/drawer/tasks/drawerTaskSpareParts'
 
 const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     //1.Init
@@ -124,9 +125,9 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
         id: Number(taskid)
     })
     const [modalstatustoggle, setmodalstatustoggle] = useState(false)
-    //task submit
+    //TASK SUBMIT
     const [loadingsubmittask, setloadingsubmittask] = useState(false)
-    //task detail
+    //TASK DETAIL
     //tambah staff
     const [currentidstafftask, setcurrentidstafftask] = useState(null)
     const [currentstafftask, setcurrentstafftask] = useState([])
@@ -149,7 +150,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
         task_id: Number(taskid)
     })
     const [loadingtaskdetaildelete, setloadingtaskdetaildelete] = useState(false)
-    //update task
+    //TASK UPDATE
     const [selecteditems, setselecteditems] = useState([])
     const [selectedstaffgroup, setselectedstaffgroup] = useState([])
     const [switchstaffgroup, setswitchstaffgroup] = useState(1)
@@ -169,6 +170,10 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     })
     const [modaltaskdelete, setmodaltaskdelete] = useState(false)
     const [loadingtaskdelete, setloadingtaskdelete] = useState(false)
+    //SPARE PARTS
+    const [drawerspart, setdrawerspart] = useState(false)
+    const [selectedforin, setselectedforin] = useState([])
+    const [selectedforout, setselectedforout] = useState([])
 
 
     //HANDLER
@@ -489,7 +494,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                         tempstaffgroup = res2.data.users.map((doc, idx) => ({
                             ...doc,
                             children: doc.name,
-                            companyname: '-',
+                            position: doc.position ?? "",
                             image: doc.profile_image
                         })),
                         setswitchstaffgroup(1)
@@ -521,7 +526,6 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                     })
                     return ([...tasklistItem])
                 })
-                console.log("data 4 map: ", data4map)
                 setdatatype4(data4map)
                 setdatatype42(data4map)
                 //time_left
@@ -538,6 +542,27 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 }
                 res2.data.status === 5 || res2.data.status === 6 ? setcompleteclose(true) : setcompleteclose(false)
                 res2.data.users.filter(docsome => docsome.id === dataProfile.data.id)[0]?.check_out !== null ? setisselfcheckout(true) : setisselfcheckout(false)
+                var tempin = [], tempout = []
+                res2.data.inventories.filter(fil => (fil.is_from_task === false)).map((doc, idx) => {
+                    if (doc.is_in === true) {
+                        tempin.push({
+                            ...doc,
+                            migid: doc.mig_id,
+                            modelname: doc.model_name,
+                            assetname: doc.asset_name
+                        })
+                    }
+                    else {
+                        tempout.push({
+                            ...doc,
+                            migid: doc.mig_id,
+                            modelname: doc.model_name,
+                            assetname: doc.asset_name
+                        })
+                    }
+                })
+                setselectedforin(tempin)
+                setselectedforout(tempout)
                 setpraloadingtask(false)
             })
     }, [loadingtaskdelete, loadingchange, loadingstafftask, triggertaskdetailupdate, loadingtaskdetaildelete, triggertaskdetailcreate, loadingeditable, loadingcheckin])
@@ -1760,18 +1785,21 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                             praloadingtask ?
                                 null
                                 :
-                                displaytask.status === 4 ?
-                                    <div>
-                                        <Buttonsys onClick={handleCheckInTask} disabled={true} type={`primary`} fullWidth={true}>
-                                            Check In
-                                        </Buttonsys>
-                                    </div>
+                                displaytask.created_by === dataProfile.data.id ?
+                                    null
                                     :
-                                    <div>
-                                        <Buttonsys onClick={handleCheckInTask} disabled={disablededitable === true ? false : true} type={`primary`} fullWidth={true}>
-                                            Check In
-                                        </Buttonsys>
-                                    </div>
+                                    displaytask.status === 4 ?
+                                        <div>
+                                            <Buttonsys onClick={handleCheckInTask} disabled={true} type={`primary`} fullWidth={true}>
+                                                Check In
+                                            </Buttonsys>
+                                        </div>
+                                        :
+                                        <div>
+                                            <Buttonsys onClick={handleCheckInTask} disabled={disablededitable === true ? false : true} type={`primary`} fullWidth={true}>
+                                                Check In
+                                            </Buttonsys>
+                                        </div>
                         }
                     </div>
                     <div className='shadow-md rounded-md bg-white p-4 my-3 ml-3 flex flex-col'>
@@ -1889,10 +1917,10 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                         }
                         <p className='my-2 text-sm text-gray-500 ml-1'>Masuk</p>
                         {
-                            displaytask.inventories.filter(doc => doc.is_in !== null).length === 0 ?
+                            displaytask.inventories.filter(doc => doc.is_in === true && doc.is_from_task === false).length === 0 ?
                                 `-`
                                 :
-                                displaytask.inventories.filter(doc => doc.is_in !== null).map((doc, idx) => (
+                                displaytask.inventories.filter(doc => doc.is_in === true && doc.is_from_task === false).map((doc, idx) => (
                                     <div className='my-3 flex items-center'>
                                         <div className='mr-2 flex items-center'>
                                             <AssetIconSvg size={50} />
@@ -1912,10 +1940,10 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                         }
                         <p className='my-2 text-sm text-gray-500 ml-1'>Keluar</p>
                         {
-                            displaytask.inventories.filter(doc => doc.is_in === null && doc.is_from_task === false).length === 0 ?
+                            displaytask.inventories.filter(doc => doc.is_in === false && doc.is_from_task === false).length === 0 ?
                                 `-`
                                 :
-                                displaytask.inventories.filter(doc => doc.is_in === null && doc.is_from_task === false).map((doc, idx) => (
+                                displaytask.inventories.filter(doc => doc.is_in === false && doc.is_from_task === false).map((doc, idx) => (
                                     <div className='my-3 flex items-center'>
                                         <div className='mr-2 flex items-center'>
                                             <AssetIconSvg size={50} />
@@ -1934,22 +1962,25 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                 ))
                         }
                         {
-                            displaytask.created_by !== dataProfile.data.id &&
-                            <>
-                                {
-                                    completeclose || isselfcheckout ?
-                                        null
-                                        :
-                                        <div className="my-3 flex items-center justify-center">
-                                            <Buttonsys disabled={disablededitable} type={`default`}>
-                                                <div className="mr-1">
-                                                    <EditIconSvg size={18} color={`#35763B`} />
-                                                </div>
-                                                Pergantian Suku Cadang
-                                            </Buttonsys>
-                                        </div>
-                                }
-                            </>
+                            praloadingtask ?
+                                null
+                                :
+                                displaytask.created_by !== dataProfile.data.id &&
+                                <>
+                                    {
+                                        completeclose || isselfcheckout ?
+                                            null
+                                            :
+                                            <div className="my-3 flex items-center justify-center">
+                                                <Buttonsys disabled={disablededitable} type={`default`} onClick={() => { setdrawerspart(true) }}>
+                                                    <div className="mr-1">
+                                                        <EditIconSvg size={18} color={`#35763B`} />
+                                                    </div>
+                                                    Pergantian Suku Cadang
+                                                </Buttonsys>
+                                            </div>
+                                    }
+                                </>
                         }
                     </div>
                 </div>
@@ -2013,6 +2044,20 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 taskid={taskid}
                 settriggertaskdetailcreate={settriggertaskdetailcreate}
                 taskid={taskid}
+            />
+            <DrawerTaskSpareParts
+                title={"Pergantian Suku Cadang"}
+                visible={drawerspart}
+                onClose={() => { setdrawerspart(false) }}
+                buttonOkText={"Simpan Suku Cadang"}
+                initProps={initProps}
+                onvisible={setdrawerspart}
+                idtask={taskid}
+                selectedforin={selectedforin}
+                setselectedforin={setselectedforin}
+                selectedforout={selectedforout}
+                setselectedforout={setselectedforout}
+                prevpath="mytask"
             />
         </Layout>
     )
