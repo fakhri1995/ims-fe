@@ -525,7 +525,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                             >
                                                 {
                                                     datastaffgroup.map((doc, idx) => (
-                                                        <Select.Option key={idx} value={doc.id} companyname={doc.company?.full_name} image={doc.profile_image}>{doc.name}</Select.Option>
+                                                        <Select.Option key={idx} value={doc.id} position={doc.position} image={doc.profile_image}>{doc.name}</Select.Option>
                                                     ))
                                                 }
                                             </Select>
@@ -599,7 +599,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <Label>{switchstaffgroup === 0 ? `` : `${doc.companyname}`}</Label>
+                                                    <Label>{switchstaffgroup === 0 ? `` : `${doc.position}`}</Label>
                                                 </div>
                                             </div>
                                         </div>

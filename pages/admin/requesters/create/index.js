@@ -40,7 +40,8 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
         profile_image: '',
         company_id: 0,
         password: '',
-        confirm_password: ''
+        confirm_password: '',
+        position: ""
     })
     const [loadingupload, setLoadingupload] = useState(false)
     const [loadingcreate, setLoadingcreate] = useState(false)
@@ -230,6 +231,15 @@ function RequestersCreate({ initProps, dataProfile, sidemenu, dataCompanyList })
                                             }
                                         ]}>
                                         <Input value={newuserrequesters.email} name={`email`} onChange={onChangeCreateRequesters} />
+                                    </Form.Item>
+                                    <Form.Item label="Posisi" required name="position"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Posisi wajib diisi',
+                                            },
+                                        ]}>
+                                        <Input value={newuserrequesters.position} name={`position`} onChange={onChangeCreateRequesters} />
                                     </Form.Item>
                                     <Form.Item label="No. Handphone" name="phone_number"
                                         rules={[

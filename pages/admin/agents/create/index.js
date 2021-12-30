@@ -26,7 +26,8 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
         profile_image: '',
         company_id: 1,
         password: "",
-        confirm_password: ""
+        confirm_password: "",
+        position: ""
     })
     const [loadingupload, setLoadingupload] = useState(false)
     const [loadingsave, setLoadingsave] = useState(false)
@@ -253,6 +254,15 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                                             }
                                         ]}>
                                         <Input value={newuser.email} name={`email`} onChange={onChangeCreateAgents} />
+                                    </Form.Item>
+                                    <Form.Item label="Posisi" required name="position"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Posisi wajib diisi',
+                                            },
+                                        ]}>
+                                        <Input value={newuser.position} name={`position`} onChange={onChangeCreateAgents} />
                                     </Form.Item>
                                     <Form.Item label="No. Handphone" name="phone_number"
                                         rules={[

@@ -29,7 +29,8 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
         fullname: "",
         phone_number: "",
         profile_image: `/default-users.jpeg`,
-        role_ids: []
+        role_ids: [],
+        position: ""
     })
     const [datacompanylist, setdatacompanylist] = useState([])
     const [idrole, setidrole] = useState(0)
@@ -147,7 +148,8 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                     phone_number: res2.data.phone_number,
                     profile_image: res2.data.profile_image === "" || res2.data.profile_image === "-" ? `/default-users.jpeg` : res2.data.profile_image,
                     email: res2.data.email,
-                    role_ids: res2.data.roles.map(docmap => docmap.id)
+                    role_ids: res2.data.roles.map(docmap => docmap.id),
+                    position: res2.data.position
                 }
                 setData1(temp)
                 // setdatarole({ ...datarole, account_id: res2.data.user_id })
@@ -316,6 +318,15 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                                                     }
                                                 ]}>
                                                 <Input disabled value={data1.email} name={`email`} onChange={onChangeEditAgents} />
+                                            </Form.Item>
+                                            <Form.Item label="Posisi" required name="position"
+                                                rules={[
+                                                    {
+                                                        required: true,
+                                                        message: 'Posisi wajib diisi',
+                                                    },
+                                                ]}>
+                                                <Input value={data1.position} name={`position`} onChange={onChangeEditAgents} />
                                             </Form.Item>
                                             <Form.Item label="No. Handphone" required name="phone_number"
                                                 rules={[

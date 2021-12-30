@@ -38,6 +38,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
     // const [dataraw2, setdataraw2] = useState([])
     const [datalokasi, setdatalokasi] = useState([])
     const [datarawloading, setdatarawloading] = useState(false)
+    const [praloading, setpraloading] = useState(true)
     const [dataKK, setDataSource] = useState([]);
     const [rowstate, setrowstate] = useState(0)
     const [namasearchact, setnamasearchact] = useState(name1 === "" ? false : true)
@@ -132,6 +133,21 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         {
             title: 'Email',
             dataIndex: 'email',
+            // render: (text, record, index) => {
+            //     return {
+            //         props: {
+            //             style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+            //         },
+            //         children:
+            //             <>
+            //                 {record.email}
+            //             </>
+            //     }
+            // }
+        },
+        {
+            title: 'Posisi',
+            dataIndex: 'position',
             // render: (text, record, index) => {
             //     return {
             //         props: {
@@ -272,6 +288,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
 
     //useEffect
     useEffect(() => {
+        setpraloading(true)
         setdatarawloading(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList?name=${name1}&company_id=${location_id1}${is_enabled1 === "" ? "" : `&is_enabled=${is_enabled1}`}`, {
             method: `GET`,
@@ -308,13 +325,15 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                             phone_number: doc.phone_number,
                             company_name: doc.company_name,
                             is_enabled: doc.is_enabled,
-                            company_id: doc.company_id
+                            company_id: doc.company_id,
+                            position: doc.position
                         })
                     })
                 }
-                setdataraw(dataDD)
+                setdataraw(res2.data)
                 // setdataraw2(dataDD)
                 setDataSource(dataDD)
+                setpraloading(false)
             })
     }, [])
     useEffect(() => {
@@ -487,7 +506,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                             <Table pagination={{
                                 pageSize: 10, total: rawdata.total, onChange: (page, pageSize) => {
                                     setpraloading(true)
-                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList?page=${page}&rows=10&name=${name1}&company_id=${location_id1}${is_enabled1 === "" ? "" : `&is_enabled=${is_enabled1}`}}`, {
+                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList?page=${page}&rows=10&name=${name1}&company_id=${location_id1}${is_enabled1 === "" ? "" : `&is_enabled=${is_enabled1}`}`, {
                                         method: `GET`,
                                         headers: {
                                             'Authorization': JSON.parse(initProps),
@@ -496,13 +515,15 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                                         .then(res => res.json())
                                         .then(res2 => {
                                             setrawdata(res2.data)
-                                            setdisplaydata(res2.data.data)
-                                            setdisplaydata2(res2.data.data)
-                                            setdisplaydata3(res2.data.data)
+                                            var temppagination = res2.data.data.map((doc, idx) => ({
+                                                ...doc,
+                                                profile_image: doc.profile_image === "-" || doc.profile_image === "" ? `/default-users.jpeg` : doc.profile_image,
+                                            }))
+                                            setDataSource(temppagination)
                                             setpraloading(false)
                                         })
                                 }
-                            }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} loading={datarawloading}
+                            }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} loading={praloading}
                                 onRow={(record, rowIndex) => {
                                     return {
                                         onMouseOver: (event) => {

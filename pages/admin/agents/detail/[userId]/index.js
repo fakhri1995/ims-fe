@@ -113,18 +113,16 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
         name: "",
         role: "",
         phone_number: "",
-        profile_image: `/default-users.jpeg`
+        profile_image: `/default-users.jpeg`,
+        position: ""
     })
     const [dataemail, setdataemail] = useState("")
     const [namarole, setnamarole] = useState("")
+    const [namarolearr, setnamarolearr] = useState([])
     const [patharr, setpatharr] = useState([])
     const [isenabled, setisenabled] = useState(false)
     const [origincomp, setorigincomp] = useState("")
     const [ubahstatus, setubahstatus] = useState(false)
-    // const [datarole, setdatarole] = useState({
-    //     account_id: dataDetailRequester.data.user_id,
-    //     role_ids: [dataDetailRequester.data.feature_roles[0]]
-    // })
     const [datarole, setdatarole] = useState({
         account_id: 0,
         role_ids: 0
@@ -137,9 +135,6 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
     const [visiblenon, setVisiblenon] = useState(false)
     const [visiblehapus, setvisiblehapus] = useState(false)
     const [loadinghapus, setloadinghapus] = useState(false)
-    const [visibleubahpass, setVisibleubahpass] = useState(false)
-    const [loadingupdate, setLoadingupdate] = useState(false)
-    const [loadingubahpass, setloadingubahpass] = useState(false)
     const [loadingubahaktif, setloadingubahaktif] = useState(false)
     const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
     const [dataraw1, setdataraw1] = useState({ data: [] })
@@ -254,7 +249,8 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
                     name: res2.data.name,
                     role: res2.data.roles,
                     phone_number: res2.data.phone_number,
-                    profile_image: res2.data.profile_image === "" || res2.data.profile_image === "-" ? `/default-users.jpeg` : res2.data.profile_image
+                    profile_image: res2.data.profile_image === "" || res2.data.profile_image === "-" ? `/default-users.jpeg` : res2.data.profile_image,
+                    position: res2.data.position
                 }
                 setisenabled(res2.data.is_enabled)
                 setData1(temp)
@@ -264,24 +260,27 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
                 pathArr[pathArr.length - 1] = `Detail Profil Agent - ` + res2.data.name
                 setpatharr(pathArr)
                 setorigincomp(res2.data.company.name)
-                return res2.data.roles
+                setnamarolearr(res2.data.roles)
+                setpraloading(false)
+                // return res2.data.roles
             })
-            .then(val => {
-                fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
-                    method: `GET`,
-                    headers: {
-                        'Authorization': JSON.parse(initProps)
-                    }
-                })
-                    .then(res => res.json())
-                    .then(res2 => {
-                        const selectedrole = res2.data.filter((dataa) => {
-                            return val.map(docmap => docmap.id).indexOf(dataa.id) !== -1
-                        }).map(docmap => docmap.name)
-                        setnamarole(selectedrole ? selectedrole.join(", ") : "-")
-                        setpraloading(false)
-                    })
-            })
+        // .then(val => {
+        //     fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+        //         method: `GET`,
+        //         headers: {
+        //             'Authorization': JSON.parse(initProps)
+        //         }
+        //     })
+        //         .then(res => res.json())
+        //         .then(res2 => {
+        //             const selectedrole = res2.data.filter((dataa) => {
+        //                 return val.map(docmap => docmap.id).indexOf(dataa.id) !== -1
+        //             }).map(docmap => docmap.name)
+        //             setnamarole(selectedrole ? selectedrole.join(", ") : "-")
+        //             setnamarolearr()
+        //             setpraloading(false)
+        //         })
+        // })
     }, [ubahstatus])
 
     return (
@@ -390,6 +389,10 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
                                                 <h1 className="text-sm font-semibold">Email:</h1>
                                                 <h1 className="text-sm font-normal text-black">{dataemail}</h1>
                                             </div>
+                                            <div className="col-span-1 flex flex-col mb-5">
+                                                <h1 className="text-sm font-semibold">Posisi:</h1>
+                                                <h1 className="text-sm font-normal text-black">{data1.position}</h1>
+                                            </div>
                                             {/* <Form.Item label="No. Handphone" required tooltip="Wajib diisi" name="phone_number" initialValue={data1.phone_number}
                                         rules={[
                                             {
@@ -409,7 +412,14 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
                                     </Form.Item> */}
                                             <div className="col-span-1 flex flex-col mb-5">
                                                 <h1 className="font-semibold text-sm">Role:</h1>
-                                                <h1 className="text-sm font-normal text-black">{namarole}</h1>
+                                                <div className=' flex items-center'>
+                                                    {
+                                                        namarolearr.map((doc, idx) => (
+                                                            <div className=' p-2 rounded bg-primary100 bg-opacity-10 text-primary100 mr-2'>{doc.name}</div>
+                                                        ))
+                                                    }
+                                                </div>
+                                                {/* <h1 className="text-sm font-normal text-black">{namarole}</h1> */}
                                             </div>
                                             <div className="col-span-1 flex flex-col mb-5">
                                                 <h1 className="font-semibold text-sm">Asal Lokasi:</h1>

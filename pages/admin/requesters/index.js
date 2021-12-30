@@ -57,6 +57,7 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
 
     //useState
     const [dataraw, setdataraw] = useState([])
+    const [praloading, setpraloading] = useState(true)
     const [datarawloading, setdatarawloading] = useState(false)
     const [datarawloading2, setdatarawloading2] = useState(false)
     const [dataKK, setDataSource] = useState([]);
@@ -265,6 +266,21 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
             }
         },
         {
+            title: 'Posisi',
+            dataIndex: 'position',
+            render: (text, record, index) => {
+                return {
+                    // props: {
+                    //     style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
+                    // },
+                    children:
+                        <>
+                            {record.position}
+                        </>
+                }
+            }
+        },
+        {
             title: 'No. Handphone',
             dataIndex: 'phone_number',
             render: (text, record, index) => {
@@ -358,6 +374,7 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
 
     //useEffect
     useEffect(() => {
+        setpraloading(true)
         setdatarawloading(true)
         setdatarawloading2(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList?name=${name1}&company_id=${location_id1 === "" && company_id1 === "null" ? "" : (location_id1 === "" ? company_id1 : location_id1)}${is_enabled1 === "" ? "" : `&is_enabled=${is_enabled1}`}`, {
@@ -389,12 +406,14 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                             phone_number: doc.phone_number,
                             company_id: doc.company_id,
                             company_name: doc.company_name,
-                            is_enabled: doc.is_enabled
+                            is_enabled: doc.is_enabled,
+                            position: doc.position
                         })
                     })
                 }
-                setdataraw(dataDD)
+                setdataraw(res2.data)
                 setDataSource(dataDD)
+                setpraloading(false)
             })
     }, [])
     useEffect(() => {
@@ -576,13 +595,15 @@ function Requesters({ initProps, dataProfile, dataListRequester, dataCompanyList
                                         .then(res => res.json())
                                         .then(res2 => {
                                             setrawdata(res2.data)
-                                            setdisplaydata(res2.data.data)
-                                            setdisplaydata2(res2.data.data)
-                                            setdisplaydata3(res2.data.data)
+                                            var temppagination = res2.data.data.map((doc, idx) => ({
+                                                ...doc,
+                                                profile_image: doc.profile_image === "-" || doc.profile_image === "" ? `/default-users.jpeg` : doc.profile_image,
+                                            }))
+                                            setDataSource(temppagination)
                                             setpraloading(false)
                                         })
                                 }
-                            }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} loading={datarawloading}
+                            }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} loading={praloading}
                                 onRow={(record, rowIndex) => {
                                     return {
                                         onMouseOver: (event) => {
