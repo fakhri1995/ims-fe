@@ -133,7 +133,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
     }, [])
     //Referensi
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterTickets?id=`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -141,7 +141,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
         })
             .then(res => res.json())
             .then(res2 => {
-                setdatareferences(res2.data.tickets.data)
+                setdatareferences(res2.data)
             })
     }, [])
     //Lokasi
@@ -333,37 +333,35 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                         <div className='w-full'>
                             <Select
                                 style={{ width: `100%` }}
-                                mode='multiple'
                                 suffixIcon={<SearchOutlined />}
                                 showArrow
                                 placeholder="Referensi"
-                                disabled
                                 name={`reference_id`}
                                 onChange={(value) => { setdatacreate({ ...datacreate, reference_id: value }) }}
-                            // showSearch
-                            // optionFilterProp="children"
-                            // notFoundContent={fetchingreferences ? <Spin size="small" /> : null}
-                            // onSearch={(value) => {
-                            //     setfetchingreferences(true)
-                            //     fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?ticket_id=${value}`, {
-                            //         method: `GET`,
-                            //         headers: {
-                            //             'Authorization': JSON.parse(initProps),
-                            //         },
-                            //     })
-                            //         .then(res => res.json())
-                            //         .then(res2 => {
-                            //             setdatareferences(res2.data.tickets.data)
-                            //             setfetchingreferences(false)
-                            //         })
-                            // }}
-                            // filterOption={(input, opt) => (
-                            //     opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                            // )}
+                                showSearch
+                                optionFilterProp="children"
+                                notFoundContent={fetchingreferences ? <Spin size="small" /> : null}
+                                onSearch={(value) => {
+                                    setfetchingreferences(true)
+                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterTickets?id=${value}`, {
+                                        method: `GET`,
+                                        headers: {
+                                            'Authorization': JSON.parse(initProps),
+                                        },
+                                    })
+                                        .then(res => res.json())
+                                        .then(res2 => {
+                                            setdatareferences(res2.data)
+                                            setfetchingreferences(false)
+                                        })
+                                }}
+                                filterOption={(input, opt) => (
+                                    opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                )}
                             >
                                 {
                                     datareferences.map((doc, idx) => (
-                                        <Select.Option key={idx} value={doc.id}>{doc.type.code + `-` + doc.ticketable.id}</Select.Option>
+                                        <Select.Option key={idx} value={doc.id}>{doc.name}</Select.Option>
                                     ))
                                 }
                             </Select >

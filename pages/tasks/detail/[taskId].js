@@ -913,7 +913,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                                                                         </div>
                                                                                                     </div>
                                                                                                     <div>
-                                                                                                        <Label>-</Label>
+                                                                                                        <Label>{displaytask.users.filter(fil => fil.id === doc.id)[0].position}</Label>
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </div>
@@ -961,7 +961,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                                                                 </div>
                                                                                             </div>
                                                                                             <div>
-                                                                                                <Label>-</Label>
+                                                                                                <Label>{displaytask.users.filter(fil => fil.id === doc.id)[0].position}</Label>
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
@@ -1828,7 +1828,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                 displaytask.reference_id === null ?
                                     `-`
                                     :
-                                    <p className=' mb-0 text-sm text-gray-500'>Tiket {displaytask.reference.type.code}-{displaytask.reference.type.id}</p>
+                                    <p className=' mb-0 text-sm text-gray-500'>Tiket {displaytask.reference.type.code}-{displaytask.reference.id}</p>
                             }
                         </div>
                         <div className='my-3 flex flex-col'>
@@ -1990,7 +1990,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                     <div id={`card-1`} className=" flex justify-center"></div>
                     :
                     <DrawerTaskUpdate
-                        title={"Tambah Task"}
+                        title={"Ubah Task"}
                         visible={drawertaskupdate}
                         onClose={() => { setdrawertaskupdate(false) }}
                         buttonOkText={"Simpan Task"}
@@ -2021,6 +2021,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                         setregular={setregular}
                         choosedateendrepeat={choosedateendrepeat}
                         setchoosedateendrepeat={setchoosedateendrepeat}
+                        prevpath={prevpath}
                     />
             }
             <DrawerTaskDetailUpdate
@@ -2057,7 +2058,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 setselectedforin={setselectedforin}
                 selectedforout={selectedforout}
                 setselectedforout={setselectedforout}
-                prevpath="mytask"
+                prevpath={prevpath}
             />
         </Layout>
     )

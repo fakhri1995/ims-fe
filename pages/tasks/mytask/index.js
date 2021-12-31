@@ -499,7 +499,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             })
     }, [])
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskTypeCounts`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTaskTypeCounts`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -693,7 +693,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                                     </div>
                                                                     <div className="flex flex-col mt-2">
                                                                         <Text color={`white`}>Berakhir {(new Date() - new Date(userlasttwo[0].deadline)) / (1000 * 60 * 60 * 24) < 1 ? `Hari Ini` : `${moment(userlasttwo[0].deadline).locale('id').format('Do MMM')}`}</Text>
-                                                                        <Progress trailColor={`#4D4D4D`} strokeColor={`#ffffff`} percent={50} showInfo={false} />
+                                                                        <Progress trailColor={`#4D4D4D`} strokeColor={`#ffffff`} percent={userlasttwo[0].time_limit_percentage} showInfo={false} />
                                                                     </div>
                                                                 </div>
                                                                 <div className="flex flex-col">
@@ -716,7 +716,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                                     </div>
                                                                     <div className="flex flex-col mt-2">
                                                                         <Text>Berakhir {(new Date() - new Date(userlasttwo[1].deadline)) / (1000 * 60 * 60 * 24) < 1 ? `Hari Ini` : `${moment(userlasttwo[1].deadline).locale('id').format('Do MMM')}`}</Text>
-                                                                        <Progress trailColor={`#d8e8da`} strokeColor={`#35763B`} percent={50} showInfo={false} />
+                                                                        <Progress trailColor={`#d8e8da`} strokeColor={`#35763B`} percent={userlasttwo[1].time_limit_percentage} showInfo={false} />
                                                                     </div>
                                                                 </div>
                                                                 <div className="flex flex-col">
@@ -924,7 +924,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                             <div tabIndex={`1`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col'>
                                                 <div className=' flex justify-end mb-1 cursor-pointer' onClick={() => {
                                                     setloadingttcdata(true)
-                                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskTypeCounts?location=`, {
+                                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTaskTypeCounts?location=`, {
                                                         method: `GET`,
                                                         headers: {
                                                             'Authorization': JSON.parse(initProps),
@@ -949,7 +949,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                     titleRender={(nodeData) => (
                                                         <div className="flex items-start w-full py-3 rounded-md px-2" onClick={() => {
                                                             setloadingttcdata(true)
-                                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskTypeCounts?location=${nodeData.key}`, {
+                                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTaskTypeCounts?location=${nodeData.key}`, {
                                                                 method: `GET`,
                                                                 headers: {
                                                                     'Authorization': JSON.parse(initProps),

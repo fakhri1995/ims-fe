@@ -20,7 +20,7 @@ function recursiveModifData(dataa) {
     return dataa
 }
 
-const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, dataupdate, setdataupdate, loading, selecteditems, setselecteditems, selectedstaffgroup, setselectedstaffgroup, switchstaffgroup, setswitchstaffgroup, now, setnow, choosedate, setchoosedate, nowend, setnowend, choosedateend, setchoosedateend, repeatable, setrepeatable, regular, setregular, choosedateendrepeat, setchoosedateendrepeat }) => {
+const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, dataupdate, setdataupdate, loading, selecteditems, setselecteditems, selectedstaffgroup, setselectedstaffgroup, switchstaffgroup, setswitchstaffgroup, now, setnow, choosedate, setchoosedate, nowend, setnowend, choosedateend, setchoosedateend, repeatable, setrepeatable, regular, setregular, choosedateendrepeat, setchoosedateendrepeat, prevpath }) => {
     //USESTATE
     const [loadingupdate, setloadingupdate] = useState(false)
     const [disabledupdate, setdisabledupdate] = useState(true)
@@ -89,7 +89,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                     })
                     setdataitems([])
                     setdatastaffgroup([])
-                    window.location.href = `/tasks/detail/${dataupdate.id}`
+                    window.location.href = `/tasks/detail/${dataupdate.id}${prevpath && `?prevpath=${prevpath}`}`
                 }
                 else {
                     notification['error']({
@@ -118,7 +118,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
     }, [])
     //Referensi
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterTickets`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -126,7 +126,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
         })
             .then(res => res.json())
             .then(res2 => {
-                setdatareferences(res2.data.tickets.data)
+                setdatareferences(res2.data)
             })
     }, [])
     //Lokasi
@@ -320,17 +320,36 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                 <div className='w-full'>
                                     <Select
                                         style={{ width: `100%` }}
-                                        mode='multiple'
                                         suffixIcon={<SearchOutlined />}
                                         showArrow
+                                        value={dataupdate.reference_id}
                                         placeholder="Referensi"
-                                        disabled
                                         name={`reference_id`}
                                         onChange={(value) => { setdataupdate({ ...dataupdate, reference_id: value }) }}
+                                        showSearch
+                                        optionFilterProp="children"
+                                        notFoundContent={fetchingreferences ? <Spin size="small" /> : null}
+                                        onSearch={(value) => {
+                                            setfetchingreferences(true)
+                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterTickets?id=${value}`, {
+                                                method: `GET`,
+                                                headers: {
+                                                    'Authorization': JSON.parse(initProps),
+                                                },
+                                            })
+                                                .then(res => res.json())
+                                                .then(res2 => {
+                                                    setdatareferences(res2.data)
+                                                    setfetchingreferences(false)
+                                                })
+                                        }}
+                                        filterOption={(input, opt) => (
+                                            opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        )}
                                     >
                                         {
                                             datareferences.map((doc, idx) => (
-                                                <Select.Option key={idx} value={doc.id}>{doc.type.code + `-` + doc.ticketable.id}</Select.Option>
+                                                <Select.Option key={idx} value={doc.id}>{doc.name}</Select.Option>
                                             ))
                                         }
                                     </Select >
