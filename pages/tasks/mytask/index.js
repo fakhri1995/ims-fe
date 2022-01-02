@@ -103,11 +103,13 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     const [pagetaskpick, setpagetaskpick] = useState(1)
     const [rowstaskpick, setrowstaskpick] = useState(10)
     const [loadingtaskpick, setloadingtaskpick] = useState(false)
+    const [reloadpick, setreloadpick] = useState(-1)
     //filter sort -task pick
     const [sortstatetaskpick, setsortstatetaskpick] = useState({
         sort_by: "",
         sort_type: "",
     })
+    const [loadingfiltertaskpick, setloadingfiltertaskpick] = useState(false)
     const [datafilterlokasitaskpick, setdatafilterlokasitaskpick] = useState([])
     const [datafiltertipetaskstaskpick, setdatafiltertipetaskstaskpick] = useState([])
     const [searchfilterstatetaskpick, setsearchfilterstatetaskpick] = useState("")
@@ -296,11 +298,11 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                         </>
                 }
             },
-            sorter: (a, b) => a.id < b.id,
+            sorter: (a, b) => a.id > b.id,
         },
         {
             title: 'Tipe Task',
-            dataIndex: 'name',
+            dataIndex: 'task_type',
             render: (text, record, index) => {
                 return {
                     children:
@@ -349,20 +351,21 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                 }
             }
         },
-        // {
-        //     title: 'Deskripsi',
-        //     dataIndex: 'description',
-        //     render: (text, record, index) => {
-        //         return {
-        //             children:
-        //                 <p className=' truncate'>
-        //                     {record.description === "" || record.description === "-" ? `-` : record.description}
-        //                 </p>
-        //         }
-        //     }
-        // },
         {
-            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
+            title: 'Deskripsi',
+            dataIndex: 'description',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <p className=' line-clamp-3'>
+                            {record.description === "" || record.description === "-" ? `-` : record.description}
+                        </p>
+                }
+            },
+            sorter: (a, b) => a.name.localeCompare(b.name),
+        },
+        {
+            title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
             dataIndex: 'actions',
             align: `center`,
             render: (text, record, index) => {
@@ -382,7 +385,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     //HANDLER
     const onFilterTask = () => {
         setloadingtasks(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTasks?page=1&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -390,13 +393,29 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         })
             .then(res => res.json())
             .then(res2 => {
+                setpagetask(1)
                 setdatarawtask(res2.data)
                 setdatatasks(res2.data.data)
                 setloadingtasks(false)
             })
     }
+    const onFilterTaskPick = () => {
+        setloadingfiltertaskpick(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskPickList?rows=${rowstaskpick}&page=1&keyword=${searchfilterstatetaskpick}&task_type=${tasktypefilterstatetaskpick}&location=${lokasifilterstatetaskpick}&from=${fromdatefilterstatetaskpick}&to=${todatefilterstatetaskpick}&sort_by=${sortstatetaskpick.sort_by}&sort_type=${sortstatetaskpick.sort_type}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setpagetaskpick(1)
+                setdatarawtaskpick(res2.data)
+                setdatataskpick(res2.data.data)
+                setloadingfiltertaskpick(false)
+            })
+    }
     const handlePickTask = (idtask) => {
-        setloadingtaskpick(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/assignSelfTask`, {
             method: 'PUT',
             headers: {
@@ -409,7 +428,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         })
             .then((res) => res.json())
             .then(res2 => {
-                setloadingtaskpick(false)
+                setreloadpick(prev => prev + 1)
                 if (res2.success) {
                     notification['success']({
                         message: res2.message,
@@ -512,7 +531,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             })
     }, [])
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskPickList?rows=${rowstaskpick}&page=${pagetaskpick}&name=${searchfilterstatetaskpick}`, {
+        setloadingtaskpick(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskPickList?rows=${rowstaskpick}&page=${pagetaskpick}&keyword=${searchfilterstatetaskpick}&task_type=${tasktypefilterstatetaskpick}&location=${lokasifilterstatetaskpick}&from=${fromdatefilterstatetaskpick}&to=${todatefilterstatetaskpick}&sort_by=${sortstatetaskpick.sort_by}&sort_type=${sortstatetaskpick.sort_type}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -524,7 +544,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                 setdatataskpick(res2.data.data)
                 setloadingtaskpick(false)
             })
-    }, [loadingtaskpick, viewtaskpick])
+    }, [viewtaskpick, reloadpick, loadingfiltertaskpick])
     useEffect(() => {
         if (triggertasktypupdate !== -1) {
             setidtasktypupdate(triggertasktypupdate)
@@ -619,7 +639,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                 ></TreeSelect >
                                             </div>
                                             <div className='mx-1 w-1/12'>
-                                                <Buttonsys type={`primary`}>
+                                                <Buttonsys type={`primary`} onClick={onFilterTaskPick}>
                                                     <div className='mr-1'>
                                                         <SearchIconSvg size={15} color={`#ffffff`} />
                                                     </div>
@@ -1207,32 +1227,6 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                         </div>
                 }
             </div>
-            {/* <DrawerTaskTypesCreate
-                title={"Tambah Tipe Task"}
-                visible={drawertasktypecreate}
-                onClose={() => { setdrawertasktypecreate(false) }}
-                buttonOkText={"Simpan Tipe Task"}
-                initProps={initProps}
-                onvisible={setdrawertasktypecreate}
-            />
-            <DrawerTaskTypesUpdate
-                title={"Ubah Tipe Task"}
-                visible={drawertasktypupdate}
-                onClose={() => { setdrawertasktypupdate(false) }}
-                buttonOkText={"Simpan Tipe Task"}
-                initProps={initProps}
-                onvisible={setdrawertasktypupdate}
-                loading={loadingtipetasks}
-                id={idtasktypupdate}
-            />
-            <DrawerTaskCreate
-                title={"Tambah Task"}
-                visible={drawertaskcreate}
-                onClose={() => { setdrawertaskcreate(false) }}
-                buttonOkText={"Simpan Task"}
-                initProps={initProps}
-                onvisible={setdrawertaskcreate}
-            /> */}
         </Layout>
     )
 }

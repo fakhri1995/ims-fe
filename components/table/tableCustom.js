@@ -339,7 +339,7 @@ const TableCustomTaskPick = ({ dataSource, setDataSource, columns, loading, page
                 onChange: (page, pageSize) => {
                     setpraloading(true)
                     setpage(page)
-                    fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskPickList?page=${page}&rows=${pageSize}&name=${searchstate}`, {
+                    fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskPickList?page=${page}&rows=${pageSize}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}`, {
                         method: `GET`,
                         headers: {
                             'Authorization': JSON.parse(initProps),
@@ -358,7 +358,7 @@ const TableCustomTaskPick = ({ dataSource, setDataSource, columns, loading, page
                     if (sorter.column) {
                         setpraloading(true)
                         setsortstate({ sort_by: sorter.column.dataIndex, sort_type: sorter.order === "ascend" ? "asc" : "desc" })
-                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskPickList?page=${pagination.current}&rows=${pagination.pageSize}&name=${searchstate}`, {
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskPickList?page=${pagination.current}&rows=${pagination.pageSize}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&sort_by=${sorter.column.dataIndex}&sort_type=${sorter.order === "ascend" ? "asc" : "desc"}`, {
                             method: `GET`,
                             headers: {
                                 'Authorization': JSON.parse(initProps),
@@ -374,7 +374,7 @@ const TableCustomTaskPick = ({ dataSource, setDataSource, columns, loading, page
                     else {
                         setpraloading(true)
                         setsortstate({ sort_by: "", sort_type: "" })
-                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskPickList?page=${pagination.current}&rows=${pagination.pageSize}&name=${searchstate}`, {
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskPickList?page=${pagination.current}&rows=${pagination.pageSize}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&sort_by=&sort_type=`, {
                             method: `GET`,
                             headers: {
                                 'Authorization': JSON.parse(initProps),
