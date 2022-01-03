@@ -82,7 +82,15 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
         <DrawerCore
             title={title}
             visible={visible}
-            onClose={onClose}
+            onClose={() => {
+                setdatacreate({
+                    name: "",
+                    description: "",
+                    works: []
+                })
+                settasktypenameexist(null)
+                onvisible(false)
+            }}
             buttonOkText={buttonOkText}
             onClick={handleAddTipeTask}
             disabled={disabledcreate}
@@ -181,7 +189,7 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                                 </div>
                                             </div> */}
                                             <div key={idx} className="grid grid-cols-2 mb-3">
-                                                <div className="col-span-1 mr-1 flex items-center">
+                                                <div className="col-span-1 mr-1 mb-3 flex items-center">
                                                     <div className=' mr-2'>
                                                         <Input value={doc.name} placeholder="Nama" onChange={(e) => {
                                                             var temp = [...datacreate.works]
@@ -298,9 +306,9 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                                                     return (
                                                                         <div key={idx2} className="flex items-center mb-2"
                                                                         >
-                                                                            <div className="cursor-pointer font-bold mr-2">
+                                                                            {/* <div className="cursor-pointer font-bold mr-2">
                                                                                 ::
-                                                                            </div>
+                                                                            </div> */}
                                                                             <div className="flex items-center mr-2">
                                                                                 <Checkbox style={{ marginRight: `0.5rem` }} checked />
                                                                                 {doc2}
@@ -352,9 +360,9 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                                                     return (
                                                                         <div key={idx2} className="flex items-center mb-2"
                                                                         >
-                                                                            <div className="cursor-pointer font-bold mr-2">
+                                                                            {/* <div className="cursor-pointer font-bold mr-2">
                                                                                 ::
-                                                                            </div>
+                                                                            </div> */}
                                                                             <div className="flex items-center mr-2">
                                                                                 {doc2}
                                                                             </div>
@@ -424,9 +432,9 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                                                             return (
                                                                                 <div key={idx2} className="flex items-center mb-2"
                                                                                 >
-                                                                                    <div className="cursor-pointer font-bold mr-2">
+                                                                                    {/* <div className="cursor-pointer font-bold mr-2">
                                                                                         ::
-                                                                                    </div>
+                                                                                    </div> */}
                                                                                     <div className="flex items-center mr-2">
                                                                                         {doc2}
                                                                                     </div>
@@ -474,9 +482,9 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                                             doc.lists.map((doc3, idx3) => {
                                                                 return (
                                                                     <div className="flex items-center mb-4">
-                                                                        <div className="cursor-pointer font-bold mr-2">
+                                                                        {/* <div className="cursor-pointer font-bold mr-2">
                                                                             ::
-                                                                        </div>
+                                                                        </div> */}
                                                                         <div className='flex flex-col'>
                                                                             <div className="flex mb-2">
                                                                                 <div className="w-7/12 mr-2">
@@ -590,9 +598,9 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                                             doc.lists.map((doc4, idx4) => {
                                                                 return (
                                                                     <div key={idx4} className=" px-3 flex items-center mb-2">
-                                                                        <div className="cursor-pointer font-bold mr-2">
+                                                                        {/* <div className="cursor-pointer font-bold mr-2">
                                                                             ::
-                                                                        </div>
+                                                                        </div> */}
                                                                         <div className="flex items-center mr-2">
                                                                             <Input placeholder="Tambah" style={{ marginRight: `0.5rem` }} value={doc4} onChange={(e) => {
                                                                                 var temp = [...datacreate.works]

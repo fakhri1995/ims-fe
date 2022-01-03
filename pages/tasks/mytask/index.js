@@ -36,12 +36,14 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     //1.1.2.status - location
     const [statustaskloc, setstatustaskloc] = useState([])
     const [statustasklocstate, setstatustasklocstate] = useState("")
+    const [statusloctoggle, setstatusloctoggle] = useState(false)
     //1.2.TASK TYPE COUNT
     const [ttccolorbar, setttccolorbar] = useState(['#2F80ED', '#E5C471', '#BF4A40', '#6AAA70',])
     const [ttcdata, setttcdata] = useState([])
     const [loadingttcdata, setloadingttcdata] = useState(true)
     //1.2.2.task type count - location
     const [ttcloc, setttcloc] = useState([])
+    const [ttloctoggle, setttloctoggle] = useState(false)
     //update - task type
     const [triggertasktypupdate, settriggertasktypupdate] = useState(-1)
     const [idtasktypupdate, setidtasktypupdate] = useState(-1)
@@ -763,39 +765,16 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                     <H1>Status Task</H1>
                                     <div className="flex items-center">
                                         <div className=' dropdown'>
-                                            <div tabIndex={`0`} className="mx-1 cursor-pointer">
+                                            <div tabIndex={`0`} className="mx-1 cursor-pointer" onClick={() => { setstatusloctoggle(prev => !prev) }}>
                                                 <MappinIconSvg color={`#000000`} size={25} />
                                             </div>
-                                            <div tabIndex={`0`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col max-h-72 overflow-scroll'>
-                                                <div className=' flex justify-end mb-1 cursor-pointer' onClick={() => {
-                                                    setloadingstatustaskdata(true)
-                                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getStatusTaskList?from=${statustaskdatestate.from}&to=${statustaskdatestate.to}&location=`, {
-                                                        method: `GET`,
-                                                        headers: {
-                                                            'Authorization': JSON.parse(initProps),
-                                                        },
-                                                    })
-                                                        .then(res => res.json())
-                                                        .then(res2 => {
-                                                            setstatustasklocstate('')
-                                                            setstatustaskdata(res2.data)
-                                                            setloadingstatustaskdata(false)
-                                                        })
-                                                }}>
-                                                    <p className=' text-xs text-gray-500 mr-1'>Reset</p>
-                                                    <CircleXIconSvg size={15} color={`#BF4A40`} />
-                                                </div>
-                                                <Tree
-                                                    className='treeTaskStatusList'
-                                                    defaultExpandAll
-                                                    treeData={statustaskloc}
-                                                    switcherIcon={<DownOutlined />}
-                                                    showIcon
-                                                    blockNode={true}
-                                                    titleRender={(nodeData) => (
-                                                        <div className="flex items-start w-full py-3 rounded-md px-2" onClick={() => {
+                                            {
+                                                statusloctoggle ?
+                                                    <div tabIndex={`0`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col max-h-72 overflow-scroll'>
+                                                        <div className=' flex justify-end mb-1 cursor-pointer' onClick={() => {
+                                                            setstatusloctoggle(false)
                                                             setloadingstatustaskdata(true)
-                                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getStatusTaskList?from=${statustaskdatestate.from}&to=${statustaskdatestate.to}&location=${nodeData.key}`, {
+                                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTaskStatusList?from=${statustaskdatestate.from}&to=${statustaskdatestate.to}&location=`, {
                                                                 method: `GET`,
                                                                 headers: {
                                                                     'Authorization': JSON.parse(initProps),
@@ -803,24 +782,54 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                             })
                                                                 .then(res => res.json())
                                                                 .then(res2 => {
-                                                                    setstatustasklocstate(nodeData.key)
-                                                                    setstatustaskdata(res2.data)
+                                                                    setstatustasklocstate('')
+                                                                    setstatustaskdata(res2.data.status_list)
                                                                     setloadingstatustaskdata(false)
                                                                 })
                                                         }}>
-                                                            <div className="mr-3 flex items-start">
-                                                                <LocationIconSvg id={`icon${nodeData.key}`} size={15} color={`#808080`} />
-                                                            </div>
-                                                            <div className="mr-3">
-                                                                <p className=' text-gray-500 mb-0' id={`text${nodeData.key}`}>
-                                                                    {nodeData.title}
-                                                                </p>
-                                                            </div>
+                                                            <p className=' text-xs text-gray-500 mr-1'>Reset</p>
+                                                            <CircleXIconSvg size={15} color={`#BF4A40`} />
                                                         </div>
-                                                    )
-                                                    }
-                                                />
-                                            </div>
+                                                        <Tree
+                                                            className='treeTaskStatusList'
+                                                            defaultExpandAll
+                                                            treeData={statustaskloc}
+                                                            switcherIcon={<DownOutlined />}
+                                                            showIcon
+                                                            blockNode={true}
+                                                            titleRender={(nodeData) => (
+                                                                <div className="flex items-start w-full py-3 rounded-md px-2" onClick={() => {
+                                                                    setstatusloctoggle(false)
+                                                                    setloadingstatustaskdata(true)
+                                                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTaskStatusList?from=${statustaskdatestate.from}&to=${statustaskdatestate.to}&location=${nodeData.key}`, {
+                                                                        method: `GET`,
+                                                                        headers: {
+                                                                            'Authorization': JSON.parse(initProps),
+                                                                        },
+                                                                    })
+                                                                        .then(res => res.json())
+                                                                        .then(res2 => {
+                                                                            setstatustasklocstate(nodeData.key)
+                                                                            setstatustaskdata(res2.data.status_list)
+                                                                            setloadingstatustaskdata(false)
+                                                                        })
+                                                                }}>
+                                                                    <div className="mr-3 flex items-start">
+                                                                        <LocationIconSvg id={`icon${nodeData.key}`} size={15} color={`#808080`} />
+                                                                    </div>
+                                                                    <div className="mr-3">
+                                                                        <p className=' text-gray-500 mb-0' id={`text${nodeData.key}`}>
+                                                                            {nodeData.title}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            )
+                                                            }
+                                                        />
+                                                    </div>
+                                                    :
+                                                    null
+                                            }
                                         </div>
                                         <div className="mx-1 cursor-pointer" onClick={() => { setstatustaskdatefilter(prev => !prev) }}>
                                             <CalendartimeIconSvg color={`#000000`} size={25} />
@@ -828,7 +837,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                         <DatePicker.RangePicker value={statustaskdatestate.from === "" ? ["", ""] : [moment(statustaskdatestate.from), moment(statustaskdatestate.to)]} allowEmpty style={{ visibility: `hidden`, width: `0`, padding: `0` }} className="datepickerStatus" open={statustaskdatefilter} onChange={(dates, datestrings) => {
                                             setstatustaskdatefilter(prev => !prev)
                                             setloadingstatustaskdata(true)
-                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getStatusTaskList?from=${datestrings[0]}&to=${datestrings[1]}&location=${statustasklocstate}`, {
+                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTaskStatusList?from=${datestrings[0]}&to=${datestrings[1]}&location=${statustasklocstate}`, {
                                                 method: `GET`,
                                                 headers: {
                                                     'Authorization': JSON.parse(initProps),
@@ -846,7 +855,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                     <p className=' mb-0 text-primary100 hover:text-primary75 cursor-pointer' onClick={() => {
                                                         setstatustaskdatefilter(prev => !prev)
                                                         setloadingstatustaskdata(true)
-                                                        fetch(`https://boiling-thicket-46501.herokuapp.com/getStatusTaskList?from=&to=&location=${statustasklocstate}`, {
+                                                        fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTaskStatusList?from=&to=&location=${statustasklocstate}`, {
                                                             method: `GET`,
                                                             headers: {
                                                                 'Authorization': JSON.parse(initProps),
@@ -961,38 +970,16 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                     <H1>Tipe Task Terbanyak</H1>
                                     <div className="flex items-center">
                                         <div className="dropdown dropdown-left">
-                                            <div tabIndex={`1`} className="mx-1 cursor-pointer">
+                                            <div tabIndex={`1`} className="mx-1 cursor-pointer" onClick={() => { setttloctoggle(prev => !prev) }}>
                                                 <MappinIconSvg color={`#000000`} size={25} />
                                             </div>
-                                            <div tabIndex={`1`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col max-h-72 overflow-scroll'>
-                                                <div className=' flex justify-end mb-1 cursor-pointer' onClick={() => {
-                                                    setloadingttcdata(true)
-                                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTaskTypeCounts?location=`, {
-                                                        method: `GET`,
-                                                        headers: {
-                                                            'Authorization': JSON.parse(initProps),
-                                                        },
-                                                    })
-                                                        .then(res => res.json())
-                                                        .then(res2 => {
-                                                            setttcdata(res2.data)
-                                                            setloadingttcdata(false)
-                                                        })
-                                                }}>
-                                                    <p className=' text-xs text-gray-500 mr-1'>Reset</p>
-                                                    <CircleXIconSvg size={15} color={`#BF4A40`} />
-                                                </div>
-                                                <Tree
-                                                    className='treeTaskStatusList'
-                                                    defaultExpandAll
-                                                    treeData={ttcloc}
-                                                    switcherIcon={<DownOutlined />}
-                                                    showIcon
-                                                    blockNode={true}
-                                                    titleRender={(nodeData) => (
-                                                        <div className="flex items-start w-full py-3 rounded-md px-2" onClick={() => {
+                                            {
+                                                ttloctoggle ?
+                                                    <div tabIndex={`1`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col max-h-72 overflow-scroll'>
+                                                        <div className=' flex justify-end mb-1 cursor-pointer' onClick={() => {
+                                                            setttloctoggle(false)
                                                             setloadingttcdata(true)
-                                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTaskTypeCounts?location=${nodeData.key}`, {
+                                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTaskTypeCounts?location=`, {
                                                                 method: `GET`,
                                                                 headers: {
                                                                     'Authorization': JSON.parse(initProps),
@@ -1004,18 +991,47 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                                     setloadingttcdata(false)
                                                                 })
                                                         }}>
-                                                            <div className="mr-3 flex items-start">
-                                                                <LocationIconSvg id={`icon${nodeData.key}`} size={15} color={`#808080`} />
-                                                            </div>
-                                                            <div className="mr-3">
-                                                                <p className=' text-gray-500 mb-0' id={`text${nodeData.key}`}>
-                                                                    {nodeData.title}
-                                                                </p>
-                                                            </div>
+                                                            <p className=' text-xs text-gray-500 mr-1'>Reset</p>
+                                                            <CircleXIconSvg size={15} color={`#BF4A40`} />
                                                         </div>
-                                                    )}
-                                                />
-                                            </div>
+                                                        <Tree
+                                                            className='treeTaskStatusList'
+                                                            defaultExpandAll
+                                                            treeData={ttcloc}
+                                                            switcherIcon={<DownOutlined />}
+                                                            showIcon
+                                                            blockNode={true}
+                                                            titleRender={(nodeData) => (
+                                                                <div className="flex items-start w-full py-3 rounded-md px-2" onClick={() => {
+                                                                    setttloctoggle(false)
+                                                                    setloadingttcdata(true)
+                                                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTaskTypeCounts?location=${nodeData.key}`, {
+                                                                        method: `GET`,
+                                                                        headers: {
+                                                                            'Authorization': JSON.parse(initProps),
+                                                                        },
+                                                                    })
+                                                                        .then(res => res.json())
+                                                                        .then(res2 => {
+                                                                            setttcdata(res2.data)
+                                                                            setloadingttcdata(false)
+                                                                        })
+                                                                }}>
+                                                                    <div className="mr-3 flex items-start">
+                                                                        <LocationIconSvg id={`icon${nodeData.key}`} size={15} color={`#808080`} />
+                                                                    </div>
+                                                                    <div className="mr-3">
+                                                                        <p className=' text-gray-500 mb-0' id={`text${nodeData.key}`}>
+                                                                            {nodeData.title}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        />
+                                                    </div>
+                                                    :
+                                                    null
+                                            }
                                         </div>
                                     </div>
                                 </div>

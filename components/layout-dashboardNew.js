@@ -98,6 +98,10 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, st, pr
                                                                 return (
                                                                     <Breadcrumb.Item key={idx} href={`/tasks/${prevpath}`}> <strong>{prevpath === "admin" ? "Admin Task" : "My Task"}</strong> </Breadcrumb.Item>
                                                                 )
+                                                            else if (childBreacrumbDD[1] === "Tasktypes")
+                                                                return (
+                                                                    <Breadcrumb.Item key={idx} href={`/tasks/admin`}> <strong>Admin Task</strong> </Breadcrumb.Item>
+                                                                )
                                                         }
                                                         else if (idx === childBreacrumbDD.length - 1 && idx > 0)
                                                             return (

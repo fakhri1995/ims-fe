@@ -183,7 +183,7 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                     </div>
                                                                 </div>
                                                                 <div key={idx} className="grid grid-cols-2 mb-3">
-                                                                    <div className="col-span-1 mr-1">
+                                                                    <div className="col-span-1 mr-1 mb-3">
                                                                         <Input value={doc.name} placeholder="Nama" onChange={(e) => {
                                                                             const tempdisplay = [...datadisplay.works]
                                                                             tempdisplay[idx].name = e.target.value
@@ -373,9 +373,9 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                         return (
                                                                                             <div key={idx2} className="flex items-center mb-2"
                                                                                             >
-                                                                                                <div className="cursor-pointer font-bold mr-2">
+                                                                                                {/* <div className="cursor-pointer font-bold mr-2">
                                                                                                     ::
-                                                                                                </div>
+                                                                                                </div> */}
                                                                                                 <div className="flex items-center mr-2">
                                                                                                     <Checkbox style={{ marginRight: `0.5rem` }} checked />
                                                                                                     {doc2}
@@ -477,9 +477,9 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                         return (
                                                                                             <div key={idx2} className="flex items-center mb-2"
                                                                                             >
-                                                                                                <div className="cursor-pointer font-bold mr-2">
+                                                                                                {/* <div className="cursor-pointer font-bold mr-2">
                                                                                                     ::
-                                                                                                </div>
+                                                                                                </div> */}
                                                                                                 <div className="flex items-center mr-2">
                                                                                                     {doc2}
                                                                                                 </div>
@@ -624,9 +624,9 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                                 return (
                                                                                                     <div key={idx2} className="flex items-center mb-2"
                                                                                                     >
-                                                                                                        <div className="cursor-pointer font-bold mr-2">
+                                                                                                        {/* <div className="cursor-pointer font-bold mr-2">
                                                                                                             ::
-                                                                                                        </div>
+                                                                                                        </div> */}
                                                                                                         <div className="flex items-center mr-2">
                                                                                                             {doc2}
                                                                                                         </div>
@@ -724,9 +724,9 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                 doc.lists.map((doc3, idx3) => {
                                                                                     return (
                                                                                         <div className="flex items-center mb-4">
-                                                                                            <div className="cursor-pointer font-bold mr-2">
+                                                                                            {/* <div className="cursor-pointer font-bold mr-2">
                                                                                                 ::
-                                                                                            </div>
+                                                                                            </div> */}
                                                                                             <div className='flex flex-col'>
                                                                                                 <div className="flex mb-2">
                                                                                                     <div className="w-7/12 mr-2">
@@ -965,9 +965,9 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                 doc.lists.map((doc4, idx4) => {
                                                                                     return (
                                                                                         <div key={idx4} className=" px-3 flex items-center mb-2">
-                                                                                            <div className="cursor-pointer font-bold mr-2">
+                                                                                            {/* <div className="cursor-pointer font-bold mr-2">
                                                                                                 ::
-                                                                                            </div>
+                                                                                            </div> */}
                                                                                             <div className="flex items-center mr-2">
                                                                                                 <Input placeholder="Tambah" value={doc4} onChange={(e) => {
                                                                                                     var tempdisplay = [...datadisplay.works]
