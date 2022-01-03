@@ -16,8 +16,8 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
         task_type_id: null,
         location_id: null,
         reference_id: null,
-        created_at: moment(new Date()).locale('id').format(),
-        deadline: moment(new Date()).add(3, 'h').locale('id').format(),
+        created_at: null,
+        deadline: null,
         is_group: null,
         is_replaceable: false,
         assign_ids: [],
@@ -52,10 +52,10 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
     const [fetchingstaffgroup, setfetchingstaffgroup] = useState(false)
     const [switchstaffgroup, setswitchstaffgroup] = useState(1)
     //start date
-    const [now, setnow] = useState(true)
+    const [now, setnow] = useState(null)
     const [choosedate, setchoosedate] = useState(false)
     //end date
-    const [nowend, setnowend] = useState(3)
+    const [nowend, setnowend] = useState(null)
     const [choosedateend, setchoosedateend] = useState(false)
     //repeat date
     const [repeatable, setrepeatable] = useState(false)
@@ -251,7 +251,33 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
         <DrawerCore
             title={title}
             visible={visible}
-            onClose={onClose}
+            onClose={()=>{
+                setdatacreate({
+                    name: "",
+                    description: "",
+                    task_type_id: null,
+                    location_id: null,
+                    reference_id: null,
+                    created_at: null,
+                    deadline: null,
+                    is_group: null,
+                    is_replaceable: false,
+                    assign_ids: [],
+                    inventory_ids: [],
+                    is_uploadable: false,
+                    repeat: 0,
+                    files: [],
+                    end_repeat_at: null,
+                    subloc_id: null,
+                })
+                setdataitems([])
+                setdatastaffgroup([])
+                setswitchstaffgroup(1)
+                setnow(null)
+                setnowend(null)
+                setrepeatable(false)
+                onvisible(false)
+            }}
             buttonOkText={buttonOkText}
             onClick={handleAddTask}
             disabled={disabledcreate}
@@ -261,21 +287,22 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                     <div className="mb-6">
                         <p className="mb-0 text-red-500 text-xs italic">*Informasi ini harus diisi</p>
                     </div>
-                    <div className="mb-6 flex px-3">
-                        <div className=' w-6/12 mr-2 flex flex-col'>
-                            <div className="flex mb-2">
-                                <Label>Tipe Task</Label>
-                                <span className="tasktype"></span>
-                                <style jsx>
-                                    {`
+                    <div className="mb-6 flex flex-col px-3">
+                        <div className="flex mb-2">
+                            <Label>Tipe Task</Label>
+                            <span className="tasktype"></span>
+                            <style jsx>
+                                {`
                                         .tasktype::before{
                                             content: '*';
                                             color: red;
                                         }
                                     `}
-                                </style>
-                            </div>
+                            </style>
+                        </div>
+                        <div className="w-full">
                             <Select
+                                style={{ width: `100%` }}
                                 value={datacreate.task_type_id}
                                 placeholder="Nama tipe task"
                                 showSearch
@@ -318,20 +345,12 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                         </div> */}
                     </div>
                     <div className='mb-5 flex flex-col px-3'>
-                        <div className="flex mb-1">
+                        <div className="flex mb-2">
                             <Label>Referensi</Label>
-                            <span className="tasktype"></span>
-                            <style jsx>
-                                {`
-                                    .tasktype::before{
-                                        content: '*';
-                                        color: red;
-                                    }
-                                `}
-                            </style>
                         </div>
                         <div className='w-full'>
                             <Select
+                            value={datacreate.reference_id}
                                 style={{ width: `100%` }}
                                 suffixIcon={<SearchOutlined />}
                                 showArrow
@@ -389,7 +408,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                             suffixIcon={<SearchOutlined />}
                             showArrow
                             name={`locations_id`}
-                            onChange={(value) => { typeof (value) === 'undefined' ? setdatacreate({ ...datacreate, location_id: null, subloc_id: null }) : setdatacreate({ ...datacreate, location_id: value }); setdisabledtrigger(prev => prev + 1) }}
+                            onChange={(value) => { typeof (value) === 'undefined' ? setdatacreate({ ...datacreate, location_id: null, subloc_id: null }) : (setdatacreate({ ...datacreate, location_id: value }), settriggersubloc(value)); setdisabledtrigger(prev => prev + 1) }}
                             treeData={datalocations}
                             treeDefaultExpandAll
                             value={datacreate.location_id}
@@ -422,7 +441,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                             <Label>Pergantian Suku Cadang</Label>
                         </div>
                         <div>
-                            <Switch value={datacreate.is_replaceable} onChange={(checked) => { setdatacreate({ ...datacreate, is_replaceable: checked }); console.log(datacreate) }}></Switch>
+                            <Switch checked={datacreate.is_replaceable} onChange={(checked) => { setdatacreate({ ...datacreate, is_replaceable: checked }) }}></Switch>
                         </div>
                     </div>
                     <div className="mb-6 px-3 flex flex-col">
@@ -509,7 +528,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                     <Label>Staff</Label>
                                 </div>
                                 <div className="mx-1">
-                                    <Switch value={datacreate.is_group} onChange={(checked) => { setswitchstaffgroup(checked ? 0 : 1); setdatacreate({ ...datacreate, is_group: checked, assign_ids: [] }); setselectedstaffgroup([]) }}></Switch>
+                                    <Switch checked={datacreate.is_group} onChange={(checked) => { setswitchstaffgroup(checked ? 0 : 1); setdatacreate({ ...datacreate, is_group: checked, assign_ids: [] }); setselectedstaffgroup([]) }}></Switch>
                                 </div>
                                 <div className="ml-1">
                                     <Label>Group</Label>
@@ -655,7 +674,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                     e.target.value === true ? setchoosedate(false) : null
                                     setdisabledtrigger(prev => prev + 1)
                                 }}
-                                defaultValue={now}
+                                value={now}
                             >
                                 <div className="flex flex-col">
                                     <div className='mb-1'>
@@ -720,7 +739,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                     e.target.value !== -10 ? setchoosedateend(false) : null
                                     setdisabledtrigger(prev => prev + 1)
                                 }}
-                                defaultValue={nowend}
+                                value={nowend}
                             >
                                 <div className="flex flex-col">
                                     <div className='mb-1'>

@@ -714,7 +714,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     }, [triggertasktypupdate])
 
     return (
-        <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
+        <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st} prevpath={"admin"}>
             <div className="flex flex-col" id="mainWrapper">
                 {
                     viewdetailtipetask || viewdetailstaff ?
@@ -880,7 +880,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                             <div tabIndex={`2`} className="mx-1 cursor-pointer">
                                                 <MappinIconSvg color={`#000000`} size={25} />
                                             </div>
-                                            <div tabIndex={`2`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col'>
+                                            <div tabIndex={`2`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col max-h-72 overflow-scroll'>
                                                 <div className=' flex justify-end mb-1 cursor-pointer' onClick={() => {
                                                     setloadingdtdata(true)
                                                     fetch(`https://boiling-thicket-46501.herokuapp.com/getDeadlineTasks?from=${dtdatestate.from}&to=${dtdatestate.to}&location=`, {
@@ -939,7 +939,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                         <div className="mx-1 cursor-pointer" onClick={() => { setdtdatefilter(prev => !prev) }}>
                                             <CalendartimeIconSvg color={`#000000`} size={25} />
                                         </div>
-                                        <DatePicker.RangePicker allowEmpty style={{ visibility: `hidden`, width: `0`, padding: `0` }} className="datepickerStatus" open={dtdatefilter} onChange={(dates, datestrings) => {
+                                        <DatePicker.RangePicker value={dtdatestate.from === "" ? ["", ""] : [moment(dtdatestate.from), moment(dtdatestate.to)]} allowEmpty style={{ visibility: `hidden`, width: `0`, padding: `0` }} className="datepickerStatus" open={dtdatefilter} onChange={(dates, datestrings) => {
+                                            setdtdatefilter(prev => !prev)
                                             setloadingdtdata(true)
                                             fetch(`https://boiling-thicket-46501.herokuapp.com/getDeadlineTasks?from=${datestrings[0]}&to=${datestrings[1]}&location=${dtlocstate}`, {
                                                 method: `GET`,
@@ -963,6 +964,35 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                     }
                                                 })
                                         }}
+                                            renderExtraFooter={() => (
+                                                <div className=' flex items-center'>
+                                                    <p className=' mb-0 text-primary100 hover:text-primary75 cursor-pointer' onClick={() => {
+                                                        setdtdatefilter(prev => !prev)
+                                                        setloadingdtdata(true)
+                                                        fetch(`https://boiling-thicket-46501.herokuapp.com/getDeadlineTasks?from=&to=&location=${dtlocstate}`, {
+                                                            method: `GET`,
+                                                            headers: {
+                                                                'Authorization': JSON.parse(initProps),
+                                                            },
+                                                        })
+                                                            .then(res => res.json())
+                                                            .then(res2 => {
+                                                                if (res2.success) {
+                                                                    setdtdatestate({ from: "", to: "" })
+                                                                    setdtdata(res2.data)
+                                                                    setloadingdtdata(false)
+                                                                }
+                                                                else {
+                                                                    notification['error']({
+                                                                        message: res2.message,
+                                                                        duration: 3
+                                                                    })
+                                                                    setloadingdtdata(false)
+                                                                }
+                                                            })
+                                                    }}>Reset</p>
+                                                </div>
+                                            )}
                                         />
                                     </div>
                                 </div>
@@ -1154,7 +1184,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                             <div tabIndex={`0`} className="mx-1 cursor-pointer">
                                                 <MappinIconSvg color={`#000000`} size={25} />
                                             </div>
-                                            <div tabIndex={`0`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col'>
+                                            <div tabIndex={`0`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col max-h-72 overflow-scroll'>
                                                 <div className=' flex justify-end mb-1 cursor-pointer' onClick={() => {
                                                     setloadingstatustaskdata(true)
                                                     fetch(`https://boiling-thicket-46501.herokuapp.com/getStatusTaskList?from=${statustaskdatestate.from}&to=${statustaskdatestate.to}&location=`, {
@@ -1213,7 +1243,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                         <div className="mx-1 cursor-pointer" onClick={() => { setstatustaskdatefilter(prev => !prev) }}>
                                             <CalendartimeIconSvg color={`#000000`} size={25} />
                                         </div>
-                                        <DatePicker.RangePicker allowEmpty style={{ visibility: `hidden`, width: `0`, padding: `0` }} className="datepickerStatus" open={statustaskdatefilter} onChange={(dates, datestrings) => {
+                                        <DatePicker.RangePicker value={statustaskdatestate.from === "" ? ["", ""] : [moment(statustaskdatestate.from), moment(statustaskdatestate.to)]} allowEmpty style={{ visibility: `hidden`, width: `0`, padding: `0` }} className="datepickerStatus" open={statustaskdatefilter} onChange={(dates, datestrings) => {
+                                            setstatustaskdatefilter(prev => !prev)
                                             setloadingstatustaskdata(true)
                                             fetch(`https://boiling-thicket-46501.herokuapp.com/getStatusTaskList?from=${datestrings[0]}&to=${datestrings[1]}&location=${statustasklocstate}`, {
                                                 method: `GET`,
@@ -1228,6 +1259,26 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                     setloadingstatustaskdata(false)
                                                 })
                                         }}
+                                            renderExtraFooter={() => (
+                                                <div className=' flex items-center'>
+                                                    <p className=' mb-0 text-primary100 hover:text-primary75 cursor-pointer' onClick={() => {
+                                                        setstatustaskdatefilter(prev => !prev)
+                                                        setloadingstatustaskdata(true)
+                                                        fetch(`https://boiling-thicket-46501.herokuapp.com/getStatusTaskList?from=&to=&location=${statustasklocstate}`, {
+                                                            method: `GET`,
+                                                            headers: {
+                                                                'Authorization': JSON.parse(initProps),
+                                                            },
+                                                        })
+                                                            .then(res => res.json())
+                                                            .then(res2 => {
+                                                                setstatustaskdatestate({ from: "", to: "" })
+                                                                setstatustaskdata(res2.data)
+                                                                setloadingstatustaskdata(false)
+                                                            })
+                                                    }}>Reset</p>
+                                                </div>
+                                            )}
                                         />
                                     </div>
                                 </div>
@@ -1331,7 +1382,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                             <div tabIndex={`1`} className="mx-1 cursor-pointer">
                                                 <MappinIconSvg color={`#000000`} size={25} />
                                             </div>
-                                            <div tabIndex={`1`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col'>
+                                            <div tabIndex={`1`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col max-h-72 overflow-scroll'>
                                                 <div className=' flex justify-end mb-1 cursor-pointer' onClick={() => {
                                                     setloadingttcdata(true)
                                                     fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskTypeCounts?location=`, {

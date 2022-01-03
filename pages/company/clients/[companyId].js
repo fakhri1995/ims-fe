@@ -489,7 +489,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
         }
     }, [viewrelasi])
     return (
-        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={patharr} st={st}>
+        <Layout tok={tok} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={patharr} st={st} idpage={companyid}>
             <div className="grid grid-cols-12">
                 {
                     praloadingedit ?

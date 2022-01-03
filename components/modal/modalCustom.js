@@ -273,7 +273,7 @@ const ModalHapusTask = ({ title, visible, onvisible, onOk, onCancel, loading, da
             }
             loading={loading}
         >
-            Apakah Anda yakin ingin melanjutkan penghapusan Tipe Task <strong>{datadelete.name}</strong>?
+            Apakah Anda yakin ingin melanjutkan penghapusan Task <strong>{datadelete.name}</strong>?
         </ModalCore>
     )
 }
@@ -300,7 +300,7 @@ const ModalHapusTaskDetail = ({ title, visible, onvisible, onOk, onCancel, loadi
             }
             loading={loading}
         >
-            Apakah Anda yakin ingin melanjutkan penghapusan Tipe Task <strong>{datadelete.name}</strong>?
+            Apakah Anda yakin ingin melanjutkan penghapusan Task <strong>{datadelete.name}</strong>?
         </ModalCore>
     )
 }

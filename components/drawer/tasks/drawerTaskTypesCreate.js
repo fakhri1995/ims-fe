@@ -18,11 +18,11 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
     const [tasktypenameexist, settasktypenameexist] = useState(null)
     const [loadingtasktypenameexist, setloadingtasktypenameexist] = useState(false)
     //checkbox
-    const [tempcb, settempcb] = useState("")
+    const [tempcb, settempcb] = useState([])
     //matriks
     const [isbarismatriks, setisbarismatriks] = useState(false)
-    const [tempcolumnmatriks, settempcolumnmatriks] = useState("")
-    const [temprowmatriks, settemprowmatriks] = useState("")
+    const [tempcolumnmatriks, settempcolumnmatriks] = useState([])
+    const [temprowmatriks, settemprowmatriks] = useState([])
 
     //HANDLER
     const onChangeInput = (e) => {
@@ -323,7 +323,7 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                                                 <div className="mr-1 cursor-pointer hover:text-primary100" onClick={() => {
                                                                     settempcb("")
                                                                     var temp = [...datacreate.works]
-                                                                    temp[idx].lists.push(tempcb)
+                                                                    temp[idx].lists.push(tempcb[idx])
                                                                     setdatacreate(prev => ({
                                                                         ...prev,
                                                                         works: temp
@@ -331,8 +331,10 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                                                 }}>
                                                                     <H2>+</H2>
                                                                 </div>
-                                                                <Input placeholder="Tambah" value={tempcb} onChange={(e) => {
-                                                                    settempcb(e.target.value)
+                                                                <Input placeholder="Tambah" value={tempcb[idx]} onChange={(e) => {
+                                                                    var temptempcb = [...tempcb]
+                                                                    temptempcb[idx] = e.target.value
+                                                                    settempcb(temptempcb)
                                                                 }} bordered={false} />
                                                             </div>
                                                         </div>
@@ -374,7 +376,7 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                                                 <div className="mr-1 cursor-pointer hover:text-primary100" onClick={() => {
                                                                     settempcolumnmatriks("")
                                                                     var temp = [...datacreate.works]
-                                                                    temp[idx].columns.push(tempcolumnmatriks)
+                                                                    temp[idx].columns.push(tempcolumnmatriks[idx])
                                                                     setdatacreate(prev => ({
                                                                         ...prev,
                                                                         works: temp
@@ -382,7 +384,11 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                                                 }}>
                                                                     <H2>+</H2>
                                                                 </div>
-                                                                <Input placeholder="Tambah" value={tempcolumnmatriks} onChange={(e) => { settempcolumnmatriks(e.target.value) }} bordered={false} />
+                                                                <Input placeholder="Tambah" value={tempcolumnmatriks[idx]} onChange={(e) => {
+                                                                    var temptempcolumnsmatriks = [...tempcolumnmatriks]
+                                                                    temptempcolumnsmatriks[idx] = e.target.value
+                                                                    settempcolumnmatriks(temptempcolumnsmatriks)
+                                                                }} bordered={false} />
                                                             </div>
                                                         </div>
                                                         <div className="mb-3 flex flex-col">
@@ -442,7 +448,7 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                                                         <div className="mr-1 cursor-pointer hover:text-primary100" onClick={() => {
                                                                             settemprowmatriks("")
                                                                             var temp = [...datacreate.works]
-                                                                            temp[idx].rows.push(temprowmatriks)
+                                                                            temp[idx].rows.push(temprowmatriks[idx])
                                                                             setdatacreate(prev => ({
                                                                                 ...prev,
                                                                                 works: temp
@@ -450,7 +456,11 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                                                         }}>
                                                                             <H2>+</H2>
                                                                         </div>
-                                                                        <Input placeholder="Tambah" value={temprowmatriks} onChange={(e) => { settemprowmatriks(e.target.value) }} bordered={false} />
+                                                                        <Input placeholder="Tambah" value={temprowmatriks[idx]} onChange={(e) => {
+                                                                            var temptemprowssmatriks = [...temprowmatriks]
+                                                                            temptemprowssmatriks[idx] = e.target.value
+                                                                            settemprowmatriks(temptemprowssmatriks)
+                                                                        }} bordered={false} />
                                                                     </div>
                                                                 </div>
                                                             }
@@ -700,6 +710,9 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                             ...prev,
                             works: [...prev.works, { type: 1, name: "", description: "" }]
                         }))
+                        settempcb([...tempcb, ""])
+                        settempcolumnmatriks([...tempcolumnmatriks, ""])
+                        settemprowmatriks([...temprowmatriks, ""])
                     }}>
                         <div className="text-primary100 hover:text-primary75">
                             + Tambah Pekerjaan Baru

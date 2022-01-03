@@ -9,7 +9,7 @@ import MenuFoldOutlined from '@ant-design/icons/MenuFoldOutlined'
 import LayoutMenu from './layout-menu'
 import LayoutMenuHeader from './layout-menu-header'
 
-function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, st }) {
+function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, st, prevpath, idpage, extra }) {
     const rt = useRouter()
     var rootBreadcrumb = ""
     var childBreacrumb = []
@@ -28,6 +28,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, st }) 
         return doc[0].toUpperCase() + doc.slice(1)
     })
     const childBreacrumbDD = childBreacrumbCC
+    console.log(childBreacrumbDD)
     // if (childBreacrumbDD[1] === "Update") {
     //     childBreacrumbDD.splice(2, 1)
     // }
@@ -82,13 +83,98 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, st }) 
                             {
                                 pathArr ?
                                     <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 10px`, backgroundColor: `#F4FAF5` }} className={st.breadcrumbClients}>
-                                        {/* {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${pathArr[0]}`}><strong>{pathArr[0]}</strong></Breadcrumb.Item>} */}
-                                        {childBreacrumbDD.length !== 0 ?
+                                        {
+                                            childBreacrumbDD[0] === "Tasks" &&
+                                            <>
+                                                {
+                                                    childBreacrumbDD.map((doc, idx) => {
+                                                        pathBuilder = pathBuilder + `/${pathArr[idx]}`
+                                                        if (idx === 0) {
+                                                            if (childBreacrumbDD[1] === "Admin" || childBreacrumbDD[1] === "My Task")
+                                                                return (
+                                                                    <Breadcrumb.Item key={idx} href={`/tasks/${prevpath}`}> <strong>{childBreacrumbDD[1] === "Admin" ? "Admin Task" : "My Task"}</strong> </Breadcrumb.Item>
+                                                                )
+                                                            else if (childBreacrumbDD[1] === "Detail Task")
+                                                                return (
+                                                                    <Breadcrumb.Item key={idx} href={`/tasks/${prevpath}`}> <strong>{prevpath === "admin" ? "Admin Task" : "My Task"}</strong> </Breadcrumb.Item>
+                                                                )
+                                                        }
+                                                        else if (idx === childBreacrumbDD.length - 1 && idx > 0)
+                                                            return (
+                                                                <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                            )
+                                                        else
+                                                            return (
+                                                                <Breadcrumb.Item key={idx} href={pathBuilder}><strong>{doc}</strong> </Breadcrumb.Item>
+                                                            )
+                                                    })
+                                                }
+                                            </>
+                                        }
+                                        {
+                                            childBreacrumbDD[0] === "Company" &&
+                                            <>
+                                                {
+                                                    childBreacrumbDD.map((doc, idx) => {
+                                                        pathBuilder = pathBuilder + `/${pathArr[idx]}`
+                                                        if (idx === 0) {
+                                                            if (childBreacrumbDD[1] !== "Clients") {
+                                                                if (childBreacrumbDD[1] !== "myCompany") {
+                                                                    return (
+                                                                        <Breadcrumb.Item key={idx} href={`/company/myCompany`}> <strong>My Company</strong> </Breadcrumb.Item>
+                                                                    )
+                                                                }
+                                                                else {
+                                                                    childBreacrumbDD[1] === "Locations" &&
+                                                                        <Breadcrumb.Item key={idx} href={`/company/myCompany`}> <strong>My Company</strong> </Breadcrumb.Item>
+                                                                    childBreacrumbDD[1] !== "Locations" &&
+                                                                        <Breadcrumb.Item key={idx} href={`/company/myCompany`}> <strong>My Company</strong> </Breadcrumb.Item>
+                                                                }
+                                                            }
+                                                            else if (childBreacrumbDD[1] === "Clients") {
+                                                                return (
+                                                                    <Breadcrumb.Item key={idx} href={`/company/clients/${idpage}`}> <strong>Clients</strong> </Breadcrumb.Item>
+                                                                )
+                                                            }
+                                                        }
+                                                        else if (idx === childBreacrumbDD.length - 1 && idx > 0)
+                                                            return (
+                                                                <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                            )
+                                                        else
+                                                            if (childBreacrumbDD[2] === "Detail Lokasi") {
+                                                                return (
+                                                                    <Breadcrumb.Item key={idx} href={`/company/myCompany/locations`}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                                )
+                                                            }
+                                                        if (childBreacrumbDD[1] === "Clients") {
+                                                            if (childBreacrumbDD[2] === "Locations") {
+                                                                return (
+                                                                    <Breadcrumb.Item key={idx} href={`/company/clients`}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                                )
+                                                            }
+                                                            else {
+                                                                return (
+                                                                    <Breadcrumb.Item key={idx} href={`/company/clients/${idpage}`}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                                )
+                                                            }
+                                                        }
+                                                        else {
+                                                            return (
+                                                                <Breadcrumb.Item key={idx} href={pathBuilder}><strong>{doc}</strong> </Breadcrumb.Item>
+                                                            )
+                                                        }
+                                                    })
+                                                }
+                                            </>
+                                        }
+                                        {/* {childBreacrumbDD.length !== 0 ?
                                             childBreacrumbDD.map((doc, idx) => {
                                                 pathBuilder = pathBuilder + `/${pathArr[idx]}`
-                                                if (idx === 0) {
+                                                if (idx === 0 && doc === 'Tasks') {
+                                                    if(prevpath === 'admin')
                                                     return (
-                                                        <Breadcrumb.Item key={idx} href={`/dashboard/${pathArr[idx]}`}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                        <Breadcrumb.Item key={idx} href={`/tasks/admin/${pathArr[idx]}`}> <strong>{doc}</strong> </Breadcrumb.Item>
                                                     )
                                                 }
                                                 else if (idx === childBreacrumbDD.length - 1 && idx > 0) {
@@ -107,21 +193,13 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, st }) 
                                                     return (
                                                         <Breadcrumb.Item key={idx} href={pathBuilder}>
                                                             <strong>{doc}</strong>
-                                                            {/* <Link href={{
-                                                            pathname: pathBuilder,
-                                                            query: {
-                                                                originPath: oriPath
-                                                            }
-                                                        }}>
-                                                            <strong>{doc}</strong>
-                                                        </Link> */}
                                                         </Breadcrumb.Item>
                                                     )
                                                 }
                                             })
                                             :
                                             null
-                                        }
+                                        } */}
                                     </Breadcrumb>
                                     :
                                     null

@@ -41,7 +41,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
     const rt = useRouter()
     const [instanceForm] = Form.useForm();
     var pathArr = rt.pathname.split("/").slice(1)
-    pathArr.splice(2, 1)
+    // pathArr.splice(2, 1)
     pathArr[pathArr.length - 1] = "Detail Lokasi"
 
     //useState
@@ -580,7 +580,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
     }, [])
 
     return (
-        <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
+        <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st} idpage={locid}>
             <div className="grid grid-cols-12">
                 {
                     praloadingedit ?

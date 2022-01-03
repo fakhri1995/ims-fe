@@ -28,11 +28,11 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
     const [deletestate, setdeletestate] = useState(false)
     const [workslen, setworkslen] = useState(0)
     //checkbox
-    const [tempcb, settempcb] = useState("")
+    const [tempcb, settempcb] = useState([])
     //matriks
     const [isbarismatriks, setisbarismatriks] = useState([])
-    const [tempcolumnmatriks, settempcolumnmatriks] = useState("")
-    const [temprowmatriks, settemprowmatriks] = useState("")
+    const [tempcolumnmatriks, settempcolumnmatriks] = useState([])
+    const [temprowmatriks, settemprowmatriks] = useState([])
 
     //HANDLER
     const onChangeInput = (e) => {
@@ -423,7 +423,7 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                     <div className="mr-1 cursor-pointer hover:text-primary100" onClick={() => {
                                                                                         settempcb("")
                                                                                         var tempdisplay = [...datadisplay.works]
-                                                                                        tempdisplay[idx].lists.push(tempcb)
+                                                                                        tempdisplay[idx].lists.push(tempcb[idx])
                                                                                         setdatadisplay(prev => ({
                                                                                             ...prev,
                                                                                             works: tempdisplay
@@ -456,8 +456,10 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                     }}>
                                                                                         <H2>+</H2>
                                                                                     </div>
-                                                                                    <Input placeholder="Tambah" value={tempcb} onChange={(e) => {
-                                                                                        settempcb(e.target.value)
+                                                                                    <Input placeholder="Tambah" value={tempcb[idx]} onChange={(e) => {
+                                                                                        var temptempcb = [...tempcb]
+                                                                                        temptempcb[idx] = e.target.value
+                                                                                        settempcb(temptempcb)
                                                                                     }} bordered={false} />
                                                                                 </div>
                                                                             </div>
@@ -524,7 +526,7 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                     <div className="mr-1 cursor-pointer hover:text-primary100" onClick={() => {
                                                                                         settempcolumnmatriks("")
                                                                                         var tempdisplay = [...datadisplay.works]
-                                                                                        tempdisplay[idx].columns.push(tempcolumnmatriks)
+                                                                                        tempdisplay[idx].columns.push(tempcolumnmatriks[idx])
                                                                                         setdatadisplay(prev => ({
                                                                                             ...prev,
                                                                                             works: tempdisplay
@@ -557,7 +559,11 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                     }}>
                                                                                         <H2>+</H2>
                                                                                     </div>
-                                                                                    <Input placeholder="Tambah" value={tempcolumnmatriks} onChange={(e) => { settempcolumnmatriks(e.target.value) }} bordered={false} />
+                                                                                    <Input placeholder="Tambah" value={tempcolumnmatriks[idx]} onChange={(e) => {
+                                                                                        var temptempcolumnsmatriks = [...tempcolumnmatriks]
+                                                                                        temptempcolumnsmatriks[idx] = e.target.value
+                                                                                        settempcolumnmatriks(temptempcolumnsmatriks)
+                                                                                    }} bordered={false} />
                                                                                 </div>
                                                                             </div>
                                                                             <div className="mb-3 flex flex-col">
@@ -667,7 +673,7 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                             <div className="mr-1 cursor-pointer hover:text-primary100" onClick={() => {
                                                                                                 settemprowmatriks("")
                                                                                                 var tempdisplay = [...datadisplay.works]
-                                                                                                tempdisplay[idx].rows.push(temprowmatriks)
+                                                                                                tempdisplay[idx].rows.push(temprowmatriks[idx])
                                                                                                 setdatadisplay(prev => ({
                                                                                                     ...prev,
                                                                                                     works: tempdisplay
@@ -700,7 +706,11 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                             }}>
                                                                                                 <H2>+</H2>
                                                                                             </div>
-                                                                                            <Input placeholder="Tambah" value={temprowmatriks} onChange={(e) => { settemprowmatriks(e.target.value) }} bordered={false} />
+                                                                                            <Input placeholder="Tambah" value={temprowmatriks[idx]} onChange={(e) => {
+                                                                                                var temptemprowssmatriks = [...temprowmatriks]
+                                                                                                temptemprowssmatriks[idx] = e.target.value
+                                                                                                settemprowmatriks(temptemprowssmatriks)
+                                                                                            }} bordered={false} />
                                                                                         </div>
                                                                                     </div>
                                                                                 }
@@ -1175,6 +1185,9 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                     ...prev,
                                     add_works: [...prev.add_works, { type: 1, name: "", description: "" }]
                                 }))
+                                settempcb([...tempcb, ""])
+                                settempcolumnmatriks([...tempcolumnmatriks, ""])
+                                settemprowmatriks([...temprowmatriks, ""])
                             }}>
                                 <div className="text-primary100 hover:text-primary75">
                                     + Tambah Pekerjaan Baru

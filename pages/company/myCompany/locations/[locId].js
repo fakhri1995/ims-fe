@@ -41,7 +41,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
     const rt = useRouter()
     const [instanceForm] = Form.useForm();
     var pathArr = rt.pathname.split("/").slice(1)
-    pathArr.splice(2, 1)
+    pathArr.splice(1, 1)
     pathArr[pathArr.length - 1] = "Detail Lokasi"
 
     //useState

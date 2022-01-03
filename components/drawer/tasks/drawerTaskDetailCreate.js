@@ -76,7 +76,7 @@ const DrawerTaskDetailCreate = ({ title, id, taskid, loading, visible, onvisible
     //USEEFFECT
     useEffect(() => {
         if (disabledtrigger !== -1) {
-            if (datacreate.work.name !== "" && datacreate.work.description !== "") {
+            if (datacreate.work.name !== "" && datacreate.work.type !== null) {
                 setdisabledcreate(false)
             }
             else {
@@ -93,8 +93,13 @@ const DrawerTaskDetailCreate = ({ title, id, taskid, loading, visible, onvisible
                 setdatacreate({
                     id: null,
                     task_id: null,
-                    work: {}
+                    work: {
+                        name: "",
+                        type: null,
+                        description: ""
+                    }
                 })
+                setdisabledcreate(true)
                 onvisible(false)
             }}
             buttonOkText={buttonOkText}
@@ -156,6 +161,7 @@ const DrawerTaskDetailCreate = ({ title, id, taskid, loading, visible, onvisible
                                                 setdatacreate({
                                                     ...tt
                                                 })
+                                                setdisabledtrigger(prev => prev + 1)
                                             }}>
                                                 <Select.Option value={1}>
                                                     <div className="flex items-center">
@@ -204,7 +210,6 @@ const DrawerTaskDetailCreate = ({ title, id, taskid, loading, visible, onvisible
                                                         description: e.target.value
                                                     }
                                                 }))
-                                                setdisabledtrigger(prev => prev + 1)
                                             }}></Input>
                                         </div>
                                         {

@@ -19,7 +19,6 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
     var activeTab = "profile"
     const { active, id, company_name } = rt.query
     var temp2 = rt.pathname.split("/").slice(1)
-    temp2.splice(0, 1)
     temp2[temp2.length - 1] = company_name + ` - Locations`
 
     if (active) {
@@ -307,7 +306,7 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
         }
     }, [idselected])
     return (
-        <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={temp2} st={st}>
+        <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={temp2} st={st} idpage={id} extra={company_name}>
             <div className="grid grid-cols-12">
                 <div className="col-span-6 flex flex-col m-3">
                     <div className="flex justify-around mb-5">

@@ -20,7 +20,7 @@ function recursiveModifData(dataa) {
     return dataa
 }
 
-const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, dataupdate, setdataupdate, loading, selecteditems, setselecteditems, selectedstaffgroup, setselectedstaffgroup, switchstaffgroup, setswitchstaffgroup, now, setnow, choosedate, setchoosedate, nowend, setnowend, choosedateend, setchoosedateend, repeatable, setrepeatable, regular, setregular, choosedateendrepeat, setchoosedateendrepeat, prevpath }) => {
+const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, dataupdate, setdataupdate, loading, selecteditems, setselecteditems, selectedstaffgroup, setselectedstaffgroup, switchstaffgroup, setswitchstaffgroup, now, setnow, choosedate, setchoosedate, nowend, setnowend, choosedateend, setchoosedateend, repeatable, setrepeatable, regular, setregular, choosedateendrepeat, setchoosedateendrepeat, prevpath, triggersubloc, settriggersubloc }) => {
     //USESTATE
     const [loadingupdate, setloadingupdate] = useState(false)
     const [disabledupdate, setdisabledupdate] = useState(true)
@@ -35,7 +35,6 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
     const [datalocations, setdatalocations] = useState([])
     const [datasublocs, setdatasublocs] = useState([])
     const [fetchinglocations, setfetchinglocations] = useState(false)
-    const [triggersubloc, settriggersubloc] = useState(-1)
     const [selectedsubloc, setselectedsubloc] = useState(null)
     //items
     const [dataitems, setdataitems] = useState([])
@@ -144,18 +143,16 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
     }, [])
     //Sublokasi
     useEffect(() => {
-        if (triggersubloc !== -1) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getSubLocations?company_id=${triggersubloc}`, {
-                method: `GET`,
-                headers: {
-                    'Authorization': JSON.parse(initProps),
-                }
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getSubLocations?company_id=${triggersubloc}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatasublocs(res2.data.children)
             })
-                .then(res => res.json())
-                .then(res2 => {
-                    setdatasublocs(res2.data.children)
-                })
-        }
     }, [triggersubloc])
     //Items
     useEffect(() => {
@@ -254,7 +251,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                             <div className="mb-6">
                                 <p className="mb-0 text-red-500 text-xs italic">*Informasi ini harus diisi</p>
                             </div>
-                            {/* <div className="mb-6 flex px-3">
+                            <div className="mb-6 flex px-3">
                                 <div className=' w-6/12 mr-2 flex flex-col'>
                                     <div className="flex mb-2">
                                         <Label>Tipe Task</Label>
@@ -269,29 +266,9 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                         </style>
                                     </div>
                                     <Select
-                                        placeholder="Nama tipe task"
                                         suffixIcon={<SearchOutlined />}
+                                        disabled
                                         showArrow
-                                        showSearch
-                                        optionFilterProp="children"
-                                        notFoundContent={fetchingtasktypes ? <Spin size="small" /> : null}
-                                        onSearch={(value) => {
-                                            setfetchingtasktypes(true)
-                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterTaskTypes?name=${value}`, {
-                                                method: `GET`,
-                                                headers: {
-                                                    'Authorization': JSON.parse(initProps),
-                                                },
-                                            })
-                                                .then(res => res.json())
-                                                .then(res2 => {
-                                                    setdatatasktypes(res2.data)
-                                                    setfetchingtasktypes(false)
-                                                })
-                                        }}
-                                        filterOption={(input, opt) => (
-                                            opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                        )}
                                         name={`task_type_id`}
                                         value={dataupdate.task_type_id}
                                         onChange={(value) => { setdataupdate({ ...dataupdate, task_type_id: value }); setdisabledtrigger(prev => prev + 1) }}
@@ -303,7 +280,15 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                         }
                                     </Select >
                                 </div>
-                            </div> */}
+                                <div className='w-6/12 ml-2 flex flex-col justify-center'>
+                                    <div className='mb-2 text-center'>
+                                        <Label>No. Task (dibuat otomatis)</Label>
+                                    </div>
+                                    <div className='w-full text-center'>
+                                        <H1>T-000{dataupdate.id}</H1>
+                                    </div>
+                                </div>
+                            </div>
                             <div id={`card${0}`} className='mb-5 flex flex-col px-3'>
                                 <div className="flex mb-1">
                                     <Label>Referensi</Label>
@@ -381,7 +366,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                     suffixIcon={<SearchOutlined />}
                                     showArrow
                                     name={`locations_id`}
-                                    onChange={(value) => { typeof (value) === 'undefined' ? setdataupdate({ ...dataupdate, location_id: null, subloc_id: null }) : setdataupdate({ ...dataupdate, location_id: value }); setdisabledtrigger(prev => prev + 1) }}
+                                    onChange={(value) => { typeof (value) === 'undefined' ? setdataupdate({ ...dataupdate, location_id: null, subloc_id: null }) : (setdataupdate({ ...dataupdate, location_id: value }), settriggersubloc(value)); setdisabledtrigger(prev => prev + 1) }}
                                     treeData={datalocations}
                                     treeDefaultExpandAll
                                     value={dataupdate.location_id}

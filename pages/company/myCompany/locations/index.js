@@ -18,8 +18,8 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
     const rt = useRouter()
     var activeTab = "profile"
     var temp2 = rt.pathname.split("/").slice(1)
-    temp2.splice(0, 1)
-    temp2[temp2.length - 1] = dataProfile.data.company.name
+    temp2.splice(1, 1)
+    // temp2[temp2.length - 1] = dataProfile.data.company.name
     const { active, id } = rt.query
 
     if (active) {

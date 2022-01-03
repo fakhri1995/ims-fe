@@ -552,7 +552,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     }, [triggertasktypupdate])
 
     return (
-        <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st}>
+        <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st} prevpath={"mytask"}>
             <div className="flex flex-col" id="mainWrapper">
                 {
                     viewtaskpick ?
@@ -697,61 +697,63 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                     </div>
                                                 }
                                             </div>
-                                            {
-                                                userlasttwo.length < 1 ?
-                                                    <div className=' flex w-full h-full items-center justify-center'>
-                                                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                                                    </div>
-                                                    :
-                                                    <>
-                                                        {
-                                                            userlasttwo.length >= 1 &&
-                                                            <div className="rounded bg-state1 shadow text-white p-5 flex justify-between mb-8 cursor-pointer" onClick={() => { rt.push(`/tasks/detail/${userlasttwo[0].id}`) }}>
-                                                                <div className="flex flex-col">
-                                                                    <div>
-                                                                        <ClipboardcheckIconSvg size={50} color={`#ffffff`} />
+                                            <div className=' h-full'>
+                                                {
+                                                    userlasttwo.length < 1 ?
+                                                        <div className=' flex w-full h-full items-center justify-center'>
+                                                            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                                        </div>
+                                                        :
+                                                        <>
+                                                            {
+                                                                userlasttwo.length >= 1 &&
+                                                                <div className="rounded bg-state1 hover:bg-state12 transition duration-300 shadow text-white p-5 flex justify-between mb-2 cursor-pointer h-3/6" onClick={() => { rt.push(`/tasks/detail/${userlasttwo[0].id}`) }}>
+                                                                    <div className="flex flex-col">
+                                                                        <div>
+                                                                            <ClipboardcheckIconSvg size={50} color={`#ffffff`} />
+                                                                        </div>
+                                                                        <div className="flex flex-col mt-2">
+                                                                            <Text color={`white`}>Berakhir {(new Date() - new Date(userlasttwo[0].deadline)) / (1000 * 60 * 60 * 24) < 1 ? `Hari Ini` : `${moment(userlasttwo[0].deadline).locale('id').format('Do MMM')}`}</Text>
+                                                                            <Progress trailColor={`#4D4D4D`} strokeColor={`#ffffff`} percent={userlasttwo[0].time_limit_percentage} showInfo={false} />
+                                                                        </div>
                                                                     </div>
-                                                                    <div className="flex flex-col mt-2">
-                                                                        <Text color={`white`}>Berakhir {(new Date() - new Date(userlasttwo[0].deadline)) / (1000 * 60 * 60 * 24) < 1 ? `Hari Ini` : `${moment(userlasttwo[0].deadline).locale('id').format('Do MMM')}`}</Text>
-                                                                        <Progress trailColor={`#4D4D4D`} strokeColor={`#ffffff`} percent={userlasttwo[0].time_limit_percentage} showInfo={false} />
-                                                                    </div>
-                                                                </div>
-                                                                <div className="flex flex-col">
-                                                                    <div className="flex flex-col text-right">
-                                                                        <p className={`font-bold text-xl mb-0 text-white`}>{userlasttwo[0].name}</p>
-                                                                        <Label>T-000{userlasttwo[0].id}</Label>
-                                                                    </div>
-                                                                    <div className="flex flex-col mt-4 text-right">
-                                                                        <H2 color={`white`}>Sisa {userlasttwo[0].time_left}</H2>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        }
-                                                        {
-                                                            userlasttwo.length >= 2 &&
-                                                            <div className="rounded bg-white shadow p-5 flex justify-between cursor-pointer" onClick={() => { rt.push(`/tasks/detail/${userlasttwo[1].id}`) }}>
-                                                                <div className="flex flex-col">
-                                                                    <div>
-                                                                        <ClipboardcheckIconSvg size={50} color={`#35763B`} />
-                                                                    </div>
-                                                                    <div className="flex flex-col mt-2">
-                                                                        <Text>Berakhir {(new Date() - new Date(userlasttwo[1].deadline)) / (1000 * 60 * 60 * 24) < 1 ? `Hari Ini` : `${moment(userlasttwo[1].deadline).locale('id').format('Do MMM')}`}</Text>
-                                                                        <Progress trailColor={`#d8e8da`} strokeColor={`#35763B`} percent={userlasttwo[1].time_limit_percentage} showInfo={false} />
+                                                                    <div className="flex flex-col">
+                                                                        <div className="flex flex-col text-right">
+                                                                            <p className={`font-bold text-xl mb-0 text-white`}>{userlasttwo[0].name}</p>
+                                                                            <Label>T-000{userlasttwo[0].id}</Label>
+                                                                        </div>
+                                                                        <div className="flex flex-col mt-4 text-right">
+                                                                            <H2 color={`white`}>Sisa {userlasttwo[0].time_left}</H2>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                                <div className="flex flex-col">
-                                                                    <div className="flex flex-col text-right">
-                                                                        <H1>{userlasttwo[1].name}</H1>
-                                                                        <Label>T-000{userlasttwo[1].id}</Label>
+                                                            }
+                                                            {
+                                                                userlasttwo.length >= 2 &&
+                                                                <div className="rounded bg-white hover:bg-mono90 transition duration-300 shadow p-5 flex justify-between cursor-pointer h-3/6" onClick={() => { rt.push(`/tasks/detail/${userlasttwo[1].id}`) }}>
+                                                                    <div className="flex flex-col">
+                                                                        <div>
+                                                                            <ClipboardcheckIconSvg size={50} color={`#35763B`} />
+                                                                        </div>
+                                                                        <div className="flex flex-col mt-2">
+                                                                            <Text>Berakhir {(new Date() - new Date(userlasttwo[1].deadline)) / (1000 * 60 * 60 * 24) < 1 ? `Hari Ini` : `${moment(userlasttwo[1].deadline).locale('id').format('Do MMM')}`}</Text>
+                                                                            <Progress trailColor={`#d8e8da`} strokeColor={`#35763B`} percent={userlasttwo[1].time_limit_percentage} showInfo={false} />
+                                                                        </div>
                                                                     </div>
-                                                                    <div className="flex flex-col mt-4 text-right">
-                                                                        <H2 color={`primary`}>Sisa {userlasttwo[1].time_left}</H2>
+                                                                    <div className="flex flex-col">
+                                                                        <div className="flex flex-col text-right">
+                                                                            <H1>{userlasttwo[1].name}</H1>
+                                                                            <Label>T-000{userlasttwo[1].id}</Label>
+                                                                        </div>
+                                                                        <div className="flex flex-col mt-4 text-right">
+                                                                            <H2 color={`primary`}>Sisa {userlasttwo[1].time_left}</H2>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                        }
-                                                    </>
-                                            }
+                                                            }
+                                                        </>
+                                                }
+                                            </div>
                                         </>
                                 }
                             </div>
@@ -764,7 +766,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                             <div tabIndex={`0`} className="mx-1 cursor-pointer">
                                                 <MappinIconSvg color={`#000000`} size={25} />
                                             </div>
-                                            <div tabIndex={`0`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col'>
+                                            <div tabIndex={`0`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col max-h-72 overflow-scroll'>
                                                 <div className=' flex justify-end mb-1 cursor-pointer' onClick={() => {
                                                     setloadingstatustaskdata(true)
                                                     fetch(`https://boiling-thicket-46501.herokuapp.com/getStatusTaskList?from=${statustaskdatestate.from}&to=${statustaskdatestate.to}&location=`, {
@@ -823,7 +825,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                         <div className="mx-1 cursor-pointer" onClick={() => { setstatustaskdatefilter(prev => !prev) }}>
                                             <CalendartimeIconSvg color={`#000000`} size={25} />
                                         </div>
-                                        <DatePicker.RangePicker allowEmpty style={{ visibility: `hidden`, width: `0`, padding: `0` }} className="datepickerStatus" open={statustaskdatefilter} onChange={(dates, datestrings) => {
+                                        <DatePicker.RangePicker value={statustaskdatestate.from === "" ? ["", ""] : [moment(statustaskdatestate.from), moment(statustaskdatestate.to)]} allowEmpty style={{ visibility: `hidden`, width: `0`, padding: `0` }} className="datepickerStatus" open={statustaskdatefilter} onChange={(dates, datestrings) => {
+                                            setstatustaskdatefilter(prev => !prev)
                                             setloadingstatustaskdata(true)
                                             fetch(`https://boiling-thicket-46501.herokuapp.com/getStatusTaskList?from=${datestrings[0]}&to=${datestrings[1]}&location=${statustasklocstate}`, {
                                                 method: `GET`,
@@ -838,6 +841,26 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                     setloadingstatustaskdata(false)
                                                 })
                                         }}
+                                            renderExtraFooter={() => (
+                                                <div className=' flex items-center'>
+                                                    <p className=' mb-0 text-primary100 hover:text-primary75 cursor-pointer' onClick={() => {
+                                                        setstatustaskdatefilter(prev => !prev)
+                                                        setloadingstatustaskdata(true)
+                                                        fetch(`https://boiling-thicket-46501.herokuapp.com/getStatusTaskList?from=&to=&location=${statustasklocstate}`, {
+                                                            method: `GET`,
+                                                            headers: {
+                                                                'Authorization': JSON.parse(initProps),
+                                                            },
+                                                        })
+                                                            .then(res => res.json())
+                                                            .then(res2 => {
+                                                                setstatustaskdatestate({ from: "", to: "" })
+                                                                setstatustaskdata(res2.data)
+                                                                setloadingstatustaskdata(false)
+                                                            })
+                                                    }}>Reset</p>
+                                                </div>
+                                            )}
                                         />
                                     </div>
                                 </div>
@@ -941,7 +964,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                             <div tabIndex={`1`} className="mx-1 cursor-pointer">
                                                 <MappinIconSvg color={`#000000`} size={25} />
                                             </div>
-                                            <div tabIndex={`1`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col'>
+                                            <div tabIndex={`1`} className='p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col max-h-72 overflow-scroll'>
                                                 <div className=' flex justify-end mb-1 cursor-pointer' onClick={() => {
                                                     setloadingttcdata(true)
                                                     fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTaskTypeCounts?location=`, {
@@ -1003,7 +1026,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                         </>
                                         :
                                         <>
-                                            <div className="flex justify-center mb-5">
+                                            <div className="flex justify-center mb-5 h-4/6">
                                                 <Bar
                                                     data={{
                                                         labels: ttcdata.map(doc => doc.name),

@@ -19,10 +19,10 @@ import DrawerTaskSpareParts from '../../../components/drawer/tasks/drawerTaskSpa
 const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     //1.Init
     const rt = useRouter()
-    const pathArr = rt.pathname.split("/").slice(1)
-    pathArr.splice(2, 1)
-    pathArr.push(`Task ${taskid}`)
     const { prevpath } = rt.query
+    const pathArr = rt.pathname.split("/").slice(1)
+    pathArr.splice(1,2)
+    pathArr.push(`Detail Task`)
 
     //USESTATE
     const [displaytask, setdisplaytask] = useState({
@@ -80,6 +80,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
         end_repeat_at: null,
         subloc_id: null,
     })
+    const [triggersubloc, settriggersubloc] = useState(-1)
     const [users2, setusers2] = useState([])
     const [praloadingtask, setpraloadingtask] = useState(true)
     const [timeleft, settimeleft] = useState({
@@ -464,7 +465,8 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                     task_type_id: res2.data.task_type_id,
                     name: res2.data.name,
                     description: res2.data.description,
-                    location_id: res2.data.location_id,
+                    location_id: res2.data.location.top_parent ? res2.data.location.top_parent.id : res2.data.location_id,
+                    subloc_id: res2.data.location.top_parent ? res2.data.location_id : null,
                     reference_id: res2.data.reference_id,
                     created_at: res2.data.created_at,
                     deadline: res2.data.deadline,
@@ -484,6 +486,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                     migid: doc.mig_id,
                     assetname: doc.asset_name
                 }))
+                settriggersubloc(res2.data.location.top_parent ? res2.data.location.top_parent.id : -1)
                 setselecteditems(tempitems)
                 setrepeatable(res2.data.repeat === 0 ? false : true)
                 setregular(res2.data.repeat > 1 ? true : false)
@@ -571,7 +574,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     }, [scrolltriggerupdate])
 
     return (
-        <Layout tok={initProps} dataProfile={dataProfile} sidemenu={prevpath === "admin" ? "201" : "202"} pathArr={pathArr} st={st}>
+        <Layout tok={initProps} dataProfile={dataProfile} sidemenu={prevpath === "admin" ? "201" : "202"} pathArr={pathArr} st={st} prevpath={prevpath}>
             <div className='grid grid-cols-12 px-5'>
                 <div className=' col-span-9 flex flex-col'>
                     <div className='shadow-md rounded-md bg-white p-5 mb-6 mr-3 flex flex-col'>
@@ -876,8 +879,8 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                                     completeclose === false &&
                                                                     <div tabIndex={`0`} onClick={() => {
                                                                         setcurrentidstafftask(doctask.id)
-                                                                        setdisplaycurrentstafftask(displaytask.users)
-                                                                        setdisplaycurrentstafftask2(displaytask.users)
+                                                                        setdisplaycurrentstafftask(displaytask.users.filter(fil => doctask.users.map(m => m.id).includes(fil.id) === false))
+                                                                        setdisplaycurrentstafftask2(displaytask.users.filter(fil => doctask.users.map(m => m.id).includes(fil.id) === false))
                                                                         setcurrentstafftask(doctask.users)
                                                                     }}>
                                                                         <p className='mb-0 font-semibold text-sm text-primary100 hover:text-primary75 cursor-pointer flex items-center'><EditIconSvg size={15} color={`#35763B`} />Atur Staff</p>
@@ -1138,7 +1141,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                                     <div className=' border rounded-md mb-3 w-full p-2'>
                                                                         <div className={`grid grid-cols-12 w-full`}>
                                                                             <div className=' col-span-4 flex items-center p-2'>
-                                                                                <div className='mr-1 flex items-center cursor-pointer' onClick={() => {
+                                                                                {/* <div className='mr-1 flex items-center cursor-pointer' onClick={() => {
                                                                                     var awaltemp = datatype4.filter((docfil, idxfil) => docfil[0].id === doctask.id)[0]
                                                                                     var temp = [...awaltemp]
                                                                                     var temp2 = []
@@ -1157,7 +1160,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                                                     {sort4state === -1 && <SortDescendingIconSvg size={15} color={`#8f8f8f`} />}
                                                                                     {sort4state === 0 && <ArrowsSortIconSvg size={15} color={`#CCCCCC`} />}
                                                                                     {sort4state === 1 && <SortAscendingIconSvg size={15} color={`#8f8f8f`} />}
-                                                                                </div>
+                                                                                </div> */}
                                                                                 <div className='flex items-center'>
                                                                                     <H2>Model</H2>
                                                                                 </div>
@@ -1858,7 +1861,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                             <Buttonsys type={`default`} onClick={() => { setdrawertaskupdate(true) }}>
                                                 <div className='mr-1 flex items-center'>
                                                     <EditIconSvg size={15} color={`#35763B`} />
-                                                    Edit Task
+                                                    Ubah Task
                                                 </div>
                                             </Buttonsys>
                                         </div>
@@ -2022,6 +2025,8 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                         choosedateendrepeat={choosedateendrepeat}
                         setchoosedateendrepeat={setchoosedateendrepeat}
                         prevpath={prevpath}
+                        triggersubloc={triggersubloc}
+                        settriggersubloc={settriggersubloc}
                     />
             }
             <DrawerTaskDetailUpdate
