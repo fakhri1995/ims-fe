@@ -300,7 +300,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                 .then(res2 => {
                     setselecteddata({
                         ...res2.data,
-                        image_logo: res2.data.image_logo === "-" || res2.data.image_logo === "" ? '/default-users.jpeg' : res2.data.image_logo
+                        image_logo: res2.data.image_logo === "-" || res2.data.image_logo === "" ? '/image/Induk.png' : res2.data.image_logo
                     })
                     setloadingselected(false)
                 })
@@ -396,50 +396,57 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                                         </div>
                                         <div className="flex items-center justify-between">
                                             <div className="w-6/12 flex-col flex items-center">
-                                                <div className="w-32 h-32" id="chart">
-                                                    <Pie
-                                                        data={{
-                                                            labels: selecteddata.asset_cluster.map(doc => doc.name),
-                                                            datasets: [
-                                                                {
-                                                                    data: selecteddata.asset_cluster.map(doc => doc.asset_count),
-                                                                    backgroundColor: [
-                                                                        '#EE6DD9',
-                                                                        '#6AAA70',
-                                                                        '#ED962F',
-                                                                        '#BF4A40',
-                                                                        '#2F80ED',
-                                                                        '#E5C471',
-                                                                    ],
-                                                                    borderColor: [
-                                                                        '#EE6DD9',
-                                                                        '#6AAA70',
-                                                                        '#ED962F',
-                                                                        '#BF4A40',
-                                                                        '#2F80ED',
-                                                                        '#E5C471',
-                                                                        // 'rgba(255, 99, 132, 1)',
-                                                                        // 'rgba(54, 162, 235, 1)',
-                                                                        // 'rgba(255, 206, 86, 1)',
-                                                                        // 'rgba(75, 192, 192, 1)',
-                                                                        // 'rgba(153, 102, 255, 1)',
-                                                                        // 'rgba(255, 159, 64, 1)',
-                                                                    ],
-                                                                    borderWidth: 1,
-                                                                },
-                                                            ]
-                                                        }}
-                                                        options={{
-                                                            title: {
-                                                                display: false,
+                                                {
+                                                    selecteddata.asset_cluster.length === 0 ?
+                                                        <>
+                                                            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                                        </>
+                                                        :
+                                                        <div className="w-32 h-32" id="chart">
+                                                            <Pie
+                                                                data={{
+                                                                    labels: selecteddata.asset_cluster.map(doc => doc.name),
+                                                                    datasets: [
+                                                                        {
+                                                                            data: selecteddata.asset_cluster.map(doc => doc.asset_count),
+                                                                            backgroundColor: [
+                                                                                '#EE6DD9',
+                                                                                '#6AAA70',
+                                                                                '#ED962F',
+                                                                                '#BF4A40',
+                                                                                '#2F80ED',
+                                                                                '#E5C471',
+                                                                            ],
+                                                                            borderColor: [
+                                                                                '#EE6DD9',
+                                                                                '#6AAA70',
+                                                                                '#ED962F',
+                                                                                '#BF4A40',
+                                                                                '#2F80ED',
+                                                                                '#E5C471',
+                                                                                // 'rgba(255, 99, 132, 1)',
+                                                                                // 'rgba(54, 162, 235, 1)',
+                                                                                // 'rgba(255, 206, 86, 1)',
+                                                                                // 'rgba(75, 192, 192, 1)',
+                                                                                // 'rgba(153, 102, 255, 1)',
+                                                                                // 'rgba(255, 159, 64, 1)',
+                                                                            ],
+                                                                            borderWidth: 1,
+                                                                        },
+                                                                    ]
+                                                                }}
+                                                                options={{
+                                                                    title: {
+                                                                        display: false,
 
-                                                            },
-                                                            legend: {
-                                                                display: false,
-                                                            }
-                                                        }}
-                                                    />
-                                                </div>
+                                                                    },
+                                                                    legend: {
+                                                                        display: false,
+                                                                    }
+                                                                }}
+                                                            />
+                                                        </div>
+                                                }
                                                 <div className="flex flex-col items-center">
                                                     <H2>{selecteddata.inventory_count}</H2>
                                                     <Label>Total Aset</Label>

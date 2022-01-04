@@ -549,6 +549,8 @@ const DrawerLokasiClient = ({ title, visible, onClose, children, buttonOkText, i
     })
     const [disabledsave, setdisabledsave] = useState(true)
     const [disabledtrigger, setdisabledtrigger] = useState(-1)
+    const [warningphonenumber, setwarningphonenumber] = useState(false)
+    const [warningemail, setwarningemail] = useState(false)
 
     const onChangeInput = (e) => {
         setcreatedata({
@@ -587,35 +589,43 @@ const DrawerLokasiClient = ({ title, visible, onClose, children, buttonOkText, i
         setloadingfoto(false)
     }
     const handleCreateLokasi = () => {
-        setlokasiloading(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyClient`, {
-            method: 'POST',
-            headers: {
-                'Authorization': JSON.parse(initProps),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(createdata)
-        })
-            .then((res) => res.json())
-            .then(res2 => {
-                setlokasiloading(false)
-                onvisible(false)
-                if (res2.success) {
-                    notification['success']({
-                        message: res2.message,
-                        duration: 3
-                    })
-                    setTimeout(() => {
-                        rt.push(`/company/clients/locations?id=${displaydata.id}&company_name=${displaydata.name}`)
-                    }, 500)
-                }
-                else {
-                    notification['error']({
-                        message: res2.message,
-                        duration: 3
-                    })
-                }
+        if (/(^\d+$)/.test(createdata.phone_number) === false || /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/.test(createdata.email) === false) {
+            // console.log(new RegExp(/(^\d+$)/).test(createdata.phone_number))
+            new RegExp(/(^\d+$)/).test(createdata.phone_number) === false ? setwarningphonenumber(true) : setwarningphonenumber(false)
+            new RegExp(/(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/).test(createdata.email) === false ? setwarningemail(true) : setwarningemail(false)
+            setdisabledsave(true)
+        }
+        else {
+            setlokasiloading(true)
+            fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyClient`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(createdata)
             })
+                .then((res) => res.json())
+                .then(res2 => {
+                    setlokasiloading(false)
+                    onvisible(false)
+                    if (res2.success) {
+                        notification['success']({
+                            message: res2.message,
+                            duration: 3
+                        })
+                        setTimeout(() => {
+                            rt.push(`/company/clients/locations?id=${displaydata.id}&company_name=${displaydata.name}`)
+                        }, 500)
+                    }
+                    else {
+                        notification['error']({
+                            message: res2.message,
+                            duration: 3
+                        })
+                    }
+                })
+        }
     }
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
@@ -683,8 +693,10 @@ const DrawerLokasiClient = ({ title, visible, onClose, children, buttonOkText, i
                         <InputRequired name="name" onChangeInput={onChangeInput} label="Nama Lokasi"></InputRequired>
                         <InputRequired name="address" onChangeInput={onChangeInput} label="Alamat Lokasi"></InputRequired>
                         <InputRequired name="phone_number" onChangeInput={onChangeInput} label="Nomor Telepon"></InputRequired>
+                        {warningphonenumber && <p className=' text-red-500 text-sm mb-3 -mt-3 mx-3'>Nomor Telepon harus angka</p>}
                         <InputRequired name="penanggung_jawab" onChangeInput={onChangeInput} label="Penanggung Jawab (PIC)"></InputRequired>
                         {dynamicattr.email && <InputNotRequired name="email" onChangeInput={onChangeInputNotRequired} label="Email"></InputNotRequired>}
+                        {warningemail && <p className=' text-red-500 text-sm mb-3 -mt-3 mx-3'>Email belum diisi dengan benar</p>}
                         {dynamicattr.website && <InputNotRequired name="website" onChangeInput={onChangeInputNotRequired} label="Website"></InputNotRequired>}
                         {dynamicattr.npwp && <InputNotRequired name="npwp" onChangeInput={onChangeInputNotRequired} label="NPWP"></InputNotRequired>}
                         {dynamicattr.fax && <InputNotRequired name="fax" onChangeInput={onChangeInputNotRequired} label="Fax"></InputNotRequired>}
@@ -789,6 +801,8 @@ const DrawerSublokasi = ({ title, visible, onClose, children, buttonOkText, init
     const [sameaddress, setsameaddress] = useState(false)
     const [lokasiloading, setlokasiloading] = useState(false)
     const [loadingfoto, setloadingfoto] = useState(false)
+    const [warningphonenumber, setwarningphonenumber] = useState(false)
+    const [warningemail, setwarningemail] = useState(false)
 
     const onChangeInput = (e) => {
         setcreatedata({
@@ -827,35 +841,42 @@ const DrawerSublokasi = ({ title, visible, onClose, children, buttonOkText, init
         setloadingfoto(false)
     }
     const handleCreateSubLokasi = () => {
-        setlokasiloading(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanySub`, {
-            method: 'POST',
-            headers: {
-                'Authorization': JSON.parse(initProps),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(createdata)
-        })
-            .then((res) => res.json())
-            .then(res2 => {
-                setlokasiloading(false)
-                onvisible(false)
-                if (res2.success) {
-                    notification['success']({
-                        message: res2.message,
-                        duration: 3
-                    })
-                    setTimeout(() => {
-                        // rt.push(`/company/myCompany/detail/${res2.id}`)
-                    }, 500)
-                }
-                else {
-                    notification['error']({
-                        message: res2.message,
-                        duration: 3
-                    })
-                }
+        if (/(^\d+$)/.test(createdata.phone_number) === false) {
+            // console.log(new RegExp(/(^\d+$)/).test(createdata.phone_number))
+            new RegExp(/(^\d+$)/).test(createdata.phone_number) === false ? setwarningphonenumber(true) : setwarningphonenumber(false)
+            setdisabledsave(true)
+        }
+        else {
+            setlokasiloading(true)
+            fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanySub`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(createdata)
             })
+                .then((res) => res.json())
+                .then(res2 => {
+                    setlokasiloading(false)
+                    onvisible(false)
+                    if (res2.success) {
+                        notification['success']({
+                            message: res2.message,
+                            duration: 3
+                        })
+                        setTimeout(() => {
+                            // rt.push(`/company/myCompany/detail/${res2.id}`)
+                        }, 500)
+                    }
+                    else {
+                        notification['error']({
+                            message: res2.message,
+                            duration: 3
+                        })
+                    }
+                })
+        }
     }
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
@@ -938,6 +959,7 @@ const DrawerSublokasi = ({ title, visible, onClose, children, buttonOkText, init
                             <Input name="address" onChange={onChangeInput} disabled={sameaddress ? true : false} />
                         </div>
                         <InputRequired name="phone_number" onChangeInput={onChangeInput} label="Nomor Telepon"></InputRequired>
+                        {warningphonenumber && <p className=' text-red-500 text-sm mb-3 -mt-3 mx-3'>Nomor Telepon harus angka</p>}
                         <InputRequired name="penanggung_jawab" onChangeInput={onChangeInput} label="Penanggung Jawab (PIC)"></InputRequired>
                     </div>
                 </div>
@@ -952,7 +974,7 @@ const DrawerAddRelasi = ({ id, title, visible, onClose, children, buttonOkText, 
         subject_id: Number(id),
         relationship_id: null,
         is_inverse: null,
-        type_id: null,
+        type_id: -3,
         connected_ids: null,
         backup_connected_ids: null
     })
@@ -961,7 +983,7 @@ const DrawerAddRelasi = ({ id, title, visible, onClose, children, buttonOkText, 
     const [relationnameddadd, setrelationnameddadd] = useState(false)
     const [relationselectedidxadd, setrelationselectedidxadd] = useState(-1)
     const [relationselectedisinverseadd, setrelationselectedisinverseadd] = useState(-1)
-    const [detailtipeadd, setdetailtipeadd] = useState(-10)
+    const [detailtipeadd, setdetailtipeadd] = useState(-9)
     const [detailtipedataadd, setdetailtipedataadd] = useState([])
     const [modaladd, setmodaladd] = useState(false)
     const [disabledadd, setdisabledadd] = useState(true)
@@ -1119,7 +1141,7 @@ const DrawerAddRelasi = ({ id, title, visible, onClose, children, buttonOkText, 
                     </div>
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Tipe <span className="tipepart"></span></p>
-                        <Select value={dataApiadd.type_id} onChange={(value) => {
+                        <Select disabled value={dataApiadd.type_id} onChange={(value) => {
                             setdataApiadd({ ...dataApiadd, type_id: value })
                             dataApiadd.relationship_id === null || value === null ? setdisabledadd(true) : setdisabledadd(false)
                             setdetailtipeadd(value)

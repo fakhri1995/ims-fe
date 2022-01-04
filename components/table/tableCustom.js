@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Table } from 'antd'
 import { useRouter } from 'next/router'
 
-const TableCustom = ({ dataSource, setDataSource, columns, loading, pageSize, total, setpraloading, initProps, setpage }) => {
+const TableCustom = ({ dataSource, setDataSource, columns, loading, setloading, pageSize, total, setpraloading, initProps, setpage, pagefromsearch, keyworditems, setdataraw, locid }) => {
     return (
         <Table
             dataSource={dataSource}
@@ -10,12 +10,13 @@ const TableCustom = ({ dataSource, setDataSource, columns, loading, pageSize, to
             loading={loading}
             scroll={{ x: 200 }}
             pagination={{
+                current: pagefromsearch,
                 pageSize: pageSize,
                 total: total,
                 onChange: (page, pageSize) => {
                     setloading(true)
                     setpage(page)
-                    fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyInventories?page=${page}&rows=${pageSize}&keyword=`, {
+                    fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyInventories?id=${locid}&page=${page}&rows=${pageSize}&keyword=${keyworditems}`, {
                         method: `GET`,
                         headers: {
                             'Authorization': JSON.parse(initProps),
@@ -23,8 +24,9 @@ const TableCustom = ({ dataSource, setDataSource, columns, loading, pageSize, to
                     })
                         .then(res => res.json())
                         .then(res2 => {
+                            setdataraw(res2.data)
                             setDataSource(res2.data.data)
-                            setpraloading(false)
+                            setloading(false)
                         })
                 }
             }}

@@ -748,7 +748,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                             <Label>Email</Label>
                                             {
                                                 editable ?
-                                                    <Input name="email" onChange={onChangeInput} prefix={<EmailIconSvg size={15} />} defaultValue={displaydata.email ?? "-"}></Input>
+                                                    <Input name="email" onChange={onChangeInput} prefix={<EmailIconSvg size={15} color={`#35763B`} />} defaultValue={displaydata.email ?? "-"}></Input>
                                                     :
                                                     <div className="flex">
                                                         <div className="mr-1">
@@ -762,7 +762,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                             <Label>No.Telp</Label>
                                             {
                                                 editable ?
-                                                    <Input name="phone_number" onChange={onChangeInput} prefix={<PhoneIconSvg size={15} />} defaultValue={displaydata.phone_number ?? "-"}></Input>
+                                                    <Input name="phone_number" onChange={onChangeInput} prefix={<PhoneIconSvg size={15} color={`#35763B`} />} defaultValue={displaydata.phone_number ?? "-"}></Input>
                                                     :
                                                     <div className="flex">
                                                         <div className="mr-1">
@@ -776,7 +776,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                             <Label>Website</Label>
                                             {
                                                 editable ?
-                                                    <Input name="website" onChange={onChangeInput} prefix={<WebIconSvg size={15} />} defaultValue={displaydata.website ?? "-"}></Input>
+                                                    <Input name="website" onChange={onChangeInput} prefix={<WebIconSvg size={15} color={`#35763B`} />} defaultValue={displaydata.website ?? "-"}></Input>
                                                     :
                                                     <div className="flex">
                                                         <div className="mr-1">

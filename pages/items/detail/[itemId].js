@@ -1378,7 +1378,7 @@ const Association = ({ initProps, itemid, maindata, praloading }) => {
                                                 }
                                                 {
                                                     doc.ticket.status.id === 5 &&
-                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">{doc.ticket.status.name}</div>
+                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.ticket.status.name}</div>
                                                 }
                                             </div>
                                         )

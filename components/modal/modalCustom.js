@@ -6,7 +6,7 @@ import ModalCore from './modalCore'
 import { Spin } from 'antd'
 import ButtonSys from '../button'
 
-function ModalEdit({ title, visible, onOk, onCancel, footer, loading, children }) {
+function ModalEdit({ title, visible, onOk, onCancel, footer, loading, level, children }) {
     return (
         <ModalCore
             title={title}
@@ -16,7 +16,7 @@ function ModalEdit({ title, visible, onOk, onCancel, footer, loading, children }
             footer={footer}
             loading={loading}
         >
-            Apakah anda yakin ingin mengubah profil Perusahan ini?`
+            Apakah anda yakin ingin mengubah {level === 2 ? `Sub Lokasi` : `Profil Perusahaan`} ini?`
         </ModalCore>
     )
 }

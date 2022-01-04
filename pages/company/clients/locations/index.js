@@ -299,7 +299,7 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
                 .then(res2 => {
                     setselecteddata({
                         ...res2.data,
-                        image_logo: res2.data.image_logo === "-" || res2.data.image_logo === "" ? '/default-users.jpeg' : res2.data.image_logo
+                        image_logo: res2.data.image_logo === "-" || res2.data.image_logo === "" ? '/image/Induk.png' : res2.data.image_logo
                     })
                     setloadingselected(false)
                 })
