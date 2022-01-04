@@ -28,7 +28,6 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, st, pr
         return doc[0].toUpperCase() + doc.slice(1)
     })
     const childBreacrumbDD = childBreacrumbCC
-    console.log(childBreacrumbDD)
     // if (childBreacrumbDD[1] === "Update") {
     //     childBreacrumbDD.splice(2, 1)
     // }

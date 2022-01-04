@@ -8,7 +8,7 @@ import { SearchOutlined } from '@ant-design/icons'
 import ButtonSys from '../../button'
 import moment from 'moment'
 
-const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps }) => {
+const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, loadingcreate, setloadingcreate }) => {
     //USESTATE
     const [datacreate, setdatacreate] = useState({
         name: "",
@@ -28,7 +28,6 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
         end_repeat_at: null,
         subloc_id: null,
     })
-    const [loadingcreate, setloadingcreate] = useState(false)
     const [disabledcreate, setdisabledcreate] = useState(true)
     const [disabledtrigger, setdisabledtrigger] = useState(-1)
     //task types
@@ -53,6 +52,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
     const [switchstaffgroup, setswitchstaffgroup] = useState(1)
     //start date
     const [now, setnow] = useState(null)
+    const [tempdate, settempdate] = useState('')
     const [choosedate, setchoosedate] = useState(false)
     //end date
     const [nowend, setnowend] = useState(null)
@@ -81,19 +81,14 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
             .then(res2 => {
                 setloadingcreate(false)
                 if (res2.success) {
-                    onvisible(false)
-                    notification['success']({
-                        message: res2.message,
-                        duration: 3
-                    })
                     setdatacreate({
                         name: "",
                         description: "",
                         task_type_id: null,
                         location_id: null,
                         reference_id: null,
-                        created_at: moment(new Date()).locale('id').format(),
-                        deadline: moment(new Date()).add(3, 'h').locale('id').format(),
+                        created_at: null,
+                        deadline: null,
                         is_group: null,
                         is_replaceable: false,
                         assign_ids: [],
@@ -104,8 +99,17 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                         end_repeat_at: null,
                         subloc_id: null,
                     })
-                    setdataitems([])
-                    setdatastaffgroup([])
+                    setselecteditems([])
+                    setselectedstaffgroup([])
+                    setswitchstaffgroup(1)
+                    setnow(null)
+                    setnowend(null)
+                    setrepeatable(false)
+                    onvisible(false)
+                    notification['success']({
+                        message: res2.message,
+                        duration: 3
+                    })
                 }
                 else {
                     notification['error']({
@@ -251,7 +255,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
         <DrawerCore
             title={title}
             visible={visible}
-            onClose={()=>{
+            onClose={() => {
                 setdatacreate({
                     name: "",
                     description: "",
@@ -270,8 +274,8 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                     end_repeat_at: null,
                     subloc_id: null,
                 })
-                setdataitems([])
-                setdatastaffgroup([])
+                setselecteditems([])
+                setselectedstaffgroup([])
                 setswitchstaffgroup(1)
                 setnow(null)
                 setnowend(null)
@@ -350,7 +354,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                         </div>
                         <div className='w-full'>
                             <Select
-                            value={datacreate.reference_id}
+                                value={datacreate.reference_id}
                                 style={{ width: `100%` }}
                                 suffixIcon={<SearchOutlined />}
                                 showArrow
@@ -441,7 +445,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                             <Label>Pergantian Suku Cadang</Label>
                         </div>
                         <div>
-                            <Switch checked={datacreate.is_replaceable} onChange={(checked) => { setdatacreate({ ...datacreate, is_replaceable: checked }) }}></Switch>
+                            <Switch checked={datacreate.is_replaceable} onChange={(checked) => { setdatacreate({ ...datacreate, is_replaceable: checked }); /*console.log(datacreate, Math.floor(moment.duration(moment("2022-01-06 11:58:27").diff(moment(datacreate.created_at))).asHours())) console.log(moment.duration(moment(new Date()).diff(moment("2022-01-07 09:21:48"))).asDays())*/ }}></Switch>
                         </div>
                     </div>
                     <div className="mb-6 px-3 flex flex-col">
@@ -670,7 +674,8 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                 name={`created_at`}
                                 onChange={(e) => {
                                     setnow(e.target.value)
-                                    setdatacreate({ ...datacreate, created_at: e.target.value === true ? moment(new Date()).locale('id').format() : null })
+                                    settempdate(datacreate.created_at)
+                                    setdatacreate({ ...datacreate, created_at: e.target.value === true ? moment(new Date()).locale('id').format() : null, deadline: datacreate.deadline === null ? null : moment(datacreate.deadline).add(Math.floor(moment.duration(moment(new Date()).diff(moment(datacreate.created_at))).asHours()), 'h').locale('id').format() })
                                     e.target.value === true ? setchoosedate(false) : null
                                     setdisabledtrigger(prev => prev + 1)
                                 }}
@@ -697,7 +702,7 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                 choosedate &&
                                 <div>
                                     <DatePicker showTime placeholder="Jadwal Mulai" style={{ width: `100%` }} onChange={(date, datestring) => {
-                                        setdatacreate({ ...datacreate, created_at: datestring })
+                                        setdatacreate({ ...datacreate, created_at: datestring, deadline: datacreate.deadline === null ? null : moment(datacreate.deadline).add(Math.floor(moment.duration(moment(datestring).diff(moment(tempdate))).asHours()), 'h').locale('id').format() })
                                         setdisabledtrigger(prev => prev + 1)
                                     }}></DatePicker>
                                 </div>
@@ -724,16 +729,16 @@ const DrawerTaskCreate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                     setnowend(e.target.value)
                                     var choisedate = ''
                                     if (e.target.value === 3) {
-                                        choisedate = moment().add(3, 'h').locale('id').format()
+                                        now === false ? choisedate = moment(datacreate.created_at).add(3, 'h').locale('id').format() : choisedate = moment().add(3, 'h').locale('id').format()
                                     }
                                     else if (e.target.value === 30) {
-                                        choisedate = moment().add(30, 'h').locale('id').format()
+                                        now === false ? choisedate = moment(datacreate.created_at).add(30, 'h').locale('id').format() : choisedate = moment().add(30, 'h').locale('id').format()
                                     }
                                     else if (e.target.value === 24) {
-                                        choisedate = moment().add(1, 'd').locale('id').format()
+                                        now === false ? choisedate = moment(datacreate.created_at).add(1, 'd').locale('id').format() : choisedate = moment().add(1, 'd').locale('id').format()
                                     }
                                     else if (e.target.value === 168) {
-                                        choisedate = moment().add(1, 'w').locale('id').format()
+                                        now === false ? choisedate = moment(datacreate.created_at).add(1, 'w').locale('id').format() : choisedate = moment().add(1, 'w').locale('id').format()
                                     }
                                     setdatacreate({ ...datacreate, deadline: e.target.value !== -10 ? choisedate : null })
                                     e.target.value !== -10 ? setchoosedateend(false) : null

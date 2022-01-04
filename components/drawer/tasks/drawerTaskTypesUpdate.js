@@ -5,7 +5,7 @@ import { Spin, notification, Input, Select, Empty, Checkbox } from 'antd'
 import { AlignJustifiedIconSvg, BorderAllSvg, CheckboxIconSvg, CircleXIconSvg, CopyIconSvg, ListNumbersSvg, RulerIconSvg, TrashIconSvg } from '../../icon'
 import { Label, H2 } from '../../typography'
 
-const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvisible, onClose, buttonOkText, disabled, initProps }) => {
+const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvisible, onClose, buttonOkText, disabled, initProps, trigger }) => {
     //USESTATE
     const [datadisplay, setdatadisplay] = useState({
         id: "",
@@ -113,7 +113,7 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                     setloadingdetailtipetaskupdate(false)
                 })
         }
-    }, [id])
+    }, [trigger])
     useEffect(() => {
         if (disabledtrigger !== -1) {
             if (datadisplay.name !== "" && datadisplay.description !== "") {
@@ -371,12 +371,12 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                 {
                                                                                     doc.lists.map((doc2, idx2) => {
                                                                                         return (
-                                                                                            <div key={idx2} className="flex items-center mb-2"
+                                                                                            <div key={idx2} className="flex items-center justify-between mb-2"
                                                                                             >
                                                                                                 {/* <div className="cursor-pointer font-bold mr-2">
                                                                                                     ::
                                                                                                 </div> */}
-                                                                                                <div className="flex items-center mr-2">
+                                                                                                <div className="flex items-center">
                                                                                                     <Checkbox style={{ marginRight: `0.5rem` }} checked />
                                                                                                     {doc2}
                                                                                                 </div>
@@ -475,12 +475,12 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                 {
                                                                                     doc.columns.map((doc2, idx2) => {
                                                                                         return (
-                                                                                            <div key={idx2} className="flex items-center mb-2"
+                                                                                            <div key={idx2} className="flex items-center justify-between mb-2"
                                                                                             >
                                                                                                 {/* <div className="cursor-pointer font-bold mr-2">
                                                                                                     ::
                                                                                                 </div> */}
-                                                                                                <div className="flex items-center mr-2">
+                                                                                                <div className="flex items-center">
                                                                                                     {doc2}
                                                                                                 </div>
                                                                                                 <div className='cursor-pointer flex items-center text-center justify-center' onClick={() => {
@@ -622,12 +622,12 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                                         {
                                                                                             doc.rows.map((doc2, idx2) => {
                                                                                                 return (
-                                                                                                    <div key={idx2} className="flex items-center mb-2"
+                                                                                                    <div key={idx2} className="flex items-center justify-between mb-2"
                                                                                                     >
                                                                                                         {/* <div className="cursor-pointer font-bold mr-2">
                                                                                                             ::
                                                                                                         </div> */}
-                                                                                                        <div className="flex items-center mr-2">
+                                                                                                        <div className="flex items-center">
                                                                                                             {doc2}
                                                                                                         </div>
                                                                                                         <div className='cursor-pointer flex items-center text-center justify-center' onClick={() => {

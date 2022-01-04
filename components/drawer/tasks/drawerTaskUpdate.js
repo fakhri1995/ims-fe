@@ -20,7 +20,7 @@ function recursiveModifData(dataa) {
     return dataa
 }
 
-const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, dataupdate, setdataupdate, loading, selecteditems, setselecteditems, selectedstaffgroup, setselectedstaffgroup, switchstaffgroup, setswitchstaffgroup, now, setnow, choosedate, setchoosedate, nowend, setnowend, choosedateend, setchoosedateend, repeatable, setrepeatable, regular, setregular, choosedateendrepeat, setchoosedateendrepeat, prevpath, triggersubloc, settriggersubloc }) => {
+const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, dataupdate, setdataupdate, loading, selecteditems, setselecteditems, selectedstaffgroup, setselectedstaffgroup, switchstaffgroup, setswitchstaffgroup, now, setnow, choosedate, setchoosedate, nowend, setnowend, choosedateend, setchoosedateend, repeatable, setrepeatable, regular, setregular, choosedateendrepeat, setchoosedateendrepeat, prevpath, idsubloc, setidsubloc, setrefreshdefaultupdatetask }) => {
     //USESTATE
     const [loadingupdate, setloadingupdate] = useState(false)
     const [disabledupdate, setdisabledupdate] = useState(true)
@@ -35,6 +35,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
     const [datalocations, setdatalocations] = useState([])
     const [datasublocs, setdatasublocs] = useState([])
     const [fetchinglocations, setfetchinglocations] = useState(false)
+    const [triggersubloc, settriggersubloc] = useState(-1)
     const [selectedsubloc, setselectedsubloc] = useState(null)
     //items
     const [dataitems, setdataitems] = useState([])
@@ -143,16 +144,18 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
     }, [])
     //Sublokasi
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getSubLocations?company_id=${triggersubloc}`, {
-            method: `GET`,
-            headers: {
-                'Authorization': JSON.parse(initProps),
-            }
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setdatasublocs(res2.data.children)
+        if (triggersubloc !== -1) {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getSubLocations?company_id=${idsubloc}`, {
+                method: `GET`,
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                }
             })
+                .then(res => res.json())
+                .then(res2 => {
+                    setdatasublocs(res2.data.children)
+                })
+        }
     }, [triggersubloc])
     //Items
     useEffect(() => {
@@ -233,7 +236,10 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
         <DrawerCore
             title={title}
             visible={visible}
-            onClose={onClose}
+            onClose={() => {
+                setrefreshdefaultupdatetask(prev => prev + 1)
+                onvisible(false)
+            }}
             buttonOkText={buttonOkText}
             onClick={handleUpdateTask}
             disabled={disabledupdate}
@@ -366,7 +372,7 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                     suffixIcon={<SearchOutlined />}
                                     showArrow
                                     name={`locations_id`}
-                                    onChange={(value) => { typeof (value) === 'undefined' ? setdataupdate({ ...dataupdate, location_id: null, subloc_id: null }) : (setdataupdate({ ...dataupdate, location_id: value }), settriggersubloc(value)); setdisabledtrigger(prev => prev + 1) }}
+                                    onChange={(value) => { typeof (value) === 'undefined' ? setdataupdate({ ...dataupdate, location_id: null, subloc_id: null }) : (setdataupdate({ ...dataupdate, location_id: value }), setidsubloc(value), settriggersubloc(prev => prev + 1)); setdisabledtrigger(prev => prev + 1) }}
                                     treeData={datalocations}
                                     treeDefaultExpandAll
                                     value={dataupdate.location_id}
@@ -462,14 +468,14 @@ const DrawerTaskUpdate = ({ title, visible, onvisible, onClose, buttonOkText, di
                                                         setselecteditems(temp)
                                                         setdataupdate(prev => ({
                                                             ...prev,
-                                                            inventory_ids: temp.map(docmap => docmap.value)
+                                                            inventory_ids: temp.map(docmap => docmap.id)
                                                         }))
                                                     }}>
                                                         <CircleXIconSvg size={15} color={`#BF4A40`} />
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <Label>{doc.migid}/{doc.assetname}</Label>
+                                                    <Label>{doc.migid} / {doc.assetname}</Label>
                                                 </div>
                                             </div>
                                         </div>

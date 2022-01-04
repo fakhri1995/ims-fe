@@ -248,6 +248,8 @@ const DrawerLokasi = ({ title, visible, onClose, children, buttonOkText, initPro
     const [treedata, settreedata] = useState([])
     const [lokasiloading, setlokasiloading] = useState(false)
     const [loadingfoto, setloadingfoto] = useState(false)
+    const [warningphonenumber, setwarningphonenumber] = useState(false)
+    const [warningemail, setwarningemail] = useState(false)
     const [dynamicattr, setdynamicattr] = useState({
         email: false,
         website: false,
@@ -262,6 +264,13 @@ const DrawerLokasi = ({ title, visible, onClose, children, buttonOkText, initPro
         setcreatedata({
             ...createdata,
             [e.target.name]: e.target.value
+        })
+        setdisabledtrigger(prev => prev + 1)
+    }
+    const onChangeEmail = (e) => {
+        setcreatedata({
+            ...createdata,
+            email: e.target.value
         })
         setdisabledtrigger(prev => prev + 1)
     }
@@ -295,35 +304,45 @@ const DrawerLokasi = ({ title, visible, onClose, children, buttonOkText, initPro
         setloadingfoto(false)
     }
     const handleCreateLokasi = () => {
-        setlokasiloading(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyBranch`, {
-            method: 'POST',
-            headers: {
-                'Authorization': JSON.parse(initProps),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(createdata)
-        })
-            .then((res) => res.json())
-            .then(res2 => {
-                setlokasiloading(false)
-                onvisible(false)
-                if (res2.success) {
-                    notification['success']({
-                        message: res2.message,
-                        duration: 3
-                    })
-                    setTimeout(() => {
-                        rt.push(`/company/myCompany/locations`)
-                    }, 500)
-                }
-                else {
-                    notification['error']({
-                        message: res2.message,
-                        duration: 3
-                    })
-                }
+        // console.log(/(^\d+$)/.test(createdata.phone_number), createdata.phone_number)
+        if (/(^\d+$)/.test(createdata.phone_number) === false || /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/.test(createdata.email) === false) {
+            // console.log(new RegExp(/(^\d+$)/).test(createdata.phone_number))
+            new RegExp(/(^\d+$)/).test(createdata.phone_number) === false ? setwarningphonenumber(true) : setwarningphonenumber(false)
+            new RegExp(/(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/).test(createdata.email) === false ? setwarningemail(true) : setwarningemail(false)
+            setdisabledsave(true)
+        }
+        else {
+            setlokasiloading(true)
+            fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyBranch`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': JSON.parse(initProps),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(createdata)
             })
+                .then((res) => res.json())
+                .then(res2 => {
+                    setlokasiloading(false)
+                    onvisible(false)
+                    if (res2.success) {
+                        notification['success']({
+                            message: res2.message,
+                            duration: 3
+                        })
+                        setdisabledsave(true)
+                        setTimeout(() => {
+                            rt.push(`/company/myCompany/locations`)
+                        }, 500)
+                    }
+                    else {
+                        notification['error']({
+                            message: res2.message,
+                            duration: 3
+                        })
+                    }
+                })
+        }
     }
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
@@ -351,7 +370,33 @@ const DrawerLokasi = ({ title, visible, onClose, children, buttonOkText, initPro
         <DrawerCore
             title={title}
             visible={visible}
-            onClose={onClose}
+            onClose={() => {
+                setcreatedata({
+                    name: '',
+                    address: "",
+                    phone_number: "",
+                    image_logo: '',
+                    parent_id: null,
+                    singkatan: "",
+                    tanggal_pkp: null,
+                    penanggung_jawab: "",
+                    npwp: "",
+                    fax: "",
+                    email: "",
+                    website: ""
+                })
+                setdynamicattr({
+                    email: false,
+                    website: false,
+                    npwp: false,
+                    fax: false,
+                    tanggal_pkp: false
+                })
+                setwarningphonenumber(false)
+                setwarningemail(false)
+                setdisabledsave(true)
+                onvisible(false)
+            }}
             buttonOkText={buttonOkText}
             onClick={handleCreateLokasi}
             disabled={disabledsave}
@@ -391,8 +436,10 @@ const DrawerLokasi = ({ title, visible, onClose, children, buttonOkText, initPro
                         <InputRequired name="name" onChangeInput={onChangeInput} label="Nama Lokasi"></InputRequired>
                         <InputRequired name="address" onChangeInput={onChangeInput} label="Alamat Lokasi"></InputRequired>
                         <InputRequired name="phone_number" onChangeInput={onChangeInput} label="Nomor Telepon"></InputRequired>
+                        {warningphonenumber && <p className=' text-red-500 text-sm mb-3 -mt-3 mx-3'>Nomor Telepon harus angka</p>}
                         <InputRequired name="penanggung_jawab" onChangeInput={onChangeInput} label="Penanggung Jawab (PIC)"></InputRequired>
-                        {dynamicattr.email && <InputNotRequired name="email" onChangeInput={onChangeInputNotRequired} label="Email"></InputNotRequired>}
+                        {dynamicattr.email && <InputNotRequired name="email" onChangeInput={onChangeEmail} label="Email"></InputNotRequired>}
+                        {warningemail && <p className=' text-red-500 text-sm mb-3 -mt-3 mx-3'>Email belum diisi dengan benar</p>}
                         {dynamicattr.website && <InputNotRequired name="website" onChangeInput={onChangeInputNotRequired} label="Website"></InputNotRequired>}
                         {dynamicattr.npwp && <InputNotRequired name="npwp" onChangeInput={onChangeInputNotRequired} label="NPWP"></InputNotRequired>}
                         {dynamicattr.fax && <InputNotRequired name="fax" onChangeInput={onChangeInputNotRequired} label="Fax"></InputNotRequired>}

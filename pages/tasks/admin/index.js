@@ -135,6 +135,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     })
     const [datatasks, setdatatasks] = useState([])
     const [loadingtasks, setloadingtasks] = useState(false)
+    const [loadingcreate, setloadingcreate] = useState(false)
     //filter dan sort - tasks
     const [datafiltertipetasks, setdatafiltertipetasks] = useState([])
     const [datafilterlokasi, setdatafilterlokasi] = useState([])
@@ -598,7 +599,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     setloadingtipetasks(false)
                 })
         }
-    }, [viewdetailtipetask, drawertasktypecreate, modaltipetaskdelete])
+    }, [viewdetailtipetask, loadingcreate, modaltipetaskdelete])
     useEffect(() => {
         setloadingtasks(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`, {
@@ -613,7 +614,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                 setdatatasks(res2.data.data)
                 setloadingtasks(false)
             })
-    }, [drawertaskcreate])
+    }, [loadingcreate])
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getAllCompanyList`, {
             method: `GET`,
@@ -1706,6 +1707,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                 buttonOkText={"Simpan Task"}
                 initProps={initProps}
                 onvisible={setdrawertaskcreate}
+                loadingcreate={loadingcreate}
+                setloadingcreate={setloadingcreate}
             />
         </Layout>
     )

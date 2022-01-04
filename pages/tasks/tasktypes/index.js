@@ -50,6 +50,7 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
     //update - task type
     const [triggertasktypupdate, settriggertasktypupdate] = useState(-1)
     const [idtasktypupdate, setidtasktypupdate] = useState(-1)
+    const [tempidtasktypeupdate, settempidtasktypeupdate] = useState(-1)
     const [drawertasktypupdate, setdrawertasktypupdate] = useState(false)
     //delete - task type
     const [datatipetaskdelete, setdatatipetaskdelete] = useState({
@@ -120,7 +121,8 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
                         <div className="flex items-center">
                             <div className="mx-1">
                                 <Buttonsys type="default" onClick={() => {
-                                    settriggertasktypupdate(record.id)
+                                    settempidtasktypeupdate(record.id)
+                                    settriggertasktypupdate(prev => prev + 1)
                                     setdrawertasktypupdate(true)
                                 }}>
                                     <EditIconSvg size={15} color={`#35763B`} />
@@ -188,7 +190,7 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
     }, [drawertasktypecreate, modaltipetaskdelete])
     useEffect(() => {
         if (triggertasktypupdate !== -1) {
-            setidtasktypupdate(triggertasktypupdate)
+            setidtasktypupdate(tempidtasktypeupdate)
         }
     }, [triggertasktypupdate])
 
@@ -275,6 +277,7 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
                         onvisible={setdrawertasktypupdate}
                         loading={loadingtipetasks}
                         id={idtasktypupdate}
+                        trigger={triggertasktypupdate}
                     />
                 </div>
             </div>

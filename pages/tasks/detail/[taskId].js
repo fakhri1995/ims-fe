@@ -21,7 +21,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     const rt = useRouter()
     const { prevpath } = rt.query
     const pathArr = rt.pathname.split("/").slice(1)
-    pathArr.splice(1,2)
+    pathArr.splice(1, 2)
     pathArr.push(`Detail Task`)
 
     //USESTATE
@@ -152,6 +152,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     })
     const [loadingtaskdetaildelete, setloadingtaskdetaildelete] = useState(false)
     //TASK UPDATE
+    const [refreshdefaultupdatetask, setrefreshdefaultupdatetask] = useState(-1)
     const [selecteditems, setselecteditems] = useState([])
     const [selectedstaffgroup, setselectedstaffgroup] = useState([])
     const [switchstaffgroup, setswitchstaffgroup] = useState(1)
@@ -486,7 +487,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                     migid: doc.mig_id,
                     assetname: doc.asset_name
                 }))
-                settriggersubloc(res2.data.location.top_parent ? res2.data.location.top_parent.id : -1)
+                settriggersubloc(res2.data.location.top_parent ? res2.data.location.top_parent.id : "")
                 setselecteditems(tempitems)
                 setrepeatable(res2.data.repeat === 0 ? false : true)
                 setregular(res2.data.repeat > 1 ? true : false)
@@ -529,6 +530,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                     })
                     return ([...tasklistItem])
                 })
+                console.log(data4map)
                 setdatatype4(data4map)
                 setdatatype42(data4map)
                 //time_left
@@ -568,7 +570,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 setselectedforout(tempout)
                 setpraloadingtask(false)
             })
-    }, [loadingtaskdelete, loadingchange, loadingstafftask, triggertaskdetailupdate, loadingtaskdetaildelete, triggertaskdetailcreate, loadingeditable, loadingcheckin])
+    }, [loadingtaskdelete, refreshdefaultupdatetask, loadingchange, loadingstafftask, triggertaskdetailupdate, loadingtaskdetaildelete, triggertaskdetailcreate, loadingeditable, loadingcheckin])
     useEffect(() => {
         document.getElementById(`card${scrollidupdate}`).scrollIntoView(true)
     }, [scrolltriggerupdate])
@@ -596,7 +598,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                 <div className="mr-1 flex items-center">
                                     <ClockIconSvg size={15} color={`#BF4A40`} />
                                 </div>
-                                Berakir {moment(displaytask.deadline).locale('id').format('lll')}
+                                Berakhir {moment(displaytask.deadline).locale('id').format('lll')}
                             </div>
                         </div>
                         <div className='flex flex-col mb-7'>
@@ -604,7 +606,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                 <Label>Deskripsi</Label>
                             </div>
                             <div>
-                                <p className='mb-0 text-sm text-gray-600'>{displaytask.description}</p>
+                                <p className='mb-0 text-sm text-gray-600'>{displaytask.description === "" || displaytask.description === "-" ? `-` : displaytask.description}</p>
                             </div>
                         </div>
                         {
@@ -678,7 +680,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                     </div>
                                     {
                                         completeclose === false &&
-                                        <div className=' flex justify-end'>
+                                        <div className=' flex justify-end mb-3'>
                                             <Buttonsys type={`primary`} onClick={() => { setdrawertaskupdate(true); setscrollidupdate(6); setscrolltriggerupdate(prev => !prev) }}>
                                                 <div className='mb-1'>
                                                     <UserPlusIconSvg size={15} color={`#ffffff`} />
@@ -687,6 +689,19 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                             </Buttonsys>
                                         </div>
                                     }
+                                    <div className="flex flex-col">
+                                        <div className='mb-1'>
+                                            <Label>Status</Label>
+                                        </div>
+                                        <div>
+                                            {displaytask.status === 1 && <H2>Overdue</H2>}
+                                            {displaytask.status === 2 && <H2>Open</H2>}
+                                            {displaytask.status === 3 && <H2>On Progress</H2>}
+                                            {displaytask.status === 4 && <H2>On Hold</H2>}
+                                            {displaytask.status === 5 && <H2>Completed</H2>}
+                                            {displaytask.status === 6 && <H2>Closed</H2>}
+                                        </div>
+                                    </div>
                                 </div>
                                 :
                                 <div className=' flex flex-col mb-7'>
@@ -811,6 +826,19 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                     </div>
                                     <div className="flex flex-col mb-7">
                                         <div className='mb-1'>
+                                            <Label>Status</Label>
+                                        </div>
+                                        <div>
+                                            {displaytask.status === 1 && <H2>Overdue</H2>}
+                                            {displaytask.status === 2 && <H2>Open</H2>}
+                                            {displaytask.status === 3 && <H2>On Progress</H2>}
+                                            {displaytask.status === 4 && <H2>On Hold</H2>}
+                                            {displaytask.status === 5 && <H2>Completed</H2>}
+                                            {displaytask.status === 6 && <H2>Closed</H2>}
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col mb-7">
+                                        <div className='mb-1'>
                                             <Label>Jenis Task</Label>
                                         </div>
                                         <div>
@@ -824,7 +852,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                     </div>
                                     <div className=' flex flex-col'>
                                         <div className=' mb-1'>
-                                            <Label>Catatan</Label>
+                                            <Label>Revisi Pekerjaan</Label>
                                         </div>
                                         <div>
                                             <p className=' mb-0 text-sm text-gray-700'>{displaytask.notes === null ? `-` : displaytask.notes}</p>
@@ -1174,7 +1202,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                                             }
                                                                         </div>
                                                                         {
-                                                                            datatype4?.filter((docfil, idxfil) => docfil[0].id === doctask.id)[0].map((doc4, idx4) => (
+                                                                            datatype4?.filter((docfil, idxfil) => docfil[0]?.id === doctask.id)[0]?.map((doc4, idx4) => (
                                                                                 <div className='grid grid-cols-12'>
                                                                                     <div className=' col-span-4 flex items-center py-2 px-2'>
                                                                                         <p className=' mb-0 text-sm text-gray-700'>{doc4.model}</p>
@@ -2025,8 +2053,9 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                         choosedateendrepeat={choosedateendrepeat}
                         setchoosedateendrepeat={setchoosedateendrepeat}
                         prevpath={prevpath}
-                        triggersubloc={triggersubloc}
-                        settriggersubloc={settriggersubloc}
+                        idsubloc={triggersubloc}
+                        setidsubloc={settriggersubloc}
+                        setrefreshdefaultupdatetask={setrefreshdefaultupdatetask}
                     />
             }
             <DrawerTaskDetailUpdate
