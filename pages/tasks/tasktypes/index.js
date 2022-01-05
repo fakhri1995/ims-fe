@@ -1,7 +1,7 @@
 import Layout from '../../../components/layout-dashboardNew'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import st from '../../../components/layout-dashboard.module.css'
 import { Progress, Input, notification, Select, DatePicker, Spin, Tree, Empty, TreeSelect } from 'antd'
 import Buttonsys from '../../../components/button'
@@ -50,7 +50,8 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
     //update - task type
     const [triggertasktypupdate, settriggertasktypupdate] = useState(-1)
     const [idtasktypupdate, setidtasktypupdate] = useState(-1)
-    const [tempidtasktypeupdate, settempidtasktypeupdate] = useState(-1)
+    // const [tempidtasktypeupdate, settempidtasktypeupdate] = useState(-1)
+    const tempidtasktypeupdate = useRef(-1)
     const [drawertasktypupdate, setdrawertasktypupdate] = useState(false)
     //delete - task type
     const [datatipetaskdelete, setdatatipetaskdelete] = useState({
@@ -110,7 +111,7 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
                         </>
                 }
             },
-            sorter: (a, b) => a.tasks_count < b.tasks_count,
+            sorter: (a, b) => a.tasks_count > b.tasks_count,
         },
         {
             title: 'Opsi',
@@ -121,7 +122,8 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
                         <div className="flex items-center">
                             <div className="mx-1">
                                 <Buttonsys type="default" onClick={() => {
-                                    settempidtasktypeupdate(record.id)
+                                    // settempidtasktypeupdate(record.id)
+                                    tempidtasktypeupdate.current = record.id
                                     settriggertasktypupdate(prev => prev + 1)
                                     setdrawertasktypupdate(true)
                                 }}>
@@ -188,11 +190,11 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
                 setloadingtipetasks(false)
             })
     }, [drawertasktypecreate, modaltipetaskdelete])
-    useEffect(() => {
-        if (triggertasktypupdate !== -1) {
-            setidtasktypupdate(tempidtasktypeupdate)
-        }
-    }, [triggertasktypupdate])
+    // useEffect(() => {
+    //     if (triggertasktypupdate !== -1) {
+    //         setidtasktypupdate(tempidtasktypeupdate.current)
+    //     }
+    // }, [triggertasktypupdate])
 
     return (
         <Layout tok={initProps} dataProfile={dataProfile} sidemenu={sidemenu} pathArr={pathArr} st={st} prevpath={"admin"}>
@@ -276,7 +278,7 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
                         initProps={initProps}
                         onvisible={setdrawertasktypupdate}
                         loading={loadingtipetasks}
-                        id={idtasktypupdate}
+                        id={tempidtasktypeupdate}
                         trigger={triggertasktypupdate}
                     />
                 </div>

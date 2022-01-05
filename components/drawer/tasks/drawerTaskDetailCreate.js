@@ -57,6 +57,15 @@ const DrawerTaskDetailCreate = ({ title, id, taskid, loading, visible, onvisible
             .then(res2 => {
                 setloadingcreate(false)
                 if (res2.success) {
+                    setdatacreate({
+                        task_id: Number(taskid),
+                        work: {
+                            name: "",
+                            type: null,
+                            description: ""
+                        }
+                    })
+                    setdisabledcreate(true)
                     onvisible(false)
                     notification['success']({
                         message: res2.message,
@@ -91,8 +100,7 @@ const DrawerTaskDetailCreate = ({ title, id, taskid, loading, visible, onvisible
             visible={visible}
             onClose={() => {
                 setdatacreate({
-                    id: null,
-                    task_id: null,
+                    task_id: Number(taskid),
                     work: {
                         name: "",
                         type: null,
@@ -117,9 +125,9 @@ const DrawerTaskDetailCreate = ({ title, id, taskid, loading, visible, onvisible
                             <div className="flex flex-col px-3 mb-5">
                                 <div className='bg-white flex flex-col shadow-md rounded-md p-3 mb-4 border'>
                                     <div className="flex justify-center text-lg font-bold mb-3">
-                                        <div className="cursor-pointer">
+                                        {/* <div className="cursor-pointer">
                                             :::
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className="grid grid-cols-2 mb-3">
                                         <div className="col-span-1 mr-1">
@@ -238,11 +246,11 @@ const DrawerTaskDetailCreate = ({ title, id, taskid, loading, visible, onvisible
                                                     {
                                                         datacreate.work.rows.map((doc2, idx2) => {
                                                             return (
-                                                                <div key={idx2} className="flex items-center mb-2">
-                                                                    <div className="cursor-pointer font-bold mr-2">
+                                                                <div key={idx2} className="flex items-center justify-between mb-2">
+                                                                    {/* <div className="cursor-pointer font-bold mr-2">
                                                                         ::
-                                                                    </div>
-                                                                    <div className="flex items-center mr-2">
+                                                                    </div> */}
+                                                                    <div className="flex items-center">
                                                                         <Checkbox style={{ marginRight: `0.5rem` }} checked />
                                                                         {doc2}
                                                                     </div>
@@ -295,12 +303,12 @@ const DrawerTaskDetailCreate = ({ title, id, taskid, loading, visible, onvisible
                                                     {
                                                         datacreate.work.columns.map((doc2, idx2) => {
                                                             return (
-                                                                <div key={idx2} className="flex items-center mb-2"
+                                                                <div key={idx2} className="flex items-center justify-between mb-2"
                                                                 >
-                                                                    <div className="cursor-pointer font-bold mr-2">
+                                                                    {/* <div className="cursor-pointer font-bold mr-2">
                                                                         ::
-                                                                    </div>
-                                                                    <div className="flex items-center mr-2">
+                                                                    </div> */}
+                                                                    <div className="flex items-center">
                                                                         {doc2}
                                                                     </div>
                                                                     <div className=' cursor-pointer flex items-center' onClick={() => {
@@ -370,12 +378,12 @@ const DrawerTaskDetailCreate = ({ title, id, taskid, loading, visible, onvisible
                                                             {
                                                                 datacreate.work.rows.map((doc2, idx2) => {
                                                                     return (
-                                                                        <div key={idx2} className="flex items-center mb-2"
+                                                                        <div key={idx2} className="flex items-center justify-between mb-2"
                                                                         >
-                                                                            <div className="cursor-pointer font-bold mr-2">
+                                                                            {/* <div className="cursor-pointer font-bold mr-2">
                                                                                 ::
-                                                                            </div>
-                                                                            <div className="flex items-center mr-2">
+                                                                            </div> */}
+                                                                            <div className="flex items-center">
                                                                                 {doc2}
                                                                             </div>
                                                                             <div className=' cursor-pointer flex items-center' onClick={() => {
@@ -424,19 +432,6 @@ const DrawerTaskDetailCreate = ({ title, id, taskid, loading, visible, onvisible
                                                     datacreate.work.rows.map((doc3, idx3) => {
                                                         return (
                                                             <div className="flex items-center mb-4">
-                                                                <div className=' cursor-pointer flex items-center' onClick={() => {
-                                                                    var temp = [...datacreate.work.rows]
-                                                                    temp.splice(idx3, 1)
-                                                                    setdatacreate(prev => ({
-                                                                        ...prev,
-                                                                        work: {
-                                                                            ...prev.work,
-                                                                            rows: temp
-                                                                        }
-                                                                    }))
-                                                                }}>
-                                                                    <CircleXIconSvg size={15} color={`#BF4A40`} />
-                                                                </div>
                                                                 <div className='flex flex-col'>
                                                                     <div className="flex mb-2">
                                                                         <div className="w-7/12 mr-2">
@@ -481,10 +476,23 @@ const DrawerTaskDetailCreate = ({ title, id, taskid, loading, visible, onvisible
                                                                             </Select>
                                                                         </div>
                                                                     </div>
-                                                                    <div className="flex mb-2">
-                                                                        <Input placeholder="Keterangan" value={doc3.description} onChange={(e) => {
+                                                                    <div className="flex items-center mb-2">
+                                                                        <div className=' w-11/12'>
+                                                                            <Input placeholder="Keterangan" value={doc3.description} onChange={(e) => {
+                                                                                var temp = [...datacreate.work.rows]
+                                                                                temp[idx3] = { ...doc3, description: e.target.value }
+                                                                                setdatacreate(prev => ({
+                                                                                    ...prev,
+                                                                                    work: {
+                                                                                        ...prev.work,
+                                                                                        rows: temp
+                                                                                    }
+                                                                                }))
+                                                                            }}></Input>
+                                                                        </div>
+                                                                        <div className=' w-1/12 cursor-pointer flex justify-center items-center' onClick={() => {
                                                                             var temp = [...datacreate.work.rows]
-                                                                            temp[idx3] = { ...doc3, description: e.target.value }
+                                                                            temp.splice(idx3, 1)
                                                                             setdatacreate(prev => ({
                                                                                 ...prev,
                                                                                 work: {
@@ -492,7 +500,9 @@ const DrawerTaskDetailCreate = ({ title, id, taskid, loading, visible, onvisible
                                                                                     rows: temp
                                                                                 }
                                                                             }))
-                                                                        }}></Input>
+                                                                        }}>
+                                                                            <CircleXIconSvg size={15} color={`#BF4A40`} />
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -548,19 +558,6 @@ const DrawerTaskDetailCreate = ({ title, id, taskid, loading, visible, onvisible
                                                     datacreate.work.rows.map((doc4, idx4) => {
                                                         return (
                                                             <div key={idx4} className=" px-3 flex items-center mb-2">
-                                                                <div className=' cursor-pointer flex items-center' onClick={() => {
-                                                                    var temp = [...datacreate.work.rows]
-                                                                    temp.splice(idx4, 1)
-                                                                    setdatacreate(prev => ({
-                                                                        ...prev,
-                                                                        work: {
-                                                                            ...prev.work,
-                                                                            rows: temp
-                                                                        }
-                                                                    }))
-                                                                }}>
-                                                                    <CircleXIconSvg size={15} color={`#BF4A40`} />
-                                                                </div>
                                                                 <div className="flex items-center mr-2">
                                                                     <Input placeholder="Tambah" value={doc4} onChange={(e) => {
                                                                         var temp = [...datacreate.work.rows]
@@ -574,6 +571,19 @@ const DrawerTaskDetailCreate = ({ title, id, taskid, loading, visible, onvisible
                                                                         }))
                                                                     }} bordered={false}
                                                                     />
+                                                                </div>
+                                                                <div className=' cursor-pointer flex items-center' onClick={() => {
+                                                                    var temp = [...datacreate.work.rows]
+                                                                    temp.splice(idx4, 1)
+                                                                    setdatacreate(prev => ({
+                                                                        ...prev,
+                                                                        work: {
+                                                                            ...prev.work,
+                                                                            rows: temp
+                                                                        }
+                                                                    }))
+                                                                }}>
+                                                                    <CircleXIconSvg size={15} color={`#BF4A40`} />
                                                                 </div>
                                                             </div>
                                                         )

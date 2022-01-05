@@ -254,7 +254,7 @@ const DrawerTaskDetailUpdate = ({ title, id, taskid, loading, visible, onvisible
                     setloadingdetailtaskupdate(false)
                 })
         }
-    }, [id])
+    }, [visible])
     useEffect(() => {
         if (disabledtrigger !== -1) {
             if (datadisplay.name !== "" && datadisplay.description !== "") {
@@ -293,9 +293,9 @@ const DrawerTaskDetailUpdate = ({ title, id, taskid, loading, visible, onvisible
                             <div className="flex flex-col px-3 mb-5">
                                 <div className='bg-white flex flex-col shadow-md rounded-md p-3 mb-4 border'>
                                     <div className="flex justify-center text-lg font-bold mb-3">
-                                        <div className="cursor-pointer">
+                                        {/* <div className="cursor-pointer">
                                             :::
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className="grid grid-cols-2 mb-3">
                                         <div className="col-span-1 mr-1">
@@ -483,7 +483,7 @@ const DrawerTaskDetailUpdate = ({ title, id, taskid, loading, visible, onvisible
                                                         description: e.target.value
                                                     }
                                                 }))
-                                                setdisabledtrigger(prev => prev + 1)
+                                                // setdisabledtrigger(prev => prev + 1)
                                             }}></Input>
                                         </div>
                                         {
@@ -512,11 +512,11 @@ const DrawerTaskDetailUpdate = ({ title, id, taskid, loading, visible, onvisible
                                                     {
                                                         datadisplay.lists.map((doc2, idx2) => {
                                                             return (
-                                                                <div key={idx2} className="flex items-center mb-2">
-                                                                    <div className="cursor-pointer font-bold mr-2">
+                                                                <div key={idx2} className="flex items-center justify-between mb-2">
+                                                                    {/* <div className="cursor-pointer font-bold mr-2">
                                                                         ::
-                                                                    </div>
-                                                                    <div className="flex items-center mr-2">
+                                                                    </div> */}
+                                                                    <div className="flex items-center">
                                                                         <Checkbox style={{ marginRight: `0.5rem` }} checked />
                                                                         {doc2}
                                                                     </div>
@@ -593,12 +593,12 @@ const DrawerTaskDetailUpdate = ({ title, id, taskid, loading, visible, onvisible
                                                     {
                                                         datadisplay.columns.map((doc2, idx2) => {
                                                             return (
-                                                                <div key={idx2} className="flex items-center mb-2"
+                                                                <div key={idx2} className="flex items-center justify-between mb-2"
                                                                 >
-                                                                    <div className="cursor-pointer font-bold mr-2">
+                                                                    {/* <div className="cursor-pointer font-bold mr-2">
                                                                         ::
-                                                                    </div>
-                                                                    <div className="flex items-center mr-2">
+                                                                    </div> */}
+                                                                    <div className="flex items-center">
                                                                         {doc2}
                                                                     </div>
                                                                     <div className=' cursor-pointer flex items-center' onClick={() => {
@@ -662,7 +662,7 @@ const DrawerTaskDetailUpdate = ({ title, id, taskid, loading, visible, onvisible
                                                 </div>
                                                 <div className="mb-3 flex flex-col">
                                                     <div className="mb-2">
-                                                        <RadioNotRequired label="Baris" value={datadisplay.is_general} onChangeRadio={(e) => {
+                                                        <RadioNotRequired label="Baris" defaultValue={datadisplay.is_general} onChangeRadio={(e) => {
                                                             setisbarismatriks(e.target.value);
                                                             setdatadisplay(prev => ({
                                                                 ...prev,
@@ -696,12 +696,12 @@ const DrawerTaskDetailUpdate = ({ title, id, taskid, loading, visible, onvisible
                                                             {
                                                                 datadisplay.rows.map((doc2, idx2) => {
                                                                     return (
-                                                                        <div key={idx2} className="flex items-center mb-2"
+                                                                        <div key={idx2} className="flex items-center justify-between mb-2"
                                                                         >
-                                                                            <div className="cursor-pointer font-bold mr-2">
+                                                                            {/* <div className="cursor-pointer font-bold mr-2">
                                                                                 ::
-                                                                            </div>
-                                                                            <div className="flex items-center mr-2">
+                                                                            </div> */}
+                                                                            <div className="flex items-center">
                                                                                 {doc2}
                                                                             </div>
                                                                             <div className=' cursor-pointer flex items-center' onClick={() => {
@@ -774,48 +774,6 @@ const DrawerTaskDetailUpdate = ({ title, id, taskid, loading, visible, onvisible
                                                     datadisplay.lists.map((doc3, idx3) => {
                                                         return (
                                                             <div className="flex items-center mb-4">
-                                                                <div className=' cursor-pointer flex items-center' onClick={() => {
-                                                                    var temp = [...datadisplay.lists]
-                                                                    temp.splice(idx3, 1)
-                                                                    setdatadisplay(prev => ({
-                                                                        ...prev,
-                                                                        lists: temp
-                                                                    }))
-                                                                    if (prevtype === datadisplay.type) {
-                                                                        if (idx3 - (dynamniclen - 1) <= 0) {
-                                                                            setdataupdate(prev => ({
-                                                                                ...prev,
-                                                                                work: {
-                                                                                    ...prev.work,
-                                                                                    delete_rows: [...prev.work.delete_rows, dataupdate.work.lists.map(doc => doc.type).indexOf(doc3.type)]
-                                                                                }
-                                                                            }))
-                                                                            setdynamniclen(prev => prev - 1)
-                                                                        }
-                                                                        else {
-                                                                            var templists = [...dataupdate.work.add_rows]
-                                                                            templists.splice(idx3 - dynamniclen, 1)
-                                                                            setdataupdate(prev => ({
-                                                                                ...prev,
-                                                                                work: {
-                                                                                    ...prev.work,
-                                                                                    add_rows: templists
-                                                                                }
-                                                                            }))
-                                                                        }
-                                                                    }
-                                                                    else {
-                                                                        setdataupdate(prev => ({
-                                                                            ...prev,
-                                                                            work: {
-                                                                                ...prev.work,
-                                                                                rows: temp
-                                                                            }
-                                                                        }))
-                                                                    }
-                                                                }}>
-                                                                    <CircleXIconSvg size={15} color={`#BF4A40`} />
-                                                                </div>
                                                                 <div className='flex flex-col'>
                                                                     <div className="flex mb-2">
                                                                         <div className="w-7/12 mr-2">
@@ -895,32 +853,74 @@ const DrawerTaskDetailUpdate = ({ title, id, taskid, loading, visible, onvisible
                                                                         </div>
                                                                     </div>
                                                                     <div className="flex mb-2">
-                                                                        <Input placeholder="Keterangan" value={doc3.description} onChange={(e) => {
-                                                                            var tempdisplay = [...datadisplay.lists]
-                                                                            tempdisplay[idx3] = ({ ...doc3, description: e.target.value })
-                                                                            setdatadisplay(prev => ({
-                                                                                ...prev,
-                                                                                lists: tempdisplay
-                                                                            }))
-                                                                            if (prevtype === datadisplay.type) {
-                                                                                if (idx3 - (dynamniclen - 1) <= 0) {
-                                                                                    var templists = [...dataupdate.work.update_rows]
-                                                                                    var idxupdaterows = dataupdate.work.update_rows.map(doc => doc.number).indexOf(idx3)
-                                                                                    idxupdaterows === -1 ?
-                                                                                        templists.push({ ...doc3, number: idx3, description: e.target.value })
-                                                                                        :
-                                                                                        templists[idxupdaterows] = ({ ...doc3, number: idx3, description: e.target.value })
+                                                                        <div className=' w-10/12'>
+                                                                            <Input placeholder="Keterangan" value={doc3.description} onChange={(e) => {
+                                                                                var tempdisplay = [...datadisplay.lists]
+                                                                                tempdisplay[idx3] = ({ ...doc3, description: e.target.value })
+                                                                                setdatadisplay(prev => ({
+                                                                                    ...prev,
+                                                                                    lists: tempdisplay
+                                                                                }))
+                                                                                if (prevtype === datadisplay.type) {
+                                                                                    if (idx3 - (dynamniclen - 1) <= 0) {
+                                                                                        var templists = [...dataupdate.work.update_rows]
+                                                                                        var idxupdaterows = dataupdate.work.update_rows.map(doc => doc.number).indexOf(idx3)
+                                                                                        idxupdaterows === -1 ?
+                                                                                            templists.push({ ...doc3, number: idx3, description: e.target.value })
+                                                                                            :
+                                                                                            templists[idxupdaterows] = ({ ...doc3, number: idx3, description: e.target.value })
+                                                                                        setdataupdate(prev => ({
+                                                                                            ...prev,
+                                                                                            work: {
+                                                                                                ...prev.work,
+                                                                                                update_rows: templists
+                                                                                            }
+                                                                                        }))
+                                                                                    }
+                                                                                    else {
+                                                                                        var templists = [...dataupdate.work.add_rows]
+                                                                                        templists[idx3 - dynamniclen] = { ...doc3, description: e.target.value }
+                                                                                        setdataupdate(prev => ({
+                                                                                            ...prev,
+                                                                                            work: {
+                                                                                                ...prev.work,
+                                                                                                add_rows: templists
+                                                                                            }
+                                                                                        }))
+                                                                                    }
+                                                                                }
+                                                                                else {
                                                                                     setdataupdate(prev => ({
                                                                                         ...prev,
                                                                                         work: {
                                                                                             ...prev.work,
-                                                                                            update_rows: templists
+                                                                                            rows: tempdisplay
                                                                                         }
                                                                                     }))
                                                                                 }
+                                                                            }}></Input>
+                                                                        </div>
+                                                                        <div className=' w-2/12 cursor-pointer flex justify-center items-center' onClick={() => {
+                                                                            var temp = [...datadisplay.lists]
+                                                                            temp.splice(idx3, 1)
+                                                                            setdatadisplay(prev => ({
+                                                                                ...prev,
+                                                                                lists: temp
+                                                                            }))
+                                                                            if (prevtype === datadisplay.type) {
+                                                                                if (idx3 - (dynamniclen - 1) <= 0) {
+                                                                                    setdataupdate(prev => ({
+                                                                                        ...prev,
+                                                                                        work: {
+                                                                                            ...prev.work,
+                                                                                            delete_rows: [...prev.work.delete_rows, dataupdate.work.lists.map(doc => doc.type).indexOf(doc3.type)]
+                                                                                        }
+                                                                                    }))
+                                                                                    setdynamniclen(prev => prev - 1)
+                                                                                }
                                                                                 else {
                                                                                     var templists = [...dataupdate.work.add_rows]
-                                                                                    templists[idx3 - dynamniclen] = { ...doc3, description: e.target.value }
+                                                                                    templists.splice(idx3 - dynamniclen, 1)
                                                                                     setdataupdate(prev => ({
                                                                                         ...prev,
                                                                                         work: {
@@ -935,11 +935,13 @@ const DrawerTaskDetailUpdate = ({ title, id, taskid, loading, visible, onvisible
                                                                                     ...prev,
                                                                                     work: {
                                                                                         ...prev.work,
-                                                                                        rows: tempdisplay
+                                                                                        rows: temp
                                                                                     }
                                                                                 }))
                                                                             }
-                                                                        }}></Input>
+                                                                        }}>
+                                                                            <CircleXIconSvg size={15} color={`#BF4A40`} />
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1016,48 +1018,6 @@ const DrawerTaskDetailUpdate = ({ title, id, taskid, loading, visible, onvisible
                                                     datadisplay.lists.map((doc4, idx4) => {
                                                         return (
                                                             <div key={idx4} className=" px-3 flex items-center mb-2">
-                                                                <div className=' cursor-pointer flex items-center' onClick={() => {
-                                                                    var temp = [...datadisplay.lists]
-                                                                    temp.splice(idx4, 1)
-                                                                    setdatadisplay(prev => ({
-                                                                        ...prev,
-                                                                        lists: temp
-                                                                    }))
-                                                                    if (prevtype === datadisplay.type) {
-                                                                        if (idx4 - (dynamniclen - 1) <= 0) {
-                                                                            setdataupdate(prev => ({
-                                                                                ...prev,
-                                                                                work: {
-                                                                                    ...prev.work,
-                                                                                    delete_rows: [...prev.work.delete_rows, dataupdate.work.lists.indexOf(doc4)]
-                                                                                }
-                                                                            }))
-                                                                            setdynamniclen(prev => prev - 1)
-                                                                        }
-                                                                        else {
-                                                                            var templists = [...dataupdate.work.add_rows]
-                                                                            templists.splice(idx4 - dynamniclen, 1)
-                                                                            setdataupdate(prev => ({
-                                                                                ...prev,
-                                                                                work: {
-                                                                                    ...prev.work,
-                                                                                    add_rows: templists
-                                                                                }
-                                                                            }))
-                                                                        }
-                                                                    }
-                                                                    else {
-                                                                        setdataupdate(prev => ({
-                                                                            ...prev,
-                                                                            work: {
-                                                                                ...prev.work,
-                                                                                rows: temp
-                                                                            }
-                                                                        }))
-                                                                    }
-                                                                }}>
-                                                                    <CircleXIconSvg size={15} color={`#BF4A40`} />
-                                                                </div>
                                                                 <div className="flex items-center mr-2">
                                                                     <Input placeholder="Tambah" value={doc4} onChange={(e) => {
                                                                         var tempdisplay = [...datadisplay.lists]
@@ -1105,6 +1065,48 @@ const DrawerTaskDetailUpdate = ({ title, id, taskid, loading, visible, onvisible
                                                                         }
                                                                     }} bordered={false}
                                                                     />
+                                                                </div>
+                                                                <div className=' cursor-pointer flex items-center' onClick={() => {
+                                                                    var temp = [...datadisplay.lists]
+                                                                    temp.splice(idx4, 1)
+                                                                    setdatadisplay(prev => ({
+                                                                        ...prev,
+                                                                        lists: temp
+                                                                    }))
+                                                                    if (prevtype === datadisplay.type) {
+                                                                        if (idx4 - (dynamniclen - 1) <= 0) {
+                                                                            setdataupdate(prev => ({
+                                                                                ...prev,
+                                                                                work: {
+                                                                                    ...prev.work,
+                                                                                    delete_rows: [...prev.work.delete_rows, dataupdate.work.lists.indexOf(doc4)]
+                                                                                }
+                                                                            }))
+                                                                            setdynamniclen(prev => prev - 1)
+                                                                        }
+                                                                        else {
+                                                                            var templists = [...dataupdate.work.add_rows]
+                                                                            templists.splice(idx4 - dynamniclen, 1)
+                                                                            setdataupdate(prev => ({
+                                                                                ...prev,
+                                                                                work: {
+                                                                                    ...prev.work,
+                                                                                    add_rows: templists
+                                                                                }
+                                                                            }))
+                                                                        }
+                                                                    }
+                                                                    else {
+                                                                        setdataupdate(prev => ({
+                                                                            ...prev,
+                                                                            work: {
+                                                                                ...prev.work,
+                                                                                rows: temp
+                                                                            }
+                                                                        }))
+                                                                    }
+                                                                }}>
+                                                                    <CircleXIconSvg size={15} color={`#BF4A40`} />
                                                                 </div>
                                                             </div>
                                                         )

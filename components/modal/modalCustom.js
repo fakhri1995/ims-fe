@@ -300,7 +300,7 @@ const ModalHapusTaskDetail = ({ title, visible, onvisible, onOk, onCancel, loadi
             }
             loading={loading}
         >
-            Apakah Anda yakin ingin melanjutkan penghapusan Task <strong>{datadelete.name}</strong>?
+            Apakah Anda yakin ingin melanjutkan penghapusan Detail Task <strong>{datadelete.name}</strong>?
         </ModalCore>
     )
 }

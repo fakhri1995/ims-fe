@@ -78,9 +78,9 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
 
     //USEEFFECT
     useEffect(() => {
-        if (id !== -1) {
+        if (trigger !== -1) {
             setloadingdetailtipetaskupdate(true)
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskType?id=${id}`, {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskType?id=${id.current}`, {
                 method: `GET`,
                 headers: {
                     'Authorization': JSON.parse(initProps),
@@ -178,9 +178,9 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                         return (
                                                             <div key={idx} className='bg-white flex flex-col shadow-md rounded-md p-3 mb-4 border'>
                                                                 <div className="flex justify-center text-lg font-bold mb-3">
-                                                                    <div className="cursor-pointer">
+                                                                    {/* <div className="cursor-pointer">
                                                                         :::
-                                                                    </div>
+                                                                    </div> */}
                                                                 </div>
                                                                 <div key={idx} className="grid grid-cols-2 mb-3">
                                                                     <div className="col-span-1 mr-1 mb-3">

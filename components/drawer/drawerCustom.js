@@ -974,6 +974,7 @@ const DrawerAddRelasi = ({ id, title, visible, onClose, children, buttonOkText, 
         subject_id: Number(id),
         relationship_id: null,
         is_inverse: null,
+        from_inverse: true,
         type_id: -3,
         connected_ids: null,
         backup_connected_ids: null
@@ -994,7 +995,6 @@ const DrawerAddRelasi = ({ id, title, visible, onClose, children, buttonOkText, 
 
     const handleAddRelationshipItem = () => {
         setloadingadd(true)
-        // delete dataApiadd.backup_connected_ids
         fetch(`https://boiling-thicket-46501.herokuapp.com/addRelationshipInventories`, {
             method: 'POST',
             headers: {
@@ -1012,9 +1012,10 @@ const DrawerAddRelasi = ({ id, title, visible, onClose, children, buttonOkText, 
                         subject_id: Number(id),
                         relationship_id: null,
                         is_inverse: null,
-                        type_id: null,
+                        type_id: -3,
                         connected_ids: null,
-                        backup_connected_ids: null
+                        backup_connected_ids: null,
+                        from_inverse: true
                     })
                     setrelationnameadd("")
                     setsublocdata(null)
@@ -1060,7 +1061,7 @@ const DrawerAddRelasi = ({ id, title, visible, onClose, children, buttonOkText, 
                 })
         }
         else if (detailtipeadd !== -10) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${dataApiadd.type_id}`, {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterInventories`, {
                 method: `GET`,
                 headers: {
                     'Authorization': JSON.parse(initProps),
@@ -1068,10 +1069,11 @@ const DrawerAddRelasi = ({ id, title, visible, onClose, children, buttonOkText, 
             })
                 .then(res => res.json())
                 .then(res2 => {
-                    dataApiadd.type_id === -3 && setdetailtipedataadd([res2.data])
-                    dataApiadd.type_id === -1 && setdetailtipedataadd(res2.data)
-                    dataApiadd.type_id === -2 && setdetailtipedataadd(res2.data)
-                    dataApiadd.type_id === -4 && setdetailtipedataadd(res2.data.data)
+                    setdetailtipedataadd(res2.data)
+                    // dataApiadd.type_id === -3 && setdetailtipedataadd([res2.data])
+                    // dataApiadd.type_id === -1 && setdetailtipedataadd(res2.data)
+                    // dataApiadd.type_id === -2 && setdetailtipedataadd(res2.data)
+                    // dataApiadd.type_id === -4 && setdetailtipedataadd(res2.data.data)
                 })
         }
     }, [detailtipeadd, subloctrig])
@@ -1139,7 +1141,7 @@ const DrawerAddRelasi = ({ id, title, visible, onClose, children, buttonOkText, 
                             `}
                         </style>
                     </div>
-                    <div className="flex flex-col mb-3">
+                    {/* <div className="flex flex-col mb-3">
                         <p className="mb-0">Tipe <span className="tipepart"></span></p>
                         <Select disabled value={dataApiadd.type_id} onChange={(value) => {
                             setdataApiadd({ ...dataApiadd, type_id: value })
@@ -1159,14 +1161,47 @@ const DrawerAddRelasi = ({ id, title, visible, onClose, children, buttonOkText, 
                                 }
                             `}
                         </style>
-                    </div>
+                    </div> */}
                     {
                         dataApiadd.type_id !== null ?
                             <>
                                 {
+                                    <div className="flex flex-col mb-3">
+                                        <p className="mb-0">Item</p>
+                                        <Select allowClear value={dataApiadd.connected_ids} showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
+                                            setfetchingmodel(true)
+                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterInventories?keyword=${value !== "" ? value : ""}`, {
+                                                method: `GET`,
+                                                headers: {
+                                                    'Authorization': JSON.parse(initProps),
+                                                },
+                                            })
+                                                .then(res => res.json())
+                                                .then(res2 => {
+                                                    setdetailtipedataadd(res2.data)
+                                                    setfetchingmodel(false)
+                                                })
+                                        }} 
+                                        // filterOption={(input, opt) => (
+                                        //     opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        // )} 
+                                        onChange={(value) => {
+                                            setdataApiadd({ ...dataApiadd, connected_ids: [value], backup_connected_ids: [value] })
+                                        }}>
+                                            {
+                                                detailtipedataadd.map((doc, idx) => {
+                                                    return (
+                                                        <Select.Option value={doc.id}>{doc.mig_id} - {doc.model_name} - {doc.asset_name}</Select.Option>
+                                                    )
+                                                })
+                                            }
+                                        </Select>
+                                    </div>
+                                }
+                                {/* {
                                     dataApiadd.type_id === -1 &&
                                     <div className="flex flex-col mb-3">
-                                        <p className="mb-0">Detail Tipe</p>
+                                        <p className="mb-0">Item</p>
                                         <Select value={dataApiadd.connected_ids} mode="multiple" showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
                                             setfetchingmodel(true)
                                             fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&name=${value !== "" ? value : ""}`, {
@@ -1268,13 +1303,13 @@ const DrawerAddRelasi = ({ id, title, visible, onClose, children, buttonOkText, 
                                             }
                                         </Select>
                                     </div>
-                                }
+                                } */}
                             </>
                             :
                             null
 
                     }
-                    {
+                    {/* {
                         sublocdata !== null &&
                         <div className="flex flex-col mb-3">
                             <p className="mb-0">Detail Tipe (Sublokasi)</p>
@@ -1287,7 +1322,7 @@ const DrawerAddRelasi = ({ id, title, visible, onClose, children, buttonOkText, 
                                 }
                             }}></TreeSelect>
                         </div>
-                    }
+                    } */}
                 </div>
             </Spin>
         </DrawerCore>

@@ -135,6 +135,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
     const [drawerelasi, setdrawerelasi] = useState(false)
     //relasi-update
     const [drawerupdaterelasi, setdrawerupdaterelasi] = useState(false)
+    const [fetchingmodel, setfetchingmodel] = useState(false)
     const [dataupdaterelasi, setdataupdaterelasi] = useState({
         id: null,
         subject_id: null,
@@ -162,7 +163,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
     const [relationnameddupdate, setrelationnameddupdate] = useState(false)
     const [relationselectedidxupdate, setrelationselectedidxupdate] = useState(-1)
     const [relationselectedisinverseupdate, setrelationselectedisinverseupdate] = useState(-1)
-    const [detailtipeupdate, setdetailtipeupdate] = useState(-10)
+    const [detailtipeupdate, setdetailtipeupdate] = useState(-9)
     const [detailtipedataupdate, setdetailtipedataupdate] = useState([])
     const [disabledupdate, setdisabledupdate] = useState(true)
     const [loadingupdate, setloadingupdate] = useState(false)
@@ -519,7 +520,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                 })
         }
         else if (detailtipeupdate !== -10) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${dataApiupdate.type_id}`, {
+            fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterInventories`, {
                 method: `GET`,
                 headers: {
                     'Authorization': JSON.parse(initProps),
@@ -527,10 +528,11 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
             })
                 .then(res => res.json())
                 .then(res2 => {
-                    dataApiupdate.type_id === -3 && setdetailtipedataupdate([res2.data])
-                    dataApiupdate.type_id === -1 && setdetailtipedataupdate(res2.data)
-                    dataApiupdate.type_id === -2 && setdetailtipedataupdate(res2.data)
-                    dataApiupdate.type_id === -4 && setdetailtipedataupdate(res2.data.data)
+                    setdetailtipedataupdate(res2.data)
+                    // dataApiupdate.type_id === -3 && setdetailtipedataupdate([res2.data])
+                    // dataApiupdate.type_id === -1 && setdetailtipedataupdate(res2.data)
+                    // dataApiupdate.type_id === -2 && setdetailtipedataupdate(res2.data)
+                    // dataApiupdate.type_id === -4 && setdetailtipedataupdate(res2.data.data)
                 })
         }
     }, [detailtipeupdate, subloctrig])
@@ -955,6 +957,37 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                                 </style>
                                             </div>
                                             <div className="flex flex-col mb-3">
+                                                <p className="mb-0">Item</p>
+                                                <Select allowClear value={dataApiupdate.connected_id} showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
+                                                    setfetchingmodel(true)
+                                                    fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterInventories?keyword=${value !== "" ? value : ""}`, {
+                                                        method: `GET`,
+                                                        headers: {
+                                                            'Authorization': JSON.parse(initProps),
+                                                        },
+                                                    })
+                                                        .then(res => res.json())
+                                                        .then(res2 => {
+                                                            setdetailtipedataupdate(res2.data)
+                                                            setfetchingmodel(false)
+                                                        })
+                                                }}
+                                                    // filterOption={(input, opt) => (
+                                                    //     opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                                    // )} 
+                                                    onChange={(value) => {
+                                                        setdataApiupdate({ ...dataApiupdate, connected_id: value, backup_connected_id: value })
+                                                    }}>
+                                                    {
+                                                        detailtipedataupdate.map((doc, idx) => {
+                                                            return (
+                                                                <Select.Option value={doc.id}>{doc.mig_id} - {doc.model_name} - {doc.asset_name}</Select.Option>
+                                                            )
+                                                        })
+                                                    }
+                                                </Select>
+                                            </div>
+                                            {/* <div className="flex flex-col mb-3">
                                                 <p className="mb-0">Tipe <span className="tipepart"></span></p>
                                                 <Select disabled value={dataApiupdate.type_id} onChange={(value) => {
                                                     setdataApiupdate({ ...dataApiupdate, type_id: value })
@@ -974,8 +1007,8 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                                         }
                                                     `}
                                                 </style>
-                                            </div>
-                                            {
+                                            </div> */}
+                                            {/* {
                                                 dataApiupdate.type_id !== null ?
                                                     <>
                                                         {
@@ -992,8 +1025,8 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                                     :
                                                     null
 
-                                            }
-                                            {
+                                            } */}
+                                            {/* {
                                                 sublocdata !== null &&
                                                 <div className="flex flex-col mb-3">
                                                     <p className="mb-0">Detail Tipe (Sublokasi)</p>
@@ -1006,7 +1039,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                                         }
                                                     }}></TreeSelect>
                                                 </div>
-                                            }
+                                            } */}
                                         </div>
                                     </Spin>
                                 </DrawerCore>
@@ -1022,7 +1055,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                                 </Buttonsys>
                                                 <Buttonsys type="primary" color="danger" onClick={handleDeleteRelationshipItem}>
                                                     <TrashIconSvg size={15} color={`#ffffff`} />
-                                                    Ya, saya yakin dan hapus bank
+                                                    Ya, saya yakin dan hapus relasi
                                                 </Buttonsys>
                                             </div>
                                         </Spin>

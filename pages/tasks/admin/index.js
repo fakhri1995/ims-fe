@@ -537,7 +537,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     //HANDLER
     const onFilterTask = () => {
         setloadingtasks(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -1009,7 +1009,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                         </>
                                         :
                                         <>
-                                            <div className="flex justify-center mb-4">
+                                            <div className="flex justify-center mb-4 h-56">
                                                 <Line
                                                     data={{
                                                         labels: [
@@ -1088,7 +1088,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                         </>
                                         :
                                         <>
-                                            <div className="flex justify-center mb-4 h-36">
+                                            <div className="flex justify-center mb-4 h-40">
                                                 <Progress
                                                     type="dashboard"
                                                     percent={scdata.percentage}
@@ -1103,11 +1103,11 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                             <div>
                                                                 <p className=' mb-0 font-bold text-3xl'>{percent}%</p>
                                                             </div>
-                                                            <div>
+                                                            {/* <div>
                                                                 <p className=' mb-0 text-xs text-gray-500'>
                                                                     Persentase staff tidak memiliki task
                                                                 </p>
-                                                            </div>
+                                                            </div> */}
                                                         </div>
                                                     )}
                                                 />
@@ -1151,8 +1151,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                 <div className="flex items-center justify-between mb-4">
                                     <H1>Kelola Task</H1>
                                 </div>
-                                <div className="flex flex-col">
-                                    <div className="flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2" onClick={() => { setdrawertaskcreate(true) }}>
+                                <div className="flex flex-col justify-center h-full">
+                                    <div className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2" onClick={() => { setdrawertaskcreate(true) }}>
                                         <div className="flex p-1 bg-primary10 rounded mr-3">
                                             <ClipboardcheckIconSvg size={35} color={`#35763B`} />
                                         </div>
@@ -1161,7 +1161,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                             <Label>Error, PM, Instalasi, Perbaikan, Upgrade Sistem, dll. </Label>
                                         </div>
                                     </div>
-                                    <div className="flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2" onClick={() => { setdrawertasktypecreate(true) }}>
+                                    <div className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2" onClick={() => { setdrawertasktypecreate(true) }}>
                                         <div className="flex p-1 bg-primary10 rounded mr-3">
                                             <ListcheckIconSvg size={35} color={`#35763B`} />
                                         </div>
@@ -1170,7 +1170,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                             <Label>Tambah tipe task baru</Label>
                                         </div>
                                     </div>
-                                    <div className="flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2" onClick={() => { rt.push(`/tasks/tasktypes`) }}>
+                                    <div className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2" onClick={() => { rt.push(`/tasks/tasktypes`) }}>
                                         <div className="flex p-1 bg-primary10 rounded mr-3">
                                             <EditIconSvg size={35} color={`#35763B`} />
                                         </div>
@@ -1463,8 +1463,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                             <Spin />
                                         </>
                                         :
-                                        <div className=' flex items-center'>
-                                            <div className=" w-7/12 flex justify-center mr-2">
+                                        <div className=' flex items-center h-full'>
+                                            <div className=" w-7/12 flex justify-center mr-2 h-full">
                                                 <Bar
                                                     data={{
                                                         labels: ttcdata.map(doc => doc.name),
@@ -1690,7 +1690,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                 initProps={initProps}
                 onvisible={setdrawertasktypecreate}
             />
-            <DrawerTaskTypesUpdate
+            {/* <DrawerTaskTypesUpdate
                 title={"Ubah Tipe Task"}
                 visible={drawertasktypupdate}
                 onClose={() => { setdrawertasktypupdate(false) }}
@@ -1699,7 +1699,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                 onvisible={setdrawertasktypupdate}
                 loading={loadingtipetasks}
                 id={idtasktypupdate}
-            />
+            /> */}
             <DrawerTaskCreate
                 title={"Tambah Task"}
                 visible={drawertaskcreate}

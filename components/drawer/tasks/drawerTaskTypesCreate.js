@@ -114,9 +114,9 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                     `}
                                 </style>
                             </div>
-                            <div className=' flex items-center'>
-                                <div className="mr-2">
-                                    <Input name='name' defaultValue={datacreate.name} onChange={onChangeInput}
+                            <div className=' flex flex-col'>
+                                <div className="mb-2 w-full">
+                                    <Input style={{ width: `100%` }} name='name' defaultValue={datacreate.name} onChange={onChangeInput}
                                         onBlur={(e) => {
                                             setloadingtasktypenameexist(true)
                                             fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterTaskTypes?name=${e.target.value}`, {
@@ -134,28 +134,30 @@ const DrawerTaskTypesCreate = ({ title, visible, onvisible, onClose, buttonOkTex
                                         }}
                                     ></Input>
                                 </div>
-                                {
-                                    loadingtasktypenameexist ?
-                                        <>
-                                            <Spin />
-                                        </>
-                                        :
-                                        tasktypenameexist !== null ?
-                                            (
-                                                tasktypenameexist === true ?
-                                                    <div className=' bg-overdue bg-opacity-10 text-overdue p-1 rounded flex justify-center items-center text-2xs'>
-                                                        <div className=' mr-1'><AlertIconSvg size={12} color={`#BF4A40`} /></div>
-                                                        Tipe task sudah ada
-                                                    </div>
-                                                    :
-                                                    <div className=' bg-open bg-opacity-10 text-open p-1 rounded flex justify-center items-center text-2xs'>
-                                                        <div className=' mr-1'><CheckIconSvg size={12} color={`#2F80ED`} /></div>
-                                                        Tipe task masih kosong
-                                                    </div>
-                                            )
+                                <div className='flex items-center'>
+                                    {
+                                        loadingtasktypenameexist ?
+                                            <>
+                                                <Spin size='small' />
+                                            </>
                                             :
-                                            null
-                                }
+                                            tasktypenameexist !== null ?
+                                                (
+                                                    tasktypenameexist === true ?
+                                                        <div className=' bg-overdue bg-opacity-10 text-overdue px-2 py-2 rounded flex items-center text-2xs'>
+                                                            <div className=' mr-1'><AlertIconSvg size={15} color={`#BF4A40`} /></div>
+                                                            Tipe task sudah ada
+                                                        </div>
+                                                        :
+                                                        <div className=' bg-open bg-opacity-10 text-open px-2 py-2 rounded flex items-center text-2xs'>
+                                                            <div className=' mr-1'><CheckIconSvg size={15} color={`#2F80ED`} /></div>
+                                                            Tipe task masih kosong
+                                                        </div>
+                                                )
+                                                :
+                                                null
+                                    }
+                                </div>
                             </div>
                         </div>
                         {/* <InputRequired name="name" defaultValue={datacreate.name} onChangeInput={onChangeInput} label="Judul Tipe Task"></InputRequired> */}
