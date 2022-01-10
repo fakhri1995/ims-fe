@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Layout from '../../../components/migwebsite/layout.js'
 import Flickity from 'react-flickity-component'
 import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined'
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import Linkk from 'next/link'
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -27,8 +28,8 @@ function LandingPage({ }) {
     //     setNav1(slider1)
     //     setNav2(slider2)
     // }, [slider1, slider2])
+    
     const sliderSettings = {
-        dots: true,
         infinite: true,
         speed: 500,
         slidesToShow: 2,
@@ -36,20 +37,26 @@ function LandingPage({ }) {
         centerMode: true,
         arrows: false,
         dots: false,
+        swipeToSlide: true,
         responsive: [
             {
                 breakpoint: 768,
                 settings: {
                     slidesToShow: 1,
+                    centerMode: false,
+                    dots: true,
                 }
-            },
-            //     {
-            //         breakpoint: 576,
-            //         settings: {
-            //             slidesToShow: 1,
-            //         }
-            //     }
+            }
         ]
+    };
+    const sliderSettings2 = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        swipeToSlide: true,
+        arrows: false,
     };
     return (
         <Layout>
@@ -297,6 +304,80 @@ function LandingPage({ }) {
                     </div>
                 </div>
             </section>
+            <section className={'section3landingpageadvantages py-8 md:hidden px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
+                <p className={'text-3xl md:text-4xl pb-2 md:pb-4 gilroy-medium text-center font-semibold'}>
+                    Advantages
+                </p>
+                <div className={'center md:content-around text-xl'} style={{ maxWidth: 1000 }}>
+                    <Slider {...sliderSettings2}>
+                        <div>
+                            <Card>
+                                <div className=''>
+                                    <img className='mx-auto' src='/image/landingpage/on_demand.png'></img>
+                                    <p className='pb-4 gilroy-bold text-xl mx-auto text-center'>On Demand Services</p>
+                                    <p className='pb-4 gilroy-medium text-xl mx-auto text-center'>Transform your business with our custom solutions to<br className='hidden xl:block'></br> optimize your cost and productivity</p>
+                                </div>
+                            </Card>
+                        </div>
+                        <div>
+                            <Card>
+                                <div className=''>
+                                    <img className='mx-auto' src='/image/landingpage/reliable_partner.png'></img>
+                                    <p className='pb-4 gilroy-bold text-xl mx-auto text-center'>Realiable Partner</p>
+                                    <p className='pb-4 gilroy-medium text-xl mx-auto text-center'>A partner you can trust, with more than 15 years of<br className='hidden xl:block'></br> experiences-we’re here for the long run</p>
+                                </div>
+                            </Card>
+                        </div>
+                        <div>
+                            <Card>
+                                <div className=''>
+                                    <img className='mx-auto' src='/image/landingpage/competitive_rates.png'></img>
+                                    <p className='pb-4 gilroy-bold text-xl mx-auto text-center'>Competitive Rates</p>
+                                    <p className='pb-4 gilroy-medium text-xl mx-auto text-center'>We offer the best services with the best price tailored<br className='hidden xl:block'></br> to your needs</p>
+                                </div>
+                            </Card>
+                        </div>
+                        <div>
+                            <Card>
+                                <div className=''>
+                                    <img className='mx-auto' src='/image/landingpage/cost_efficient.png'></img>
+                                    <p className='pb-4 gilroy-bold text-xl mx-auto text-center'>Cost Efficient</p>
+                                    <p className='pb-4 gilroy-medium text-xl mx-auto text-center'>We help you grow and offer solutions to help optimized<br className='hidden xl:block'></br> your bussiness</p>
+                                </div>
+                            </Card>
+                        </div>
+                    </Slider>
+                </div>
+            </section>
+
+            {/* desktop show */}
+            <section className={'section3landingpageadvantages md:bottom-16 md:relative py-8 hidden md:block px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
+                <p className={'text-3xl md:text-4xl pb-2 md:pb-4 gilroy-medium font-semibold text-center'}>
+                    Advantages
+                </p>
+                <div class="grid grid-cols-2 gap-2 place-content-center mx-auto">
+                    <div>
+                        <img className='mx-auto' src='/image/landingpage/on_demand.png'></img>
+                        <p className='pb-4 gilroy-bold text-xl mx-auto text-center'>On Demand Services</p>
+                        <p className='pb-4 gilroy-medium text-xl mx-auto text-center'>Transform your business with our custom solutions to<br className='hidden xl:block'></br> optimize your cost and productivity</p>
+                    </div>
+                    <div>
+                        <img className='mx-auto' src='/image/landingpage/reliable_partner.png'></img>
+                        <p className='pb-4 gilroy-bold text-xl mx-auto text-center'>Realiable Partner</p>
+                        <p className='pb-4 gilroy-medium text-xl mx-auto text-center'>A partner you can trust, with more than 15 years of<br className='hidden xl:block'></br> experiences-we’re here for the long run</p>
+                    </div>
+                    <div>
+                        <img className='mx-auto' src='/image/landingpage/competitive_rates.png'></img>
+                        <p className='pb-4 gilroy-bold text-xl mx-auto text-center'>Competitive Rates</p>
+                        <p className='pb-4 gilroy-medium text-xl mx-auto text-center'>We offer the best services with the best price tailored<br className='hidden xl:block'></br> to your needs</p>
+                    </div>
+                    <div>
+                        <img className='mx-auto' src='/image/landingpage/cost_efficient.png'></img>
+                        <p className='pb-4 gilroy-bold text-xl mx-auto text-center'>Cost Efficient</p>
+                        <p className='pb-4 gilroy-medium text-xl mx-auto text-center'>We help you grow and offer solutions to help optimized<br className='hidden xl:block'></br> your bussiness</p>
+                    </div>
+                </div>
+            </section>
             {/* <section className={'section2landingpagebrowser md:relative md:bottom-32 py-8 hidden md:block px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                     <div className={'container mx-auto pb-8'}>
                         <Slider
@@ -399,112 +480,102 @@ function LandingPage({ }) {
                     Show Cases
                 </p>
                 <p className={'gilroy-medium text-2xl'}>
-                    We build a long-term relationship to continuously seek new improvement and opportunities.
+                    We collaborate with partners from a wide range of industries
                 </p>
                 <br></br>
-                <div className={'pb-8 center md:content-around text-xl'} style={{ maxWidth: 1000 }}>
+                <div className={'pb-8 center md:content-around text-xl h-max'} style={{ maxWidth: 1000 }}>
                     <Slider {...sliderSettings}>
                         <div>
                             <Card>
-                                <div className='h-64 md:h-32'>
-                                    {/* <Space className={'start pb-4'}>
-                                    <img className={'pr-1 inset-y-0 left-0'} style={{ maxHeight: 45 }} src="/image/company/kb.png"></img>
-                                    <p>
-                                        <p className={'text-xl gilroy-bold  text-left'}>KB Bukopin</p>
-                                        <p className={'gilroy-regular  text-left'}>Banking</p>
-                                    </p>
-                                </Space> */}
-                                    <Row style={{ alignItems: 'center' }}>
-                                        <Col xs={{span:12}} md={{span:6}}><img className={'pr-2'} style={{ maxHeight: 50 }} src="/image/company/kb.png"></img></Col>
+                                <div className='h-auto md:h-32'>
+                                    <Row className='hidden md:flex pb-4' style={{ alignItems: 'center' }}>
+                                        <Col xs={{ span: 12 }} md={{ span: 6 }}><img className={'pr-2'} style={{ maxHeight: 50 }} src="/image/company/kb.png"></img></Col>
                                         <Col span={12}>
                                             <p className={'text-xl gilroy-medium text-left'}>KB Bukopin</p>
-                                            <p className={'gilroy-regular pb-4 text-left'}>Banking</p>
+                                            <p className={'gilroy-regular text-left'}>Banking</p>
                                         </Col>
                                     </Row>
+                                    <div className='block md:hidden pb-2'>
+                                        <img className={'pr-2'} style={{ maxHeight: 50 }} src="/image/company/kb.png"></img>
+                                        <p className={'text-xl gilroy-medium text-left'}>KB Bukopin</p>
+                                        <p className={'gilroy-regular text-left'}>Banking</p>
+                                    </div>
                                     <p className={'text-left'}>Provide IT hardware infrastructure with 45 service points in Indonesia. Rent and maintenance +5.000 hardware. Support IT Engineer for build many projects. </p>
                                 </div>
                             </Card>
                         </div>
                         <div>
                             <Card>
-                                <div className='h-64 md:h-32'>
-                                    {/* <Space className={'start pb-4'}>
-                                    <img className={'pr-1'} style={{ maxHeight: 45 }} src="/image/company/shipper.png"></img>
-                                    <p>
-                                        <p className={'text-xl gilroy-bold  text-left'}>Shipper</p>
-                                        <p className={'gilroy-regular  text-left'}>Logistic Service</p>
-                                    </p>
-                                </Space> */}
-                                    <Row style={{ alignItems: 'center' }}>
-                                        <Col xs={{span:12}} md={{span:6}}><img className={''} style={{ maxHeight: 50 }} src="/image/company/shipper.png"></img></Col>
+                                <div className='h-auto md:h-32'>
+                                    <Row className='hidden md:flex pb-4' style={{ alignItems: 'center' }}>
+                                        <Col xs={{ span: 12 }} md={{ span: 6 }}><img className={''} style={{ maxHeight: 50 }} src="/image/company/shipper.png"></img></Col>
                                         <Col span={12}>
                                             <p className={'text-xl gilroy-medium text-left'}>Shipper</p>
-                                            <p className={'gilroy-regular  text-left pb-4'}>Logistic Service</p>
+                                            <p className={'gilroy-regular  text-left'}>Logistic Service</p>
                                         </Col>
                                     </Row>
+                                    <div className='block md:hidden pb-2'>
+                                        <img className={'pr-2'} style={{ maxHeight: 50 }} src="/image/company/shipper.png"></img>
+                                        <p className={'text-xl gilroy-medium text-left'}>Shipper</p>
+                                        <p className={'gilroy-regular text-left'}>Logistic Service</p>
+                                    </div>
                                     <p className={'text-left'}>Accommodate talent with exceptional skills in a short time. The project was conducted earlier with help recruitment fastly.</p>
                                 </div>
                             </Card>
                         </div>
                         <div>
                             <Card>
-                                <div className='h-64 md:h-32'>
-                                    {/* <Space className={'start pb-4'}>
-                                    <img className={'pr-1'} style={{ maxHeight: 45 }} src="/image/company/cgx.png"></img>
-                                    <p>
-                                        <p className={'text-xl gilroy-bold text-left'}>CGX</p>
-                                        <p className={'gilroy-regular text-left'}>Shipment and Warehouse</p>
-                                    </p>
-                                </Space> */}
-                                    <Row style={{ alignItems: 'center' }}>
-                                        <Col xs={{span:12}} md={{span:6}}><img className={''} style={{ maxHeight: 50 }} src="/image/company/cgx.png"></img></Col>
+                                <div className='h-auto md:h-32'>
+                                    <Row className='hidden md:flex pb-4' style={{ alignItems: 'center' }}>
+                                        <Col xs={{ span: 12 }} md={{ span: 6 }}><img className={''} style={{ maxHeight: 30 }} src="/image/company/cgx.png"></img></Col>
                                         <Col span={12}>
-                                        <p className={'text-xl gilroy-medium text-left'}>CGX</p>
-                                        <p className={'gilroy-regular text-left pb-4'}>Shipment and Warehouse</p>
+                                            <p className={'text-xl gilroy-medium text-left'}>CGX</p>
+                                            <p className={'gilroy-regular text-left'}>Shipment and Warehouse</p>
                                         </Col>
                                     </Row>
+                                    <div className='block md:hidden pb-2'>
+                                        <img className={'pr-2'} style={{ maxHeight: 30}} src="/image/company/cgx.png"></img>
+                                        <p className={'text-xl gilroy-medium text-left'}>CGX</p>
+                                        <p className={'gilroy-regular text-left'}>Shipment and Warehouse</p>
+                                    </div>
                                     <p className={'text-left'}>Develop logistic delivery process and reporting. Make sure to handle critical operations about open API business.</p>
                                 </div>
                             </Card>
                         </div>
                         <div>
                             <Card>
-                                <div className='h-64 md:h-32'>
-                                    {/* <Space className={'start pb-4'}>
-                                    <img className={'pr-1'} style={{ maxHeight: 45 }} src="/image/company/kb.png"></img>
-                                    <p>
-                                        <p className={'text-xl gilroy-bold text-left'}>KB Bukopin</p>
-                                        <p className={'gilroy-regular text-left'}>Banking</p>
-                                    </p>
-                                </Space> */}
-                                    <Row style={{ alignItems: 'center' }}>
-                                        <Col xs={{span:12}} md={{span:6}}><img className={''} style={{ maxHeight: 50 }} src="/image/company/kb.png"></img></Col>
+                                <div className='h-auto md:h-32'>
+                                    <Row className='hidden md:flex pb-4' style={{ alignItems: 'center' }}>
+                                        <Col xs={{ span: 12 }} md={{ span: 6 }}><img className={''} style={{ maxHeight: 50 }} src="/image/company/kb.png"></img></Col>
                                         <Col span={12}>
                                             <p className={'text-xl gilroy-medium text-left'}>KB Bukopin Syariah</p>
-                                            <p className={'gilroy-regular  text-left pb-4'}>Banking</p>
+                                            <p className={'gilroy-regular  text-left'}>Banking</p>
                                         </Col>
                                     </Row>
+                                    <div className='md:hidden pb-2'>
+                                        <img className={'pr-2'} style={{ maxHeight: 50 }} src="/image/company/kb.png"></img>
+                                        <p className={'text-xl gilroy-medium text-left'}>KB Bukopin Syariah</p>
+                                        <p className={'gilroy-regular text-left'}>Banking</p>
+                                    </div>
                                     <p className={'text-left'}>Rent and maintenance IT hardware infrastructure. Support at a high service level. </p>
                                 </div>
                             </Card>
                         </div>
                         <div>
                             <Card>
-                                <div className='h-64 md:h-32'>
-                                    {/* <Space className={'start pb-4'}>
-                                    <img className={'pr-1'} style={{ maxHeight: 45 }} src="/image/company/forty.png"></img>
-                                    <p>
-                                        <p className={'text-xl gilroy-bold text-left'}>Forty</p>
-                                        <p className={'gilroy-regular text-left'}>IT Service</p>
-                                    </p>
-                                </Space> */}
-                                    <Row style={{ alignItems: 'center' }}>
-                                        <Col xs={{span:12}} md={{span:6}}><img className={''} style={{ maxHeight: 50 }} src="/image/company/forty.png"></img></Col>
+                                <div className='h-auto md:h-32 pb-4'>
+                                    <Row className='hidden md:flex' style={{ alignItems: 'center' }}>
+                                        <Col xs={{ span: 12 }} md={{ span: 6 }}><img className={''} style={{ maxHeight: 50 }} src="/image/company/forty.png"></img></Col>
                                         <Col span={12}>
                                             <p className={'text-xl gilroy-medium text-left'}>Forty</p>
                                             <p className={'gilroy-regular  text-left pb-4'}>IT Service</p>
                                         </Col>
                                     </Row>
+                                    <div className='block pb-2 md:hidden'>
+                                        <img className={'pr-2'} style={{ maxHeight: 50 }} src="/image/company/forty.png"></img>
+                                        <p className={'text-xl gilroy-medium text-left'}>Forty</p>
+                                        <p className={'gilroy-regular text-left'}>IT Service</p>
+                                    </div>
                                     <p className={'text-left'}>Develop Forty Mobile App with a sensitive timeline. Manage from initial lending, payment transactions to reporting. </p>
                                 </div>
                             </Card>
@@ -517,11 +588,11 @@ function LandingPage({ }) {
             <section className={'px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 pb-20 pt-10 md:pt-0 text-center'}>
                 <div className={'container mx-auto'}>
                     <p className={'text-3xl md:text-4xl pb-4 gilroy-medium font-semibold'}>
-                        Bringing you the advantages
+                        Let's get Started
                     </p>
                     <Linkk href="/contactus">
                         <button className={'text-xl text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black'}>
-                            <p className={'px-8'}>Get started</p>
+                            <p className={'px-8 gilroy-bold'}>Contact Us</p>
                         </button>
                     </Linkk>
                 </div>
