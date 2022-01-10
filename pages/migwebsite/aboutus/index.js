@@ -45,7 +45,7 @@ function AboutUs({ }) {
                 <div className={'grid md:flex my-4 justify-center md:justify-between'}>
                     <div className={'flex-col flex bg-white mr-0 p-4 w-full border-2 border-black-300 rounded-lg hover:shadow-lg'}>
                         <div className={'min-h-full relative pb-8'} style={{}}>
-                            <img style={{ height: '40px', width: 'auto' }} src="/image/navbar/hardware.png"></img>
+                            <img style={{ height: '40px', width: 'auto' }} src="/image/navbar/hardware.svg"></img>
                             <p className={'text-left py-3 gilroy-bold text-xl'}>
                                 Hardware
                             </p>
@@ -61,7 +61,7 @@ function AboutUs({ }) {
                     </div>
                     <div className={'flex-col bg-white my-5 md:my-0 mx-0 md:mx-5 p-4 w-full border-2 border-black-300 rounded-lg hover:shadow-lg'}>
                         <div className={'min-h-full relative pb-8'} style={{}}>
-                            <img style={{height:'40px', width:'auto', position:'relative', left:'-25px'}} src="/image/navbar/software.png"></img>
+                            <img style={{height:'40px', width:'auto', position:'relative'}} src="/image/navbar/software.svg"></img>
                             <p className={'text-left py-3 gilroy-bold text-xl'}>Software
                             </p>
                             <p className={'gilroy-regular text-xl'}>
@@ -76,7 +76,7 @@ function AboutUs({ }) {
                     </div>
                     <div className={'flex-col bg-white mdl-0 p-4 w-full border-2 border-black-300 rounded-lg hover:shadow-lg'}>
                         <div className={'min-h-full relative pb-8'} style={{}}>
-                            <img style={{height:'40px', width:'auto', position:'relative', left:'-10px'}} src="/image/navbar/talents.png"></img>
+                            <img style={{height:'40px', width:'auto', position:'relative'}} src="/image/navbar/talents.svg"></img>
                             <p className={'text-left py-3 gilroy-bold text-xl'}>Talents
                             </p>
                             <p className={'gilroy-regular text-xl'}>
