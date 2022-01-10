@@ -88,21 +88,6 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
                         style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
                     },
                     children:
-                        // <div className="flex">
-                        //     <div className=" h-6 px-1 border hover:border-blue-500 hover:text-blue-500 rounded-sm cursor-pointer flex justify-center items-center mr-3" onClick={() => {
-                        //         setdataedit({
-                        //             id: record.id,
-                        //             nama: record.nama,
-                        //             jenis: record.jenis,
-                        //             tahun_penggunaan: record.tahun_penggunaan,
-                        //             deskripsi: record.deskripsi
-                        //         })
-                        //         setmodaledit(true)
-                        //     }}>
-                        //         <EditOutlined />
-                        //     </div>
-                        //     <div className=" h-6 px-1 border hover:border-blue-500 hover:text-blue-500 rounded-sm cursor-pointer flex justify-center items-center" onClick={() => { setmodaldelete(true); setiddelete(record.id) }}><DeleteOutlined /></div>
-                        // </div>
                         <div className=" flex">
                             {
                                 [171].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
@@ -397,54 +382,6 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
 
                         </div>
                         <Table columns={columns} dataSource={dataListDepreciationsMap} pagination={{ pageSize: 8 }} scroll={{ x: 300 }}></Table>
-                        {/* <div id="tabel" className="flex flex-col overflow-x-scroll">
-                            <div id="thead" className="grid grid-cols-9 justify-center items-center border-b-2 border-gray-600 p-2 bg-gray-100">
-                                <div className=" col-span-2 font-semibold text-sm">Nama</div>
-                                <div className=" col-span-2 font-semibold text-sm">Tipe</div>
-                                <div className=" col-span-1 font-semibold text-sm">Tahun Penggunaan</div>
-                                <div className=" col-span-3 font-semibold text-sm">Deskripsi</div>
-                                <div className=" col-span-1"></div>
-                            </div>
-                            <div id="tbody">
-                                {
-                                    dataGetDepreciations.data.length === 0 ?
-                                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
-                                        :
-                                        <>
-                                            {
-                                                dataGetDepreciations.data.map((doc, idx) => {
-                                                    return (
-                                                        <div className="grid grid-cols-9 justify-center items-center p-4 hover:bg-gray-100" onMouseOver={(e) => { onHoverCell(e, idx) }} onMouseLeave={(e) => { onLeaveCell(e, idx) }}>
-                                                            <div className=" col-span-2 font-semibold text-sm">{doc.nama}</div>
-                                                            <div className=" col-span-2 text-sm">{doc.jenis}</div>
-                                                            <div className=" col-span-1 text-sm">{doc.tahun_penggunaan} Tahun</div>
-                                                            <div className=" col-span-3 text-sm">{doc.deskripsi}</div>
-                                                            <div className="col-span-1 flex">
-                                                                <div className=" h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center mr-3" onClick={() => {
-                                                                    var temp = editarea
-                                                                    temp[idx] = true
-                                                                    seteditarea(temp)
-                                                                    setdataedit({
-                                                                        id: doc.id,
-                                                                        nama: doc.nama,
-                                                                        jenis: doc.jenis,
-                                                                        tahun_penggunaan: doc.tahun_penggunaan,
-                                                                        deskripsi: doc.deskripsi
-                                                                    })
-                                                                    setmodaledit(true)
-                                                                }}>
-                                                                    <EditOutlined />
-                                                                </div>
-                                                                <div className=" h-6 px-1 border-2 rounded-sm cursor-pointer hover:bg-gray-200 flex justify-center items-center" onClick={() => { setmodaldelete(true); setiddelete(doc.id) }}><DeleteOutlined /></div>
-                                                            </div>
-                                                        </div>
-                                                    )
-                                                })
-                                            }
-                                        </>
-                                }
-                            </div>
-                        </div> */}
                         <Modal
                             title={`Konfirmasi hapus depresiasi`}
                             visible={modaldelete}
@@ -540,7 +477,7 @@ export async function getServerSideProps({ req, res }) {
         }
     }
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -548,10 +485,10 @@ export async function getServerSideProps({ req, res }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    if (![169, 170, 171, 172].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![169, 170, 171, 172].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
 
     const resourcesGD = await fetch(`https://boiling-thicket-46501.herokuapp.com/getDepreciations`, {
         method: `GET`,

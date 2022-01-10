@@ -12,10 +12,9 @@ function AgentPassword({ initProps, dataProfile, sidemenu, userid }) {
     const { name } = rt.query
     const tok = initProps
     var pathArr = rt.pathname.split("/").slice(1)
-    pathArr.splice(2,1)
+    pathArr.splice(2, 1)
     pathArr[pathArr.length - 1] = `Ubah Password Agent - ${name}`
     const [instanceForm] = Form.useForm()
-    // dataCompanyList = dataCompanyList.data.members.filter(data => data.company_id !== 66)
 
     //useState
     const [datapass, setdatapass] = useState({
@@ -76,10 +75,8 @@ function AgentPassword({ initProps, dataProfile, sidemenu, userid }) {
                             <div className="flex space-x-2">
                                 <Link href={`/admin/agents/detail/${userid}`}>
                                     <Button disabled={praloading} type="default">Batal</Button>
-                                    {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button> */}
                                 </Link>
                                 <Button disabled={praloading} loading={loadingubahpass} onClick={instanceForm.submit} type="primary">Simpan</Button>
-                                {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={handleCreateAgents}>Save</button> */}
                             </div>
                         </div>
                     </Sticky>
@@ -169,22 +166,10 @@ export async function getServerSideProps({ req, res, params }) {
     //     res.end()
     // }
 
-    // const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
-    //     method: `POST`,
-    //     headers: {
-    //         'Authorization': JSON.parse(initProps),
-    //         'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify(reqBody)
-    // })
-    // const resjsonGCL = await resourcesGCL.json()
-    // const dataCompanyList = resjsonGCL
-
     return {
         props: {
             initProps,
             dataProfile,
-            // dataCompanyList,
             sidemenu: "61",
             userid,
         }

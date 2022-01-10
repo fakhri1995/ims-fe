@@ -24,17 +24,7 @@ const Messages = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
                     },
                     children:
                         <>
-                            {/* <a href="#" onClick={() => {
-                                setdrawedit(true); setdataedit({
-                                    id: record.id,
-                                    position_name: record.position_name,
-                                    job_description: record.job_description,
-                                    job_category: record.job_category,
-                                    register_link: record.register_link,
-                                })
-                            }}> */}
                             <h1 className="hover:text-gray-500">{record.nomor}</h1>
-                            {/* </a> */}
                         </>
                 }
             }
@@ -103,28 +93,6 @@ const Messages = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
                 }
             }
         },
-        // {
-        //     title: 'Message',
-        //     dataIndex: 'message',
-        //     key: 'message',
-        //     align: 'center',
-        //     render: (text, record, index) => {
-        //         return {
-        //             props: {
-        //                 style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-        //             },
-        //             children:
-        //                 <>
-        //                     <p className="text-xs">
-        //                         message
-        //                         hari ini adalah hari yg kau tunggu
-        //                         hari ini adalah hari yg kau tunggu
-        //                         hari ini adalah hari yg kau tunggu
-        //                         </p>
-        //                 </>
-        //         }
-        //     }
-        // },
         {
             dataIndex: 'status',
             key: 'status',
@@ -150,25 +118,6 @@ const Messages = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
                             >
                                 <SearchOutlined />
                             </Button>
-                            {/* <Button onClick={() => {
-                                setdrawedit(true)
-                                setdataedit({
-                                    id: record.id,
-                                    position_name: record.position_name,
-                                    job_description: record.job_description,
-                                    job_category: record.job_category,
-                                    register_link: record.register_link,
-                                })
-                            }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
-                                <EditOutlined />
-                            </Button>
-                            <Button danger onClick={() => {
-                                setmodaldelete(true);
-                                setdatadelete({ ...datadelete, id: parseInt(record.id) });
-                                setfeatureselected(record.position_name)
-                            }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
-                                <DeleteOutlined />
-                            </Button> */}
                         </div>
                 }
             }
@@ -184,34 +133,6 @@ const Messages = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
         })
     })
 
-    //create
-    const [drawcreate, setdrawcreate] = useState(false)
-    const [loadingcreate, setloadingcreate] = useState(false)
-    const [datacreate, setdatacreate] = useState({
-        name: '',
-        company_email: '',
-        company_name: '',
-        interseted_in: '',
-        message: ''
-    })
-    //update
-    const [drawedit, setdrawedit] = useState(false)
-    const [loadingedit, setloadingedit] = useState(false)
-    const [dataedit, setdataedit] = useState({
-        id: 0,
-        name: '',
-        company_email: '',
-        company_name: '',
-        interseted_in: '',
-        message: ''
-    })
-    //delete
-    const [modaldelete, setmodaldelete] = useState(false)
-    const [loadingdelete, setloadingdelete] = useState(false)
-    const [featureselected, setfeatureselected] = useState("")
-    const [datadelete, setdatadelete] = useState({
-        id: 0,
-    })
     //detail
     const [modaldetail, setmodaldetail] = useState(false)
     const [loadingdetail, setloadingdetail] = useState(false)
@@ -228,7 +149,6 @@ const Messages = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
             <div className="w-full grid grid-cols-5 border-t border-opacity-30 border-gray-500 bg-white">
                 <div className="col-span-5 border-b border-opacity-30 border-gray-400 flex items-center justify-between px-0 py-4 md:p-4 mb-5">
                     <h1 className="font-bold">Messages</h1>
-                    {/* <Button type="primary" size="large" onClick={() => { setdrawcreate(true) }}>Add New</Button> */}
                 </div>
                 <div className="col-span-5 p-0 md:p-5 flex flex-col">
                     <Table columns={columnsFeature} dataSource={dataMessagesMap} pagination={{ pageSize: 8 }} scroll={{ x: 300 }}></Table>

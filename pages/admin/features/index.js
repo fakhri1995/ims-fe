@@ -91,21 +91,8 @@ const FeaturesIndex = ({ initProps, dataProfile, dataListFeatures, sidemenu }) =
                         style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
                     },
                     children:
-                        // <div className="flex">
-                        //     <div className=" h-6 px-1 border hover:border-blue-500 hover:text-blue-500 rounded-sm cursor-pointer flex justify-center items-center mr-3" onClick={() => {
-                        //         setdrawedit(true)
-                        //         setdataedit({
-                        //             id: record.id,
-                        //             name: record.name,
-                        //             description: record.description
-                        //         })
-                        //     }}>
-                        //         <EditOutlined />
-                        //     </div>
-                        //     <div className=" h-6 px-1 border hover:border-blue-500 hover:text-blue-500 rounded-sm cursor-pointer flex justify-center items-center" onClick={() => { setmodaldelete(true); setdatadelete({ ...datadelete, id: parseInt(record.id) }); setfeatureselected(record.name) }}><DeleteOutlined /></div>
-                        // </div>
                         <div className=" flex">
-                            <Button onClick={() => {
+                            <Button disabled onClick={() => {
                                 setdrawedit(true)
                                 setdataedit({
                                     id: record.id,
@@ -115,7 +102,7 @@ const FeaturesIndex = ({ initProps, dataProfile, dataListFeatures, sidemenu }) =
                             }} style={{ paddingTop: `0`, paddingBottom: `0.3rem`, marginRight: `1rem` }}>
                                 <EditOutlined />
                             </Button>
-                            <Button danger onClick={() => {
+                            <Button disabled danger onClick={() => {
                                 setmodaldelete(true);
                                 setdatadelete({ ...datadelete, id: parseInt(record.id) });
                                 setfeatureselected(record.name)
@@ -167,16 +154,6 @@ const FeaturesIndex = ({ initProps, dataProfile, dataListFeatures, sidemenu }) =
 
 
     //event
-    const onSearchService = (val) => {
-        if (val === "") {
-            setdatatable(datatable)
-        }
-        setdatatable(prev => {
-            return prev.filter(dataa => {
-                return dataa.name.toLowerCase().includes(val.toLowerCase())
-            })
-        })
-    }
     const onCariFeature = (e) => {
         console.log("asa: " + e.target.value)
         if (e.target.value === "") {
@@ -268,10 +245,9 @@ const FeaturesIndex = ({ initProps, dataProfile, dataListFeatures, sidemenu }) =
             <div className="w-full grid grid-cols-5 border-t border-opacity-30 border-gray-500 bg-white">
                 <div className="col-span-5 border-b border-opacity-30 border-gray-400 flex items-center justify-between px-0 py-4 md:p-4 mb-5">
                     <h1 className="font-bold">Features</h1>
-                    <Button type="primary" size="large" onClick={() => { setdrawcreate(true) }}>Add New</Button>
+                    <Button disabled type="primary" size="large" onClick={() => { setdrawcreate(true) }}>Add New</Button>
                 </div>
                 <div className="col-span-5 p-0 md:p-5 flex flex-col">
-                    {/* <Search placeholder="Cari Nama Feature" allowClear style={{ width: `40%`, marginBottom: `1rem` }} onSearch={(value) => { onSearchService(value) }} /> */}
                     <div className="w-full md:w-5/12">
                         <Input prefix={<SearchOutlined />} placeholder="Cari Fitur" style={{ borderRadius: `0.1rem`, marginBottom: `1rem`, width: `100%` }} onChange={onCariFeature} allowClear />
                     </div>
@@ -361,7 +337,7 @@ export async function getServerSideProps({ req, res }) {
         }
     }
     const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -370,7 +346,7 @@ export async function getServerSideProps({ req, res }) {
     const dataProfile = resjson
 
     const resourcesGF = await fetch(`https://boiling-thicket-46501.herokuapp.com/getFeatures`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }

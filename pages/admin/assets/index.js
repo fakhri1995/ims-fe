@@ -45,13 +45,6 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
             ["parent"]: value
         })
     }
-    const fungsiSetParent = (val) => {
-        setParentadd(val);
-        setDatanew({
-            ...datanew,
-            ["parent"]: val
-        });
-    }
     const onExpand = (expandedKeys) => {
         setExpandedKeys(expandedKeys);
         setAutoExpandParent(false);
@@ -256,9 +249,6 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
                                 <h1 className="mt-2 font-semibold text-xl">Assets Types</h1>
                             </div>
                             <Button disabled={praloading} type="primary" size="large" onClick={() => { /*setNewmodal(true)*/ rt.push(`/admin/assets/create?idparent=&codeparent=`) }}>Tambah</Button>
-                            {/* <div className="w-auto h-auto p-2 text-white bg-blue-700 rounded-md cursor-pointer hover:bg-blue-900 text-xs md:text-sm font-semibold" onClick={() => { setNewmodal(true) }}>
-                                New Asset Type
-                            </div> */}
                             {
                                 praloading ?
                                     null
@@ -428,20 +418,10 @@ export async function getServerSideProps({ req, res }) {
     const resjson = await resources.json()
     const dataProfile = resjson
 
-    // const resourcesGA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
-    //     method: `GET`,
-    //     headers: {
-    //         'Authorization': JSON.parse(initProps),
-    //     }
-    // })
-    // const resjsonGA = await resourcesGA.json()
-    // const dataAssetsList = resjsonGA
-
     return {
         props: {
             initProps,
             dataProfile,
-            // dataAssetsList,
             sidemenu: "81"
         },
     }

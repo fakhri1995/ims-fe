@@ -34,8 +34,6 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         to: null,
         total: null
     })
-    const [dataraw, setdataraw] = useState([])
-    // const [dataraw2, setdataraw2] = useState([])
     const [datalokasi, setdatalokasi] = useState([])
     const [datarawloading, setdatarawloading] = useState(false)
     const [praloading, setpraloading] = useState(true)
@@ -49,46 +47,16 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
     const [statusvalue, setstatusvalue] = useState(null)
     const [namaasset, setnamaasset] = useState(location_id1)
     const [defasset, setdefasset] = useState(null)
-    // const FilterAll = () => {
-    //     setDataSource(dataraw)
-    // }
-    // const FilterByWord = (word) => {
-    //     const currValue = word;
-    //     const filteredData = dataraw.filter(entry => {
-    //         if (entry.fullname.toLowerCase()[0] === word) {
-    //             return entry.fullname.toLowerCase().includes(currValue)
-    //         }
-    //     }
-    //     );
-    //     setDataSource(filteredData);
-    // };
     const tok = initProps
     const pathArr = rt.pathname.split("/").slice(1)
     const { originPath } = rt.query
 
     const columnsDD = [
-        // {
-        //     dataIndex: 'nomor',
-        //     align: `center`,
-        //     // sorter: (a, b) => a.user_id - b.user_id,
-        //     // sortDirections: ['descend', 'ascend'],
-        //     render: (text, record, index) => {
-        //         return {
-        //             children:
-        //                 <div className="text-center">
-        //                     {record.nomor}
-        //                 </div>
-        //         }
-        //     }
-        // },
         {
             dataIndex: 'profil_image',
             key: `profil_image`,
             render: (text, record, index) => {
                 return {
-                    // props: {
-                    //     style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-                    // },
                     children:
                         <>
                             <img src={record.profile_image} alt="imageProfile" className=" object-cover w-10 h-10 rounded-full" />
@@ -96,99 +64,25 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                 }
             }
         },
-        // {
-        //     title: 'ID',
-        //     dataIndex: 'user_id',
-        //     // sorter: (a, b) => a.user_id - b.user_id,
-        //     // sortDirections: ['descend', 'ascend'],
-        //     // render: (text, record, index) => {
-        //     //     return {
-        //     //         props: {
-        //     //             style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-        //     //         },
-        //     //         children:
-        //     //             <>
-        //     //                 {record.user_id}
-        //     //             </>
-        //     //     }
-        //     // }
-        // },
         {
             title: 'Nama',
             dataIndex: 'name',
-            // sorter: (a, b) => a.fullname.localeCompare(b.fullname),
-            // sortDirections: ['descend', 'ascend'],
-            // render: (text, record, index) => {
-            //     return {
-            //         props: {
-            //             style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-            //         },
-            //         children:
-            //             <>
-            //                 {record.fullname}
-            //             </>
-            //     }
-            // }
         },
         {
             title: 'Email',
             dataIndex: 'email',
-            // render: (text, record, index) => {
-            //     return {
-            //         props: {
-            //             style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-            //         },
-            //         children:
-            //             <>
-            //                 {record.email}
-            //             </>
-            //     }
-            // }
         },
         {
             title: 'Posisi',
             dataIndex: 'position',
-            // render: (text, record, index) => {
-            //     return {
-            //         props: {
-            //             style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-            //         },
-            //         children:
-            //             <>
-            //                 {record.email}
-            //             </>
-            //     }
-            // }
         },
         {
             title: 'No. Handphone',
             dataIndex: 'phone_number',
-            // render: (text, record, index) => {
-            //     return {
-            //         props: {
-            //             style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-            //         },
-            //         children:
-            //             <>
-            //                 {record.phone_number}
-            //             </>
-            //     }
-            // }
         },
         {
             title: 'Asal Lokasi',
             dataIndex: 'company_name',
-            // render: (text, record, index) => {
-            //     return {
-            //         props: {
-            //             style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-            //         },
-            //         children:
-            //             <>
-            //                 {record.phone_number}
-            //             </>
-            //     }
-            // }
         },
         {
             title: 'Status',
@@ -207,34 +101,11 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                 }
             }
         },
-        // {
-        //     title: '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0',
-        //     dataIndex: 'actionss',
-        //     render: (text, record, index) => {
-        //         return {
-        //             props: {
-        //                 style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-        //             },
-        //             children:
-        //                 <>
-        //                     {
-        //                         [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-        //                             <Button onClick={() => { rt.push(`/admin/agents/${record.user_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
-        //                                 <EditOutlined />
-        //                             </Button>
-        //                             :
-        //                             null
-        //                     }
-        //                 </>
-        //         }
-        //     }
-        // }
     ];
 
     //filtering
     const onChangeSearch = (e) => {
         if (e.target.value === "") {
-            // setDataSource(dataraw)
             window.location.href = `/admin/agents?name=&location_id=${asallokasifilteract ? location_id1 : ""}&is_enabled=${statusfilteract ? is_enabled1 : ""}`
             setnamasearchact(false)
         }
@@ -245,7 +116,6 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
     }
     const onChangeAsalLokasi = (value) => {
         if (typeof (value) === 'undefined') {
-            // setDataSource(dataraw)
             window.location.href = `/admin/agents?name=${namasearchact ? name1 : ""}&location_id=&is_enabled=${statusfilteract ? is_enabled1 : ""}`
             setasallokasifilteract(false)
         }
@@ -256,7 +126,6 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
     }
     const onChangeStatus = (value) => {
         if (typeof (value) === 'undefined') {
-            // setDataSource(dataraw)
             window.location.href = `/admin/agents?name=${namasearchact ? name1 : ""}&location_id=${asallokasifilteract ? location_id1 : ""}&is_enabled=`
             setstatusfilteract(false)
         }
@@ -266,23 +135,6 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         }
     }
     const onFinalClick = () => {
-        // var datatemp = dataraw
-        // if (asallokasifilteract) {
-        //     datatemp = datatemp.filter(flt => {
-        //         return flt.company_id === asallokasivalue
-        //     })
-        // }
-        // if (namasearchact) {
-        //     datatemp = datatemp.filter(flt => {
-        //         return flt.fullname.toLowerCase().includes(namavalue.toLowerCase())
-        //     })
-        // }
-        // if (statusfilteract) {
-        //     datatemp = datatemp.filter(flt => {
-        //         return flt.status === statusvalue
-        //     })
-        // }
-        // setDataSource(datatemp)
         window.location.href = `/admin/agents?name=${namasearchact ? (namavalue === null ? name1 : namavalue) : ""}&location_id=${asallokasifilteract ? (asallokasivalue === null ? location_id1 : asallokasivalue) : ""}&is_enabled=${statusfilteract ? (statusvalue === "" ? is_enabled1 : statusvalue) : ""}`
     }
 
@@ -296,11 +148,6 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
-            // body: JSON.stringify({
-            //     page: 1,
-            //     rows: 50,
-            //     order_by: "asc"
-            // })
         })
             .then(res => res.json())
             .then(res2 => {
@@ -330,8 +177,6 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                         })
                     })
                 }
-                setdataraw(res2.data)
-                // setdataraw2(dataDD)
                 setDataSource(dataDD)
                 setpraloading(false)
             })
@@ -388,89 +233,6 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                     // [108].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                     <div className="h-auto w-full grid grid-cols-1 md:grid-cols-5 mb-5 bg-white rounded-md">
                         <div className="md:col-span-5 col-span-1 flex flex-col py-3">
-                            {/* <div className="flex flex-wrap mb-2">
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={FilterAll}>
-                                    All
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("a")}>
-                                    A
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("b")}>
-                                    B
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("c")}>
-                                    C
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("d")}>
-                                    D
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("e")}>
-                                    E
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("f")}>
-                                    F
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("g")}>
-                                    G
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("h")}>
-                                    H
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("i")}>
-                                    I
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("j")}>
-                                    J
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("k")}>
-                                    K
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("l")}>
-                                    L
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("m")}>
-                                    M
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("n")}>
-                                    N
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("o")}>
-                                    O
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("p")}>
-                                    P
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("q")}>
-                                    Q
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("r")}>
-                                    R
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("s")}>
-                                    S
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("t")}>
-                                    T
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("u")}>
-                                    U
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("v")}>
-                                    V
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("w")}>
-                                    W
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("x")}>
-                                    X
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("y")}>
-                                    Y
-                            </button>
-                                <button className=" hover:bg-gray-400 rounded px-1 w-auto h-auto" onClick={() => FilterByWord("z")}>
-                                    Z
-                            </button>
-                            </div> */}
                             {
                                 datarawloading ?
                                     null

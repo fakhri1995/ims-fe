@@ -1,4 +1,4 @@
-import Layout from '../../../../components/layout-dashboard2'
+import Layout from '../../../../components/layout-dashboard'
 import st from '../../../../components/layout-dashboard.module.css'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
@@ -27,7 +27,6 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
         harga: true,
         id_terms_of_payment: true
     })
-    // console.log(contractInputData)
     //----------Create Incident Parameter-------------
     const [newcontract, setNewcontract] = useState({
         id_client_company: "",
@@ -48,14 +47,6 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
     const onAddService = () => {
         setSelectedServiceItemTemp(serviceItemTemp.serviceItemValues)
         var items = serviceItemTemp.serviceItemValues
-        // var items = [...dataServiceItems]
-        // var items = serviceItemTemp.serviceItemValues.map((item,index)=>{
-        //     return ({
-        //         id_service_item: item.key,
-        //         harga: "",
-        //         id_terms_of_payment: ""
-        //     })
-        // })
         setDataServiceItems(items)
         setNewcontract({
             ...newcontract,
@@ -209,7 +200,6 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
             return doc.id_service_kategori == val
         })
         setPopulateListService(listServiceByCategory)
-        // console.log(listServiceByCategory)
     }
     const [defaultCategory, setDefaultCategory] = useState(null)
     const clearFilterCategory = () => {
@@ -224,7 +214,6 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
         }))
     }
     const searchServiceItem = (e) => {
-        // console.log(e.target.value)
         var val = e.target.value
         const listServiceByCategory = contractInputData.data.service_items.map((doc, idx) => {
             return ({
@@ -242,15 +231,8 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
             }
         })
         setPopulateListService(listServiceByCategory)
-        // console.log(listServiceByCategory)
     }
-    // const populateListService = contractInputData.data.service_items.map((doc, idx) => {
-    //     return ({
-    //         key: doc.id,
-    //         nama: doc.nama_service_item,
-    //         deskripsi: doc.deskripsi_singkat,
-    //     })
-    // })
+
     //--------------populate list company ------------
     const populateListCompany = contractInputData.data.companies.filter((doc,idx)=>(doc.id!==66)).map((doc, idx) => {
         return ({
@@ -295,24 +277,6 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
     
     //----------------------------------------------
     
-    const checkFile = () => {
-        // console.log (selectedServiceItemTemp)
-        // console.log (serviceItemTemp)
-        // console.log (dataServiceItems)
-        console.log (validation)
-        // var satu = selectedServiceItemTemp.map(item=>item.key)
-        // var dua = dataServiceItems.map(item=>item.id_service_item)
-        // // console.log (newcontract,selectedServiceItemTemp,dataServiceItems)
-        // var tiga = selectedServiceItemTemp.map(item=>item.key).filter(value => (dataServiceItems.map(item=>item.id_service_item).includes(value)))
-        // // var empat = dataServiceItems.map(item=>item.id_service_item).filter(value => (selectedServiceItemTemp.map(item=>item.key).includes(value)))
-        // console.log ("selected item: ",satu,"data service item: ",dua,"array intersect :",tiga)
-        // // var lah = dataServiceItems.filter((obj)=>{tiga.includes(obj.id_service_item)})
-        // // setDataServiceItems(dataServiceItems.filter((obj)=>{tiga.includes(obj.id_service_item)}))
-        // console.log (dataServiceItems)
-    }
-    const check = () => {
-        console.log(newcontract.service_items)
-    }
     const [widthDrawer, setWidthDrawer] = useState(600)
     useEffect(() => {
         var w = window.innerWidth
@@ -322,7 +286,6 @@ function ContractCreate({ initProps, dataProfile, contractInputData, sidemenu })
         else if(w < 640){
             setWidthDrawer(400)
         }
-        // console.log(w)
     }, [])
     return (
         <Layout tok={tok} dataProfile={dataProfile} pathArr={pathArr} sidemenu={sidemenu} originPath={originPath} st={st}>
@@ -530,7 +493,7 @@ export async function getServerSideProps({ req, res }) {
     }
 
     const resourcesGP = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
-        method: `POST`,
+        method: `GET`,
         headers: {
             'Authorization': JSON.parse(initProps)
         }
@@ -538,10 +501,10 @@ export async function getServerSideProps({ req, res }) {
     const resjsonGP = await resourcesGP.json()
     const dataProfile = resjsonGP
 
-    if (![196].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-        res.writeHead(302, { Location: '/dashboard/admin' })
-        res.end()
-    }
+    // if (![196].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
+    //     res.writeHead(302, { Location: '/dashboard/admin' })
+    //     res.end()
+    // }
     
     const getContractInputData = await fetch(`https://boiling-thicket-46501.herokuapp.com/getContractInputData`, {
         method: `GET`,

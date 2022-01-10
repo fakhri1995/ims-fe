@@ -210,8 +210,6 @@ function Groups({ initProps, dataProfile, dataGroupsAgents, dataGroupsRequesters
                     width: 100,
                     render: (text, record, index) => {
                         return {
-
-
                             props: {
                                 style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
                             },

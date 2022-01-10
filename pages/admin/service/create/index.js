@@ -3,7 +3,7 @@ import { useState } from 'react'
 import httpcookie from 'cookie'
 import { DownOutlined, MinusCircleTwoTone } from '@ant-design/icons'
 import { Button, Anchor, Dropdown, Menu, Form, Input, notification, Select, Checkbox } from 'antd'
-import Layout from '../../../../components/layout-dashboard2'
+import Layout from '../../../../components/layout-dashboard'
 import st from '../../../../components/layout-dashboard.module.css'
 
 function ServiceCreate({ initProps, dataProfile, dataListServiceCategories, dataListServiceItem, sidemenu }) {

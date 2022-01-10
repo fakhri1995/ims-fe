@@ -1,4 +1,4 @@
-import Layout from '../../../../../components/layout-dashboard2'
+import Layout from '../../../../../components/layout-dashboard'
 import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
@@ -82,7 +82,6 @@ function GroupsRequestersDetail({ initProps, dataProfile, dataListAccount, dataD
     //----------------radio button--------------
     const [value, setValue] = useState(1);
     const onChange = e => {
-        // console.log('radio checked', e.target.value);
         setValue(e.target.value);
     };
     //------------------------------------------
@@ -136,12 +135,7 @@ function GroupsRequestersDetail({ initProps, dataProfile, dataListAccount, dataD
                                 >
                                     {
                                         // [142].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                            <Input placeholder="Group Name" name={`name`} onChange={onChangeEditGroup}></Input>
-                                            // :
-                                            // <div className="col-span-1 flex flex-col mb-5">
-                                            //     <h1 className="font-semibold text-sm">Group Name:</h1>
-                                            //     <h1 className="text-sm font-normal text-black">{editgroup.name}</h1>
-                                            // </div>
+                                        <Input placeholder="Group Name" name={`name`} onChange={onChangeEditGroup}></Input>
                                     }
                                 </Form.Item>
                             </div>
@@ -158,12 +152,7 @@ function GroupsRequestersDetail({ initProps, dataProfile, dataListAccount, dataD
                                 >
                                     {
                                         // [142].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                            <TextArea placeholder="Group Description" rows={2} name={`description`} onChange={onChangeEditGroup} />
-                                            // :
-                                            // <div className="col-span-1 flex flex-col mb-5">
-                                            //     <h1 className="font-semibold text-sm">Group Description:</h1>
-                                            //     <h1 className="text-sm font-normal text-black">{editgroup.description}</h1>
-                                            // </div>
+                                        <TextArea placeholder="Group Description" rows={2} name={`description`} onChange={onChangeEditGroup} />
                                     }
                                 </Form.Item>
                             </div>
@@ -180,12 +169,7 @@ function GroupsRequestersDetail({ initProps, dataProfile, dataListAccount, dataD
                                 >
                                     {
                                         // [142].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                            <Select showSearch placeholder="Add Group Head" name={`group_head`} showArrow options={dataDD} optionFilterProp="label" onChange={onChangeEditGroupHeadGroup} style={{ width: '100%', lineHeight: '2.4' }} />
-                                            // :
-                                            // <div className="col-span-1 flex flex-col mb-5">
-                                            //     <h1 className="font-semibold text-sm">Group Head:</h1>
-                                            //     <h1 className="text-sm font-normal text-black">{editgroup.group_head}</h1>
-                                            // </div>
+                                        <Select showSearch placeholder="Add Group Head" name={`group_head`} showArrow options={dataDD} optionFilterProp="label" onChange={onChangeEditGroupHeadGroup} style={{ width: '100%', lineHeight: '2.4' }} />
                                     }
                                 </Form.Item>
                             </div>
@@ -194,30 +178,24 @@ function GroupsRequestersDetail({ initProps, dataProfile, dataListAccount, dataD
                             <Divider style={{ borderTop: '1px solid rgba(0, 0, 0, 0.2)' }} />
                             {
                                 // [142].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                    <>
-                                        <h1 className="font-semibold text-base w-auto py-2">Agents</h1>
-                                        <div className="border-gray-300 md:px-4 px-0 py-4 mb-5 border bg-white w-full h-auto ">
-                                            <Radio.Group className="flex flex-col md:flex-row" row onChange={onChange} value={value}>
-                                                <Radio className="flex-initial font-bold " value={1}>Add as a Member
-                                                    <p className="pl-6 whitespace-normal font-normal" style={{ width: 'min-content', minWidth: '15rem' }}>Members can be assigned tickets, tasks and other items that belong to this group.</p>
-                                                </Radio>
-                                                <Radio disabled className="flex-initial font-bold" value={2}>Add as an Observer
-                                                    <p className="pl-6 whitespace-normal font-normal" style={{ width: 'min-content', minWidth: '15rem' }}>Members can be assigned tickets, tasks and other items that belong to this group.</p>
-                                                </Radio>
-                                            </Radio.Group>
-                                            <Row>
-                                                <Col flex="auto">
-                                                    <Select placeholder="Add an Requester" showArrow mode="multiple" optionFilterProp="label" onChange={handleChangeEditRequester} defaultValue={editgroup.user_ids} options={dataDD} style={{ width: '100%', padding: '0 5px', lineHeight: '2.4' }} />
-                                                </Col>
-                                            </Row>
-                                        </div>
-                                    </>
-                                    // :
-                                    // <Row>
-                                    //     <Col flex="auto">
-                                    //         <Select disabled placeholder="Add an Requester" showArrow mode="multiple" optionFilterProp="label" onChange={handleChangeEditRequester} defaultValue={editgroup.user_ids} options={dataDD} style={{ width: '100%', padding: '0 5px', lineHeight: '2.4' }} />
-                                    //     </Col>
-                                    // </Row>
+                                <>
+                                    <h1 className="font-semibold text-base w-auto py-2">Agents</h1>
+                                    <div className="border-gray-300 md:px-4 px-0 py-4 mb-5 border bg-white w-full h-auto ">
+                                        <Radio.Group className="flex flex-col md:flex-row" row onChange={onChange} value={value}>
+                                            <Radio className="flex-initial font-bold " value={1}>Add as a Member
+                                                <p className="pl-6 whitespace-normal font-normal" style={{ width: 'min-content', minWidth: '15rem' }}>Members can be assigned tickets, tasks and other items that belong to this group.</p>
+                                            </Radio>
+                                            <Radio disabled className="flex-initial font-bold" value={2}>Add as an Observer
+                                                <p className="pl-6 whitespace-normal font-normal" style={{ width: 'min-content', minWidth: '15rem' }}>Members can be assigned tickets, tasks and other items that belong to this group.</p>
+                                            </Radio>
+                                        </Radio.Group>
+                                        <Row>
+                                            <Col flex="auto">
+                                                <Select placeholder="Add an Requester" showArrow mode="multiple" optionFilterProp="label" onChange={handleChangeEditRequester} defaultValue={editgroup.user_ids} options={dataDD} style={{ width: '100%', padding: '0 5px', lineHeight: '2.4' }} />
+                                            </Col>
+                                        </Row>
+                                    </div>
+                                </>
                             }
                         </div>
                     </Form>
@@ -280,7 +258,6 @@ export async function getServerSideProps({ req, res, params }) {
             'Authorization': JSON.parse(initProps),
             'Content-Type': 'application/json'
         },
-        // body: JSON.stringify(reqBodyAccountList)
     })
     const resjsonLA = await resourcesLA.json()
     const dataListAccount = resjsonLA

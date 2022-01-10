@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import DrawerCore from './drawerCore'
-import { AtmBank } from '../atm'
 import { DateNotRequired, DateRequired, InputNotRequired, InputRequired, RadioRequired, TreeSelectRequired, TextAreaRequired, SelectNotRequired, RadioNotRequired } from '../input'
 import { Spin, notification, Input, Select, TreeSelect, Empty, Checkbox } from 'antd'
 import { AlignJustifiedIconSvg, BorderAllSvg, CameraIconSvg, CheckboxIconSvg, CircleXIconSvg, CopyIconSvg, EmailIconSvg, FaxIconSvg, ListNumbersSvg, NotesIconSvg, PkpIconSvg, RefreshIconSvg, RulerIconSvg, SquarePlusIconSvg, TrashIconSvg, WebIconSvg } from '../icon'
@@ -84,7 +83,12 @@ const DrawerBank = ({ title, visible, onClose, children, buttonOkText, initProps
             <Spin spinning={bankloading}>
                 <div className="flex flex-col">
                     <div className="flex justify-center items-center mb-5">
-                        <AtmBank from={createdata.color_first} to={createdata.color_second}></AtmBank>
+                        {/* <AtmBank from={createdata.color_first} to={createdata.color_second}></AtmBank> */}
+                        <div className={`w-5/12 h-28 rounded-md bg-gradient-to-tl ${createdata.color_first} ${createdata.color_second} relative mr-3`}>
+                            <div className="absolute bottom-0 right-2">
+                                <img src="/image/visa.png" className="object-contain" />
+                            </div>
+                        </div>
                         {/* {createdata.preset === 1 && <AtmBank from="from-state1" to="to-state2"></AtmBank>}
                         {createdata.preset === 2 && <AtmBank from="from-state3" to="to-state4"></AtmBank>}
                         {createdata.preset === 3 && <AtmBank from="from-red-200" to="to-red-600"></AtmBank>}
@@ -194,7 +198,12 @@ const DrawerBankClient = ({ title, visible, onClose, children, buttonOkText, ini
             <Spin spinning={bankloading}>
                 <div className="flex flex-col">
                     <div className="flex justify-center items-center mb-5">
-                        <AtmBank from={createdata.color_first} to={createdata.color_second}></AtmBank>
+                        {/* <AtmBank from={createdata.color_first} to={createdata.color_second}></AtmBank> */}
+                        <div className={`w-5/12 h-28 rounded-md bg-gradient-to-tl ${createdata.color_first} ${createdata.color_second} relative mr-3`}>
+                            <div className="absolute bottom-0 right-2">
+                                <img src="/image/visa.png" className="object-contain" />
+                            </div>
+                        </div>
                         {/* {createdata.preset === 1 && <AtmBank from="from-state1" to="to-state2"></AtmBank>}
                         {createdata.preset === 2 && <AtmBank from="from-state3" to="to-state4"></AtmBank>}
                         {createdata.preset === 3 && <AtmBank from="from-red-200" to="to-red-600"></AtmBank>}
@@ -1181,13 +1190,13 @@ const DrawerAddRelasi = ({ id, title, visible, onClose, children, buttonOkText, 
                                                     setdetailtipedataadd(res2.data)
                                                     setfetchingmodel(false)
                                                 })
-                                        }} 
-                                        // filterOption={(input, opt) => (
-                                        //     opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                        // )} 
-                                        onChange={(value) => {
-                                            setdataApiadd({ ...dataApiadd, connected_ids: [value], backup_connected_ids: [value] })
-                                        }}>
+                                        }}
+                                            // filterOption={(input, opt) => (
+                                            //     opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                            // )} 
+                                            onChange={(value) => {
+                                                setdataApiadd({ ...dataApiadd, connected_ids: [value], backup_connected_ids: [value] })
+                                            }}>
                                             {
                                                 detailtipedataadd.map((doc, idx) => {
                                                     return (

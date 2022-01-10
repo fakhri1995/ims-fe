@@ -99,17 +99,6 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
             console.log("isi upload: " + info.file.originFileObj.name)
             const formData = new FormData()
             formData.append('file', info.file.originFileObj)
-            // fetch("/api/upload", {
-            //     method: "POST",
-            //     body: formData
-            // })
-            //     .then(response => response.json())
-            //     .then(data => {
-            //         console.log(data);
-            //     })
-            //     .catch(error => {
-            //         console.error(error);
-            //     });
             formData.append('upload_preset', 'migsys')
             return fetch(`https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`, {
                 method: 'POST',
@@ -122,21 +111,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                         profile_image: res2.secure_url
                     })
                 })
-            //or
-            // getBase64(info.file.originFileObj, (imageUrl) => {
-            //     setNewuser({
-            //         ...newuser,
-            //         profile_image: imageUrl,
-            //     })
-            //     setLoadingupload(false)
-            // }
-            // );
         }
-    }
-    function getBase64(img, callback) {
-        const reader = new FileReader();
-        reader.addEventListener('load', () => callback(reader.result));
-        reader.readAsDataURL(img);
     }
     const uploadButton = (
         <div>
@@ -222,16 +197,6 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                                             treeDefaultExpandAll
                                             onChange={(value) => { setNewuser({ ...newuser, company_id: value }) }}
                                         />
-                                        {/* <Select onChange={(value) => { setNewuserrequesters({ ...newuserrequesters, company_id: value }) }} name={`company_id`} allowClear>
-                                            <Select.Option >Choose company</Select.Option>
-                                            {
-                                                datacompanylist.map((doc, idx) => {
-                                                    return (
-                                                        <Select.Option title={doc.company_name} key={idx} value={doc.company_id}>{doc.company_name}</Select.Option>
-                                                    )
-                                                })
-                                            }
-                                        </Select> */}
                                     </Form.Item>
                                     <Form.Item label="Nama Lengkap" required name="fullname"
                                         rules={[
@@ -320,39 +285,11 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                                             }
                                         </Select>
                                     </Form.Item>
-                                    {/* <Form.Item label="Role" name="role"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Role harus diisi',
-                                            },
-                                        ]}>
-                                        <input type="number" value={newuser.role} name={'role'} onChange={onChangeCreateAgents} />
-                                    </Form.Item> */}
                                 </Form>
                             </div>
                         </div>
                     </div>
                 </div>
-                {/* <div className=" col-span-1 md:col-span-1 hidden md:flex flex-col space-y-4 p-4">
-                    <div className="font-semibold text-base">Agents</div>
-                    <p className="font-normal text-xs">
-                        When you add a new agent, you will have to provide the agent’s email, set their permission levels and access (full-time or occasional). Agents will receive an email with a confirmation link to activate their account after which they can be assigned to, or respond to tickets. Administrators can also edit an Agent’s profile to include the agent’s title, phone, profile picture, signature etc.
-                    </p>
-                    <div className="font-semibold text-base">Full-time vs Occasional Agents</div>
-                    <p className=" font-normal text-xs">
-                        You can choose whether your agents will need access to your support portal full-time, or will only be logging in occasionally. Occasional agents will use up a Day Pass for each day they login to your support, and you can purchase Day Passes in bulk from the Admin tab. Note that you will only be billed monthly for the number of full-time agents you add.
-                    </p>
-                    <div className="font-semibold text-base">Agent Groups</div>
-                    <p className=" font-normal text-xs">
-                        You can choose whether your agents will need access to your support portal full-time, or will only be logging in occasionally. Occasional agents will use up a Day Pass for each day they login to your support, and you can purchase Day Passes in bulk from the Admin tab. Note that you will only be billed monthly for the number of full-time agents you add.
-                    </p>
-                    <div className="font-semibold text-base">Agent Groups</div>
-                    <p className=" font-normal text-xs">
-                        Choose the tickets this agent can view and actions they can perform within the helpdesk by assigning one or more roles.
-                        Note that you will not be able to modify your own roles, or delete yourself.
-                    </p>
-                </div> */}
             </div>
         </Layout>
     )

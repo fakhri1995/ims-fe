@@ -163,18 +163,6 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
             asset_columns: fielddata,
         })
     }, [newfieldidxtrigger])
-    // useEffect(() => {
-    //     if (currentdropdownidx !== -1) {
-    //         setfielddata(prev => {
-    //             var temp = prev
-    //             temp[currentdropdownidx]["default"] = {
-    //                 default: "-",
-    //                 opsi: currentdropdown
-    //             }
-    //             return temp
-    //         })
-    //     }
-    // }, [currentdropdowntrigger])
     useEffect(() => {
         if (currentnondropdownidx !== -1) {
             setfielddata(prev => {
@@ -236,25 +224,6 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                     `}
                                                     </style>
                                                 </div>
-                                                // <Form.Item name="parent" label="Induk Asset Type"
-                                                //     rules={[
-                                                //         {
-                                                //             required: true,
-                                                //             message: 'Induk Asset Type wajib diisi',
-                                                //         },
-                                                //     ]}>
-                                                //     <TreeSelect
-                                                //         style={{ marginRight: `1rem` }}
-                                                //         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                                //         treeData={assetdata}
-                                                //         defaultValue={idparent !== "" ? idparent : null}
-                                                //         placeholder="Pilih parent"
-                                                //         disabled={idparent !== ""}
-                                                //         treeDefaultExpandAll
-                                                //         onChange={(value) => { setnewdata({ ...newdata, parent: value }) }}
-                                                //         allowClear
-                                                //     />
-                                                // </Form.Item>
                                                 :
                                                 <Form.Item name="parent" label={
                                                     <div className="flex">
@@ -270,12 +239,6 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                                         </style>
                                                     </div>
                                                 }
-                                                // rules={[
-                                                //     {
-                                                //         required: true,
-                                                //         message: 'Induk Asset Type wajib diisi',
-                                                //     },
-                                                // ]}
                                                 >
                                                     <TreeSelect
                                                         style={{ marginRight: `1rem` }}

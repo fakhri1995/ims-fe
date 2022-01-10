@@ -17,7 +17,6 @@ function GroupsAgentsCreate({ initProps, dataProfile, dataListAccount, sidemenu 
     const dataDetailGroup = []
     const [instanceForm] = Form.useForm()
     const [loadingbtn, setLoadingbtn] = useState(false)
-    // console.log(dataProfile)
     //----------CreateGroup-------------
     const [newgroup, setNewgroup] = useState({
         name: '',
@@ -45,13 +44,8 @@ function GroupsAgentsCreate({ initProps, dataProfile, dataListAccount, sidemenu 
             ["user_ids"]: value
         })
     }
-    function handleClick() {
-        console.log(newgroup)
-        // console.log(`selected ${value}`);
-    }
     //----------------------------------------------
     const handleCreateGroup = () => {
-        // console.log(newgroup)
         setLoadingbtn(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/addAgentGroup`, {
             method: 'POST',
@@ -86,7 +80,6 @@ function GroupsAgentsCreate({ initProps, dataProfile, dataListAccount, sidemenu 
     //----------------radio button--------------
     const [value, setValue] = useState(1);
     const onChange = e => {
-        // console.log('radio checked', e.target.value);
         setValue(e.target.value);
     };
     //------------------------------------------

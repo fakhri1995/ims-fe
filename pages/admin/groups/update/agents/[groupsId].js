@@ -43,9 +43,6 @@ function GroupsAgentsDetail({ initProps, dataProfile, dataListAccount, dataDetai
             ["user_ids"]: value
         })
     }
-    function handleClick() {
-        console.log(editgroup)
-    }
     const handleEditGroup = () => {
         setLoadingbtn(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateAgentGroup`, {
@@ -81,7 +78,6 @@ function GroupsAgentsDetail({ initProps, dataProfile, dataListAccount, dataDetai
     //----------------radio button--------------
     const [value, setValue] = useState(1);
     const onChange = e => {
-        // console.log('radio checked', e.target.value);
         setValue(e.target.value);
     };
     //------------------------------------------
@@ -93,10 +89,6 @@ function GroupsAgentsDetail({ initProps, dataProfile, dataListAccount, dataDetai
             label: doc.name,
         })
     })
-
-    function handleChange(value) {
-        console.log(`selected ${value}`);
-    }
 
     //----------------------------------------------
     const { TextArea } = Input;
@@ -137,11 +129,6 @@ function GroupsAgentsDetail({ initProps, dataProfile, dataListAccount, dataDetai
                                     {
                                         // [137].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                             <Input placeholder="Group Name" name={`name`} onChange={onChangeEditGroup}></Input>
-                                            // :
-                                            // <div className="col-span-1 flex flex-col mb-5">
-                                            //     <h1 className="font-semibold text-sm">Group Name:</h1>
-                                            //     <h1 className="text-sm font-normal text-black">{editgroup.name}</h1>
-                                            // </div>
                                     }
                                 </Form.Item>
                             </div>
@@ -159,11 +146,6 @@ function GroupsAgentsDetail({ initProps, dataProfile, dataListAccount, dataDetai
                                     {
                                         // [137].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                             <TextArea placeholder="Group Description" rows={2} name={`description`} onChange={onChangeEditGroup} />
-                                            // :
-                                            // <div className="col-span-1 flex flex-col mb-5">
-                                            //     <h1 className="font-semibold text-sm">Group Description:</h1>
-                                            //     <h1 className="text-sm font-normal text-black">{editgroup.description}</h1>
-                                            // </div>
                                     }
                                 </Form.Item>
                             </div>
@@ -181,11 +163,6 @@ function GroupsAgentsDetail({ initProps, dataProfile, dataListAccount, dataDetai
                                     {
                                         // [137].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                             <Select showSearch placeholder="Add Group Head" name={`group_head`} showArrow options={dataDD} optionFilterProp="label" onChange={onChangeEditGroupHeadGroup} style={{ width: '100%', lineHeight: '2.4' }} />
-                                            // :
-                                            // <div className="col-span-1 flex flex-col mb-5">
-                                            //     <h1 className="font-semibold text-sm">Group Head:</h1>
-                                            //     <h1 className="text-sm font-normal text-black">{editgroup.group_head}</h1>
-                                            // </div>
                                     }
                                 </Form.Item>
                             </div>
@@ -212,12 +189,6 @@ function GroupsAgentsDetail({ initProps, dataProfile, dataListAccount, dataDetai
                                             </Row>
                                         </div>
                                     </>
-                                    // :
-                                    // <Row>
-                                    //     <Col flex="auto">
-                                    //         <Select disabled placeholder="Add an Agent" showArrow mode="multiple" optionFilterProp="label" onChange={handleChangeEditAgent} defaultValue={editgroup.user_ids} options={dataDD} style={{ width: '100%', padding: '0 5px', lineHeight: '2.4' }} />
-                                    //     </Col>
-                                    // </Row>
                             }
                         </div>
                     </Form>
@@ -232,11 +203,6 @@ function GroupsAgentsDetail({ initProps, dataProfile, dataListAccount, dataDetai
 export async function getServerSideProps({ req, res, params }) {
     var initProps = {};
     const groupsid = params.groupsId
-    const reqBodyAccountList = {
-        page: 1,
-        rows: 50,
-        order_by: "asc"
-    }
     if (req && req.headers) {
         const cookies = req.headers.cookie;
         if (!cookies) {
@@ -281,7 +247,6 @@ export async function getServerSideProps({ req, res, params }) {
             'Authorization': JSON.parse(initProps),
             'Content-Type': 'application/json'
         },
-        // body: JSON.stringify(reqBodyAccountList)
     })
     const resjsonLA = await resourcesLA.json()
     const dataListAccount = resjsonLA

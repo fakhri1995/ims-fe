@@ -13,7 +13,6 @@ import { ModalEdit, ModalHapus, ModalStatus } from '../../../components/modal/mo
 import { DrawerBank, DrawerBankClient } from '../../../components/drawer/drawerCustom'
 import DrawerCore from '../../../components/drawer/drawerCore'
 import { InputRequired, RadioRequired } from '../../../components/input'
-import { AtmMain, AtmBank } from '../../../components/atm'
 import CountUp from 'react-countup'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { TableCustomRelasi } from '../../../components/table/tableCustom'
@@ -806,7 +805,12 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                                             banks.map((doc, idx) => {
                                                 return (
                                                     <div className="flex mt-5">
-                                                        <AtmMain idx={idx} from={doc.color_first} to={doc.color_second}></AtmMain>
+                                                        {/* <AtmMain idx={idx} from={doc.color_first} to={doc.color_second}></AtmMain> */}
+                                                        <div className={`w-5/12 h-28 rounded-md bg-gradient-to-tl ${doc.color_first} ${doc.color_second} relative mr-3`}>
+                                                            <div className="absolute bottom-0 right-2">
+                                                                <img src="/image/visa.png" className="object-contain" />
+                                                            </div>
+                                                        </div>
                                                         <div className="w-7/12 flex flex-col justify-between">
                                                             <div className="flex justify-between w-full items-center">
                                                                 <H2>{doc.name ?? "-"}</H2>
@@ -847,7 +851,12 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                                             <Spin spinning={bankloadingedit}>
                                                 <div className="flex flex-col">
                                                     <div className="flex justify-center items-center mb-5">
-                                                        <AtmBank from={editbankdata.color_first} to={editbankdata.color_second}></AtmBank>
+                                                        {/* <AtmBank from={editbankdata.color_first} to={editbankdata.color_second}></AtmBank> */}
+                                                        <div className={`w-5/12 h-28 rounded-md bg-gradient-to-tl ${editbankdata.color_first} ${editbankdata.color_second} relative mr-3`}>
+                                                            <div className="absolute bottom-0 right-2">
+                                                                <img src="/image/visa.png" className="object-contain" />
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div className="flex justify-center mb-10">
                                                         <div className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state1 to-state2 border cursor-pointer ${editbankdata.color_first === "from-state1" && "border-primary100"} mx-2`} onClick={() => { seteditbankdata({ ...editbankdata, color_first: "from-state1", color_second: "to-state2" }) }}></div>
