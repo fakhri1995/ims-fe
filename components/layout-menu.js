@@ -50,7 +50,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                     </Menu.Item>
                     {
                         dataProfile.data.role === 1 ?
-                            <Menu.Item key="2" icon={<TicketIconSvg />} title="Tickets">
+                            <Menu.Item key="2" icon={<TicketIconSvg size={20} color={`#597e8d`} />} title="Tickets">
                                 {/* <Menu.Item key="21"> */}
                                 <Link href="/tickets">
                                     Ticket
@@ -61,7 +61,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             <>
                                 {
                                     dataProfile.data.features.includes(107) &&
-                                    <Menu.Item key="2" icon={<TicketIconSvg />} title="Tickets">
+                                    <Menu.Item key="2" icon={<TicketIconSvg size={20} color={`#597e8d`} />} title="Tickets">
                                         {/* <Menu.Item key="21"> */}
                                         <Link href="/tickets">
                                             Ticket
@@ -367,7 +367,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                     </Menu.Item>
                     {
                         dataProfile.data.role === 1 ?
-                            <Menu.Item key="2" icon={<TicketIconSvg />} title="Tickets">
+                            <Menu.Item key="2" icon={<TicketIconSvg size={20} color={`#597e8d`} />} title="Tickets">
                                 {/* <Menu.Item key="21"> */}
                                 <Link href="/tickets">
                                     Ticket
@@ -378,7 +378,7 @@ const LayoutMenu = ({ dataProfile, sidemenu, coll, collsmall, st, handleCollSmal
                             <>
                                 {
                                     dataProfile.data.features.includes(107) &&
-                                    <Menu.Item key="2" icon={<TicketIconSvg />} title="Tickets">
+                                    <Menu.Item key="2" icon={<TicketIconSvg size={20} color={`#597e8d`} />} title="Tickets">
                                         {/* <Menu.Item key="21"> */}
                                         <Link href="/tickets">
                                             Ticket

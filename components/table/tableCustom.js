@@ -395,6 +395,230 @@ const TableCustomTaskPick = ({ dataSource, setDataSource, columns, loading, page
     )
 }
 
+const TableCustomTicketTypes = ({ dataSource, setDataSource, columns, loading, pageSize, total, setpraloading, initProps, setpage, pagefromsearch, setdataraw, setsorting, sorting, searching }) => {
+    return (
+        <Table
+            className='tableTypeTask'
+            dataSource={dataSource}
+            columns={columns}
+            loading={loading}
+            scroll={{ x: 200 }}
+            pagination={{
+                current: pagefromsearch,
+                pageSize: pageSize,
+                total: total,
+                onChange: (page, pageSize) => {
+                    setpraloading(true)
+                    setpage(page)
+                    fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketTaskTypes?page=${page}&rows=${pageSize}&keyword=${searching}&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}`, {
+                        method: `GET`,
+                        headers: {
+                            'Authorization': JSON.parse(initProps),
+                        },
+                    })
+                        .then(res => res.json())
+                        .then(res2 => {
+                            setdataraw(res2.data)
+                            setDataSource(res2.data.data)
+                            setpraloading(false)
+                        })
+                }
+            }}
+            onChange={(pagination, filters, sorter, extra) => {
+                if (extra.action === "sort") {
+                    if (sorter.column) {
+                        setpraloading(true)
+                        setsorting({ sort_by: sorter.column.dataIndex, sort_type: sorter.order === "ascend" ? "asc" : "desc" })
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketTaskTypes?page=${pagination.current}&rows=${pagination.pageSize}&keyword=${searching}&sort_by=${sorter.column.dataIndex}&sort_type=${sorter.order === "ascend" ? "asc" : "desc"}`, {
+                            method: `GET`,
+                            headers: {
+                                'Authorization': JSON.parse(initProps),
+                            },
+                        })
+                            .then(res => res.json())
+                            .then(res2 => {
+                                setdataraw(res2.data)
+                                setDataSource(res2.data.data)
+                                setpraloading(false)
+                            })
+                    }
+                    else {
+                        setpraloading(true)
+                        setsorting({ sort_by: "", sort_type: "" })
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketTaskTypes?page=${pagination.current}&rows=${pagination.pageSize}&keyword=${searching}&sort_by=&sort_type=`, {
+                            method: `GET`,
+                            headers: {
+                                'Authorization': JSON.parse(initProps),
+                            },
+                        })
+                            .then(res => res.json())
+                            .then(res2 => {
+                                setdataraw(res2.data)
+                                setDataSource(res2.data.data)
+                                setpraloading(false)
+                            })
+                    }
+                }
+            }}
+        />
+    )
+}
+
+const TableCustomTicketHistories = ({ dataSource, setDataSource, columns, loading, pageSize, total, setpraloading, initProps, setpage, pagefromsearch, setdataraw, setsorting, sorting, searching, tickettype, fromdate, todate, location, fromres, tores }) => {
+    return (
+        <Table
+            className='tableTypeTask'
+            dataSource={dataSource}
+            columns={columns}
+            loading={loading}
+            scroll={{ x: 200 }}
+            pagination={{
+                current: pagefromsearch,
+                pageSize: pageSize,
+                total: total,
+                onChange: (page, pageSize) => {
+                    setpraloading(true)
+                    setpage(page)
+                    fetch(`https://boiling-thicket-46501.herokuapp.com/getClosedTickets?page=${page}&rows=${pageSize}&ticket_id=${searching}&from=${fromdate}&to=${todate}&location_id=${location}&from_res=${fromres}&to_res=${tores}&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}`, {
+                        method: `GET`,
+                        headers: {
+                            'Authorization': JSON.parse(initProps),
+                        },
+                    })
+                        .then(res => res.json())
+                        .then(res2 => {
+                            setdataraw(res2.data)
+                            setDataSource(res2.data.data)
+                            setpraloading(false)
+                        })
+                }
+            }}
+            onChange={(pagination, filters, sorter, extra) => {
+                if (extra.action === "sort") {
+                    if (sorter.column) {
+                        setpraloading(true)
+                        setsorting({ sort_by: sorter.column.dataIndex, sort_type: sorter.order === "ascend" ? "asc" : "desc" })
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getClosedTickets?page=${pagination.current}&rows=${pagination.pageSize}&ticket_id=${searching}&from=${fromdate}&to=${todate}&location_id=${location}&from_res=${fromres}&to_res=${tores}&sort_by=${sorter.column.dataIndex}&sort_type=${sorter.order === "ascend" ? "asc" : "desc"}`, {
+                            method: `GET`,
+                            headers: {
+                                'Authorization': JSON.parse(initProps),
+                            },
+                        })
+                            .then(res => res.json())
+                            .then(res2 => {
+                                setdataraw(res2.data)
+                                setDataSource(res2.data.data)
+                                setpraloading(false)
+                            })
+                    }
+                    else {
+                        setpraloading(true)
+                        setsorting({ sort_by: "", sort_type: "" })
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getClosedTickets?page=${pagination.current}&rows=${pagination.pageSize}&ticket_id=${searching}&from=${fromdate}&to=${todate}&location_id=${location}&from_res=${fromres}&to_res=${tores}&sort_by=&sort_type=`, {
+                            method: `GET`,
+                            headers: {
+                                'Authorization': JSON.parse(initProps),
+                            },
+                        })
+                            .then(res => res.json())
+                            .then(res2 => {
+                                setdataraw(res2.data)
+                                setDataSource(res2.data.data)
+                                setpraloading(false)
+                            })
+                    }
+                }
+            }}
+        />
+    )
+}
+
+const TableCustomTickets = ({ dataSource, setDataSource, columns, loading, pageSize, total, setpraloading, initProps, setpage, pagefromsearch, setdataraw, setsorting, sorting, searching, tickettype, fromdate, todate, location, status }) => {
+    const rt = useRouter()
+    const [rowstate, setrowstate] = useState(0)
+    return (
+        <Table
+            className='tableTypeTask'
+            dataSource={dataSource}
+            columns={columns}
+            loading={loading}
+            scroll={{ x: 200 }}
+            pagination={{
+                current: pagefromsearch,
+                pageSize: pageSize,
+                total: total,
+                onChange: (page, pageSize) => {
+                    setpraloading(true)
+                    setpage(page)
+                    fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${page}&rows=${pageSize}&ticket_id=${searching}&from=${fromdate}&to=${todate}&location_id=${location}&status_id=${status}&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}`, {
+                        method: `GET`,
+                        headers: {
+                            'Authorization': JSON.parse(initProps),
+                        },
+                    })
+                        .then(res => res.json())
+                        .then(res2 => {
+                            setdataraw(res2.data)
+                            setDataSource(res2.data.data)
+                            setpraloading(false)
+                        })
+                }
+            }}
+            onChange={(pagination, filters, sorter, extra) => {
+                if (extra.action === "sort") {
+                    if (sorter.column) {
+                        setpraloading(true)
+                        setsorting({ sort_by: sorter.column.dataIndex, sort_type: sorter.order === "ascend" ? "asc" : "desc" })
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${pagination.current}&rows=${pagination.pageSize}&ticket_id=${searching}&from=${fromdate}&to=${todate}&location_id=${location}&status_id=${status}&sort_by=${sorter.column.dataIndex}&sort_type=${sorter.order === "ascend" ? "asc" : "desc"}`, {
+                            method: `GET`,
+                            headers: {
+                                'Authorization': JSON.parse(initProps),
+                            },
+                        })
+                            .then(res => res.json())
+                            .then(res2 => {
+                                setdataraw(res2.data)
+                                setDataSource(res2.data.data)
+                                setpraloading(false)
+                            })
+                    }
+                    else {
+                        setpraloading(true)
+                        setsorting({ sort_by: "", sort_type: "" })
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${pagination.current}&rows=${pagination.pageSize}&ticket_id=${searching}&from=${fromdate}&to=${todate}&location_id=${location}&status_id=${status}&sort_by=&sort_type=`, {
+                            method: `GET`,
+                            headers: {
+                                'Authorization': JSON.parse(initProps),
+                            },
+                        })
+                            .then(res => res.json())
+                            .then(res2 => {
+                                setdataraw(res2.data)
+                                setDataSource(res2.data.data)
+                                setpraloading(false)
+                            })
+                    }
+                }
+            }}
+            onRow={(record, rowIndex) => {
+                return {
+                    onMouseOver: (event) => {
+                        setrowstate(record.id)
+                    },
+                    onClick: (event) => {
+                        rt.push(`/tickets2/detail/${record.id}`)
+                    }
+                }
+            }}
+            rowClassName={(record, idx) => {
+                return (
+                    `${record.id === rowstate && `cursor-pointer`} ${record.status === 1 && `bg-bgBackdropOverdue`}`
+                )
+            }}
+        />
+    )
+}
+
 export {
-    TableCustom, TableCustomRelasi, TableCustomTipeTask, TableCustomTask, TableCustomStaffTask, TableCustomTaskPick
+    TableCustom, TableCustomRelasi, TableCustomTipeTask, TableCustomTask, TableCustomStaffTask, TableCustomTaskPick, TableCustomTicketTypes, TableCustomTicketHistories, TableCustomTickets
 }

@@ -93,6 +93,12 @@ module.exports = {
         'state2': `#FFE000`,
         'state3': `#6DD5ED`,
         'state4': `#2193B0`,
+        'primary100': '#35763B',
+        'primary75': '#65976a',
+        'primary50': '#95b898',
+        'primary25': '#c4d8c7',
+        'primary10': '#d8e8da',
+        'backdrop': '#F4FAF5',
       })
     },
   },

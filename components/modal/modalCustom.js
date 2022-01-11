@@ -339,6 +339,32 @@ const ModalUbahOnHoldTask = ({ title, visible, onvisible, onOk, onCancel, loadin
     )
 }
 
+const ModalHapusTipeTiket = ({ title, visible, onvisible, onOk, onCancel, loading, datadelete, children }) => {
+    return (
+        <ModalCore
+            title={title}
+            visible={visible}
+            onCancel={onCancel}
+            footer={
+                <Spin spinning={loading}>
+                    <div className="flex justify-between items-center">
+                        <ButtonSys type="default" color="danger" onClick={() => { onvisible(false) }}>
+                            Batalkan
+                        </ButtonSys>
+                        <ButtonSys type="primary" color="danger" onClick={onOk}>
+                            <TrashIconSvg size={15} color={`#ffffff`} />
+                            Hapus
+                        </ButtonSys>
+                    </div>
+                </Spin>
+            }
+            loading={loading}
+        >
+            Apakah Anda yakin ingin melanjutkan penghapusan Pengaturan <strong>{datadelete.name}</strong>?
+        </ModalCore>
+    )
+}
+
 export {
-    ModalEdit, ModalHapus, ModalHapusLokasiCekChild, ModalHapusLokasiMoveChild, ModalHapusLokasiConfirm, ModalHapusInventoryExist, ModalStatus, ModalHapusTipeTask, ModalHapusTask, ModalHapusTaskDetail, ModalUbahOnHoldTask
+    ModalEdit, ModalHapus, ModalHapusLokasiCekChild, ModalHapusLokasiMoveChild, ModalHapusLokasiConfirm, ModalHapusInventoryExist, ModalStatus, ModalHapusTipeTask, ModalHapusTask, ModalHapusTaskDetail, ModalUbahOnHoldTask, ModalHapusTipeTiket
 }

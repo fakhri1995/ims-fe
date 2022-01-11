@@ -13,9 +13,9 @@ const DashboardIconSvg = () => {
         <Icon component={dashboardIconSvg}></Icon>
     )
 }
-const TicketIconSvg = () => {
+const TicketIconSvg = ({ size, color }) => {
     const ticketIconSvg = () => (
-        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-ticket" width={20} height={20} viewBox="0 0 24 24" strokeWidth="1.5" stroke="#597e8d" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-ticket" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <line x1={15} y1={5} x2={15} y2={7} />
             <line x1={15} y1={11} x2={15} y2={13} />
@@ -760,6 +760,62 @@ const LayoutGridAddSvg = ({ size, color }) => {
         <Icon component={layoutGridAddSvg}></Icon>
     )
 }
+const FilePlusIconSvg = ({ size, color }) => {
+    const filePlusIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-file-plus" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+            <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
+            <line x1={12} y1={11} x2={12} y2={17} />
+            <line x1={9} y1={14} x2={15} y2={14} />
+        </svg>
+    )
+    return (
+        <Icon component={filePlusIconSvg}></Icon>
+    )
+}
+const TableExportIconSvg = ({ size, color }) => {
+    const tableExportIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-table-export" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M11.5 20h-5.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v7.5m-16 -3.5h16m-10 -6v16m4 -1h7m-3 -3l3 3l-3 3" />
+        </svg>
+    )
+    return (
+        <Icon component={tableExportIconSvg}></Icon>
+    )
+}
+const HistoryIconSvg = ({ size, color }) => {
+    const historyIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-history" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <polyline points="12 8 12 12 14 14" />
+            <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" />
+        </svg>
+    )
+    return (
+        <Icon component={historyIconSvg}></Icon>
+    )
+}
+const AdjusmentsHorizontalIconSvg = ({ size, color }) => {
+    const adjusmentsHorizontalIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-adjustments-horizontal" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <circle cx={14} cy={6} r={2} />
+            <line x1={4} y1={6} x2={12} y2={6} />
+            <line x1={16} y1={6} x2={20} y2={6} />
+            <circle cx={8} cy={12} r={2} />
+            <line x1={4} y1={12} x2={6} y2={12} />
+            <line x1={10} y1={12} x2={20} y2={12} />
+            <circle cx={17} cy={18} r={2} />
+            <line x1={4} y1={18} x2={15} y2={18} />
+            <line x1={19} y1={18} x2={20} y2={18} />
+        </svg>
+    )
+    return (
+        <Icon component={adjusmentsHorizontalIconSvg}></Icon>
+    )
+}
 const AssetIconSvg = ({ size, color }) => {
     const assetIconSvg = () => (
         <svg width={size} height={size} viewBox="0 0 72 73" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -965,5 +1021,9 @@ export {
     PhotoIconSvg,
     FileTextIconSvg,
     SendIconSvg,
-    LayoutGridAddSvg
+    LayoutGridAddSvg,
+    FilePlusIconSvg,
+    TableExportIconSvg,
+    AdjusmentsHorizontalIconSvg,
+    HistoryIconSvg
 }
