@@ -21,6 +21,8 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
     //1.Init
     const rt = useRouter()
     const pathArr = rt.pathname.split("/").slice(1)
+    pathArr.splice(1, 2)
+    pathArr.push(`Tipe Task Tiket`)
 
     //2.Use State
     //TICKET TYPES
@@ -206,7 +208,7 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
                 <div className='flex flex-col shadow-md rounded-lg bg-white p-5 mb-6 mx-3'>
                     <div className="flex justify-between items-center mb-5">
                         <div className="flex items-center">
-                            <div className="mr-2 cursor-pointer flex items-center" onClick={() => { rt.push(`/tickets2`) }}>
+                            <div className="mr-2 cursor-pointer flex items-center" onClick={() => { rt.push(`/tickets`) }}>
                                 <BackIconSvg size={15} color={`#000000`} />
                             </div>
                             <div className=' mr-2 flex items-center'>

@@ -28,9 +28,7 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, st, pr
         return doc[0].toUpperCase() + doc.slice(1)
     })
     const childBreacrumbDD = childBreacrumbCC
-    // if (childBreacrumbDD[1] === "Update") {
-    //     childBreacrumbDD.splice(2, 1)
-    // }
+    console.log(childBreacrumbDD)
     const { Sider, Content, Header } = Layout
     const [coll, setColl] = useState(true)
     const [collsmall, setCollsmall] = useState(true)
@@ -82,6 +80,43 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, st, pr
                             {
                                 pathArr ?
                                     <Breadcrumb separator=">" style={{ float: `left`, padding: `24px 10px`, backgroundColor: `#F4FAF5` }} className={st.breadcrumbClients}>
+                                        {
+                                            childBreacrumbDD[0] === "Tickets" &&
+                                            <>
+                                                {
+                                                    childBreacrumbDD.map((doc, idx) => {
+                                                        pathBuilder = pathBuilder + `/${pathArr[idx]}`
+                                                        if (idx === 0) {
+                                                            if (childBreacrumbDD[1] === "Detail Tiket")
+                                                                return (
+                                                                    <Breadcrumb.Item key={idx} href={`/tickets`}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                                )
+                                                            else if (childBreacrumbDD[1] === "Riwayat Tiket")
+                                                                return (
+                                                                    <Breadcrumb.Item key={idx} href={`/tickets`}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                                )
+                                                            else if (childBreacrumbDD[1] === "Tipe Task Tiket")
+                                                                return (
+                                                                    <Breadcrumb.Item key={idx} href={`/tickets`}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                                )
+                                                            else if (childBreacrumbDD.length === 1) {
+                                                                return (
+                                                                    <Breadcrumb.Item key={idx}><strong>{doc}</strong></Breadcrumb.Item>
+                                                                )
+                                                            }
+                                                        }
+                                                        else if (idx === childBreacrumbDD.length - 1 && idx > 0)
+                                                            return (
+                                                                <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
+                                                            )
+                                                        else
+                                                            return (
+                                                                <Breadcrumb.Item key={idx} href={pathBuilder}><strong>{doc}</strong> </Breadcrumb.Item>
+                                                            )
+                                                    })
+                                                }
+                                            </>
+                                        }
                                         {
                                             childBreacrumbDD[0] === "Tasks" &&
                                             <>
@@ -171,38 +206,6 @@ function LayoutDashboard({ children, tok, dataProfile, pathArr, sidemenu, st, pr
                                                 }
                                             </>
                                         }
-                                        {/* {childBreacrumbDD.length !== 0 ?
-                                            childBreacrumbDD.map((doc, idx) => {
-                                                pathBuilder = pathBuilder + `/${pathArr[idx]}`
-                                                if (idx === 0 && doc === 'Tasks') {
-                                                    if(prevpath === 'admin')
-                                                    return (
-                                                        <Breadcrumb.Item key={idx} href={`/tasks/admin/${pathArr[idx]}`}> <strong>{doc}</strong> </Breadcrumb.Item>
-                                                    )
-                                                }
-                                                else if (idx === childBreacrumbDD.length - 1 && idx > 0) {
-                                                    if (doc === "Assets") {
-                                                        return (
-                                                            <Breadcrumb.Item key={idx}> <strong>{"Assets Types & Fields"}</strong> </Breadcrumb.Item>
-                                                        )
-                                                    }
-                                                    else {
-                                                        return (
-                                                            <Breadcrumb.Item key={idx}> <strong>{doc}</strong> </Breadcrumb.Item>
-                                                        )
-                                                    }
-                                                }
-                                                else {
-                                                    return (
-                                                        <Breadcrumb.Item key={idx} href={pathBuilder}>
-                                                            <strong>{doc}</strong>
-                                                        </Breadcrumb.Item>
-                                                    )
-                                                }
-                                            })
-                                            :
-                                            null
-                                        } */}
                                     </Breadcrumb>
                                     :
                                     null

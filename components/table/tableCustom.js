@@ -606,7 +606,7 @@ const TableCustomTickets = ({ dataSource, setDataSource, columns, loading, pageS
                         setrowstate(record.id)
                     },
                     onClick: (event) => {
-                        rt.push(`/tickets2/detail/${record.id}`)
+                        rt.push(`/tickets/detail/${record.id}`)
                     }
                 }
             }}

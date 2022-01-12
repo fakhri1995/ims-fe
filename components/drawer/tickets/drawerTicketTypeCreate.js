@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import DrawerCore from '../drawerCore'
-import { InputRequired, SelectRequired, TextAreaNotRequired } from '../../input'
-import { Spin, TreeSelect, Select, DatePicker, Switch, Radio, notification, Input } from 'antd'
-import { AssetIconSvg, CalendartimeIconSvg, CircleXIconSvg, TrashIconSvg, UserIconSvg } from '../../icon'
-import { Label, H1, H2 } from '../../typography'
+import { Spin, Select, notification, Input } from 'antd'
+import { Label } from '../../typography'
 import { SearchOutlined } from '@ant-design/icons'
-import ButtonSys from '../../button'
-import moment from 'moment'
 
 function modifData1(dataa) {
     for (var i = 0; i < dataa.length; i++) {
