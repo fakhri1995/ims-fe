@@ -53,9 +53,9 @@ function AboutUs({ }) {
                                 Optimize your cost by leasing and maintenances variety of electronic equipments
                             </p>
                             <div className={'absolute bottom-0'}>
-                                <Link href={{ pathname: '/hardware' }}><button className={'pt-4 gilroy-bold text-xl text-green-800'}>
+                                <Link href={{ pathname: '/hardware' }}><a className={'gilroy-bold text-xl text-green-800 hover:text-green-800 focus:text-green-800'}>
                                     Get yours&nbsp; <ArrowRightOutlined className={'relative'} style={{ top: '-2.5px' }} />
-                                </button></Link>
+                                </a></Link>
                             </div>
                         </div>
                     </div>
@@ -68,9 +68,9 @@ function AboutUs({ }) {
                                 We support your companies to simplify and automate the process through digitalization
                             </p>
                             <div className={'absolute bottom-0'}>
-                                <Link href={{pathname: '/software'}}><button className={'pt-4 gilroy-bold text-green-800 text-xl'}>
+                                <Link href={{pathname: '/software'}}><a className={'gilroy-bold text-green-800 text-xl hover:text-green-800 focus:text-green-800'}>
                                     Build now&nbsp; <ArrowRightOutlined className={'relative'} style={{top:'-2.5px'}}/>
-                                </button></Link>
+                                </a></Link>
                             </div>
                         </div>
                     </div>
@@ -83,9 +83,9 @@ function AboutUs({ }) {
                                 We help you reduce complexity in talent sourcing and management
                             </p>
                             <div className={'absolute bottom-0'}>
-                                <Link href={{pathname: '/talents'}}><button className={'pt-4 gilroy-bold text-green-800 text-xl'}>
+                                <Link href={{pathname: '/talents'}}><a className={'gilroy-bold text-green-800 text-xl hover:text-green-800 focus:text-green-800'}>
                                     Setup your team&nbsp; <ArrowRightOutlined className={'relative'} style={{top:'-2.5px'}}/>
-                                </button></Link>
+                                </a></Link>
                             </div>
                         </div>
                     </div>
