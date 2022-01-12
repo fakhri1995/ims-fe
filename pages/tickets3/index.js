@@ -111,7 +111,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 return {
                     children:
                         <>
-                            <strong>{`#${record.type.code} - `}{record.ticketable.id}</strong>
+                            <strong>{record.full_name}</strong>
                         </>
                 }
             }
@@ -124,7 +124,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     children:
                         <>
                             {/* {ticketrelations.requesters.filter(docfil => docfil.user_id === record.requester.user_id)[0].fullname} */}
-                            {record.requester.name}
+                            {record.task.creator.name}
                         </>
                 }
             }
@@ -138,7 +138,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     children:
                         <>
                             {/* {ticketrelations.companies.filter(docfil => docfil.company_id === record.location)[0].company_name} */}
-                            {record.ticketable.location.id === 0 ? "-" : record.ticketable.location.full_name}
+                            {record.task.location.id === 0 ? "-" : record.task.location.full_location}
                         </>
                 }
             }
@@ -161,61 +161,61 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 }
             }
         },
-        {
-            title: 'Assign To',
-            dataIndex: 'assign_to',
-            render: (text, record, index) => {
-                return {
-                    children:
-                        <>
-                            {/* {ticketrelations.requesters.filter(docfil => docfil.user_id === record.assign_to)[0].fullname} */}
-                            {record.assignable.id === 0 ?
-                                <div className="flex items-center">
-                                    <p className='mb-0 mr-2'>None</p>
-                                    <Tooltip placement="right" title="Ticket Belum di assign ke engineer">
-                                        <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
-                                    </Tooltip>
-                                </div>
-                                :
-                                record.assignable.name
-                            }
-                        </>
-                }
-            }
-        },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            align: `center`,
-            render: (text, record, index) => {
-                return {
-                    children:
-                        <>
-                            {/* {ticketrelations.status_ticket.filter(docfil => docfil.id === record.status)[0].name} */}
-                            {
-                                record.status.id === 1 &&
-                                <div className="rounded-md h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">{record.status.name}</div>
-                            }
-                            {
-                                record.status.id === 2 &&
-                                <div className="rounded-md h-auto px-1 text-center py-1 bg-green-100 border border-green-200 text-green-600">{record.status.name}</div>
-                            }
-                            {
-                                record.status.id === 3 &&
-                                <div className="rounded-md h-auto px-1 text-center py-1 bg-yellow-100 border border-yellow-200 text-yellow-600">{record.status.name}</div>
-                            }
-                            {
-                                record.status.id === 4 &&
-                                <div className="rounded-md h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">{record.status.name}</div>
-                            }
-                            {
-                                record.status.id === 5 &&
-                                <div className="rounded-md h-auto px-1 text-center py-1 bg-gray-100 border border-gray-200 text-gray-600">{record.status.name}</div>
-                            }
-                        </>
-                }
-            }
-        },
+        // {
+        //     title: 'Assign To',
+        //     dataIndex: 'assign_to',
+        //     render: (text, record, index) => {
+        //         return {
+        //             children:
+        //                 <>
+        //                     {/* {ticketrelations.requesters.filter(docfil => docfil.user_id === record.assign_to)[0].fullname} */}
+        //                     {record.assignable.id === 0 ?
+        //                         <div className="flex items-center">
+        //                             <p className='mb-0 mr-2'>None</p>
+        //                             <Tooltip placement="right" title="Ticket Belum di assign ke engineer">
+        //                                 <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
+        //                             </Tooltip>
+        //                         </div>
+        //                         :
+        //                         record.assignable.name
+        //                     }
+        //                 </>
+        //         }
+        //     }
+        // },
+        // {
+        //     title: 'Status',
+        //     dataIndex: 'status',
+        //     align: `center`,
+        //     render: (text, record, index) => {
+        //         return {
+        //             children:
+        //                 <>
+        //                     {/* {ticketrelations.status_ticket.filter(docfil => docfil.id === record.status)[0].name} */}
+        //                     {
+        //                         record.status.id === 1 &&
+        //                         <div className="rounded-md h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">{record.status.name}</div>
+        //                     }
+        //                     {
+        //                         record.status.id === 2 &&
+        //                         <div className="rounded-md h-auto px-1 text-center py-1 bg-green-100 border border-green-200 text-green-600">{record.status.name}</div>
+        //                     }
+        //                     {
+        //                         record.status.id === 3 &&
+        //                         <div className="rounded-md h-auto px-1 text-center py-1 bg-yellow-100 border border-yellow-200 text-yellow-600">{record.status.name}</div>
+        //                     }
+        //                     {
+        //                         record.status.id === 4 &&
+        //                         <div className="rounded-md h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">{record.status.name}</div>
+        //                     }
+        //                     {
+        //                         record.status.id === 5 &&
+        //                         <div className="rounded-md h-auto px-1 text-center py-1 bg-gray-100 border border-gray-200 text-gray-600">{record.status.name}</div>
+        //                     }
+        //                 </>
+        //         }
+        //     }
+        // },
     ]
 
     //3.onChange
@@ -327,10 +327,10 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
             .then(res => res.json())
             .then(res2 => {
                 setrawdata(res2.data)
-                setdisplayentiredata(res2.data.tickets)
-                setdisplaydata(res2.data.tickets.data)
-                setdisplaydata1(res2.data.tickets.data)
-                setdisplaydata2(res2.data.tickets.data)
+                setdisplayentiredata(res2.data)
+                setdisplaydata(res2.data.data)
+                setdisplaydata1(res2.data.data)
+                setdisplaydata2(res2.data.data)
             })
     }, [])
     useEffect(() => {

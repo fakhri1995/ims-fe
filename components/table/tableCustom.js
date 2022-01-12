@@ -550,7 +550,7 @@ const TableCustomTickets = ({ dataSource, setDataSource, columns, loading, pageS
                 onChange: (page, pageSize) => {
                     setpraloading(true)
                     setpage(page)
-                    fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${page}&rows=${pageSize}&ticket_id=${searching}&from=${fromdate}&to=${todate}&location_id=${location}&status_id=${status}&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}`, {
+                    fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${page}&rows=${pageSize}&ticket_id=${searching}&type_id=${tickettype}&from=${fromdate}&to=${todate}&location_id=${location}&status_id=${status}&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}`, {
                         method: `GET`,
                         headers: {
                             'Authorization': JSON.parse(initProps),
@@ -569,7 +569,7 @@ const TableCustomTickets = ({ dataSource, setDataSource, columns, loading, pageS
                     if (sorter.column) {
                         setpraloading(true)
                         setsorting({ sort_by: sorter.column.dataIndex, sort_type: sorter.order === "ascend" ? "asc" : "desc" })
-                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${pagination.current}&rows=${pagination.pageSize}&ticket_id=${searching}&from=${fromdate}&to=${todate}&location_id=${location}&status_id=${status}&sort_by=${sorter.column.dataIndex}&sort_type=${sorter.order === "ascend" ? "asc" : "desc"}`, {
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${pagination.current}&rows=${pagination.pageSize}&ticket_id=${searching}&type_id=${tickettype}&from=${fromdate}&to=${todate}&location_id=${location}&status_id=${status}&sort_by=${sorter.column.dataIndex}&sort_type=${sorter.order === "ascend" ? "asc" : "desc"}`, {
                             method: `GET`,
                             headers: {
                                 'Authorization': JSON.parse(initProps),
@@ -585,7 +585,7 @@ const TableCustomTickets = ({ dataSource, setDataSource, columns, loading, pageS
                     else {
                         setpraloading(true)
                         setsorting({ sort_by: "", sort_type: "" })
-                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${pagination.current}&rows=${pagination.pageSize}&ticket_id=${searching}&from=${fromdate}&to=${todate}&location_id=${location}&status_id=${status}&sort_by=&sort_type=`, {
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${pagination.current}&rows=${pagination.pageSize}&ticket_id=${searching}&type_id=${tickettype}&from=${fromdate}&to=${todate}&location_id=${location}&status_id=${status}&sort_by=&sort_type=`, {
                             method: `GET`,
                             headers: {
                                 'Authorization': JSON.parse(initProps),

@@ -191,7 +191,7 @@ const DrawerTicketUpdate = ({ title, visible, onvisible, onClose, buttonOkText, 
                                             <Select.Option value={doc.id}>
                                                 <div className=' flex items-center'>
                                                     <div className='mr-1 w-7 h7 rounded-full'>
-                                                        <img src={doc.profil_image === "-" ? `/image/stafftask.png` : doc.profil_image} className=' object-contain' alt="" />
+                                                        <img src={doc.profile_image === "-" ? `/image/stafftask.png` : doc.profile_image} className=' object-contain' alt="" />
                                                     </div>
                                                 </div>
                                                 <div>{doc.name}</div>

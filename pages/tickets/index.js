@@ -14,6 +14,7 @@ import { H1, H2, Text, Label } from '../../components/typography'
 import ButtonSys from '../../components/button'
 import { TableCustomTickets } from '../../components/table/tableCustom'
 import DrawerTicketCreate from '../../components/drawer/tickets/drawerTicketCreate'
+import DrawerTicketExports from '../../components/drawer/tickets/drawerTicketExports'
 
 
 const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
@@ -33,7 +34,9 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
     const [drawerticketscreate, setdrawerticketscreate] = useState(false)
     const [loadingticketscreate, setloadingticketscreate] = useState(false)
     const [refreshcreateticketscreate, setrefreshcreateticketscreate] = useState(-1)
-    //2.5.TABLE TIKET
+    //2.5.EKSPOR TIKET
+    const [drawerticketexports, setdrawerticketexports] = useState(false)
+    //2.6.TABLE TIKET
     const [datatickets, setdatatickets] = useState([])
     const [datarawtickets, setdatarawtickets] = useState({
         current_page: "",
@@ -226,7 +229,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
     //4.Handler
     const onFilterTickets = () => {
         setloadingtickets(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${pagetickets}&rows=${rowstickets}&ticket_id=${searcingfiltertickets}&from=${fromfiltertickets}&to=${tofiltertickets}&location_id=${locfiltertickets}&status_id=${statusfiltertickets}&sort_by=${sortingtickets.sort_by}&sort_type=${sortingtickets.sort_type}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${pagetickets}&rows=${rowstickets}&ticket_id=${searcingfiltertickets}&type_id=${tickettypefiltertickets}&from=${fromfiltertickets}&to=${tofiltertickets}&location_id=${locfiltertickets}&status_id=${statusfiltertickets}&sort_by=${sortingtickets.sort_by}&sort_type=${sortingtickets.sort_type}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -265,7 +268,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
     }, [])
     useEffect(() => {
         setloadingtickets(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${pagetickets}&rows=${rowstickets}&ticket_id=${searcingfiltertickets}&from=${fromfiltertickets}&to=${tofiltertickets}&location_id=${locfiltertickets}&status_id=${statusfiltertickets}&sort_by=${sortingtickets.sort_by}&sort_type=${sortingtickets.sort_type}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${pagetickets}&rows=${rowstickets}&ticket_id=${searcingfiltertickets}&type_id=${tickettypefiltertickets}&from=${fromfiltertickets}&to=${tofiltertickets}&location_id=${locfiltertickets}&status_id=${statusfiltertickets}&sort_by=${sortingtickets.sort_by}&sort_type=${sortingtickets.sort_type}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -463,7 +466,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                         {/* KELOLA TIKET */}
                         <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mt-2 mx-2 h-full">
                             <div className="flex flex-col justify-center h-full">
-                                <div className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2" onClick={() => { }}>
+                                <div className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2" onClick={() => { setdrawerticketexports(true) }}>
                                     <div className="flex p-1 bg-primary10 rounded mr-3">
                                         <TableExportIconSvg size={35} color={`#35763B`} />
                                     </div>
@@ -631,6 +634,14 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                 refreshtickets={refreshcreateticketscreate}
                 setrefreshtickets={setrefreshcreateticketscreate}
                 dataprofile={dataProfile}
+            />
+            <DrawerTicketExports
+                title={"Ekspor Tiket"}
+                visible={drawerticketexports}
+                onClose={() => { setdrawerticketexports(false) }}
+                buttonOkText={"Ekspor Tiket"}
+                initProps={initProps}
+                onvisible={setdrawerticketexports}
             />
         </Layout>
     )
