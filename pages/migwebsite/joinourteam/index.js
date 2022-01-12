@@ -103,21 +103,21 @@ function JoinOurTeam({ dataCareers }) {
                 </div>
 
                 <div className={'md:flex justify-between'}>
-                    <div className={'flex-col flex bg-white mr-0 md:mr-10 p-4 w-auto border-2 border-black-300 rounded-lg hover:shadow-lg pb-10'}>
+                    <div className={'flex-col flex bg-white mr-0 md:mr-10 p-4 w-auto border-2 border-black-300 rounded-lg hover:shadow-lg mb-4'}>
                         <div>
                             <p className={'text-xl md:text-2xl gilroy-bold pr-10'}>Agility</p>
                             <br></br>
                             <p className={'text-left pr-4 text-base md:text-xl'}>We are adapting to fast-changing environments.</p>
                         </div>
                     </div>
-                    <div className={'flex-col flex bg-white mr-0 md:mr-10 p-4 w-auto border-2 border-black-300 rounded-lg hover:shadow-lg pb-10'}>
+                    <div className={'flex-col flex bg-white mr-0 md:mr-10 p-4 w-auto border-2 border-black-300 rounded-lg hover:shadow-lg mb-4'}>
                         <div>
                             <p className={'text-xl md:text-2xl gilroy-bold pr-10'}>Perseverance</p>
                             <br></br>
                             <p className={'text-left pr-4 text-base md:text-xl'}>We aim high and constantly strive for excellence.</p>
                         </div>
                     </div>
-                    <div className={'flex-col flex bg-white mr-0 md:mr-10 p-4 w-auto border-2 border-black-300 rounded-lg hover:shadow-lg pb-10'}>
+                    <div className={'flex-col flex bg-white mr-0 md:mr-10 p-4 w-auto border-2 border-black-300 rounded-lg hover:shadow-lg mb-4'}>
                         <div>
                             <p className={'text-xl md:text-2xl gilroy-bold pr-10'}>Integrity</p>
                             <br></br>
