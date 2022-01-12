@@ -351,7 +351,7 @@ function LandingPage({ }) {
             </section>
 
             {/* desktop show */}
-            <section className={'section3landingpageadvantages md:bottom-16 md:relative py-8 hidden md:block px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
+            <section className={'section3landingpageadvantages md:bottom-24 md:relative py-8 hidden md:block px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'}>
                 <p className={'text-3xl md:text-4xl pb-2 md:pb-4 gilroy-medium font-semibold text-center'}>
                     Advantages
                 </p>
@@ -487,16 +487,16 @@ function LandingPage({ }) {
                     <Slider {...sliderSettings}>
                         <div>
                             <Card>
-                                <div className='h-auto md:h-32'>
+                                <div className='h-auto md:h-36'>
                                     <Row className='hidden md:flex pb-4' style={{ alignItems: 'center' }}>
-                                        <Col xs={{ span: 12 }} md={{ span: 6 }}><img className={'pr-2'} style={{ maxHeight: 50 }} src="/image/company/kb.png"></img></Col>
+                                        <Col xs={{ span: 12 }} md={{ span: 6 }}><img className={'pr-2'} style={{ maxHeight: 70 }} src="/image/company/kb.jpg"></img></Col>
                                         <Col span={12}>
                                             <p className={'text-xl gilroy-medium text-left'}>KB Bukopin</p>
                                             <p className={'gilroy-regular text-left'}>Banking</p>
                                         </Col>
                                     </Row>
                                     <div className='block md:hidden pb-2'>
-                                        <img className={'pr-2'} style={{ maxHeight: 50 }} src="/image/company/kb.png"></img>
+                                        <img className={'pr-2'} style={{ maxHeight: 70 }} src="/image/company/kb.jpg"></img>
                                         <p className={'text-xl gilroy-medium text-left'}>KB Bukopin</p>
                                         <p className={'gilroy-regular text-left'}>Banking</p>
                                     </div>
@@ -506,16 +506,16 @@ function LandingPage({ }) {
                         </div>
                         <div>
                             <Card>
-                                <div className='h-auto md:h-32'>
+                                <div className='h-auto md:h-36'>
                                     <Row className='hidden md:flex pb-4' style={{ alignItems: 'center' }}>
-                                        <Col xs={{ span: 12 }} md={{ span: 6 }}><img className={''} style={{ maxHeight: 50 }} src="/image/company/shipper.png"></img></Col>
+                                        <Col xs={{ span: 12 }} md={{ span: 6 }}><img className={''} style={{ maxHeight: 70 }} src="/image/company/shipper.png"></img></Col>
                                         <Col span={12}>
                                             <p className={'text-xl gilroy-medium text-left'}>Shipper</p>
                                             <p className={'gilroy-regular  text-left'}>Logistic Service</p>
                                         </Col>
                                     </Row>
                                     <div className='block md:hidden pb-2'>
-                                        <img className={'pr-2'} style={{ maxHeight: 50 }} src="/image/company/shipper.png"></img>
+                                        <img className={'pr-2'} style={{ maxHeight: 70 }} src="/image/company/shipper.png"></img>
                                         <p className={'text-xl gilroy-medium text-left'}>Shipper</p>
                                         <p className={'gilroy-regular text-left'}>Logistic Service</p>
                                     </div>
@@ -525,16 +525,16 @@ function LandingPage({ }) {
                         </div>
                         <div>
                             <Card>
-                                <div className='h-auto md:h-32'>
+                                <div className='h-auto md:h-36'>
                                     <Row className='hidden md:flex pb-4' style={{ alignItems: 'center' }}>
-                                        <Col xs={{ span: 12 }} md={{ span: 6 }}><img className={''} style={{ maxHeight: 30 }} src="/image/company/cgx.png"></img></Col>
+                                        <Col xs={{ span: 12 }} md={{ span: 6 }}><img className={''} style={{ maxHeight: 70 }} src="/image/company/cgx.png"></img></Col>
                                         <Col span={12}>
                                             <p className={'text-xl gilroy-medium text-left'}>CGX</p>
                                             <p className={'gilroy-regular text-left'}>Shipment and Warehouse</p>
                                         </Col>
                                     </Row>
                                     <div className='block md:hidden pb-2'>
-                                        <img className={'pr-2'} style={{ maxHeight: 30}} src="/image/company/cgx.png"></img>
+                                        <img className={'pr-2'} style={{ maxHeight: 70}} src="/image/company/cgx.png"></img>
                                         <p className={'text-xl gilroy-medium text-left'}>CGX</p>
                                         <p className={'gilroy-regular text-left'}>Shipment and Warehouse</p>
                                     </div>
@@ -544,16 +544,16 @@ function LandingPage({ }) {
                         </div>
                         <div>
                             <Card>
-                                <div className='h-auto md:h-32'>
+                                <div className='h-auto md:h-36'>
                                     <Row className='hidden md:flex pb-4' style={{ alignItems: 'center' }}>
-                                        <Col xs={{ span: 12 }} md={{ span: 6 }}><img className={''} style={{ maxHeight: 50 }} src="/image/company/kb.png"></img></Col>
+                                        <Col xs={{ span: 12 }} md={{ span: 6 }}><img className={''} style={{ maxHeight: 70 }} src="/image/company/kb.jpg"></img></Col>
                                         <Col span={12}>
                                             <p className={'text-xl gilroy-medium text-left'}>KB Bukopin Syariah</p>
                                             <p className={'gilroy-regular  text-left'}>Banking</p>
                                         </Col>
                                     </Row>
                                     <div className='md:hidden pb-2'>
-                                        <img className={'pr-2'} style={{ maxHeight: 50 }} src="/image/company/kb.png"></img>
+                                        <img className={'pr-2'} style={{ maxHeight: 70 }} src="/image/company/kb.jpg"></img>
                                         <p className={'text-xl gilroy-medium text-left'}>KB Bukopin Syariah</p>
                                         <p className={'gilroy-regular text-left'}>Banking</p>
                                     </div>
@@ -563,16 +563,16 @@ function LandingPage({ }) {
                         </div>
                         <div>
                             <Card>
-                                <div className='h-auto md:h-32 pb-4'>
-                                    <Row className='hidden md:flex' style={{ alignItems: 'center' }}>
-                                        <Col xs={{ span: 12 }} md={{ span: 6 }}><img className={''} style={{ maxHeight: 50 }} src="/image/company/forty.png"></img></Col>
+                                <div className='h-auto md:h-36 pb-4'>
+                                    <Row className='hidden md:flex pb-4' style={{ alignItems: 'center' }}>
+                                        <Col xs={{ span: 12 }} md={{ span: 6 }}><img className={''} style={{ maxHeight: 70 }} src="/image/company/forty.png"></img></Col>
                                         <Col span={12}>
                                             <p className={'text-xl gilroy-medium text-left'}>Forty</p>
-                                            <p className={'gilroy-regular  text-left pb-4'}>IT Service</p>
+                                            <p className={'gilroy-regular  text-left'}>IT Service</p>
                                         </Col>
                                     </Row>
                                     <div className='block pb-2 md:hidden'>
-                                        <img className={'pr-2'} style={{ maxHeight: 50 }} src="/image/company/forty.png"></img>
+                                        <img className={'pr-2'} style={{ maxHeight: 70 }} src="/image/company/forty.png"></img>
                                         <p className={'text-xl gilroy-medium text-left'}>Forty</p>
                                         <p className={'gilroy-regular text-left'}>IT Service</p>
                                     </div>
