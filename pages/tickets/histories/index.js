@@ -1,215 +1,213 @@
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import httpcookie from 'cookie'
 import Link from 'next/link'
 import { SearchOutlined } from '@ant-design/icons'
-import { Button, Table, Input } from 'antd'
-import Layout from '../../../components/layout-dashboard2'
+import { Input, DatePicker, Select, TreeSelect } from 'antd'
 import moment from 'moment'
+import Layout from '../../../components/layout-dashboardNew'
 import st from '../../../components/layout-dashboard.module.css'
+import { SearchIconSvg, UserIconSvg } from '../../../components/icon'
+import { H1, H2, Label, Text } from '../../../components/typography'
+import ButtonSys from '../../../components/button'
+import { BackIconSvg } from '../../../components/icon'
+import { TableCustomTicketHistories } from '../../../components/table/tableCustom'
 
-
-const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
-    // 1.Init
+const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
+    //1.Init
     const rt = useRouter()
     const pathArr = rt.pathname.split("/").slice(1)
+    pathArr.splice(1, 2)
+    pathArr.push(`Riwayat Tiket`)
 
-    //useState
-    //2.useState
-    const [displaydata, setdisplaydata] = useState([])
-    const [ticketrelations, setticketrelations] = useState({
+    //2.Use State
+    //TASK HISTORIES
+    const [datarawhistories, setdatarawhistories] = useState({
+        current_page: "",
+        data: [],
+        first_page_url: "",
+        from: null,
+        last_page: null,
+        last_page_url: "",
+        next_page_url: "",
+        path: "",
+        per_page: null,
+        prev_page_url: null,
+        to: null,
+        total: null
+    })
+    const [datahistories, setdatahistories] = useState([])
+    const [dataticketrelation, setdatatickrelation] = useState({
         status_ticket: [
             {
                 id: 0,
                 name: ""
             }
         ],
+        ticket_types: [],
         incident_type: [],
-        requesters: [
-            {
-                user_id: 0,
-                fullname: "",
-                company_id: 0
-            },
-        ],
-        requester_companies: [],
-        companies: [
-            {
-                company_id: 0,
-                company_name: "",
-                parent_id: null
-            },
-        ],
+        companies: {
+            data: [
+                {
+                    id: 0,
+                    title: '',
+                    key: '',
+                    value: 0
+                }
+            ]
+        },
+        ticket_task_types: [],
+        resolved_times: []
     })
-    const [displaydata1, setdisplaydata1] = useState([])
-    const [displaydata2, setdisplaydata2] = useState([])
-    const [displayentiredata, setdisplayentiredata] = useState({
-        current_page: 0,
-        data: [],
-        first_page_url: "",
-        from: 0,
-        last_page: 0,
-        last_page_url: "",
-        next_page_url: null,
-        path: "",
-        per_page: "",
-        prev_page_url: "",
-        to: 0,
-        total: 0
+    const [loadinghistories, setloadinghistories] = useState(false)
+    const [loadingfilterhistories, setloadingfilterhistories] = useState(false)
+    const [pagehistories, setpagehistories] = useState(1)
+    const [rowshistories, setrowshistories] = useState(10)
+    const [sortinghistories, setsortinghistories] = useState({
+        sort_by: "",
+        sort_type: ""
     })
-    const [namasearchact, setnamasearchact] = useState(false)
-    const [namavalue, setnamavalue] = useState("")
-    const [rowstate, setrowstate] = useState(0)
-    const [praloading, setpraloading] = useState(true)
-    const [inputnumberfalse, setinputnumberfalse] = useState(false)
+    //Filter
+    const [datafilterthistories, setdatafilterthistories] = useState([])
+    const [searcingfilterhistories, setsearcingfilterhistories] = useState("")
+    const [tickettypefilterhistories, settickettypefilterhistories] = useState("")
+    const [fromfilterhistories, setfromfilterhistories] = useState("")
+    const [tofilterhistories, settofilterhistories] = useState("")
+    const [locfilterhistories, setlocfilterhistories] = useState("")
+    const [fromresfilterhistories, setfromresfilterhistories] = useState("")
+    const [helperfromresfilterhistories, sethelperfromresfilterhistories] = useState("")
+    const [toresfilterhistories, settoresfilterhistories] = useState("")
+    //create - ticket histories
+    const [drawerhistoriescreate, setdrawerhistoriescreate] = useState(false)
+    const [loadinghistoriescreate, setloadinghistoriescreate] = useState(false)
+    const [refreshcreatehistoriescreate, setrefreshcreatehistoriescreate] = useState(-1)
+    //delete - ticket histories
+    const [datahistoriesdelete, setdatahistoriesdelete] = useState({
+        id: null,
+        name: ""
+    })
+    const [modalhistoriesdelete, setmodalhistoriesdelete] = useState(false)
+    const [loadinghistoriesdelete, setloadinghistoriesdelete] = useState(false)
+    const [refreshcreatehistoriesdelete, setrefreshcreatehistoriesdelete] = useState(-1)
 
-    //declaration
-    const datatableDummies = [
+    //2. Column Table
+    const columnsTicketHistories = [
         {
-            id: 100,
-            ticket_type: 1,
-            raised_by: 1,
-            location_problem: 1,
-            date_raised: "2021-10-19T08:00:46.384Z",
-            assign_to: 2,
-            status: 1
-        },
-        {
-            id: 200,
-            ticket_type: 1,
-            raised_by: 1,
-            location_problem: 1,
-            date_raised: "2021-02-19T16:00:46.384Z",
-            assign_to: 3,
-            status: 2
-        },
-        {
-            id: 300,
-            ticket_type: 1,
-            raised_by: 1,
-            location_problem: 1,
-            date_raised: "2019-11-19T23:00:50.384Z",
-            assign_to: 4,
-            status: 3
-        }
-    ]
-    const column = [
-        {
-            title: 'No Ticket',
-            dataIndex: 'ticket_type',
+            title: 'No',
+            dataIndex: 'num',
             render: (text, record, index) => {
                 return {
                     children:
                         <>
-                            {record.type.id === 1 && `#${record.type.code} - `}{record.ticketable.id}
+                            {datarawhistories.from + index}
                         </>
                 }
             }
         },
         {
-            title: 'Raised By',
-            dataIndex: 'raised_by',
+            title: 'No. Tiket',
+            dataIndex: 'id',
             render: (text, record, index) => {
                 return {
                     children:
                         <>
-                            {/* {ticketrelations.requesters.filter(docfil => docfil.user_id === record.raised_by)[0].fullname} */}
+                            {record.type.code} - {record.id}
+                        </>
+                }
+            },
+            sorter: (a, b) => a.id > b.id,
+        },
+        {
+            title: 'Tipe Tiket',
+            dataIndex: 'type',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.type.name}
+                        </>
+                }
+            },
+            sorter: (a, b) => a.type.name.localeCompare(b.type.name),
+        },
+        {
+            title: 'Diajukan Oleh',
+            dataIndex: 'requested_by',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
                             {record.requester.name}
                         </>
                 }
-            }
+            },
         },
         {
             title: 'Lokasi Problem',
-            dataIndex: 'location_problem',
+            dataIndex: 'location_id',
             render: (text, record, index) => {
                 return {
                     children:
                         <>
-                            {/* {ticketrelations.companies.filter(docfil => docfil.company_id === record.location_problem)[0].company_name} */}
                             {record.ticketable.location.name}
                         </>
                 }
-            }
+            },
         },
         {
-            title: 'Date Raised',
-            dataIndex: 'date_raised',
+            title: 'Tanggal Pengajuan',
+            dataIndex: 'raised_at',
             render: (text, record, index) => {
-                // var jumlahHari = Math.floor((new Date().getTime() - new Date(record.date_raised).getTime()) / (1000 * 3600 * 24))
-                // var jumlahJam = ""
-                // if (jumlahHari < 1) {
-                //     jumlahJam = Math.floor((new Date().getTime() - new Date(record.date_raised).getTime()) / (1000 * 3600))
-                // }
                 return {
                     children:
                         <>
-                            {/* {moment(record.date_raised).locale('id').format('L')} ({jumlahHari < 1 ? `${jumlahJam} jam` : `${jumlahHari} hari`} yang lalu) */}
                             {record.raised_at}
                         </>
                 }
-            }
+            },
+            sorter: (a, b) => a.raised_at.localeCompare(b.raised_at),
         },
         {
-            title: 'Assign To',
-            dataIndex: 'assign_to',
+            title: 'Di-assign Ke',
+            dataIndex: 'assignable',
             render: (text, record, index) => {
                 return {
                     children:
                         <>
-                            {/* {ticketrelations.requesters.filter(docfil => docfil.user_id === record.assign_to)[0].fullname} */}
-                            {record.assignable.name}
+                            {
+                                record.assignable.id === 0 ?
+                                    <div className=' flex items-center bg-onhold bg-opacity-10'>
+                                        <div className=' mr-2'><UserIconSvg /></div>
+                                        <div>Belum di-assign</div>
+                                    </div>
+                                    :
+                                    <>
+                                        {record.assignable.name}
+                                    </>
+                            }
                         </>
                 }
             }
         },
+        {
+            title: 'Durasi Selesai',
+            dataIndex: 'resolved_times',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.resolved_times}
+                        </>
+                }
+            },
+            sorter: (a, b) => a.resolved_times.localeCompare(b.resolved_times),
+        },
     ]
 
-    //handler
-    //search nama
-    const onChangeSearch = (e) => {
-        if (e.target.value === "") {
-            setdisplaydata(displaydata2)
-            setnamasearchact(false)
-        }
-        else {
-            if (/(^\d*$)/.test(e.target.value)) {
-                setinputnumberfalse(false)
-                setnamasearchact(true)
-                setnamavalue(e.target.value)
-            }
-            else {
-                setinputnumberfalse(true)
-            }
-        }
-    }
-    const onFinalClick = () => {
-        // var datatemp = displaydata1
-        // if (namasearchact) {
-        //     datatemp = datatemp.filter(flt => {
-        //         return flt.id === namavalue
-        //     })
-        // }
-        // setdisplaydata(datatemp)
-        if (inputnumberfalse === false) {
-            setpraloading(true)
-            fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getClosedTickets" : "getClientClosedTickets"}?ticket_id=${namasearchact ? namavalue : ""}`, {
-                method: `GET`,
-                headers: {
-                    'Authorization': JSON.parse(initProps),
-                },
-            })
-                .then(res => res.json())
-                .then(res2 => {
-                    res2.data.tickets.data.length === 0 ? setdisplaydata([]) : setdisplaydata(res2.data.tickets.data)
-                    setpraloading(false)
-                })
-        }
-    }
-
-    //5.useEffect
-    useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getClosedTickets" : "getClientClosedTickets"}`, {
+    //3. Handler
+    const onFilterTicketHistories = () => {
+        setloadinghistories(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getClosedTickets?page=${pagehistories}&rows=${rowshistories}&ticket_id=${searcingfilterhistories}&from=${fromfilterhistories}&to=${tofilterhistories}&location_id=${locfilterhistories}&from_res=${fromresfilterhistories}&to_res=${toresfilterhistories}&sort_by=${sortinghistories.sort_by}&sort_type=${sortinghistories.sort_type}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -217,97 +215,202 @@ const TicketHistories = ({ initProps, dataProfile, sidemenu }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                setdisplayentiredata(res2.data.tickets)
-                setdisplaydata(res2.data.tickets.data)
-                setdisplaydata1(res2.data.tickets.data)
-                setdisplaydata2(res2.data.tickets.data)
-                setpraloading(false)
+                setdatarawhistories(res2.data)
+                setdatahistories(res2.data.data)
+                setdatafilterthistories(res2.data.data)
+                setloadinghistories(false)
             })
-            .then(() => {
-                fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getTicketRelation" : "getClientTicketRelation"}`, {
-                    method: `GET`,
-                    headers: {
-                        'Authorization': JSON.parse(initProps),
-                    }
-                })
-                    .then(res => res.json())
-                    .then(res2 => {
-                        setticketrelations(res2.data)
-                        setpraloading(false)
-                    })
+    }
+    // const handleDeleteTicketHistories = () => {
+    //     setloadinghistories(true)
+    //     fetch(`https://boiling-thicket-46501.herokuapp.com/deleteTicketTaskType`, {
+    //         method: 'DELETE',
+    //         headers: {
+    //             'Authorization': JSON.parse(initProps),
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify({
+    //             id: datatickettypesdelete.id
+    //         })
+    //     })
+    //         .then((res) => res.json())
+    //         .then(res2 => {
+    //             setloadinghistories(false)
+    //             if (res2.success) {
+    //                 setrefreshcreatetickettypesdelete(prev => prev + 1)
+    //                 setmodaltickettypesdelete(false)
+    //                 notification['success']({
+    //                     message: res2.message,
+    //                     duration: 3
+    //                 })
+    //             }
+    //             else {
+    //                 notification['error']({
+    //                     message: res2.message,
+    //                     duration: 3
+    //                 })
+    //             }
+    //         })
+    // }
+
+    //4.Use Effect
+    useEffect(() => {
+        setloadinghistories(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getClosedTickets?page=${pagehistories}&rows=${rowshistories}&ticket_id=${searcingfilterhistories}&from=${fromfilterhistories}&to=${tofilterhistories}&location_id=${locfilterhistories}&from_res=${fromresfilterhistories}&to_res=${toresfilterhistories}&sort_by=${sortinghistories.sort_by}&sort_type=${sortinghistories.sort_type}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatarawhistories(res2.data)
+                setdatahistories(res2.data.data)
+                setdatafilterthistories(res2.data.data)
+                setloadinghistories(false)
+            })
+    }, [])
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getTicketRelation" : "getClientTicketRelation"}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatatickrelation(res2.data)
             })
     }, [])
 
     return (
         <Layout dataProfile={dataProfile} sidemenu={sidemenu} tok={initProps} st={st} pathArr={pathArr}>
-            <div className=" w-full grid grid-cols-1 md:grid-cols-4 border-t border-b bg-white mb-5 px-4 py-5">
-                <div className=" col-span-1 md:col-span-3 flex items-center mb-2 md:mb-0">
-                    <div className="font-bold text-2xl w-auto mr-14">History Tickets Closed</div>
-                </div>
-                <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
-                    <Link href={'/tickets/exporting?closed=1'}>
-                        <Button size="large" type="primary" style={{ marginRight: `1rem` }}>
-                            Export
-                        </Button>
-                    </Link>
-                </div>
-            </div>
-            <div className="h-auto w-full grid grid-cols-1 md:grid-cols-5 mb-5 bg-white rounded-md">
-                <div className="md:col-span-5 col-span-1 flex flex-col py-3">
-                    <div className="flex mb-8">
-                        <div className=" w-full mr-1 grid grid-cols-12">
-                            <div className="col-span-4 mr-1">
-                                <Input style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Ticket Number" onChange={onChangeSearch} allowClear></Input>
-                                {inputnumberfalse && <p className="mb-0 text-xs text-red-400">Ticket number harus angka</p>}
-                            </div>
-                            <div className=" col-span-1">
-                                <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
-                            </div>
+            <div className=' flex flex-col px-5'>
+                <div className='flex flex-col shadow-md rounded-lg bg-white p-5 mb-6 mx-3'>
+                    <div className="flex items-center mb-5">
+                        <div className="mr-2 cursor-pointer flex items-center" onClick={() => { rt.push(`/tickets`) }}>
+                            <BackIconSvg size={15} color={`#000000`} />
+                        </div>
+                        <div className=' mr-2 flex items-center'>
+                            <H1>Riwayat Tiket</H1>
                         </div>
                     </div>
-                    <div className="px-10">
-                        <Table
-                            pagination={{
-                                pageSize: 10, total: displayentiredata.total, onChange: (page, pageSize) => {
-                                    setpraloading(true)
-                                    fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getClosedTickets" : "getClientClosedTickets"}?page=${page}&rows=10`, {
-                                        method: `GET`,
-                                        headers: {
-                                            'Authorization': JSON.parse(initProps),
-                                        },
+                    <div className=' flex items-center mb-5'>
+                        <div className="mx-1 w-2/12">
+                            <Input value={searcingfilterhistories === "" ? null : searcingfilterhistories} style={{ width: `100%` }} placeholder="Kata Kunci.." allowClear onChange={(e) => {
+                                if (e.target.value === "") {
+                                    setsearcingfilterhistories("")
+                                }
+                                else {
+                                    setsearcingfilterhistories(e.target.value)
+                                }
+                            }} />
+                        </div>
+                        <div className='mx-1 w-2/12'>
+                            <Select
+                                value={tickettypefilterhistories === "" ? null : tickettypefilterhistories}
+                                placeholder="Semua Tipe Tiket"
+                                style={{ width: `100%` }}
+                                allowClear
+                                name={`task_type`}
+                                onChange={(value) => { typeof (value) === 'undefined' ? settickettypefilterhistories("") : settickettypefilterhistories(value) }}
+                            >
+                                {
+                                    dataticketrelation.ticket_types.map((doc, idx) => (
+                                        <Select.Option key={idx} value={doc.id}>{doc.name}</Select.Option>
+                                    ))
+                                }
+                            </Select>
+                        </div>
+                        <div className=' w-3/12 mx-1'>
+                            <DatePicker.RangePicker allowEmpty className="datepickerStatus" value={fromfilterhistories === "" ? [null, null] : [moment(fromfilterhistories), moment(tofilterhistories)]} onChange={(dates, datestrings) => {
+                                setfromfilterhistories(datestrings[0])
+                                settofilterhistories(datestrings[1])
+                            }}
+                            />
+                        </div>
+                        <div className=' mx-1 w-2/12'>
+                            <TreeSelect
+                                style={{ width: `100%` }}
+                                allowClear
+                                placeholder="Semua Lokasi"
+                                showSearch
+                                suffixIcon={<SearchOutlined />}
+                                showArrow
+                                name={`locations_id`}
+                                onChange={(value) => { typeof (value) === 'undefined' ? setlocfilterhistories("") : setlocfilterhistories(value) }}
+                                treeData={[dataticketrelation.companies]}
+                                treeDefaultExpandAll
+                                value={locfilterhistories === "" ? null : locfilterhistories}
+                            ></TreeSelect >
+                        </div>
+                        <div className='mx-1 w-2/12'>
+                            <Select
+                                value={helperfromresfilterhistories === "" ? null : helperfromresfilterhistories}
+                                placeholder="Durasi Selesai"
+                                style={{ width: `100%` }}
+                                allowClear
+                                name={`resolved_times`}
+                                onChange={(value, option) => { typeof (value) === 'undefined' ? (setfromresfilterhistories(''), settoresfilterhistories(''), sethelperfromresfilterhistories("")) : (setfromresfilterhistories(option.from), settoresfilterhistories(option.to), sethelperfromresfilterhistories(value)) }}
+                            >
+                                {
+                                    dataticketrelation.resolved_times.map((doc, idx) => {
+                                        if (doc.from === null)
+                                            return (
+                                                <Select.Option key={idx} value={1} from={doc.from} to={doc.to}>Kurang dari 3 jam</Select.Option>
+                                            )
+                                        else if (doc.from === 10800)
+                                            return (
+                                                <Select.Option key={idx} value={2} from={doc.from} to={doc.to}>3 - 12 jam</Select.Option>
+                                            )
+                                        else if (doc.from === 43200)
+                                            return (
+                                                <Select.Option key={idx} value={3} from={doc.from} to={doc.to}>12 - 30 jam</Select.Option>
+                                            )
+                                        else if (doc.from === 108000)
+                                            return (
+                                                <Select.Option key={idx} value={4} from={doc.from} to={doc.to}>30 jam - 3 hari</Select.Option>
+                                            )
+                                        else if (doc.from === 259200)
+                                            return (
+                                                <Select.Option key={idx} value={5} from={doc.from} to={doc.to}>Lebih dari 3 hari</Select.Option>
+                                            )
                                     })
-                                        .then(res => res.json())
-                                        .then(res2 => {
-                                            setdisplayentiredata(res2.data.tickets)
-                                            setdisplaydata(res2.data.tickets.data)
-                                            setdisplaydata1(res2.data.tickets.data)
-                                            setdisplaydata2(res2.data.tickets.data)
-                                            setpraloading(false)
-                                        })
                                 }
-                            }}
-                            scroll={{ x: 200 }} dataSource={displaydata} columns={column} loading={praloading}
-                            onRow={(record, rowIndex) => {
-                                return {
-                                    onMouseOver: (event) => {
-                                        setrowstate(record.id)
-                                    },
-                                    onClick: (event) => {
-                                        // {
-                                        //     [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                        rt.push(`/tickets/detail/${record.id}`)
-                                        //         :
-                                        //         null
-                                        // }
-                                    }
-                                }
-                            }}
-                            rowClassName={(record, idx) => {
-                                return (
-                                    record.id === rowstate ? `cursor-pointer` : ``
-                                )
-                            }}
-                        ></Table>
+                            </Select>
+                        </div>
+                        <div className='mx-1 w-1/12'>
+                            <ButtonSys type={`primary`} onClick={onFilterTicketHistories}>
+                                <div className='mr-1'>
+                                    <SearchIconSvg size={15} color={`#ffffff`} />
+                                </div>
+                                Cari
+                            </ButtonSys>
+                        </div>
+                    </div>
+                    <div>
+                        <TableCustomTicketHistories
+                            dataSource={datahistories}
+                            setDataSource={setdatahistories}
+                            columns={columnsTicketHistories}
+                            loading={loadinghistories}
+                            setpraloading={setloadinghistories}
+                            pageSize={rowshistories}
+                            total={datarawhistories.total}
+                            initProps={initProps}
+                            setpage={setpagehistories}
+                            pagefromsearch={pagehistories}
+                            setdataraw={setdatarawhistories}
+                            setsorting={setsortinghistories}
+                            sorting={sortinghistories}
+                            searching={searcingfilterhistories}
+                            tickettype={tickettypefilterhistories}
+                            fromdate={fromfilterhistories}
+                            todate={tofilterhistories}
+                            location={locfilterhistories}
+                            fromres={fromresfilterhistories}
+                            tores={toresfilterhistories}
+                        />
                     </div>
                 </div>
             </div>

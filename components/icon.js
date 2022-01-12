@@ -785,6 +785,82 @@ const TableExportIconSvg = ({ size, color }) => {
         <Icon component={tableExportIconSvg}></Icon>
     )
 }
+const FileExportIconSvg = ({ size, color }) => {
+    const fileExportIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-file-export" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+            <path d="M11.5 21h-4.5a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v5m-5 6h7m-3 -3l3 3l-3 3" />
+        </svg>
+    )
+    return (
+        <Icon component={fileExportIconSvg}></Icon>
+    )
+}
+const DotsIconSvg = ({ size, color }) => {
+    const dotsIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-dots" width={44} height={44} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <circle cx={5} cy={12} r={1} />
+            <circle cx={12} cy={12} r={1} />
+            <circle cx={19} cy={12} r={1} />
+        </svg>
+    )
+    return (
+        <Icon component={dotsIconSvg}></Icon>
+    )
+}
+const UserSearchIconSvg = ({ size, color }) => {
+    const userSearchIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-user-search" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <circle cx={12} cy={7} r={4} />
+            <path d="M6 21v-2a4 4 0 0 1 4 -4h1" />
+            <circle cx="16.5" cy="17.5" r="2.5" />
+            <path d="M18.5 19.5l2.5 2.5" />
+        </svg>
+    )
+    return (
+        <Icon component={userSearchIconSvg}></Icon>
+    )
+}
+const InfoCircleIconSvg = ({ size, color }) => {
+    const infoCircleIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-info-circle" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <circle cx={12} cy={12} r={9} />
+            <line x1={12} y1={8} x2="12.01" y2={8} />
+            <polyline points="11 12 12 12 12 16 13 16" />
+        </svg>
+    )
+    return (
+        <Icon component={infoCircleIconSvg}></Icon>
+    )
+}
+const PlusIconSvg = ({ size, color }) => {
+    const plusIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-plus" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <line x1={12} y1={5} x2={12} y2={19} />
+            <line x1={5} y1={12} x2={19} y2={12} />
+        </svg>
+    )
+    return (
+        <Icon component={plusIconSvg}></Icon>
+    )
+}
+const XIconSvg = ({ size, color }) => {
+    const xIconSvg = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-x" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <line x1={18} y1={6} x2={6} y2={18} />
+            <line x1={6} y1={6} x2={18} y2={18} />
+        </svg>
+    )
+    return (
+        <Icon component={xIconSvg}></Icon>
+    )
+}
 const HistoryIconSvg = ({ size, color }) => {
     const historyIconSvg = () => (
         <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-history" width={size} height={size} viewBox="0 0 24 24" strokeWidth="1.5" stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
@@ -1025,5 +1101,11 @@ export {
     FilePlusIconSvg,
     TableExportIconSvg,
     AdjusmentsHorizontalIconSvg,
-    HistoryIconSvg
+    HistoryIconSvg,
+    FileExportIconSvg,
+    DotsIconSvg,
+    UserSearchIconSvg,
+    InfoCircleIconSvg,
+    PlusIconSvg,
+    XIconSvg
 }

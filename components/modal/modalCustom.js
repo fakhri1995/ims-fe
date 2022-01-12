@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { AlertIconSvg, TrashIconSvg } from '../icon'
-import { TextAreaRequired, TreeSelectRequired } from '../input'
+import { AlertIconSvg, CheckIconSvg, TrashIconSvg, XIconSvg } from '../icon'
+import { TextAreaRequired, TextAreaNotRequired, TreeSelectRequired } from '../input'
 import { Text } from '../typography'
 import ModalCore from './modalCore'
 import { Spin } from 'antd'
@@ -365,6 +365,100 @@ const ModalHapusTipeTiket = ({ title, visible, onvisible, onOk, onCancel, loadin
     )
 }
 
+const ModalNoteTiket = ({ title, visible, onvisible, onOk, onCancel, loading, datanoteticket, setdatanoteticket, ticketid, children }) => {
+    return (
+        <ModalCore
+            title={title}
+            visible={visible}
+            onCancel={() => {
+                setdatanoteticket({ id: Number(ticketid), notes: "" })
+                onvisible(false)
+            }}
+            footer={
+                <Spin spinning={loading}>
+                    <div className="flex justify-between items-center">
+                        <ButtonSys type="default" onClick={() => { setdatanoteticket({ id: Number(ticketid), notes: "" }); onvisible(false) }}>
+                            Batalkan
+                        </ButtonSys>
+                        <ButtonSys type="primary" onClick={onOk}>
+                            <CheckIconSvg size={15} color={`#ffffff`} />
+                            Simpan Catatan
+                        </ButtonSys>
+                    </div>
+                </Spin>
+            }
+            loading={loading}
+        >
+            <TextAreaNotRequired value={datanoteticket.notes} label={`Catatan`} onChangeInput={(e) => { setdatanoteticket({ ...datanoteticket, notes: e.target.value }) }}></TextAreaNotRequired>
+        </ModalCore>
+    )
+}
+
+const ModalCancelTiket = ({ title, visible, onvisible, onOk, onCancel, loading, data, setdata, ticketid, children }) => {
+    return (
+        <ModalCore
+            title={title}
+            visible={visible}
+            onCancel={() => {
+                setdata({ id: Number(ticketid), notes: "", name: "" })
+                onvisible(false)
+            }}
+            footer={
+                <Spin spinning={loading}>
+                    <div className="flex justify-between items-center">
+                        <ButtonSys type="default" onClick={() => { setdata({ id: Number(ticketid), notes: "", name: "" }); onvisible(false) }}>
+                            Batalkan
+                        </ButtonSys>
+                        <ButtonSys type="primary" color={`danger`} onClick={onOk}>
+                            <XIconSvg size={15} color={`#ffffff`} />
+                            Ya, saya yakin dan batalkan tiket
+                        </ButtonSys>
+                    </div>
+                </Spin>
+            }
+            loading={loading}
+        >
+            <div className=' flex'>
+                <Text>
+                    Apakah Anda yakin ingin membatalkan tiket <strong>{data.name}</strong>? Anda tidak dapat mengembalikan tiket yang sudah terhapus
+                </Text>
+            </div>
+        </ModalCore>
+    )
+}
+
+const ModalReleaseItemTiket = ({ title, visible, onvisible, onOk, onCancel, loading, data, setdata, ticketid, children }) => {
+    return (
+        <ModalCore
+            title={title}
+            visible={visible}
+            onCancel={() => {
+                onvisible(false)
+            }}
+            footer={
+                <Spin spinning={loading}>
+                    <div className="flex justify-between items-center">
+                        <ButtonSys type="default" onClick={() => { setdata({ ...data, id: Number(ticketid), inventory_id: "" }); onvisible(false) }}>
+                            Batalkan
+                        </ButtonSys>
+                        <ButtonSys type="primary" color={`danger`} onClick={onOk}>
+                            <XIconSvg size={15} color={`#ffffff`} />
+                            Ya, pisahkan Aset dengan Tiket
+                        </ButtonSys>
+                    </div>
+                </Spin>
+            }
+            loading={loading}
+        >
+            <div className=' flex'>
+                <Text>
+                    Apakah Anda yakin ingin memisahkan Aset <strong>{data.name}</strong>  dengan Tiket?
+                </Text>
+            </div>
+        </ModalCore>
+    )
+}
+
 export {
-    ModalEdit, ModalHapus, ModalHapusLokasiCekChild, ModalHapusLokasiMoveChild, ModalHapusLokasiConfirm, ModalHapusInventoryExist, ModalStatus, ModalHapusTipeTask, ModalHapusTask, ModalHapusTaskDetail, ModalUbahOnHoldTask, ModalHapusTipeTiket
+    ModalEdit, ModalHapus, ModalHapusLokasiCekChild, ModalHapusLokasiMoveChild, ModalHapusLokasiConfirm, ModalHapusInventoryExist, ModalStatus, ModalHapusTipeTask, ModalHapusTask, ModalHapusTaskDetail, ModalUbahOnHoldTask, ModalHapusTipeTiket, ModalNoteTiket, ModalCancelTiket, ModalReleaseItemTiket
 }

@@ -1,53 +1,63 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
-import Link from 'next/link'
-import { SearchOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
-import { Button, Table, Input, Select, DatePicker, TreeSelect, Tooltip } from 'antd'
-import Layout from '../../components/layout-dashboard2'
+import { SearchOutlined } from '@ant-design/icons'
+import { Button, Spin, Empty, Select, TreeSelect, DatePicker, Input } from 'antd'
+import Layout from '../../components/layout-dashboardNew'
 import moment from 'moment'
 import st from '../../components/layout-dashboard.module.css'
+import { AdjusmentsHorizontalIconSvg, AlerttriangleIconSvg, HistoryIconSvg, MappinIconSvg, SearchIconSvg, TableExportIconSvg, TicketIconSvg, UserIconSvg } from '../../components/icon'
+import { Chart, ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement } from 'chart.js'
+Chart.register(ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement);
+import { Doughnut, Bar, Line } from 'react-chartjs-2';
+import { H1, H2, Text, Label } from '../../components/typography'
+import ButtonSys from '../../components/button'
+import { TableCustomTickets } from '../../components/table/tableCustom'
+import DrawerTicketCreate from '../../components/drawer/tickets/drawerTicketCreate'
 
-const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
-    // 1.Init
+
+const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
+    //1.Init
     const rt = useRouter()
     const pathArr = rt.pathname.split("/").slice(1)
-    var ticketid1 = "", locationid1 = "", from1 = "", to1 = "", statusid1 = ""
-    const { ticket_id, location_id, from, to, status_id } = rt.query
-    if (ticket_id) {
-        ticketid1 = ticket_id
-    }
-    if (location_id) {
-        locationid1 = location_id
-    }
-    if (status_id) {
-        statusid1 = status_id
-    }
-    if (from) {
-        from1 = from
-    }
-    if (to) {
-        to1 = to
-    }
 
     //2.useState
-    const [displaydata, setdisplaydata] = useState([])
-    const [ticketrelations, setticketrelations] = useState({
+    //2.1.PENYELESAIAN TIKET
+    const [dataresolvedtimesticket, setdataresolvedtimesticket] = useState([])
+    const [loadingdataresolvedtimes, setloadingdataresolvedtimes] = useState(true)
+    //2.2.STATUS TIKET
+    const [datastatusticket, setdatastatusticket] = useState([])
+    //2.3.JUMLAH TIKET
+    const [datacountsticket, setdatacountsticket] = useState("")
+    //2.4.TAMBAH TIKET
+    const [drawerticketscreate, setdrawerticketscreate] = useState(false)
+    const [loadingticketscreate, setloadingticketscreate] = useState(false)
+    const [refreshcreateticketscreate, setrefreshcreateticketscreate] = useState(-1)
+    //2.5.TABLE TIKET
+    const [datatickets, setdatatickets] = useState([])
+    const [datarawtickets, setdatarawtickets] = useState({
+        current_page: "",
+        data: [],
+        first_page_url: "",
+        from: null,
+        last_page: null,
+        last_page_url: "",
+        next_page_url: "",
+        path: "",
+        per_page: null,
+        prev_page_url: null,
+        to: null,
+        total: null
+    })
+    const [dataticketrelation, setdatatickrelation] = useState({
         status_ticket: [
             {
                 id: 0,
                 name: ""
             }
         ],
+        ticket_types: [],
         incident_type: [],
-        requesters: [
-            {
-                user_id: 0,
-                fullname: "",
-                company_id: 0
-            },
-        ],
-        requester_companies: [],
         companies: {
             data: [
                 {
@@ -57,127 +67,120 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     value: 0
                 }
             ]
-        }
+        },
+        ticket_task_types: [],
+        resolved_times: []
     })
-    const [displaydata1, setdisplaydata1] = useState([])
-    const [displaydata2, setdisplaydata2] = useState([])
-    const [rawdata, setrawdata] = useState({
-        total_tickets: 0,
-        open_tickets_count: 0,
-        on_progress_tickets_count: 0,
-        on_hold_tickets_count: 0,
-        canceled_tickets_count: 0,
-        closed_tickets_count: 0,
-        tickets: {}
+    const [loadingtickets, setloadingtickets] = useState(false)
+    const [pagetickets, setpagetickets] = useState(1)
+    const [rowstickets, setrowstickets] = useState(10)
+    const [sortingtickets, setsortingtickets] = useState({
+        sort_by: "",
+        sort_type: ""
     })
-    const [displayentiredata, setdisplayentiredata] = useState({
-        current_page: 0,
-        data: [],
-        first_page_url: "",
-        from: 0,
-        last_page: 0,
-        last_page_url: "",
-        next_page_url: null,
-        path: "",
-        per_page: "",
-        prev_page_url: "",
-        to: 0,
-        total: 0
-    })
-    const [namasearchact, setnamasearchact] = useState(ticketid1 === "" ? false : true)
-    const [namavalue, setnamavalue] = useState(null)
-    const [lokasifilteract, setlokasifilteract] = useState(locationid1 === "" ? false : true)
-    const [lokasivalue, setlokasivalue] = useState(null)
-    const [rangedatefilteract, setrangedatefilteract] = useState(false)
-    const [rangedatevalue, setrangedatevalue] = useState([])
-    const [fromact, setfromact] = useState(from1 === "" ? false : true)
-    const [fromvalue, setfromvalue] = useState(null)
-    const [toact, settoact] = useState(to1 === "" ? false : true)
-    const [tovalue, settovalue] = useState(null)
-    const [statusfilteract, setstatusfilteract] = useState(statusid1 === "" ? false : true)
-    const [statusvalue, setstatusvalue] = useState(null)
-    const [namaasset, setnamaasset] = useState(locationid1)
-    const [defasset, setdefasset] = useState(null)
-    const [rowstate, setrowstate] = useState(0)
-    const [praloading, setpraloading] = useState(true)
-    const [inputnumberfalse, setinputnumberfalse] = useState(false)
+    //Filter
+    const [datafilterttickets, setdatafilterttickets] = useState([])
+    const [searcingfiltertickets, setsearcingfiltertickets] = useState("")
+    const [tickettypefiltertickets, settickettypefiltertickets] = useState("")
+    const [fromfiltertickets, setfromfiltertickets] = useState("")
+    const [tofiltertickets, settofiltertickets] = useState("")
+    const [locfiltertickets, setlocfiltertickets] = useState("")
+    const [statusfiltertickets, setstatusfiltertickets] = useState("")
 
-    //declaration
-    const column = [
+    //3.Columns
+    const columnsTickets = [
         {
-            title: 'No Ticket',
+            title: 'No',
             dataIndex: 'num',
             render: (text, record, index) => {
                 return {
                     children:
                         <>
-                            <strong>{`#${record.type.code} - `}{record.ticketable.id}</strong>
+                            {datarawtickets.from + index}
                         </>
                 }
             }
         },
         {
-            title: 'Raised By',
-            dataIndex: 'raised_by',
+            title: 'No. Tiket',
+            dataIndex: 'id',
             render: (text, record, index) => {
                 return {
                     children:
                         <>
-                            {/* {ticketrelations.requesters.filter(docfil => docfil.user_id === record.requester.user_id)[0].fullname} */}
-                            {record.requester.name}
+                            {record.full_name}
                         </>
                 }
-            }
+            },
+            sorter: (a, b) => a.id > b.id,
+        },
+        {
+            title: 'Tipe Tiket',
+            dataIndex: 'type',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.type_name}
+                        </>
+                }
+            },
+            sorter: (a, b) => a.type_name.localeCompare(b.type_name),
+        },
+        {
+            title: 'Diajukan Oleh',
+            dataIndex: 'requested_by',
+            render: (text, record, index) => {
+                return {
+                    children:
+                        <>
+                            {record.task.creator.name}
+                        </>
+                }
+            },
         },
         {
             title: 'Lokasi Problem',
-            dataIndex: 'location_problem',
-            align: `center`,
+            dataIndex: 'location_id',
             render: (text, record, index) => {
                 return {
                     children:
                         <>
-                            {/* {ticketrelations.companies.filter(docfil => docfil.company_id === record.location)[0].company_name} */}
-                            {record.ticketable.location.id === 0 ? "-" : record.ticketable.location.full_name}
+                            {record.task.location.full_location}
                         </>
                 }
-            }
+            },
         },
         {
-            title: 'Date Raised',
-            dataIndex: 'date_raised',
+            title: 'Tanggal Pengajuan',
+            dataIndex: 'raised_at',
             render: (text, record, index) => {
-                // var jumlahHari = Math.floor((new Date().getTime() - new Date(record.raised_at).getTime()) / (1000 * 3600 * 24))
-                // var jumlahJam = ""
-                // if (jumlahHari < 1) {
-                //     jumlahJam = Math.floor((new Date().getTime() - new Date(record.raised_at).getTime()) / (1000 * 3600))
-                // }
                 return {
                     children:
                         <>
-                            {/* {moment(record.raised_at).locale('id').format('L')} ({jumlahHari < 1 ? `${jumlahJam} jam` : `${jumlahHari} hari`} yang lalu) */}
                             {record.raised_at}
                         </>
                 }
-            }
+            },
+            sorter: (a, b) => a.raised_at.localeCompare(b.raised_at),
         },
         {
-            title: 'Assign To',
-            dataIndex: 'assign_to',
+            title: 'Di-assign Ke',
+            dataIndex: 'assignable',
             render: (text, record, index) => {
                 return {
                     children:
                         <>
-                            {/* {ticketrelations.requesters.filter(docfil => docfil.user_id === record.assign_to)[0].fullname} */}
-                            {record.assignable.id === 0 ?
-                                <div className="flex items-center">
-                                    <p className='mb-0 mr-2'>None</p>
-                                    <Tooltip placement="right" title="Ticket Belum di assign ke engineer">
-                                        <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
-                                    </Tooltip>
-                                </div>
-                                :
-                                record.assignable.name
+                            {
+                                record.task.users.length === 0 ?
+                                    <div className=' flex items-center bg-onhold bg-opacity-10'>
+                                        <div className=' mr-2'><UserIconSvg /></div>
+                                        <div>Belum di-assign</div>
+                                    </div>
+                                    :
+                                    <div>
+                                        {record.task.users.map(user => user.name).join(", ")}
+                                    </div>
                             }
                         </>
                 }
@@ -186,139 +189,44 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
         {
             title: 'Status',
             dataIndex: 'status',
-            align: `center`,
             render: (text, record, index) => {
                 return {
                     children:
                         <>
-                            {/* {ticketrelations.status_ticket.filter(docfil => docfil.id === record.status)[0].name} */}
                             {
-                                record.status.id === 1 &&
-                                <div className="rounded-md h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">{record.status.name}</div>
+                                record.status === 1 &&
+                                <div className="rounded-md h-auto px-3 text-center py-1 bg-overdue bg-opacity-10 text-overdue">Overdue</div>
                             }
                             {
-                                record.status.id === 2 &&
-                                <div className="rounded-md h-auto px-1 text-center py-1 bg-green-100 border border-green-200 text-green-600">{record.status.name}</div>
+                                record.status === 2 &&
+                                <div className="rounded-md h-auto px-3 text-center py-1 bg-open bg-opacity-10 text-open">Open</div>
                             }
                             {
-                                record.status.id === 3 &&
-                                <div className="rounded-md h-auto px-1 text-center py-1 bg-yellow-100 border border-yellow-200 text-yellow-600">{record.status.name}</div>
+                                record.status === 3 &&
+                                <div className="rounded-md h-auto px-3 text-center py-1 bg-onprogress bg-opacity-10 text-onprogress">On-Progress</div>
                             }
                             {
-                                record.status.id === 4 &&
-                                <div className="rounded-md h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">{record.status.name}</div>
+                                record.status === 4 &&
+                                <div className="rounded-md h-auto px-3 text-center py-1 bg-onhold bg-opacity-10 text-onhold">On-Hold</div>
                             }
                             {
-                                record.status.id === 5 &&
-                                <div className="rounded-md h-auto px-1 text-center py-1 bg-gray-100 border border-gray-200 text-gray-600">{record.status.name}</div>
+                                record.status === 5 &&
+                                <div className="rounded-md h-auto px-3 text-center py-1 bg-completed bg-opacity-10 text-completed">Completed</div>
                             }
-                        </>
+                            {
+                                record.status === 6 &&
+                                <div className="rounded-md h-auto px-3 text-center py-1 bg-closed bg-opacity-10 text-closed">Closed</div>
+                            }                        </>
                 }
-            }
+            },
+            sorter: (a, b) => a.status_name.localeCompare(b.status_name),
         },
     ]
 
-    //3.onChange
-    //search nama
-    const onChangeSearch = (e) => {
-        if (e.target.value === "") {
-            // setdisplaydata(displaydata2)
-            window.location.href = `/tickets?ticket_id=&location_id=${lokasifilteract ? locationid1 : ""}&status_id=${statusfilteract ? statusid1 : ""}&from=${fromact ? from1 : ""}&to=${toact ? to1 : ""}`
-            setnamasearchact(false)
-        }
-        else {
-            if (/(^\d*$)/.test(e.target.value)) {
-                setinputnumberfalse(false)
-                setnamasearchact(true)
-                setnamavalue(e.target.value)
-            }
-            else {
-                setinputnumberfalse(true)
-            }
-        }
-    }
-    //search lokasi
-    const onChangeLokasi = (idlokasi) => {
-        if (typeof (idlokasi) === 'undefined') {
-            // setdisplaydata(displaydata2)
-            window.location.href = `/tickets?ticket_id=${namasearchact ? ticketid1 : ""}&location_id=&status_id=${statusfilteract ? statusid1 : ""}&from=${fromact ? from1 : ""}&to=${toact ? to1 : ""}`
-            setlokasifilteract(false)
-        }
-        else {
-            setlokasifilteract(true)
-            setlokasivalue(idlokasi)
-        }
-    }
-    //search range date
-    const onChangeRangeDate = (datestrings) => {
-        if (typeof (datestrings) === 'undefined') {
-            // setdisplaydata(displaydata2)
-            window.location.href = `/tickets?ticket_id=${namasearchact ? ticketid1 : ""}&location_id=${lokasifilteract ? locationid1 : ""}&status_id=${statusfilteract ? statusid1 : ""}&from=&to=`
-            setrangedatefilteract(false)
-            setfromact(false)
-            settoact(false)
-        }
-        else {
-            setrangedatefilteract(true)
-            setfromact(true)
-            settoact(true)
-            setrangedatevalue(datestrings)
-            setfromvalue(moment(datestrings[0]).locale('id').format('YYYY-MM-DD'))
-            settovalue(moment(datestrings[1]).locale('id').format('YYYY-MM-DD'))
-        }
-    }
-    //search status
-    const onChangeStatus = (idstatus) => {
-        if (typeof (idstatus) === 'undefined') {
-            // setdisplaydata(displaydata2)
-            window.location.href = `/tickets?ticket_id=${namasearchact ? ticketid1 : ""}&location_id=${lokasifilteract ? locationid1 : ""}&status_id=&from=${fromact ? from1 : ""}&to=${toact ? to1 : ""}`
-            setstatusfilteract(false)
-        }
-        else {
-            setstatusfilteract(true)
-            setstatusvalue(idstatus)
-        }
-    }
-    const onFinalClick = () => {
-        // var datatemp = displaydata1
-        // if (rangedatefilteract) {
-        //     datatemp = datatemp.filter(flt => {
-        //         return flt.asset_name.toLowerCase() === rangedatevalue.toLowerCase()
-        //         // return (flt.asset_name.toLowerCase().includes(assettypevalue.toLowerCase())) || (flt.asset_name.replaceAll(/\s+\/\s+/g, "/").split("/")[0] === namaasset)
-        //     })
-        // }
-        // if (lokasifilteract) {
-        //     datatemp = datatemp.filter(flt => flt.model_id === lokasivalue)
-        // }
-        // if (statusfilteract) {
-        //     datatemp = datatemp.filter(flt => flt.status_condition === statusvalue)
-        // }
-        // if (namasearchact) {
-        //     datatemp = datatemp.filter(flt => {
-        //         return flt.inventory_name.toLowerCase().includes(namavalue.toLowerCase())
-        //     })
-        // }
-        // setdisplaydata(datatemp)
-        if (inputnumberfalse === false) {
-            window.location.href = `/tickets?ticket_id=${namasearchact ? (namavalue === null ? ticketid1 : namavalue) : ""}&location_id=${lokasifilteract ? (lokasivalue === null ? locationid1 : lokasivalue) : ""}&status=${statusfilteract ? (statusvalue === null ? statusid1 : statusvalue) : ""}&from=${fromact ? (fromvalue === null ? from1 : fromvalue) : ""}&to=${toact ? (tovalue === null ? to1 : tovalue) : ""}`
-        }
-        // setpraloading(true)
-        // fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?ticket_id=${namasearchact ? namavalue : ""}&location_id=${lokasifilteract ? lokasivalue : ""}&status_id=${statusfilteract ? statusvalue : ""}&from=${rangedatefilteract ? moment(rangedatevalue[0]).locale('id').format('YYYY-MM-DD') : ""}&to=${rangedatefilteract ? moment(rangedatevalue[1]).locale('id').format('YYYY-MM-DD') : ""}`, {
-        //     method: `GET`,
-        //     headers: {
-        //         'Authorization': JSON.parse(initProps),
-        //     },
-        // })
-        //     .then(res => res.json())
-        //     .then(res2 => {
-        //         res2.data.tickets.data.length === 0 ? setdisplaydata([]) : setdisplaydata(res2.data.tickets.data)
-        //         setpraloading(false)
-        //     })
-    }
-
-    //5.useEffect
-    useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getTickets" : "getClientTickets"}?ticket_id=${ticketid1}&location_id=${locationid1}&status_id=${statusid1}&from=${from1}&to=${to1}`, {
+    //4.Handler
+    const onFilterTickets = () => {
+        setloadingtickets(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${pagetickets}&rows=${rowstickets}&ticket_id=${searcingfiltertickets}&from=${fromfiltertickets}&to=${tofiltertickets}&location_id=${locfiltertickets}&status_id=${statusfiltertickets}&sort_by=${sortingtickets.sort_by}&sort_type=${sortingtickets.sort_type}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -326,13 +234,51 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                setrawdata(res2.data)
-                setdisplayentiredata(res2.data.tickets)
-                setdisplaydata(res2.data.tickets.data)
-                setdisplaydata1(res2.data.tickets.data)
-                setdisplaydata2(res2.data.tickets.data)
+                setdatarawtickets(res2.data)
+                setdatatickets(res2.data.data)
+                setdatafilterttickets(res2.data.data)
+                setloadingtickets(false)
+            })
+    }
+
+    //5.useEffect
+    useEffect(() => {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketStatusCounts`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                var tempresolvedtimes = []
+                for (var times in res2.data.counts) {
+                    if (times !== "total_counts") {
+                        tempresolvedtimes.push({ counts: res2.data.counts[times].counts, percentage: res2.data.counts[times].percentage, name: times })
+                    }
+                }
+                setdataresolvedtimesticket(tempresolvedtimes)
+                setdatastatusticket(res2.data.statuses)
+                setdatacountsticket(res2.data.counts.total_counts)
+                setloadingdataresolvedtimes(false)
             })
     }, [])
+    useEffect(() => {
+        setloadingtickets(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${pagetickets}&rows=${rowstickets}&ticket_id=${searcingfiltertickets}&from=${fromfiltertickets}&to=${tofiltertickets}&location_id=${locfiltertickets}&status_id=${statusfiltertickets}&sort_by=${sortingtickets.sort_by}&sort_type=${sortingtickets.sort_type}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            },
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setdatarawtickets(res2.data)
+                setdatatickets(res2.data.data)
+                setdatafilterttickets(res2.data.data)
+                setloadingtickets(false)
+            })
+    }, [refreshcreateticketscreate])
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getTicketRelation" : "getClientTicketRelation"}`, {
             method: `GET`,
@@ -342,219 +288,350 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                var status_ticket_map = []
-                if (dataProfile.data.role !== 1) {
-                    for (var attr in res2.data.status_ticket) {
-                        status_ticket_map.push(res2.data.status_ticket[attr])
-                    }
-                    setticketrelations({
-                        ...res2.data,
-                        status_ticket: status_ticket_map
-                    })
-                }
-                else {
-                    setticketrelations(res2.data)
-                }
-                setdefasset(namaasset)
-                setpraloading(false)
+                setdatatickrelation(res2.data)
             })
     }, [])
 
     return (
         <Layout dataProfile={dataProfile} sidemenu={sidemenu} tok={initProps} st={st} pathArr={pathArr}>
-            <div className=" w-full grid grid-cols-1 md:grid-cols-4 border-gray-400 md:border-t md:border-b bg-white mb-5 px-4 py-5">
-                <div className=" col-span-1 md:col-span-3 flex items-center mb-2 md:mb-0">
-                    <div className="font-bold text-2xl w-auto mr-14">Tickets</div>
-                    <div className="flex flex-col mr-10">
-                        <div className="flex items-center mb-2">
-                            <div className="w-2 h-2 rounded-full bg-blue-500 mr-1"></div>
-                            <p className="mb-0">Open</p>
+            <div className="flex flex-col" id="mainWrapper">
+                <div className=' grid grid-cols-10 px-5'>
+                    {/* PENYELESAIAN TIKET */}
+                    <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mx-3">
+                        <div className="flex items-center justify-between mb-4">
+                            <H1>Penyelesaian Tiket</H1>
                         </div>
-                        <div className=" text-lg text-center">{rawdata.open_tickets_count}</div>
-                    </div>
-                    {
-                        dataProfile.data.role === 1 &&
-                        <div className="flex flex-col mr-10">
-                            <div className="flex items-center mb-2">
-                                <div className="w-2 h-2 rounded-full bg-green-500 mr-1"></div>
-                                <p className="mb-0">On Progress</p>
-                            </div>
-                            <div className=" text-lg text-center">{rawdata.on_progress_tickets_count}</div>
-                        </div>
-                    }
-                    {
-                        dataProfile.data.role === 1 &&
-                        <div className="flex flex-col mr-10">
-                            <div className="flex items-center mb-2">
-                                <div className="w-2 h-2 rounded-full bg-yellow-500 mr-1"></div>
-                                <p className="mb-0">On Hold</p>
-                            </div>
-                            <div className=" text-lg text-center">{rawdata.on_hold_tickets_count}</div>
-                        </div>
-                    }
+                        {
+                            loadingdataresolvedtimes ?
+                                <>
+                                    <Spin />
+                                </>
+                                :
+                                <div className=' flex flex-col'>
+                                    {
+                                        dataresolvedtimesticket.every(docevery => docevery.counts === 0) ?
+                                            <div className=' w-full flex items-center justify-center'>
+                                                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                            </div>
+                                            :
+                                            <div className=" w-full flex justify-center">
+                                                <Doughnut
+                                                    data={{
+                                                        labels: dataresolvedtimesticket.map((doc) => doc.name),
+                                                        datasets: [
+                                                            {
+                                                                data: dataresolvedtimesticket.map((doc) => doc.counts),
+                                                                backgroundColor: [
+                                                                    '#2F80ED',
+                                                                    '#BF4A40',
+                                                                    '#ED962F',
+                                                                    '#E5C471',
+                                                                    '#6AAA70',
+                                                                ],
+                                                                borderColor: [
+                                                                    '#2F80ED',
+                                                                    '#BF4A40',
+                                                                    '#ED962F',
+                                                                    '#E5C471',
+                                                                    '#6AAA70',
+                                                                ],
+                                                                borderWidth: 1,
+                                                            },
+                                                        ]
+                                                    }}
+                                                    options={{
+                                                        title: {
+                                                            display: false,
 
-                    <div className="flex flex-col mr-10">
-                        <div className="flex items-center mb-2">
-                            <div className="w-2 h-2 rounded-full bg-red-500 mr-1"></div>
-                            <p className="mb-0">Cancel</p>
-                        </div>
-                        <div className=" text-lg text-center">{rawdata.canceled_tickets_count}</div>
+                                                        },
+                                                        legend: {
+                                                            display: false,
+                                                        },
+                                                        maintainAspectRatio: false,
+                                                        cutout: 55,
+                                                        spacing: 5
+                                                    }}
+                                                />
+                                            </div>
+                                    }
+                                    <div className="flex flex-col w-full">
+                                        {
+                                            dataresolvedtimesticket.map((doc, idx) => {
+                                                return (
+                                                    <div className="flex justify-between items-center mb-1">
+                                                        <div className="flex">
+                                                            <div className={`w-1 mr-1 ${doc.name === 'three_hours' && `bg-open`} ${doc.name === 'three_to_twelve_hours' && `bg-overdue`} ${doc.name === 'twelve_to_thirty_hours' && `bg-onprogress`} ${doc.name === 'thirty_hours_to_three_days' && `bg-onhold`} ${doc.name === 'three_days' && `bg-completed`}`}></div>
+                                                            <Text>{doc.name === 'three_hours' && `Kurang dari 3 jam`} {doc.name === 'three_to_twelve_hours' && `3 - 12 jam`} {doc.name === 'twelve_to_thirty_hours' && `12 - 30 jam`} {doc.name === 'thirty_hours_to_three_days' && `30 jam - 3 hari`} {doc.name === 'three_days' && `Lebih dari 3 hari`}</Text>
+                                                        </div>
+                                                        <div className="flex">
+                                                            <H2>{doc.counts}</H2>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            })
+                                        }
+                                    </div>
+                                </div>
+                        }
                     </div>
-                    <div className="flex flex-col mr-12">
-                        <div className="flex items-center mb-2">
-                            <div className="w-2 h-2 rounded-full bg-gray-500 mr-1"></div>
-                            <p className="mb-0">Closed</p>
-                        </div>
-                        <div className=" text-lg text-center">{rawdata.closed_tickets_count}</div>
-                    </div>
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-2">
-                            <p className="mb-0 font-bold text-lg">Total Tiket</p>
-                        </div>
-                        <div className=" font-bold text-xl text-center">{rawdata.total_tickets}</div>
-                    </div>
-                </div>
-                <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
+                    {/* STATUS DAN JUMLAH TIKET */}
                     {
-                        dataProfile.data.role === 1 ?
-                            <Link href={'/tickets/histories'}>
-                                <Button size="large" type="primary" style={{ marginRight: `1rem` }} onClick={() => { rt.push(`/tickets/histories`) }}>
-                                    History
-                                </Button>
-                            </Link>
-                            :
+                        loadingdataresolvedtimes ?
                             <>
-                                {
-                                    dataProfile.data.features.includes(108) &&
-                                    <Link href={'/tickets/histories'}>
-                                        <Button size="large" type="primary" style={{ marginRight: `1rem` }} onClick={() => { rt.push(`/tickets/histories`) }}>
-                                            History
-                                        </Button>
-                                    </Link>
-                                }
+                                <Spin />
                             </>
-                    }
-                    {
-                        dataProfile.data.role === 1 &&
-                        <Link href={'/tickets/exporting?closed=0'}>
-                            <Button style={{ backgroundColor: `gray`, borderColor: `gray`, marginRight: `1rem` }} size="large" type="primary">
-                                Export
-                            </Button>
-                        </Link>
-                    }
-                    <Link href={'/tickets/create'}>
-                        <Button size="large" type="primary">
-                            Buat Tiket
-                        </Button>
-                    </Link>
-                </div>
-            </div>
-            <div className="h-auto w-full grid grid-cols-1 md:grid-cols-5 mb-5 bg-white rounded-md">
-                <div className="md:col-span-5 col-span-1 flex flex-col py-3">
-                    {
-                        praloading ?
-                            null
                             :
-                            <div className="flex mb-8">
-                                <div className=" w-full mr-1 grid grid-cols-12">
-                                    <div className="col-span-3 mr-1 flex flex-col">
-                                        <Input defaultValue={ticketid1} style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Ticket Number" onChange={onChangeSearch} allowClear></Input>
-                                        {inputnumberfalse && <p className="mb-0 text-xs text-red-400">Ticket number harus angka</p>}
+                            <div className='col-span-3 flex flex-col mb-6'>
+                                <div className=' mb-3 grid grid-cols-2'>
+                                    <div className=' col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-2 mr-1 mb-2'>
+                                        <div><TicketIconSvg size={30} color={`#BF4A40`} /></div>
+                                        <div className=' flex flex-col'>
+                                            <div className=' flex items-center justify-end'>
+                                                <p className='mb-0 text-overdue font-semibold text-base mr-1'>{datastatusticket[0].status_count}</p>
+                                                <div><AlerttriangleIconSvg size={15} color={`#BF4A40`} /></div>
+                                            </div>
+                                            <div className=' justify-end flex'><Label>{datastatusticket[0].status_name}</Label></div>
+                                        </div>
                                     </div>
-                                    <div className="col-span-3 mr-1">
-                                        <TreeSelect defaultValue={namaasset === "" ? null : Number(defasset)} placeholder="Lokasi Problem" style={{ width: `100%` }} allowClear onChange={(value, label, extra) => {
-                                            if (typeof (value) === 'undefined') {
-                                                onChangeLokasi()
-                                            }
-                                            else {
-                                                onChangeLokasi(value)
-                                            }
-                                        }} treeData={dataProfile.data.role === 1 ? [ticketrelations.companies] : [ticketrelations.companies.data]} treeDefaultExpandAll />
+                                    <div className=' col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-1 mr-2 mb-2'>
+                                        <div><TicketIconSvg size={30} color={`#2F80ED`} /></div>
+                                        <div className=' flex flex-col'>
+                                            <div className=' flex items-center justify-end'>
+                                                <p className='mb-0 text-open font-semibold text-base mr-1'>{datastatusticket[1].status_count}</p>
+                                            </div>
+                                            <div className=' justify-end flex'><Label>{datastatusticket[1].status_name}</Label></div>
+                                        </div>
                                     </div>
-                                    <div className="col-span-3 mr-1">
-                                        <DatePicker.RangePicker defaultValue={from1 === "" && to1 === "" ? null : [moment(from1), moment(to1)]} style={{ width: `100%` }} placeholder={["Tanggal Awal", "Tanggal Akhir"]} onChange={(dates, datestrings) => {
-                                            if (datestrings[0] === '' && datestrings[1] === '') {
-                                                onChangeRangeDate()
-                                            }
-                                            else {
-                                                onChangeRangeDate(datestrings)
-                                            }
-                                        }}>
-                                        </DatePicker.RangePicker>
+                                    <div className=' col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-2 mr-1 my-2'>
+                                        <div><TicketIconSvg size={30} color={`#ED962F`} /></div>
+                                        <div className=' flex flex-col'>
+                                            <div className=' flex items-center justify-end'>
+                                                <p className='mb-0 text-onprogress font-semibold text-base mr-1'>{datastatusticket[2].status_count}</p>
+                                            </div>
+                                            <div className=' justify-end flex'><Label>{datastatusticket[2].status_name}</Label></div>
+                                        </div>
                                     </div>
-                                    <div className="col-span-2 mr-1">
-                                        <Select defaultValue={statusid1 === "" ? null : Number(statusid1)} placeholder="Status" style={{ width: `100%` }} allowClear onChange={(value) => {
-                                            if (typeof (value) === 'undefined') {
-                                                onChangeStatus()
-                                            }
-                                            else {
-                                                onChangeStatus(value)
-                                            }
-                                        }}>
-                                            {
-                                                ticketrelations.status_ticket.map((docconds, idxconds) => {
-                                                    return (
-                                                        <Select.Option value={docconds.id}>{docconds.name}</Select.Option>
-                                                    )
-                                                })
-                                            }
-                                        </Select>
+                                    <div className=' col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-1 mr-2 my-2'>
+                                        <div><TicketIconSvg size={30} color={`#E5C471`} /></div>
+                                        <div className=' flex flex-col'>
+                                            <div className=' flex items-center justify-end'>
+                                                <p className='mb-0 text-onhold font-semibold text-base mr-1'>{datastatusticket[3].status_count}</p>
+                                            </div>
+                                            <div className=' justify-end flex'><Label>{datastatusticket[3].status_name}</Label></div>
+                                        </div>
                                     </div>
-                                    <div className=" col-span-1">
-                                        <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
+                                    <div className=' col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-2 mr-1 mt-2'>
+                                        <div><TicketIconSvg size={30} color={`#6AAA70`} /></div>
+                                        <div className=' flex flex-col'>
+                                            <div className=' flex items-center justify-end'>
+                                                <p className='mb-0 text-completed font-semibold text-base mr-1'>{datastatusticket[4].status_count}</p>
+                                            </div>
+                                            <div className=' justify-end flex'><Label>{datastatusticket[4].status_name}</Label></div>
+                                        </div>
                                     </div>
+                                    <div className=' col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-1 mr-2 mt-2'>
+                                        <div><TicketIconSvg size={30} color={`#808080`} /></div>
+                                        <div className=' flex flex-col'>
+                                            <div className=' flex items-center justify-end'>
+                                                <p className='mb-0 text-closed font-semibold text-base mr-1'>{datastatusticket[5].status_count}</p>
+                                            </div>
+                                            <div className=' justify-end flex'><Label>{datastatusticket[5].status_name}</Label></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='shadow-md rounded-md bg-white p-5 mx-2 flex justify-between items-center h-full'>
+                                    <div><H1>Total Tiket</H1></div>
+                                    <div><p className=' mb-0 text-5xl font-light text-primary100'>{datacountsticket}</p></div>
                                 </div>
                             </div>
                     }
-                    <div className="px-6">
-                        <Table pagination={{
-                            pageSize: 10, total: displayentiredata.total, onChange: (page, pageSize) => {
-                                setpraloading(true)
-                                fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getTickets" : "getClientTickets"}?page=${page}&rows=10&ticket_id=${ticketid1}&location_id=${locationid1}&status_id=${statusid1}&from=${from1}&to=${to1}`, {
-                                    method: `GET`,
-                                    headers: {
-                                        'Authorization': JSON.parse(initProps),
-                                    },
-                                })
-                                    .then(res => res.json())
-                                    .then(res2 => {
-                                        setdisplayentiredata(res2.data.tickets)
-                                        setdisplaydata(res2.data.tickets.data)
-                                        setdisplaydata1(res2.data.tickets.data)
-                                        setdisplaydata2(res2.data.tickets.data)
-                                        setpraloading(false)
-                                    })
-                            }
-                        }} scroll={{ x: 200 }} dataSource={displaydata} columns={column} loading={praloading}
-                            onRow={(record, rowIndex) => {
-                                return {
-                                    onMouseOver: (event) => {
-                                        setrowstate(record.id)
-                                    },
-                                    onClick: (event) => {
-                                        // {
-                                        //     [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                                        dataProfile.data.role === 1 ?
-                                            rt.push(`/tickets/detail/${record.id}`)
-                                            :
-                                            (
-                                                dataProfile.data.features.includes(109) && rt.push(`/tickets/detail/${record.id}`)
-                                            )
-                                        //         :
-                                        //         null
-                                        // }
+                    <div className=' col-span-4 flex flex-col mb-6'>
+                        {/* BUAT TIKET */}
+                        <div className='shadow-md rounded-md bg-gradient-to-br from-primary100 to-state4 transition ease-in-out hover:from-primary75 cursor-pointer p-5 mx-2 flex items-center mb-2'
+                            onClick={() => {
+                                setdrawerticketscreate(true)
+                            }}
+                        >
+                            <div className=' mr-5'>
+                                <TicketIconSvg size={40} color={`#ffffff`} />
+                            </div>
+                            <div className=' flex flex-col'>
+                                <p className=' mb-1 text-lg text-white font-semibold'>Buat Tiket</p>
+                                <p className=' mb-0 text-sm text-white text-opacity-60'>{moment(new Date()).locale('id').format('dddd, LL')}</p>
+                            </div>
+                        </div>
+                        {/* KELOLA TIKET */}
+                        <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mt-2 mx-2 h-full">
+                            <div className="flex flex-col justify-center h-full">
+                                <div className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2" onClick={() => { }}>
+                                    <div className="flex p-1 bg-primary10 rounded mr-3">
+                                        <TableExportIconSvg size={35} color={`#35763B`} />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <H2>Expor Tiket</H2>
+                                        <Label>Download daftar tiket dalam bentuk spreadsheet/excel</Label>
+                                    </div>
+                                </div>
+                                <div className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2" onClick={() => { rt.push(`/tickets/histories`) }}>
+                                    <div className="flex p-1 bg-primary10 rounded mr-3">
+                                        <HistoryIconSvg size={35} color={`#35763B`} />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <H2>Riwayat Tiket</H2>
+                                        <Label>Lihat seluruh tiket yang berstatus closed berikut durasi</Label>
+                                    </div>
+                                </div>
+                                <div className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2" onClick={() => { rt.push(`/tickets/tickettypes`) }}>
+                                    <div className="flex p-1 bg-primary10 rounded mr-3">
+                                        <AdjusmentsHorizontalIconSvg size={35} color={`#35763B`} />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <H2>Atur Tiket</H2>
+                                        <Label>Hubungkan tiket dengan task yang akan dijalankan</Label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/* TABLE TIKET */}
+                    <div className="col-span-10 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mx-2">
+                        <div className="flex items-center justify-between mb-4">
+                            <H1>Semua Tiket</H1>
+                        </div>
+                        <div className=' flex items-center mb-4'>
+                            <div className="mx-1 w-2/12">
+                                <Input value={searcingfiltertickets === "" ? null : searcingfiltertickets} style={{ width: `100%` }} placeholder="Kata Kunci.." allowClear onChange={(e) => {
+                                    if (e.target.value === "") {
+                                        setsearcingfiltertickets("")
                                     }
-                                }
-                            }}
-                            rowClassName={(record, idx) => {
-                                return (
-                                    record.id === rowstate ? `cursor-pointer` : ``
-                                )
-                            }}
-                        ></Table>
+                                    else {
+                                        setsearcingfiltertickets(e.target.value)
+                                    }
+                                }} />
+                            </div>
+                            <div className='mx-1 w-2/12'>
+                                <Select
+                                    value={tickettypefiltertickets === "" ? null : tickettypefiltertickets}
+                                    placeholder="Semua Tipe Tiket"
+                                    style={{ width: `100%` }}
+                                    allowClear
+                                    name={`task_type`}
+                                    onChange={(value) => { typeof (value) === 'undefined' ? settickettypefiltertickets("") : settickettypefiltertickets(value) }}
+                                >
+                                    {
+                                        dataticketrelation.ticket_types.map((doc, idx) => (
+                                            <Select.Option key={idx} value={doc.id}>{doc.name}</Select.Option>
+                                        ))
+                                    }
+                                </Select>
+                            </div>
+                            <div className=' w-3/12 mx-1'>
+                                <DatePicker.RangePicker allowEmpty className="datepickerStatus" value={fromfiltertickets === "" ? [null, null] : [moment(fromfiltertickets), moment(tofiltertickets)]} onChange={(dates, datestrings) => {
+                                    setfromfiltertickets(datestrings[0])
+                                    settofiltertickets(datestrings[1])
+                                }}
+                                />
+                            </div>
+                            <div className=' mx-1 w-2/12'>
+                                <TreeSelect
+                                    style={{ width: `100%` }}
+                                    allowClear
+                                    placeholder="Semua Lokasi"
+                                    showSearch
+                                    suffixIcon={<SearchOutlined />}
+                                    showArrow
+                                    name={`locations_id`}
+                                    onChange={(value) => { typeof (value) === 'undefined' ? setlocfiltertickets("") : setlocfiltertickets(value) }}
+                                    treeData={[dataticketrelation.companies]}
+                                    treeDefaultExpandAll
+                                    value={locfiltertickets === "" ? null : locfiltertickets}
+                                ></TreeSelect >
+                            </div>
+                            <div className='mx-1 w-2/12'>
+                                <Select
+                                    value={statusfiltertickets === "" ? null : statusfiltertickets}
+                                    placeholder="Status"
+                                    style={{ width: `100%` }}
+                                    allowClear
+                                    name={`status`}
+                                    onChange={(value, option) => { typeof (value) === 'undefined' ? (setstatusfiltertickets('')) : (setstatusfiltertickets(value)) }}
+                                >
+                                    {
+                                        dataticketrelation.status_ticket.map((doc, idx) => {
+                                            if (doc.id === 1)
+                                                return (
+                                                    <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-overdue'></div> {doc.name}</div></Select.Option>
+                                                )
+                                            else if (doc.id === 2)
+                                                return (
+                                                    <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-open'></div> {doc.name}</div></Select.Option>
+                                                )
+                                            else if (doc.id === 3)
+                                                return (
+                                                    <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-onprogress'></div> {doc.name}</div></Select.Option>
+                                                )
+                                            else if (doc.id === 4)
+                                                return (
+                                                    <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-onhold'></div> {doc.name}</div></Select.Option>
+                                                )
+                                            else if (doc.id === 5)
+                                                return (
+                                                    <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-completed'></div> {doc.name}</div></Select.Option>
+                                                )
+                                            else if (doc.id === 6)
+                                                return (
+                                                    <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-closed'></div> {doc.name}</div></Select.Option>
+                                                )
+                                        })
+                                    }
+                                </Select>
+                            </div>
+                            <div className='mx-1 w-1/12'>
+                                <ButtonSys type={`primary`} onClick={onFilterTickets}>
+                                    <div className='mr-1'>
+                                        <SearchIconSvg size={15} color={`#ffffff`} />
+                                    </div>
+                                    Cari
+                                </ButtonSys>
+                            </div>
+                        </div>
+                        <div>
+                            <TableCustomTickets
+                                dataSource={datatickets}
+                                setDataSource={setdatatickets}
+                                columns={columnsTickets}
+                                loading={loadingtickets}
+                                setpraloading={setloadingtickets}
+                                pageSize={rowstickets}
+                                total={datarawtickets.total}
+                                initProps={initProps}
+                                setpage={setpagetickets}
+                                pagefromsearch={pagetickets}
+                                setdataraw={setdatarawtickets}
+                                setsorting={setsortingtickets}
+                                sorting={sortingtickets}
+                                searching={searcingfiltertickets}
+                                tickettype={tickettypefiltertickets}
+                                fromdate={fromfiltertickets}
+                                todate={tofiltertickets}
+                                location={locfiltertickets}
+                                status={statusfiltertickets}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
+            <DrawerTicketCreate
+                title={"Tiket Baru"}
+                visible={drawerticketscreate}
+                onClose={() => { setdrawerticketscreate(false) }}
+                buttonOkText={"Simpan"}
+                initProps={initProps}
+                onvisible={setdrawerticketscreate}
+                refreshtickets={refreshcreateticketscreate}
+                setrefreshtickets={setrefreshcreateticketscreate}
+                dataprofile={dataProfile}
+            />
         </Layout>
     )
 }
@@ -602,4 +679,4 @@ export async function getServerSideProps({ req, res }) {
     }
 }
 
-export default TicketsIndex
+export default TicketIndex2

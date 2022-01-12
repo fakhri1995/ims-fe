@@ -1,708 +1,91 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import httpcookie from 'cookie'
-import Link from 'next/link'
-import { ExclamationCircleOutlined, DownOutlined } from '@ant-design/icons'
-import { notification, Button, Spin, Empty, Modal, Tooltip, Select, Tabs, Input, TreeSelect, Alert, Timeline } from 'antd'
-import Layout from '../../../components/layout-dashboard2'
+import { SearchOutlined } from '@ant-design/icons'
+import { Spin, Empty, notification } from 'antd'
+import Layout from '../../../components/layout-dashboardNew'
 import moment from 'moment'
 import st from '../../../components/layout-dashboard.module.css'
-import Sticky from 'wil-react-sticky'
+import { CalendartimeIconSvg, CheckIconSvg, EditIconSvg, FileExportIconSvg, FilePlusIconSvg, InfoCircleIconSvg, PlusIconSvg, TicketIconSvg, UserIconSvg, UserSearchIconSvg, XIconSvg } from '../../../components/icon'
+import { Chart, ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement } from 'chart.js'
+Chart.register(ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement);
+import { Doughnut, Bar, Line } from 'react-chartjs-2';
+import { H1, H2, Text, Label } from '../../../components/typography'
+import ButtonSys from '../../../components/button'
+import { TableCustomTickets } from '../../../components/table/tableCustom'
+import DrawerTicketCreate from '../../../components/drawer/tickets/drawerTicketCreate'
+import { ModalCancelTiket, ModalNoteTiket, ModalReleaseItemTiket } from '../../../components/modal/modalCustom'
+import DrawerTicketConnectItem from '../../../components/drawer/tickets/drawerTicketConnectItem'
+import DrawerTicketAssign from '../../../components/drawer/tickets/drawerTicketAssign'
+import DrawerTicketDeadline from '../../../components/drawer/tickets/drawerTicketDeadline'
+import DrawerTicketUpdate from '../../../components/drawer/tickets/drawerTicketUpdate'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
-const Overview = ({ ticketid, initProps, praloading, maindata, ticketrelations, dataProfile }) => {
-    //init
+const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
+    //1.Init
     const rt = useRouter()
-    var selisihWaktu = ""
-    maindata.ticket.closed_at ? (Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.original_raised_at).getTime()) / (1000 * 3600 * 24)) > 1 ?
-        selisihWaktu =
-        Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.original_raised_at).getTime()) / (1000 * 3600 * 24)) + " hari "
-        + Math.floor((Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.original_raised_at).getTime()) % (1000 * 3600 * 24))) / (1000 * 3600)) + " jam "
-        + Math.floor(Math.floor(Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.original_raised_at).getTime()) % (1000 * 3600 * 24)) % (1000 * 3600)) / (60000)) + " menit"
-        :
-        selisihWaktu =
-        Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.original_raised_at).getTime()) / (1000 * 3600)) + " jam "
-        + Math.floor(Math.floor((new Date(maindata.ticket.closed_at).getTime() - new Date(maindata.ticket.original_raised_at).getTime()) % (1000 * 3600)) / (60000)) + " menit")
-        :
-        null
+    const pathArr = rt.pathname.split("/").slice(1)
+    pathArr.splice(1, 2)
+    pathArr.push(`Detail Tiket`)
 
-    //useState
-    //export
-    const [exporting, setexporting] = useState("")
-    const [nameexporting, setnameexporting] = useState("")
-    const [noteexporting, setnoteexporting] = useState("")
-    const [modalexporting, setmodalexporting] = useState(false)
-    const [displayexporting, setdisplayexporting] = useState(true)
-    const [loadingexporting, setloadingexporting] = useState(false)
-
-    return (
-        <div className="flex flex-col">
-            <div className="border-b flex justify-between px-5 pb-5 pt-3 mb-8">
-                <h1 className="font-bold text-xl my-auto">Overview</h1>
-                {
-                    praloading ?
-                        null
-                        :
-                        <div className="flex">
-                            {
-                                dataProfile.data.role === 1 &&
-                                <Button type="default" onClick={(e) => { rt.push(`/tickets/update/${ticketid}`) }} style={{ marginRight: `1rem` }} size="large">Edit</Button>
-                            }
-                            {
-                                dataProfile.data.role === 1 ?
-                                    <Button type="primary" loading={loadingexporting} className="buttonExport" onClick={(e) => {
-                                        setloadingexporting(true)
-                                        fetch(`https://boiling-thicket-46501.herokuapp.com/ticketExport?id=${ticketid}`, {
-                                            method: `GET`,
-                                            headers: {
-                                                'Authorization': JSON.parse(initProps)
-                                            }
-                                        })
-                                            .then(res => res.blob())
-                                            .then(res2 => {
-                                                var newBlob = new Blob([res2], { type: "application/pdf" })
-                                                const data = window.URL.createObjectURL(newBlob);
-                                                var link = document.createElement('a');
-                                                link.href = data;
-                                                link.download = `${maindata.ticket.type.name}-${maindata.ticket.ticketable.id}.pdf`;
-                                                link.click();
-                                                setTimeout(function () {
-                                                    window.URL.revokeObjectURL(data);
-                                                })
-                                                setloadingexporting(false)
-                                            })
-                                    }} size="large">Export</Button>
-                                    :
-                                    <>
-                                        {
-                                            dataProfile.data.features.includes(113) &&
-                                            <Button type="primary" loading={loadingexporting} className="buttonExport" onClick={(e) => {
-                                                setloadingexporting(true)
-                                                fetch(`https://boiling-thicket-46501.herokuapp.com/clientTicketExport?id=${ticketid}`, {
-                                                    method: `GET`,
-                                                    headers: {
-                                                        'Authorization': JSON.parse(initProps)
-                                                    }
-                                                })
-                                                    .then(res => res.blob())
-                                                    .then(res2 => {
-                                                        var newBlob = new Blob([res2], { type: "application/pdf" })
-                                                        const data = window.URL.createObjectURL(newBlob);
-                                                        var link = document.createElement('a');
-                                                        link.href = data;
-                                                        link.download = "file.pdf";
-                                                        link.click();
-                                                        setTimeout(function () {
-                                                            window.URL.revokeObjectURL(data);
-                                                        })
-                                                        setloadingexporting(false)
-                                                    })
-                                            }} size="large">Export</Button>
-                                        }
-                                    </>
-                            }
-                        </div>
-                }
-            </div>
-            {
-                praloading ?
-                    <Spin />
-                    :
-                    <div className="mb-8 mx-5 p-5 w-9/12 flex flex-col">
-                        <div className="border shadow-md rounded-md flex flex-col p-5 mb-6">
-                            <h1 className=" text-lg font-semibold">Ticket Detail:</h1>
-                            <hr />
-                            <div className="flex flex-col mt-3 mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">Ticket Raised By:</h1>
-                                {/* <p className="mb-0 text-sm">{ticketrelations.requesters.filter(docfil => docfil.user_id === maindata.ticket.requester_id)[0] ? ticketrelations.requesters.filter(docfil => docfil.user_id === maindata.ticket.requester_id)[0].fullname : ""}</p> */}
-                                <p className="mb-0 text-sm">{maindata.ticket.requester.name}</p>
-                            </div>
-                            <div className="flex flex-col mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">Lokasi Pembuat:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.requester.company.full_name}</p>
-                            </div>
-                            <div className="flex flex-col mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">Date Raised Ticket:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.original_raised_at ? moment(maindata.ticket.original_raised_at).locale('id').format("LL") + " - " + moment(maindata.ticket.original_raised_at).locale('id').format("LT") + " WIB" : "-"}</p>
-                            </div>
-                            <div className="flex flex-col mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">Date Closed Ticket:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.closed_at === null ? "-" : moment(maindata.ticket.closed_at).locale('id').format("LL") + " - " + moment(maindata.ticket.closed_at).locale('id').format("LT") + " WIB"}</p>
-                            </div>
-                            <div className="flex flex-col mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">Resolved Time:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.closed_at === null ? "-" : `${selisihWaktu}`}</p>
-                            </div>
-                        </div>
-                        <div className="border shadow-md rounded-md flex flex-col p-5">
-                            <h1 className=" text-lg font-semibold">Problem Detail:</h1>
-                            <hr />
-                            <div className="flex flex-col mt-3 mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">Jenis Produk:</h1>
-                                <p className="mb-0 text-sm">
-                                    {maindata.ticket.ticketable.product_type.name}
-                                </p>
-                            </div>
-                            <div className="flex flex-col mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">{maindata.ticket.ticketable.product_type === 2 ? "Terminal ID" : "ID Produk"}:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.ticketable.product_id === "" ? "-" : maindata.ticket.ticketable.product_id}</p>
-                            </div>
-                            <div className="flex flex-col mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">Nama PIC:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.ticketable.pic_name === "" ? "-" : maindata.ticket.ticketable.pic_name}</p>
-                            </div>
-                            <div className="flex flex-col mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">Kontak PIC:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.ticketable.pic_contact === "" ? "-" : maindata.ticket.ticketable.pic_contact}</p>
-                            </div>
-                            <div className="flex flex-col mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">Problem:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.ticketable.problem === "" ? "-" : maindata.ticket.ticketable.problem}</p>
-                            </div>
-                            <div className="flex flex-col mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">Lokasi Problem:</h1>
-                                <p className="mb-0 mr-2 text-sm">{maindata.ticket.ticketable.location.id === 0 ? "-" : maindata.ticket.ticketable.location.full_name}</p>
-                            </div>
-                            <div className="flex flex-col mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">Waktu Kejadian:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.ticketable.incident_time ? moment(maindata.ticket.ticketable.incident_time).locale('id').format("LL") + " - " + moment(maindata.ticket.ticketable.incident_time).locale('id').format("LT") + " WIB" : "-"}</p>
-                            </div>
-                            <div className="flex flex-col mb-5">
-                                <h1 className=" text-sm font-semibold mb-2">Bukti Kejadian:</h1>
-                                {
-                                    maindata.ticket.ticketable.files.length === 0 ?
-                                        "-"
-                                        :
-                                        maindata.ticket.ticketable.files.map((doc, idx) => {
-                                            return (
-                                                <a href={doc} target="_blank">
-                                                    <div className="border border-dashed px-4 py-2 flex justify-between items-center w-9/12 mb-1 relative cursor-pointer hover:text-blue-500">
-                                                        <img src={doc} alt="selected images" className="object-contain w-16 h-16 mr-10" />
-                                                        {/* <p className="mb-0 mr-3">{maindata.incident.data.incident.files}</p> */}
-                                                    </div>
-                                                </a>
-                                            )
-                                        })
-                                }
-                            </div>
-                            <div className="flex flex-col mb-5">
-                                <h1 className=" text-sm font-semibold mb-0">Deskripsi Kerusakan:</h1>
-                                <p className="mb-0 text-sm">{maindata.ticket.ticketable.description === "" ? "-" : maindata.ticket.ticketable.description}</p>
-                            </div>
-                        </div>
-                    </div>
-            }
-        </div>
-    )
-}
-
-const DetailItem = ({ ticketid, initProps, connecteditem, setconnecteditem, maindata }) => {
-    //init
-    const rt = useRouter()
-
-    //useState
-    const [praloadingconnected, setpraloadingconnected] = useState(true)
-    const [connecteditemdata, setconnecteditemdata] = useState({
+    //2.useState
+    //2.1 General
+    const [displaydata, setdisplaydata] = useState({
         id: null,
-        model_id: null,
-        vendor_id: null,
-        inventory_name: "",
-        status_condition: null,
-        status_usage: null,
-        location: null,
-        is_exist: null,
-        deskripsi: null,
-        manufacturer_id: null,
-        mig_id: "",
-        serial_number: null,
-        created_at: "",
-        updated_at: "",
-        deleted_at: null,
-        model_inventory: {
+        ticketable_id: null,
+        task_id: null,
+        closed_at: null,
+        resolved_times: "",
+        status: null,
+        name: "",
+        creator: "",
+        creator_location: "",
+        raised_at: "",
+        assignment_type: "",
+        assignment_operator_id: null,
+        assignment_operator_name: "",
+        assignment_profile_image: "",
+        deadline: null,
+        status_name: "",
+        ticketable: {
             id: null,
-            name: "",
-            asset_id: null,
+            product_type: null,
+            product_id: "",
+            pic_name: "",
+            pic_contact: "",
+            location_id: null,
+            inventory_id: null,
+            problem: "",
+            incident_time: "",
+            files: [],
+            description: "",
             deleted_at: null,
-            asset: {
+            asset_type_name: "",
+            location: {
                 id: null,
                 name: "",
-                deleted_at: null
-            }
-        },
-        location_inventory: {
-            company_id: null,
-            company_name: ""
-        },
-        additional_attributes: [
-            {
+                full_location: ""
+            },
+            asset_type: {
                 id: null,
+                task_type_id: null,
+                ticket_type_id: null,
                 name: "",
-                value: ""
-            },
-            {
-                id: null,
-                name: "",
-                value: ""
-            }
-        ],
-        inventory_parts: []
-    })
-    const [itemactivity, setitemactivity] = useState(true)
-    const [modalconnecteditem, setmodalconnecteditem] = useState(false)
-    const [loadingconnecteditem, setloadingconnecteditem] = useState(false)
-    const [disabledconnecteditem, setdisabledconnecteditem] = useState(true)
-    //1.asset
-    const [assetdata, setassetdata] = useState([])
-    const [selectedasset, setselectedasset] = useState(null)
-    const [selectedassetcode, setselectedassetcode] = useState("")
-    //2. Item
-    const [itemdata, setitemdata] = useState([])
-    const [selecteditem, setselecteditem] = useState(null)
-    const [fetchingpart, setfetchingpart] = useState(false)
-
-    //handler
-    const handleSetItem = () => {
-        setloadingconnecteditem(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/setItemTicket`, {
-            method: `PUT`,
-            headers: {
-                'Authorization': JSON.parse(initProps),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                id: Number(ticketid),
-                inventory_id: selecteditem
-            })
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setloadingconnecteditem(false)
-                setmodalconnecteditem(false)
-                if (res2.success) {
-                    notification['success']({
-                        message: "Tiket berhasil dihubungkan dengan Item",
-                        duration: 3
-                    })
-                    window.location.href = `/tickets/detail/${ticketid}?active=detailItem`
-                }
-                else if (!res2.success) {
-                    notification['error']({
-                        message: res2.message,
-                        duration: 3
-                    })
-                }
-            })
-    }
-
-    //useEffect
-    useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
-            method: `GET`,
-            headers: {
-                'Authorization': JSON.parse(initProps),
-            }
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setassetdata(res2.data)
-            })
-    }, [])
-    useEffect(() => {
-        if (selectedasset !== null) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?rows=50&location_id=${maindata.ticket.ticketable.location_id !== null ? maindata.ticket.ticketable.location_id : ``}&asset_id=${selectedasset === null ? "" : selectedasset}`, {
-                method: `GET`,
-                headers: {
-                    'Authorization': JSON.parse(initProps),
-                },
-            })
-                .then(res => res.json())
-                .then(res2 => {
-                    // const datafilter = res2.data.filter(docfil => docfil.asset_id === selectedasset)
-                    // setitemdata(datafilter.length === 0 ? res2.data : datafilter)
-                    setitemdata(res2.data.data)
-                }, [])
-        }
-    }, [selectedasset])
-    useEffect(() => {
-        // if (connecteditem !== null) {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicket?id=${ticketid}`, {
-            method: `GET`,
-            headers: {
-                'Authorization': JSON.parse(initProps),
-            },
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setpraloadingconnected(true)
-                res2.data.ticket.ticketable.inventory_id !== null ?
-                    fetch(`https://boiling-thicket-46501.herokuapp.com/getInventory?id=${res2.data.ticket.ticketable.inventory_id}`, {
-                        method: `GET`,
-                        headers: {
-                            'Authorization': JSON.parse(initProps),
-                        },
-                    })
-                        .then(res => res.json())
-                        .then(res3 => {
-                            setconnecteditemdata(res3.data)
-                            setpraloadingconnected(false)
-                            setitemactivity(false)
-                        }, [])
-                    :
-                    setconnecteditemdata(null)
-                setpraloadingconnected(false)
-            })
-        // else {
-        //     setconnecteditemdata(null)
-        //     setpraloadingconnected(false)
-        // }
-    }, [])
-
-    return (
-        <div className="flex flex-col">
-            <div className="border-b flex justify-between px-5 pb-5 pt-3 mb-8">
-                <h1 className="font-bold text-xl my-auto">Detail Item</h1>
-                {
-                    // praloading ?
-                    //     null
-                    //     :
-                    <div className="flex">
-                        <Button type="primary" disabled={itemactivity} onClick={(e) => { rt.push(`/items/detail/${connecteditemdata.id}?active=activity`) }} size="large">Activity Item</Button>
-                        {/* <Button type="primary" className="buttonExport" onClick={(e) => { setmodalexporting(true) }} size="large">Export</Button> */}
-                    </div>
-                }
-            </div>
-            {
-                maindata.ticket.status.id === 5 &&
-                <div className=" mb-5 w-10/12">
-                    <Alert
-                        style={{ padding: `0.5rem` }}
-                        message=""
-                        description={
-                            <p className="mb-0">Berikut ini tampilan detail item yang di  <strong>closed</strong> pada <strong>{maindata.ticket.closed_at === null ? "" : moment(maindata.ticket.closed_at).locale('id').format("LL")}</strong> </p>
-                        }
-                        type="info"
-                        showIcon
-                    />
-                </div>
-            }
-            {
-                praloadingconnected ?
-                    <>
-                        <Spin />
-                    </>
-                    :
-                    connecteditem === null ?
-                        <div className=" border rounded-lg py-10 w-10/12 mx-auto flex flex-col">
-                            <Empty description={
-                                <p className="mb-0">
-                                    Hubungkan <span className=" text-blue-500">Item</span><span className="connectItem"></span>
-                                    <style jsx>
-                                        {`
-                                        .connectItem::before{
-                                            content: '*';
-                                            color: red;
-                                        }
-                                    `}
-                                    </style>
-                                </p>
-                            } image={Empty.PRESENTED_IMAGE_DEFAULT}>
-                                <Button type="primary" onClick={() => { setmodalconnecteditem(true) }}>Pilih Item</Button>
-                            </Empty>
-                        </div>
-                        :
-                        <div className="mb-8 w-10/12 flex flex-col">
-                            {/* <div className="border shadow-md rounded-md flex flex-col p-5 mb-3">
-                                <div className="flex justify-between">
-                                    <div className="flex flex-col mt-3 mb-5">
-                                        <h1 className=" text-sm font-semibold mb-0">Item:</h1>
-                                        <p className="mb-0 text-sm">{connecteditem.inventory_name ?? ""}</p>
-                                    </div>
-                                </div>
-                            </div> */}
-                            <div className="border shadow-md rounded-md flex flex-col p-5 mb-5 relative">
-                                <div className="flex items-center absolute right-8 top-8">
-                                    <Button onClick={() => { setmodalconnecteditem(true) }}>Ganti Item</Button>
-                                </div>
-                                <div className="flex flex-col mt-3 mb-5">
-                                    <h1 className=" text-sm font-semibold mb-0">Model:</h1>
-                                    <p className="mb-0 text-sm">{connecteditem.model_inventory.name ?? "-"}</p>
-                                </div>
-                                <div className="flex flex-col mt-3 mb-5">
-                                    <h1 className=" text-sm font-semibold mb-0">Asset Type:</h1>
-                                    <p className="mb-0 text-sm">{connecteditem.model_inventory.asset.full_name ?? "-"}</p>
-                                </div>
-                                <div className="flex flex-col mt-3 mb-5">
-                                    <h1 className=" text-sm font-semibold mb-0">MIG ID:</h1>
-                                    <p className="mb-0 text-sm">{connecteditem.mig_id ?? "-"}</p>
-                                </div>
-                                <div className="flex flex-col mt-3 mb-5">
-                                    <h1 className=" text-sm font-semibold mb-2">Status Pemakaian:</h1>
-                                    {
-                                        connecteditem.status_usage ?
-                                            <>
-                                                {connecteditem.status_usage.id === 1 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">In Used</div>}
-                                                {connecteditem.status_usage.id === 2 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-green-100 border border-green-200 text-green-600">In Stock</div>}
-                                                {connecteditem.status_usage.id === 3 && <div className="rounded-md w-40 h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">Replacement</div>}
-                                            </>
-                                            :
-                                            "-"
-                                    }
-                                </div>
-                                <div className="flex flex-col mt-3 mb-5">
-                                    <h1 className=" text-sm font-semibold mb-2">Status Kondisi:</h1>
-                                    {
-                                        connecteditem.status_condition ?
-                                            <>
-                                                {
-                                                    connecteditem.status_condition.id === 1 &&
-                                                    <div className="p-1 flex w-full items-center">
-                                                        <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
-                                                        <p className="mb-0 font-semibold">Good</p>
-                                                    </div>
-                                                }
-                                                {
-                                                    connecteditem.status_condition.id === 2 &&
-                                                    <div className="p-1 flex w-full items-center">
-                                                        <div className="w-3 h-3 rounded-full bg-gray-500 mr-1"></div>
-                                                        <p className="mb-0 font-semibold">Grey</p>
-                                                    </div>
-                                                }
-                                                {
-                                                    connecteditem.status_condition.id === 3 &&
-                                                    <div className="p-1 flex w-full items-center">
-                                                        <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
-                                                        <p className="mb-0 font-semibold">Bad</p>
-                                                    </div>
-                                                }
-                                            </>
-                                            :
-                                            "-"
-                                    }
-                                </div>
-                                <div className="flex flex-col mt-3 mb-5">
-                                    <h1 className=" text-sm font-semibold mb-0">Serial Number:</h1>
-                                    <p className="mb-0 text-sm">{connecteditem.serial_number === null ? "-" : connecteditem.serial_number}</p>
-                                </div>
-                                <div className="flex flex-col mt-3 mb-5">
-                                    <h1 className=" text-sm font-semibold mb-0">Location:</h1>
-                                    <p className="mb-0 text-sm">{connecteditem.location_inventory.full_name ?? "-"}</p>
-                                </div>
-                                <div className="flex flex-col mt-3 mb-5">
-                                    <h1 className=" text-sm font-semibold mb-0">Deskripsi:</h1>
-                                    <p className="mb-0 text-sm">{connecteditem.deskripsi === null || connecteditem.deskripsi === "" ? "-" : connecteditem.deskripsi}</p>
-                                </div>
-                            </div>
-                        </div>
-            }
-            <Modal title={
-                <div className="flex justify-between p-5 mt-5">
-                    <h1 className="font-bold text-xl">Hubungkan Item ke Ticket</h1>
-                    <div className="flex">
-                        <>
-                            <Button type="default" onClick={() => { setmodalconnecteditem(false); setselectedassetcode(""); setselectedasset(null); setselecteditem(null) }} style={{ marginRight: `1rem` }}>Batal</Button>
-                            <Button type='primary' loading={loadingconnecteditem} disabled={disabledconnecteditem} loading={loadingconnecteditem} onClick={handleSetItem}>Simpan</Button>
-                        </>
-                    </div>
-                </div>
-            }
-                visible={modalconnecteditem}
-                onCancel={() => { setmodalconnecteditem(false); setselectedassetcode(""); setselectedasset(null); setselecteditem(null) }}
-                footer={null}
-                width={720}
-            >
-                <div className="flex flex-col mb-5">
-                    <div className="flex flex-col mb-3">
-                        <p className="mb-0">Asset Type <span className="assetitem"></span></p>
-                        <TreeSelect treeDefaultExpandAll value={selectedassetcode} treeData={assetdata} onChange={(value, label, extra) => {
-                            setselectedasset(extra.allCheckedNodes[0].node.props.id)
-                            setselectedassetcode(value)
-                        }}></TreeSelect>
-                        <style jsx>
-                            {`
-                                .assetitem::before{
-                                    content: '*';
-                                    color: red;
-                                }
-                            `}
-                        </style>
-                    </div>
-                    <div className="flex flex-col mb-3">
-                        <p className="mb-0">Item <span className="itemitem"></span></p>
-                        <Select disabled={selectedasset === null} value={selecteditem} notFoundContent={fetchingpart ? <Spin size="small" /> : null} onSearch={(value) => {
-                            setfetchingpart(true)
-                            fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?rows=50&location_id=${maindata.ticket.ticketable.location_id !== null ? maindata.ticket.ticketable.location_id : ``}&asset_id=${selectedasset === null ? "" : selectedasset}&mig_id=${value !== "" ? value : ""}`, {
-                                method: `GET`,
-                                headers: {
-                                    'Authorization': JSON.parse(initProps),
-                                },
-                            })
-                                .then(res => res.json())
-                                .then(res2 => {
-                                    res2.data.data.length === 0 ? setitemdata([]) : setitemdata(res2.data.data)
-                                    setfetchingpart(false)
-                                })
-                        }} showSearch optionFilterProp="children" placeholder="Cari Item" filterOption={(input, opt) => (
-                            opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                        )} onChange={(value) => { setselecteditem(value); setdisabledconnecteditem(false) }}>
-                            {
-                                itemdata.map((doc, idx) => {
-                                    return (
-                                        <Select.Option value={doc.id}>{doc.mig_id}</Select.Option>
-                                    )
-                                })
-                            }
-                        </Select>
-                        <style jsx>
-                            {`
-                                .itemitem::before{
-                                    content: '*';
-                                    color: red;
-                                }
-                            `}
-                        </style>
-                    </div>
-                </div>
-            </Modal>
-        </div>
-    )
-}
-
-const Activity = ({ ticketid, initProps, activitytrigger, dataProfile }) => {
-    //useState
-    const [logs, setlogs] = useState([])
-    const [praloadinglogs, setpraloadinglogs] = useState(true)
-
-    //useEffect
-    useEffect(() => {
-        setpraloadinglogs(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getTicketLog" : "getClientTicketLog"}?id=${ticketid}`, {
-            method: `GET`,
-            headers: {
-                'Authorization': JSON.parse(initProps),
-            }
-        })
-            .then(res => res.json())
-            .then((res2) => {
-                setlogs(res2.data)
-                setpraloadinglogs(false)
-            })
-    }, [activitytrigger])
-
-    return (
-        <div className="flex flex-col">
-            <div className="border-b flex justify-between p-5 mb-8">
-                <h1 className="font-bold text-xl my-auto">Activity</h1>
-            </div>
-            <div className="flex flex-col w-6/12">
-                {
-                    praloadinglogs ?
-                        <Spin />
-                        :
-                        logs.length < 1 ?
-                            <>
-                                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                            </>
-                            :
-                            <Timeline mode="left">
-                                {
-                                    logs.map((doclog, idxlog) => {
-                                        return (
-                                            <Timeline.Item label={moment(doclog.created_at).locale('id').format('LL') + " " + moment(doclog.created_at).locale('id').format('LT')}>
-                                                <div className="flex flex-col">
-                                                    <h1 className="font-semibold text-base mb-1">{doclog.log_name}</h1>
-                                                    <p className="mb-1 text-xs text-gray-500">Oleh {doclog.causer.name}</p>
-                                                    <p className="mb-1 text-sm">Notes: {doclog.description === null ? "-" : doclog.description}</p>
-                                                </div>
-                                            </Timeline.Item>
-                                        )
-                                    })
-                                }
-                            </Timeline>
-                }
-            </div>
-        </div>
-    )
-}
-
-const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
-    //1. Init
-    const rt = useRouter()
-    var activeTab = "overview"
-    const { active } = rt.query
-    if (active) {
-        activeTab = active
-    }
-    var pathArr = rt.pathname.split("/").slice(1)
-    pathArr.splice(2, 2)
-    pathArr[pathArr.length - 1] = "Detail Ticket"
-    const { TabPane } = Tabs
-
-    //useState
-    const [maindata, setmaindata] = useState({
-        ticket: {
-            id: Number(ticketid),
-            raised_at: "",
-            closed_at: "",
-            original_closed_at: "",
-            resolve_time: "",
-            type: {
-                id: null,
-                name: "",
-                code: ""
-            },
-            status: {
-                id: null,
-                name: ""
-            },
-            requester: {
-                user_id: null,
-                fullname: ""
-            },
-            ticketable: {
-                id: null,
-                product_type: null,
-                product_id: "",
-                pic_name: "",
-                pic_contact: "",
-                location_id: null,
-                inventory_id: null,
-                location: {
-                    company_id: null,
-                    company_name: ""
-                },
-                problem: "",
-                incident_time: "",
-                files: [
-                    ""
-                ],
                 description: "",
                 deleted_at: null
             },
-            assignable: {
-                id: null,
-                name: ""
-            }
-        },
+            inventory: null
+        }
     })
-    const [ticketrelations, setticketrelations] = useState({
+    const [dataticketrelation, setdatatickrelation] = useState({
         status_ticket: [
             {
                 id: 0,
                 name: ""
             }
         ],
-        ticket_types: [
-            {
-                id: '',
-                name: ''
-            }
-        ],
-        requesters: [
-            {
-                user_id: 0,
-                fullname: "",
-                company_id: 0
-            },
-        ],
+        ticket_types: [],
+        incident_type: [],
         companies: {
             data: [
                 {
@@ -713,125 +96,94 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                 }
             ]
         },
+        ticket_task_types: [],
+        resolved_times: []
     })
     const [praloading, setpraloading] = useState(true)
-    //notes
-    const [notes, setnotes] = useState("")
-    const [modalnotes, setmodalnotes] = useState(false)
-    const [loadingnotes, setloadingnotes] = useState(false)
-    //status
-    const [status, setstatus] = useState("")
-    const [namestatus, setnamestatus] = useState("")
-    const [notestatus, setnotestatus] = useState("")
-    const [modalstatus, setmodalstatus] = useState(false)
-    const [displaystatus, setdisplaystatus] = useState(true)
-    const [loadingstatus, setloadingstatus] = useState(false)
-    //asignto
-    const [to, setto] = useState(null)
-    const [assignto, setassignto] = useState(null)
-    const [nameassignto, setnameassignto] = useState("")
-    const [defaultnameassignto, setdefaultnameassignto] = useState("")
-    const [modalassignto, setmodalassignto] = useState(false)
-    const [loadingassignto, setloadingassignto] = useState(false)
-    const [disabledassignto, setdisabledassignto] = useState(true)
-    const [displayassignto, setdisplayassignto] = useState(true)
-    //connected item
-    const [connecteditem, setconnecteditem] = useState(null)
-    //activity
-    const [activitytrigger, setactivitytrigger] = useState(0)
-    //groups/engineer
-    const [engineergroup, setengineergroup] = useState([])
-    const [engineergrouptrigger, setengineergrouptrigger] = useState(-1)
+    //2.2.Update
+    const [datapayloadupdate, setdatapayloadupdate] = useState({
+        id: Number(ticketid),
+        requester_id: null,
+        raised_at: null,
+        closed_at: null,
+        product_id: "",
+        pic_name: "",
+        pic_contact: "",
+        location_id: null,
+        problem: "",
+        incident_time: null,
+        files: [],
+        description: ""
+    })
+    const [drawerupdateticket, setdrawerupdateticket] = useState(false)
+    const [refreshupdateticket, setrefreshupdateticket] = useState(-1)
+    //2.3.Hubungkan Item
+    const [datapayloadconnectitem, setdatapayloadconnectitem] = useState({
+        id: Number(ticketid),
+        inventory_id: null,
+        name: ""
+    })
+    const [selectedassettype, setselectedassettype] = useState(null)
+    const [drawerconnectitemticket, setdrawerconnectitemticket] = useState(false)
+    const [modalreleaseitemticket, setmodalreleaseitemticket] = useState(false)
+    const [loadingreleaseitemticket, setloadingreleaseitemticket] = useState(false)
+    const [refreshconnectitemticket, setrefreshconnectitemticket] = useState(-1)
+    //2.4.Assign Item
+    const [datapayloadassign, setdatapayloadassign] = useState({
+        id: Number(ticketid),
+        assignable_type: true,
+        assignable_id: null
+    })
+    const [drawerassignticket, setdrawerassignticket] = useState(false)
+    const [refreshassignticket, setrefreshassignticket] = useState(-1)
+    //2.5.Deadline
+    const [datapayloaddeadline, setdatapayloaddeadline] = useState({
+        id: Number(ticketid),
+        deadline: null
+    })
+    const [drawerdeadlineicket, setdrawedeadlineticket] = useState(false)
+    const [refreshdeadlineicket, setrefreshdeadlineicket] = useState(-1)
+    const [showdatepicker, setshowdatepicker] = useState(false)
+    const [datevalue, setdatevalue] = useState(null)
+    //2.6.Status(Batalkan Tiket)
+    const [modalcancelticket, setmodalcancelticket] = useState(false)
+    const [datacancelticket, setdatacancelticket] = useState({ id: Number(ticketid), notes: "", name: "" })
+    const [loadingcancelticket, setloadingcancelticket] = useState(false)
+    const [refreshcancelticket, setrefreshcancelticket] = useState(-1)
+    //2.7.Note
+    const [displaynoteticket, setdisplaynoteticket] = useState([])
+    const [datanoteticket, setdatanoteticket] = useState({ id: Number(ticketid), notes: "" })
+    const [modalnoteticket, setmodalnoteticket] = useState(false)
+    const [loadingnoteticket, setloadingnoteticket] = useState(false)
+    const [refreshnoteticket, setrefreshnoteticket] = useState(-1)
+    //2.8.Activity Log
+    const [displaylogticket, setdisplaylogticket] = useState([])
+    const [praloadinglogticket, setpraloadinglogticket] = useState(true)
+    //2.9 Export
+    const [loadingexportticket, setloadingexportticket] = useState(false)
 
-    //handler
-    const handleSetStatus = () => {
-        setloadingstatus(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/changeStatusTicket`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': JSON.parse(initProps),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                id: Number(ticketid),
-                notes: notestatus,
-                status_id: status
-            })
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setloadingstatus(false)
-                setmodalstatus(false)
-                if (res2.success) {
-                    notification['success']({
-                        message: "Status berhasil diubah",
-                        duration: 2
-                    })
-                    window.location.href = `/tickets/detail/${ticketid}`
-                }
-                else if (!res2.success) {
-                    notification['error']({
-                        message: res2.message,
-                        duration: 3
-                    })
-                }
-            })
-    }
-    const handleSetStatusClient = () => {
-        setloadingstatus(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/cancelClientTicket`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': JSON.parse(initProps),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                id: Number(ticketid),
-                notes: notestatus,
-            })
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setloadingstatus(false)
-                setmodalstatus(false)
-                if (res2.success) {
-                    notification['success']({
-                        message: "Status berhasil diubah",
-                        duration: 2
-                    })
-                    window.location.href = `/tickets/detail/${ticketid}`
-                }
-                else if (!res2.success) {
-                    notification['error']({
-                        message: res2.message,
-                        duration: 3
-                    })
-                }
-            })
-    }
-    const handleNotes = () => {
-        setloadingnotes(true)
+    //3.Handler
+    const handleNoteTicket = () => {
+        setloadingnoteticket(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "addNoteTicket" : "clientAddNoteTicket"}`, {
             method: 'POST',
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                id: Number(ticketid),
-                notes: notes
-            })
+            body: JSON.stringify(datanoteticket)
         })
             .then(res => res.json())
             .then(res2 => {
-                setloadingnotes(false)
-                setmodalnotes(false)
+                setloadingnoteticket(false)
+                setmodalnoteticket(false)
                 if (res2.success) {
+                    setdatanoteticket({ id: Number(ticketid), notes: "" })
+                    setrefreshnoteticket(prev => prev + 1)
                     notification['success']({
                         message: "Note berhasil ditambahkan",
                         duration: 3
                     })
-                    window.location.href = `/tickets/detail/${ticketid}?active=activity`
                 }
                 else if (!res2.success) {
                     notification['error']({
@@ -841,30 +193,60 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                 }
             })
     }
-    const handleAssignTo = () => {
-        setloadingassignto(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/assignTicket`, {
+    const handleCancelTicket = () => {
+        setloadingcancelticket(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/cancelTicket`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datacancelticket)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                setloadingcancelticket(false)
+                setmodalcancelticket(false)
+                if (res2.success) {
+                    setdatacancelticket({ id: Number(ticketid), notes: "" })
+                    setrefreshcancelticket(prev => prev + 1)
+                    notification['success']({
+                        message: "Tiket berhasil dibatalkan",
+                        duration: 3
+                    })
+                }
+                else if (!res2.success) {
+                    notification['error']({
+                        message: res2.message,
+                        duration: 3
+                    })
+                }
+            })
+    }
+    const handleReleaseItemTicket = () => {
+        setloadingreleaseitemticket(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/setItemTicket`, {
             method: 'PUT',
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                id: Number(ticketid),
-                assignable_type: to,
-                assignable_id: assignto
+                ...datapayloadconnectitem,
+                inventory_id: null
             })
         })
             .then(res => res.json())
             .then(res2 => {
-                setloadingassignto(false)
-                setmodalassignto(false)
+                setloadingreleaseitemticket(false)
+                setmodalreleaseitemticket(false)
                 if (res2.success) {
+                    setdatapayloadconnectitem({ id: Number(ticketid), inventory_id: null, name: "" })
+                    setrefreshconnectitemticket(prev => prev + 1)
                     notification['success']({
-                        message: "Assign To berhasil diubah",
+                        message: "Tiket berhasil dibatalkan",
                         duration: 3
                     })
-                    window.location.href = `/tickets/detail/${ticketid}`
                 }
                 else if (!res2.success) {
                     notification['error']({
@@ -875,8 +257,7 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
             })
     }
 
-
-    //useEffect
+    //4.useEffect
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getTicket" : "getClientTicket"}?id=${ticketid}`, {
             method: `GET`,
@@ -886,10 +267,51 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                setmaindata(res2.data)
-                setstatus(res2.data.ticket.status.id)
-                res2.data.ticket.assignable.id ? (setassignto(res2.data.ticket.assignable.id), setnameassignto(res2.data.ticket.assignable.name), setdefaultnameassignto(res2.data.ticket.assignable.name)) : setassignto(null)
-                res2.data.ticket.ticketable.inventory === null ? setconnecteditem(null) : setconnecteditem(res2.data.ticket.ticketable.inventory)
+                setdisplaydata(res2.data)
+                setdatapayloadupdate({
+                    ...datapayloadupdate,
+                    requester_id: res2.data.creator_id,
+                    raised_at: moment(res2.data.raised_at).locale('id').format(),
+                    closed_at: res2.data.closed_at === null ? null : moment(res2.data.closed_at).locale('id').format(),
+                    product_id: res2.data.ticketable.product_id,
+                    pic_name: res2.data.ticketable.pic_name,
+                    pic_contact: res2.data.ticketable.pic_contact,
+                    location_id: res2.data.ticketable.location_id,
+                    problem: res2.data.ticketable.problem,
+                    incident_time: moment(res2.data.ticketable.incident_time).locale('id').format(),
+                    files: res2.data.ticketable.files,
+                    description: res2.data.ticketable.description
+                })
+                res2.data.assignment_operator_id === 0 ?
+                    setdatapayloadassign({
+                        id: Number(ticketid),
+                        assignable_type: true,
+                        assignable_id: null
+                    })
+                    :
+                    setdatapayloadassign({
+                        ...datapayloadassign,
+                        assignable_type: res2.data.assignment_type === "Engineer" ? true : false,
+                        assignable_id: res2.data.assignment_operator_id
+                    })
+                res2.data.ticketable.inventory === null ?
+                    setselectedassettype(null)
+                    :
+                    (
+                        setdatapayloadconnectitem({
+                            id: Number(ticketid),
+                            inventory_id: res2.data.ticketable.inventory.id,
+                            name: res2.data.ticketable.inventory.mig_id
+                        }),
+                        setselectedassettype(res2.data.ticketable.inventory.model_inventory.asset_id)
+                    )
+                setdatapayloaddeadline({
+                    id: Number(ticketid),
+                    deadline: res2.data.deadline === "-" ? null : res2.data.deadline
+                })
+                res2.data.deadline === "-" ? setshowdatepicker(false) : setshowdatepicker(true)
+                res2.data.deadline === "-" ? setdatevalue(null) : setdatevalue(-10)
+                setdatacancelticket({ ...datacancelticket, name: res2.data.name })
             })
             .then(() => {
                 fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getTicketRelation" : "getClientTicketRelation"}`, {
@@ -900,357 +322,607 @@ const TicketDetail = ({ initProps, dataProfile, sidemenu, ticketid }) => {
                 })
                     .then(res => res.json())
                     .then(res2 => {
-                        setticketrelations(res2.data)
+                        setdatatickrelation(res2.data)
                         setpraloading(false)
                     })
             })
-    }, [])
+    }, [refreshconnectitemticket, refreshassignticket, refreshdeadlineicket, refreshcancelticket, refreshupdateticket])
     useEffect(() => {
-        if (engineergrouptrigger !== -1) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getAssignToList?assignable_type=${to === true ? 1 : 0}`, {
-                method: `GET`,
-                headers: {
-                    'Authorization': JSON.parse(initProps)
-                }
+        setpraloadinglogticket(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getTicketLog" : "getClientTicketLog"}?id=${ticketid}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': JSON.parse(initProps),
+            }
+        })
+            .then(res => res.json())
+            .then((res2) => {
+                setdisplaylogticket(res2.data.normal_logs)
+                setdisplaynoteticket(res2.data.special_logs.filter(note => note.log_name === "Note Khusus"))
+                setpraloadinglogticket(false)
             })
-                .then(res => res.json())
-                .then(res2 => {
-                    setengineergroup(res2.data)
-                })
-        }
-    }, [engineergrouptrigger])
+    }, [refreshnoteticket, refreshupdateticket, refreshconnectitemticket, refreshassignticket, refreshdeadlineicket])
+
 
     return (
-        <Layout st={st} sidemenu={sidemenu} tok={initProps} pathArr={pathArr} dataProfile={dataProfile}>
-            <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4" id="createAssetsWrapper">
-                <div className=" col-span-1 md:col-span-4 mb-8">
-                    <Sticky containerSelectorFocus="#createAgentsWrapper">
-                        <div className=" col-span-4 flex justify-between py-4 px-4 border-t border-b bg-white">
-                            <div className="flex items-center">
-                                <div className="flex flex-col">
-                                    <p className=" text-gray-400 mb-0">Ticket Number:</p>
-                                    <h1 className="font-semibold py-2 text-2xl mb-0 mr-20">#INC-{maindata.ticket.ticketable.id}</h1>
+        <Layout dataProfile={dataProfile} sidemenu={sidemenu} tok={initProps} st={st} pathArr={pathArr}>
+            <div className=' flex flex-col'>
+                <div className=' grid grid-cols-11 px-5'>
+                    <div className=' col-span-3 flex flex-col'>
+                        {/* Informasi Umum Tiket */}
+                        <div className=' flex flex-col mb-2 mr-2 shadow-md rounded-md bg-white p-5'>
+                            <div className=' flex flex-col mb-4'>
+                                <div className=' flex items-center justify-center mb-2'>
+                                    <div className='mr-2'><TicketIconSvg size={30} color={`#000000`} /></div>
+                                    <div><H1>{displaydata.name}</H1></div>
+                                </div>
+                                <div className=' flex items-center justify-center mb-4'>
+                                    {praloading ? null : <div><Label>{dataticketrelation.ticket_types.filter(type => type.id === displaydata.ticketable.product_type)[0]?.name}</Label></div>}
+                                </div>
+                                <div className=' flex justify-center items-center'>
+                                    {
+                                        praloading ? null :
+                                            <ButtonSys type={`default`} onClick={() => { setdrawerupdateticket(true) }}>
+                                                <div className=' mr-1'><EditIconSvg size={15} color={`#35763B`} /></div>
+                                                Ubah Tiket
+                                            </ButtonSys>
+                                    }
+                                </div>
+                            </div>
+                            {
+                                praloading ?
+                                    <div className=' flex justify-center'>
+                                        <Spin />
+                                    </div>
+                                    :
+                                    <div className=' flex flex-col'>
+                                        <div className=' flex flex-col mb-5'>
+                                            <Label>Diajukan Oleh:</Label>
+                                            <p className=' mb-0 text-gray-600'>{displaydata.creator}</p>
+                                        </div>
+                                        <div className=' flex flex-col mb-5'>
+                                            <Label>Lokasi:</Label>
+                                            <p className=' mb-0 text-gray-600'>{displaydata.creator_location}</p>
+                                        </div>
+                                        <div className=' flex flex-col mb-5'>
+                                            <Label>Tanggal Diajukan:</Label>
+                                            <p className=' mb-0 text-gray-600'>{displaydata.raised_at}</p>
+                                        </div>
+                                        <div className=' flex flex-col mb-5'>
+                                            <Label>Tanggal Selesai:</Label>
+                                            <p className=' mb-0 text-gray-600'>{displaydata.deadline}</p>
+                                        </div>
+                                        <div className=' flex flex-col mb-5'>
+                                            <Label>Tanggal Closed:</Label>
+                                            <p className=' mb-0 text-gray-600'>{displaydata.closed_at === null ? `-` : displaydata.closed_at}</p>
+                                        </div>
+                                    </div>
+                            }
+                        </div>
+                        {/* INFORMASI DETAIL TIKET */}
+                        <div className='flex flex-col my-2 mr-2 shadow-md rounded-md bg-white p-5'>
+                            <div className=' mb-7'>
+                                <H1>Detail Masalah</H1>
+                            </div>
+                            <div className=' flex flex-col mb-5'>
+                                <Label>Tipe Aset:</Label>
+                                <p className=' mb-0 text-gray-600'>{displaydata.ticketable.asset_type_name}</p>
+                            </div>
+                            <div className=' flex flex-col mb-5'>
+                                <Label>Terminal ID:</Label>
+                                <p className=' mb-0 text-gray-600'>{displaydata.ticketable.product_id}</p>
+                            </div>
+                            <div className=' flex flex-col mb-5'>
+                                <Label>PIC:</Label>
+                                <p className=' mb-0 text-gray-600'>{displaydata.ticketable.pic_name === "" ? `-` : displaydata.ticketable.pic_name} / {displaydata.ticketable.pic_contact}</p>
+                            </div>
+                            <div className=' flex flex-col mb-5'>
+                                <Label>Waktu Kejadian:</Label>
+                                <p className=' mb-0 text-gray-600'>{displaydata.ticketable.incident_time}</p>
+                            </div>
+                            <div className=' flex flex-col mb-5'>
+                                <Label>Lokasi Masalah:</Label>
+                                <p className=' mb-0 text-gray-600'>{displaydata.ticketable.location.full_location}</p>
+                            </div>
+                            <div className=' flex flex-col mb-5'>
+                                <Label>Deskripsi Kerusakan:</Label>
+                                <p className=' mb-0 text-gray-600'>{displaydata.ticketable.description}</p>
+                            </div>
+                        </div>
+                        {/* BUKTI KEJADIAN TIKET */}
+                        <div className='flex flex-col my-2 mr-2 shadow-md rounded-md bg-white p-5'>
+                            <div className=' mb-7'>
+                                <H1>Bukti Kejadian</H1>
+                            </div>
+                            {
+                                displaydata.ticketable.files.length === 0 ?
+                                    <>
+                                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                    </>
+                                    :
+                                    <div className=' grid grid-cols-2'>
+                                        {
+                                            displaydata.ticketable.files.map((doc, idx) => (
+                                                <a target={`_blank`} href={doc}>
+                                                    <div className=' col-span-1 mx-1 flex flex-col items-center mb-2 cursor-pointer'>
+                                                        <img src={doc} className=' object-contain mb-1 h-28 w-full' alt="" />
+                                                    </div>
+                                                </a>
+                                            ))
+                                        }
+                                    </div>
+                            }
+                        </div>
+                        {/* EKSPOR TIKET */}
+                        <div className='flex items-center justify-center mb-2 mr-2 shadow-md rounded-md bg-white p-5'>
+                            {
+                                loadingexportticket ?
+                                    <>
+                                        <Spin />
+                                    </>
+                                    :
+                                    <div>
+                                        <ButtonSys type={`default`} onClick={() => {
+                                            setloadingexportticket(true)
+                                            fetch(`https://boiling-thicket-46501.herokuapp.com/ticketExport?id=${ticketid}`, {
+                                                method: `GET`,
+                                                headers: {
+                                                    'Authorization': JSON.parse(initProps)
+                                                }
+                                            })
+                                                .then(res => res.blob())
+                                                .then(res2 => {
+                                                    var newBlob = new Blob([res2], { type: "application/pdf" })
+                                                    const data = window.URL.createObjectURL(newBlob);
+                                                    var link = document.createElement('a');
+                                                    link.href = data;
+                                                    link.download = `${displaydata.name}.pdf`;
+                                                    link.click();
+                                                    setTimeout(function () {
+                                                        window.URL.revokeObjectURL(data);
+                                                    })
+                                                    setloadingexportticket(false)
+                                                })
+                                        }}>
+                                            <div className=' mr-1'><FileExportIconSvg size={15} color={`#35763B`} /></div>
+                                            Ekspor Tiket
+                                        </ButtonSys>
+                                    </div>
+                            }
+                        </div>
+                    </div>
+                    <div className=' col-span-8 flex flex-col'>
+                        {/* STATUS ASSIGN DEADLINE TIKET */}
+                        <div className=' w-full flex justify-around mb-2 ml-2 shadow-md rounded-md bg-white p-5'>
+                            <div className=' w-4/12 pr-8 flex items-center justify-between mb-2'>
+                                <div className=' flex flex-col'>
+                                    <div className="mb-2"><Label>Status</Label></div>
+                                    <div className=' flex items-center'>
+                                        <div className=" mr-2"><CheckIconSvg size={25} color={`#35763B`} /></div>
+                                        <p className=' mb-0 text-base font-bold'>{displaydata.status_name}</p>
+                                    </div>
+                                </div>
+                                {
+                                    displaydata.status !== 7 &&
+                                    <div className="dropdown dropdown-end">
+                                        <div tabIndex={`1`} className=' h-full flex justify-end items-start cursor-pointer text-lg font-bold'>
+                                            <span className='mb-0'>...</span>
+                                        </div>
+                                        <div tabIndex={`1`} className=' menu dropdown-content bg-backdrop p-3'>
+                                            <div className=' p-3 w-52 flex items-center bg-white rounded shadow hover:bg-red-100 text-overdue cursor-pointer' onClick={() => { setmodalcancelticket(true) }}>
+                                                <div className="mr-2"><XIconSvg size={15} color={`#BF4A40`} /></div>
+                                                <p className=' mb-0'>Batalkan Tiket</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                <ModalCancelTiket
+                                    title={"Pembatalan Tiket"}
+                                    visible={modalcancelticket}
+                                    onvisible={setmodalcancelticket}
+                                    onCancel={() => { setmodalcancelticket(false) }}
+                                    loading={loadingcancelticket}
+                                    onOk={handleCancelTicket}
+                                    data={datacancelticket}
+                                    setdata={setdatacancelticket}
+                                    ticketid={ticketid}
+                                />
+                            </div>
+                            <div className=' w-4/12 px-8 flex items-center justify-between mb-2'>
+                                <div className=' flex flex-col'>
+                                    <div className='mb-2'><Label>{displaydata.assignment_type}</Label></div>
+                                    {
+                                        praloading ?
+                                            <><Spin /></>
+                                            :
+                                            displaydata.assignment_operator_id === 0 ?
+                                                <button className=' btn btn-sm bg-state2 border-state2 hover:bg-onhold hover:border-onhold px-6 py-0' onClick={() => { setdrawerassignticket(true) }}>
+                                                    <div className="mr-1"><FilePlusIconSvg size={15} color={`#ffffff`} /></div>
+                                                    Assign Engineer
+                                                </button>
+                                                :
+                                                <div className=' flex items-center'>
+                                                    <div className=' flex items-center'>
+                                                        {
+                                                            displaydata.assignment_type === 'Engineer' ?
+                                                                <div className=' w-8 h-8 rounded-full mr-2'>
+                                                                    <img src={displaydata.assignment_profile_image === "" || displaydata.assignment_profile_image === "-" ? "/image/staffTask.png" : `${displaydata.assignment_profile_image}`} className=' object-contain w-10 h-10' alt="" />
+                                                                </div>
+                                                                :
+                                                                <div className=' mr-2'><UserIconSvg /></div>
+                                                        }
+                                                    </div>
+                                                    <p className=' mb-0 text-base font-bold'>{displaydata.assignment_operator_name}</p>
+                                                </div>
+                                    }
                                 </div>
                                 {
                                     praloading ?
                                         null
                                         :
-                                        <>
-                                            <div className="flex flex-col mr-7 p-2">
-                                                <p className="mb-1">Ticket Type:</p>
-                                                {
-                                                    // displayusage ?
-                                                    <Select defaultValue={maindata.ticket.type.id} placeholder="Masukkan Tipe Ticket" style={{ width: `10rem` }} bordered={true} defaultValue={1} onChange={(value) => {
-                                                    }}>
-                                                        {
-                                                            ticketrelations.ticket_types.map((doc, idx) => {
-                                                                return (
-                                                                    <Select.Option value={doc.id}><strong>{doc.name}</strong></Select.Option>
-                                                                )
-                                                            })
-                                                        }
-                                                    </Select>
-                                                    // :
-                                                    // null
-                                                }
-                                            </div>
-                                            <div className="flex flex-col p-2 mr-7">
-                                                <p className="mb-1">Status:</p>
-                                                {
-                                                    displaystatus ?
-                                                        <Select disabled={status === 5} defaultValue={maindata.ticket.status.id} value={status} placeholder="Masukkan Status" style={{ width: `10rem` }} bordered={true} defaultValue={1} onChange={(value, option) => {
-                                                            setstatus(value)
-                                                            setnamestatus(option.name)
-                                                            setmodalstatus(true)
-                                                            setdisplaystatus(false)
-                                                        }}>
-                                                            {
-                                                                dataProfile.data.role === 1 ?
-                                                                    ticketrelations.status_ticket.map((doc, idx) => {
-                                                                        return (
-                                                                            <Select.Option key={idx} value={doc.id} name={doc.name}><strong>{doc.name}</strong></Select.Option>
-                                                                        )
-                                                                    })
-                                                                    :
-                                                                    dataProfile.data.features.includes(110) &&
-                                                                    ticketrelations.status_ticket.map((doc, idx) => {
-                                                                        if (doc.id === 1 || doc.id === 4) {
-                                                                            return (
-                                                                                <Select.Option key={idx} value={doc.id} name={doc.name}><strong>{doc.name}</strong></Select.Option>
-                                                                            )
-                                                                        }
-                                                                    })
-                                                            }
-                                                        </Select>
-                                                        :
-                                                        null
-                                                }
-                                            </div>
-                                            {
-                                                dataProfile.data.role === 1 &&
-                                                <div className="flex flex-col cursor-pointer w-40" onClick={() => { setmodalassignto(true); setdisplayassignto(false) }}>
-                                                    <p className="mb-1">Assign To:</p>
-                                                    {
-                                                        displayassignto ?
-                                                            <div className="py-1 px-3 border border-primary100 flex items-center justify-between">
-                                                                <h1 className="font-semibold mb-0 mr-5">{assignto === null ? 'None' : `${nameassignto}`}</h1>
-                                                                <DownOutlined />
-                                                            </div>
-                                                            :
-                                                            null
-                                                    }
+                                        displaydata.status !== 7 ?
+                                            displaydata.assignment_operator_id === 0 ?
+                                                null
+                                                :
+                                                <div className=' h-full flex justify-end items-start cursor-pointer' onClick={() => { setdrawerassignticket(true) }}>
+                                                    <UserSearchIconSvg size={18} color={`#4D4D4D`} />
                                                 </div>
-                                            }
-                                        </>
+                                            :
+                                            null
                                 }
                             </div>
-                            {
-                                dataProfile.data.role === 1 ?
-                                    <div className="flex items-center">
-                                        <Button onClick={() => { setmodalnotes(true) }} size="large">Tambah Notes</Button>
-                                    </div>
-                                    :
-                                    <>
-                                        {
-                                            dataProfile.data.features.includes(112) &&
-                                            <div className="flex items-center">
-                                                <Button onClick={() => { setmodalnotes(true) }} size="large">Tambah Notes</Button>
-                                            </div>
-                                        }
-                                    </>
-                            }
+                            <div className=' w-4/12 pl-8 flex items-center justify-between mb-2'>
+                                <div className=' flex flex-col'>
+                                    <div className=' mb-2'><Label>Deadline</Label></div>
+                                    {
+                                        praloading ?
+                                            <><Spin /></>
+                                            :
+                                            displaydata.deadline === "-" ?
+                                                <button className=' btn btn-sm bg-state2 border-state2 hover:bg-onhold hover:border-onhold px-6 py-0' onClick={() => { setdrawedeadlineticket(true) }}>
+                                                    <div className="mr-1"><CalendartimeIconSvg size={15} color={`#ffffff`} /></div>
+                                                    Tentukan Deadline
+                                                </button>
+                                                :
+                                                <div className=' flex items-center'>
+                                                    <p className=' mb-0 text-base font-bold'>{displaydata.deadline}</p>
+                                                </div>
+                                    }
+                                </div>
+                                {
+                                    praloading ?
+                                        null
+                                        :
+                                        displaydata.status !== 7 ?
+                                            displaydata.deadline === "-" ?
+                                                null
+                                                :
+                                                <div className=' h-full flex justify-end items-start cursor-pointer' onClick={() => { setdrawedeadlineticket(true) }}>
+                                                    <CalendartimeIconSvg size={18} color={`#4D4D4D`} />
+                                                </div>
+                                            :
+                                            null
+                                }
+                            </div>
                         </div>
-                    </Sticky>
-                </div>
-                <div className="col-span-1 md:col-span-4 mb-8">
-                    <div className=" hidden md:block">
-                        <Tabs tabPosition={`left`} defaultActiveKey={activeTab} onTabClick={(key, e) => {
-                            if (key === "activity") {
-                                setactivitytrigger(prev => prev + 1)
-                            }
-                        }}>
-                            <TabPane tab="Overview" key={`overview`}>
-                                <Overview ticketid={ticketid} initProps={initProps} praloading={praloading} maindata={maindata} ticketrelations={ticketrelations} dataProfile={dataProfile} />
-                            </TabPane>
-                            {
-                                dataProfile.data.role === 1 &&
-                                <TabPane tab={
-                                    <div className="flex items-center">
-                                        <p className="mb-0 mr-2">Detail Item</p>
+                        <div className='flex w-full'>
+                            {/* DETAIL ASET TIKET */}
+                            <div className=' w-6/12 mx-2'>
+                                <div className=' flex w-full flex-col mt-2 shadow-md rounded-md bg-white p-5'>
+                                    <div className=' flex items-center justify-between mb-5'>
+                                        <H1>Detail Aset</H1>
                                         {
-                                            connecteditem === null ?
-                                                <Tooltip placement="right" title="Ticket Incident belum terhubung dengan Item">
-                                                    <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
-                                                </Tooltip>
-                                                :
+                                            displaydata.ticketable.inventory === null ?
                                                 null
-                                        }
-                                    </div>
-                                } key="detailItem">
-                                    <DetailItem ticketid={ticketid} initProps={initProps} connecteditem={connecteditem} setconnecteditem={setconnecteditem} maindata={maindata}></DetailItem>
-                                </TabPane>
-                            }
-                            {
-                                dataProfile.data.role === 1 ?
-                                    <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
-                                        <Activity dataProfile={dataProfile} ticketid={ticketid} initProps={initProps} activitytrigger={activitytrigger} />
-                                    </TabPane>
-                                    :
-                                    dataProfile.data.features.includes(111) &&
-                                    <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
-                                        <Activity dataProfile={dataProfile} ticketid={ticketid} initProps={initProps} activitytrigger={activitytrigger} />
-                                    </TabPane>
-                            }
-                        </Tabs>
-                    </div>
-                    <div className=" block md:hidden" >
-                        <Tabs tabPosition={`top`} defaultActiveKey={activeTab} onTabClick={(key, e) => {
-                            if (key === "activity") {
-                                setactivitytrigger(prev => prev + 1)
-                            }
-                        }}>
-                            <TabPane tab="Overview" key={`overview`}>
-                                <Overview ticketid={ticketid} initProps={initProps} praloading={praloading} maindata={maindata} ticketrelations={ticketrelations} dataProfile={dataProfile} />
-                            </TabPane>
-                            {
-                                dataProfile.data.role === 1 &&
-                                <TabPane tab={
-                                    <div className="flex items-center">
-                                        <p className="mb-0 mr-2">Detail Item</p>
-                                        {
-                                            connecteditem === null ?
-                                                <Tooltip placement="right" title="Ticket Incident belum terhubung dengan Item">
-                                                    <ExclamationCircleOutlined style={{ color: `brown` }}></ExclamationCircleOutlined>
-                                                </Tooltip>
                                                 :
-                                                null
+                                                <div className="dropdown dropdown-end">
+                                                    <div tabIndex={`2`} className=' h-full flex justify-end items-start cursor-pointer text-lg font-bold'>
+                                                        <span className='mb-0'>...</span>
+                                                    </div>
+                                                    <div tabIndex={`2`} className=' menu dropdown-content bg-backdrop p-3'>
+                                                        <div className=' p-3 w-52 mb-4 flex items-center bg-white rounded shadow hover:bg-primary25 text-primary100 cursor-pointer' onClick={() => { setdrawerconnectitemticket(true) }}>
+                                                            <p className=' mb-0'>Ganti Aset</p>
+                                                        </div>
+                                                        <div className=' p-3 w-52 flex items-center bg-white rounded shadow hover:bg-primary25 text-primary100 cursor-pointer' onClick={() => { setmodalreleaseitemticket(true) }}>
+                                                            <p className=' mb-0'>Pisah Aset</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                         }
+                                        <ModalReleaseItemTiket
+                                            title={"Pemisahan Item dengan Tiket"}
+                                            visible={modalreleaseitemticket}
+                                            onvisible={setmodalreleaseitemticket}
+                                            onCancel={() => { setmodalreleaseitemticket(false) }}
+                                            loading={loadingreleaseitemticket}
+                                            onOk={handleReleaseItemTicket}
+                                            data={datapayloadconnectitem}
+                                            setdata={setdatapayloadconnectitem}
+                                            ticketid={ticketid}
+                                        />
                                     </div>
-                                } key="detailItem">
-                                    <DetailItem ticketid={ticketid} initProps={initProps} connecteditem={connecteditem} setconnecteditem={setconnecteditem} maindata={maindata}></DetailItem>
-                                </TabPane>
-                            }
-                            {
-                                dataProfile.data.role === 1 ?
-                                    <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
-                                        <Activity dataProfile={dataProfile} ticketid={ticketid} initProps={initProps} activitytrigger={activitytrigger} />
-                                    </TabPane>
-                                    :
-                                    dataProfile.data.features.includes(111) &&
-                                    <TabPane /*disabled={praloading2}*/ tab="Activity" key={`activity`}>
-                                        <Activity dataProfile={dataProfile} ticketid={ticketid} initProps={initProps} activitytrigger={activitytrigger} />
-                                    </TabPane>
-                            }
-                        </Tabs>
+                                    {
+                                        displaydata.ticketable.inventory === null ?
+                                            <>
+                                                <div className=' flex flex-col justify-center items-center mb-5'>
+                                                    <div className='w-52 h-52 mb-2'>
+                                                        <img src="/image/emptyAssetTicket.png" className=' object-contain' alt="" />
+                                                    </div>
+                                                    <div className=' w-8/12 text-center'>
+                                                        <p className=' mb-0 text-gray-400'>Belum ada aset terhubung. Silakan hubungkan aset.</p>
+                                                    </div>
+                                                </div>
+                                                <div className=' flex justify-center mb-5'>
+                                                    <ButtonSys type={`primary`} onClick={() => { setdrawerconnectitemticket(true) }}>
+                                                        + Hubungkan Aset
+                                                    </ButtonSys>
+                                                </div>
+                                            </>
+                                            :
+                                            <div className=' flex flex-col'>
+                                                {
+                                                    displaydata.status === 6 &&
+                                                    <div className=' flex bg-primary100 text-white rounded-md p-4 w-full mb-5'>
+                                                        <div className=' flex items-center justify-center h-full mr-2'><InfoCircleIconSvg size={20} color={`#ffffff`} /></div>
+                                                        <p className=' mb-0'>
+                                                            Berikut tampilan detail item yang di-closed pada tanggal <strong>{displaydata.closed_at === null ? `-` : displaydata.closed_at}</strong>
+                                                        </p>
+                                                    </div>
+                                                }
+                                                <div className="mb-8 flex flex-col items-center">
+                                                    <H1>{displaydata.ticketable?.inventory?.model_inventory?.name}</H1>
+                                                    <Label>{displaydata.ticketable?.inventory?.mig_id}</Label>
+                                                </div>
+                                                <div className=' flex flex-col mb-5'>
+                                                    <Label>Tipe Aset:</Label>
+                                                    <p className=' mb-0 text-gray-600'>{displaydata.ticketable?.inventory?.model_inventory?.asset?.full_name}</p>
+                                                </div>
+                                                <div className=' flex flex-col mb-5'>
+                                                    <Label>No Seri:</Label>
+                                                    <p className=' mb-0 text-gray-600'>{displaydata.ticketable?.inventory?.serial_number === null ? `-` : displaydata.ticketable?.inventory?.serial_number}</p>
+                                                </div>
+                                                <div className=' flex flex-col mb-5'>
+                                                    <Label>Status Pemakaian:</Label>
+                                                    <div>
+                                                        {displaydata.ticketable.inventory.status_usage.id === 1 && <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-open bg-opacity-10 text-open">In Used</div>}
+                                                        {displaydata.ticketable.inventory.status_usage.id === 2 && <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-completed bg-opacity-10 text-completed">In Stock</div>}
+                                                        {displaydata.ticketable.inventory.status_usage.id === 3 && <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-overdue bg-opacity-10 text-overdue">Replacement</div>}
+                                                    </div>
+                                                </div>
+                                                <div className=' flex flex-col mb-5'>
+                                                    <Label>Kondisi Aset:</Label>
+                                                    <div>
+                                                        {displaydata.ticketable.inventory.status_condition.id === 1 && <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-completed bg-opacity-10 text-completed">Good</div>}
+                                                        {displaydata.ticketable.inventory.status_condition.id === 2 && <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-closed bg-opacity-10 text-closed">Gray</div>}
+                                                        {displaydata.ticketable.inventory.status_condition.id === 3 && <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-overdue bg-opacity-10 text-overdue">Bad</div>}
+                                                    </div>
+                                                </div>
+                                                <div className=' flex flex-col mb-5'>
+                                                    <Label>Lokasi Item:</Label>
+                                                    <p className=' mb-0 text-gray-600'>{displaydata.ticketable?.inventory?.location === null ? `-` : displaydata.ticketable?.inventory?.location}</p>
+                                                </div>
+                                                <hr />
+                                                {
+                                                    displaydata.ticketable.inventory.additional_attributes.map((doccolumns, idxcolumns) => {
+                                                        return (
+                                                            <div key={idxcolumns} className={`flex flex-col mb-5 ${idxcolumns === 0 ? `mt-5` : ``}`}>
+                                                                <Label>{doccolumns.name}:</Label>
+                                                                <p className="mb-0 text-sm">
+                                                                    {
+                                                                        doccolumns.data_type === 'dropdown' || doccolumns.data_type === 'checkbox' || doccolumns.data_type === 'date' ?
+                                                                            <>
+                                                                                {
+                                                                                    doccolumns.data_type === 'dropdown' &&
+                                                                                    <>
+                                                                                        {doccolumns.value.opsi[doccolumns.value.default]}
+                                                                                    </>
+                                                                                }
+                                                                                {
+                                                                                    doccolumns.data_type === 'checkbox' &&
+                                                                                    <>
+                                                                                        {doccolumns.value.opsi.filter((_, idxfil) => {
+                                                                                            return doccolumns.value.default.includes(idxfil)
+                                                                                        }).join(", ")}
+                                                                                    </>
+                                                                                }
+                                                                                {
+                                                                                    doccolumns.data_type === 'date' &&
+                                                                                    <>
+                                                                                        {moment(doccolumns.value).locale('id').format('LL')}
+                                                                                    </>
+                                                                                }
+                                                                            </>
+                                                                            :
+                                                                            <p className=' mb-0 text-gray-600'>
+                                                                                {doccolumns.value}
+                                                                            </p>
+                                                                    }
+                                                                </p>
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
+                                                <div className=' flex flex-col mb-5'>
+                                                    <Label>Deskripsi:</Label>
+                                                    <p className=' mb-0 text-gray-600'>{displaydata.ticketable?.inventory?.deskripsi === null ? `-` : displaydata.ticketable?.inventory?.deskripsi}</p>
+                                                </div>
+                                            </div>
+                                    }
+                                </div>
+                            </div>
+                            <div className='flex flex-col w-6/12'>
+                                {/* CATATAN TIKET */}
+                                <div className=' shadow-md rounded-md bg-white p-5 my-2 ml-2'>
+                                    <div className=' flex items-center justify-between mb-5'>
+                                        <H1>Catatan</H1>
+                                        <div className=' h-full flex justify-end items-start cursor-pointer' onClick={() => { setmodalnoteticket(true) }}>
+                                            <PlusIconSvg size={25} color={`#35763B`} />
+                                        </div>
+                                    </div>
+                                    {
+                                        loadingnoteticket ?
+                                            <>
+                                                <Spin />
+                                            </>
+                                            :
+                                            displaynoteticket.length === 0 ?
+                                                <>
+                                                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                                </>
+                                                :
+                                                displaynoteticket.map((note, idx) => (
+                                                    <div className=' flex flex-col mb-5'>
+                                                        <p className=' mb-3 line-clamp-6 font-light'>{note.description}</p>
+                                                        <div className="flex items-center justify-between">
+                                                            <div className=' flex'>
+                                                                <div className=' w-5 h-5 rounded-full mr-2'>
+                                                                    <img src={"/image/staffTask.png"} className=' object-contain w-5 h-5' alt="" />
+                                                                </div>
+                                                                <Text color={`green`}>{note.causer.name}</Text>
+                                                            </div>
+                                                            <div>
+                                                                <Label>{moment(note.created_at).locale('id').format('LL, LT')}</Label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                    }
+                                </div>
+                                <ModalNoteTiket
+                                    title={"Catatan Baru"}
+                                    visible={modalnoteticket}
+                                    onvisible={setmodalnoteticket}
+                                    onCancel={() => { setmodalnoteticket(false) }}
+                                    loading={loadingnoteticket}
+                                    onOk={handleNoteTicket}
+                                    datanoteticket={datanoteticket}
+                                    setdatanoteticket={setdatanoteticket}
+                                    ticketid={ticketid}
+                                />
+                                {/* AKTIVITAS TIKET */}
+                                <div className='shadow-md rounded-md bg-white p-5 mt-2 ml-2'>
+                                    <div className=' flex items-center justify-between mb-5'>
+                                        <H1>Aktivitas</H1>
+                                    </div>
+                                    {
+                                        praloadinglogticket ?
+                                            <div className=' flex justify-center'>
+                                                <Spin />
+                                            </div>
+                                            :
+                                            displaylogticket.length === 0 ?
+                                                <>
+                                                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                                </>
+                                                :
+                                                // <InfiniteScroll
+                                                //     dataLength={logs.length}
+                                                //     next={fetchDataMoreLogs}
+                                                //     hasMore={hasmore}
+                                                //     loader={
+                                                //         <>
+                                                //             <Spin />
+                                                //         </>
+                                                //     }
+                                                //     endMessage={
+                                                //         <div className="flex justify-center text-center">
+                                                //             <Label>Sudah Semua</Label>
+                                                //         </div>
+                                                //     }
+                                                // >
+                                                //     {
+                                                displaylogticket.map((log, idx) => (
+                                                    <div className=' flex flex-col mb-4'>
+                                                        <p className=' mb-2 line-clamp-6 font-medium'>{log.log_name}</p>
+                                                        <div className="flex items-center justify-between">
+                                                            <div className=' flex'>
+                                                                <div className=' w-5 h-5 rounded-full mr-2'>
+                                                                    <img src={log.causer.profile_image === "-" ? "/image/staffTask.png" : log.causer.profile_image} className=' object-contain w-5 h-5' alt="" />
+                                                                </div>
+                                                                <Text color={`green`}>{log.causer.name}</Text>
+                                                            </div>
+                                                            <div>
+                                                                <Label>{moment(log.created_at).locale('id').format('LL, LT')}</Label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                        //     }
+                                        // </InfiniteScroll>
+                                    }
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <Modal title={
-                <div className="flex justify-between p-5 mt-5">
-                    <h1 className="font-bold text-xl">Form Tambah Notes ticket #{maindata.ticket.type.code}-{maindata.ticket.type.id}</h1>
-                    <div className="flex">
-                        <>
-                            <Button type="default" onClick={() => { setmodalnotes(false) }} style={{ marginRight: `1rem` }}>Batal</Button>
-                            <Button type='primary' disabled={notes === ""} loading={loadingnotes} onClick={handleNotes}>Simpan</Button>
-                        </>
-                    </div>
-                </div>
-            }
-                visible={modalnotes}
-                onCancel={() => { setmodalnotes(false) }}
-                footer={null}
-                width={720}
-            >
-                <div className="flex flex-col mb-5">
-                    <p className="mb-2">Notes <span className="notes"></span></p>
-                    <Input.TextArea rows={3} placeholder="Masukkan Notes" onChange={(e => {
-                        setnotes(e.target.value)
-                    })}></Input.TextArea>
-                    <style jsx>
-                        {`
-                            .notes::before{
-                                content: '*';
-                                color: red;
-                            }
-                        `}
-                    </style>
-                </div>
-            </Modal>
-            <Modal title={
-                <div className="flex justify-between p-5 mt-5">
-                    <h1 className="font-bold text-xl">Ubah Status Ticket Menjadi {namestatus}</h1>
-                    <div className="flex">
-                        <>
-                            <Button type="default" onClick={() => { setmodalstatus(false); setdisplaystatus(true) }} style={{ marginRight: `1rem` }}>Batal</Button>
-                            <Button type='primary' disabled={status === ""} loading={loadingstatus} onClick={dataProfile.data.role === 1 ? handleSetStatus : handleSetStatusClient}>Simpan</Button>
-                        </>
-                    </div>
-                </div>
-            }
-                visible={modalstatus}
-                onCancel={() => { setmodalstatus(false); setdisplaystatus(true) }}
-                footer={null}
-                width={720}
-            >
-                <div className="flex flex-col mb-5">
-                    <div className="flex mb-2">
-                        <span className="judulField"></span>
-                        <p className="mb-0">Notes</p>
-                        <style jsx>
-                            {`
-                                .judulField::before{
-                                    content: '*';
-                                    color: red;
-                                }
-                            `}
-                        </style>
-                    </div>
-                    <Input.TextArea rows={3} placeholder="Masukkan Notes" onChange={(e => {
-                        setnotestatus(e.target.value)
-                    })}></Input.TextArea>
-                </div>
-            </Modal>
-            <Modal title={
-                <div className="flex justify-between p-5 mt-5">
-                    <h1 className="font-bold text-xl">Assigned To</h1>
-                    <div className="flex">
-                        <>
-                            <Button type="default" onClick={() => { setmodalassignto(false); setdisplayassignto(true); setnameassignto(defaultnameassignto) }} style={{ marginRight: `1rem` }}>Batal</Button>
-                            <Button type='primary' disabled={disabledassignto} onClick={handleAssignTo} loading={loadingassignto}>Simpan</Button>
-                        </>
-                    </div>
-                </div>
-            }
-                visible={modalassignto}
-                onCancel={() => { setmodalassignto(false); setdisplayassignto(true); setnameassignto(defaultnameassignto) }}
-                footer={null}
-                width={720}
-            >
-                <div className="flex flex-col mb-5">
-                    <div className="flex flex-col mb-3">
-                        <p className="mb-0">Assigned To <span className="assto"></span></p>
-                        <Select onChange={(value) => { setto(value); setengineergrouptrigger(prev => prev + 1) }}>
-                            <Select.Option value={true}>Engineer</Select.Option>
-                            <Select.Option value={false}>Group</Select.Option>
-                        </Select>
-                        <style jsx>
-                            {`
-                                .assto::before{
-                                    content: '*';
-                                    color: red;
-                                }
-                            `}
-                        </style>
-                    </div>
-                    {
-                        to === null ?
-                            null
-                            :
-                            <div className="flex flex-col mb-3">
-                                <p className="mb-0">{to === true ? "Engineer" : "Group"} <span className="engineer"></span></p>
-                                {
-                                    // to === true &&
-                                    <Select disabled={to === null} onChange={(value, option) => { setassignto(value); setdisabledassignto(false); setnameassignto(option.name) }}>
-                                        {
-                                            engineergroup.map((doc, idx) => {
-                                                return (
-                                                    <Select.Option value={doc.id} name={doc.name}>{doc.name}</Select.Option>
-                                                )
-                                            })
-                                        }
-                                    </Select>
-                                }
-                                {/* {
-                                    to === false &&
-                                    <Select disabled={to === null} onChange={(value, option) => { setassignto(value); setdisabledassignto(false); setnameassignto(option.name) }}>
-                                        {
-                                            agentgroup.map((doc, idx) => {
-                                                return (
-                                                    <Select.Option value={doc.id} name={doc.name}>{doc.name}</Select.Option>
-                                                )
-                                            })
-                                        }
-                                    </Select>
-                                } */}
-                                <style jsx>
-                                    {`
-                                .engineer::before{
-                                    content: '*';
-                                    color: red;
-                                }
-                            `}
-                                </style>
-                            </div>
-                    }
-                </div>
-            </Modal>
+            <DrawerTicketConnectItem
+                title={"Hubungkan Aset"}
+                visible={drawerconnectitemticket}
+                onClose={() => { setdrawerconnectitemticket(false) }}
+                buttonOkText={"Hubungkan Aset"}
+                initProps={initProps}
+                onvisible={setdrawerconnectitemticket}
+                refresh={refreshconnectitemticket}
+                setrefresh={setrefreshconnectitemticket}
+                ticketid={ticketid}
+                datapayload={datapayloadconnectitem}
+                setdatapayload={setdatapayloadconnectitem}
+                selectedassettype={selectedassettype}
+                setselectedassettype={setselectedassettype}
+            />
+            <DrawerTicketAssign
+                title={""}
+                visible={drawerassignticket}
+                onClose={() => { setdrawerassignticket(false) }}
+                buttonOkText={"Simpan"}
+                initProps={initProps}
+                onvisible={setdrawerassignticket}
+                refresh={refreshassignticket}
+                setrefresh={setrefreshassignticket}
+                ticketid={ticketid}
+                datapayload={datapayloadassign}
+                setdatapayload={setdatapayloadassign}
+            />
+            <DrawerTicketDeadline
+                title={"Deadline"}
+                visible={drawerdeadlineicket}
+                onClose={() => { setdrawedeadlineticket(false) }}
+                buttonOkText={"Simpan"}
+                initProps={initProps}
+                onvisible={setdrawedeadlineticket}
+                refresh={refreshdeadlineicket}
+                setrefresh={setrefreshdeadlineicket}
+                ticketid={ticketid}
+                datapayload={datapayloaddeadline}
+                setdatapayload={setdatapayloaddeadline}
+                showdatetime={showdatepicker}
+                setshowdatetime={setshowdatepicker}
+                datevalue={datevalue}
+                setdatevalue={setdatevalue}
+            />
+            <DrawerTicketUpdate
+                title={"Ubah Tiket"}
+                visible={drawerupdateticket}
+                onClose={() => { setdrawerupdateticket(false) }}
+                buttonOkText={"Simpan Perubahan Tiket"}
+                initProps={initProps}
+                onvisible={setdrawerupdateticket}
+                refreshtickets={refreshupdateticket}
+                setrefreshtickets={setrefreshupdateticket}
+                dataprofile={dataProfile}
+                datapayload={datapayloadupdate}
+                setdatapayload={setdatapayloadupdate}
+                ticketid={ticketid}
+                displaydata={displaydata}
+            />
         </Layout>
     )
 }
 
 export async function getServerSideProps({ req, res, params }) {
-    var initProps = {};
     const ticketid = params.ticketId
+    var initProps = {};
     if (!req.headers.cookie) {
         return {
             redirect: {
