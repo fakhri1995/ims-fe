@@ -111,7 +111,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
                 return {
                     children:
                         <>
-                            {record.type.code} - {record.id}
+                            {record.full_name}
                         </>
                 }
             },
@@ -124,7 +124,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
                 return {
                     children:
                         <>
-                            {record.type.name}
+                            {record.type_name}
                         </>
                 }
             },
@@ -137,7 +137,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
                 return {
                     children:
                         <>
-                            {record.requester.name}
+                            {record.task.creator.name}
                         </>
                 }
             },
@@ -149,7 +149,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
                 return {
                     children:
                         <>
-                            {record.ticketable.location.name}
+                            {record.task.location.full_location}
                         </>
                 }
             },
@@ -175,14 +175,14 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
                     children:
                         <>
                             {
-                                record.assignable.id === 0 ?
+                                record.task.users.length === 0 ?
                                     <div className=' flex items-center bg-onhold bg-opacity-10'>
                                         <div className=' mr-2'><UserIconSvg /></div>
                                         <div>Belum di-assign</div>
                                     </div>
                                     :
                                     <>
-                                        {record.assignable.name}
+                                        {record.task.users[0].name}
                                     </>
                             }
                         </>

@@ -116,6 +116,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
         description: ""
     })
     const [drawerupdateticket, setdrawerupdateticket] = useState(false)
+    const [refreshclosedupdateticket, setrefreshclosedupdateticket] = useState(-1)
     const [refreshupdateticket, setrefreshupdateticket] = useState(-1)
     //2.3.Hubungkan Item
     const [datapayloadconnectitem, setdatapayloadconnectitem] = useState({
@@ -127,6 +128,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
     const [drawerconnectitemticket, setdrawerconnectitemticket] = useState(false)
     const [modalreleaseitemticket, setmodalreleaseitemticket] = useState(false)
     const [loadingreleaseitemticket, setloadingreleaseitemticket] = useState(false)
+    const [refreshclosedconnectitemticket, setrefreshclosedconnectitemticket] = useState(-1)
     const [refreshconnectitemticket, setrefreshconnectitemticket] = useState(-1)
     //2.4.Assign Item
     const [datapayloadassign, setdatapayloadassign] = useState({
@@ -135,6 +137,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
         assignable_id: null
     })
     const [drawerassignticket, setdrawerassignticket] = useState(false)
+    const [refreshclosedassignticket, setrefreshclosedassignticket] = useState(-1)
     const [refreshassignticket, setrefreshassignticket] = useState(-1)
     //2.5.Deadline
     const [datapayloaddeadline, setdatapayloaddeadline] = useState({
@@ -142,6 +145,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
         deadline: null
     })
     const [drawerdeadlineicket, setdrawedeadlineticket] = useState(false)
+    const [refreshcloseddeadlineticket, setrefreshcloseddeadlineticket] = useState(-1)
     const [refreshdeadlineicket, setrefreshdeadlineicket] = useState(-1)
     const [showdatepicker, setshowdatepicker] = useState(false)
     const [datevalue, setdatevalue] = useState(null)
@@ -195,7 +199,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
     }
     const handleCancelTicket = () => {
         setloadingcancelticket(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/cancelTicket`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? `cancelTicket` : `cancelClientTicket`}`, {
             method: 'PUT',
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -326,7 +330,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                         setpraloading(false)
                     })
             })
-    }, [refreshconnectitemticket, refreshassignticket, refreshdeadlineicket, refreshcancelticket, refreshupdateticket])
+    }, [refreshconnectitemticket, refreshassignticket, refreshdeadlineicket, refreshcancelticket, refreshupdateticket, refreshclosedupdateticket, refreshclosedconnectitemticket, refreshclosedassignticket, refreshcloseddeadlineticket])
     useEffect(() => {
         setpraloadinglogticket(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? "getTicketLog" : "getClientTicketLog"}?id=${ticketid}`, {
@@ -361,11 +365,13 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                                 </div>
                                 <div className=' flex justify-center items-center'>
                                     {
-                                        praloading ? null :
-                                            <ButtonSys type={`default`} onClick={() => { setdrawerupdateticket(true) }}>
-                                                <div className=' mr-1'><EditIconSvg size={15} color={`#35763B`} /></div>
-                                                Ubah Tiket
-                                            </ButtonSys>
+                                        dataProfile.data.role === 1 ?
+                                            praloading ? null :
+                                                <ButtonSys type={`default`} onClick={() => { setdrawerupdateticket(true) }}>
+                                                    <div className=' mr-1'><EditIconSvg size={15} color={`#35763B`} /></div>
+                                                    Ubah Tiket
+                                                </ButtonSys>
+                                            : null
                                     }
                                 </div>
                             </div>
@@ -390,11 +396,11 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                                         </div>
                                         <div className=' flex flex-col mb-5'>
                                             <Label>Tanggal Selesai:</Label>
-                                            <p className=' mb-0 text-gray-600'>{displaydata.deadline}</p>
+                                            <p className=' mb-0 text-gray-600'>{displaydata.closed_at === null ? `-` : moment(displaydata.closed_at).locale('id').format('LL')}</p>
                                         </div>
                                         <div className=' flex flex-col mb-5'>
-                                            <Label>Tanggal Closed:</Label>
-                                            <p className=' mb-0 text-gray-600'>{displaydata.closed_at === null ? `-` : displaydata.closed_at}</p>
+                                            <Label>Durasi Penyelesaian:</Label>
+                                            <p className=' mb-0 text-gray-600'>{displaydata.resolved_times}</p>
                                         </div>
                                     </div>
                             }
@@ -464,7 +470,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                                     <div>
                                         <ButtonSys type={`default`} onClick={() => {
                                             setloadingexportticket(true)
-                                            fetch(`https://boiling-thicket-46501.herokuapp.com/ticketExport?id=${ticketid}`, {
+                                            fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? `ticketExport` : `clientTicketExport`}?id=${ticketid}`, {
                                                 method: `GET`,
                                                 headers: {
                                                     'Authorization': JSON.parse(initProps)
@@ -557,18 +563,21 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                                     }
                                 </div>
                                 {
-                                    praloading ?
-                                        null
-                                        :
-                                        displaydata.status !== 7 ?
-                                            displaydata.assignment_operator_id === 0 ?
-                                                null
-                                                :
-                                                <div className=' h-full flex justify-end items-start cursor-pointer' onClick={() => { setdrawerassignticket(true) }}>
-                                                    <UserSearchIconSvg size={18} color={`#4D4D4D`} />
-                                                </div>
-                                            :
+                                    dataProfile.data.role === 1 ?
+                                        praloading ?
                                             null
+                                            :
+                                            displaydata.status !== 7 ?
+                                                displaydata.assignment_operator_id === 0 ?
+                                                    null
+                                                    :
+                                                    <div className=' h-full flex justify-end items-start cursor-pointer' onClick={() => { setdrawerassignticket(true) }}>
+                                                        <UserSearchIconSvg size={18} color={`#4D4D4D`} />
+                                                    </div>
+                                                :
+                                                null
+                                        :
+                                        null
                                 }
                             </div>
                             <div className=' w-4/12 pl-8 flex items-center justify-between mb-2'>
@@ -590,204 +599,250 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                                     }
                                 </div>
                                 {
-                                    praloading ?
-                                        null
-                                        :
-                                        displaydata.status !== 7 ?
-                                            displaydata.deadline === "-" ?
-                                                null
-                                                :
-                                                <div className=' h-full flex justify-end items-start cursor-pointer' onClick={() => { setdrawedeadlineticket(true) }}>
-                                                    <CalendartimeIconSvg size={18} color={`#4D4D4D`} />
-                                                </div>
-                                            :
+                                    dataProfile.data.role === 1 ?
+                                        praloading ?
                                             null
+                                            :
+                                            displaydata.status !== 7 ?
+                                                displaydata.deadline === "-" ?
+                                                    null
+                                                    :
+                                                    <div className=' h-full flex justify-end items-start cursor-pointer' onClick={() => { setdrawedeadlineticket(true) }}>
+                                                        <CalendartimeIconSvg size={18} color={`#4D4D4D`} />
+                                                    </div>
+                                                :
+                                                null
+                                        :
+                                        null
                                 }
                             </div>
                         </div>
                         <div className='flex w-full'>
                             {/* DETAIL ASET TIKET */}
                             <div className=' w-6/12 mx-2'>
-                                <div className=' flex w-full flex-col mt-2 shadow-md rounded-md bg-white p-5'>
-                                    <div className=' flex items-center justify-between mb-5'>
-                                        <H1>Detail Aset</H1>
-                                        {
-                                            displaydata.ticketable.inventory === null ?
-                                                null
-                                                :
-                                                <div className="dropdown dropdown-end">
-                                                    <div tabIndex={`2`} className=' h-full flex justify-end items-start cursor-pointer text-lg font-bold'>
-                                                        <span className='mb-0'>...</span>
-                                                    </div>
-                                                    <div tabIndex={`2`} className=' menu dropdown-content bg-backdrop p-3'>
-                                                        <div className=' p-3 w-52 mb-4 flex items-center bg-white rounded shadow hover:bg-primary25 text-primary100 cursor-pointer' onClick={() => { setdrawerconnectitemticket(true) }}>
-                                                            <p className=' mb-0'>Ganti Aset</p>
-                                                        </div>
-                                                        <div className=' p-3 w-52 flex items-center bg-white rounded shadow hover:bg-primary25 text-primary100 cursor-pointer' onClick={() => { setmodalreleaseitemticket(true) }}>
-                                                            <p className=' mb-0'>Pisah Aset</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                        }
-                                        <ModalReleaseItemTiket
-                                            title={"Pemisahan Item dengan Tiket"}
-                                            visible={modalreleaseitemticket}
-                                            onvisible={setmodalreleaseitemticket}
-                                            onCancel={() => { setmodalreleaseitemticket(false) }}
-                                            loading={loadingreleaseitemticket}
-                                            onOk={handleReleaseItemTicket}
-                                            data={datapayloadconnectitem}
-                                            setdata={setdatapayloadconnectitem}
-                                            ticketid={ticketid}
-                                        />
-                                    </div>
-                                    {
-                                        displaydata.ticketable.inventory === null ?
-                                            <>
-                                                <div className=' flex flex-col justify-center items-center mb-5'>
-                                                    <div className='w-52 h-52 mb-2'>
-                                                        <img src="/image/emptyAssetTicket.png" className=' object-contain' alt="" />
-                                                    </div>
-                                                    <div className=' w-8/12 text-center'>
-                                                        <p className=' mb-0 text-gray-400'>Belum ada aset terhubung. Silakan hubungkan aset.</p>
-                                                    </div>
-                                                </div>
-                                                <div className=' flex justify-center mb-5'>
-                                                    <ButtonSys type={`primary`} onClick={() => { setdrawerconnectitemticket(true) }}>
-                                                        + Hubungkan Aset
-                                                    </ButtonSys>
-                                                </div>
-                                            </>
-                                            :
-                                            <div className=' flex flex-col'>
+                                {
+                                    dataProfile.data.role === 1 ?
+                                        <div className=' flex w-full flex-col mt-2 shadow-md rounded-md bg-white p-5'>
+                                            <div className=' flex items-center justify-between mb-5'>
+                                                <H1>Detail Aset</H1>
                                                 {
-                                                    displaydata.status === 6 &&
-                                                    <div className=' flex bg-primary100 text-white rounded-md p-4 w-full mb-5'>
-                                                        <div className=' flex items-center justify-center h-full mr-2'><InfoCircleIconSvg size={20} color={`#ffffff`} /></div>
-                                                        <p className=' mb-0'>
-                                                            Berikut tampilan detail item yang di-closed pada tanggal <strong>{displaydata.closed_at === null ? `-` : displaydata.closed_at}</strong>
-                                                        </p>
-                                                    </div>
+                                                    displaydata.ticketable.inventory === null ?
+                                                        null
+                                                        :
+                                                        <div className="dropdown dropdown-end">
+                                                            <div tabIndex={`2`} className=' h-full flex justify-end items-start cursor-pointer text-lg font-bold'>
+                                                                <span className='mb-0'>...</span>
+                                                            </div>
+                                                            <div tabIndex={`2`} className=' menu dropdown-content bg-backdrop p-3'>
+                                                                <div className=' p-3 w-52 mb-4 flex items-center bg-white rounded shadow hover:bg-primary25 text-primary100 cursor-pointer' onClick={() => { setdrawerconnectitemticket(true) }}>
+                                                                    <p className=' mb-0'>Ganti Aset</p>
+                                                                </div>
+                                                                <div className=' p-3 w-52 flex items-center bg-white rounded shadow hover:bg-primary25 text-primary100 cursor-pointer' onClick={() => { setmodalreleaseitemticket(true) }}>
+                                                                    <p className=' mb-0'>Pisah Aset</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                 }
-                                                <div className="mb-8 flex flex-col items-center">
-                                                    <H1>{displaydata.ticketable?.inventory?.model_inventory?.name}</H1>
-                                                    <Label>{displaydata.ticketable?.inventory?.mig_id}</Label>
-                                                </div>
-                                                <div className=' flex flex-col mb-5'>
-                                                    <Label>Tipe Aset:</Label>
-                                                    <p className=' mb-0 text-gray-600'>{displaydata.ticketable?.inventory?.model_inventory?.asset?.full_name}</p>
-                                                </div>
-                                                <div className=' flex flex-col mb-5'>
-                                                    <Label>No Seri:</Label>
-                                                    <p className=' mb-0 text-gray-600'>{displaydata.ticketable?.inventory?.serial_number === null ? `-` : displaydata.ticketable?.inventory?.serial_number}</p>
-                                                </div>
-                                                <div className=' flex flex-col mb-5'>
-                                                    <Label>Status Pemakaian:</Label>
-                                                    <div>
-                                                        {displaydata.ticketable.inventory.status_usage.id === 1 && <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-open bg-opacity-10 text-open">In Used</div>}
-                                                        {displaydata.ticketable.inventory.status_usage.id === 2 && <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-completed bg-opacity-10 text-completed">In Stock</div>}
-                                                        {displaydata.ticketable.inventory.status_usage.id === 3 && <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-overdue bg-opacity-10 text-overdue">Replacement</div>}
-                                                    </div>
-                                                </div>
-                                                <div className=' flex flex-col mb-5'>
-                                                    <Label>Kondisi Aset:</Label>
-                                                    <div>
-                                                        {displaydata.ticketable.inventory.status_condition.id === 1 && <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-completed bg-opacity-10 text-completed">Good</div>}
-                                                        {displaydata.ticketable.inventory.status_condition.id === 2 && <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-closed bg-opacity-10 text-closed">Gray</div>}
-                                                        {displaydata.ticketable.inventory.status_condition.id === 3 && <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-overdue bg-opacity-10 text-overdue">Bad</div>}
-                                                    </div>
-                                                </div>
-                                                <div className=' flex flex-col mb-5'>
-                                                    <Label>Lokasi Item:</Label>
-                                                    <p className=' mb-0 text-gray-600'>{displaydata.ticketable?.inventory?.location === null ? `-` : displaydata.ticketable?.inventory?.location}</p>
-                                                </div>
-                                                <hr />
-                                                {
-                                                    displaydata.ticketable.inventory.additional_attributes.map((doccolumns, idxcolumns) => {
-                                                        return (
-                                                            <div key={idxcolumns} className={`flex flex-col mb-5 ${idxcolumns === 0 ? `mt-5` : ``}`}>
-                                                                <Label>{doccolumns.name}:</Label>
-                                                                <p className="mb-0 text-sm">
-                                                                    {
-                                                                        doccolumns.data_type === 'dropdown' || doccolumns.data_type === 'checkbox' || doccolumns.data_type === 'date' ?
-                                                                            <>
-                                                                                {
-                                                                                    doccolumns.data_type === 'dropdown' &&
-                                                                                    <>
-                                                                                        {doccolumns.value.opsi[doccolumns.value.default]}
-                                                                                    </>
-                                                                                }
-                                                                                {
-                                                                                    doccolumns.data_type === 'checkbox' &&
-                                                                                    <>
-                                                                                        {doccolumns.value.opsi.filter((_, idxfil) => {
-                                                                                            return doccolumns.value.default.includes(idxfil)
-                                                                                        }).join(", ")}
-                                                                                    </>
-                                                                                }
-                                                                                {
-                                                                                    doccolumns.data_type === 'date' &&
-                                                                                    <>
-                                                                                        {moment(doccolumns.value).locale('id').format('LL')}
-                                                                                    </>
-                                                                                }
-                                                                            </>
-                                                                            :
-                                                                            <p className=' mb-0 text-gray-600'>
-                                                                                {doccolumns.value}
-                                                                            </p>
-                                                                    }
+                                                <ModalReleaseItemTiket
+                                                    title={"Pemisahan Item dengan Tiket"}
+                                                    visible={modalreleaseitemticket}
+                                                    onvisible={setmodalreleaseitemticket}
+                                                    onCancel={() => { setmodalreleaseitemticket(false) }}
+                                                    loading={loadingreleaseitemticket}
+                                                    onOk={handleReleaseItemTicket}
+                                                    data={datapayloadconnectitem}
+                                                    setdata={setdatapayloadconnectitem}
+                                                    ticketid={ticketid}
+                                                />
+                                            </div>
+                                            {
+                                                displaydata.ticketable.inventory === null ?
+                                                    <>
+                                                        <div className=' flex flex-col justify-center items-center mb-5'>
+                                                            <div className='w-52 h-52 mb-2'>
+                                                                <img src="/image/emptyAssetTicket.png" className=' object-contain' alt="" />
+                                                            </div>
+                                                            <div className=' w-8/12 text-center'>
+                                                                <p className=' mb-0 text-gray-400'>Belum ada aset terhubung. Silakan hubungkan aset.</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className=' flex justify-center mb-5'>
+                                                            <ButtonSys type={`primary`} onClick={() => { setdrawerconnectitemticket(true) }}>
+                                                                + Hubungkan Aset
+                                                            </ButtonSys>
+                                                        </div>
+                                                    </>
+                                                    :
+                                                    <div className=' flex flex-col'>
+                                                        {
+                                                            displaydata.status === 6 &&
+                                                            <div className=' flex bg-primary100 text-white rounded-md p-4 w-full mb-5'>
+                                                                <div className=' flex items-center justify-center h-full mr-2'><InfoCircleIconSvg size={20} color={`#ffffff`} /></div>
+                                                                <p className=' mb-0'>
+                                                                    Berikut tampilan detail item yang di-closed pada tanggal <strong>{displaydata.closed_at === null ? `-` : displaydata.closed_at}</strong>
                                                                 </p>
                                                             </div>
-                                                        )
-                                                    })
-                                                }
-                                                <div className=' flex flex-col mb-5'>
-                                                    <Label>Deskripsi:</Label>
-                                                    <p className=' mb-0 text-gray-600'>{displaydata.ticketable?.inventory?.deskripsi === null ? `-` : displaydata.ticketable?.inventory?.deskripsi}</p>
+                                                        }
+                                                        <div className="mb-8 flex flex-col items-center">
+                                                            <H1>{displaydata.ticketable?.inventory?.model_inventory?.name}</H1>
+                                                            <Label>{displaydata.ticketable?.inventory?.mig_id}</Label>
+                                                        </div>
+                                                        <div className=' flex flex-col mb-5'>
+                                                            <Label>Tipe Aset:</Label>
+                                                            <p className=' mb-0 text-gray-600'>{displaydata.ticketable?.inventory?.model_inventory?.asset?.full_name}</p>
+                                                        </div>
+                                                        <div className=' flex flex-col mb-5'>
+                                                            <Label>No Seri:</Label>
+                                                            <p className=' mb-0 text-gray-600'>{displaydata.ticketable?.inventory?.serial_number === null ? `-` : displaydata.ticketable?.inventory?.serial_number}</p>
+                                                        </div>
+                                                        <div className=' flex flex-col mb-5'>
+                                                            <Label>Status Pemakaian:</Label>
+                                                            <div>
+                                                                {displaydata.ticketable.inventory.status_usage.id === 1 && <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-open bg-opacity-10 text-open">In Used</div>}
+                                                                {displaydata.ticketable.inventory.status_usage.id === 2 && <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-completed bg-opacity-10 text-completed">In Stock</div>}
+                                                                {displaydata.ticketable.inventory.status_usage.id === 3 && <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-overdue bg-opacity-10 text-overdue">Replacement</div>}
+                                                            </div>
+                                                        </div>
+                                                        <div className=' flex flex-col mb-5'>
+                                                            <Label>Kondisi Aset:</Label>
+                                                            <div>
+                                                                {displaydata.ticketable.inventory.status_condition.id === 1 && <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-completed bg-opacity-10 text-completed">Good</div>}
+                                                                {displaydata.ticketable.inventory.status_condition.id === 2 && <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-closed bg-opacity-10 text-closed">Gray</div>}
+                                                                {displaydata.ticketable.inventory.status_condition.id === 3 && <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-overdue bg-opacity-10 text-overdue">Bad</div>}
+                                                            </div>
+                                                        </div>
+                                                        <div className=' flex flex-col mb-5'>
+                                                            <Label>Lokasi Item:</Label>
+                                                            <p className=' mb-0 text-gray-600'>{displaydata.ticketable?.inventory?.location === null ? `-` : displaydata.ticketable?.inventory?.location}</p>
+                                                        </div>
+                                                        <hr />
+                                                        {
+                                                            displaydata.ticketable.inventory.additional_attributes.map((doccolumns, idxcolumns) => {
+                                                                return (
+                                                                    <div key={idxcolumns} className={`flex flex-col mb-5 ${idxcolumns === 0 ? `mt-5` : ``}`}>
+                                                                        <Label>{doccolumns.name}:</Label>
+                                                                        <p className="mb-0 text-sm">
+                                                                            {
+                                                                                doccolumns.data_type === 'dropdown' || doccolumns.data_type === 'checkbox' || doccolumns.data_type === 'date' ?
+                                                                                    <>
+                                                                                        {
+                                                                                            doccolumns.data_type === 'dropdown' &&
+                                                                                            <>
+                                                                                                {doccolumns.value.opsi[doccolumns.value.default]}
+                                                                                            </>
+                                                                                        }
+                                                                                        {
+                                                                                            doccolumns.data_type === 'checkbox' &&
+                                                                                            <>
+                                                                                                {doccolumns.value.opsi.filter((_, idxfil) => {
+                                                                                                    return doccolumns.value.default.includes(idxfil)
+                                                                                                }).join(", ")}
+                                                                                            </>
+                                                                                        }
+                                                                                        {
+                                                                                            doccolumns.data_type === 'date' &&
+                                                                                            <>
+                                                                                                {moment(doccolumns.value).locale('id').format('LL')}
+                                                                                            </>
+                                                                                        }
+                                                                                    </>
+                                                                                    :
+                                                                                    <p className=' mb-0 text-gray-600'>
+                                                                                        {doccolumns.value}
+                                                                                    </p>
+                                                                            }
+                                                                        </p>
+                                                                    </div>
+                                                                )
+                                                            })
+                                                        }
+                                                        <div className=' flex flex-col mb-5'>
+                                                            <Label>Deskripsi:</Label>
+                                                            <p className=' mb-0 text-gray-600'>{displaydata.ticketable?.inventory?.deskripsi === null ? `-` : displaydata.ticketable?.inventory?.deskripsi}</p>
+                                                        </div>
+                                                    </div>
+                                            }
+                                        </div>
+                                        :
+                                        <div className=' shadow-md rounded-md bg-white p-5 my-2 ml-2'>
+                                            <div className=' flex items-center justify-between mb-5'>
+                                                <H1>Catatan</H1>
+                                                <div className=' h-full flex justify-end items-start cursor-pointer' onClick={() => { setmodalnoteticket(true) }}>
+                                                    <PlusIconSvg size={25} color={`#35763B`} />
                                                 </div>
                                             </div>
-                                    }
-                                </div>
+                                            {
+                                                loadingnoteticket ?
+                                                    <>
+                                                        <Spin />
+                                                    </>
+                                                    :
+                                                    displaynoteticket.length === 0 ?
+                                                        <>
+                                                            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                                        </>
+                                                        :
+                                                        displaynoteticket.map((note, idx) => (
+                                                            <div className=' flex flex-col mb-5'>
+                                                                <p className=' mb-3 line-clamp-6 font-light'>{note.description}</p>
+                                                                <div className="flex items-center justify-between">
+                                                                    <div className=' flex'>
+                                                                        <div className=' w-5 h-5 rounded-full mr-2'>
+                                                                            <img src={"/image/staffTask.png"} className=' object-contain w-5 h-5' alt="" />
+                                                                        </div>
+                                                                        <Text color={`green`}>{note.causer.name}</Text>
+                                                                    </div>
+                                                                    <div>
+                                                                        <Label>{moment(note.created_at).locale('id').format('LL, LT')}</Label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        ))
+                                            }
+                                        </div>
+                                }
                             </div>
                             <div className='flex flex-col w-6/12'>
                                 {/* CATATAN TIKET */}
-                                <div className=' shadow-md rounded-md bg-white p-5 my-2 ml-2'>
-                                    <div className=' flex items-center justify-between mb-5'>
-                                        <H1>Catatan</H1>
-                                        <div className=' h-full flex justify-end items-start cursor-pointer' onClick={() => { setmodalnoteticket(true) }}>
-                                            <PlusIconSvg size={25} color={`#35763B`} />
+                                {
+                                    dataProfile.data.role === 1 &&
+                                    <div className=' shadow-md rounded-md bg-white p-5 my-2 ml-2'>
+                                        <div className=' flex items-center justify-between mb-5'>
+                                            <H1>Catatan</H1>
+                                            <div className=' h-full flex justify-end items-start cursor-pointer' onClick={() => { setmodalnoteticket(true) }}>
+                                                <PlusIconSvg size={25} color={`#35763B`} />
+                                            </div>
                                         </div>
-                                    </div>
-                                    {
-                                        loadingnoteticket ?
-                                            <>
-                                                <Spin />
-                                            </>
-                                            :
-                                            displaynoteticket.length === 0 ?
+                                        {
+                                            loadingnoteticket ?
                                                 <>
-                                                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                                    <Spin />
                                                 </>
                                                 :
-                                                displaynoteticket.map((note, idx) => (
-                                                    <div className=' flex flex-col mb-5'>
-                                                        <p className=' mb-3 line-clamp-6 font-light'>{note.description}</p>
-                                                        <div className="flex items-center justify-between">
-                                                            <div className=' flex'>
-                                                                <div className=' w-5 h-5 rounded-full mr-2'>
-                                                                    <img src={"/image/staffTask.png"} className=' object-contain w-5 h-5' alt="" />
+                                                displaynoteticket.length === 0 ?
+                                                    <>
+                                                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                                    </>
+                                                    :
+                                                    displaynoteticket.map((note, idx) => (
+                                                        <div className=' flex flex-col mb-5'>
+                                                            <p className=' mb-3 line-clamp-6 font-light'>{note.description}</p>
+                                                            <div className="flex items-center justify-between">
+                                                                <div className=' flex'>
+                                                                    <div className=' w-5 h-5 rounded-full mr-2'>
+                                                                        <img src={"/image/staffTask.png"} className=' object-contain w-5 h-5' alt="" />
+                                                                    </div>
+                                                                    <Text color={`green`}>{note.causer.name}</Text>
                                                                 </div>
-                                                                <Text color={`green`}>{note.causer.name}</Text>
-                                                            </div>
-                                                            <div>
-                                                                <Label>{moment(note.created_at).locale('id').format('LL, LT')}</Label>
+                                                                <div>
+                                                                    <Label>{moment(note.created_at).locale('id').format('LL, LT')}</Label>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                ))
-                                    }
-                                </div>
+                                                    ))
+                                        }
+                                    </div>
+                                }
                                 <ModalNoteTiket
                                     title={"Catatan Baru"}
                                     visible={modalnoteticket}
@@ -865,6 +920,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                 onvisible={setdrawerconnectitemticket}
                 refresh={refreshconnectitemticket}
                 setrefresh={setrefreshconnectitemticket}
+                setrefreshclosed={setrefreshclosedconnectitemticket}
                 ticketid={ticketid}
                 datapayload={datapayloadconnectitem}
                 setdatapayload={setdatapayloadconnectitem}
@@ -880,6 +936,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                 onvisible={setdrawerassignticket}
                 refresh={refreshassignticket}
                 setrefresh={setrefreshassignticket}
+                setrefreshclosed={setrefreshclosedassignticket}
                 ticketid={ticketid}
                 datapayload={datapayloadassign}
                 setdatapayload={setdatapayloadassign}
@@ -893,6 +950,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                 onvisible={setdrawedeadlineticket}
                 refresh={refreshdeadlineicket}
                 setrefresh={setrefreshdeadlineicket}
+                setrefreshclosed={setrefreshcloseddeadlineticket}
                 ticketid={ticketid}
                 datapayload={datapayloaddeadline}
                 setdatapayload={setdatapayloaddeadline}
@@ -910,13 +968,14 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                 onvisible={setdrawerupdateticket}
                 refreshtickets={refreshupdateticket}
                 setrefreshtickets={setrefreshupdateticket}
+                setrefreshclosed={setrefreshclosedupdateticket}
                 dataprofile={dataProfile}
                 datapayload={datapayloadupdate}
                 setdatapayload={setdatapayloadupdate}
                 ticketid={ticketid}
                 displaydata={displaydata}
             />
-        </Layout>
+        </Layout >
     )
 }
 

@@ -8,7 +8,7 @@ import { SearchOutlined, LoadingOutlined } from '@ant-design/icons'
 import ButtonSys from '../../button'
 import moment from 'moment'
 
-const DrawerTicketUpdate = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, refreshtickets, setrefreshtickets, dataprofile, displaydata, datapayload, setdatapayload, ticketid }) => {
+const DrawerTicketUpdate = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, refreshtickets, setrefreshtickets, setrefreshclosed, dataprofile, displaydata, datapayload, setdatapayload, ticketid }) => {
     //useState
     const [loadingsave, setloadingsave] = useState(false)
     //data for each field
@@ -135,20 +135,7 @@ const DrawerTicketUpdate = ({ title, visible, onvisible, onClose, buttonOkText, 
             title={title}
             visible={visible}
             onClose={() => {
-                setdatapayload({
-                    id: Number(ticketid),
-                    requester_id: null,
-                    raised_at: null,
-                    closed_at: null,
-                    product_id: "",
-                    pic_name: "",
-                    pic_contact: "",
-                    location_id: null,
-                    problem: "",
-                    incident_time: null,
-                    files: [],
-                    description: ""
-                })
+                setrefreshclosed(prev => prev + 1)
                 onvisible(false)
             }}
             buttonOkText={buttonOkText}
@@ -193,8 +180,8 @@ const DrawerTicketUpdate = ({ title, visible, onvisible, onClose, buttonOkText, 
                                                     <div className='mr-1 w-7 h7 rounded-full'>
                                                         <img src={doc.profile_image === "-" ? `/image/stafftask.png` : doc.profile_image} className=' object-contain' alt="" />
                                                     </div>
+                                                    <div>{doc.name}</div>
                                                 </div>
-                                                <div>{doc.name}</div>
                                             </Select.Option>
                                         ))
                                     }

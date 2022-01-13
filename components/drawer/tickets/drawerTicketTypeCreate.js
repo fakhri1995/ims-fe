@@ -36,7 +36,7 @@ const DrawerTicketTypeCreate = ({ title, visible, onvisible, onClose, buttonOkTe
     const [datapayload, setdatapayload] = useState({
         name: "",
         description: "",
-        ticket_type_id: null,
+        ticket_type_id: 1,
         task_type_id: null
     })
     const [loadingsave, setloadingsave] = useState(false)
@@ -169,7 +169,7 @@ const DrawerTicketTypeCreate = ({ title, visible, onvisible, onClose, buttonOkTe
                                         });
                                         setdisabledtrigger(prev => prev + 1)
                                     }}
-                                    value={datapayload.ticket_type_id}
+                                    defaultValue={datapayload.ticket_type_id}
                                 >
                                     {
                                         datatickettypes.map((doc, idx) => (

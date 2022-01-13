@@ -32,7 +32,7 @@ const DrawerTicketExports = ({ title, visible, onvisible, onClose, buttonOkText,
     const [secondopt, setsecondopt] = useState([1, 2, 3, 4, 5, 6, 7]);
     const [valuesecondopt, setvaluesecondopt] = useState([1, 2, 3, 4, 5, 6, 7]);
     //disabled save button
-    const [disabledcreate, setdisabledcreate] = useState(true)
+    const [disabledcreate, setdisabledcreate] = useState(false)
     const [disabledtrigger, setdisabledtrigger] = useState(-1)
 
     //handler
@@ -83,7 +83,7 @@ const DrawerTicketExports = ({ title, visible, onvisible, onClose, buttonOkText,
             })
     }, [])
     useEffect(() => {
-        if (datapayload.assignable_id !== null) {
+        if (datapayload.core_attributes.every(val => val === 0) === false) {
             setdisabledcreate(false)
         }
         else {
@@ -122,7 +122,7 @@ const DrawerTicketExports = ({ title, visible, onvisible, onClose, buttonOkText,
                             <p className="mb-0 text-red-500 text-xs italic">*Informasi ini harus diisi</p>
                         </div>
                         <div className="mb-6">
-                            <H1>Pilih Filter:</H1>
+                            <H2>Pilih Filter:</H2>
                         </div>
                         <div className="flex flex-col mb-6">
                             <div className="flex mb-2">
@@ -269,6 +269,7 @@ const DrawerTicketExports = ({ title, visible, onvisible, onClose, buttonOkText,
                                         setvaluecoreopt(values)
                                         var arr = [0, 0, 0, 0, 0, 0, 0, 0, 0].map((_, idx) => values.includes(idx) ? 1 : 0)
                                         setdatapayload({ ...datapayload, core_attributes: arr })
+                                        setdisabledtrigger(prev => prev + 1)
                                     }}
                                     value={valuecoreopt}
                                 >
@@ -304,15 +305,6 @@ const DrawerTicketExports = ({ title, visible, onvisible, onClose, buttonOkText,
                         <div className="flex flex-col mb-6">
                             <div className="flex mb-2">
                                 <Label>Jenis Tiket</Label>
-                                <span className="tickettype"></span>
-                                <style jsx>
-                                    {`
-                                        .tickettype::before{
-                                            content: '*';
-                                            color: red;
-                                        }
-                                    `}
-                                </style>
                             </div>
                             <Select allowClear placeholder="Pilih Jenis Ticket" style={{ width: `100%` }} onChange={(value) => {
                                 setdatapayload({ ...datapayload, type: typeof (value) === 'undefined' ? null : value, secondary_attributes: [1, 1, 1, 1, 1, 1, 1, 1] })
@@ -331,7 +323,6 @@ const DrawerTicketExports = ({ title, visible, onvisible, onClose, buttonOkText,
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex">
                                             <Label>Pilih Parameter Detail Masalah</Label>
-                                            <span className="second"></span>
                                         </div>
                                         <div onClick={() => {
                                             setvaluesecondopt(secondopt);
@@ -340,14 +331,6 @@ const DrawerTicketExports = ({ title, visible, onvisible, onClose, buttonOkText,
                                         }}>
                                             <Text color={`green`} cursor={`pointer`}>Pilih Semua</Text>
                                         </div>
-                                        <style jsx>
-                                            {`
-                                        .second::before{
-                                            content: '*';
-                                            color: red;
-                                        }
-                                    `}
-                                        </style>
                                     </div>
                                     <div className="mb-2 flex">
                                         <Checkbox.Group

@@ -38,6 +38,7 @@ module.exports = {
         'onhold': `#E5C471`,
         'completed': `#6AAA70`,
         'closed': `#808080`,
+        'canceled': `#F46780`,
         'bgBackdropOverdue': `#f9edec`,
       }),
       borderColor: theme => ({
@@ -63,6 +64,7 @@ module.exports = {
         'onprogress': `#ED962F`,
         'onhold': `#E5C471`,
         'completed': `#6AAA70`,
+        'canceled': `#F46780`,
         'closed': `#808080`,
       }),
       textColor: {
@@ -86,6 +88,7 @@ module.exports = {
         'onprogress': `#ED962F`,
         'onhold': `#E5C471`,
         'completed': `#6AAA70`,
+        'canceled': `#F46780`,
         'closed': `#808080`,
       },
       gradientColorStops: theme => ({

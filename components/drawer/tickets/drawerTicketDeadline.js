@@ -6,7 +6,7 @@ import { Label, H2 } from '../../typography'
 import { SearchOutlined } from '@ant-design/icons'
 import { UserIconSvg } from '../../icon'
 
-const DrawerTicketDeadline = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, refresh, setrefresh, datapayload, setdatapayload, showdatetime, setshowdatetime, datevalue, setdatevalue, ticketid }) => {
+const DrawerTicketDeadline = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, refresh, setrefresh, setrefreshclosed, datapayload, setdatapayload, showdatetime, setshowdatetime, datevalue, setdatevalue, ticketid }) => {
 
     //useState
     const [loadingsave, setloadingsave] = useState(false)
@@ -65,7 +65,7 @@ const DrawerTicketDeadline = ({ title, visible, onvisible, onClose, buttonOkText
             title={title}
             visible={visible}
             onClose={() => {
-                setrefresh(prev => prev + 1)
+                setrefreshclosed(prev => prev + 1)
                 setdatapayload({
                     id: Number(ticketid),
                     deadline: null
@@ -92,19 +92,19 @@ const DrawerTicketDeadline = ({ title, visible, onvisible, onClose, buttonOkText
                                         setdatevalue(3)
                                         setshowdatetime(false)
                                     }
-                                    else if (e.target.value === 30) {
+                                    else if (e.target.value === 12) {
                                         choisedate = moment(datapayload.created_at).add(30, 'h').locale('id').format()
+                                        setdatevalue(12)
+                                        setshowdatetime(false)
+                                    }
+                                    else if (e.target.value === 30) {
+                                        choisedate = moment(datapayload.created_at).add(1, 'h').locale('id').format()
                                         setdatevalue(30)
                                         setshowdatetime(false)
                                     }
-                                    else if (e.target.value === 24) {
-                                        choisedate = moment(datapayload.created_at).add(1, 'd').locale('id').format()
-                                        setdatevalue(24)
-                                        setshowdatetime(false)
-                                    }
-                                    else if (e.target.value === 168) {
-                                        choisedate = moment(datapayload.created_at).add(1, 'w').locale('id').format()
-                                        setdatevalue(168)
+                                    else if (e.target.value === 72) {
+                                        choisedate = moment(datapayload.created_at).add(3, 'd').locale('id').format()
+                                        setdatevalue(72)
                                         setshowdatetime(false)
                                     }
                                     else if (e.target.value === -10) {
@@ -117,19 +117,19 @@ const DrawerTicketDeadline = ({ title, visible, onvisible, onClose, buttonOkText
                                 value={datevalue}
                             >
                                 <div className="flex flex-col">
-                                    <div className='mb-1'>
-                                        <Radio value={3}>3 jam ke depan</Radio>
+                                    <div className='mb-3'>
+                                        <Radio value={3}>3 Jam</Radio>
                                     </div>
-                                    <div className='mb-1'>
-                                        <Radio value={30}>30 jam ke depan</Radio>
+                                    <div className='mb-3'>
+                                        <Radio value={12}>12 Jam</Radio>
                                     </div>
-                                    <div className='mb-1'>
-                                        <Radio value={24}>Besok</Radio>
+                                    <div className='mb-3'>
+                                        <Radio value={30}>30 Jam</Radio>
                                     </div>
-                                    <div className='mb-1'>
-                                        <Radio value={168}>1 minggu ke depan</Radio>
+                                    <div className='mb-3'>
+                                        <Radio value={72}>3 Hari</Radio>
                                     </div>
-                                    <div className='mb-1'>
+                                    <div className='mb-3'>
                                         <Radio value={-10}>Pilih Tanggal</Radio>
                                     </div>
                                 </div>

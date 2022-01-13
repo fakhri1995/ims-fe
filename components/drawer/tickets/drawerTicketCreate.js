@@ -135,7 +135,7 @@ const DrawerTicketCreate = ({ title, visible, onvisible, onClose, buttonOkText, 
 
     //useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataprofile.data.role === 1 ? `getTicketRelation` : `getClientTicketRelation`}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),

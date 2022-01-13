@@ -219,7 +219,12 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                             {
                                 record.status === 6 &&
                                 <div className="rounded-md h-auto px-3 text-center py-1 bg-closed bg-opacity-10 text-closed">Closed</div>
-                            }                        </>
+                            } 
+                            {
+                                record.status === 7 &&
+                                <div className="rounded-md h-auto px-3 text-center py-1 bg-canceled bg-opacity-10 text-canceled">Canceled</div>
+                            }                            
+                            </>
                 }
             },
             sorter: (a, b) => a.status_name.localeCompare(b.status_name),
@@ -229,7 +234,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
     //4.Handler
     const onFilterTickets = () => {
         setloadingtickets(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${pagetickets}&rows=${rowstickets}&ticket_id=${searcingfiltertickets}&type_id=${tickettypefiltertickets}&from=${fromfiltertickets}&to=${tofiltertickets}&location_id=${locfiltertickets}&status_id=${statusfiltertickets}&sort_by=${sortingtickets.sort_by}&sort_type=${sortingtickets.sort_type}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? `getTickets` : `getClientTickets`}?page=${pagetickets}&rows=${rowstickets}&ticket_id=${searcingfiltertickets}&type_id=${tickettypefiltertickets}&from=${fromfiltertickets}&to=${tofiltertickets}&location_id=${locfiltertickets}&status_id=${statusfiltertickets}&sort_by=${sortingtickets.sort_by}&sort_type=${sortingtickets.sort_type}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -246,7 +251,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
 
     //5.useEffect
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketStatusCounts`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? `getTicketStatusCounts` : `getClientTicketStatusCounts`}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -254,21 +259,23 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                var tempresolvedtimes = []
-                for (var times in res2.data.counts) {
-                    if (times !== "total_counts") {
-                        tempresolvedtimes.push({ counts: res2.data.counts[times].counts, percentage: res2.data.counts[times].percentage, name: times })
+                if (dataProfile.data.role === 1) {
+                    var tempresolvedtimes = []
+                    for (var times in res2.data.counts) {
+                        if (times !== "total_counts") {
+                            tempresolvedtimes.push({ counts: res2.data.counts[times].counts, percentage: res2.data.counts[times].percentage, name: times })
+                        }
                     }
+                    setdataresolvedtimesticket(tempresolvedtimes)
+                    setdatacountsticket(res2.data.sum_ticket)
                 }
-                setdataresolvedtimesticket(tempresolvedtimes)
                 setdatastatusticket(res2.data.statuses)
-                setdatacountsticket(res2.data.counts.total_counts)
                 setloadingdataresolvedtimes(false)
             })
     }, [])
     useEffect(() => {
         setloadingtickets(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?page=${pagetickets}&rows=${rowstickets}&ticket_id=${searcingfiltertickets}&type_id=${tickettypefiltertickets}&from=${fromfiltertickets}&to=${tofiltertickets}&location_id=${locfiltertickets}&status_id=${statusfiltertickets}&sort_by=${sortingtickets.sort_by}&sort_type=${sortingtickets.sort_type}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/${dataProfile.data.role === 1 ? `getTickets` : `getClientTickets`}?page=${pagetickets}&rows=${rowstickets}&ticket_id=${searcingfiltertickets}&type_id=${tickettypefiltertickets}&from=${fromfiltertickets}&to=${tofiltertickets}&location_id=${locfiltertickets}&status_id=${statusfiltertickets}&sort_by=${sortingtickets.sort_by}&sort_type=${sortingtickets.sort_type}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -299,104 +306,221 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
         <Layout dataProfile={dataProfile} sidemenu={sidemenu} tok={initProps} st={st} pathArr={pathArr}>
             <div className="flex flex-col" id="mainWrapper">
                 <div className=' grid grid-cols-10 px-5'>
-                    {/* PENYELESAIAN TIKET */}
-                    <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mx-3">
-                        <div className="flex items-center justify-between mb-4">
-                            <H1>Penyelesaian Tiket</H1>
-                        </div>
-                        {
-                            loadingdataresolvedtimes ?
-                                <>
-                                    <Spin />
-                                </>
-                                :
-                                <div className=' flex flex-col'>
+                    {
+                        dataProfile.data.role === 1 ?
+                            <>
+                                {/* PENYELESAIAN TIKETt */}
+                                <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mx-3">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <H1>Penyelesaian Tiket</H1>
+                                    </div>
                                     {
-                                        dataresolvedtimesticket.every(docevery => docevery.counts === 0) ?
-                                            <div className=' w-full flex items-center justify-center'>
-                                                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                                            </div>
+                                        loadingdataresolvedtimes ?
+                                            <>
+                                                <Spin />
+                                            </>
                                             :
-                                            <div className=" w-full flex justify-center">
-                                                <Doughnut
-                                                    data={{
-                                                        labels: dataresolvedtimesticket.map((doc) => doc.name),
-                                                        datasets: [
-                                                            {
-                                                                data: dataresolvedtimesticket.map((doc) => doc.counts),
-                                                                backgroundColor: [
-                                                                    '#2F80ED',
-                                                                    '#BF4A40',
-                                                                    '#ED962F',
-                                                                    '#E5C471',
-                                                                    '#6AAA70',
-                                                                ],
-                                                                borderColor: [
-                                                                    '#2F80ED',
-                                                                    '#BF4A40',
-                                                                    '#ED962F',
-                                                                    '#E5C471',
-                                                                    '#6AAA70',
-                                                                ],
-                                                                borderWidth: 1,
-                                                            },
-                                                        ]
-                                                    }}
-                                                    options={{
-                                                        title: {
-                                                            display: false,
+                                            <div className=' flex flex-col'>
+                                                {
+                                                    dataresolvedtimesticket.every(docevery => docevery.counts === 0) ?
+                                                        <div className=' w-full flex items-center justify-center'>
+                                                            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                                        </div>
+                                                        :
+                                                        <div className=" w-full flex justify-center">
+                                                            <Doughnut
+                                                                data={{
+                                                                    labels: dataresolvedtimesticket.map((doc) => doc.name),
+                                                                    datasets: [
+                                                                        {
+                                                                            data: dataresolvedtimesticket.map((doc) => doc.counts),
+                                                                            backgroundColor: [
+                                                                                '#2F80ED',
+                                                                                '#BF4A40',
+                                                                                '#ED962F',
+                                                                                '#E5C471',
+                                                                                '#6AAA70',
+                                                                            ],
+                                                                            borderColor: [
+                                                                                '#2F80ED',
+                                                                                '#BF4A40',
+                                                                                '#ED962F',
+                                                                                '#E5C471',
+                                                                                '#6AAA70',
+                                                                            ],
+                                                                            borderWidth: 1,
+                                                                        },
+                                                                    ]
+                                                                }}
+                                                                options={{
+                                                                    title: {
+                                                                        display: false,
 
-                                                        },
-                                                        legend: {
-                                                            display: false,
-                                                        },
-                                                        maintainAspectRatio: false,
-                                                        cutout: 55,
-                                                        spacing: 5
-                                                    }}
-                                                />
+                                                                    },
+                                                                    legend: {
+                                                                        display: false,
+                                                                    },
+                                                                    maintainAspectRatio: false,
+                                                                    cutout: 55,
+                                                                    spacing: 5
+                                                                }}
+                                                            />
+                                                        </div>
+                                                }
+                                                <div className="flex flex-col w-full">
+                                                    {
+                                                        dataresolvedtimesticket.map((doc, idx) => {
+                                                            return (
+                                                                <div className="flex justify-between items-center mb-1">
+                                                                    <div className="flex">
+                                                                        <div className={`w-1 mr-1 ${doc.name === 'three_hours' && `bg-open`} ${doc.name === 'three_to_twelve_hours' && `bg-overdue`} ${doc.name === 'twelve_to_thirty_hours' && `bg-onprogress`} ${doc.name === 'thirty_hours_to_three_days' && `bg-onhold`} ${doc.name === 'three_days' && `bg-completed`}`}></div>
+                                                                        <Text>{doc.name === 'three_hours' && `Kurang dari 3 jam`} {doc.name === 'three_to_twelve_hours' && `3 - 12 jam`} {doc.name === 'twelve_to_thirty_hours' && `12 - 30 jam`} {doc.name === 'thirty_hours_to_three_days' && `30 jam - 3 hari`} {doc.name === 'three_days' && `Lebih dari 3 hari`}</Text>
+                                                                    </div>
+                                                                    <div className="flex">
+                                                                        <H2>{doc.counts}</H2>
+                                                                    </div>
+                                                                </div>
+                                                            )
+                                                        })
+                                                    }
+                                                </div>
                                             </div>
                                     }
-                                    <div className="flex flex-col w-full">
-                                        {
-                                            dataresolvedtimesticket.map((doc, idx) => {
-                                                return (
-                                                    <div className="flex justify-between items-center mb-1">
-                                                        <div className="flex">
-                                                            <div className={`w-1 mr-1 ${doc.name === 'three_hours' && `bg-open`} ${doc.name === 'three_to_twelve_hours' && `bg-overdue`} ${doc.name === 'twelve_to_thirty_hours' && `bg-onprogress`} ${doc.name === 'thirty_hours_to_three_days' && `bg-onhold`} ${doc.name === 'three_days' && `bg-completed`}`}></div>
-                                                            <Text>{doc.name === 'three_hours' && `Kurang dari 3 jam`} {doc.name === 'three_to_twelve_hours' && `3 - 12 jam`} {doc.name === 'twelve_to_thirty_hours' && `12 - 30 jam`} {doc.name === 'thirty_hours_to_three_days' && `30 jam - 3 hari`} {doc.name === 'three_days' && `Lebih dari 3 hari`}</Text>
+                                </div>
+                                {/* STATUS DAN JUMLAH TIKET */}
+                                {
+                                    loadingdataresolvedtimes ?
+                                        <>
+                                            <Spin />
+                                        </>
+                                        :
+                                        <div className='col-span-3 flex flex-col mb-6'>
+                                            <div className=' mb-3 grid grid-cols-2'>
+                                                <div className=' col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-2 mr-1 mb-2'>
+                                                    <div><TicketIconSvg size={30} color={`#BF4A40`} /></div>
+                                                    <div className=' flex flex-col'>
+                                                        <div className=' flex items-center justify-end'>
+                                                            <p className='mb-0 text-overdue font-semibold text-base mr-1'>{datastatusticket[0].status_count}</p>
+                                                            <div><AlerttriangleIconSvg size={15} color={`#BF4A40`} /></div>
                                                         </div>
-                                                        <div className="flex">
-                                                            <H2>{doc.counts}</H2>
-                                                        </div>
+                                                        <div className=' justify-end flex'><Label>{datastatusticket[0].status_name}</Label></div>
                                                     </div>
-                                                )
-                                            })
-                                        }
+                                                </div>
+                                                <div className=' col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-1 mr-2 mb-2'>
+                                                    <div><TicketIconSvg size={30} color={`#2F80ED`} /></div>
+                                                    <div className=' flex flex-col'>
+                                                        <div className=' flex items-center justify-end'>
+                                                            <p className='mb-0 text-open font-semibold text-base mr-1'>{datastatusticket[1].status_count}</p>
+                                                        </div>
+                                                        <div className=' justify-end flex'><Label>{datastatusticket[1].status_name}</Label></div>
+                                                    </div>
+                                                </div>
+                                                <div className=' col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-2 mr-1 my-2'>
+                                                    <div><TicketIconSvg size={30} color={`#ED962F`} /></div>
+                                                    <div className=' flex flex-col'>
+                                                        <div className=' flex items-center justify-end'>
+                                                            <p className='mb-0 text-onprogress font-semibold text-base mr-1'>{datastatusticket[2].status_count}</p>
+                                                        </div>
+                                                        <div className=' justify-end flex'><Label>{datastatusticket[2].status_name}</Label></div>
+                                                    </div>
+                                                </div>
+                                                <div className=' col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-1 mr-2 my-2'>
+                                                    <div><TicketIconSvg size={30} color={`#E5C471`} /></div>
+                                                    <div className=' flex flex-col'>
+                                                        <div className=' flex items-center justify-end'>
+                                                            <p className='mb-0 text-onhold font-semibold text-base mr-1'>{datastatusticket[3].status_count}</p>
+                                                        </div>
+                                                        <div className=' justify-end flex'><Label>{datastatusticket[3].status_name}</Label></div>
+                                                    </div>
+                                                </div>
+                                                <div className=' col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-2 mr-1 mt-2'>
+                                                    <div><TicketIconSvg size={30} color={`#808080`} /></div>
+                                                    <div className=' flex flex-col'>
+                                                        <div className=' flex items-center justify-end'>
+                                                            <p className='mb-0 text-closed font-semibold text-base mr-1'>{datastatusticket[4].status_count}</p>
+                                                        </div>
+                                                        <div className=' justify-end flex'><Label>{datastatusticket[4].status_name}</Label></div>
+                                                    </div>
+                                                </div>
+                                                <div className=' col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-1 mr-2 mt-2'>
+                                                    <div><TicketIconSvg size={30} color={`#F46780`} /></div>
+                                                    <div className=' flex flex-col'>
+                                                        <div className=' flex items-center justify-end'>
+                                                            <p className='mb-0 text-canceled font-semibold text-base mr-1'>{datastatusticket[5].status_count}</p>
+                                                        </div>
+                                                        <div className=' justify-end flex'><Label>{datastatusticket[5].status_name}</Label></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className='shadow-md rounded-md bg-white p-5 mx-2 flex justify-between items-center h-full'>
+                                                <div><H1>Total Tiket</H1></div>
+                                                <div><p className=' mb-0 text-5xl font-light text-primary100'>{datacountsticket}</p></div>
+                                            </div>
+                                        </div>
+                                }
+                                <div className=' col-span-4 flex flex-col mb-6'>
+                                    {/* BUAT TIKET */}
+                                    <div className='shadow-md rounded-md bg-gradient-to-br from-primary100 to-state4 transition ease-in-out hover:from-primary75 cursor-pointer p-5 mx-3 flex items-center mb-2'
+                                        onClick={() => {
+                                            setdrawerticketscreate(true)
+                                        }}
+                                    >
+                                        <div className=' mr-5'>
+                                            <TicketIconSvg size={40} color={`#ffffff`} />
+                                        </div>
+                                        <div className=' flex flex-col'>
+                                            <p className=' mb-1 text-lg text-white font-semibold'>Buat Tiket</p>
+                                            <p className=' mb-0 text-sm text-white text-opacity-60'>{moment(new Date()).locale('id').format('dddd, LL')}</p>
+                                        </div>
+                                    </div>
+                                    {/* KELOLA TIKET */}
+                                    <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mt-2 mx-3 h-full">
+                                        <div className="flex flex-col justify-center h-full">
+                                            <div className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2" onClick={() => { setdrawerticketexports(true) }}>
+                                                <div className="flex p-1 bg-primary10 rounded mr-3">
+                                                    <TableExportIconSvg size={35} color={`#35763B`} />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <H2>Expor Tiket</H2>
+                                                    <Label>Download daftar tiket dalam bentuk spreadsheet/excel</Label>
+                                                </div>
+                                            </div>
+                                            <div className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2" onClick={() => { rt.push(`/tickets/histories`) }}>
+                                                <div className="flex p-1 bg-primary10 rounded mr-3">
+                                                    <HistoryIconSvg size={35} color={`#35763B`} />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <H2>Riwayat Tiket</H2>
+                                                    <Label>Lihat seluruh tiket yang berstatus closed berikut durasi</Label>
+                                                </div>
+                                            </div>
+                                            <div className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2" onClick={() => { rt.push(`/tickets/tickettypes`) }}>
+                                                <div className="flex p-1 bg-primary10 rounded mr-3">
+                                                    <AdjusmentsHorizontalIconSvg size={35} color={`#35763B`} />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <H2>Atur Tiket</H2>
+                                                    <Label>Hubungkan tiket dengan task yang akan dijalankan</Label>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                        }
-                    </div>
-                    {/* STATUS DAN JUMLAH TIKET */}
-                    {
-                        loadingdataresolvedtimes ?
-                            <>
-                                <Spin />
                             </>
                             :
-                            <div className='col-span-3 flex flex-col mb-6'>
-                                <div className=' mb-3 grid grid-cols-2'>
-                                    <div className=' col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-2 mr-1 mb-2'>
-                                        <div><TicketIconSvg size={30} color={`#BF4A40`} /></div>
+                            <div className=" col-span-10 grid grid-cols-12">
+                                <div className="col-span-8 flex mb-6">
+                                    <div className=' col-span-2 shadow-md rounded-md bg-white p-5 flex justify-between ml-2 mr-1 mb-2'>
+                                        <div><TicketIconSvg size={30} color={`#ED962F`} /></div>
                                         <div className=' flex flex-col'>
                                             <div className=' flex items-center justify-end'>
-                                                <p className='mb-0 text-overdue font-semibold text-base mr-1'>{datastatusticket[0].status_count}</p>
+                                                <p className='mb-0 text-onprogress font-semibold text-base mr-1'>{datastatusticket[0].status_count}</p>
                                                 <div><AlerttriangleIconSvg size={15} color={`#BF4A40`} /></div>
                                             </div>
                                             <div className=' justify-end flex'><Label>{datastatusticket[0].status_name}</Label></div>
                                         </div>
                                     </div>
-                                    <div className=' col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-1 mr-2 mb-2'>
+                                    <div className=' col-span-2 shadow-md rounded-md bg-white p-5 flex justify-between ml-1 mr-2 mb-2'>
                                         <div><TicketIconSvg size={30} color={`#2F80ED`} /></div>
                                         <div className=' flex flex-col'>
                                             <div className=' flex items-center justify-end'>
@@ -405,97 +529,40 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                                             <div className=' justify-end flex'><Label>{datastatusticket[1].status_name}</Label></div>
                                         </div>
                                     </div>
-                                    <div className=' col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-2 mr-1 my-2'>
-                                        <div><TicketIconSvg size={30} color={`#ED962F`} /></div>
+                                    <div className=' col-span-2 shadow-md rounded-md bg-white p-5 flex justify-between ml-2 mr-1 mb-2'>
+                                        <div><TicketIconSvg size={30} color={`#808080`} /></div>
                                         <div className=' flex flex-col'>
                                             <div className=' flex items-center justify-end'>
-                                                <p className='mb-0 text-onprogress font-semibold text-base mr-1'>{datastatusticket[2].status_count}</p>
+                                                <p className='mb-0 text-closed font-semibold text-base mr-1'>{datastatusticket[2].status_count}</p>
                                             </div>
                                             <div className=' justify-end flex'><Label>{datastatusticket[2].status_name}</Label></div>
                                         </div>
                                     </div>
-                                    <div className=' col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-1 mr-2 my-2'>
-                                        <div><TicketIconSvg size={30} color={`#E5C471`} /></div>
+                                    <div className=' col-span-2 shadow-md rounded-md bg-white p-5 flex justify-between ml-1 mr-2 mb-2'>
+                                        <div><TicketIconSvg size={30} color={`#BF4A40`} /></div>
                                         <div className=' flex flex-col'>
                                             <div className=' flex items-center justify-end'>
-                                                <p className='mb-0 text-onhold font-semibold text-base mr-1'>{datastatusticket[3].status_count}</p>
+                                                <p className='mb-0 text-overdue font-semibold text-base mr-1'>{datastatusticket[3].status_count}</p>
                                             </div>
                                             <div className=' justify-end flex'><Label>{datastatusticket[3].status_name}</Label></div>
                                         </div>
                                     </div>
-                                    <div className=' col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-2 mr-1 mt-2'>
-                                        <div><TicketIconSvg size={30} color={`#6AAA70`} /></div>
-                                        <div className=' flex flex-col'>
-                                            <div className=' flex items-center justify-end'>
-                                                <p className='mb-0 text-completed font-semibold text-base mr-1'>{datastatusticket[4].status_count}</p>
-                                            </div>
-                                            <div className=' justify-end flex'><Label>{datastatusticket[4].status_name}</Label></div>
-                                        </div>
-                                    </div>
-                                    <div className=' col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-1 mr-2 mt-2'>
-                                        <div><TicketIconSvg size={30} color={`#808080`} /></div>
-                                        <div className=' flex flex-col'>
-                                            <div className=' flex items-center justify-end'>
-                                                <p className='mb-0 text-closed font-semibold text-base mr-1'>{datastatusticket[5].status_count}</p>
-                                            </div>
-                                            <div className=' justify-end flex'><Label>{datastatusticket[5].status_name}</Label></div>
-                                        </div>
-                                    </div>
                                 </div>
-                                <div className='shadow-md rounded-md bg-white p-5 mx-2 flex justify-between items-center h-full'>
-                                    <div><H1>Total Tiket</H1></div>
-                                    <div><p className=' mb-0 text-5xl font-light text-primary100'>{datacountsticket}</p></div>
+                                <div className="col-span-4 shadow-md rounded-md bg-gradient-to-br from-primary100 to-state4 transition ease-in-out hover:from-primary75 cursor-pointer p-5 mx-3 flex items-center mb-6"
+                                    onClick={() => {
+                                        setdrawerticketscreate(true)
+                                    }}
+                                >
+                                    <div className=' mr-5'>
+                                        <TicketIconSvg size={40} color={`#ffffff`} />
+                                    </div>
+                                    <div className=' flex flex-col'>
+                                        <p className=' mb-1 text-lg text-white font-semibold'>Buat Tiket</p>
+                                        <p className=' mb-0 text-sm text-white text-opacity-60'>{moment(new Date()).locale('id').format('dddd, LL')}</p>
+                                    </div>
                                 </div>
                             </div>
                     }
-                    <div className=' col-span-4 flex flex-col mb-6'>
-                        {/* BUAT TIKET */}
-                        <div className='shadow-md rounded-md bg-gradient-to-br from-primary100 to-state4 transition ease-in-out hover:from-primary75 cursor-pointer p-5 mx-2 flex items-center mb-2'
-                            onClick={() => {
-                                setdrawerticketscreate(true)
-                            }}
-                        >
-                            <div className=' mr-5'>
-                                <TicketIconSvg size={40} color={`#ffffff`} />
-                            </div>
-                            <div className=' flex flex-col'>
-                                <p className=' mb-1 text-lg text-white font-semibold'>Buat Tiket</p>
-                                <p className=' mb-0 text-sm text-white text-opacity-60'>{moment(new Date()).locale('id').format('dddd, LL')}</p>
-                            </div>
-                        </div>
-                        {/* KELOLA TIKET */}
-                        <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mt-2 mx-2 h-full">
-                            <div className="flex flex-col justify-center h-full">
-                                <div className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2" onClick={() => { setdrawerticketexports(true) }}>
-                                    <div className="flex p-1 bg-primary10 rounded mr-3">
-                                        <TableExportIconSvg size={35} color={`#35763B`} />
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <H2>Expor Tiket</H2>
-                                        <Label>Download daftar tiket dalam bentuk spreadsheet/excel</Label>
-                                    </div>
-                                </div>
-                                <div className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2" onClick={() => { rt.push(`/tickets/histories`) }}>
-                                    <div className="flex p-1 bg-primary10 rounded mr-3">
-                                        <HistoryIconSvg size={35} color={`#35763B`} />
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <H2>Riwayat Tiket</H2>
-                                        <Label>Lihat seluruh tiket yang berstatus closed berikut durasi</Label>
-                                    </div>
-                                </div>
-                                <div className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2" onClick={() => { rt.push(`/tickets/tickettypes`) }}>
-                                    <div className="flex p-1 bg-primary10 rounded mr-3">
-                                        <AdjusmentsHorizontalIconSvg size={35} color={`#35763B`} />
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <H2>Atur Tiket</H2>
-                                        <Label>Hubungkan tiket dengan task yang akan dijalankan</Label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     {/* TABLE TIKET */}
                     <div className="col-span-10 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mx-2">
                         <div className="flex items-center justify-between mb-4">
@@ -619,6 +686,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                                 todate={tofiltertickets}
                                 location={locfiltertickets}
                                 status={statusfiltertickets}
+                                dataprofile={dataProfile}
                             />
                         </div>
                     </div>

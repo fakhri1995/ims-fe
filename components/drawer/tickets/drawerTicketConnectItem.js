@@ -15,7 +15,7 @@ function modifData(dataa) {
     return dataa
 }
 
-const DrawerTicketConnectItem = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, refresh, setrefresh, datapayload, setdatapayload, selectedassettype, setselectedassettype, ticketid }) => {
+const DrawerTicketConnectItem = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, refresh, setrefresh, setrefreshclosed, datapayload, setdatapayload, selectedassettype, setselectedassettype, ticketid }) => {
     //useState
     const [loadingsave, setloadingsave] = useState(false)
     const [loadinggetasset, setloadinggetasset] = useState(false)
@@ -102,6 +102,7 @@ const DrawerTicketConnectItem = ({ title, visible, onvisible, onClose, buttonOkT
             title={title}
             visible={visible}
             onClose={() => {
+                setrefreshclosed(prev => prev + 1)
                 setdatapayload({
                     id: Number(ticketid),
                     inventory_id: null

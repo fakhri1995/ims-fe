@@ -5,7 +5,7 @@ import { Label, H2 } from '../../typography'
 import { SearchOutlined } from '@ant-design/icons'
 import { UserIconSvg } from '../../icon'
 
-const DrawerTicketAssign = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, refresh, setrefresh, datapayload, setdatapayload, ticketid }) => {
+const DrawerTicketAssign = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, refresh, setrefresh, setrefreshclosed, datapayload, setdatapayload, ticketid }) => {
 
     //useState
 
@@ -89,7 +89,7 @@ const DrawerTicketAssign = ({ title, visible, onvisible, onClose, buttonOkText, 
             title={title}
             visible={visible}
             onClose={() => {
-                setrefresh(prev => prev + 1)
+                setrefreshclosed(prev => prev + 1)
                 onvisible(false)
             }}
             buttonOkText={buttonOkText}
@@ -152,7 +152,7 @@ const DrawerTicketAssign = ({ title, visible, onvisible, onClose, buttonOkText, 
                                 }}
                             ></Input>
                         </div>
-                        <div className="my-5 flex flex-col h-52 overflow-scroll">
+                        <div className="my-5 flex flex-col max-h-screen overflow-scroll">
                             {
                                 loadinggetengs ?
                                     <>
