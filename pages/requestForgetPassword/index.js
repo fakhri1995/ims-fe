@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Input, Checkbox, Button, message } from 'antd';
+import { Input, Checkbox, Button, message, Result } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router'
 import httpcookie from 'cookie'
@@ -11,7 +11,7 @@ export default function RequestForgetPassword({ initProps }) {
     const [formdata, setFormdata] = useState({
         email: '',
     })
-    const [alerterror, setAlerterror] = useState(false)
+    const [success, setsuccess] = useState(false)
     const [loadingforgetpass, setloadingforgetpass] = useState(false)
     const onChangeForgetPassword = (e) => {
         setFormdata({
@@ -32,11 +32,12 @@ export default function RequestForgetPassword({ initProps }) {
             .then(res2 => {
                 setloadingforgetpass(false)
                 if (res2.success) {
+                    setsuccess(true)
                     notification['success']({
                         message: res2.data,
                         duration: 3
                     })
-                    rt.push('/login')
+                    // rt.push('/login')
                 }
                 else if (!res2.success) {
                     message.error({
@@ -53,26 +54,37 @@ export default function RequestForgetPassword({ initProps }) {
             <div className="container-xl bg-blue-600 h-screen" /*style={{background:`linear-gradient(#035ea3, #198e07)`}}*/>
                 <div className="pt-20 relative" id="wrapper">
                     <div className=" mx-auto bg-white rounded-lg w-10/12 md:w-5/12 max-h-80 md:max-h-80 text-black shadow-lg px-3 md:px-5 pt-10 pb-1 text-center">
-                        <h1 className="mb-5 font-mont text-xl font-semibold">Lupa Password</h1>
-                        <Form className="loginForm" onFinish={handleForgetPassword}>
-                            <Form.Item name="email" rules={[
-                                {
-                                    required: true,
-                                    message: 'Email wajib diisi',
-                                },
-                                {
-                                    pattern: /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
-                                    message: 'Email belum diisi dengan benar'
-                                }
-                            ]}>
-                                <Input prefix={<UserOutlined className="site-form-item-icon" />} name="email" value={formdata} placeholder="Email" onChange={onChangeForgetPassword} />
-                            </Form.Item>
-                            <Form.Item style={{ justifyContent: `center` }}>
-                                <Button type="primary" htmlType='submit' loading={loadingforgetpass} className="login-form-button mb-5" style={{ width: `100%` }}>
-                                    Submit
-                                </Button>
-                            </Form.Item>
-                        </Form>
+                        {
+                            success ?
+                                <Result
+                                    status="success"
+                                    subTitle="Silahkan cek Email anda untuk verifikasi akun"
+                                    title="Berhasil"
+                                />
+                                :
+                                <>
+                                    <h1 className="mb-5 font-mont text-xl font-semibold">Lupa Password</h1>
+                                    <Form className="loginForm" onFinish={handleForgetPassword}>
+                                        <Form.Item name="email" rules={[
+                                            {
+                                                required: true,
+                                                message: 'Email wajib diisi',
+                                            },
+                                            {
+                                                pattern: /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
+                                                message: 'Email belum diisi dengan benar'
+                                            }
+                                        ]}>
+                                            <Input prefix={<UserOutlined className="site-form-item-icon" />} name="email" value={formdata} placeholder="Email" onChange={onChangeForgetPassword} />
+                                        </Form.Item>
+                                        <Form.Item style={{ justifyContent: `center` }}>
+                                            <Button type="primary" htmlType='submit' loading={loadingforgetpass} className="login-form-button mb-5" style={{ width: `100%` }}>
+                                                Submit
+                                            </Button>
+                                        </Form.Item>
+                                    </Form>
+                                </>
+                        }
                     </div>
                 </div>
             </div>
