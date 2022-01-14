@@ -68,6 +68,8 @@ module.exports = {
         'closed': `#808080`,
       }),
       textColor: {
+        'primary': '#1890ff',
+        'secondary': '#60A5FA',
         'primary100': '#35763B',
         'primary75': '#65976a',
         'primary50': '#95b898',

@@ -250,7 +250,7 @@ const DrawerTaskDetailUpdate = ({ title, id, taskid, loading, visible, onvisible
                         setdynamniclen(worksdetail.component.lists.length)
                     }
                     setprevtype(worksdetail.component.type)
-                    worksdetail.component.name !== "" && worksdetail.component.description !== "" ? setdisabledupdate(false) : setdisabledupdate(true)
+                    worksdetail.component.name !== "" && worksdetail.component.type !== null ? setdisabledupdate(false) : setdisabledupdate(true)
                     setloadingdetailtaskupdate(false)
                 })
         }

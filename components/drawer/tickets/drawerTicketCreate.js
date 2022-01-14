@@ -68,7 +68,6 @@ const DrawerTicketCreate = ({ title, visible, onvisible, onClose, buttonOkText, 
     const onChangeGambar = async (e) => {
         setloadingfile(true)
         const foto = e.target.files
-        console.log(foto[0])
         const formdata = new FormData()
         formdata.append('file', foto[0])
         formdata.append('upload_preset', 'migsys')

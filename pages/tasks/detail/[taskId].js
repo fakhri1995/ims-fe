@@ -9,7 +9,7 @@ import { H1, H2, Label, Text } from '../../../components/typography'
 import { ArrowsSortIconSvg, AssetIconSvg, BackIconSvg, CheckIconSvg, CircleXIconSvg, ClipboardcheckIconSvg, ClockIconSvg, CloudUploadIconSvg, EditIconSvg, ForbidIconSvg, PlayerPauseIconSvg, PlayerPlayIconSvg, RefreshIconSvg, SearchIconSvg, SendIconSvg, SortAscendingIconSvg, SortDescendingIconSvg, TrashIconSvg, UserPlusIconSvg } from '../../../components/icon'
 import { ModalHapusTask, ModalHapusTaskDetail, ModalUbahOnHoldTask } from '../../../components/modal/modalCustom'
 import moment from 'moment'
-import { SearchOutlined } from '@ant-design/icons'
+import { LoadingOutlined } from '@ant-design/icons'
 import DrawerTaskUpdate from '../../../components/drawer/tasks/drawerTaskUpdate'
 import DrawerTaskDetailUpdate from '../../../components/drawer/tasks/drawerTaskDetailUpdate'
 import DrawerTaskDetailCreate from '../../../components/drawer/tasks/drawerTaskDetailCreate'
@@ -176,9 +176,27 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     const [drawerspart, setdrawerspart] = useState(false)
     const [selectedforin, setselectedforin] = useState([])
     const [selectedforout, setselectedforout] = useState([])
+    //UPLOAD FILE
+    const [loadingfile, setloadingfile] = useState(false)
 
 
     //HANDLER
+    const onChangeGambar = async (e) => {
+        setloadingfile(true)
+        const foto = e.target.files
+        const formdata = new FormData()
+        formdata.append('file', foto[0])
+        formdata.append('upload_preset', 'migsys')
+        const fetching = await fetch(`https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`, {
+            method: 'POST',
+            body: formdata
+        })
+        const datajson = await fetching.json()
+        var tempfile = [...dataupdate.files]
+        tempfile.push(datajson.secure_url)
+        setdataupdate({ ...dataupdate, files: tempfile })
+        setloadingfile(false)
+    }
     const handleDeleteTask = () => {
         setloadingtaskdelete(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/deleteTask`, {
@@ -406,7 +424,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                         message: res2.message,
                         duration: 3
                     })
-                    window.location.href = `/tasks`
+                    window.location.href = `/tasks/${prevpath}`
                 }
                 else {
                     notification['error']({
@@ -434,7 +452,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                         message: res2.message,
                         duration: 3
                     })
-                    window.location.href = `/tasks`
+                    window.location.href = `/tasks/${prevpath}`
                 }
                 else {
                     notification['error']({
@@ -1112,11 +1130,13 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                                         <div className=' mb-3 flex flex-col'>
                                                                             {
                                                                                 doctask.component.lists.map((doc3, idx3) => (
-                                                                                    <Checkbox defaultChecked={doctask.component.values[idx3]} style={{ marginBottom: `0.5rem` }} onChange={(e) => {
-                                                                                        var temp = [...currentdataeditable.values]
-                                                                                        temp[idx3] = e.target.checked
-                                                                                        setcurrentdataeditable({ ...currentdataeditable, values: temp })
-                                                                                    }}>{doc3}</Checkbox>
+                                                                                    <div className=' mb-3'>
+                                                                                        <Checkbox defaultChecked={doctask.component.values[idx3]} onChange={(e) => {
+                                                                                            var temp = [...currentdataeditable.values]
+                                                                                            temp[idx3] = e.target.checked
+                                                                                            setcurrentdataeditable({ ...currentdataeditable, values: temp })
+                                                                                        }}>{doc3}</Checkbox>
+                                                                                    </div>
                                                                                 ))
                                                                             }
                                                                         </div>
@@ -1497,7 +1517,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                                 </div>
                                                             </div>
                                                             :
-                                                            completeclose || isselfcheckout ?
+                                                            completeclose && isselfcheckout ?
                                                                 null
                                                                 :
                                                                 editable[idxtask] ?
@@ -1563,28 +1583,37 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                     <H2>Lampiran</H2>
                                                 </div>
                                                 {
-                                                    completeclose || isselfcheckout ?
+                                                    completeclose && isselfcheckout ?
                                                         null
                                                         :
                                                         <div>
-                                                            <Buttonsys disabled={disablededitable} type={`default`}>
+                                                            <Buttonsys disabled={disablededitable} onChangeGambar={onChangeGambar} type={`defaultInput`}>
                                                                 <div className="mr-1">
-                                                                    <CloudUploadIconSvg size={15} color={`#35763B`} />
+                                                                    {loadingfile ? <LoadingOutlined style={{ marginRight: `0.5rem` }} /> : <CloudUploadIconSvg size={15} color={`#35763B`} />}
                                                                 </div>
                                                                 Unggah Lampiran
                                                             </Buttonsys>
                                                         </div>
                                                 }
                                             </div>
-                                            <div className=' flex flex-col mb-4'>
+                                            <div className=' grid grid-cols-4 mb-4'>
                                                 {
                                                     displaytask.files === null ?
                                                         <>
                                                             <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Belum ada file yang di upload"></Empty>
                                                         </>
                                                         :
-                                                        displaytask.files.map((doc, idx) => (
-                                                            <div className=' flex items-center mb-2'>
+                                                        dataupdate.files.map((doc, idx) => (
+                                                            <div className=' col-span-1 mx-1 flex flex-col items-center mb-5'>
+                                                                <img src={doc} className=' object-contain mb-1 h-40 w-full' alt="" />
+                                                                <div className=' cursor-pointer' onClick={() => {
+                                                                    var tempfiles = [...dataupdate.files]
+                                                                    tempfiles.splice(idx, 1)
+                                                                    setdataupdate(prev => ({
+                                                                        ...prev,
+                                                                        files: tempfiles
+                                                                    }))
+                                                                }}><TrashIconSvg size={15} color={`#BF4A40`} /></div>
                                                             </div>
                                                         ))
                                                 }
@@ -1674,7 +1703,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                         </div>
                                 :
                                 displaytask.users.some(docsome => docsome.id === dataProfile.data.id) ?
-                                    completeclose || isselfcheckout ?
+                                    completeclose && isselfcheckout ?
                                         <div className=' flex justify-center w-full text-center'>
                                             <div className=' mr-2'><CheckIconSvg size={30} color={`#35763B`} /></div>
                                             <div>
@@ -1811,28 +1840,32 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                 />
                             </div>
                     }
-                    <div className=' my-3 ml-3'>
-                        {
-                            praloadingtask ?
+                    {
+                        praloadingtask ?
+                            null
+                            :
+                            displaytask.created_by === dataProfile.data.id ?
                                 null
                                 :
-                                displaytask.created_by === dataProfile.data.id ?
-                                    null
-                                    :
-                                    displaytask.status === 4 ?
+                                displaytask.status === 4 ?
+                                    <div className=' my-3 ml-3'>
+
                                         <div>
                                             <Buttonsys onClick={handleCheckInTask} disabled={true} type={`primary`} fullWidth={true}>
                                                 Check In
                                             </Buttonsys>
                                         </div>
-                                        :
+                                    </div>
+                                    :
+                                    <div className=' my-3 ml-3'>
+
                                         <div>
                                             <Buttonsys onClick={handleCheckInTask} disabled={disablededitable === true ? false : true} type={`primary`} fullWidth={true}>
                                                 Check In
                                             </Buttonsys>
                                         </div>
-                        }
-                    </div>
+                                    </div>
+                    }
                     <div className='shadow-md rounded-md bg-white p-4 my-3 ml-3 flex flex-col'>
                         <div className='my-3 flex flex-col'>
                             <div className='mb-2'>
@@ -1999,7 +2032,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                 displaytask.created_by !== dataProfile.data.id &&
                                 <>
                                     {
-                                        completeclose || isselfcheckout ?
+                                        completeclose && isselfcheckout ?
                                             null
                                             :
                                             <div className="my-3 flex items-center justify-center">

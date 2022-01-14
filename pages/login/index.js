@@ -84,17 +84,15 @@ export default function Home({ initProps }) {
               ]} style={{ marginBottom: `3rem` }}>
                 <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} name="password" value={formdata} placeholder="Password" type="password" onChange={onChangeLogin} />
               </Form.Item>
-              {/* <Form.Item>
-                <Form.Item name="remember" valuePropName="checked" noStyle>
-                  <Checkbox>Remember me</Checkbox>
-                </Form.Item>
-              </Form.Item> */}
               <Form.Item style={{ justifyContent: `center` }}>
-                <Button type="primary" htmlType="submit" loading={loadinglogin} className="login-form-button mb-5" style={{ width: `100%` }}>
+                <Button type="primary" htmlType="submit" loading={loadinglogin} className="login-form-button" style={{ width: `100%` }}>
                   Log in
                 </Button>
               </Form.Item>
             </Form>
+            <div className=' flex justify-center items-center'>
+              <p className=' mb-5 text-primary hover:text-secondary cursor-pointer' onClick={() => { rt.push(`/requestForgetPassword`) }}>Lupa Password</p>
+            </div>
           </div>
         </div>
       </div>
@@ -110,7 +108,7 @@ export async function getServerSideProps({ req, res }) {
     if (req.headers.cookie) {
       const cookies = req.headers.cookie;
       const cookiesJSON1 = httpcookie.parse(cookies);
-      if(cookiesJSON1.token){
+      if (cookiesJSON1.token) {
         return {
           redirect: {
             permanent: false,

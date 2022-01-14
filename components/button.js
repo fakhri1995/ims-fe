@@ -25,6 +25,14 @@ const ButtonSys = ({ size, type, children, color, submit, onClick, form, selecte
             </button>
         )
     }
+    else if (type === 'defaultInput') {
+        return (
+            <label onClick={onClick} className={`btn btn-outline ${size === "large" ? "" : "btn-sm"} ${typeof (color) === 'undefined' ? "text-primary100" : (color === "danger" && "text-state1")} hover:text-white hover:${typeof (color) === 'undefined' ? "bg-primary75" : (color === "danger" && "bg-state1")} hover:${typeof (color) === 'undefined' ? "bg-primary75" : (color === "danger" && "bg-state1")} ${typeof (color) === 'undefined' ? "border-primary100" : (color === "danger" && "border-state1")} hover:${typeof (color) === 'undefined' ? "border-primary75" : (color === "danger" && "border-state1")} px-6`}>
+                <input type="file" style={{ display: `none` }} name="urlgambarProduct" onChange={onChangeGambar} />
+                {children}
+            </label>
+        )
+    }
     else if (type === 'ghost') {
         return (
             <button style={fullWidth && { width: `100%` }} form={form} onClick={onClick} type={submit ? "submit" : "button"} className={`btn btn-outline border-none ${size === "large" ? "" : "btn-sm"} ${typeof (color) === 'undefined' && "text-primary100"} ${color === "danger" && "text-state1"} ${selected && "bg-primary25"} hover:${typeof (color) === 'undefined' ? "text-primary75" : (color === "danger" && "text-state1")} px-6`}>
