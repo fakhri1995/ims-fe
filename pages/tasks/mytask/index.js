@@ -846,7 +846,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                                 .then(res => res.json())
                                                 .then(res2 => {
                                                     setstatustaskdatestate({ from: datestrings[0], to: datestrings[1] })
-                                                    setstatustaskdata(res2.data)
+                                                    setstatustaskdata(res2.data.status_list)
                                                     setloadingstatustaskdata(false)
                                                 })
                                         }}

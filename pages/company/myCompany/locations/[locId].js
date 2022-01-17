@@ -17,7 +17,7 @@ import { InputNotRequired, DateNotRequired } from '../../../../components/input'
 function modifData(dataa) {
     for (var i = 0; i < dataa.length; i++) {
         dataa[i]['children'] = dataa[i].sub_children
-        dataa[i]['image_logo'] = dataa[i].image_logo === "" || dataa[i].image_logo === "-" ? `/image/Induk.png` : dataa[i].image_logo
+        dataa[i]['image_logo'] = dataa[i].image_logo === "" || dataa[i].image_logo === "-" ? `/image/Sublokasi.png` : dataa[i].image_logo
         delete dataa[i].sub_children
         if (dataa[i].children) [
             modifData(dataa[i].children)
@@ -540,7 +540,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                     name: res2.data.name,
                     address: res2.data.address,
                     phone_number: res2.data.phone_number,
-                    image_logo: res2.data.image_logo === "-" || res2.data.image_logo === "" ? '/image/Induk.png' : res2.data.image_logo,
+                    image_logo: res2.data.image_logo === "-" || res2.data.image_logo === "" ? (res2.data.level === 1 ? '/image/Induk.png' : `/image/Sublokasi.png`) : res2.data.image_logo,
                     singkatan: res2.data.singkatan,
                     tanggal_pkp: res2.data.tanggal_pkp === null ? null : moment(res2.data.tanggal_pkp),
                     penanggung_jawab: res2.data.penanggung_jawab,
@@ -604,7 +604,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                 <Form form={instanceForm} initialValues={displaydata}>
                                     <div className="max-h-24 relative">
                                         <img src={`/image/Rectangle.png`} alt="" className="object-fit max-h-24 w-full rounded-t" />
-                                        <div className="absolute -bottom-1/2 bg-white left-24 rounded-full">
+                                        <div className="absolute -bottom-1/2 bg-white rounded-full" style={{ left: `35%` }}>
                                             <img src={displaydata.image_logo} alt="" className="object-contain w-24 h-24 rounded-full" />
                                         </div>
                                     </div>
@@ -728,7 +728,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                             }
                                         </div>
                                         {
-                                            displaydata.level === 2 ?
+                                            displaydata.level >= 2 ?
                                                 null
                                                 :
                                                 displaydata.npwp === "-" || displaydata.npwp === "" ?
@@ -739,14 +739,14 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                                             <div className="flex flex-col mb-5 px-3">
                                                                 <>
                                                                     <Label>NPWP</Label>
-                                                                    <p className="mb-0">{displaydata.npwp === "" && `-`}</p>
+                                                                    <p className="mb-0">{displaydata.npwp === "" || displaydata.npwp === "-" ? `-` : displaydata.npwp}</p>
                                                                 </>
                                                             </div>
                                                         }
                                                     </>
                                         }
                                         {
-                                            displaydata.level === 2 ?
+                                            displaydata.level >= 2 ?
                                                 null
                                                 :
                                                 displaydata.tanggal_pkp === "-" || displaydata.tanggal_pkp === "" || displaydata.tanggal_pkp === null ?
@@ -765,7 +765,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                                     </>
                                         }
                                         {
-                                            displaydata.level === 2 ?
+                                            displaydata.level >= 2 ?
                                                 null
                                                 :
                                                 displaydata.email === "-" || displaydata.email === "" ?
@@ -789,7 +789,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                                     </>
                                         }
                                         {
-                                            displaydata.level === 2 ?
+                                            displaydata.level >= 2 ?
                                                 null
                                                 :
                                                 displaydata.fax === "-" || displaydata.fax === "" ?
@@ -813,7 +813,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                                     </>
                                         }
                                         {
-                                            displaydata.level === 2 ?
+                                            displaydata.level >= 2 ?
                                                 null
                                                 :
                                                 displaydata.website === "-" || displaydata.website === "" ?
@@ -837,18 +837,21 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                                     </>
                                         }
                                         {
-                                            editable &&
-                                            <>
-                                                {dynamicattr.email && <InputNotRequired name="email" onChangeInput={onChangeInputNotRequired} defaultValue={displaydata.email} label="Email"></InputNotRequired>}
-                                                {dynamicattr.email && warningemail && <p className=' text-red-500 text-sm mb-3 -mt-3 mx-3'>Email belum diisi dengan benar</p>}
-                                                {dynamicattr.website && <InputNotRequired name="website" onChangeInput={onChangeInputNotRequired} defaultValue={displaydata.website} label="Website"></InputNotRequired>}
-                                                {dynamicattr.npwp && <InputNotRequired name="npwp" onChangeInput={onChangeInputNotRequired} defaultValue={displaydata.npwp} label="NPWP"></InputNotRequired>}
-                                                {dynamicattr.fax && <InputNotRequired name="fax" onChangeInput={onChangeInputNotRequired} defaultValue={displaydata.fax} label="Fax"></InputNotRequired>}
-                                                {dynamicattr.tanggal_pkp && <DateNotRequired name="tanggal_pkp" onChangeDate={onchangeDate} label="Tanggal PKP" defaultValue={displaydata.tanggal_pkp === null ? null : moment(displaydata.tanggal_pkp)}></DateNotRequired>}
-                                            </>
+                                            displaydata.level >= 2 ?
+                                                null
+                                                :
+                                                editable &&
+                                                <>
+                                                    {dynamicattr.email && <InputNotRequired name="email" onChangeInput={onChangeInputNotRequired} defaultValue={displaydata.email} label="Email"></InputNotRequired>}
+                                                    {dynamicattr.email && warningemail && <p className=' text-red-500 text-sm mb-3 -mt-3 mx-3'>Email belum diisi dengan benar</p>}
+                                                    {dynamicattr.website && <InputNotRequired name="website" onChangeInput={onChangeInputNotRequired} defaultValue={displaydata.website} label="Website"></InputNotRequired>}
+                                                    {dynamicattr.npwp && <InputNotRequired name="npwp" onChangeInput={onChangeInputNotRequired} defaultValue={displaydata.npwp} label="NPWP"></InputNotRequired>}
+                                                    {dynamicattr.fax && <InputNotRequired name="fax" onChangeInput={onChangeInputNotRequired} defaultValue={displaydata.fax} label="Fax"></InputNotRequired>}
+                                                    {dynamicattr.tanggal_pkp && <DateNotRequired name="tanggal_pkp" onChangeDate={onchangeDate} label="Tanggal PKP" defaultValue={displaydata.tanggal_pkp === null ? null : moment(displaydata.tanggal_pkp)}></DateNotRequired>}
+                                                </>
                                         }
                                         {
-                                            displaydata.level === 2 ?
+                                            displaydata.level >= 2 ?
                                                 null
                                                 :
                                                 editable &&
@@ -1159,7 +1162,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                                         }
                                     </div>
                                     <div className="flex flex-col items-center mb-5">
-                                        <div className="mb-2">
+                                        <div className="mb-2 text-center">
                                             <H1>{selectedsublocdata.title}</H1>
                                         </div>
                                         <div className="mb-4">

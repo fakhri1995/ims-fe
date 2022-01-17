@@ -316,9 +316,43 @@ const DrawerLokasi = ({ title, visible, onClose, children, buttonOkText, initPro
         // console.log(/(^\d+$)/.test(createdata.phone_number), createdata.phone_number)
         if (/(^\d+$)/.test(createdata.phone_number) === false || /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/.test(createdata.email) === false) {
             // console.log(new RegExp(/(^\d+$)/).test(createdata.phone_number))
-            new RegExp(/(^\d+$)/).test(createdata.phone_number) === false ? setwarningphonenumber(true) : setwarningphonenumber(false)
-            new RegExp(/(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/).test(createdata.email) === false ? setwarningemail(true) : setwarningemail(false)
-            setdisabledsave(true)
+            if (createdata.email === "") {
+                setlokasiloading(true)
+                fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyBranch`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': JSON.parse(initProps),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(createdata)
+                })
+                    .then((res) => res.json())
+                    .then(res2 => {
+                        setlokasiloading(false)
+                        onvisible(false)
+                        if (res2.success) {
+                            notification['success']({
+                                message: res2.message,
+                                duration: 3
+                            })
+                            setdisabledsave(true)
+                            setTimeout(() => {
+                                rt.push(`/company/myCompany/locations`)
+                            }, 500)
+                        }
+                        else {
+                            notification['error']({
+                                message: res2.message,
+                                duration: 3
+                            })
+                        }
+                    })
+            }
+            else {
+                new RegExp(/(^\d+$)/).test(createdata.phone_number) === false ? setwarningphonenumber(true) : setwarningphonenumber(false)
+                new RegExp(/(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/).test(createdata.email) === false ? (createdata.email === "" ? setwarningemail(false) : setwarningemail(true)) : setwarningemail(false)
+                setdisabledsave(true)
+            }
         }
         else {
             setlokasiloading(true)
@@ -447,8 +481,12 @@ const DrawerLokasi = ({ title, visible, onClose, children, buttonOkText, initPro
                         <InputRequired name="phone_number" onChangeInput={onChangeInput} label="Nomor Telepon"></InputRequired>
                         {warningphonenumber && <p className=' text-red-500 text-sm mb-3 -mt-3 mx-3'>Nomor Telepon harus angka</p>}
                         <InputRequired name="penanggung_jawab" onChangeInput={onChangeInput} label="Penanggung Jawab (PIC)"></InputRequired>
-                        {dynamicattr.email && <InputNotRequired name="email" onChangeInput={onChangeEmail} label="Email"></InputNotRequired>}
-                        {warningemail && <p className=' text-red-500 text-sm mb-3 -mt-3 mx-3'>Email belum diisi dengan benar</p>}
+                        {dynamicattr.email &&
+                            <>
+                                <InputNotRequired name="email" onChangeInput={onChangeEmail} label="Email"></InputNotRequired>
+                                {warningemail && <p className=' text-red-500 text-sm mb-3 -mt-3 mx-3'>Email belum diisi dengan benar</p>}
+                            </>
+                        }
                         {dynamicattr.website && <InputNotRequired name="website" onChangeInput={onChangeInputNotRequired} label="Website"></InputNotRequired>}
                         {dynamicattr.npwp && <InputNotRequired name="npwp" onChangeInput={onChangeInputNotRequired} label="NPWP"></InputNotRequired>}
                         {dynamicattr.fax && <InputNotRequired name="fax" onChangeInput={onChangeInputNotRequired} label="Fax"></InputNotRequired>}
@@ -600,9 +638,42 @@ const DrawerLokasiClient = ({ title, visible, onClose, children, buttonOkText, i
     const handleCreateLokasi = () => {
         if (/(^\d+$)/.test(createdata.phone_number) === false || /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/.test(createdata.email) === false) {
             // console.log(new RegExp(/(^\d+$)/).test(createdata.phone_number))
-            new RegExp(/(^\d+$)/).test(createdata.phone_number) === false ? setwarningphonenumber(true) : setwarningphonenumber(false)
-            new RegExp(/(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/).test(createdata.email) === false ? setwarningemail(true) : setwarningemail(false)
-            setdisabledsave(true)
+            if (createdata.email === "") {
+                setlokasiloading(true)
+                fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyClient`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': JSON.parse(initProps),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(createdata)
+                })
+                    .then((res) => res.json())
+                    .then(res2 => {
+                        setlokasiloading(false)
+                        onvisible(false)
+                        if (res2.success) {
+                            notification['success']({
+                                message: res2.message,
+                                duration: 3
+                            })
+                            setTimeout(() => {
+                                rt.push(`/company/clients/locations?id=${displaydata.id}&company_name=${displaydata.name}`)
+                            }, 500)
+                        }
+                        else {
+                            notification['error']({
+                                message: res2.message,
+                                duration: 3
+                            })
+                        }
+                    })
+            }
+            else {
+                new RegExp(/(^\d+$)/).test(createdata.phone_number) === false ? setwarningphonenumber(true) : setwarningphonenumber(false)
+                new RegExp(/(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/).test(createdata.email) === false ? setwarningemail(true) : setwarningemail(false)
+                setdisabledsave(true)
+            }
         }
         else {
             setlokasiloading(true)
@@ -704,8 +775,12 @@ const DrawerLokasiClient = ({ title, visible, onClose, children, buttonOkText, i
                         <InputRequired name="phone_number" onChangeInput={onChangeInput} label="Nomor Telepon"></InputRequired>
                         {warningphonenumber && <p className=' text-red-500 text-sm mb-3 -mt-3 mx-3'>Nomor Telepon harus angka</p>}
                         <InputRequired name="penanggung_jawab" onChangeInput={onChangeInput} label="Penanggung Jawab (PIC)"></InputRequired>
-                        {dynamicattr.email && <InputNotRequired name="email" onChangeInput={onChangeInputNotRequired} label="Email"></InputNotRequired>}
-                        {warningemail && <p className=' text-red-500 text-sm mb-3 -mt-3 mx-3'>Email belum diisi dengan benar</p>}
+                        {dynamicattr.email &&
+                            <>
+                                <InputNotRequired name="email" onChangeInput={onChangeInputNotRequired} label="Email"></InputNotRequired>
+                                {warningemail && <p className=' text-red-500 text-sm mb-3 -mt-3 mx-3'>Email belum diisi dengan benar</p>}
+                            </>
+                        }
                         {dynamicattr.website && <InputNotRequired name="website" onChangeInput={onChangeInputNotRequired} label="Website"></InputNotRequired>}
                         {dynamicattr.npwp && <InputNotRequired name="npwp" onChangeInput={onChangeInputNotRequired} label="NPWP"></InputNotRequired>}
                         {dynamicattr.fax && <InputNotRequired name="fax" onChangeInput={onChangeInputNotRequired} label="Fax"></InputNotRequired>}

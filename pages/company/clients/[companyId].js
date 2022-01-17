@@ -430,7 +430,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                     name: res2.data.name,
                     address: res2.data.address,
                     phone_number: res2.data.phone_number,
-                    image_logo: res2.data.image_logo === "-" || res2.data.image_logo === "" ? '/default-users.jpeg' : res2.data.image_logo,
+                    image_logo: res2.data.image_logo === "-" || res2.data.image_logo === "" ? '/image/Company.png' : res2.data.image_logo,
                     singkatan: res2.data.singkatan,
                     tanggal_pkp: res2.data.tanggal_pkp === null ? moment(new Date()) : moment(res2.data.tanggal_pkp),
                     penanggung_jawab: res2.data.penanggung_jawab,

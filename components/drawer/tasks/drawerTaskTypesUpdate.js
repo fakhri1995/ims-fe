@@ -569,7 +569,9 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                                                                             <div className="mb-3 flex flex-col">
                                                                                 <div className="mb-2">
                                                                                     <RadioNotRequired label="Baris" defaultValue={doc.is_general} onChangeRadio={(e) => {
-                                                                                        setisbarismatriks(e.target.value);
+                                                                                        var temparrisbarismatriks = [...isbarismatriks]
+                                                                                        temparrisbarismatriks[idx] = e.target.value
+                                                                                        setisbarismatriks(temparrisbarismatriks);
                                                                                         var tempdisplay = [...datadisplay.works]
                                                                                         tempdisplay[idx].is_general = e.target.value
                                                                                         setdatadisplay(prev => ({

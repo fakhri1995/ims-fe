@@ -555,7 +555,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                     name: res2.data.name,
                     address: res2.data.address,
                     phone_number: res2.data.phone_number,
-                    image_logo: res2.data.image_logo === "-" || res2.data.image_logo === "" ? '/default-users.jpeg' : res2.data.image_logo,
+                    image_logo: res2.data.image_logo === "-" || res2.data.image_logo === "" ? '/image/Company.png' : res2.data.image_logo,
                     singkatan: res2.data.singkatan,
                     tanggal_pkp: res2.data.tanggal_pkp === null ? moment(new Date()) : moment(res2.data.tanggal_pkp),
                     penanggung_jawab: res2.data.penanggung_jawab,
@@ -625,7 +625,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                                     <div className="max-h-24 relative">
                                         <img src={`/image/Rectangle.png`} alt="" className="object-fit max-h-24 w-full rounded-t" />
                                         <div className="absolute -bottom-1/2 bg-white left-28 rounded-full">
-                                            <img src={displaydata.image_logo} alt="" className="object-contain w-24 h-24" />
+                                            <img src={displaydata.image_logo} alt="" className="object-contain w-24 h-24 rounded-full" />
                                         </div>
                                     </div>
                                     <div className="mt-14 flex flex-col justify-center text-center">
