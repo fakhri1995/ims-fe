@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Table } from 'antd'
 import { useRouter } from 'next/router'
 
-const TableCustom = ({ dataSource, setDataSource, columns, loading, setloading, pageSize, total, setpraloading, initProps, setpage, pagefromsearch, keyworditems, setdataraw, locid }) => {
+const TableCustom = ({ dataSource, setDataSource, columns, loading, setloading, pageSize, total, setpraloading, initProps, setpage, pagefromsearch, keyworditems, setdataraw, locid, sorting, setsorting }) => {
     return (
         <Table
             dataSource={dataSource}
@@ -16,7 +16,7 @@ const TableCustom = ({ dataSource, setDataSource, columns, loading, setloading, 
                 onChange: (page, pageSize) => {
                     setloading(true)
                     setpage(page)
-                    fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyInventories?id=${locid}&page=${page}&rows=${pageSize}&keyword=${keyworditems}`, {
+                    fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyInventories?id=${locid}&page=${page}&rows=${pageSize}&keyword=${keyworditems}&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}`, {
                         method: `GET`,
                         headers: {
                             'Authorization': JSON.parse(initProps),
@@ -28,6 +28,42 @@ const TableCustom = ({ dataSource, setDataSource, columns, loading, setloading, 
                             setDataSource(res2.data.data)
                             setloading(false)
                         })
+                }
+            }}
+            onChange={(pagination, filters, sorter, extra) => {
+                if (extra.action === "sort") {
+                    if (sorter.column) {
+                        setloading(true)
+                        setsorting({ sort_by: sorter.column.dataIndex, sort_type: sorter.order === "ascend" ? "asc" : "desc" })
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyInventories?id=${locid}&page=${pagination.current}&rows=${pagination.pageSize}&keyword=${keyworditems}&sort_by=${sorter.column.dataIndex}&sort_type=${sorter.order === "ascend" ? "asc" : "desc"}`, {
+                            method: `GET`,
+                            headers: {
+                                'Authorization': JSON.parse(initProps),
+                            },
+                        })
+                            .then(res => res.json())
+                            .then(res2 => {
+                                setdataraw(res2.data)
+                                setDataSource(res2.data.data)
+                                setloading(false)
+                            })
+                    }
+                    else {
+                        setloading(true)
+                        setsorting({ sort_by: "", sort_type: "" })
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyInventories?id=${locid}&page=${pagination.current}&rows=${pagination.pageSize}&keyword=${keyworditems}&sort_by=&sort_type=`, {
+                            method: `GET`,
+                            headers: {
+                                'Authorization': JSON.parse(initProps),
+                            },
+                        })
+                            .then(res => res.json())
+                            .then(res2 => {
+                                setdataraw(res2.data)
+                                setDataSource(res2.data.data)
+                                setloading(false)
+                            })
+                    }
                 }
             }}
         />

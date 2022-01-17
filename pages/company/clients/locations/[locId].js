@@ -123,6 +123,10 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
     const [page, setpage] = useState(1)
     const [rows, setrows] = useState(6)
     const [keyworditems, setkeyworditems] = useState("")
+    const [sortingitems, setsortingitems] = useState({
+        sort_by: "",
+        sort_type: ""
+    })
     const [praloadingitem, setpraloadingitem] = useState(true)
     //SUB LOKASI
     const [subloc, setsubloc] = useState([])
@@ -171,7 +175,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
                 return {
                     children:
                         <>
-                            {index + 1}
+                            {rawitems.from + 1}
                         </>
                 }
             }
@@ -196,10 +200,11 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
                 return {
                     children:
                         <>
-                            {record.model_inventory.asset.asset_name}
+                            {record.asset_name}
                         </>
                 }
-            }
+            },
+            sorter: (a, b) => a.asset_name - b.asset_name,
         },
         {
             title: 'Model',
@@ -208,7 +213,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
                 return {
                     children:
                         <>
-                            {record.model_inventory.name}
+                            {record.model_name}
                         </>
                 }
             }
@@ -292,7 +297,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
     }
     const onSearchItems = (e) => {
         setpraloadingitem(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyInventories?id=${locid}&page=1&rows=${rows}&keyword=${e.target.value}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyInventories?id=${locid}&page=1&rows=${rows}&keyword=${e.target.value}&sort_by=${sortingitems.sort_by}&sort_type=${sortingitems.sort_type}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -565,7 +570,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
     }, [sublokasidrawer, refreshpage])
 
     useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyInventories?id=${locid}&page=${page}&rows=${rows}&keyword=${keyworditems}`, {
+        fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyInventories?id=${locid}&page=${page}&rows=${rows}&keyword=${keyworditems}&sort_by=${sortingitems.sort_by}&sort_type=${sortingitems.sort_type}`, {
             method: `GET`,
             headers: {
                 'Authorization': JSON.parse(initProps),
@@ -1111,6 +1116,8 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
                                 pagefromsearch={page}
                                 keyworditems={keyworditems}
                                 locid={locid}
+                                sorting={sortingitems}
+                                setsorting={setsortingitems}
                             />
                         </div>
                     </div>

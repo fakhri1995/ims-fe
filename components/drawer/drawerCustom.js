@@ -335,10 +335,31 @@ const DrawerLokasi = ({ title, visible, onClose, children, buttonOkText, initPro
                                 message: res2.message,
                                 duration: 3
                             })
+                            setcreatedata({
+                                name: '',
+                                address: "",
+                                phone_number: "",
+                                image_logo: '',
+                                parent_id: null,
+                                singkatan: "",
+                                tanggal_pkp: null,
+                                penanggung_jawab: "",
+                                npwp: "",
+                                fax: "",
+                                email: "",
+                                website: ""
+                            })
+                            setdynamicattr({
+                                email: false,
+                                website: false,
+                                npwp: false,
+                                fax: false,
+                                tanggal_pkp: false
+                            })
+                            setwarningphonenumber(false)
+                            setwarningemail(false)
                             setdisabledsave(true)
-                            setTimeout(() => {
-                                rt.push(`/company/myCompany/locations`)
-                            }, 500)
+                            rt.push(`/company/myCompany/locations`)
                         }
                         else {
                             notification['error']({
@@ -373,10 +394,31 @@ const DrawerLokasi = ({ title, visible, onClose, children, buttonOkText, initPro
                             message: res2.message,
                             duration: 3
                         })
+                        setcreatedata({
+                            name: '',
+                            address: "",
+                            phone_number: "",
+                            image_logo: '',
+                            parent_id: null,
+                            singkatan: "",
+                            tanggal_pkp: null,
+                            penanggung_jawab: "",
+                            npwp: "",
+                            fax: "",
+                            email: "",
+                            website: ""
+                        })
+                        setdynamicattr({
+                            email: false,
+                            website: false,
+                            npwp: false,
+                            fax: false,
+                            tanggal_pkp: false
+                        })
+                        setwarningphonenumber(false)
+                        setwarningemail(false)
                         setdisabledsave(true)
-                        setTimeout(() => {
-                            rt.push(`/company/myCompany/locations`)
-                        }, 500)
+                        rt.push(`/company/myCompany/locations`)
                     }
                     else {
                         notification['error']({
@@ -651,15 +693,36 @@ const DrawerLokasiClient = ({ title, visible, onClose, children, buttonOkText, i
                     .then((res) => res.json())
                     .then(res2 => {
                         setlokasiloading(false)
-                        onvisible(false)
                         if (res2.success) {
                             notification['success']({
                                 message: res2.message,
                                 duration: 3
                             })
-                            setTimeout(() => {
-                                rt.push(`/company/clients/locations?id=${displaydata.id}&company_name=${displaydata.name}`)
-                            }, 500)
+                            setcreatedata({
+                                name: '',
+                                address: "",
+                                phone_number: "",
+                                image_logo: '',
+                                parent_id: null,
+                                singkatan: "",
+                                tanggal_pkp: null,
+                                penanggung_jawab: "",
+                                npwp: "",
+                                fax: "",
+                                email: "",
+                                website: ""
+                            })
+                            setdynamicattr({
+                                email: false,
+                                website: false,
+                                npwp: false,
+                                fax: false,
+                                tanggal_pkp: false
+                            })
+                            setwarningphonenumber(false)
+                            setwarningemail(false)
+                            onvisible(false)
+                            rt.push(`/company/clients/locations?id=${displaydata.id}&company_name=${displaydata.name}`)
                         }
                         else {
                             notification['error']({
@@ -688,15 +751,36 @@ const DrawerLokasiClient = ({ title, visible, onClose, children, buttonOkText, i
                 .then((res) => res.json())
                 .then(res2 => {
                     setlokasiloading(false)
-                    onvisible(false)
                     if (res2.success) {
                         notification['success']({
                             message: res2.message,
                             duration: 3
                         })
-                        setTimeout(() => {
-                            rt.push(`/company/clients/locations?id=${displaydata.id}&company_name=${displaydata.name}`)
-                        }, 500)
+                        setcreatedata({
+                            name: '',
+                            address: "",
+                            phone_number: "",
+                            image_logo: '',
+                            parent_id: null,
+                            singkatan: "",
+                            tanggal_pkp: null,
+                            penanggung_jawab: "",
+                            npwp: "",
+                            fax: "",
+                            email: "",
+                            website: ""
+                        })
+                        setdynamicattr({
+                            email: false,
+                            website: false,
+                            npwp: false,
+                            fax: false,
+                            tanggal_pkp: false
+                        })
+                        setwarningphonenumber(false)
+                        setwarningemail(false)
+                        onvisible(false)
+                        rt.push(`/company/clients/locations?id=${displaydata.id}&company_name=${displaydata.name}`)
                     }
                     else {
                         notification['error']({
@@ -733,7 +817,33 @@ const DrawerLokasiClient = ({ title, visible, onClose, children, buttonOkText, i
         <DrawerCore
             title={title}
             visible={visible}
-            onClose={onClose}
+            onClose={() => {
+                setcreatedata({
+                    name: '',
+                    address: "",
+                    phone_number: "",
+                    image_logo: '',
+                    parent_id: null,
+                    singkatan: "",
+                    tanggal_pkp: null,
+                    penanggung_jawab: "",
+                    npwp: "",
+                    fax: "",
+                    email: "",
+                    website: ""
+                })
+                setdynamicattr({
+                    email: false,
+                    website: false,
+                    npwp: false,
+                    fax: false,
+                    tanggal_pkp: false
+                })
+                setwarningphonenumber(false)
+                setwarningemail(false)
+                setdisabledsave(true)
+                onvisible(false)
+            }}
             buttonOkText={buttonOkText}
             onClick={handleCreateLokasi}
             disabled={disabledsave}
@@ -943,15 +1053,29 @@ const DrawerSublokasi = ({ title, visible, onClose, children, buttonOkText, init
                 .then((res) => res.json())
                 .then(res2 => {
                     setlokasiloading(false)
-                    onvisible(false)
                     if (res2.success) {
+                        setcreatedata({
+                            name: '',
+                            address_same: false,
+                            address: "",
+                            phone_number: "",
+                            image_logo: '',
+                            parent_id: null,
+                            singkatan: "",
+                            tanggal_pkp: null,
+                            penanggung_jawab: "",
+                            npwp: "",
+                            fax: "",
+                            email: "",
+                            website: ""
+                        })
+                        setsameaddress(false)
+                        setdisabledsave(true)
+                        onvisible(false)
                         notification['success']({
                             message: res2.message,
                             duration: 3
                         })
-                        setTimeout(() => {
-                            // rt.push(`/company/myCompany/detail/${res2.id}`)
-                        }, 500)
                     }
                     else {
                         notification['error']({
@@ -988,7 +1112,26 @@ const DrawerSublokasi = ({ title, visible, onClose, children, buttonOkText, init
         <DrawerCore
             title={title}
             visible={visible}
-            onClose={onClose}
+            onClose={()=>{
+                setcreatedata({
+                    name: '',
+                    address_same: false,
+                    address: "",
+                    phone_number: "",
+                    image_logo: '',
+                    parent_id: null,
+                    singkatan: "",
+                    tanggal_pkp: null,
+                    penanggung_jawab: "",
+                    npwp: "",
+                    fax: "",
+                    email: "",
+                    website: ""
+                })
+                setsameaddress(false)
+                setdisabledsave(true)
+                onvisible(false)
+            }}
             buttonOkText={buttonOkText}
             onClick={handleCreateSubLokasi}
             disabled={disabledsave}

@@ -108,7 +108,8 @@ const DrawerTaskTypesUpdate = ({ title, id, loading, visible, dataDisplay, onvis
                         description: res2.data.description
                     }))
                     res2.data.name !== "" && res2.data.description !== "" ? setdisabledupdate(false) : setdisabledupdate(true)
-                    var tempisbarismatriks = res2.data.works.map(m => m.details.is_general ? (m.details.is_general === true ? true : false) : 1)
+                    var tempisbarismatriks = res2.data.works.map(m => typeof(m.details.is_general) !== 'undefined' ? (m.details.is_general ? true : false) : 1)
+                    console.log(tempisbarismatriks)
                     setisbarismatriks(tempisbarismatriks)
                     setloadingdetailtipetaskupdate(false)
                 })

@@ -74,7 +74,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
                     children:
                         <>
                             <Link href={`/company/clients/${record.id}`}>
-                                <a><img src={record.image_logo === "-" || record.image_logo === "" ? `/default-users.jpeg` : record.image_logo} alt="imageProfile" className=" object-cover w-10 h-10 rounded-full" /></a>
+                                <a><img src={record.image_logo === "-" || record.image_logo === "" ? `/image/Induk.png` : record.image_logo} alt="imageProfile" className=" object-cover w-10 h-10 rounded-full" /></a>
                             </Link>
                         </>
                 }

@@ -321,7 +321,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                             </Buttonsys>
                         </div>
                         <div className="mx-0">
-                            <Buttonsys type="primary" onClick={() => { setlokasidrawer(true); console.log(branchdata, sorted) }}>
+                            <Buttonsys type="primary" onClick={() => { setlokasidrawer(true) }}>
                                 + Tambah Lokasi
                             </Buttonsys>
                         </div>
