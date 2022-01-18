@@ -3,9 +3,9 @@ import httpcookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import st from '../../../components/layout-dashboard.module.css'
-import { Select, Spin, notification, Input, Empty, Tooltip, Checkbox } from 'antd'
+import { Select, Spin, notification, Input, Empty, Checkbox } from 'antd'
 import Buttonsys from '../../../components/button'
-import { H1, H2, Label, Text } from '../../../components/typography'
+import { H1, H2, Label } from '../../../components/typography'
 import { ArrowsSortIconSvg, AssetIconSvg, BackIconSvg, CheckIconSvg, CircleXIconSvg, ClipboardcheckIconSvg, ClockIconSvg, CloudUploadIconSvg, EditIconSvg, ForbidIconSvg, PlayerPauseIconSvg, PlayerPlayIconSvg, RefreshIconSvg, SearchIconSvg, SendIconSvg, SortAscendingIconSvg, SortDescendingIconSvg, TrashIconSvg, UserPlusIconSvg } from '../../../components/icon'
 import { ModalHapusTask, ModalHapusTaskDetail, ModalUbahOnHoldTask } from '../../../components/modal/modalCustom'
 import moment from 'moment'
@@ -15,6 +15,305 @@ import DrawerTaskDetailUpdate from '../../../components/drawer/tasks/drawerTaskD
 import DrawerTaskDetailCreate from '../../../components/drawer/tasks/drawerTaskDetailCreate'
 import { TextAreaRequired } from '../../../components/input'
 import DrawerTaskSpareParts from '../../../components/drawer/tasks/drawerTaskSpareParts'
+import { Document, Page, View, PDFDownloadLink, StyleSheet, Image, Text, Link } from '@react-pdf/renderer'
+
+const styles = StyleSheet.create({
+    page: {
+        flexDirection: 'column',
+        backgroundColor: '#ffffff',
+        paddingVertical: 23,
+        paddingHorizontal: 25
+    },
+    boxHeader: {
+        flexDirection: `row`,
+        justifyContent: `space-between`,
+        alignItems: `center`,
+        border: `1px solid #35763B`,
+        borderRadius: 5,
+        paddingHorizontal: 18,
+        paddingVertical: 10,
+        marginBottom: 20
+    },
+    boxUmum: {
+        flexDirection: `row`,
+        border: `1px solid #35763B`,
+        borderRadius: 5,
+        padding: 18,
+        marginBottom: 20,
+        flexWrap: `wrap`
+    },
+    boxDetail: {
+        flexDirection: `column`,
+        border: `1px solid #35763B`,
+        borderRadius: 5,
+        padding: 18,
+        marginBottom: 20,
+        flexWrap: `wrap`
+    },
+    boxUsers: {
+        flexDirection: `row`,
+        border: `1px solid #E5E5E5`,
+        borderRadius: 5,
+        paddingHorizontal: 18,
+        paddingVertical: 12,
+        marginBottom: 15,
+        flexWrap: `wrap`
+    },
+    boxType4: {
+        border: `1px solid #E5E5E5`,
+        borderRadius: 5,
+        paddingHorizontal: 18,
+        paddingVertical: 12,
+        marginBottom: 0,
+    },
+    boxType5: {
+        flexDirection: `row`,
+        border: `1px solid #E5E5E5`,
+        borderRadius: 5,
+        paddingHorizontal: 18,
+        paddingVertical: 12,
+        marginBottom: 0,
+        flexWrap: `wrap`
+    },
+    judul2: {
+        fontSize: 12, fontWeight: `heavy`, color: `#4D4D4D`, marginBottom: 2
+    },
+    label: {
+        fontSize: 8, fontWeight: `light`, color: `#bbbbbb`, marginBottom: 4
+    },
+    texter: {
+        fontSize: 9, fontWeight: `light`, color: `#4D4D4D`, marginBottom: 4
+    }
+});
+
+const TaskPDFTemplate = ({ detail, datatype4 }) => {
+    return (
+        <Document>
+            <Page size={`A4`} style={styles.page}>
+                {/* Header */}
+                <View style={styles.boxHeader}>
+                    <View style={{ flexDirection: `row`, alignItems: `center` }}>
+                        <View style={{ marginRight: 1 }}>
+                            <Image style={{ width: 40, height: 40 }} src={`/image/LogoMig.png`}></Image>
+                        </View>
+                        <Text style={{ fontSize: 10, color: `#4D4D4D` }}><Text style={{ fontSize: 18, fontWeight: `heavy`, color: `#4d4d4d` }}>MIG</Text>Sys</Text>
+                    </View>
+                    <View style={{ flexDirection: `column`, justifyContent: `flex-end` }}>
+                        <Text style={{ fontSize: 12, fontWeight: `heavy`, color: `black`, marginBottom: 2 }}>SAR</Text>
+                        <Text style={{ fontSize: 8, fontWeight: `light`, color: `#bbbbbb`, textAlign: `right` }}>Service Activity Report</Text>
+                    </View>
+                </View>
+                {/* Informasi Umum */}
+                <View style={styles.boxUmum}>
+                    <View style={{ width: `33%`, flexDirection: `column`, marginBottom: 10 }}>
+                        <Text style={styles.label}>Tipe Task</Text>
+                        <Text style={styles.texter}>PM 2</Text>
+                    </View>
+                    <View style={{ width: `33%`, flexDirection: `column`, marginBottom: 10 }}>
+                        <Text style={styles.label}>Nomor Task</Text>
+                        <Text style={styles.texter}>T-000089</Text>
+                    </View>
+                    <View style={{ width: `33%`, flexDirection: `column`, marginBottom: 10 }}>
+                        <Text style={styles.label}>Lokasi</Text>
+                        <Text style={styles.texter}>KCP Tebet 2</Text>
+                    </View>
+                    <View style={{ width: `33%`, flexDirection: `column` }}>
+                        <Text style={styles.label}>Referensi (Jika ada)</Text>
+                        <Text style={styles.texter}>Tiket INC-7</Text>
+                    </View>
+                    <View style={{ width: `33%`, flexDirection: `column` }}>
+                        <Text style={styles.label}>Pembuat Task</Text>
+                        <Text style={styles.texter}>John Doe</Text>
+                    </View>
+                    <View style={{ width: `33%`, flexDirection: `column` }}>
+                        <Text style={styles.label}>Tanggal Pembuatan</Text>
+                        <Text style={styles.texter}>08 Nov 2021, 12:00</Text>
+                    </View>
+                </View>
+                {/* Informasi Detail */}
+                <View style={styles.boxDetail}>
+                    <View style={{ width: `100%`, flexDirection: `column`, marginBottom: 15 }}>
+                        <Text style={styles.label}>Jenis Task</Text>
+                        <Text style={styles.judul2}>Task Kelompok</Text>
+                    </View>
+                    <View style={{ width: `100%`, flexDirection: `column`, marginBottom: 15 }}>
+                        <Text style={styles.label}>Deskripsi</Text>
+                        <Text style={styles.texter}>Layar rusak & tombol tidak responsif</Text>
+                    </View>
+                    {/* Table Users */}
+                    <View style={styles.boxUsers}>
+                        <View style={{ width: `10%`, marginBottom: 10 }}>
+                            <Text style={styles.judul2}>No.</Text>
+                        </View>
+                        <View style={{ width: `30%`, marginBottom: 10 }}>
+                            <Text style={styles.judul2}>Staff</Text>
+                        </View>
+                        <View style={{ width: `30%`, marginBottom: 10 }}>
+                            <Text style={styles.judul2}>Check In</Text>
+                        </View>
+                        <View style={{ width: `30%`, marginBottom: 10 }}>
+                            <Text style={styles.judul2}>Check Out</Text>
+                        </View>
+                        {
+                            detail.users.map((user, idx) => (
+                                <>
+                                    <View style={{ width: `10%`, marginBottom: idx === detail.users.length - 1 ? 0 : 10 }}>
+                                        <Text style={styles.texter}>{idx + 1}</Text>
+                                    </View>
+                                    <View style={{ width: `30%`, marginBottom: idx === detail.users.length - 1 ? 0 : 10 }}>
+                                        <View style={{ display: `flex`, flexDirection: `row`, alignItems: `center` }}>
+                                            <View style={{ borderRadius: `9999px`, marginRight: 3 }}>
+                                                <Image style={{ width: 15, height: 15 }} src={user.profile_image === "-" ? `/image/staffTask.png` : user.profile_image}></Image>
+                                            </View>
+                                            <Text style={styles.texter}>{user.name}</Text>
+                                        </View>
+                                    </View>
+                                    <View style={{ width: `30%`, marginBottom: idx === detail.users.length - 1 ? 0 : 10 }}>
+                                        <Text style={styles.texter}>{user.check_in === null ? `-` : user.check_in}</Text>
+                                    </View>
+                                    <View style={{ width: `30%`, marginBottom: idx === detail.users.length - 1 ? 0 : 10 }}>
+                                        <Text style={styles.texter}>{user.check_out === null ? `-` : user.check_out}</Text>
+                                    </View>
+                                </>
+                            ))
+                        }
+                    </View>
+                    {/* Hasil Pekerjaan */}
+                    <View style={{ width: `100%`, flexDirection: `column`, marginBottom: 15 }}>
+                        <View style={{ marginBottom: 5 }}>
+                            <Text style={styles.label}>Hasil Pekerjaan</Text>
+                        </View>
+                        {
+                            detail.task_details.map((task, idx2) => (
+                                <View style={{ marginBottom: idx2 === detail.task_details.length - 1 ? 0 : 15, flexDirection: `column`, borderTopWidth: idx2 === 0 ? 0.5 : 0, borderBottomWidth: 0.5, borderColor: `1px solid #bbbbbb`, paddingVertical: 8 }}>
+                                    <View style={{ marginBottom: 4 }}>
+                                        <Text style={styles.judul2}>{task.component.name}</Text>
+                                    </View>
+                                    <View style={{ marginBottom: 4 }}>
+                                        <Text style={styles.label}>{task.component.description === "" ? `-` : task.component.description}</Text>
+                                    </View>
+                                    {
+                                        task.component.type === 1 &&
+                                        <View>
+                                            <Text style={styles.texter}>{task.component.values}</Text>
+                                        </View>
+                                    }
+                                    {
+                                        task.component.type === 2 &&
+                                        <View>
+                                            <Text style={styles.texter}>{task.component.values}</Text>
+                                        </View>
+                                    }
+                                    {
+                                        task.component.type === 3 &&
+                                        task.component.lists?.map((val, idx3) => (
+                                            <View style={{ marginBottom: idx3 === task.component.lists.length - 1 ? 0 : 4, flexDirection: `row` }}>
+                                                <View style={{ marginRight: 3 }}>
+                                                    <Image style={{ width: 15, height: 15 }} src={task.component.values[idx3] ? `/image/check.png` : `/image/forbid.png`}></Image>
+                                                </View>
+                                                <Text style={styles.texter}>{val}</Text>
+                                            </View>
+                                        ))
+                                    }
+                                    {
+                                        task.component.type === 4 &&
+                                        <View style={styles.boxType4}>
+                                            <View style={{ flexDirection: `row`, flexWrap: `wrap` }}>
+                                                <View style={{ width: `25%`, marginBottom: 7 }}>
+                                                    <Text style={styles.judul2}>Model</Text>
+                                                </View>
+                                                {
+                                                    task.component.columns.map((col, idx4) => (
+                                                        <View style={{ width: `15%`, marginBottom: idx4 === task.component.columns.length - 1 ? 0 : 7 }}>
+                                                            <Text style={styles.judul2}>{col}</Text>
+                                                        </View>
+                                                    ))
+                                                }
+                                            </View>
+                                            {
+                                                datatype4?.filter((docfil, idxfil) => docfil[0]?.id === task.id)[0]?.map((data4, idx5) => (
+                                                    <View style={{ flexDirection: `row`, flexWrap: `wrap` }}>
+                                                        <View style={{ width: `25%`, marginBottom: idx5 === datatype4.length - 1 ? 0 : 7 }}>
+                                                            <Text style={styles.judul2}>{data4.model}</Text>
+                                                        </View>
+                                                        {
+                                                            task.component.columns.map((coll, idx6) => (
+                                                                <View style={{ width: `15%`, marginBottom: idx6 === task.component.columns.length - 1 ? 0 : 7 }}>
+                                                                    {
+                                                                        data4[coll] ?
+                                                                            <View>
+                                                                                <Image style={{ width: 15, height: 15 }} src={`/image/check.png`}></Image>
+                                                                            </View>
+                                                                            :
+                                                                            <View>
+                                                                                <Image style={{ width: 15, height: 8 }} src={`/image/na.png`}></Image>
+                                                                            </View>}
+                                                                </View>
+                                                            ))
+                                                        }
+                                                    </View>
+                                                ))
+                                            }
+                                        </View>
+                                    }
+                                    {
+                                        task.component.type === 5 &&
+                                        <View style={styles.boxType5}>
+                                            <View style={{ width: `40%`, marginBottom: 10 }}>
+                                                <Text style={styles.judul2}>Keterangan</Text>
+                                            </View>
+                                            <View style={{ width: `30%`, marginBottom: 10 }}>
+                                                <Text style={styles.judul2}>Nilai</Text>
+                                            </View>
+                                            <View style={{ width: `30%`, marginBottom: 10 }}>
+                                                <Text style={styles.judul2}>Satuan</Text>
+                                            </View>
+                                            {
+                                                task.component.lists.map((list, idx7) => (
+                                                    <>
+                                                        <View style={{ width: `40%`, marginBottom: idx7 === task.component.lists.length - 1 ? 0 : 10 }}>
+                                                            <Text style={styles.texter}>{list.description === "" ? `-` : list.description}</Text>
+                                                        </View>
+                                                        <View style={{ width: `30%`, marginBottom: idx7 === task.component.lists.length - 1 ? 0 : 10 }}>
+                                                            <Text style={styles.texter}>{list.values === "" ? `-` : list.values}</Text>
+                                                        </View>
+                                                        <View style={{ width: `30%`, marginBottom: idx7 === task.component.lists.length - 1 ? 0 : 10 }}>
+                                                            <Text style={styles.texter}>{list.type === "" ? `-` : list.type}</Text>
+                                                        </View>
+                                                    </>
+                                                ))
+                                            }
+                                        </View>
+                                    }
+                                    {
+                                        task.component.type === 6 &&
+                                        <View>
+                                            <Text style={styles.texter}>{task.component.values === "" ? `-` : task.component.values}</Text>
+                                        </View>
+                                    }
+                                </View>
+                            ))
+                        }
+                    </View>
+                    <View style={{ width: `100%`, flexDirection: `column`, marginBottom: 15 }}>
+                        <View style={{ marginBottom: 5 }}>
+                            <Text style={styles.label}>Lampiran</Text>
+                        </View>
+                        <View style={{ flexDirection: `row`, alignItems: `center`, flexWrap: `wrap` }}>
+                            {
+                                detail.files.map((file, idx8) => (
+                                    <View style={{ marginHorizontal: `0.5rem`, marginVertical: `0.5rem`, width: `33%`, display: `flex`, justifyContent: `center`, marginBottom: idx8 >= 3 ? 0 : 10 }}>
+                                        <Image style={{ maxHeight: 80, maxWidth: 80, objectFit: `contain` }} src={file}></Image>
+                                    </View>
+                                ))
+                            }
+                        </View>
+                    </View>
+                </View>
+            </Page>
+        </Document>
+    )
+}
 
 const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     //1.Init
@@ -380,6 +679,24 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     }
     const handleSubmitTask = () => {
         setloadingsubmittask(true)
+        fetch(`https://boiling-thicket-46501.herokuapp.com/saveFilesTask`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': JSON.parse(initProps),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: Number(taskid),
+                files: dataupdate.files
+            })
+        })
+            .then((res) => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                }
+                else {
+                }
+            })
         fetch(`https://boiling-thicket-46501.herokuapp.com/submitTask`, {
             method: 'PUT',
             headers: {
@@ -548,7 +865,6 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                     })
                     return ([...tasklistItem])
                 })
-                console.log(data4map)
                 setdatatype4(data4map)
                 setdatatype42(data4map)
                 //time_left
@@ -675,21 +991,21 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                 displaytask.users.map((docusers, idxusers) => (
                                                     <>
                                                         <div className=' col-span-1 flex items-center py-2 pl-3'>
-                                                            <Text>{idxusers + 1}</Text>
+                                                            <div className=' text-black mb-0 text-xs'>{idxusers + 1}</div>
                                                         </div>
                                                         <div className=' col-span-5 flex items-center p-2'>
                                                             <div className='mr-1 flex items-center w-10 h-10 rounded-full'>
                                                                 <img src={docusers.profile_image === "-" || docusers.profile_image === "" ? "/image/staffTask.png" : docusers.profile_image} className=' object-contain' alt="" />
                                                             </div>
                                                             <div className='flex items-center'>
-                                                                <Text>{docusers.name}</Text>
+                                                                <div className=' text-black mb-0 text-xs'>{docusers.name}</div>
                                                             </div>
                                                         </div>
                                                         <div className=' col-span-3 flex items-center p-2'>
-                                                            <Text>{docusers.check_in === null ? `-` : moment(docusers.check_in).locale('id').format('lll')}</Text>
+                                                            <div className=' text-black mb-0 text-xs'>{docusers.check_in === null ? `-` : moment(docusers.check_in).locale('id').format('lll')}</div>
                                                         </div>
                                                         <div className=' col-span-3 flex items-center p-2'>
-                                                            <Text>{docusers.check_out === null ? `-` : moment(docusers.check_out).locale('id').format('lll')}</Text>
+                                                            <div className=' text-black mb-0 text-xs'>{docusers.check_out === null ? `-` : moment(docusers.check_out).locale('id').format('lll')}</div>
                                                         </div>
                                                     </>
                                                 ))
@@ -723,57 +1039,6 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                 </div>
                                 :
                                 <div className=' flex flex-col mb-7'>
-                                    {/* <div className=' mb-4 flex justify-between items-center'>
-                                        <div className=' flex flex-col'>
-                                            <div className=' flex items-center mb-2'>
-                                                {
-                                                    displaytask.users.map((doc, idx) => (
-                                                        <Tooltip title={doc.name} color={`#35763B`}>
-                                                            <div className={` rounded-full w-8 h-8 -mr-2 z-${idx + 1}0`}>
-                                                                <img src={doc.profile_image === "-" ? `/image/staffTask.png` : doc.profile_image} className=' object-contain' alt="" />
-                                                            </div>
-                                                        </Tooltip>
-                                                    ))
-                                                }
-                                            </div>
-                                            <div className=' flex flex-col mb-2'>
-                                                <div>
-                                                    <Label>Checkout terakhir:</Label>
-                                                </div>
-                                                <div>
-                                                    <p className=' mb-0 text-sm text-gray-700'>Selasa 16 Nov - 16.00</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className=' flex flex-col items-end'>
-                                            <div className=' mb-2 text-right'>
-                                                {
-                                                    displaytask.users.length <= 1 ?
-                                                        <H2>Task Individu</H2>
-                                                        :
-                                                        <H2>Task Kelompok</H2>
-                                                }
-                                                <Label>Berakhir {moment(displaytask.deadline).locale('id').fromNow()} - {displaytask.status === 1 && `Overdue`}{displaytask.status === 2 && `Open`}{displaytask.status === 3 && `On Progress`}{displaytask.status === 4 && `On Hold`}{displaytask.status === 5 && `Completed`}{displaytask.status === 6 && `Closed`}</Label>
-                                            </div>
-                                            {
-                                                praloadingtask ?
-                                                    null
-                                                    :
-                                                    displaytask.status === 4 ?
-                                                        <dir>
-                                                            <Buttonsys onClick={handleCheckInTask} disabled={true} type={`primary`}>
-                                                                Check In
-                                                            </Buttonsys>
-                                                        </dir>
-                                                        :
-                                                        <dir>
-                                                            <Buttonsys onClick={handleCheckInTask} disabled={disablededitable === true ? false : true} type={`primary`}>
-                                                                Check In
-                                                            </Buttonsys>
-                                                        </dir>
-                                            }
-                                        </div>
-                                    </div> */}
                                     <div className='flex flex-col mb-7'>
                                         <div className='mb-3'>
                                             <Label>Daftar Staff</Label>
@@ -820,21 +1085,21 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                     displaytask.users.map((docusers, idxusers) => (
                                                         <>
                                                             <div className=' col-span-1 flex items-center py-2 pl-3'>
-                                                                <Text>{idxusers + 1}</Text>
+                                                                <div className=' text-black text-xs mb-0'>{idxusers + 1}</div>
                                                             </div>
                                                             <div className=' col-span-5 flex items-center p-2'>
                                                                 <div className='mr-1 flex items-center w-10 h-10 rounded-full'>
                                                                     <img src={docusers.profile_image === "-" || docusers.profile_image === "" ? "/image/staffTask.png" : docusers.profile_image} className=' object-contain' alt="" />
                                                                 </div>
                                                                 <div className='flex items-center'>
-                                                                    <Text>{docusers.name}</Text>
+                                                                    <div className=' text-black text-xs mb-0'>{docusers.name}</div>
                                                                 </div>
                                                             </div>
                                                             <div className=' col-span-3 flex items-center p-2'>
-                                                                <Text>{docusers.check_in === null ? `-` : moment(docusers.check_in).locale('id').format('lll')}</Text>
+                                                                <div className=' text-black text-xs mb-0'>{docusers.check_in === null ? `-` : moment(docusers.check_in).locale('id').format('lll')}</div>
                                                             </div>
                                                             <div className=' col-span-3 flex items-center p-2'>
-                                                                <Text>{docusers.check_out === null ? `-` : moment(docusers.check_out).locale('id').format('lll')}</Text>
+                                                                <div className=' text-black text-xs mb-0'>{docusers.check_out === null ? `-` : moment(docusers.check_out).locale('id').format('lll')}</div>
                                                             </div>
                                                         </>
                                                     ))
@@ -1606,14 +1871,19 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                         dataupdate.files.map((doc, idx) => (
                                                             <div className=' col-span-1 mx-1 flex flex-col items-center mb-5'>
                                                                 <img src={doc} className=' object-contain mb-1 h-40 w-full' alt="" />
-                                                                <div className=' cursor-pointer' onClick={() => {
-                                                                    var tempfiles = [...dataupdate.files]
-                                                                    tempfiles.splice(idx, 1)
-                                                                    setdataupdate(prev => ({
-                                                                        ...prev,
-                                                                        files: tempfiles
-                                                                    }))
-                                                                }}><TrashIconSvg size={15} color={`#BF4A40`} /></div>
+                                                                {
+                                                                    completeclose && isselfcheckout ?
+                                                                        null
+                                                                        :
+                                                                        <div className=' cursor-pointer' onClick={() => {
+                                                                            var tempfiles = [...dataupdate.files]
+                                                                            tempfiles.splice(idx, 1)
+                                                                            setdataupdate(prev => ({
+                                                                                ...prev,
+                                                                                files: tempfiles
+                                                                            }))
+                                                                        }}><TrashIconSvg size={15} color={`#BF4A40`} /></div>
+                                                                }
                                                             </div>
                                                         ))
                                                 }
@@ -1624,19 +1894,24 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                 :
                                 completeclose &&
                                 <div className='mb-7 flex flex-col'>
-                                    <div className=' flex flex-col mb-4'>
-                                        {
-                                            displaytask.files.length === 0 ?
-                                                <>
-                                                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Belum ada file yang di upload"></Empty>
-                                                </>
-                                                :
-                                                displaytask.files.map((doc, idx) => (
-                                                    <div className=' flex items-center mb-2'>
-                                                    </div>
-                                                ))
-                                        }
-                                    </div>
+                                    {
+                                        displaytask.files.length === 0 ?
+                                            <>
+                                                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Belum ada file yang di upload"></Empty>
+                                            </>
+                                            :
+                                            <div className=' grid grid-cols-3'>
+                                                {
+                                                    displaytask.files.map((doc, idx) => (
+                                                        <a href={doc} target={`_blank`}>
+                                                            <div className=' col-span-1 mx-2 mb-2 flex flex-col items-center'>
+                                                                <img src={doc} className=' object-contain mb-1 max-h-40 w-full' alt="" />
+                                                            </div>
+                                                        </a>
+                                                    ))
+                                                }
+                                            </div>
+                                    }
                                 </div>
                         }
                         {
@@ -1935,12 +2210,14 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                             </Buttonsys>
                                         </div>
                                         <div className=' mb-3'>
-                                            <Buttonsys type={`primary`} onClick={() => { console.log(currentdataeditable) }}>
-                                                <div className='mr-1 flex items-center'>
-                                                    <ClipboardcheckIconSvg size={15} color={`#ffffff`} />
-                                                    Cetak Task
-                                                </div>
-                                            </Buttonsys>
+                                            <PDFDownloadLink document={<TaskPDFTemplate detail={displaytask} datatype4={datatype4} />} fileName={`produk-${displaytask.name}.pdf`}>
+                                                <Buttonsys type={`primary`} onClick={() => { console.log(currentdataeditable) }}>
+                                                    <div className='mr-1 flex items-center'>
+                                                        <ClipboardcheckIconSvg size={15} color={`#ffffff`} />
+                                                        Cetak Task
+                                                    </div>
+                                                </Buttonsys>
+                                            </PDFDownloadLink>
                                         </div>
                                     </div>
                                 :
