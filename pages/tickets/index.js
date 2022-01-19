@@ -52,7 +52,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
         to: null,
         total: null
     })
-    const [dataticketrelation, setdatatickrelation] = useState({
+    const [dataticketrelation, setdataticketrelation] = useState({
         status_ticket: [
             {
                 id: 0,
@@ -197,34 +197,58 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                     children:
                         <>
                             {
-                                record.status === 1 &&
-                                <div className="rounded-md h-auto px-3 text-center py-1 bg-overdue bg-opacity-10 text-overdue">Overdue</div>
+                                dataProfile.data.role === 1 ?
+                                    <>
+                                        {
+                                            record.status === 1 &&
+                                            <div className="rounded-md h-auto px-3 text-center py-1 bg-overdue bg-opacity-10 text-overdue">Overdue</div>
+                                        }
+                                        {
+                                            record.status === 2 &&
+                                            <div className="rounded-md h-auto px-3 text-center py-1 bg-open bg-opacity-10 text-open">Open</div>
+                                        }
+                                        {
+                                            record.status === 3 &&
+                                            <div className="rounded-md h-auto px-3 text-center py-1 bg-onprogress bg-opacity-10 text-onprogress">On-Progress</div>
+                                        }
+                                        {
+                                            record.status === 4 &&
+                                            <div className="rounded-md h-auto px-3 text-center py-1 bg-onhold bg-opacity-10 text-onhold">On-Hold</div>
+                                        }
+                                        {
+                                            record.status === 5 &&
+                                            <div className="rounded-md h-auto px-3 text-center py-1 bg-completed bg-opacity-10 text-completed">Completed</div>
+                                        }
+                                        {
+                                            record.status === 6 &&
+                                            <div className="rounded-md h-auto px-3 text-center py-1 bg-closed bg-opacity-10 text-closed">Closed</div>
+                                        }
+                                        {
+                                            record.status === 7 &&
+                                            <div className="rounded-md h-auto px-3 text-center py-1 bg-canceled bg-opacity-10 text-canceled">Canceled</div>
+                                        }
+                                    </>
+                                    :
+                                    <>
+                                        {
+                                            record.status === 1 &&
+                                            <div className="rounded-md h-auto px-3 text-center py-1 bg-onprogress bg-opacity-10 text-onprogress">Dalam Proses</div>
+                                        }
+                                        {
+                                            record.status === 2 &&
+                                            <div className="rounded-md h-auto px-3 text-center py-1 bg-open bg-opacity-10 text-open">Menunggu Staff</div>
+                                        }
+                                        {
+                                            record.status === 6 &&
+                                            <div className="rounded-md h-auto px-3 text-center py-1 bg-closed bg-opacity-10 text-closed">Selesai</div>
+                                        }
+                                        {
+                                            record.status === 7 &&
+                                            <div className="rounded-md h-auto px-3 text-center py-1 bg-canceled bg-opacity-10 text-canceled">Dibatalkan</div>
+                                        }
+                                    </>
                             }
-                            {
-                                record.status === 2 &&
-                                <div className="rounded-md h-auto px-3 text-center py-1 bg-open bg-opacity-10 text-open">Open</div>
-                            }
-                            {
-                                record.status === 3 &&
-                                <div className="rounded-md h-auto px-3 text-center py-1 bg-onprogress bg-opacity-10 text-onprogress">On-Progress</div>
-                            }
-                            {
-                                record.status === 4 &&
-                                <div className="rounded-md h-auto px-3 text-center py-1 bg-onhold bg-opacity-10 text-onhold">On-Hold</div>
-                            }
-                            {
-                                record.status === 5 &&
-                                <div className="rounded-md h-auto px-3 text-center py-1 bg-completed bg-opacity-10 text-completed">Completed</div>
-                            }
-                            {
-                                record.status === 6 &&
-                                <div className="rounded-md h-auto px-3 text-center py-1 bg-closed bg-opacity-10 text-closed">Closed</div>
-                            } 
-                            {
-                                record.status === 7 &&
-                                <div className="rounded-md h-auto px-3 text-center py-1 bg-canceled bg-opacity-10 text-canceled">Canceled</div>
-                            }                            
-                            </>
+                        </>
                 }
             },
             sorter: (a, b) => a.status_name.localeCompare(b.status_name),
@@ -298,7 +322,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
         })
             .then(res => res.json())
             .then(res2 => {
-                setdatatickrelation(res2.data)
+                setdataticketrelation(res2.data)
             })
     }, [])
 
@@ -309,7 +333,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                     {
                         dataProfile.data.role === 1 ?
                             <>
-                                {/* PENYELESAIAN TIKETt */}
+                                {/* PENYELESAIAN TIKET */}
                                 <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mx-3">
                                     <div className="flex items-center justify-between mb-4">
                                         <H1>Penyelesaian Tiket</H1>
@@ -509,42 +533,42 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                             </>
                             :
                             <div className=" col-span-10 grid grid-cols-12">
-                                <div className="col-span-8 flex mb-6">
-                                    <div className=' col-span-2 shadow-md rounded-md bg-white p-5 flex justify-between ml-2 mr-1 mb-2'>
+                                <div className="col-span-8 grid grid-cols-8 mb-6">
+                                    <div className=' col-span-2 shadow-md rounded-md bg-white p-5 flex justify-between ml-2 mr-1'>
                                         <div><TicketIconSvg size={30} color={`#ED962F`} /></div>
                                         <div className=' flex flex-col'>
                                             <div className=' flex items-center justify-end'>
-                                                <p className='mb-0 text-onprogress font-semibold text-base mr-1'>{datastatusticket[0].status_count}</p>
+                                                <p className='mb-0 text-onprogress font-semibold text-base mr-1'>{datastatusticket[0]?.status_count}</p>
                                                 <div><AlerttriangleIconSvg size={15} color={`#BF4A40`} /></div>
                                             </div>
-                                            <div className=' justify-end flex'><Label>{datastatusticket[0].status_name}</Label></div>
+                                            <div className=' justify-end flex'><Label>{datastatusticket[0]?.status_name}</Label></div>
                                         </div>
                                     </div>
-                                    <div className=' col-span-2 shadow-md rounded-md bg-white p-5 flex justify-between ml-1 mr-2 mb-2'>
+                                    <div className=' col-span-2 shadow-md rounded-md bg-white p-5 flex justify-between ml-1 mr-2'>
                                         <div><TicketIconSvg size={30} color={`#2F80ED`} /></div>
                                         <div className=' flex flex-col'>
                                             <div className=' flex items-center justify-end'>
-                                                <p className='mb-0 text-open font-semibold text-base mr-1'>{datastatusticket[1].status_count}</p>
+                                                <p className='mb-0 text-open font-semibold text-base mr-1'>{datastatusticket[1]?.status_count}</p>
                                             </div>
-                                            <div className=' justify-end flex'><Label>{datastatusticket[1].status_name}</Label></div>
+                                            <div className=' justify-end flex'><Label>{datastatusticket[1]?.status_name}</Label></div>
                                         </div>
                                     </div>
-                                    <div className=' col-span-2 shadow-md rounded-md bg-white p-5 flex justify-between ml-2 mr-1 mb-2'>
+                                    <div className=' col-span-2 shadow-md rounded-md bg-white p-5 flex justify-between ml-2 mr-1'>
                                         <div><TicketIconSvg size={30} color={`#808080`} /></div>
                                         <div className=' flex flex-col'>
                                             <div className=' flex items-center justify-end'>
-                                                <p className='mb-0 text-closed font-semibold text-base mr-1'>{datastatusticket[2].status_count}</p>
+                                                <p className='mb-0 text-closed font-semibold text-base mr-1'>{datastatusticket[2]?.status_count}</p>
                                             </div>
-                                            <div className=' justify-end flex'><Label>{datastatusticket[2].status_name}</Label></div>
+                                            <div className=' justify-end flex'><Label>{datastatusticket[2]?.status_name}</Label></div>
                                         </div>
                                     </div>
-                                    <div className=' col-span-2 shadow-md rounded-md bg-white p-5 flex justify-between ml-1 mr-2 mb-2'>
+                                    <div className=' col-span-2 shadow-md rounded-md bg-white p-5 flex justify-between ml-1 mr-2'>
                                         <div><TicketIconSvg size={30} color={`#BF4A40`} /></div>
                                         <div className=' flex flex-col'>
                                             <div className=' flex items-center justify-end'>
-                                                <p className='mb-0 text-overdue font-semibold text-base mr-1'>{datastatusticket[3].status_count}</p>
+                                                <p className='mb-0 text-overdue font-semibold text-base mr-1'>{datastatusticket[3]?.status_count}</p>
                                             </div>
-                                            <div className=' justify-end flex'><Label>{datastatusticket[3].status_name}</Label></div>
+                                            <div className=' justify-end flex'><Label>{datastatusticket[3]?.status_name}</Label></div>
                                         </div>
                                     </div>
                                 </div>
@@ -612,7 +636,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                                     showArrow
                                     name={`locations_id`}
                                     onChange={(value) => { typeof (value) === 'undefined' ? setlocfiltertickets("") : setlocfiltertickets(value) }}
-                                    treeData={[dataticketrelation.companies]}
+                                    treeData={[dataProfile.data.role === 1 ? dataticketrelation.companies : dataticketrelation.companies.data]}
                                     treeDefaultExpandAll
                                     value={locfiltertickets === "" ? null : locfiltertickets}
                                 ></TreeSelect >
@@ -627,32 +651,52 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                                     onChange={(value, option) => { typeof (value) === 'undefined' ? (setstatusfiltertickets('')) : (setstatusfiltertickets(value)) }}
                                 >
                                     {
-                                        dataticketrelation.status_ticket.map((doc, idx) => {
-                                            if (doc.id === 1)
-                                                return (
-                                                    <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-overdue'></div> {doc.name}</div></Select.Option>
-                                                )
-                                            else if (doc.id === 2)
-                                                return (
-                                                    <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-open'></div> {doc.name}</div></Select.Option>
-                                                )
-                                            else if (doc.id === 3)
-                                                return (
-                                                    <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-onprogress'></div> {doc.name}</div></Select.Option>
-                                                )
-                                            else if (doc.id === 4)
-                                                return (
-                                                    <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-onhold'></div> {doc.name}</div></Select.Option>
-                                                )
-                                            else if (doc.id === 5)
-                                                return (
-                                                    <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-completed'></div> {doc.name}</div></Select.Option>
-                                                )
-                                            else if (doc.id === 6)
-                                                return (
-                                                    <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-closed'></div> {doc.name}</div></Select.Option>
-                                                )
-                                        })
+                                        dataProfile.data.role === 1 ?
+                                            dataticketrelation.status_ticket.map((doc, idx) => {
+                                                if (doc.id === 1)
+                                                    return (
+                                                        <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-overdue'></div> {doc.name}</div></Select.Option>
+                                                    )
+                                                else if (doc.id === 2)
+                                                    return (
+                                                        <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-open'></div> {doc.name}</div></Select.Option>
+                                                    )
+                                                else if (doc.id === 3)
+                                                    return (
+                                                        <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-onprogress'></div> {doc.name}</div></Select.Option>
+                                                    )
+                                                else if (doc.id === 4)
+                                                    return (
+                                                        <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-onhold'></div> {doc.name}</div></Select.Option>
+                                                    )
+                                                else if (doc.id === 5)
+                                                    return (
+                                                        <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-completed'></div> {doc.name}</div></Select.Option>
+                                                    )
+                                                else if (doc.id === 6)
+                                                    return (
+                                                        <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-closed'></div> {doc.name}</div></Select.Option>
+                                                    )
+                                            })
+                                            :
+                                            dataticketrelation.status_ticket.map((doc, idx) => {
+                                                if (doc.id === 1)
+                                                    return (
+                                                        <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-onprogress'></div> {doc.name}</div></Select.Option>
+                                                    )
+                                                else if (doc.id === 2)
+                                                    return (
+                                                        <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-open'></div> {doc.name}</div></Select.Option>
+                                                    )
+                                                else if (doc.id === 6)
+                                                    return (
+                                                        <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-closed'></div> {doc.name}</div></Select.Option>
+                                                    )
+                                                else if (doc.id === 7)
+                                                    return (
+                                                        <Select.Option key={idx} value={doc.id}><div className=' flex items-center'><div className='mr-1 w-3 h-3 rounded-full bg-canceled'></div> {doc.name}</div></Select.Option>
+                                                    )
+                                            })
                                     }
                                 </Select>
                             </div>
@@ -703,14 +747,17 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                 setrefreshtickets={setrefreshcreateticketscreate}
                 dataprofile={dataProfile}
             />
-            <DrawerTicketExports
-                title={"Ekspor Tiket"}
-                visible={drawerticketexports}
-                onClose={() => { setdrawerticketexports(false) }}
-                buttonOkText={"Ekspor Tiket"}
-                initProps={initProps}
-                onvisible={setdrawerticketexports}
-            />
+            {
+                dataProfile.data.role === 1 &&
+                <DrawerTicketExports
+                    title={"Ekspor Tiket"}
+                    visible={drawerticketexports}
+                    onClose={() => { setdrawerticketexports(false) }}
+                    buttonOkText={"Ekspor Tiket"}
+                    initProps={initProps}
+                    onvisible={setdrawerticketexports}
+                />
+            }
         </Layout>
     )
 }

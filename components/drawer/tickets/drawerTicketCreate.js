@@ -144,7 +144,7 @@ const DrawerTicketCreate = ({ title, visible, onvisible, onClose, buttonOkText, 
             .then(res2 => {
                 setdatatypetickets(res2.data.ticket_types)
                 setdatatasktickets(res2.data.ticket_task_types)
-                setdataloctickets([res2.data.companies])
+                setdataloctickets([dataprofile.data.role === 1 ? res2.data.companies : res2.data.companies.data])
             })
     }, [])
     useEffect(() => {

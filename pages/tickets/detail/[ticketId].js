@@ -6,7 +6,7 @@ import { Spin, Empty, notification } from 'antd'
 import Layout from '../../../components/layout-dashboardNew'
 import moment from 'moment'
 import st from '../../../components/layout-dashboard.module.css'
-import { CalendartimeIconSvg, CheckIconSvg, EditIconSvg, FileExportIconSvg, FilePlusIconSvg, InfoCircleIconSvg, PlusIconSvg, TicketIconSvg, UserIconSvg, UserSearchIconSvg, XIconSvg } from '../../../components/icon'
+import { CalendartimeIconSvg, CheckIconSvg, EditIconSvg, FileExportIconSvg, FilePlusIconSvg, ForbidIconSvg, InfoCircleIconSvg, PlusIconSvg, TicketIconSvg, UserIconSvg, UserSearchIconSvg, XIconSvg } from '../../../components/icon'
 import { Chart, ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement } from 'chart.js'
 Chart.register(ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement);
 import { Doughnut, Bar, Line } from 'react-chartjs-2';
@@ -536,16 +536,22 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                             </div>
                             <div className=' w-4/12 px-8 flex items-center justify-between mb-2'>
                                 <div className=' flex flex-col'>
-                                    <div className='mb-2'><Label>{displaydata.assignment_type}</Label></div>
+                                    <div className='mb-2'><Label>{dataProfile.data.role === 1 ? displaydata.assignment_type : `Engineer/Grup`}</Label></div>
                                     {
                                         praloading ?
                                             <><Spin /></>
                                             :
                                             displaydata.assignment_operator_id === 0 ?
-                                                <button className=' btn btn-sm bg-state2 border-state2 hover:bg-onhold hover:border-onhold px-6 py-0' onClick={() => { setdrawerassignticket(true) }}>
-                                                    <div className="mr-1"><FilePlusIconSvg size={15} color={`#ffffff`} /></div>
-                                                    Assign Engineer
-                                                </button>
+                                                dataProfile.data.role === 1 ?
+                                                    <button className=' btn btn-sm bg-state2 border-state2 hover:bg-onhold hover:border-onhold px-6 py-0' onClick={() => { setdrawerassignticket(true) }}>
+                                                        <div className="mr-1"><FilePlusIconSvg size={15} color={`#ffffff`} /></div>
+                                                        Assign Engineer
+                                                    </button>
+                                                    :
+                                                    <div className="flex items-center">
+                                                        <div className="mr-1 mb-1"><ForbidIconSvg size={15} color={`#CCCCCC`} /></div>
+                                                        <Label>Belum di-assign</Label>
+                                                    </div>
                                                 :
                                                 <div className=' flex items-center'>
                                                     <div className=' flex items-center'>
@@ -588,10 +594,16 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                                             <><Spin /></>
                                             :
                                             displaydata.deadline === "-" ?
-                                                <button className=' btn btn-sm bg-state2 border-state2 hover:bg-onhold hover:border-onhold px-6 py-0' onClick={() => { setdrawedeadlineticket(true) }}>
-                                                    <div className="mr-1"><CalendartimeIconSvg size={15} color={`#ffffff`} /></div>
-                                                    Tentukan Deadline
-                                                </button>
+                                                dataProfile.data.role === 1 ?
+                                                    <button className=' btn btn-sm bg-state2 border-state2 hover:bg-onhold hover:border-onhold px-6 py-0' onClick={() => { setdrawedeadlineticket(true) }}>
+                                                        <div className="mr-1"><CalendartimeIconSvg size={15} color={`#ffffff`} /></div>
+                                                        Tentukan Deadline
+                                                    </button>
+                                                    :
+                                                    <div className="flex items-center">
+                                                        <div className="mr-1 mb-1"><ForbidIconSvg size={15} color={`#CCCCCC`} /></div>
+                                                        <Label>Belum ada deadline</Label>
+                                                    </div>
                                                 :
                                                 <div className=' flex items-center'>
                                                     <p className=' mb-0 text-base font-bold'>{displaydata.deadline}</p>
@@ -911,70 +923,75 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                     </div>
                 </div>
             </div>
-            <DrawerTicketConnectItem
-                title={"Hubungkan Aset"}
-                visible={drawerconnectitemticket}
-                onClose={() => { setdrawerconnectitemticket(false) }}
-                buttonOkText={"Hubungkan Aset"}
-                initProps={initProps}
-                onvisible={setdrawerconnectitemticket}
-                refresh={refreshconnectitemticket}
-                setrefresh={setrefreshconnectitemticket}
-                setrefreshclosed={setrefreshclosedconnectitemticket}
-                ticketid={ticketid}
-                datapayload={datapayloadconnectitem}
-                setdatapayload={setdatapayloadconnectitem}
-                selectedassettype={selectedassettype}
-                setselectedassettype={setselectedassettype}
-            />
-            <DrawerTicketAssign
-                title={""}
-                visible={drawerassignticket}
-                onClose={() => { setdrawerassignticket(false) }}
-                buttonOkText={"Simpan"}
-                initProps={initProps}
-                onvisible={setdrawerassignticket}
-                refresh={refreshassignticket}
-                setrefresh={setrefreshassignticket}
-                setrefreshclosed={setrefreshclosedassignticket}
-                ticketid={ticketid}
-                datapayload={datapayloadassign}
-                setdatapayload={setdatapayloadassign}
-            />
-            <DrawerTicketDeadline
-                title={"Deadline"}
-                visible={drawerdeadlineicket}
-                onClose={() => { setdrawedeadlineticket(false) }}
-                buttonOkText={"Simpan"}
-                initProps={initProps}
-                onvisible={setdrawedeadlineticket}
-                refresh={refreshdeadlineicket}
-                setrefresh={setrefreshdeadlineicket}
-                setrefreshclosed={setrefreshcloseddeadlineticket}
-                ticketid={ticketid}
-                datapayload={datapayloaddeadline}
-                setdatapayload={setdatapayloaddeadline}
-                showdatetime={showdatepicker}
-                setshowdatetime={setshowdatepicker}
-                datevalue={datevalue}
-                setdatevalue={setdatevalue}
-            />
-            <DrawerTicketUpdate
-                title={"Ubah Tiket"}
-                visible={drawerupdateticket}
-                onClose={() => { setdrawerupdateticket(false) }}
-                buttonOkText={"Simpan Perubahan Tiket"}
-                initProps={initProps}
-                onvisible={setdrawerupdateticket}
-                refreshtickets={refreshupdateticket}
-                setrefreshtickets={setrefreshupdateticket}
-                setrefreshclosed={setrefreshclosedupdateticket}
-                dataprofile={dataProfile}
-                datapayload={datapayloadupdate}
-                setdatapayload={setdatapayloadupdate}
-                ticketid={ticketid}
-                displaydata={displaydata}
-            />
+            {
+                dataProfile.data.role === 1 &&
+                <>
+                    <DrawerTicketConnectItem
+                        title={"Hubungkan Aset"}
+                        visible={drawerconnectitemticket}
+                        onClose={() => { setdrawerconnectitemticket(false) }}
+                        buttonOkText={"Hubungkan Aset"}
+                        initProps={initProps}
+                        onvisible={setdrawerconnectitemticket}
+                        refresh={refreshconnectitemticket}
+                        setrefresh={setrefreshconnectitemticket}
+                        setrefreshclosed={setrefreshclosedconnectitemticket}
+                        ticketid={ticketid}
+                        datapayload={datapayloadconnectitem}
+                        setdatapayload={setdatapayloadconnectitem}
+                        selectedassettype={selectedassettype}
+                        setselectedassettype={setselectedassettype}
+                    />
+                    <DrawerTicketAssign
+                        title={""}
+                        visible={drawerassignticket}
+                        onClose={() => { setdrawerassignticket(false) }}
+                        buttonOkText={"Simpan"}
+                        initProps={initProps}
+                        onvisible={setdrawerassignticket}
+                        refresh={refreshassignticket}
+                        setrefresh={setrefreshassignticket}
+                        setrefreshclosed={setrefreshclosedassignticket}
+                        ticketid={ticketid}
+                        datapayload={datapayloadassign}
+                        setdatapayload={setdatapayloadassign}
+                    />
+                    <DrawerTicketDeadline
+                        title={"Deadline"}
+                        visible={drawerdeadlineicket}
+                        onClose={() => { setdrawedeadlineticket(false) }}
+                        buttonOkText={"Simpan"}
+                        initProps={initProps}
+                        onvisible={setdrawedeadlineticket}
+                        refresh={refreshdeadlineicket}
+                        setrefresh={setrefreshdeadlineicket}
+                        setrefreshclosed={setrefreshcloseddeadlineticket}
+                        ticketid={ticketid}
+                        datapayload={datapayloaddeadline}
+                        setdatapayload={setdatapayloaddeadline}
+                        showdatetime={showdatepicker}
+                        setshowdatetime={setshowdatepicker}
+                        datevalue={datevalue}
+                        setdatevalue={setdatevalue}
+                    />
+                    <DrawerTicketUpdate
+                        title={"Ubah Tiket"}
+                        visible={drawerupdateticket}
+                        onClose={() => { setdrawerupdateticket(false) }}
+                        buttonOkText={"Simpan Perubahan Tiket"}
+                        initProps={initProps}
+                        onvisible={setdrawerupdateticket}
+                        refreshtickets={refreshupdateticket}
+                        setrefreshtickets={setrefreshupdateticket}
+                        setrefreshclosed={setrefreshclosedupdateticket}
+                        dataprofile={dataProfile}
+                        datapayload={datapayloadupdate}
+                        setdatapayload={setdatapayloadupdate}
+                        ticketid={ticketid}
+                        displaydata={displaydata}
+                    />
+                </>
+            }
         </Layout >
     )
 }
