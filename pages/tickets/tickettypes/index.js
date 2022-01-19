@@ -6,7 +6,7 @@ import { SearchOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import { Input, notification, Popover } from 'antd'
 import Layout from '../../../components/layout-dashboardNew'
 import st from '../../../components/layout-dashboard.module.css'
-import { AlerttriangleIconSvg, MappinIconSvg } from '../../../components/icon'
+import { AlerttriangleIconSvg, EditIconSvg, MappinIconSvg } from '../../../components/icon'
 import { Chart, ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement } from 'chart.js'
 Chart.register(ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement);
 import { Doughnut, Bar, Line } from 'react-chartjs-2';
@@ -16,6 +16,7 @@ import { BackIconSvg, FilePlusIconSvg, TrashIconSvg } from '../../../components/
 import { TableCustomTicketTypes } from '../../../components/table/tableCustom'
 import DrawerTicketTypeCreate from '../../../components/drawer/tickets/drawerTicketTypeCreate'
 import { ModalHapusTipeTiket } from '../../../components/modal/modalCustom'
+import DrawerTicketTypeUpdate from '../../../components/drawer/tickets/drawerTicketTypeUpdate'
 
 const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
     //1.Init
@@ -53,7 +54,18 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
     //create - ticket types
     const [drawertickettypescreate, setdrawertickettypescreate] = useState(false)
     const [loadingtickettypescreate, setloadingtickettypescreate] = useState(false)
-    const [refreshcreatetickettypescreate, setrefreshcreatetickettypescreate] = useState(-1)
+    const [refreshtickettypescreate, setrefreshtickettypescreate] = useState(-1)
+    //update - ticket types
+    const [drawertickettypesupdate, setdrawertickettypesupdate] = useState(false)
+    const [loadingtickettypesupdate, setloadingtickettypesupdate] = useState(false)
+    const [refreshtickettypesupdate, setrefreshtickettypesupdate] = useState(-1)
+    const [datapayloadtickettype, setdatapayloadtickettype] = useState({
+        id: null,
+        name: "",
+        description: "",
+        ticket_type_id: 1,
+        task_type_id: null
+    })
     //delete - ticket types
     const [datatickettypesdelete, setdatatickettypesdelete] = useState({
         id: null,
@@ -136,15 +148,34 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
             render: (text, record, index) => {
                 return {
                     children:
-                        <div className=' flex justify-end'>
-                            <div className=' rounded-md flex justify-center w-24 py-1 border border-state1 hover:border-opacity-0 bg-white hover:bg-state1 cursor-pointer transition duration-300'
+                        <div className=' flex justify-center'>
+                            <div className="mx-1">
+                                <ButtonSys type="default" onClick={() => {
+                                    setdatapayloadtickettype({
+                                        id: Number(record.id),
+                                        name: record.name,
+                                        description: record.description,
+                                        ticket_type_id: record.ticket_type_id,
+                                        task_type_id: record.task_type_id
+                                    })
+                                    setdrawertickettypesupdate(true)
+                                }}>
+                                    <EditIconSvg size={15} color={`#35763B`} />
+                                </ButtonSys>
+                            </div>
+                            <div className="mx-1">
+                                <ButtonSys type="default" color="danger" onClick={() => { setdatatickettypesdelete({ id: record.id, name: record.name }); setmodaltickettypesdelete(true) }}>
+                                    <TrashIconSvg size={15} color={`#BF4A40`} />
+                                </ButtonSys>
+                            </div>
+                            {/* <div className=' rounded-md flex justify-center w-24 py-1 border border-state1 hover:border-opacity-0 bg-white hover:bg-state1 cursor-pointer transition duration-300'
                                 onMouseOver={(e) => { setcoloricondeletehover(1) }}
                                 onMouseLeave={(e) => { setcoloricondeletehover(0) }}
                                 onClick={() => { setdatatickettypesdelete({ id: record.id, name: record.name }); setmodaltickettypesdelete(true) }}
                             >
                                 {coloricondeletehover === 0 && <div className=""><TrashIconSvg size={18} color={`#BF4A40`} /></div>}
                                 {coloricondeletehover === 1 && <div className=""><TrashIconSvg size={18} color={`#ffffff`} /></div>}
-                            </div>
+                            </div> */}
                         </div>
                 }
             },
@@ -200,7 +231,7 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
                 setdatafiltertiickettypes(res2.data.data)
                 setloadingtickettypes(false)
             })
-    }, [refreshcreatetickettypescreate, refreshcreatetickettypesdelete])
+    }, [refreshtickettypescreate, refreshcreatetickettypesdelete])
 
     return (
         <Layout dataProfile={dataProfile} sidemenu={sidemenu} tok={initProps} st={st} pathArr={pathArr}>
@@ -294,8 +325,20 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
                 buttonOkText={"Simpan Pengaturan"}
                 initProps={initProps}
                 onvisible={setdrawertickettypescreate}
-                refreshcreatetickettypescreate={refreshcreatetickettypescreate}
-                setrefreshcreatetickettypescreate={setrefreshcreatetickettypescreate}
+                refreshtickettypescreate={refreshtickettypescreate}
+                setrefreshtickettypescreate={setrefreshtickettypescreate}
+            />
+            <DrawerTicketTypeUpdate
+                title={"Ubah Pengaturan"}
+                visible={drawertickettypesupdate}
+                onClose={() => { setdrawertickettypesupdate(false) }}
+                buttonOkText={"Simpan Pengaturan"}
+                initProps={initProps}
+                onvisible={setdrawertickettypesupdate}
+                refresh={refreshtickettypesupdate}
+                setrefresh={setrefreshtickettypesupdate}
+                datapayload={datapayloadtickettype}
+                setdatapayload={setdatapayloadtickettype}
             />
             <ModalHapusTipeTiket
                 title={"Konfirmasi Hapus Pengaturan"}

@@ -184,7 +184,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                         </>
                 }
             },
-            sorter: (a, b) => a.name.localeCompare(b.name),
+            sorter: (a, b) => a.deadline > b.deadline,
         },
         {
             title: 'Staff',

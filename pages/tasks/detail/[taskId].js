@@ -2176,7 +2176,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                             </div>
                             <div className=' flex items-center'>
                                 <div className=' rounded-full w-8 h-8'>
-                                    <img src={displaytask.creator.profile_image === "-" ? `/image/staffTask.png` : displaytask.creator.profile_image} className=' object-contain' alt="" />
+                                    <img src={displaytask.creator.profile_image === "-" || displaytask.creator.profile_image === "" ? `/image/staffTask.png` : displaytask.creator.profile_image} className=' object-contain' alt="" />
                                 </div>
                                 <p className='mb-0 text-sm text-gray-500 ml-1'>{displaytask.creator.name}</p>
                             </div>
@@ -2190,7 +2190,18 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                         {
                             displaytask.created_by === dataProfile.data.id ?
                                 displaytask.status === 6 ?
-                                    null
+                                    <div className="my-5 flex flex-col items-center">
+                                        <div className=' mb-3'>
+                                            <PDFDownloadLink document={<TaskPDFTemplate detail={displaytask} datatype4={datatype4} />} fileName={`T-000${displaytask.id}-${moment(new Date()).locale('id').format(`L-LT`)}.pdf`}>
+                                                <Buttonsys type={`primary`} onClick={() => { console.log(currentdataeditable) }}>
+                                                    <div className='mr-1 flex items-center'>
+                                                        <ClipboardcheckIconSvg size={15} color={`#ffffff`} />
+                                                        Cetak Task
+                                                    </div>
+                                                </Buttonsys>
+                                            </PDFDownloadLink>
+                                        </div>
+                                    </div>
                                     :
                                     <div className='my-5 flex flex-col items-center'>
                                         <div className=' mb-3'>
@@ -2210,7 +2221,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                             </Buttonsys>
                                         </div>
                                         <div className=' mb-3'>
-                                            <PDFDownloadLink document={<TaskPDFTemplate detail={displaytask} datatype4={datatype4} />} fileName={`produk-${displaytask.name}.pdf`}>
+                                            <PDFDownloadLink document={<TaskPDFTemplate detail={displaytask} datatype4={datatype4} />} fileName={`T-000${displaytask.id}-${moment(new Date()).locale('id').format(`L-LT`)}.pdf`}>
                                                 <Buttonsys type={`primary`} onClick={() => { console.log(currentdataeditable) }}>
                                                     <div className='mr-1 flex items-center'>
                                                         <ClipboardcheckIconSvg size={15} color={`#ffffff`} />
@@ -2221,7 +2232,18 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                         </div>
                                     </div>
                                 :
-                                null
+                                <div className="my-5 flex flex-col items-center">
+                                    <div className=' mb-3'>
+                                        <PDFDownloadLink document={<TaskPDFTemplate detail={displaytask} datatype4={datatype4} />} fileName={`T-000${displaytask.id}-${moment(new Date()).locale('id').format(`L-LT`)}.pdf`}>
+                                            <Buttonsys type={`primary`} onClick={() => { console.log(currentdataeditable) }}>
+                                                <div className='mr-1 flex items-center'>
+                                                    <ClipboardcheckIconSvg size={15} color={`#ffffff`} />
+                                                    Cetak Task
+                                                </div>
+                                            </Buttonsys>
+                                        </PDFDownloadLink>
+                                    </div>
+                                </div>
                         }
                         <ModalHapusTask
                             title={"Konfirmasi Hapus Task"}

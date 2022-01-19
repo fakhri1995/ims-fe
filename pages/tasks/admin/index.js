@@ -10,7 +10,7 @@ import { AlerttriangleIconSvg, ArrowsSortIconSvg, BackIconSvg, CalendartimeIconS
 import { Chart, ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement } from 'chart.js'
 Chart.register(ArcElement, Tooltip, CategoryScale, LinearScale, LineElement, BarElement, PointElement);
 import { Doughnut, Bar, Line } from 'react-chartjs-2';
-import { TableCustomStaffTask, TableCustomTask, TableCustomTipeTask } from '../../../components/table/tableCustom'
+import { TableCustomAdminTask, TableCustomStaffTask, TableCustomTask, TableCustomTipeTask } from '../../../components/table/tableCustom'
 import { ModalHapusTipeTask } from '../../../components/modal/modalCustom'
 import DrawerTaskTypesCreate from '../../../components/drawer/tasks/drawerTaskTypesCreate'
 import DrawerTaskTypesUpdate from '../../../components/drawer/tasks/drawerTaskTypesUpdate'
@@ -325,7 +325,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                         </>
                 }
             },
-            sorter: (a, b) => a.name.localeCompare(b.name),
+            sorter: (a, b) => a.deadline > b.deadline,
         },
         {
             title: 'Staff',
@@ -1655,7 +1655,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                     </div>
                                 </div>
                                 <div className="flex flex-col">
-                                    <TableCustomTask
+                                    <TableCustomAdminTask
                                         dataSource={datatasks}
                                         setDataSource={setdatatasks}
                                         columns={columnsTask}

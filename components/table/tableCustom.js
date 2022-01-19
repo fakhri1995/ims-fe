@@ -253,40 +253,93 @@ const TableCustomTask = ({ dataSource, setDataSource, columns, loading, pageSize
                             })
                     }
                 }
-                // else if (extra.action === "filter") {
-                //     if (filters.status !== null) {
-                //         setpraloading(true)
-                //         setstatusfilterstate(filters.status[0])
-                //         fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&status=${filters.status[0]}`, {
-                //             method: `GET`,
-                //             headers: {
-                //                 'Authorization': JSON.parse(initProps),
-                //             },
-                //         })
-                //             .then(res => res.json())
-                //             .then(res2 => {
-                //                 setdataraw(res2.data)
-                //                 setDataSource(res2.data.data)
-                //                 setpraloading(false)
-                //             })
-                //     }
-                //     else {
-                //         setpraloading(true)
-                //         setstatusfilterstate("")
-                //         fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&status=`, {
-                //             method: `GET`,
-                //             headers: {
-                //                 'Authorization': JSON.parse(initProps),
-                //             },
-                //         })
-                //             .then(res => res.json())
-                //             .then(res2 => {
-                //                 setdataraw(res2.data)
-                //                 setDataSource(res2.data.data)
-                //                 setpraloading(false)
-                //             })
-                //     }
-                // }
+            }}
+        />
+    )
+}
+
+const TableCustomAdminTask = ({ dataSource, setDataSource, columns, loading, pageSize, total, setpraloading, initProps, setpage, pagefromsearch, setdataraw, sortstate, searchstate, setsortstate, tasktypefilterstate, fromdatefilterstate, todatefilterstate, lokasifilterstate, statusfilterstate, prevpath }) => {
+    const rt = useRouter()
+    const [rowstate, setrowstate] = useState(0)
+    return (
+        <Table
+            className='tableTask'
+            dataSource={dataSource}
+            columns={columns}
+            loading={loading}
+            scroll={{ x: 'max-content' }}
+            pagination={{
+                current: pagefromsearch,
+                pageSize: pageSize,
+                total: total,
+                onChange: (page, pageSize) => {
+                    setpraloading(true)
+                    setpage(page)
+                    fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${page}&rows=${pageSize}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`, {
+                        method: `GET`,
+                        headers: {
+                            'Authorization': JSON.parse(initProps),
+                        },
+                    })
+                        .then(res => res.json())
+                        .then(res2 => {
+                            setdataraw(res2.data)
+                            setDataSource(res2.data.data)
+                            setpraloading(false)
+                        })
+                }
+            }}
+            onRow={(record, rowIndex) => {
+                return {
+                    onMouseOver: (event) => {
+                        setrowstate(record.id)
+                    },
+                    onClick: (event) => {
+                        rt.push(`/tasks/detail/${record.id}?prevpath=${prevpath}`)
+                    }
+                }
+            }}
+            rowClassName={(record, idx) => {
+                return (
+                    `${record.id === rowstate && `cursor-pointer`} ${record.status === 1 && `bg-bgBackdropOverdue`}`
+                )
+            }}
+            onChange={(pagination, filters, sorter, extra) => {
+                // console.log('params', pagination, filters, sorter, extra, pagefromsearch, searchstate);
+                if (extra.action === "sort") {
+                    if (sorter.column) {
+                        setpraloading(true)
+                        setsortstate({ sort_by: sorter.column.dataIndex, sort_type: sorter.order === "ascend" ? "asc" : "desc" })
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=${sorter.column.dataIndex}&sort_type=${sorter.order === "ascend" ? "asc" : "desc"}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`, {
+                            method: `GET`,
+                            headers: {
+                                'Authorization': JSON.parse(initProps),
+                            },
+                        })
+                            .then(res => res.json())
+                            .then(res2 => {
+                                setdataraw(res2.data)
+                                setDataSource(res2.data.data)
+                                setpraloading(false)
+                            })
+                    }
+                    else {
+                        setpraloading(true)
+                        setsortstate({ sort_by: "", sort_type: "" })
+                        fetch(`https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=&sort_type=&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`, {
+                            method: `GET`,
+                            headers: {
+                                'Authorization': JSON.parse(initProps),
+                            },
+                        })
+                            .then(res => res.json())
+                            .then(res2 => {
+                                setdataraw(res2.data)
+                                setDataSource(res2.data.data)
+                                setpraloading(false)
+                            })
+                    }
+                }
             }}
         />
     )
@@ -656,5 +709,5 @@ const TableCustomTickets = ({ dataSource, setDataSource, columns, loading, pageS
 }
 
 export {
-    TableCustom, TableCustomRelasi, TableCustomTipeTask, TableCustomTask, TableCustomStaffTask, TableCustomTaskPick, TableCustomTicketTypes, TableCustomTicketHistories, TableCustomTickets
+    TableCustom, TableCustomRelasi, TableCustomTipeTask, TableCustomTask, TableCustomAdminTask, TableCustomStaffTask, TableCustomTaskPick, TableCustomTicketTypes, TableCustomTicketHistories, TableCustomTickets
 }

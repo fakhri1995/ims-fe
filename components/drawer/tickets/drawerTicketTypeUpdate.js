@@ -4,41 +4,9 @@ import { Spin, Select, notification, Input } from 'antd'
 import { Label } from '../../typography'
 import { SearchOutlined } from '@ant-design/icons'
 
-function modifData1(dataa) {
-    for (var i = 0; i < dataa.length; i++) {
-        dataa[i]['key'] = dataa[i].id
-        dataa[i]['value'] = dataa[i].id
-        dataa[i]['title'] = dataa[i].mig_id
-        if (dataa[i].inventory_parts) {
-            dataa[i]['children'] = dataa[i].inventory_parts
-            delete dataa[i].inventory_parts
-            modifData1(dataa[i].children)
-        }
-    }
-    return dataa
-}
-function modifData2(dataa) {
-    for (var i = 0; i < dataa.length; i++) {
-        dataa[i]['key'] = dataa[i].id
-        dataa[i]['value'] = dataa[i].id
-        dataa[i]['title'] = `${dataa[i].mig_id} - ${dataa[i].model_inventory?.name} - ${dataa[i].model_inventory?.asset?.name}`
-        if (dataa[i].inventory_parts) {
-            dataa[i]['children'] = dataa[i].inventory_parts
-            delete dataa[i].inventory_parts
-            modifData2(dataa[i].children)
-        }
-    }
-    return dataa
-}
 
-const DrawerTicketTypeCreate = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, refreshtickettypescreate, setrefreshtickettypescreate }) => {
+const DrawerTicketTypeUpdate = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, refresh, setrefresh, datapayload, setdatapayload }) => {
     //useState
-    const [datapayload, setdatapayload] = useState({
-        name: "",
-        description: "",
-        ticket_type_id: 1,
-        task_type_id: null
-    })
     const [loadingsave, setloadingsave] = useState(false)
     const [datatasktypes, setdatatasktypes] = useState([])
     const [datatickettypes, setdatatickettypes] = useState([])
@@ -48,11 +16,11 @@ const DrawerTicketTypeCreate = ({ title, visible, onvisible, onClose, buttonOkTe
 
 
     //handler
-    const handleAddTicketType = () => {
+    const handleUpdateTicketType = () => {
         setloadingsave(true)
         setdisabledcreate(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/addTicketTaskType`, {
-            method: 'POST',
+        fetch(`https://boiling-thicket-46501.herokuapp.com/updateTicketTaskType`, {
+            method: 'PUT',
             headers: {
                 'Authorization': JSON.parse(initProps),
                 'Content-Type': 'application/json'
@@ -61,11 +29,12 @@ const DrawerTicketTypeCreate = ({ title, visible, onvisible, onClose, buttonOkTe
         })
             .then((res) => res.json())
             .then(res2 => {
-                setrefreshtickettypescreate(prev => prev + 1)
+                setrefresh(prev => prev + 1)
                 setloadingsave(false)
                 setdisabledcreate(false)
                 if (res2.success) {
                     setdatapayload({
+                        id: null,
                         name: "",
                         description: "",
                         ticket_type_id: null,
@@ -125,6 +94,7 @@ const DrawerTicketTypeCreate = ({ title, visible, onvisible, onClose, buttonOkTe
             visible={visible}
             onClose={() => {
                 setdatapayload({
+                    id: null,
                     name: "",
                     description: "",
                     ticket_type_id: null,
@@ -133,7 +103,7 @@ const DrawerTicketTypeCreate = ({ title, visible, onvisible, onClose, buttonOkTe
                 onvisible(false)
             }}
             buttonOkText={buttonOkText}
-            onClick={handleAddTicketType}
+            onClick={handleUpdateTicketType}
             disabled={disabledcreate}
         >
             {
@@ -266,4 +236,4 @@ const DrawerTicketTypeCreate = ({ title, visible, onvisible, onClose, buttonOkTe
     )
 }
 
-export default DrawerTicketTypeCreate
+export default DrawerTicketTypeUpdate
