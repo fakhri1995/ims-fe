@@ -1464,17 +1464,17 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading, activ
                             descnew = descnew + `Pengubahan Deskripsi Item`
                         }
                         else if (doclogs.properties.attributes.list_parts?.length > doclogs.properties.old.list_parts?.length) {
-                            const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.map(part => part.id).includes(docfil.id) === false)
-                            descnew = descnew + `Penambahan Item "${listpartsnew.map(part => part.mig_id).join(", ")}" menjadi Item Part`
+                            const listpartsnew = doclogs.properties.attributes.list_parts?.filter(docfil => doclogs.properties.old.list_parts?.map(part => part.id).includes(docfil.id) === false)
+                            descnew = descnew + `Penambahan Item "${listpartsnew?.map(part => part.mig_id).join(", ")}" menjadi Item Part`
                         }
                         else if (doclogs.properties.attributes.list_parts?.length < doclogs.properties.old.list_parts?.length) {
-                            const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.map(part => part.id).includes(docfil.id) === false)
-                            descnew = descnew + `Pengeluaran Item Part "${listpartsold.map(part => part.mig_id).join(", ")}"`
+                            const listpartsold = doclogs.properties.old.list_parts?.filter(docfil => doclogs.properties.attributes.list_parts?.map(part => part.id).includes(docfil.id) === false)
+                            descnew = descnew + `Pengeluaran Item Part "${listpartsold?.map(part => part.mig_id).join(", ")}"`
                         }
                         else if (doclogs.properties.attributes.list_parts?.length === doclogs.properties.old.list_parts?.length) {
-                            const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.map(part => part.id).includes(docfil.id) === false)
-                            const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.map(part => part.id).includes(docfil.id) === false)
-                            descnew = descnew + `Pergantian Item Part "${listpartsold.map(part => part.mig_id).join(", ")}" menjadi "${listpartsnew.map(part => part.mig_id).join(", ")}"`
+                            const listpartsnew = doclogs.properties.attributes.list_parts?.filter(docfil => doclogs.properties.old.list_parts?.map(part => part.id).includes(docfil.id) === false)
+                            const listpartsold = doclogs.properties.old.list_parts?.filter(docfil => doclogs.properties.attributes.list_parts?.map(part => part.id).includes(docfil.id) === false)
+                            descnew = descnew + `Pergantian Item Part "${listpartsold?.map(part => part.mig_id).join(", ")}" menjadi "${listpartsnew?.map(part => part.mig_id).join(", ")}"`
                         }
                         else {
                             var prpts = []
@@ -1550,17 +1550,17 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading, activ
                             descnew = descnew + `Pengubahan Deskripsi Item`
                         }
                         else if (doclogs.properties.attributes.list_parts?.length > doclogs.properties.old.list_parts?.length) {
-                            const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.map(part => part.id).includes(docfil.id) === false)
-                            descnew = descnew + `Penambahan Item "${listpartsnew.map(part => part.mig_id).join(", ")}" menjadi Item Part`
+                            const listpartsnew = doclogs.properties.attributes.list_parts?.filter(docfil => doclogs.properties.old.list_parts?.map(part => part.id).includes(docfil.id) === false)
+                            descnew = descnew + `Penambahan Item "${listpartsnew?.map(part => part.mig_id).join(", ")}" menjadi Item Part`
                         }
                         else if (doclogs.properties.attributes.list_parts?.length < doclogs.properties.old.list_parts?.length) {
-                            const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.map(part => part.id).includes(docfil.id) === false)
-                            descnew = descnew + `Pengeluaran Item Part "${listpartsold.map(part => part.mig_id).join(", ")}"`
+                            const listpartsold = doclogs.properties.old.list_parts?.filter(docfil => doclogs.properties.attributes.list_parts?.map(part => part.id).includes(docfil.id) === false)
+                            descnew = descnew + `Pengeluaran Item Part "${listpartsold?.map(part => part.mig_id).join(", ")}"`
                         }
                         else if (doclogs.properties.attributes.list_parts?.length === doclogs.properties.old.list_parts?.length) {
-                            const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.map(part => part.id).includes(docfil.id) === false)
-                            const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.map(part => part.id).includes(docfil.id) === false)
-                            descnew = descnew + `Pergantian Item Part "${listpartsold.map(part => part.mig_id).join(", ")}" menjadi "${listpartsnew.map(part => part.mig_id).join(", ")}"`
+                            const listpartsnew = doclogs.properties.attributes.list_parts?.filter(docfil => doclogs.properties.old.list_parts?.map(part => part.id).includes(docfil.id) === false)
+                            const listpartsold = doclogs.properties.old.list_parts?.filter(docfil => doclogs.properties.attributes.list_parts?.map(part => part.id).includes(docfil.id) === false)
+                            descnew = descnew + `Pergantian Item Part "${listpartsold?.map(part => part.mig_id).join(", ")}" menjadi "${listpartsnew?.map(part => part.mig_id).join(", ")}"`
                         }
                         else {
                             var prpts = []
