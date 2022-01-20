@@ -59,6 +59,7 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
     const [drawertickettypesupdate, setdrawertickettypesupdate] = useState(false)
     const [loadingtickettypesupdate, setloadingtickettypesupdate] = useState(false)
     const [refreshtickettypesupdate, setrefreshtickettypesupdate] = useState(-1)
+    const [disabledupdate, setdisabledupdate] = useState(false)
     const [datapayloadtickettype, setdatapayloadtickettype] = useState({
         id: null,
         name: "",
@@ -97,7 +98,7 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
                 return {
                     children:
                         <>
-                            {record.name}
+                            {record.ticket_type_name}
                         </>
                 }
             },
@@ -123,7 +124,7 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
                 return {
                     children:
                         <>
-                            {record.name}
+                            {record.task_type_name}
                         </>
                 }
             },
@@ -168,14 +169,6 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
                                     <TrashIconSvg size={15} color={`#BF4A40`} />
                                 </ButtonSys>
                             </div>
-                            {/* <div className=' rounded-md flex justify-center w-24 py-1 border border-state1 hover:border-opacity-0 bg-white hover:bg-state1 cursor-pointer transition duration-300'
-                                onMouseOver={(e) => { setcoloricondeletehover(1) }}
-                                onMouseLeave={(e) => { setcoloricondeletehover(0) }}
-                                onClick={() => { setdatatickettypesdelete({ id: record.id, name: record.name }); setmodaltickettypesdelete(true) }}
-                            >
-                                {coloricondeletehover === 0 && <div className=""><TrashIconSvg size={18} color={`#BF4A40`} /></div>}
-                                {coloricondeletehover === 1 && <div className=""><TrashIconSvg size={18} color={`#ffffff`} /></div>}
-                            </div> */}
                         </div>
                 }
             },
@@ -229,6 +222,7 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
                 setdatarawtickettypes(res2.data)
                 setdatatickettypes(res2.data.data)
                 setdatafiltertiickettypes(res2.data.data)
+                setdisabledupdate(false)
                 setloadingtickettypes(false)
             })
     }, [refreshtickettypescreate, refreshcreatetickettypesdelete])
@@ -339,6 +333,8 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
                 setrefresh={setrefreshtickettypesupdate}
                 datapayload={datapayloadtickettype}
                 setdatapayload={setdatapayloadtickettype}
+                disabledsubmit={disabledupdate}
+                setdisabledsubmit={setdisabledupdate}
             />
             <ModalHapusTipeTiket
                 title={"Konfirmasi Hapus Pengaturan"}

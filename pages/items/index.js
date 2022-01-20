@@ -238,7 +238,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     }
     //search location
     const onChangeLocation = (id) => {
-        if (typeof(id) === 'undefined') {
+        if (typeof (id) === 'undefined') {
             // setdisplaydata(displaydata2)
             window.location.href = `items?asset_id=${assettypefilteract ? asset_id1 : ""}&model_id=${modelfilteract ? model_id1 : ""}&status_condition=${kondisifilteract ? status_condition1 : ""}&status_usage=${pemakaianfilteract ? status_usage1 : ""}&name=${namasearchact ? name1 : ""}&mig_id=${migidact ? migid1 : ""}&location_id=&sort_by=${sort_by}&sort_type=${sort_type}`
             setlocationact(false)
@@ -568,25 +568,27 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                                 </div>
                             </div>
                     }
-                    <Table pagination={{
-                        pageSize: 10, total: displayentiredata.data.total, onChange: (page, pageSize) => {
-                            setpraloading(true)
-                            fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?page=${page}&rows=10&asset_id=${asset_id1}&model_id=${model_id1}&status_condition=${status_condition1}&status_usage=${status_usage1}&name=${name1}&mig_id=${migid1}&location_id=${location_id1}&sort_by=${sort_by}&sort_type=${sort_type}`, {
-                                method: `GET`,
-                                headers: {
-                                    'Authorization': JSON.parse(initProps),
-                                },
-                            })
-                                .then(res => res.json())
-                                .then(res2 => {
-                                    setdisplayentiredata(res2)
-                                    setdisplaydata(res2.data.data)
-                                    setdisplaydata1(res2.data.data)
-                                    setdisplaydata2(res2.data.data)
-                                    setpraloading(false)
+                    <Table
+                        className='tableTypeTask'
+                        pagination={{
+                            pageSize: 10, total: displayentiredata.data.total, onChange: (page, pageSize) => {
+                                setpraloading(true)
+                                fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?page=${page}&rows=10&asset_id=${asset_id1}&model_id=${model_id1}&status_condition=${status_condition1}&status_usage=${status_usage1}&name=${name1}&mig_id=${migid1}&location_id=${location_id1}&sort_by=${sort_by}&sort_type=${sort_type}`, {
+                                    method: `GET`,
+                                    headers: {
+                                        'Authorization': JSON.parse(initProps),
+                                    },
                                 })
-                        }
-                    }} scroll={{ x: 200 }} dataSource={displaydata} columns={columnsTable} loading={praloading}
+                                    .then(res => res.json())
+                                    .then(res2 => {
+                                        setdisplayentiredata(res2)
+                                        setdisplaydata(res2.data.data)
+                                        setdisplaydata1(res2.data.data)
+                                        setdisplaydata2(res2.data.data)
+                                        setpraloading(false)
+                                    })
+                            }
+                        }} scroll={{ x: 200 }} dataSource={displaydata} columns={columnsTable} loading={praloading}
                         onRow={(record, rowIndex) => {
                             return {
                                 onMouseOver: (event) => {

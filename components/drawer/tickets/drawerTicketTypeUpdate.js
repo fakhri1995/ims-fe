@@ -5,20 +5,19 @@ import { Label } from '../../typography'
 import { SearchOutlined } from '@ant-design/icons'
 
 
-const DrawerTicketTypeUpdate = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, refresh, setrefresh, datapayload, setdatapayload }) => {
+const DrawerTicketTypeUpdate = ({ title, visible, onvisible, onClose, buttonOkText, disabled, initProps, refresh, setrefresh, datapayload, setdatapayload, disabledsubmit, setdisabledsubmit }) => {
     //useState
     const [loadingsave, setloadingsave] = useState(false)
     const [datatasktypes, setdatatasktypes] = useState([])
     const [datatickettypes, setdatatickettypes] = useState([])
     const [fecthingtasktypes, setfecthingtasktypes] = useState(false)
-    const [disabledcreate, setdisabledcreate] = useState(true)
     const [disabledtrigger, setdisabledtrigger] = useState(-1)
 
 
     //handler
     const handleUpdateTicketType = () => {
         setloadingsave(true)
-        setdisabledcreate(true)
+        setdisabledsubmit(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/updateTicketTaskType`, {
             method: 'PUT',
             headers: {
@@ -31,7 +30,7 @@ const DrawerTicketTypeUpdate = ({ title, visible, onvisible, onClose, buttonOkTe
             .then(res2 => {
                 setrefresh(prev => prev + 1)
                 setloadingsave(false)
-                setdisabledcreate(false)
+                setdisabledsubmit(false)
                 if (res2.success) {
                     setdatapayload({
                         id: null,
@@ -82,10 +81,10 @@ const DrawerTicketTypeUpdate = ({ title, visible, onvisible, onClose, buttonOkTe
     }, [])
     useEffect(() => {
         if (datapayload.ticket_type_id !== null && datapayload.name !== "" && datapayload.task_type_id !== null) {
-            setdisabledcreate(false)
+            setdisabledsubmit(false)
         }
         else {
-            setdisabledcreate(true)
+            setdisabledsubmit(true)
         }
     }, [disabledtrigger])
     return (
@@ -104,7 +103,7 @@ const DrawerTicketTypeUpdate = ({ title, visible, onvisible, onClose, buttonOkTe
             }}
             buttonOkText={buttonOkText}
             onClick={handleUpdateTicketType}
-            disabled={disabledcreate}
+            disabled={disabledsubmit}
         >
             {
                 loadingsave ?

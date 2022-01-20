@@ -323,13 +323,13 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
                             </Select>
                         </div>
                         <div className=' w-3/12 mx-1'>
-                            <DatePicker.RangePicker allowEmpty className="datepickerStatus" value={fromfilterhistories === "" ? [null, null] : [moment(fromfilterhistories), moment(tofilterhistories)]} onChange={(dates, datestrings) => {
+                            <DatePicker.RangePicker style={{ width: `100%` }} allowEmpty className="datepickerStatus" value={fromfilterhistories === "" ? [null, null] : [moment(fromfilterhistories), moment(tofilterhistories)]} onChange={(dates, datestrings) => {
                                 setfromfilterhistories(datestrings[0])
                                 settofilterhistories(datestrings[1])
                             }}
                             />
                         </div>
-                        <div className=' mx-1 w-2/12'>
+                        <div className=' mx-1 w-5/12'>
                             <TreeSelect
                                 style={{ width: `100%` }}
                                 allowClear
@@ -357,7 +357,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
                                     dataticketrelation.resolved_times.map((doc, idx) => {
                                         if (doc.from === null)
                                             return (
-                                                <Select.Option key={idx} value={1} from={doc.from} to={doc.to}>Kurang dari 3 jam</Select.Option>
+                                                <Select.Option key={idx} value={1} from={""} to={doc.to}>Kurang dari 3 jam</Select.Option>
                                             )
                                         else if (doc.from === 10800)
                                             return (
@@ -373,7 +373,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
                                             )
                                         else if (doc.from === 259200)
                                             return (
-                                                <Select.Option key={idx} value={5} from={doc.from} to={doc.to}>Lebih dari 3 hari</Select.Option>
+                                                <Select.Option key={idx} value={5} from={doc.from} to={""}>Lebih dari 3 hari</Select.Option>
                                             )
                                     })
                                 }
@@ -381,9 +381,9 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
                         </div>
                         <div className='mx-1 w-1/12'>
                             <ButtonSys type={`primary`} onClick={onFilterTicketHistories}>
-                                <div className='mr-1'>
+                                {/* <div className='mr-1'>
                                     <SearchIconSvg size={15} color={`#ffffff`} />
-                                </div>
+                                </div> */}
                                 Cari
                             </ButtonSys>
                         </div>

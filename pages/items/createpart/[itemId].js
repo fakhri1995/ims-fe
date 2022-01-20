@@ -97,11 +97,11 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
 
     //3.Define
     const columnsTable = [
-        {
-            title: 'Nama Item',
-            dataIndex: 'inventory_name',
-            key: 'inventory_name',
-        },
+        // {
+        //     title: 'Nama Item',
+        //     dataIndex: 'inventory_name',
+        //     key: 'inventory_name',
+        // },
         {
             title: 'MIG ID',
             dataIndex: 'mig_id',
@@ -471,7 +471,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                     <div className="flex mb-8">
                         <div className=" w-full mr-1 grid grid-cols-12">
                             <div className="col-span-5 mr-1">
-                                <Input defaultValue={name1} style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari Nama Model" onChange={onChangeSearch} allowClear></Input>
+                                <Input defaultValue={name1} style={{ width: `100%`, marginRight: `0.5rem` }} placeholder="Cari MIG ID" onChange={onChangeSearch} allowClear></Input>
                             </div>
                             {
                                 praloading2 ?
@@ -551,10 +551,10 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                                     const a = recursiveGetParentKey(doc.key, displaydata3)
                                     if (typeof (a) !== 'undefined') {
                                         recursiveSearchPart(displaydata3, a)
-                                        listarr.push({ name: doc.inventory_name, parent: selectedPart })
+                                        listarr.push({ mig_id: doc.mig_id, parent: selectedPart })
                                     }
                                     else {
-                                        listarr.push({ name: doc.inventory_name, parent: "" })
+                                        listarr.push({ mig_id: doc.mig_id, parent: "" })
                                     }
                                 })
                                 setlistselectedpart(listarr)
@@ -644,12 +644,12 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                             listselectedpart.map((doc, idx) => {
                                 if (doc.parent !== "") {
                                     return (
-                                        <p className="mb-0 text-xs font-semibold">- {doc.name}, sedang menjadi Item Part dari "{doc.parent.inventory_name}"</p>
+                                        <p className="mb-0 text-xs font-semibold">- {doc.mig_id}, sedang menjadi Item Part dari "{doc.parent.mig_id}"</p>
                                     )
                                 }
                                 else {
                                     return (
-                                        <p className="mb-0 text-xs font-semibold">- {doc.name}</p>
+                                        <p className="mb-0 text-xs font-semibold">- {doc.mig_id}</p>
                                     )
                                 }
                             })

@@ -180,7 +180,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                 <div className=" col-span-1 md:col-span-4 mb-8 p-3">
                     <Sticky containerSelectorFocus="#createAgentsWrapper">
                         <div className=" col-span-4 flex justify-between pt-4 border-t-2 border-b-2 bg-white">
-                            <h1 className="font-bold text-xl py-2">Form Ubah Item - {updatedata.inventory_name}</h1>
+                            <h1 className="font-bold text-xl py-2">Form Ubah Item - {updatedata.mig_id} - {updatedata.model_inventory?.name}</h1>
                             <div className="flex space-x-2">
                                 <Link href={`/items/detail/${itemid}`}>
                                     <Button type="default" /*onClick={() => { console.log(updatedata); console.log(disabledfield) }}*/>Batal</Button>
@@ -246,7 +246,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                     }>
                                         <div className="w-full rounded-sm flex items-center bg-gray-100 border p-2 h-8">{updatedata.model_inventory.asset.name}</div>
                                     </Form.Item>
-                                    <Form.Item name="inventory_name" label="Nama Item"
+                                    {/* <Form.Item name="inventory_name" label="Nama Item"
                                         rules={[
                                             {
                                                 required: true,
@@ -254,7 +254,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                             },
                                         ]}>
                                         <Input name="inventory_name" defaultValue={updatedata.inventory_name} onChange={(e) => { setupdatedata({ ...updatedata, inventory_name: e.target.value }) }} />
-                                    </Form.Item>
+                                    </Form.Item> */}
                                     <Form.Item name="mig_id" label="MIG ID"
                                         rules={[
                                             {

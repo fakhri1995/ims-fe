@@ -313,7 +313,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                     }>
                                         <div className="w-full rounded bg-gray-200 p-2 h-10">{doc.asset_name}</div>
                                     </Form.Item>
-                                    <Form.Item name="inventory_name" label={
+                                    {/* <Form.Item name="inventory_name" label={
                                         <div className="flex">
                                             <span className="namaItem"></span>
                                             <p className="mb-0 ml-1">Nama Item</p>
@@ -336,7 +336,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                 return temp2
                                             })
                                         }} />
-                                    </Form.Item>
+                                    </Form.Item> */}
                                     <Form.Item name="mig_id" label={
                                         <div className="flex">
                                             <span className="migId"></span>
@@ -993,7 +993,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                             }>
                                 <div className="w-full rounded-sm flex items-center bg-gray-100 border p-2 h-8">{assetnameitem}</div>
                             </Form.Item>
-                            <Form.Item name="inventory_name" label="Nama Item"
+                            {/* <Form.Item name="inventory_name" label="Nama Item"
                                 rules={[
                                     {
                                         required: true,
@@ -1001,7 +1001,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                     },
                                 ]}>
                                 <Input disabled={disabledfielditem} name="inventory_name" onChange={(e) => { setnewdata({ ...newdata, inventory_name: e.target.value }) }} />
-                            </Form.Item>
+                            </Form.Item> */}
                             <Form.Item name="mig_id" label="MIG ID"
                                 rules={[
                                     {
@@ -1549,7 +1549,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                                         }>
                                                                             <div className="w-full rounded bg-gray-200 p-2 h-10">{docpart.asset_name}</div>
                                                                         </Form.Item>
-                                                                        <Form.Item name="inventory_name" label={
+                                                                        {/* <Form.Item name="inventory_name" label={
                                                                             <div className="flex">
                                                                                 <span className="namaItem"></span>
                                                                                 <p className="mb-0 ml-1">Nama Item</p>
@@ -1574,7 +1574,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                                                 setemptyfieldpartmodel(docpart)
                                                                                 setemptyfieldparttrigger(prev => prev + 1)
                                                                             }} />
-                                                                        </Form.Item>
+                                                                        </Form.Item> */}
                                                                         <Form.Item name="mig_id" label={
                                                                             <div className="flex">
                                                                                 <span className="migId"></span>

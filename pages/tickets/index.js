@@ -620,13 +620,13 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                                 </Select>
                             </div>
                             <div className=' w-3/12 mx-1'>
-                                <DatePicker.RangePicker allowEmpty className="datepickerStatus" value={fromfiltertickets === "" ? [null, null] : [moment(fromfiltertickets), moment(tofiltertickets)]} onChange={(dates, datestrings) => {
+                                <DatePicker.RangePicker style={{ width: `100%` }} allowEmpty className="datepickerStatus" value={fromfiltertickets === "" ? [null, null] : [moment(fromfiltertickets), moment(tofiltertickets)]} onChange={(dates, datestrings) => {
                                     setfromfiltertickets(datestrings[0])
                                     settofiltertickets(datestrings[1])
                                 }}
                                 />
                             </div>
-                            <div className=' mx-1 w-2/12'>
+                            <div className=' mx-1 w-5/12'>
                                 <TreeSelect
                                     style={{ width: `100%` }}
                                     allowClear
@@ -702,9 +702,9 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                             </div>
                             <div className='mx-1 w-1/12'>
                                 <ButtonSys type={`primary`} onClick={onFilterTickets}>
-                                    <div className='mr-1'>
+                                    {/* <div className='mr-1'>
                                         <SearchIconSvg size={15} color={`#ffffff`} />
-                                    </div>
+                                    </div> */}
                                     Cari
                                 </ButtonSys>
                             </div>

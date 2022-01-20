@@ -554,6 +554,8 @@ const TableCustomTicketTypes = ({ dataSource, setDataSource, columns, loading, p
 }
 
 const TableCustomTicketHistories = ({ dataSource, setDataSource, columns, loading, pageSize, total, setpraloading, initProps, setpage, pagefromsearch, setdataraw, setsorting, sorting, searching, tickettype, fromdate, todate, location, fromres, tores }) => {
+    const rt = useRouter()
+    const [rowstate, setrowstate] = useState(0)
     return (
         <Table
             className='tableTypeTask'
@@ -617,6 +619,21 @@ const TableCustomTicketHistories = ({ dataSource, setDataSource, columns, loadin
                             })
                     }
                 }
+            }}
+            onRow={(record, rowIndex) => {
+                return {
+                    onMouseOver: (event) => {
+                        setrowstate(record.id)
+                    },
+                    onClick: (event) => {
+                        rt.push(`/tickets/detail/${record.id}`)
+                    }
+                }
+            }}
+            rowClassName={(record, idx) => {
+                return (
+                    `${record.id === rowstate && `cursor-pointer`} ${record.status === 1 && `bg-bgBackdropOverdue`}`
+                )
             }}
         />
     )

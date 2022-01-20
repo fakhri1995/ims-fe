@@ -83,9 +83,54 @@ const DrawerTicketCreate = ({ title, visible, onvisible, onClose, buttonOkText, 
     }
     const handleAddTicket = () => {
         if (/(^\d+$)/.test(datapayload.pic_contact) === false || /(^\d+$)/.test(datapayload.product_id) === false) {
-            new RegExp(/(^\d+$)/).test(datapayload.pic_contact) === false ? setwarningphonenumber(true) : setwarningphonenumber(false)
-            new RegExp(/(^\d+$)/).test(datapayload.product_id) === false ? setwarningproductid(true) : setwarningproductid(false)
-            setdisabledcreate(true)
+            if (datapayload.pic_contact === "") {
+                setloadingsave(true)
+                setdisabledcreate(true)
+                fetch(`https://boiling-thicket-46501.herokuapp.com/addTicket`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': JSON.parse(initProps),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(datapayload)
+                })
+                    .then((res) => res.json())
+                    .then(res2 => {
+                        setrefreshtickets(prev => prev + 1)
+                        setloadingsave(false)
+                        setdisabledcreate(false)
+                        if (res2.success) {
+                            setdatapayload({
+                                type_id: null,
+                                ticket_task_type_id: null,
+                                product_id: "",
+                                pic_name: "",
+                                pic_contact: "",
+                                location_id: dataprofile.data.company.id,
+                                problem: "",
+                                incident_time: new Date(),
+                                files: [],
+                                description: ""
+                            })
+                            onvisible(false)
+                            notification['success']({
+                                message: res2.message,
+                                duration: 3
+                            })
+                        }
+                        else {
+                            notification['error']({
+                                message: res2.message,
+                                duration: 3
+                            })
+                        }
+                    })
+            }
+            else {
+                new RegExp(/(^\d+$)/).test(datapayload.pic_contact) === false ? setwarningphonenumber(true) : setwarningphonenumber(false)
+                new RegExp(/(^\d+$)/).test(datapayload.product_id) === false ? setwarningproductid(true) : setwarningproductid(false)
+                setdisabledcreate(true)
+            }
         }
         else {
             setloadingsave(true)
@@ -339,7 +384,7 @@ const DrawerTicketCreate = ({ title, visible, onvisible, onClose, buttonOkText, 
                                 setdatapayload({ ...datapayload, pic_contact: e.target.value })
                                 setdisabledtrigger(prev => prev + 1)
                             }}></Input>
-                            {warningphonenumber && <p className=' text-red-500 text-sm mb-0'>Nomor Kontak harus angka</p>}
+                            {warningphonenumber && <p className=' text-red-500 text-sm mb-0'>Kontak PIC harus angka</p>}
                         </div>
                         <div className=' mb-6 flex flex-col'>
                             <div className="flex mb-2">

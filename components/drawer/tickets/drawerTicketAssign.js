@@ -152,7 +152,7 @@ const DrawerTicketAssign = ({ title, visible, onvisible, onClose, buttonOkText, 
                                 }}
                             ></Input>
                         </div>
-                        <div className="my-5 flex flex-col max-h-screen overflow-scroll">
+                        <div className="my-5 flex flex-col max-h-screen overflow-y-scroll">
                             {
                                 loadinggetengs ?
                                     <>

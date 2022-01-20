@@ -129,7 +129,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
                 setdisplaydata(res2.data.data)
                 setdisplaydata1(res2.data.data)
                 setdisplaydata2(res2.data.data)
-                console.log(assettypefilteract,namasearchact)
+                console.log(assettypefilteract, namasearchact)
             })
     }, [])
     useEffect(() => {
@@ -211,25 +211,27 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
                                 </div>
                             </div>
                     }
-                    <Table pagination={{
-                        pageSize: 10, total: displayentiredata.data.total, onChange: (page, pageSize) => {
-                            setpraloading(true)
-                            fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?page=${page}&rows=10&asset_id=${asset_id1}&name=${name1}&sort_by=${sort_by}&sort_type=${sort_type}`, {
-                                method: `GET`,
-                                headers: {
-                                    'Authorization': JSON.parse(initProps),
-                                },
-                            })
-                                .then(res => res.json())
-                                .then(res2 => {
-                                    setdisplayentiredata(res2)
-                                    setdisplaydata(res2.data.data)
-                                    setdisplaydata1(res2.data.data)
-                                    setdisplaydata2(res2.data.data)
-                                    setpraloading(false)
+                    <Table
+                        className='tableTypeTask'
+                        pagination={{
+                            pageSize: 10, total: displayentiredata.data.total, onChange: (page, pageSize) => {
+                                setpraloading(true)
+                                fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?page=${page}&rows=10&asset_id=${asset_id1}&name=${name1}&sort_by=${sort_by}&sort_type=${sort_type}`, {
+                                    method: `GET`,
+                                    headers: {
+                                        'Authorization': JSON.parse(initProps),
+                                    },
                                 })
-                        }
-                    }} scroll={{ x: 200 }} dataSource={displaydata} columns={columnsTable} loading={praloading}
+                                    .then(res => res.json())
+                                    .then(res2 => {
+                                        setdisplayentiredata(res2)
+                                        setdisplaydata(res2.data.data)
+                                        setdisplaydata1(res2.data.data)
+                                        setdisplaydata2(res2.data.data)
+                                        setpraloading(false)
+                                    })
+                            }
+                        }} scroll={{ x: 200 }} dataSource={displaydata} columns={columnsTable} loading={praloading}
                         onRow={(record, rowIndex) => {
                             return {
                                 onMouseOver: (event) => {

@@ -33,6 +33,10 @@ const Overview = ({ itemid, initProps, maindata, manuf, vendor, praloading }) =>
                     :
                     <div className="mb-8 mx-5 p-5 w-9/12 border shadow-md rounded-md flex flex-col">
                         <div className="flex flex-col mb-5">
+                            <h1 className=" text-sm font-semibold mb-0">Nama Item:</h1>
+                            <p className="mb-0 text-sm">{maindata.mig_id} - {maindata.model_inventory.name}</p>
+                        </div>
+                        <div className="flex flex-col mb-5">
                             <h1 className=" text-sm font-semibold mb-0">Model:</h1>
                             {
                                 // invrelations.models.filter(docfil => docfil.id === maindata.model_id)[0].deleted_at !== null
@@ -216,11 +220,11 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
     const [backupmodels, setbackupmodels] = useState(models)
 
     const columns = [
-        {
-            title: 'Nama Item',
-            dataIndex: 'inventory_name',
-            key: 'inventory_name',
-        },
+        // {
+        //     title: 'Nama Item',
+        //     dataIndex: 'inventory_name',
+        //     key: 'inventory_name',
+        // },
         {
             title: 'MIG ID',
             dataIndex: 'mig_id',
@@ -314,7 +318,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
         for (var i = 0; i < dataa.length; i++) {
             dataa[i]['key'] = dataa[i].id
             dataa[i]['value'] = dataa[i].id
-            dataa[i]['title'] = dataa[i].inventory_name
+            dataa[i]['title'] = `${dataa[i].mig_id} - ${dataa[i].model_inventory?.name}`
             dataa[i]['children'] = dataa[i].inventory_replacement_parts
             delete dataa[i].inventory_replacement_parts
             if (dataa[i].children.length > 0) {
@@ -538,7 +542,8 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                     var res = []
                     for (var i = 0; i < rsc.length; i++) {
                         rsc[i].key = rsc[i].id
-                        rsc[i].title = rsc[i].inventory_name
+                        rsc[i].value = rsc[i].id
+                        rsc[i].title = `${rsc[i].mig_id} - ${rsc[i].model_inventory?.name}`
                         rsc[i].children = rsc[i].inventory_parts
                         delete rsc[i].inventory_parts
                         if (rsc[i].children.length !== 0) {
@@ -606,7 +611,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                     praloading2 ?
                         null
                         :
-                        <Button type="primary" size="large" onClick={() => { /*console.log(mainpartdata); console.log(dataremoved)*/ rt.push(`/items/createpart/${itemid}?nama=${mainpartdata.inventory_name}`) }}>Tambah</Button>
+                        <Button type="primary" size="large" onClick={() => { /*console.log(mainpartdata); console.log(dataremoved)*/ rt.push(`/items/createpart/${itemid}?nama=${mainpartdata.mig_id}`) }}>Tambah</Button>
                 }
             </div>
             <div className="flex mb-5">
@@ -705,7 +710,7 @@ const KonfigurasiPart = ({ initProps, itemid, invrelations, maindata, praloading
                 <div className="flex flex-col mb-3">
                     <div className="flex flex-col mb-3">
                         <p className="mb-0">Nama Item Part yang Ingin Diganti <span className="namapart"></span></p>
-                        <TreeSelect disabled treeData={datatable3} value={datachanged.key}></TreeSelect>
+                        <TreeSelect treeData={datatable3} defaultValue={datachanged.key}></TreeSelect>
                         <style jsx>
                             {`
                                 .namapart::before{
@@ -1458,22 +1463,18 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading, activ
                         else if (doclogs.properties.attributes.deskripsi) {
                             descnew = descnew + `Pengubahan Deskripsi Item`
                         }
-                        else if (doclogs.properties.attributes?.list_parts) {
-                            if (doclogs.properties.attributes.list_parts.length > doclogs.properties.old.list_parts.length) {
-                                const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.includes(docfil) === false)
-                                descnew = descnew + `Penambahan Item "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id)).map(docmap => docmap.inventory_name).join(", ")}" menjadi Item Part`
-                            }
-                            if (doclogs.notes.split(" ")[1] === "Removed") {
-                                const listpartsnew = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
-                                // descnew = descnew + `Pengeluaran Item Part "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
-                                descnew = descnew + `Pengeluaran Item Part`
-                            }
-                            if (doclogs.notes.split(" ")[1] === "Replaced") {
-                                // const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
-                                const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.includes(docfil) === false)
-                                // descnew = descnew + `Pergantian Item Part "${maindata.inventory_parts.filter(docfil => listpartsold.includes(docfil.id))[0].inventory_name}" menjadi Item Part "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
-                                descnew = descnew + `Pergantian Item Part menjadi "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
-                            }
+                        else if (doclogs.properties.attributes.list_parts?.length > doclogs.properties.old.list_parts?.length) {
+                            const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.map(part => part.id).includes(docfil.id) === false)
+                            descnew = descnew + `Penambahan Item "${listpartsnew.map(part => part.mig_id).join(", ")}" menjadi Item Part`
+                        }
+                        else if (doclogs.properties.attributes.list_parts?.length < doclogs.properties.old.list_parts?.length) {
+                            const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.map(part => part.id).includes(docfil.id) === false)
+                            descnew = descnew + `Pengeluaran Item Part "${listpartsold.map(part => part.mig_id).join(", ")}"`
+                        }
+                        else if (doclogs.properties.attributes.list_parts?.length === doclogs.properties.old.list_parts?.length) {
+                            const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.map(part => part.id).includes(docfil.id) === false)
+                            const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.map(part => part.id).includes(docfil.id) === false)
+                            descnew = descnew + `Pergantian Item Part "${listpartsold.map(part => part.mig_id).join(", ")}" menjadi "${listpartsnew.map(part => part.mig_id).join(", ")}"`
                         }
                         else {
                             var prpts = []
@@ -1548,22 +1549,18 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading, activ
                         else if (doclogs.properties.attributes.deskripsi) {
                             descnew = descnew + `Pengubahan Deskripsi Item`
                         }
-                        else if (doclogs.properties.attributes?.list_parts) {
-                            if (doclogs.properties.attributes.list_parts.length > doclogs.properties.old.list_parts.length) {
-                                const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.includes(docfil) === false)
-                                descnew = descnew + `Penambahan Item "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id)).map(docmap => docmap.inventory_name).join(", ")}" menjadi Item Part`
-                            }
-                            if (doclogs.notes.split(" ")[1] === "Removed") {
-                                const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
-                                // descnew = descnew + `Pengeluaran Item Part "${maindata.inventory_parts.filter(docfil => listpartsold.includes(docfil.id))[0].inventory_name}"`
-                                descnew = descnew + `Pengeluaran Item Part`
-                            }
-                            if (doclogs.notes.split(" ")[1] === "Replaced") {
-                                // const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
-                                const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.includes(docfil) === false)
-                                // descnew = descnew + `Pergantian Item Part "${maindata.inventory_parts.filter(docfil => listpartsold.includes(docfil.id))[0].inventory_name}" menjadi Item Part "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
-                                descnew = descnew + `Pergantian Item Part menjadi "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
-                            }
+                        else if (doclogs.properties.attributes.list_parts?.length > doclogs.properties.old.list_parts?.length) {
+                            const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.map(part => part.id).includes(docfil.id) === false)
+                            descnew = descnew + `Penambahan Item "${listpartsnew.map(part => part.mig_id).join(", ")}" menjadi Item Part`
+                        }
+                        else if (doclogs.properties.attributes.list_parts?.length < doclogs.properties.old.list_parts?.length) {
+                            const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.map(part => part.id).includes(docfil.id) === false)
+                            descnew = descnew + `Pengeluaran Item Part "${listpartsold.map(part => part.mig_id).join(", ")}"`
+                        }
+                        else if (doclogs.properties.attributes.list_parts?.length === doclogs.properties.old.list_parts?.length) {
+                            const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.map(part => part.id).includes(docfil.id) === false)
+                            const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.map(part => part.id).includes(docfil.id) === false)
+                            descnew = descnew + `Pergantian Item Part "${listpartsold.map(part => part.mig_id).join(", ")}" menjadi "${listpartsnew.map(part => part.mig_id).join(", ")}"`
                         }
                         else {
                             var prpts = []
@@ -1635,22 +1632,18 @@ const Acitivty = ({ itemid, initProps, maindata, invrelations, praloading, activ
                         else if (doclogs.properties.attributes.deskripsi) {
                             descnew = descnew + `Pengubahan Deskripsi Item`
                         }
-                        else if (doclogs.properties.attributes.list_parts.length > doclogs.properties.old.list_parts.length) {
-                            if (doclogs.notes.split(" ")[1] === "Added") {
-                                const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.includes(docfil) === false)
-                                descnew = descnew + `Penambahan Item "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id)).map(docmap => docmap.inventory_name).join(", ")}" menjadi Item Part`
-                            }
-                            if (doclogs.notes.split(" ")[1] === "Removed") {
-                                const listpartsnew = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
-                                // descnew = descnew + `Pengeluaran Item Part "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
-                                descnew = descnew + `Pengeluaran Item Part`
-                            }
-                            if (doclogs.notes.split(" ")[1] === "Replaced") {
-                                // const listpartsold = doclogs.properties.old.list_parts.filter(docfil => doclogs.properties.attributes.list_parts.includes(docfil) === false)
-                                const listpartsnew = doclogs.properties.attributes.list_parts.filter(docfil => doclogs.properties.old.list_parts.includes(docfil) === false)
-                                // descnew = descnew + `Pergantian Item Part "${maindata.inventory_parts.filter(docfil => listpartsold.includes(docfil.id))[0].inventory_name}" menjadi Item Part "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
-                                descnew = descnew + `Pergantian Item Part menjadi "${maindata.inventory_parts.filter(docfil => listpartsnew.includes(docfil.id))[0].inventory_name}"`
-                            }
+                        else if (doclogs.properties.attributes.list_parts?.length > doclogs.properties.old.list_parts?.length) {
+                            const listpartsnew = doclogs.properties.attributes.list_parts?.filter(docfil => doclogs.properties.old.list_parts?.map(part => part.id).includes(docfil.id) === false)
+                            descnew = descnew + `Penambahan Item "${listpartsnew?.map(part => part.mig_id).join(", ")}" menjadi Item Part`
+                        }
+                        else if (doclogs.properties.attributes.list_parts?.length < doclogs.properties.old.list_parts?.length) {
+                            const listpartsold = doclogs.properties.old.list_parts?.filter(docfil => doclogs.properties.attributes.list_parts?.map(part => part.id).includes(docfil.id) === false)
+                            descnew = descnew + `Pengeluaran Item Part "${listpartsold?.map(part => part.mig_id).join(", ")}"`
+                        }
+                        else if (doclogs.properties.attributes.list_parts?.length === doclogs.properties.old.list_parts?.length) {
+                            const listpartsnew = doclogs.properties.attributes.list_parts?.filter(docfil => doclogs.properties.old.list_parts?.map(part => part.id).includes(docfil.id) === false)
+                            const listpartsold = doclogs.properties.old.list_parts?.filter(docfil => doclogs.properties.attributes.list_parts?.map(part => part.id).includes(docfil.id) === false)
+                            descnew = descnew + `Pergantian Item Part "${listpartsold?.map(part => part.mig_id).join(", ")}" menjadi "${listpartsnew?.map(part => part.mig_id).join(", ")}"`
                         }
                         else {
                             var prpts = []
@@ -2124,31 +2117,6 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                 setmodels(res2.data)
             })
     }, [])
-    // useEffect(() => {
-    //     fetch(`https://boiling-thicket-46501.herokuapp.com/getAgentList`, {
-    //         method: `GET`,
-    //         headers: {
-    //             'Authorization': JSON.parse(initProps),
-    //             'Content-Type': 'application/json'
-    //         },
-    //     })
-    //         .then(res => res.json())
-    //         .then(res2 => {
-    //             setagents(res2.data)
-    //         })
-    // }, [])
-    // useEffect(() => {
-    //     fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
-    //         method: `GET`,
-    //         headers: {
-    //             'Authorization': JSON.parse(initProps),
-    //         },
-    //     })
-    //         .then(res => res.json())
-    //         .then(res2 => {
-    //             setrequesters(res2.data)
-    //         })
-    // }, [])
     useEffect(() => {
         if (changeusage.relationship_type_id !== "") {
             fetch(`https://boiling-thicket-46501.herokuapp.com/getChangeStatusUsageDetailList?id=${changeusage.relationship_type_id}`, {
@@ -2199,8 +2167,8 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                         <div className=" col-span-4 flex justify-between py-5 px-4 border-t border-b bg-white">
                             <div className="flex items-center">
                                 <div className="flex flex-col">
-                                    <p className=" text-gray-400 mb-0">MIG ID:</p>
-                                    <h1 className="font-semibold py-2 text-2xl mb-0 mr-20">{maindata.mig_id}</h1>
+                                    <p className=" text-gray-400 mb-0">Item:</p>
+                                    <h1 className="font-semibold py-2 text-2xl mb-0 mr-20">{maindata.mig_id} - {maindata.model_inventory.name}</h1>
                                 </div>
                                 {
                                     praloading ?
@@ -2272,7 +2240,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                             </div>
                             <div className="flex space-x-2 items-center">
                                 <Button style={{ marginRight: `1rem` }} onClick={() => { setmodalnotes(true) }} size="large">Tambah Notes</Button>
-                                <Button type="danger" size="large" onClick={() => { setmodaldelete(true); console.log(agents, requesters) }}>Hapus</Button>
+                                <Button type="danger" size="large" onClick={() => { setmodaldelete(true); }}>Hapus</Button>
                             </div>
                         </div>
                     </Sticky>
