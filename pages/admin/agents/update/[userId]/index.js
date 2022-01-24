@@ -14,8 +14,10 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
     const [instanceForm] = Form.useForm()
     const { Option } = Select
 
+    //loading upload image
     const [loadingfoto, setLoadingfoto] = useState(false)
-    const [data1, setData1] = useState({
+    //data payload
+    const [dataupdate, setdataupdate] = useState({
         id: Number(userid),
         fullname: "",
         phone_number: "",
@@ -23,23 +25,30 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
         role_ids: [],
         position: ""
     })
+    //data asal lokasi
     const [datacompanylist, setdatacompanylist] = useState([])
-    const [idrole, setidrole] = useState(0)
+    //data default roles
+    const [defaultroles, setdefaultroles] = useState(0)
+    //data breadcrumb
     const [patharr, setpatharr] = useState([])
+    //loading pre render
     const [preloading, setpreloading] = useState(true)
-    const [companyid, setcompanyid] = useState(0)
+    //data default asal lokasi
+    const [defaultcompany, setdefaultcompany] = useState(0)
+    //loading update button
     const [loadingupdate, setLoadingupdate] = useState(false)
-    const [dataraw1, setdataraw1] = useState({ data: [] })
+    //data roles
+    const [dataroles, setdataroles] = useState({ data: [] })
 
     const onChangeRole = (value) => {
-        setData1({
-            ...data1,
+        setdataupdate({
+            ...dataupdate,
             role_ids: value
         })
     }
     const onChangeEditAgents = (e) => {
-        setData1({
-            ...data1,
+        setdataupdate({
+            ...dataupdate,
             [e.target.name]: e.target.value
         })
     }
@@ -54,8 +63,8 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
             body: formdata
         })
         const datajson = await fetching.json()
-        setData1({
-            ...data1,
+        setdataupdate({
+            ...dataupdate,
             profile_image: datajson.secure_url
         })
         setLoadingfoto(false)
@@ -68,7 +77,7 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                 'Authorization': JSON.parse(tok),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data1)
+            body: JSON.stringify(dataupdate)
         })
             .then(res => res.json())
             .then(res2 => {
@@ -79,7 +88,7 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                         duration: 3
                     })
                     setTimeout(() => {
-                        rt.push(`/admin/agents/detail/${data1.id}`)
+                        rt.push(`/admin/agents/detail/${dataupdate.id}`)
                     }, 300)
                 }
                 else if (!res2.success) {
@@ -113,13 +122,13 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                     role_ids: res2.data.roles.map(docmap => docmap.id),
                     position: res2.data.position
                 }
-                setData1(temp)
-                setidrole(res2.data.roles.map(docmap => docmap.id))
+                setdataupdate(temp)
+                setdefaultroles(res2.data.roles.map(docmap => docmap.id))
                 var pathArr = rt.pathname.split("/").slice(1)
                 pathArr.splice(3, 1)
                 pathArr[pathArr.length - 1] = `Ubah Profil Agent - ` + res2.data.name
                 setpatharr(pathArr)
-                setcompanyid(res2.data.company_id)
+                setdefaultcompany(res2.data.company_id)
                 setpreloading(false)
             })
     }, [])
@@ -144,12 +153,12 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
         })
             .then(res => res.json())
             .then(res2 => {
-                setdataraw1(res2)
+                setdataroles(res2)
             })
     }, [])
 
     return (
-        <Layout tok={tok} dataProfile={dataProfile} pathArr={patharr} sidemenu={sidemenu} dataDetailAccount={data1} st={st}>
+        <Layout tok={tok} dataProfile={dataProfile} pathArr={patharr} sidemenu={sidemenu} dataDetailAccount={dataupdate} st={st}>
             <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
                 <div className="col-span-1 md:col-span-4">
                     <Sticky containerSelectorFocus="#formAgentsWrapper">
@@ -167,11 +176,11 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                 <div className=" col-span-1 md:col-span-3 flex flex-col" id="formAgentsWrapper">
                     <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-5">
                         <div className="border-b border-black p-4 font-semibold mb-5 flex">
-                            <div className=" mr-3 md:mr-5 pt-1">Ubah Profil Agent - {data1.fullname}</div>
+                            <div className=" mr-3 md:mr-5 pt-1">Ubah Profil Agent - {dataupdate.fullname}</div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4">
                             <div className="p-3 col-span-1 md:col-span-1 flex flex-col items-center">
-                                <img src={data1.profile_image} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
+                                <img src={dataupdate.profile_image} alt="imageProfile" className=" object-cover w-32 h-32 rounded-full mb-4" />
                                 {
                                     <label className="custom-file-upload py-2 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3">
                                         <input type="file" style={{ display: `none` }} name="profile_image" onChange={onChangeEditFoto} />
@@ -185,7 +194,7 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                                     null
                                     :
                                     <div className="p-3 col-span-1 md:col-span-3">
-                                        <Form layout="vertical" initialValues={data1} form={instanceForm} onFinish={handleSubmitEditAccount}>
+                                        <Form layout="vertical" initialValues={dataupdate} form={instanceForm} onFinish={handleSubmitEditAccount}>
                                             <div className="flex flex-col mb-5">
                                                 <div className="flex mb-2">
                                                     <span className="asal"></span>
@@ -204,7 +213,7 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                                                     treeData={datacompanylist}
                                                     placeholder="Pilih Asal Lokasi"
                                                     treeDefaultExpandAll
-                                                    defaultValue={companyid}
+                                                    defaultValue={defaultcompany}
                                                     disabled
                                                 />
                                             </div>
@@ -217,7 +226,7 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                                                     },
                                                 ]}>
                                                 {
-                                                    <Input defaultValue={data1.fullname} onChange={onChangeEditAgents} name="fullname" />
+                                                    <Input defaultValue={dataupdate.fullname} onChange={onChangeEditAgents} name="fullname" />
                                                 }
                                             </Form.Item>
                                             <Form.Item label="Email" required name="email"
@@ -231,7 +240,7 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                                                         message: 'Email belum diisi dengan benar'
                                                     }
                                                 ]}>
-                                                <Input disabled value={data1.email} name={`email`} onChange={onChangeEditAgents} />
+                                                <Input disabled value={dataupdate.email} name={`email`} onChange={onChangeEditAgents} />
                                             </Form.Item>
                                             <Form.Item label="Posisi" required name="position"
                                                 rules={[
@@ -240,7 +249,7 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                                                         message: 'Posisi wajib diisi',
                                                     },
                                                 ]}>
-                                                <Input value={data1.position} name={`position`} onChange={onChangeEditAgents} />
+                                                <Input value={dataupdate.position} name={`position`} onChange={onChangeEditAgents} />
                                             </Form.Item>
                                             <Form.Item label="No. Handphone" required name="phone_number"
                                                 rules={[
@@ -254,14 +263,14 @@ function AgentUpdate({ initProps, dataProfile, dataDetailRequester, dataRoles, s
                                                     },
                                                 ]}>
                                                 {
-                                                    <Input defaultValue={data1.phone_number} onChange={onChangeEditAgents} name="phone_number" />
+                                                    <Input defaultValue={dataupdate.phone_number} onChange={onChangeEditAgents} name="phone_number" />
                                                 }
                                             </Form.Item>
                                             <h1 className="text-sm">Role:</h1>
                                             {
-                                                <Select mode="multiple" placeholder="Pilih Role" onChange={(value) => { onChangeRole(value) }} defaultValue={idrole} style={{ width: `100%` }}>
+                                                <Select mode="multiple" placeholder="Pilih Role" onChange={(value) => { onChangeRole(value) }} defaultValue={defaultroles} style={{ width: `100%` }}>
                                                     {
-                                                        dataraw1.data.map((doc, idx) => {
+                                                        dataroles.data.map((doc, idx) => {
                                                             return (
                                                                 <Option key={idx} value={doc.id}>{doc.name}</Option>
                                                             )

@@ -32,14 +32,13 @@ const Overview = ({ itemid, initProps, maindata, manuf, vendor, praloading }) =>
                     <Spin />
                     :
                     <div className="mb-8 mx-5 p-5 w-9/12 border shadow-md rounded-md flex flex-col">
-                        <div className="flex flex-col mb-5">
+                        {/* <div className="flex flex-col mb-5">
                             <h1 className=" text-sm font-semibold mb-0">Nama Item:</h1>
                             <p className="mb-0 text-sm">{maindata.mig_id} - {maindata.model_inventory.name}</p>
-                        </div>
+                        </div> */}
                         <div className="flex flex-col mb-5">
                             <h1 className=" text-sm font-semibold mb-0">Model:</h1>
                             {
-                                // invrelations.models.filter(docfil => docfil.id === maindata.model_id)[0].deleted_at !== null
                                 maindata.model_inventory.deleted_at !== null
                                     ?
                                     <div className="flex items-center">
@@ -849,7 +848,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
             key: 'relationship_name',
         },
         {
-            title: 'Nama Item',
+            title: 'Nama',
             dataIndex: 'connected_detail_name',
             key: 'connected_detail_name',
         },
@@ -1034,6 +1033,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                     dataApiadd.type_id === -1 && setdetailtipedataadd(res2.data)
                     dataApiadd.type_id === -2 && setdetailtipedataadd(res2.data)
                     dataApiadd.type_id === -4 && setdetailtipedataadd(res2.data.data)
+                    console.log()
                 })
         }
     }, [detailtipeadd, subloctrig])
@@ -1189,6 +1189,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                             setdataApiadd({ ...dataApiadd, type_id: value })
                             dataApiadd.relationship_id === null || value === null ? setdisabledadd(true) : setdisabledadd(false)
                             setdetailtipeadd(value)
+                            dataApiadd.type_id === -3 ? (setsubloctrig(-1), setsublocdata(null)) : null
                         }}>
                             <Select.Option value={-1}>Agent</Select.Option>
                             <Select.Option value={-2}>Requester</Select.Option>
@@ -1211,7 +1212,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                                     dataApiadd.type_id === -1 &&
                                     <div className="flex flex-col mb-3">
                                         <p className="mb-0">Detail Tipe</p>
-                                        <Select value={dataApiadd.connected_ids} mode="multiple" showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
+                                        <Select mode="multiple" showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
                                             setfetchingmodel(true)
                                             fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&name=${value !== "" ? value : ""}`, {
                                                 method: `GET`,
@@ -1243,7 +1244,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                                     dataApiadd.type_id === -2 &&
                                     <div className="flex flex-col mb-3">
                                         <p className="mb-0">Detail Tipe</p>
-                                        <Select value={dataApiadd.connected_ids} mode="multiple" showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
+                                        <Select mode="multiple" showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
                                             setfetchingmodel(true)
                                             fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&name=${value !== "" ? value : ""}`, {
                                                 method: `GET`,
@@ -1275,7 +1276,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                                     dataApiadd.type_id === -3 &&
                                     <div className="flex flex-col mb-3">
                                         <p className="mb-0">Detail Tipe</p>
-                                        <TreeSelect value={dataApiadd.backup_connected_ids === null ? null : dataApiadd.backup_connected_ids[0]} treeDefaultExpandedKeys={[1]} treeData={detailtipedataadd} onChange={(value, label, extra) => {
+                                        <TreeSelect defaultValue={dataApiadd.backup_connected_ids === null ? null : dataApiadd.backup_connected_ids[0]} treeDefaultExpandedKeys={[1]} treeData={detailtipedataadd} onChange={(value, label, extra) => {
                                             setdataApiadd({ ...dataApiadd, connected_ids: [value], backup_connected_ids: [value] })
                                             setsubloctrig(value)
                                         }}></TreeSelect>
@@ -1285,7 +1286,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                                     dataApiadd.type_id === -4 &&
                                     <div className="flex flex-col mb-3">
                                         <p className="mb-0">Detail Tipe</p>
-                                        <Select placeholder="Cari dengan Model ID" value={dataApiadd.connected_ids} mode="multiple" showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
+                                        <Select placeholder="Cari dengan Model ID" mode="multiple" showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
                                             setfetchingmodel(true)
                                             fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&model_id=${value !== "" ? value : ""}`, {
                                                 method: `GET`,
@@ -1360,30 +1361,30 @@ const Association = ({ initProps, itemid, maindata, praloading }) => {
                                 {
                                     maindata.associations.map((doc, idx) => {
                                         return (
-                                            <div className="rounded-md shadow-md py-4 px-5 border mb-4 flex justify-between w-10/12 cursor-pointer" onClick={() => { rt.push(`/tickets/detail/${doc.ticket.id}?active=detailItem`) }}>
+                                            <div className="rounded-md shadow-md py-4 px-5 border mb-4 flex justify-between w-10/12 cursor-pointer" onClick={() => { rt.push(`/tickets/detail/${doc.ticket?.id}?active=detailItem`) }}>
                                                 <div className="flex flex-col">
                                                     <p className="mb-0 font-semibold">Ticket Number</p>
-                                                    <p className="mb-0">#{doc.ticket.type.code} - {doc.id}</p>
+                                                    <p className="mb-0">#{doc.ticket?.type.code} - {doc.id}</p>
                                                 </div>
                                                 {
-                                                    doc.ticket.status.id === 1 &&
-                                                    <div className="rounded-md flex items-center px-2 text-center bg-red-100 border border-red-200 text-red-600">Status: {doc.ticket.status.name}</div>
+                                                    doc.ticket?.status.id === 1 &&
+                                                    <div className="rounded-md flex items-center px-2 text-center bg-red-100 border border-red-200 text-red-600">Status: {doc.ticket?.status.name}</div>
                                                 }
                                                 {
-                                                    doc.ticket.status.id === 2 &&
-                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.ticket.status.name}</div>
+                                                    doc.ticket?.status.id === 2 &&
+                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.ticket?.status.name}</div>
                                                 }
                                                 {
-                                                    doc.ticket.status.id === 3 &&
-                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.ticket.status.name}</div>
+                                                    doc.ticket?.status.id === 3 &&
+                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.ticket?.status.name}</div>
                                                 }
                                                 {
-                                                    doc.ticket.status.id === 4 &&
-                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.ticket.status.name}</div>
+                                                    doc.ticket?.status.id === 4 &&
+                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.ticket?.status.name}</div>
                                                 }
                                                 {
-                                                    doc.ticket.status.id === 5 &&
-                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.ticket.status.name}</div>
+                                                    doc.ticket?.status.id === 5 &&
+                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.ticket?.status.name}</div>
                                                 }
                                             </div>
                                         )

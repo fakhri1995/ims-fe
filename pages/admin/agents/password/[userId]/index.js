@@ -17,12 +17,16 @@ function AgentPassword({ initProps, dataProfile, sidemenu, userid }) {
     const [instanceForm] = Form.useForm()
 
     //useState
+    //data payload
     const [datapass, setdatapass] = useState({
         id: Number(userid),
         new_password: ''
     })
+    //loading ubah password button
     const [loadingubahpass, setloadingubahpass] = useState(false)
+    //data password confirm
     const [konfirmpass, setkonfirmpass] = useState('')
+    //loading pra render
     const [praloading, setpraloading] = useState(false)
 
     //handlePasswordUbahButton

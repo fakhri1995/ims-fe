@@ -20,6 +20,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
     if (is_enabled) {
         is_enabled1 = is_enabled
     }
+    //data payload
     const [rawdata, setrawdata] = useState({
         current_page: "",
         data: [],
@@ -34,11 +35,17 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         to: null,
         total: null
     })
+    //data lokasi
     const [datalokasi, setdatalokasi] = useState([])
+    //loading pre render
     const [datarawloading, setdatarawloading] = useState(false)
+    //loading pre render
     const [praloading, setpraloading] = useState(true)
-    const [dataKK, setDataSource] = useState([]);
+    //data agents
+    const [dataagents, setdataagents] = useState([]);
+    //state row table
     const [rowstate, setrowstate] = useState(0)
+    //FILTER
     const [namasearchact, setnamasearchact] = useState(name1 === "" ? false : true)
     const [asallokasifilteract, setasallokasifilteract] = useState(location_id1 === "" ? false : true)
     const [statusfilteract, setstatusfilteract] = useState(is_enabled1 === "" ? false : true)
@@ -177,7 +184,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                         })
                     })
                 }
-                setDataSource(dataDD)
+                setdataagents(dataDD)
                 setpraloading(false)
             })
     }, [])
@@ -261,7 +268,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                                         </div>
                                         <div className="w-2/12">
                                             <Button type="primary" style={{ width: `100%` }} onClick={onFinalClick}><SearchOutlined /></Button>
-                                            {/* <Button style={{ width: `40%` }} onClick={() => { setDataSource(dataraw) }}>Reset</Button> */}
+                                            {/* <Button style={{ width: `40%` }} onClick={() => { setdataagents(dataraw) }}>Reset</Button> */}
                                         </div>
                                     </div>
                             }
@@ -281,11 +288,11 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                                                 ...doc,
                                                 profile_image: doc.profile_image === "-" || doc.profile_image === "" ? `/default-users.jpeg` : doc.profile_image,
                                             }))
-                                            setDataSource(temppagination)
+                                            setdataagents(temppagination)
                                             setpraloading(false)
                                         })
                                 }
-                            }} scroll={{ x: 200 }} dataSource={dataKK} columns={columnsDD} loading={praloading}
+                            }} scroll={{ x: 200 }} dataSource={dataagents} columns={columnsDD} loading={praloading}
                                 onRow={(record, rowIndex) => {
                                     return {
                                         onMouseOver: (event) => {

@@ -283,7 +283,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                     pic_contact: res2.data.ticketable.pic_contact,
                     location_id: res2.data.ticketable.location_id,
                     problem: res2.data.ticketable.problem,
-                    incident_time: res2.data.ticketable.incident_time === null ? null : moment(res2.data.ticketable.incident_time).locale('id').format(),
+                    incident_time: res2.data.ticketable.original_incident_time === null ? null : moment(res2.data.ticketable.original_incident_time).locale('id').format(),
                     files: res2.data.ticketable.files,
                     description: res2.data.ticketable.description
                 })

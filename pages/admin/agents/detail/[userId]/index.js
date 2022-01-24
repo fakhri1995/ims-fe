@@ -107,6 +107,8 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
     const tok = initProps
     const { TabPane } = Tabs
 
+    //STATE
+    //data payload
     const [data1, setData1] = useState({
         id: "",
         name: "",
@@ -115,18 +117,29 @@ function AgentDetail({ initProps, dataProfile, dataDetailRequester, userid, side
         profile_image: `/default-users.jpeg`,
         position: ""
     })
+    //data email
     const [dataemail, setdataemail] = useState("")
+    //data roles
     const [namarolearr, setnamarolearr] = useState([])
     const [patharr, setpatharr] = useState([])
+    //custom breadcrumb
     const [isenabled, setisenabled] = useState(false)
+    //nama asal lokasi
     const [origincomp, setorigincomp] = useState("")
     const [ubahstatus, setubahstatus] = useState(false)
+    //modal to non aktif
     const [visible, setVisible] = useState(false)
+    //modal to aktif
     const [visiblenon, setVisiblenon] = useState(false)
+    //modal hapus
     const [visiblehapus, setvisiblehapus] = useState(false)
+    //loading hapus
     const [loadinghapus, setloadinghapus] = useState(false)
+    //loading to non aktif
     const [loadingubahaktif, setloadingubahaktif] = useState(false)
+    //loading to aktif
     const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false)
+    //loading pra render
     const [praloading, setpraloading] = useState(true)
 
     const handleActivationRequesters = (status) => {

@@ -31,6 +31,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
     }
 
     //useState
+    //data payload
     const [newdata, setnewdata] = useState({
         name: "",
         parent: idparent !== "" ? Number(idparent) : null,
@@ -38,14 +39,18 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
         required_sn: false,
         asset_columns: []
     })
+    //data induk asset type
     const [assetdata, setassetdata] = useState([])
+    //state field dinamis
     const [fielddata, setfielddata] = useState([])
+    //state current field dinamis
     const [currentfield, setcurrentfield] = useState({
         name: "",
         data_type: "",
         default: "",
         required: false
     })
+    //state is field added
     const [addedfield, setaddedfield] = useState([])
     const [selectedfieldidx, setselectedfieldidx] = useState(-1)
     const [selectedfieldidxtrigger, setselectedfieldidxtrigger] = useState(false)

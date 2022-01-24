@@ -386,7 +386,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                         </div>
                     </Sticky>
                 </div>
-                <div className="col-span-1 md:col-span-3 mb-8 pt-5">
+                <div className="col-span-1 md:col-span-4 mb-8 pt-5">
                     <Overview assettypeid={assettypeid} initProps={initProps} displaydata={displaydata} parentcode={parentcode} praloading={praloading} idparent={parentid} />
                 </div>
             </div>

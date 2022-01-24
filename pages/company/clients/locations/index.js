@@ -9,7 +9,7 @@ import { H1, H2, Label } from '../../../../components/typography'
 import { SortingIconSvg, LocationIconSvg, ExternalLinkIconSvg, PhoneIconSvg, EmailIconSvg } from '../../../../components/icon'
 import { DownOutlined } from '@ant-design/icons'
 import moment from 'moment'
-import { DrawerLokasi, DrawerLokasiClient } from '../../../../components/drawer/drawerCustom'
+import DrawerLokasiClient from '../../../../components/drawer/companies/clients/drawerClientCompanyLokasiCreate'
 import { Chart, ArcElement, Tooltip } from 'chart.js'
 Chart.register(ArcElement, Tooltip);
 import { Pie } from 'react-chartjs-2';

@@ -13,11 +13,14 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
     const rt = useRouter()
     const { originPath } = rt.query
     const tok = initProps
+    //Breadcrumb
     var pathArr = rt.pathname.split("/").slice(1)
     pathArr[pathArr.length - 1] = "Create"
+    //init Form instance
     const [instanceForm] = Form.useForm();
 
     //useState
+    //data payload
     const [newuser, setNewuser] = useState({
         fullname: '',
         email: '',
@@ -29,14 +32,19 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
         confirm_password: "",
         position: ""
     })
+    //is loading upload image
     const [loadingupload, setLoadingupload] = useState(false)
+    //is loading upddate
     const [loadingsave, setLoadingsave] = useState(false)
+    //data companies
     const [datacompanylist, setdatacompanylist] = useState([])
-    const [dataraw1, setdataraw1] = useState([])
+    //data roles
+    const [dataroles, setdataroles] = useState([])
+    //is pra rendered loading
     const [praloading, setpraloading] = useState(true)
 
 
-    //handleCreateButton
+    //handle CreateAgent
     const handleCreateAgents = () => {
         setLoadingsave(true)
         fetch(`https://boiling-thicket-46501.herokuapp.com/addAgentMember`, {
@@ -68,6 +76,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
             })
         console.log("isi new user: " + newuser.profile_image)
     }
+    //on change create agent
     const onChangeCreateAgents = (e) => {
         var val = e.target.value
         if (e.target.name === "role") {
@@ -78,7 +87,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
             [e.target.name]: val
         })
     }
-
+    //handle before upload
     const beforeUploadProfileImage = (file) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
         if (!isJpgOrPng) {
@@ -121,6 +130,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
     );
 
     //useEffect
+    //get Asal Lokasi
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
             method: `GET`,
@@ -134,6 +144,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                 setpraloading(false)
             })
     }, [])
+    //data Roles
     useEffect(() => {
         fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
             method: `GET`,
@@ -143,7 +154,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
         })
             .then(res => res.json())
             .then(res2 => {
-                setdataraw1(res2.data)
+                setdataroles(res2.data)
             })
     }, [])
 
@@ -277,7 +288,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                                     <Form.Item label="Role" name="role">
                                         <Select mode="multiple" onChange={(value) => { setNewuser({ ...newuser, role_ids: value }) }} /*defaultValue={idrole}*/ style={{ width: `100%` }}>
                                             {
-                                                dataraw1.map((doc, idx) => {
+                                                dataroles.map((doc, idx) => {
                                                     return (
                                                         <Select.Option key={doc.id} value={doc.id}>{doc.name}</Select.Option>
                                                     )
