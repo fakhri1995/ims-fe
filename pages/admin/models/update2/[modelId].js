@@ -135,6 +135,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
         description: "",
         manufacturer_id: null,
         required_sn: false,
+        is_consumable: false,
         model_columns: [],
         model_parts: [],
         add_columns: [],
@@ -150,6 +151,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
         description: "",
         manufacturer_id: "",
         required_sn: false,
+        is_consumable: false,
         model_columns: [],
         model_parts: [],
         add_columns: [],
@@ -564,6 +566,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                         description: "",
                         manufacturer_id: "",
                         required_sn: false,
+                        is_consumable: false,
                         model_columns: [],
                         model_parts: []
                     })
@@ -1151,8 +1154,11 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                                     <Form.Item name="description" label="Deskripsi">
                                         <Input.TextArea rows={4} name="description" onChange={(e) => { setnewdata({ ...newdata, description: e.target.value }) }} />
                                     </Form.Item>
-                                    <div className="flex">
+                                    <div className="flex mb-5">
                                         <Checkbox style={{ marginRight: `0.5rem` }} onChange={(e) => { setnewdata({ ...newdata, required_sn: e.target.checked }) }} checked={newdata.required_sn} /> Serial Number wajib ada
+                                    </div>
+                                    <div className="flex">
+                                        <Checkbox style={{ marginRight: `0.5rem` }} onChange={(e) => { setnewdata({ ...newdata, is_consumable: e.target.checked }) }} checked={newdata.is_consumable} /> Model Consumable dengan satuan jumlah
                                     </div>
                                 </Form>
                         }
@@ -1953,6 +1959,8 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                         <Button type="dashed" disabled={disabledaddfield} style={{ width: `80%`, height: `4rem` }} onClick={onClickAddField}>+ Tambah Spesifikasi Model</Button>
                     </div>
                 </div>
+                {
+                    newdata.is_consumable === false &&
                 <div className=" mb-8 col-span-1 md:col-span-4 px-5 flex flex-col">
                     <div className="mb-5">
                         <h1 className="font-bold text-xl">Konfigurasi Part Model</h1>
@@ -2267,6 +2275,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                         }}>+ Tambah Part Model</Button>
                     </div>
                 </div>
+                }
             </div>
             <Modal
                 title={

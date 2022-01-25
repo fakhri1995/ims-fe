@@ -133,6 +133,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
         description: "",
         manufacturer_id: null,
         required_sn: false,
+        is_consumable: false,
         model_columns: [],
         model_parts: []
     })
@@ -142,6 +143,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
         description: "",
         manufacturer_id: "",
         required_sn: false,
+        is_consumable: false,
         model_columns: [],
         model_parts: []
     })
@@ -825,8 +827,11 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                     <Form.Item name="description" label="Deskripsi">
                                         <Input.TextArea rows={4} name="description" onChange={(e) => { setnewdata({ ...newdata, description: e.target.value }) }} />
                                     </Form.Item>
-                                    <div className="flex">
+                                    <div className="flex mb-5">
                                         <Checkbox style={{ marginRight: `0.5rem` }} onChange={(e) => { setnewdata({ ...newdata, required_sn: e.target.checked }) }} checked={newdata.required_sn} /> Serial Number wajib ada
+                                    </div>
+                                    <div className="flex">
+                                        <Checkbox style={{ marginRight: `0.5rem` }} onChange={(e) => { setnewdata({ ...newdata, is_consumable: e.target.checked }) }} checked={newdata.is_consumable} /> Model Consumable dengan satuan jumlah
                                     </div>
                                 </Form>
                         }
@@ -836,145 +841,6 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                     <div className="mb-5">
                         <h1 className="font-bold text-xl">Spesifikasi Model</h1>
                     </div>
-                    {/* {
-                        loadingspec ?
-                            <Spin />
-                            :
-                            <>
-                                {
-                                    fielddata.map((doc, idx) => {
-                                        return (
-                                            <div key={idx} className="shadow-md border p-8 mx-3 md:mx-8 mb-5 flex flex-col rounded-md">
-                                                <div className="font-semibold mb-2">
-                                                    {doc.name}
-                                                    {fielddata[idx].required ? <span className="judulField"></span> : null} <span className="text-gray-400 text-sm">({doc.data_type === "single" ? "Single Textbox" : doc.data_type.charAt(0).toUpperCase() + doc.data_type.slice(1)})</span>
-                                                </div>
-                                                <div className='w-full'>
-                                                    {
-                                                        doc.data_type.toLowerCase() === "dropdown" &&
-                                                        <div className="flex flex-col">
-                                                            <h1>Default hanya dipilih 1 (satu) dari beberapa opsi dibawah ini</h1>
-                                                            {
-                                                                doc.default.opsi.map((docc, idxx) => (
-                                                                    <div className="flex mb-3">
-                                                                        <div className=" w-7 flex justify-center mr-5">
-                                                                            <Checkbox onChange={(e) => {
-                                                                                if (e.target.checked === true) {
-                                                                                    setfielddata(prev => {
-                                                                                        var temp = prev
-                                                                                        temp[idx]["default"]["default"] = idxx
-                                                                                        return temp
-                                                                                    })
-                                                                                }
-                                                                            }} />
-                                                                        </div>
-                                                                        <div className="w-10/12 mr-5">
-                                                                            <Input style={{ marginRight: `0.5rem` }} defaultValue={docc} placeholder={`Masukkan opsi ke-${idxx + 1}`} disabled />
-                                                                        </div>
-                                                                    </div>
-                                                                ))
-                                                            }
-                                                        </div>
-                                                    }
-                                                    {
-                                                        doc.data_type.toLowerCase() === 'number' &&
-                                                        <InputNumber style={{ width: `30%` }} placeholder={`Masukkan default ${doc.name}`} onChange={(value) => {
-                                                            setfielddata(prev => {
-                                                                const temp = prev
-                                                                temp[idx]["default"] = `${value}`
-                                                                return temp
-                                                            })
-                                                            setconcatfieldtrigger(prev => !prev)
-                                                        }}></InputNumber>
-                                                    }
-                                                    {
-                                                        doc.data_type.toLowerCase() === "paragraph" &&
-                                                        <Input.TextArea rows={4} placeholder={`Masukkan default ${doc.name}`} onChange={(e) => {
-                                                            setfielddata(prev => {
-                                                                const temp = prev
-                                                                temp[idx]["default"] = e.target.value
-                                                                return temp
-                                                            })
-                                                            setconcatfieldtrigger(prev => !prev)
-                                                        }}></Input.TextArea>
-                                                    }
-                                                    {
-                                                        doc.data_type.toLowerCase() === "checkbox" &&
-                                                        <div className="flex flex-col">
-                                                            <h1>Default dapat dipilih lebih dari 1 (satu) opsi dibawah ini</h1>
-                                                            {
-                                                                doc.default.opsi.map((docc, idxx) => (
-                                                                    <div className="flex mb-3">
-                                                                        <Checkbox style={{ marginRight: `0.5rem` }} onChange={(e) => {
-                                                                            if (e.target.checked === true) {
-                                                                                setfielddata(prev => {
-                                                                                    var temp = prev
-                                                                                    temp[idx]["default"]["default"].push(idxx)
-                                                                                    return temp
-                                                                                })
-                                                                            }
-                                                                            else {
-                                                                                setfielddata(prev => {
-                                                                                    var temp = prev
-                                                                                    const index = temp[idx]['default']['default'].indexOf(idxx)
-                                                                                    temp[idx]['default']['default'].splice(index, 1)
-                                                                                    return temp
-                                                                                })
-                                                                            }
-                                                                        }} /> {docc}
-                                                                    </div>
-                                                                ))
-                                                            }
-                                                        </div>
-                                                    }
-                                                    {
-                                                        (doc.data_type.toLowerCase() === "string") &&
-                                                        <Input placeholder={`Masukkan default ${doc.name}`} onChange={(e) => {
-                                                            setfielddata(prev => {
-                                                                const temp = prev
-                                                                temp[idx]["default"] = e.target.value
-                                                                return temp
-                                                            })
-                                                            setconcatfieldtrigger(prev => !prev)
-                                                        }}></Input>
-                                                    }
-                                                    {
-                                                        (doc.data_type.toLowerCase() === "single") &&
-                                                        <Input placeholder={`Masukkan default ${doc.name}`} onChange={(e) => {
-                                                            setfielddata(prev => {
-                                                                const temp = prev
-                                                                temp[idx]["default"] = e.target.value
-                                                                return temp
-                                                            })
-                                                            setconcatfieldtrigger(prev => !prev)
-                                                        }}></Input>
-                                                    }
-                                                    {
-                                                        doc.data_type.toLowerCase() === "date" &&
-                                                        <DatePicker placeholder={`Masukkan default ${doc.name}`} onChange={(value, dateString) => {
-                                                            setfielddata(prev => {
-                                                                const temp = prev
-                                                                temp[idx]["default"] = dateString
-                                                                return temp
-                                                            })
-                                                            setconcatfieldtrigger(prev => !prev)
-                                                        }}></DatePicker>
-                                                    }
-                                                </div>
-                                                <style jsx>
-                                                    {`
-                                                        .judulField::before{
-                                                            content: '*';
-                                                            color: red;
-                                                        }
-                                                    `}
-                                                </style>
-                                            </div>
-                                        )
-                                    })
-                                }
-                            </>
-                    } */}
                     {
                         loadingspec ?
                             <Spin />
@@ -1722,6 +1588,8 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                         <Button type="dashed" disabled={disabledaddfield} style={{ width: `80%`, height: `4rem` }} onClick={onClickAddField}>+ Tambah Spesifikasi Model</Button>
                     </div>
                 </div>
+                {
+                    newdata.is_consumable === false &&
                 <div className=" mb-8 col-span-1 md:col-span-4 px-5 flex flex-col">
                     <div className="mb-5">
                         <h1 className="font-bold text-xl">Konfigurasi Part Model</h1>
@@ -1972,6 +1840,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                         }}>+ Tambah Part Model</Button>
                     </div>
                 </div>
+                }
             </div>
             <Modal
                 title={
@@ -2040,8 +1909,11 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                         <Form.Item name="description" label="Deskripsi">
                             <Input.TextArea rows={4} name="description" value={newdata2.description} onChange={(e) => { setnewdata2({ ...newdata2, description: e.target.value }) }} />
                         </Form.Item>
-                        <div className="flex">
+                        <div className="flex mb-5">
                             <Checkbox style={{ marginRight: `0.5rem` }} checked={newdata2.required_sn} onChange={(e) => { setnewdata2({ ...newdata2, required_sn: e.target.checked }) }} checked={newdata2.required_sn} /> Serial Number wajib ada
+                        </div>
+                        <div className="flex">
+                            <Checkbox style={{ marginRight: `0.5rem` }} onChange={(e) => { setnewdata2({ ...newdata2, is_consumable: e.target.checked }) }} checked={newdata2.is_consumable} /> Model Consumable dengan satuan jumlah
                         </div>
                     </Form>
                 </div>

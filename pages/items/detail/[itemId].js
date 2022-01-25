@@ -96,7 +96,14 @@ const Overview = ({ itemid, initProps, maindata, manuf, vendor, praloading }) =>
                         </div>
                         <div className="flex flex-col mb-5">
                             <h1 className=" text-sm font-semibold mb-0">Location:</h1>
-                            <p className="mb-0 text-sm">{maindata.location === null ? "-" : maindata.location_inventory.name}</p>
+                            {
+                                maindata.is_consumable === true ?
+                                    maindata.quantities.map((doc,idx)=>(
+                                        <p className="mb-0 text-sm">{idx+1}. {doc.name} - {doc.quantity}</p>
+                                    ))
+                                    :
+                                    <p className="mb-0 text-sm">{maindata.location === null ? "-" : maindata.location_inventory.name}</p>
+                            }
                         </div>
                         <div className="flex flex-col mb-5">
                             <h1 className=" text-sm font-semibold mb-0">Deskripsi:</h1>
@@ -1361,30 +1368,30 @@ const Association = ({ initProps, itemid, maindata, praloading }) => {
                                 {
                                     maindata.associations.map((doc, idx) => {
                                         return (
-                                            <div className="rounded-md shadow-md py-4 px-5 border mb-4 flex justify-between w-10/12 cursor-pointer" onClick={() => { rt.push(`/tickets/detail/${doc.ticket?.id}?active=detailItem`) }}>
+                                            <div className="rounded-md shadow-md py-4 px-5 border mb-4 flex justify-between w-10/12 cursor-pointer" onClick={() => { rt.push(`/tickets/detail/${doc.id}?active=detailItem`) }}>
                                                 <div className="flex flex-col">
                                                     <p className="mb-0 font-semibold">Ticket Number</p>
-                                                    <p className="mb-0">#{doc.ticket?.type.code} - {doc.id}</p>
+                                                    <p className="mb-0">{doc.ticket_name}</p>
                                                 </div>
                                                 {
-                                                    doc.ticket?.status.id === 1 &&
-                                                    <div className="rounded-md flex items-center px-2 text-center bg-red-100 border border-red-200 text-red-600">Status: {doc.ticket?.status.name}</div>
+                                                    doc.status === 1 &&
+                                                    <div className="rounded-md flex items-center px-2 text-center bg-red-100 border border-red-200 text-red-600">Status: {doc.status_name}</div>
                                                 }
                                                 {
-                                                    doc.ticket?.status.id === 2 &&
-                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.ticket?.status.name}</div>
+                                                    doc.status === 2 &&
+                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.status_name}</div>
                                                 }
                                                 {
-                                                    doc.ticket?.status.id === 3 &&
-                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.ticket?.status.name}</div>
+                                                    doc.status === 3 &&
+                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.status_name}</div>
                                                 }
                                                 {
-                                                    doc.ticket?.status.id === 4 &&
-                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.ticket?.status.name}</div>
+                                                    doc.status === 4 &&
+                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.status_name}</div>
                                                 }
                                                 {
-                                                    doc.ticket?.status.id === 5 &&
-                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.ticket?.status.name}</div>
+                                                    doc.status === 5 &&
+                                                    <div className="rounded-md flex items-center px-2 text-center bg-blue-100 border border-blue-200 text-blue-600">Status: {doc.status_name}</div>
                                                 }
                                             </div>
                                         )
@@ -1847,7 +1854,8 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
         },
         additional_attributes: [],
         inventory_parts: [],
-        associations: []
+        associations: [],
+        quantities:[]
     })
     const [invrelations, setinvrelations] = useState({
         models: [
@@ -2100,7 +2108,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                             name: res3.manufacturer_id === null || res3.manufacturer_id === 0 ? "-" : res2.data.manufacturers.filter(docfil => docfil.id === res3.manufacturer_id)[0].name,
                             isnull: del_manuf !== null ? false : true
                         })
-                        res3.vendor_id === null || res3.vendor_id === 0 ? setvendor("-") : setvendor(res2.data.vendors.filter(docfil => docfil.id === res3.vendor_id)[0].name)
+                        res3.vendor_id === null || res3.vendor_id === 0 ? setvendor("-") : setvendor(res2.data.vendors.filter(docfil => docfil.id === res3.vendor_id)[0]?.name)
                         setpraloading2(false)
                     })
             })

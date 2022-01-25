@@ -130,6 +130,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
         description: "",
         manufacturer_id: "",
         required_sn: false,
+        is_consumable: false,
         asset: {
             deleted_at: null
         },
@@ -209,7 +210,6 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                         t[prop] = res2.data[prop]
                     }
                 }
-                console.log(t)
                 setdisplaydata(t)
             })
     }, [])
@@ -372,11 +372,12 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                             </style>
                         </div>
                     </div>
+                    {
+                        displaydata.is_consumable === false &&
                     <div className="flex flex-col">
                         <div className="mb-4 px-5 py-3">
                             <h1 className="font-bold mb-0 text-xl">Konfigurasi Part Model</h1>
                         </div>
-                        {/* <div className="rounded-md border shadow-md flex flex-col w-full px-5 py-3"> */}
                         {
                             displaydata.model_parts.length === 0 ?
                                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
@@ -498,6 +499,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                         </style>
                         {/* </div> */}
                     </div>
+                    }
                 </div>
             </div>
             <Modal title={<h1 className="font-semibold">Konfirmasi Hapus Model</h1>}

@@ -23,6 +23,8 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
     const [updatedata, setupdatedata] = useState({
         id: Number(itemid),
         model_id: "",
+        quantity: null,
+        is_consumable: false,
         vendor_id: "",
         inventory_name: "",
         status_condition: "",
@@ -130,6 +132,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                         t[prop] = res2.data[prop]
                     }
                 }
+                console.log(t)
                 setdisabledfield(prev => {
                     if (t.additional_attributes.filter(doc => doc.required).every(docsome => docsome.value !== null || docsome.value !== "" || docsome.value !== "-" || docsome.value.default !== "-" || docsome.value.default.length !== 0)) {
                         return false
@@ -364,6 +367,12 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                                     <Form.Item name="deskripsi" label="Deskripsi">
                                         <Input.TextArea defaultValue={updatedata.deskripsi} rows={4} name="deskripsi" onChange={(e) => { setupdatedata({ ...updatedata, deskripsi: e.target.value }) }} />
                                     </Form.Item>
+                                    {
+                                        updatedata.is_consumable === true &&
+                                            <Form.Item name="quantity" label="Jumlah Barang">
+                                                <InputNumber style={{width:`100%`}} defaultValue={updatedata.quantity} rows={4} name="quantity" onChange={(value) => { setupdatedata({ ...updatedata, quantity: value }) }} />
+                                            </Form.Item>
+                                    }
                                 </Form>
                         }
                     </div>

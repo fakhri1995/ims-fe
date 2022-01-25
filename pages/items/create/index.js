@@ -32,6 +32,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
         is_exist: true,
         deskripsi: "",
         manufacturer_id: null,
+        is_consumable: false,
+        quantity: null,
         mig_id: "",
         notes: "",
         inventory_values: [],
@@ -955,6 +957,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                     })
                                                     temploc.inventory_parts = yo
                                                     temploc.manufacturer_id = res2.data.manufacturer_id
+                                                    temploc.is_consumable = res2.data.is_consumable
                                                     return temploc
                                                 })
                                                 setloadingspec(false)
@@ -1125,6 +1128,12 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                             <Form.Item name="deskripsi" label="Deskripsi">
                                 <Input.TextArea disabled={disabledfielditem} rows={4} name="deskripsi" onChange={(e) => { setnewdata({ ...newdata, deskripsi: e.target.value }) }} />
                             </Form.Item>
+                            {
+                                newdata.is_consumable === true &&
+                            <Form.Item name="quantity" label="Jumlah Barang">
+                                <InputNumber style={{width:`100%`}} disabled={disabledfielditem} rows={4} name="quantity" onChange={(value) => { setnewdata({ ...newdata, quantity: value }) }} />
+                            </Form.Item>
+                            }
                         </Form>
                     </div>
                 </div>
