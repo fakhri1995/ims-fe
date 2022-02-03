@@ -1,0 +1,10 @@
+{
+  "semi": true,
+  "jsxBracketSameLine": true,
+  "proseWrap": "never",
+  "embeddedLanguageFormatting": "off",
+  "tabWidth": 2,
+  "importOrder": [],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true
+}

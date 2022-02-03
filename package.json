@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start -p $PORT"
+    "start": "next start -p $PORT",
+    "format": "prettier --write \"{components,pages,styles}/**/*.{js,jsx,css}\""
   },
   "dependencies": {
     "@react-pdf/renderer": "^2.1.0",
@@ -40,5 +41,11 @@
   },
   "cacheDirectories": [
     ".next/cache"
-  ]
+  ],
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^3.1.1",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.3",
+    "prettier": "^2.5.1"
+  }
 }
