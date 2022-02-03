@@ -7,11 +7,11 @@
     "build": "next build",
     "build:analyze": "ANALYZE=true next build",
     "start": "next start -p $PORT",
-    "format": "prettier --write \"{components,pages,styles}/**/*.{js,jsx,css}\"",
+    "format": "prettier --write \"src/**/*.{js,jsx,css}\"",
     "prepare": "husky install"
   },
   "lint-staged": {
-    "./{components,pages,styles}/**/*.{js,jsx,css}": "prettier --write"
+    "src/**/*.{js,jsx,css}": "prettier --write"
   },
   "dependencies": {
     "@react-pdf/renderer": "^2.1.0",
