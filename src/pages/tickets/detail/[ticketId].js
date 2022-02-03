@@ -73,7 +73,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
     resolved_times: "",
     status: null,
     name: "",
-    creator: "",
+    creator_name: "",
     creator_location: "",
     raised_at: "",
     assignment_type: "",
@@ -515,7 +515,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                 <div className=" flex flex-col">
                   <div className=" flex flex-col mb-5">
                     <Label>Diajukan Oleh:</Label>
-                    <p className=" mb-0 text-gray-600">{displaydata.creator}</p>
+                    <p className=" mb-0 text-gray-600">{displaydata.creator_name}</p>
                   </div>
                   <div className=" flex flex-col mb-5">
                     <Label>Lokasi:</Label>
