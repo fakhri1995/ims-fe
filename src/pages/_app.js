@@ -5,8 +5,8 @@ import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import "react-datepicker/dist/react-datepicker.css";
 
-import "../components/index.css";
 import "../styles/globals.css";
+import "../styles/index.css";
 
 Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
