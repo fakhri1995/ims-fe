@@ -345,7 +345,9 @@ const DrawerTicketCreate = ({
                 value={datapayload.ticket_task_type_id}
               >
                 {datatasktickets.map((doc, idx) => (
-                  <Select.Option value={doc.id}>{doc.name}</Select.Option>
+                  <Select.Option value={doc.id}>
+                    {doc.name} - {doc.task_type_name}
+                  </Select.Option>
                 ))}
               </Select>
             </div>
