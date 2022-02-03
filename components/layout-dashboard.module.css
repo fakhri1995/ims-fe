@@ -10,24 +10,28 @@
   justify-content: flex-end;
 }
 
-  .siderLayout,
-  .trigger, .breadcrumbClients {
-    display: block;
-  }
+.siderLayout,
+.trigger,
+.breadcrumbClients {
+  display: block;
+}
 
-  .siderLayoutSmall,
-  .triggerSmall, .breadcrumbClientsSmall {
-    display: none;
-  }
+.siderLayoutSmall,
+.triggerSmall,
+.breadcrumbClientsSmall {
+  display: none;
+}
 
 @media only screen and (max-width: 540px) {
   .siderLayoutSmall,
-  .triggerSmall, .breadcrumbClientsSmall {
+  .triggerSmall,
+  .breadcrumbClientsSmall {
     display: block;
   }
 
   .siderLayout,
-  .trigger, .breadcrumbClients{
+  .trigger,
+  .breadcrumbClients {
     display: none;
   }
 }

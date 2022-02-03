@@ -1,97 +1,143 @@
-import { useState } from 'react'
-import { Input, Checkbox, Button, message } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { useRouter } from 'next/router'
-import jscookie from 'js-cookie'
-import httpcookie from 'cookie'
-import { Form, notification } from 'antd'
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { Button, Checkbox, Input, message } from "antd";
+import { Form, notification } from "antd";
+import httpcookie from "cookie";
+import jscookie from "js-cookie";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
 export default function Home({ initProps }) {
   // console.log("token di login abis dari logout: " + jscookie.get('token'))
-  const rt = useRouter()
+  const rt = useRouter();
   const [formdata, setFormdata] = useState({
-    email: '',
-    password: ''
-  })
-  const [alerterror, setAlerterror] = useState(false)
-  const [loadinglogin, setLoadinglogin] = useState(false)
+    email: "",
+    password: "",
+  });
+  const [alerterror, setAlerterror] = useState(false);
+  const [loadinglogin, setLoadinglogin] = useState(false);
   const onChangeLogin = (e) => {
     setFormdata({
       ...formdata,
-      [e.target.name]: e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
   const handleLogin = () => {
-    setLoadinglogin(true)
+    setLoadinglogin(true);
     fetch(`https://boiling-thicket-46501.herokuapp.com/login`, {
       method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       // body: new URLSearchParams(formdata)
-      body: JSON.stringify(formdata)
+      body: JSON.stringify(formdata),
     })
-      .then(res => res.json())
-      .then(res2 => {
-        setLoadinglogin(false)
+      .then((res) => res.json())
+      .then((res2) => {
+        setLoadinglogin(false);
         if (res2.data) {
-          notification['success']({
+          notification["success"]({
             message: "Selamat datang di MIGSYS",
-            duration: 3
-          })
+            duration: 3,
+          });
           // console.log("token: " + res2.data.token)
           var date = new Date();
-          date.setTime(date.getTime() + (3600 * 1000 * 24));
-          jscookie.set('token', JSON.stringify(res2.data.token), { expires: date })
+          date.setTime(date.getTime() + 3600 * 1000 * 24);
+          jscookie.set("token", JSON.stringify(res2.data.token), {
+            expires: date,
+          });
           // console.log("token di session: " + JSON.parse(jscookie.get('token')))
-          rt.push('/dashboard/home')
-        }
-        else if (!res2.success) {
+          rt.push("/dashboard/home");
+        } else if (!res2.success) {
           // console.log("masuk ke error login")
-          message.error({
-            content: res2.message.errorInfo.status_detail,
-            style: {
-              marginTop: `1rem`
-            }
-          }, 5)
-          setAlerterror(true)
+          message.error(
+            {
+              content: res2.message.errorInfo.status_detail,
+              style: {
+                marginTop: `1rem`,
+              },
+            },
+            5
+          );
+          setAlerterror(true);
         }
-      })
-  }
+      });
+  };
   return (
     <>
       {/* {
         spin1 ?
           <Spin size="large"> */}
-      <div className="container-xl bg-blue-600 h-screen" /*style={{background:`linear-gradient(#035ea3, #198e07)`}}*/>
+      <div
+        className="container-xl bg-blue-600 h-screen" /*style={{background:`linear-gradient(#035ea3, #198e07)`}}*/
+      >
         <div className="pt-20 relative" id="wrapper">
           <div className="mx-auto bg-white rounded-lg w-10/12 md:w-5/12 max-h-80 md:max-h-80 text-black shadow-lg px-3 md:px-5 pt-10 pb-1 text-center">
-            <h1 className="mb-5 font-mont text-xl font-semibold">LogIn MIGSYS v3</h1>
-            <Form name="email" className="loginForm" initialValues={{ remember: true }} onFinish={handleLogin}>
-              <Form.Item name="email" rules={[
-                {
-                  required: true,
-                  message: 'Please input your Email!',
-                },
-              ]}>
-                <Input prefix={<UserOutlined className="site-form-item-icon" />} name="email" value={formdata} placeholder="Email" onChange={onChangeLogin} />
+            <h1 className="mb-5 font-mont text-xl font-semibold">
+              LogIn MIGSYS v3
+            </h1>
+            <Form
+              name="email"
+              className="loginForm"
+              initialValues={{ remember: true }}
+              onFinish={handleLogin}
+            >
+              <Form.Item
+                name="email"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your Email!",
+                  },
+                ]}
+              >
+                <Input
+                  prefix={<UserOutlined className="site-form-item-icon" />}
+                  name="email"
+                  value={formdata}
+                  placeholder="Email"
+                  onChange={onChangeLogin}
+                />
               </Form.Item>
-              <Form.Item name="password" rules={[
-                {
-                  required: true,
-                  message: 'Password!',
-                },
-              ]} style={{ marginBottom: `3rem` }}>
-                <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} name="password" value={formdata} placeholder="Password" type="password" onChange={onChangeLogin} />
+              <Form.Item
+                name="password"
+                rules={[
+                  {
+                    required: true,
+                    message: "Password!",
+                  },
+                ]}
+                style={{ marginBottom: `3rem` }}
+              >
+                <Input.Password
+                  prefix={<LockOutlined className="site-form-item-icon" />}
+                  name="password"
+                  value={formdata}
+                  placeholder="Password"
+                  type="password"
+                  onChange={onChangeLogin}
+                />
               </Form.Item>
               <Form.Item style={{ justifyContent: `center` }}>
-                <Button type="primary" htmlType="submit" loading={loadinglogin} className="login-form-button" style={{ width: `100%` }}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={loadinglogin}
+                  className="login-form-button"
+                  style={{ width: `100%` }}
+                >
                   Log in
                 </Button>
               </Form.Item>
             </Form>
-            <div className=' flex justify-center items-center'>
-              <p className=' mb-5 text-primary hover:text-secondary cursor-pointer' onClick={() => { rt.push(`/requestForgetPassword`) }}>Lupa Password</p>
+            <div className=" flex justify-center items-center">
+              <p
+                className=" mb-5 text-primary hover:text-secondary cursor-pointer"
+                onClick={() => {
+                  rt.push(`/requestForgetPassword`);
+                }}
+              >
+                Lupa Password
+              </p>
             </div>
           </div>
         </div>
@@ -99,7 +145,7 @@ export default function Home({ initProps }) {
       {/* </Spin> */}
       {/* } */}
     </>
-  )
+  );
 }
 
 export async function getServerSideProps({ req, res }) {
@@ -112,9 +158,9 @@ export async function getServerSideProps({ req, res }) {
         return {
           redirect: {
             permanent: false,
-            destination: '/dashboard/home'
-          }
-        }
+            destination: "/dashboard/home",
+          },
+        };
       }
     }
     // if (typeof cookies === 'string') {
@@ -126,5 +172,5 @@ export async function getServerSideProps({ req, res }) {
     props: {
       initProps,
     },
-  }
+  };
 }

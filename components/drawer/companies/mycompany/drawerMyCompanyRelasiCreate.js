@@ -1,188 +1,278 @@
-import React, { useState, useEffect } from 'react'
-import DrawerCore from '../../drawerCore'
-import { DateNotRequired, DateRequired, InputNotRequired, InputRequired, RadioRequired, TreeSelectRequired, TextAreaRequired, SelectNotRequired, RadioNotRequired } from '../../../input'
-import { Spin, notification, Input, Select, TreeSelect, Empty, Checkbox } from 'antd'
-import { AlignJustifiedIconSvg, BorderAllSvg, CameraIconSvg, CheckboxIconSvg, CircleXIconSvg, CopyIconSvg, EmailIconSvg, FaxIconSvg, ListNumbersSvg, NotesIconSvg, PkpIconSvg, RefreshIconSvg, RulerIconSvg, SquarePlusIconSvg, TrashIconSvg, WebIconSvg } from '../../../icon'
-import { useRouter } from 'next/router'
-import { Label, Text, H2 } from '../../../typography'
-import ButtonSys from '../../../button'
-import { LoadingOutlined, UpOutlined, DownOutlined } from '@ant-design/icons'
-import moment from 'moment'
+import ButtonSys from "../../../button";
+import {
+  AlignJustifiedIconSvg,
+  BorderAllSvg,
+  CameraIconSvg,
+  CheckboxIconSvg,
+  CircleXIconSvg,
+  CopyIconSvg,
+  EmailIconSvg,
+  FaxIconSvg,
+  ListNumbersSvg,
+  NotesIconSvg,
+  PkpIconSvg,
+  RefreshIconSvg,
+  RulerIconSvg,
+  SquarePlusIconSvg,
+  TrashIconSvg,
+  WebIconSvg,
+} from "../../../icon";
+import {
+  DateNotRequired,
+  DateRequired,
+  InputNotRequired,
+  InputRequired,
+  RadioNotRequired,
+  RadioRequired,
+  SelectNotRequired,
+  TextAreaRequired,
+  TreeSelectRequired,
+} from "../../../input";
+import { H2, Label, Text } from "../../../typography";
+import DrawerCore from "../../drawerCore";
+import { DownOutlined, LoadingOutlined, UpOutlined } from "@ant-design/icons";
+import {
+  Checkbox,
+  Empty,
+  Input,
+  Select,
+  Spin,
+  TreeSelect,
+  notification,
+} from "antd";
+import moment from "moment";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 
-const DrawerAddRelasi = ({ id, title, visible, onClose, children, buttonOkText, initProps, onvisible }) => {
-    //add
-    const [dataApiadd, setdataApiadd] = useState({
-        subject_id: Number(id),
-        relationship_id: null,
-        is_inverse: null,
-        from_inverse: true,
-        type_id: -3,
-        connected_ids: null,
-        backup_connected_ids: null
+const DrawerAddRelasi = ({
+  id,
+  title,
+  visible,
+  onClose,
+  children,
+  buttonOkText,
+  initProps,
+  onvisible,
+}) => {
+  //add
+  const [dataApiadd, setdataApiadd] = useState({
+    subject_id: Number(id),
+    relationship_id: null,
+    is_inverse: null,
+    from_inverse: true,
+    type_id: -3,
+    connected_ids: null,
+    backup_connected_ids: null,
+  });
+  const [displaydatarelations, setdisplaydatarelations] = useState([]);
+  const [relationnameadd, setrelationnameadd] = useState("");
+  const [relationnameddadd, setrelationnameddadd] = useState(false);
+  const [relationselectedidxadd, setrelationselectedidxadd] = useState(-1);
+  const [relationselectedisinverseadd, setrelationselectedisinverseadd] =
+    useState(-1);
+  const [detailtipeadd, setdetailtipeadd] = useState(-9);
+  const [detailtipedataadd, setdetailtipedataadd] = useState([]);
+  const [modaladd, setmodaladd] = useState(false);
+  const [disabledadd, setdisabledadd] = useState(true);
+  const [loadingadd, setloadingadd] = useState(false);
+  const [fetchingmodel, setfetchingmodel] = useState(false);
+  const [sublocdata, setsublocdata] = useState(null);
+  const [subloctrig, setsubloctrig] = useState(-1);
+
+  const handleAddRelationshipItem = () => {
+    setloadingadd(true);
+    fetch(
+      `https://boiling-thicket-46501.herokuapp.com/addRelationshipInventories`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataApiadd),
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        setloadingadd(false);
+        onvisible(false);
+        if (res2.success) {
+          setdataApiadd({
+            subject_id: Number(id),
+            relationship_id: null,
+            is_inverse: null,
+            type_id: -3,
+            connected_ids: null,
+            backup_connected_ids: null,
+            from_inverse: true,
+          });
+          setrelationnameadd("");
+          setsublocdata(null);
+          setrelationselectedidxadd(-1);
+          setrelationselectedisinverseadd(-1);
+          setsubloctrig(-1);
+          notification["success"]({
+            message: "Relationship Item berhasil ditambahkan",
+            duration: 3,
+          });
+        } else if (!res2.success) {
+          notification["error"]({
+            message: res2.message,
+            duration: 3,
+          });
+        }
+      });
+  };
+  useEffect(() => {
+    fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationships`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
     })
-    const [displaydatarelations, setdisplaydatarelations] = useState([])
-    const [relationnameadd, setrelationnameadd] = useState("")
-    const [relationnameddadd, setrelationnameddadd] = useState(false)
-    const [relationselectedidxadd, setrelationselectedidxadd] = useState(-1)
-    const [relationselectedisinverseadd, setrelationselectedisinverseadd] = useState(-1)
-    const [detailtipeadd, setdetailtipeadd] = useState(-9)
-    const [detailtipedataadd, setdetailtipedataadd] = useState([])
-    const [modaladd, setmodaladd] = useState(false)
-    const [disabledadd, setdisabledadd] = useState(true)
-    const [loadingadd, setloadingadd] = useState(false)
-    const [fetchingmodel, setfetchingmodel] = useState(false)
-    const [sublocdata, setsublocdata] = useState(null)
-    const [subloctrig, setsubloctrig] = useState(-1)
-
-    const handleAddRelationshipItem = () => {
-        setloadingadd(true)
-        fetch(`https://boiling-thicket-46501.herokuapp.com/addRelationshipInventories`, {
-            method: 'POST',
-            headers: {
-                'Authorization': JSON.parse(initProps),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(dataApiadd)
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setloadingadd(false)
-                onvisible(false)
-                if (res2.success) {
-                    setdataApiadd({
-                        subject_id: Number(id),
-                        relationship_id: null,
-                        is_inverse: null,
-                        type_id: -3,
-                        connected_ids: null,
-                        backup_connected_ids: null,
-                        from_inverse: true
-                    })
-                    setrelationnameadd("")
-                    setsublocdata(null)
-                    setrelationselectedidxadd(-1)
-                    setrelationselectedisinverseadd(-1)
-                    setsubloctrig(-1)
-                    notification['success']({
-                        message: "Relationship Item berhasil ditambahkan",
-                        duration: 3
-                    })
-                }
-                else if (!res2.success) {
-                    notification['error']({
-                        message: res2.message,
-                        duration: 3
-                    })
-                }
-            })
+      .then((res) => res.json())
+      .then((res2) => {
+        setdisplaydatarelations(res2.data);
+      });
+  }, []);
+  useEffect(() => {
+    if (subloctrig !== -1) {
+      fetch(
+        `https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${subloctrig}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setsublocdata(res2.data.children);
+        });
+    } else if (detailtipeadd !== -10) {
+      fetch(
+        `https://boiling-thicket-46501.herokuapp.com/getFilterInventories`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setdetailtipedataadd(res2.data);
+          // dataApiadd.type_id === -3 && setdetailtipedataadd([res2.data])
+          // dataApiadd.type_id === -1 && setdetailtipedataadd(res2.data)
+          // dataApiadd.type_id === -2 && setdetailtipedataadd(res2.data)
+          // dataApiadd.type_id === -4 && setdetailtipedataadd(res2.data.data)
+        });
     }
-    useEffect(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationships`, {
-            method: `GET`,
-            headers: {
-                'Authorization': JSON.parse(initProps),
-            }
-        })
-            .then(res => res.json())
-            .then(res2 => {
-                setdisplaydatarelations(res2.data)
-            })
-    }, [])
-    useEffect(() => {
-        if (subloctrig !== -1) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${subloctrig}`, {
-                method: `GET`,
-                headers: {
-                    'Authorization': JSON.parse(initProps),
-                }
-            })
-                .then(res => res.json())
-                .then(res2 => {
-                    setsublocdata(res2.data.children)
-                })
-        }
-        else if (detailtipeadd !== -10) {
-            fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterInventories`, {
-                method: `GET`,
-                headers: {
-                    'Authorization': JSON.parse(initProps),
-                }
-            })
-                .then(res => res.json())
-                .then(res2 => {
-                    setdetailtipedataadd(res2.data)
-                    // dataApiadd.type_id === -3 && setdetailtipedataadd([res2.data])
-                    // dataApiadd.type_id === -1 && setdetailtipedataadd(res2.data)
-                    // dataApiadd.type_id === -2 && setdetailtipedataadd(res2.data)
-                    // dataApiadd.type_id === -4 && setdetailtipedataadd(res2.data.data)
-                })
-        }
-    }, [detailtipeadd, subloctrig])
-    return (
-        <DrawerCore
-            title={title}
-            visible={visible}
-            onClose={/*()=>{console.log(dataApiadd)}*/ onClose}
-            buttonOkText={buttonOkText}
-            onClick={handleAddRelationshipItem}
-        >
-            <Spin spinning={loadingadd}>
-                <div className="flex flex-col mb-3">
-                    <div className="flex flex-col mb-3">
-                        <p className="mb-0">Relationship Type <span className="namapart"></span></p>
-                        <div className="w-full border p-2 hover:border-primary100 rounded-sm flex items-center justify-between cursor-pointer" onClick={() => { setrelationnameddadd(prev => !prev) }}>
-                            <p className="mb-0">{relationnameadd}</p>
-                            {relationnameddadd ? <UpOutlined style={{ color: `rgb(229,231,235)` }} /> : <DownOutlined style={{ color: `rgb(229,231,235)` }} />}
-                        </div>
-                        {
-                            relationnameddadd ?
-                                <div className="flex flex-col">
-                                    <div className="flex">
-                                        <div className="bg-gray-200 font-semibold p-3 w-6/12">Relationship Type</div>
-                                        <div className="bg-gray-200 font-semibold p-3 w-6/12">Inverse Relationship Type</div>
-                                    </div>
-                                    {
-                                        displaydatarelations.map((doc, idx) => {
-                                            return (
-                                                <div className="flex">
-                                                    <div className={` hover:bg-primary10 cursor-pointer hover:text-black p-3 w-6/12 ${relationselectedidxadd === idx && relationselectedisinverseadd === false ? " bg-primary50" : "bg-white"}`}
-                                                        onClick={(e) => {
-                                                            setrelationnameddadd(false);
-                                                            setrelationnameadd(doc.relationship_type);
-                                                            setdataApiadd({ ...dataApiadd, relationship_id: doc.id, is_inverse: false })
-                                                            doc.id === null || dataApiadd.type_id === null ? setdisabledadd(true) : setdisabledadd(false)
-                                                            setrelationselectedidxadd(idx)
-                                                            setrelationselectedisinverseadd(false)
-                                                        }}
-                                                    >{doc.relationship_type}</div>
-                                                    <div className={` hover:bg-primary10 cursor-pointer hover:text-black p-3 w-6/12 ${relationselectedidxadd === idx && relationselectedisinverseadd === true ? " bg-primary50" : "bg-white"}`}
-                                                        onClick={(e) => {
-                                                            setrelationnameddadd(false);
-                                                            setrelationnameadd(doc.inverse_relationship_type);
-                                                            setdataApiadd({ ...dataApiadd, relationship_id: doc.id, is_inverse: true })
-                                                            doc.id === null || dataApiadd.type_id === null ? setdisabledadd(true) : setdisabledadd(false)
-                                                            setrelationselectedidxadd(idx)
-                                                            setrelationselectedisinverseadd(true)
-                                                        }}
-                                                    >{doc.inverse_relationship_type}</div>
-                                                </div>
-                                            )
-                                        })
-                                    }
-                                </div>
-                                :
-                                null
-                        }
-                        <style jsx>
-                            {`
+  }, [detailtipeadd, subloctrig]);
+  return (
+    <DrawerCore
+      title={title}
+      visible={visible}
+      onClose={/*()=>{console.log(dataApiadd)}*/ onClose}
+      buttonOkText={buttonOkText}
+      onClick={handleAddRelationshipItem}
+    >
+      <Spin spinning={loadingadd}>
+        <div className="flex flex-col mb-3">
+          <div className="flex flex-col mb-3">
+            <p className="mb-0">
+              Relationship Type <span className="namapart"></span>
+            </p>
+            <div
+              className="w-full border p-2 hover:border-primary100 rounded-sm flex items-center justify-between cursor-pointer"
+              onClick={() => {
+                setrelationnameddadd((prev) => !prev);
+              }}
+            >
+              <p className="mb-0">{relationnameadd}</p>
+              {relationnameddadd ? (
+                <UpOutlined style={{ color: `rgb(229,231,235)` }} />
+              ) : (
+                <DownOutlined style={{ color: `rgb(229,231,235)` }} />
+              )}
+            </div>
+            {relationnameddadd ? (
+              <div className="flex flex-col">
+                <div className="flex">
+                  <div className="bg-gray-200 font-semibold p-3 w-6/12">
+                    Relationship Type
+                  </div>
+                  <div className="bg-gray-200 font-semibold p-3 w-6/12">
+                    Inverse Relationship Type
+                  </div>
+                </div>
+                {displaydatarelations.map((doc, idx) => {
+                  return (
+                    <div className="flex">
+                      <div
+                        className={` hover:bg-primary10 cursor-pointer hover:text-black p-3 w-6/12 ${
+                          relationselectedidxadd === idx &&
+                          relationselectedisinverseadd === false
+                            ? " bg-primary50"
+                            : "bg-white"
+                        }`}
+                        onClick={(e) => {
+                          setrelationnameddadd(false);
+                          setrelationnameadd(doc.relationship_type);
+                          setdataApiadd({
+                            ...dataApiadd,
+                            relationship_id: doc.id,
+                            is_inverse: false,
+                          });
+                          doc.id === null || dataApiadd.type_id === null
+                            ? setdisabledadd(true)
+                            : setdisabledadd(false);
+                          setrelationselectedidxadd(idx);
+                          setrelationselectedisinverseadd(false);
+                        }}
+                      >
+                        {doc.relationship_type}
+                      </div>
+                      <div
+                        className={` hover:bg-primary10 cursor-pointer hover:text-black p-3 w-6/12 ${
+                          relationselectedidxadd === idx &&
+                          relationselectedisinverseadd === true
+                            ? " bg-primary50"
+                            : "bg-white"
+                        }`}
+                        onClick={(e) => {
+                          setrelationnameddadd(false);
+                          setrelationnameadd(doc.inverse_relationship_type);
+                          setdataApiadd({
+                            ...dataApiadd,
+                            relationship_id: doc.id,
+                            is_inverse: true,
+                          });
+                          doc.id === null || dataApiadd.type_id === null
+                            ? setdisabledadd(true)
+                            : setdisabledadd(false);
+                          setrelationselectedidxadd(idx);
+                          setrelationselectedisinverseadd(true);
+                        }}
+                      >
+                        {doc.inverse_relationship_type}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
+            <style jsx>
+              {`
                                 .namapart::before{
                                     content: '*';
                                     color: red;
                                 }
                             `}
-                        </style>
-                    </div>
-                    {/* <div className="flex flex-col mb-3">
+            </style>
+          </div>
+          {/* <div className="flex flex-col mb-3">
                         <p className="mb-0">Tipe <span className="tipepart"></span></p>
                         <Select disabled value={dataApiadd.type_id} onChange={(value) => {
                             setdataApiadd({ ...dataApiadd, type_id: value })
@@ -203,43 +293,60 @@ const DrawerAddRelasi = ({ id, title, visible, onClose, children, buttonOkText, 
                             `}
                         </style>
                     </div> */}
-                    {
-                        dataApiadd.type_id !== null ?
-                            <>
-                                {
-                                    <div className="flex flex-col mb-3">
-                                        <p className="mb-0">Item</p>
-                                        <Select allowClear value={dataApiadd.connected_ids} showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
-                                            setfetchingmodel(true)
-                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterInventories?keyword=${value !== "" ? value : ""}`, {
-                                                method: `GET`,
-                                                headers: {
-                                                    'Authorization': JSON.parse(initProps),
-                                                },
-                                            })
-                                                .then(res => res.json())
-                                                .then(res2 => {
-                                                    setdetailtipedataadd(res2.data)
-                                                    setfetchingmodel(false)
-                                                })
-                                        }}
-                                            // filterOption={(input, opt) => (
-                                            //     opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                            // )} 
-                                            onChange={(value) => {
-                                                setdataApiadd({ ...dataApiadd, connected_ids: [value], backup_connected_ids: [value] })
-                                            }}>
-                                            {
-                                                detailtipedataadd.map((doc, idx) => {
-                                                    return (
-                                                        <Select.Option value={doc.id}>{doc.mig_id} - {doc.model_name} - {doc.asset_name}</Select.Option>
-                                                    )
-                                                })
-                                            }
-                                        </Select>
-                                    </div>
-                                }
-                                {/* {
+          {dataApiadd.type_id !== null ? (
+            <>
+              {
+                <div className="flex flex-col mb-3">
+                  <p className="mb-0">Item</p>
+                  <Select
+                    allowClear
+                    value={dataApiadd.connected_ids}
+                    showSearch
+                    optionFilterProp="children"
+                    notFoundContent={
+                      fetchingmodel ? <Spin size="small" /> : null
+                    }
+                    onSearch={(value) => {
+                      setfetchingmodel(true);
+                      fetch(
+                        `https://boiling-thicket-46501.herokuapp.com/getFilterInventories?keyword=${
+                          value !== "" ? value : ""
+                        }`,
+                        {
+                          method: `GET`,
+                          headers: {
+                            Authorization: JSON.parse(initProps),
+                          },
+                        }
+                      )
+                        .then((res) => res.json())
+                        .then((res2) => {
+                          setdetailtipedataadd(res2.data);
+                          setfetchingmodel(false);
+                        });
+                    }}
+                    // filterOption={(input, opt) => (
+                    //     opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    // )}
+                    onChange={(value) => {
+                      setdataApiadd({
+                        ...dataApiadd,
+                        connected_ids: [value],
+                        backup_connected_ids: [value],
+                      });
+                    }}
+                  >
+                    {detailtipedataadd.map((doc, idx) => {
+                      return (
+                        <Select.Option value={doc.id}>
+                          {doc.mig_id} - {doc.model_name} - {doc.asset_name}
+                        </Select.Option>
+                      );
+                    })}
+                  </Select>
+                </div>
+              }
+              {/* {
                                     dataApiadd.type_id === -1 &&
                                     <div className="flex flex-col mb-3">
                                         <p className="mb-0">Item</p>
@@ -345,12 +452,9 @@ const DrawerAddRelasi = ({ id, title, visible, onClose, children, buttonOkText, 
                                         </Select>
                                     </div>
                                 } */}
-                            </>
-                            :
-                            null
-
-                    }
-                    {/* {
+            </>
+          ) : null}
+          {/* {
                         sublocdata !== null &&
                         <div className="flex flex-col mb-3">
                             <p className="mb-0">Detail Tipe (Sublokasi)</p>
@@ -364,10 +468,10 @@ const DrawerAddRelasi = ({ id, title, visible, onClose, children, buttonOkText, 
                             }}></TreeSelect>
                         </div>
                     } */}
-                </div>
-            </Spin>
-        </DrawerCore>
-    )
-}
+        </div>
+      </Spin>
+    </DrawerCore>
+  );
+};
 
-export default DrawerAddRelasi
+export default DrawerAddRelasi;

@@ -5,34 +5,34 @@
 // import jscookie from 'js-cookie'
 // import httpcookie from 'cookie'
 // import { Form, notification } from 'antd'
-import LandingPage from '../pages/migwebsite/landingpage'
+import LandingPage from "../pages/migwebsite/landingpage";
 
-export default function Home({ }) {
+export default function Home({}) {
   // console.log("token di login abis dari logout: " + jscookie.get('token'))
-  
+
   return (
     <>
-      <LandingPage/>
+      <LandingPage />
     </>
-  )
+  );
 }
 
 // export async function getServerSideProps({ req, res }) {
-  // const initProps = {};
-  // if (req && req.headers) {
-  //   const cookies = req.headers.cookie;
-  //   if (cookies) {
-  //     res.writeHead(302, { Location: '/dashboard/home' })
-  //     res.end()
-  //   }
-  //   if (typeof cookies === 'string') {
-  //     const cookiesJSON = httpcookie.parse(cookies);
-  //     initProps.token = cookiesJSON.token;
-  //   }
-  // }
-  // return {
-    // props: {
-      // initProps,
-    // },
-  // }
+// const initProps = {};
+// if (req && req.headers) {
+//   const cookies = req.headers.cookie;
+//   if (cookies) {
+//     res.writeHead(302, { Location: '/dashboard/home' })
+//     res.end()
+//   }
+//   if (typeof cookies === 'string') {
+//     const cookiesJSON = httpcookie.parse(cookies);
+//     initProps.token = cookiesJSON.token;
+//   }
+// }
+// return {
+// props: {
+// initProps,
+// },
+// }
 // }

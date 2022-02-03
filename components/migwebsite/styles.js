@@ -1,12 +1,12 @@
 // File components/style.js
+import React from "react";
 
-import React from 'react'
 // font-family: -apple-system, BlinkMacSystemFont, Avenir Next, Avenir,
 //             Helvetica, sans-serif;
 const Styles = (props) => (
   <div>
     <style jsx global>
-    {` 
+      {` 
     .shadow{
       box-shadow:0 5px 20px rgba(0,0,0,.15)
     }
@@ -298,8 +298,9 @@ const Styles = (props) => (
     //     padding: 2rem 1rem;
     //   }
     // }
-    `}</style>
+    `}
+    </style>
   </div>
-)
+);
 
-export default Styles
+export default Styles;

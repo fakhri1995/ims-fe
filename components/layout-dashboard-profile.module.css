@@ -1,26 +1,30 @@
-.menuToggle:checked + .menu{
-    display: flex;
-    justify-content: flex-end;
+.menuToggle:checked + .menu {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .siderLayout,
-.trigger, .breadcrumbClients {
+.trigger,
+.breadcrumbClients {
   display: block;
 }
 
 .siderLayoutSmall,
-.triggerSmall, .breadcrumbClientsSmall {
+.triggerSmall,
+.breadcrumbClientsSmall {
   display: none;
 }
 
 @media only screen and (max-width: 540px) {
-.siderLayoutSmall,
-.triggerSmall, .breadcrumbClientsSmall {
-  display: block;
-}
+  .siderLayoutSmall,
+  .triggerSmall,
+  .breadcrumbClientsSmall {
+    display: block;
+  }
 
-.siderLayout,
-.trigger, .breadcrumbClients {
-  display: none;
-}
+  .siderLayout,
+  .trigger,
+  .breadcrumbClients {
+    display: none;
+  }
 }
