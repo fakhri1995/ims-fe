@@ -90,93 +90,101 @@ const DrawerTicketDeadline = ({
       }}
       buttonOkText={buttonOkText}
       onClick={handleSetDeadline}
-      disabled={disabledcreate}
-    >
+      disabled={disabledcreate}>
       {loadingsave ? (
         <>
           <Spin />
         </>
       ) : (
-        <div className=" flex flex-col px-3">
-          <div className="mb-2">
-            <Radio.Group
-              onChange={(e) => {
-                var choisedate = "";
-                if (e.target.value === 3) {
-                  choisedate = moment(datapayload.created_at)
-                    .add(3, "h")
-                    .locale("id")
-                    .format();
-                  setdatevalue(3);
-                  setshowdatetime(false);
-                } else if (e.target.value === 12) {
-                  choisedate = moment(datapayload.created_at)
-                    .add(30, "h")
-                    .locale("id")
-                    .format();
-                  setdatevalue(12);
-                  setshowdatetime(false);
-                } else if (e.target.value === 30) {
-                  choisedate = moment(datapayload.created_at)
-                    .add(1, "h")
-                    .locale("id")
-                    .format();
-                  setdatevalue(30);
-                  setshowdatetime(false);
-                } else if (e.target.value === 72) {
-                  choisedate = moment(datapayload.created_at)
-                    .add(3, "d")
-                    .locale("id")
-                    .format();
-                  setdatevalue(72);
-                  setshowdatetime(false);
-                } else if (e.target.value === -10) {
-                  setdatevalue(-10);
-                  setshowdatetime(true);
-                }
-                setdatapayload({
-                  ...datapayload,
-                  deadline: e.target.value === -10 ? null : choisedate,
-                });
-                setdisabledtrigger((prev) => prev + 1);
-              }}
-              value={datevalue}
-            >
-              <div className="flex flex-col">
-                <div className="mb-3">
-                  <Radio value={3}>3 Jam</Radio>
-                </div>
-                <div className="mb-3">
-                  <Radio value={12}>12 Jam</Radio>
-                </div>
-                <div className="mb-3">
-                  <Radio value={30}>30 Jam</Radio>
-                </div>
-                <div className="mb-3">
-                  <Radio value={72}>3 Hari</Radio>
-                </div>
-                <div className="mb-3">
-                  <Radio value={-10}>Pilih Tanggal</Radio>
-                </div>
-              </div>
-            </Radio.Group>
-          </div>
-          <div className="mb-2 flex flex-col">
-            {showdatetime ? (
-              <DatePicker
-                value={
-                  datapayload.deadline === null
-                    ? null
-                    : moment(datapayload.deadline)
-                }
-                className="datepickerStatus"
-                showTime
-                onChange={(date, datestring) => {
-                  setdatapayload({ ...datapayload, deadline: datestring });
+        <div className="flex flex-col px-3 h-full justify-between">
+          {/* Radio and date picker */}
+          <div>
+            <div className="mb-2">
+              <Radio.Group
+                onChange={(e) => {
+                  var choisedate = "";
+                  if (e.target.value === 3) {
+                    choisedate = moment(datapayload.created_at)
+                      .add(3, "h")
+                      .locale("id")
+                      .format();
+                    setdatevalue(3);
+                    setshowdatetime(false);
+                  } else if (e.target.value === 12) {
+                    choisedate = moment(datapayload.created_at)
+                      .add(30, "h")
+                      .locale("id")
+                      .format();
+                    setdatevalue(12);
+                    setshowdatetime(false);
+                  } else if (e.target.value === 30) {
+                    choisedate = moment(datapayload.created_at)
+                      .add(1, "h")
+                      .locale("id")
+                      .format();
+                    setdatevalue(30);
+                    setshowdatetime(false);
+                  } else if (e.target.value === 72) {
+                    choisedate = moment(datapayload.created_at)
+                      .add(3, "d")
+                      .locale("id")
+                      .format();
+                    setdatevalue(72);
+                    setshowdatetime(false);
+                  } else if (e.target.value === -10) {
+                    setdatevalue(-10);
+                    setshowdatetime(true);
+                  }
+                  setdatapayload({
+                    ...datapayload,
+                    deadline: e.target.value === -10 ? null : choisedate,
+                  });
                   setdisabledtrigger((prev) => prev + 1);
                 }}
-              ></DatePicker>
-            ) : null}
+                value={datevalue}>
+                <div className="flex flex-col">
+                  <div className="mb-3">
+                    <Radio value={3}>3 Jam</Radio>
+                  </div>
+                  <div className="mb-3">
+                    <Radio value={12}>12 Jam</Radio>
+                  </div>
+                  <div className="mb-3">
+                    <Radio value={30}>30 Jam</Radio>
+                  </div>
+                  <div className="mb-3">
+                    <Radio value={72}>3 Hari</Radio>
+                  </div>
+                  <div className="mb-3">
+                    <Radio value={-10}>Pilih Tanggal</Radio>
+                  </div>
+                </div>
+              </Radio.Group>
+            </div>
+            <div className="mb-2 flex flex-col">
+              {showdatetime ? (
+                <DatePicker
+                  value={
+                    datapayload.deadline === null
+                      ? null
+                      : moment(datapayload.deadline)
+                  }
+                  className="datepickerStatus"
+                  showTime
+                  onChange={(date, datestring) => {
+                    setdatapayload({ ...datapayload, deadline: datestring });
+                    setdisabledtrigger((prev) => prev + 1);
+                  }}></DatePicker>
+              ) : null}
+            </div>
+          </div>
+
+          {/* Deadline information */}
+          <div>
+            <span className="text-state1 text-base">
+              <strong>PENTING</strong>: Deadline terhitung sejak tiket dibuat
+              atau diajukan
+            </span>
           </div>
         </div>
       )}
