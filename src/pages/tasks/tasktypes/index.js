@@ -1,3 +1,18 @@
+import {
+  DatePicker,
+  Empty,
+  Input,
+  Progress,
+  Select,
+  Spin,
+  Tree,
+  TreeSelect,
+  notification,
+} from "antd";
+import moment from "moment";
+import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
+
 import Buttonsys from "../../../components/button";
 import DrawerTaskTypesCreate from "../../../components/drawer/tasks/drawerTaskTypesCreate";
 import DrawerTaskTypesUpdate from "../../../components/drawer/tasks/drawerTaskTypesUpdate";
@@ -24,21 +39,7 @@ import Layout from "../../../components/layout-dashboardNew";
 import { ModalHapusTipeTask } from "../../../components/modal/modalCustom";
 import { TableCustomTipeTask } from "../../../components/table/tableCustom";
 import { H1, H2, Label, Text } from "../../../components/typography";
-import {
-  DatePicker,
-  Empty,
-  Input,
-  Progress,
-  Select,
-  Spin,
-  Tree,
-  TreeSelect,
-  notification,
-} from "antd";
 import httpcookie from "cookie";
-import moment from "moment";
-import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
 
 const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
   //1.Init

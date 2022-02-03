@@ -1,3 +1,20 @@
+import { DownOutlined, SearchOutlined } from "@ant-design/icons";
+import {
+  DatePicker,
+  Empty,
+  Input,
+  Progress,
+  Select,
+  Spin,
+  Tree,
+  TreeSelect,
+  notification,
+} from "antd";
+import moment from "moment";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { Bar, Doughnut, Line } from "react-chartjs-2";
+
 import Buttonsys from "../../../components/button";
 import DrawerTaskCreate from "../../../components/drawer/tasks/drawerTaskCreate";
 import DrawerTaskTypesCreate from "../../../components/drawer/tasks/drawerTaskTypesCreate";
@@ -30,18 +47,6 @@ import {
   TableCustomTipeTask,
 } from "../../../components/table/tableCustom";
 import { H1, H2, Label, Text } from "../../../components/typography";
-import { DownOutlined, SearchOutlined } from "@ant-design/icons";
-import {
-  DatePicker,
-  Empty,
-  Input,
-  Progress,
-  Select,
-  Spin,
-  Tree,
-  TreeSelect,
-  notification,
-} from "antd";
 import {
   ArcElement,
   BarElement,
@@ -53,10 +58,6 @@ import {
   Tooltip,
 } from "chart.js";
 import httpcookie from "cookie";
-import moment from "moment";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { Bar, Doughnut, Line } from "react-chartjs-2";
 
 Chart.register(
   ArcElement,

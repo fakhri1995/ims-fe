@@ -1,10 +1,11 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Input, message } from "antd";
 import { Form, notification } from "antd";
-import httpcookie from "cookie";
 import jscookie from "js-cookie";
 import { useRouter } from "next/router";
 import { useState } from "react";
+
+import httpcookie from "cookie";
 
 export default function Home({ initProps }) {
   // console.log("token di login abis dari logout: " + jscookie.get('token'))

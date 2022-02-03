@@ -1,5 +1,3 @@
-import LayoutMenu from "../components/layout-menu";
-import LayoutMenuHeader from "./layout-menu-header";
 import MenuFoldOutlined from "@ant-design/icons/MenuFoldOutlined";
 import MenuUnfoldOutlined from "@ant-design/icons/MenuUnfoldOutlined";
 import { Layout } from "antd";
@@ -8,6 +6,9 @@ import jscookie from "js-cookie";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+
+import LayoutMenu from "../components/layout-menu";
+import LayoutMenuHeader from "./layout-menu-header";
 
 function LayoutDashboard2({
   children,

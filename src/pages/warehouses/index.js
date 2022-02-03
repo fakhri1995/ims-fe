@@ -1,10 +1,11 @@
+import { useRouter } from "next/router";
+import React from "react";
+import { useEffect, useState } from "react";
+
 import { ArmChairlIconSvg } from "../../components/icon";
 import st from "../../components/layout-dashboard.module.css";
 import Layout from "../../components/layout-dashboardNew";
 import httpcookie from "cookie";
-import { useRouter } from "next/router";
-import React from "react";
-import { useEffect, useState } from "react";
 
 const WareHouses = ({ initProps, dataProfile, sidemenu }) => {
   const rt = useRouter();

@@ -1,15 +1,16 @@
-import Layout from "../../../components/layout-dashboard";
-import st from "../../../components/layout-dashboard.module.css";
 import {
   DeleteOutlined,
   EditOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import { Button, Empty, Input, Modal, Spin, Table, notification } from "antd";
-import httpcookie from "cookie";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+
+import Layout from "../../../components/layout-dashboard";
+import st from "../../../components/layout-dashboard.module.css";
+import httpcookie from "cookie";
 
 const Relationships = ({ dataProfile, sidemenu, initProps }) => {
   // 1.Init

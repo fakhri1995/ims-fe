@@ -1,8 +1,9 @@
-import Layout from "../../../components/migwebsite/layout.js";
 import { Collapse } from "antd";
 import Head from "next/head";
 import Link from "next/link";
 import React from "react";
+
+import Layout from "../../../components/migwebsite/layout.js";
 
 function TermOfUse({}) {
   const { Panel } = Collapse;

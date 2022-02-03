@@ -1,9 +1,10 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Input, message } from "antd";
 import { Form, notification } from "antd";
-import httpcookie from "cookie";
 import { useRouter } from "next/router";
 import { useState } from "react";
+
+import httpcookie from "cookie";
 
 export default function ChangePassword({ initProps }) {
   const rt = useRouter();

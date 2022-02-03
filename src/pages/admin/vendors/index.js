@@ -1,5 +1,3 @@
-import Layout from "../../../components/layout-dashboard";
-import st from "../../../components/layout-dashboard.module.css";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import EditOutlined from "@ant-design/icons/EditOutlined";
 import {
@@ -13,10 +11,13 @@ import {
   Tooltip,
   notification,
 } from "antd";
-import httpcookie from "cookie";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
+
+import Layout from "../../../components/layout-dashboard";
+import st from "../../../components/layout-dashboard.module.css";
+import httpcookie from "cookie";
 
 function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
   const rt = useRouter();

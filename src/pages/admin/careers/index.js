@@ -1,14 +1,15 @@
-import Layout from "../../../components/layout-dashboard";
-import st from "../../../components/layout-dashboard.module.css";
 import {
   DeleteOutlined,
   EditOutlined,
   SelectOutlined,
 } from "@ant-design/icons";
 import { Button, Drawer, Form, Input, Modal, Table, notification } from "antd";
-import httpcookie from "cookie";
 import { useRouter } from "next/router";
 import { useState } from "react";
+
+import Layout from "../../../components/layout-dashboard";
+import st from "../../../components/layout-dashboard.module.css";
+import httpcookie from "cookie";
 
 export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
   const rt = useRouter();

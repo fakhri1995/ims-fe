@@ -1,5 +1,3 @@
-import Head from "./head";
-import Styles from "./styles";
 import {
   CaretDownOutlined,
   InstagramFilled,
@@ -11,6 +9,9 @@ import Link from "next/link";
 import React from "react";
 import { useEffect, useState } from "react";
 import Bounce from "react-reveal/Bounce";
+
+import Head from "./head";
+import Styles from "./styles";
 
 function layout({ children }) {
   const { Header, Content, Footer } = Layout;

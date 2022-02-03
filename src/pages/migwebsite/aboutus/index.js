@@ -1,9 +1,10 @@
-import Layout from "../../../components/migwebsite/layout.js";
 import ArrowRightOutlined from "@ant-design/icons/ArrowRightOutlined";
 import { Button, Card } from "antd";
 import Head from "next/head";
 import Link from "next/link";
 import React from "react";
+
+import Layout from "../../../components/migwebsite/layout.js";
 
 function AboutUs({}) {
   return (

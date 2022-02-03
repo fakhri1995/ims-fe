@@ -1,12 +1,13 @@
-import Layout from "../../../components/layout-dashboard2";
-import st from "../../../components/layout-dashboard.module.css";
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Checkbox, DatePicker, Divider, Empty, Select } from "antd";
-import httpcookie from "cookie";
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+
+import Layout from "../../../components/layout-dashboard2";
+import st from "../../../components/layout-dashboard.module.css";
+import httpcookie from "cookie";
 
 const TicketExporting = ({ initProps, dataProfile, sidemenu }) => {
   // 1.Init

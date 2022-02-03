@@ -1,3 +1,10 @@
+import { ExclamationCircleOutlined, SearchOutlined } from "@ant-design/icons";
+import { Input, Popover, notification } from "antd";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
+import { Bar, Doughnut, Line } from "react-chartjs-2";
+
 import ButtonSys from "../../../components/button";
 import DrawerTicketTypeCreate from "../../../components/drawer/tickets/drawerTicketTypeCreate";
 import DrawerTicketTypeUpdate from "../../../components/drawer/tickets/drawerTicketTypeUpdate";
@@ -16,8 +23,6 @@ import Layout from "../../../components/layout-dashboardNew";
 import { ModalHapusTipeTiket } from "../../../components/modal/modalCustom";
 import { TableCustomTicketTypes } from "../../../components/table/tableCustom";
 import { H1, H2, Label, Text } from "../../../components/typography";
-import { ExclamationCircleOutlined, SearchOutlined } from "@ant-design/icons";
-import { Input, Popover, notification } from "antd";
 import {
   ArcElement,
   BarElement,
@@ -29,10 +34,6 @@ import {
   Tooltip,
 } from "chart.js";
 import httpcookie from "cookie";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
-import { Bar, Doughnut, Line } from "react-chartjs-2";
 
 Chart.register(
   ArcElement,

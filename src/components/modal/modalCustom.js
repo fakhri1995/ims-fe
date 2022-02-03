@@ -1,3 +1,6 @@
+import { Spin } from "antd";
+import React, { useEffect, useState } from "react";
+
 import ButtonSys from "../button";
 import { AlertIconSvg, CheckIconSvg, TrashIconSvg, XIconSvg } from "../icon";
 import {
@@ -7,8 +10,6 @@ import {
 } from "../input";
 import { Text } from "../typography";
 import ModalCore from "./modalCore";
-import { Spin } from "antd";
-import React, { useEffect, useState } from "react";
 
 function ModalEdit({
   title,

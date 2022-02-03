@@ -1,11 +1,12 @@
-import Layout from "../../../components/layout-dashboard";
-import st from "../../../components/layout-dashboard.module.css";
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Table, TreeSelect } from "antd";
-import httpcookie from "cookie";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+
+import Layout from "../../../components/layout-dashboard";
+import st from "../../../components/layout-dashboard.module.css";
+import httpcookie from "cookie";
 
 const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
   // 1.Init

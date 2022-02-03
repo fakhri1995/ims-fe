@@ -1,4 +1,3 @@
-import Layout from "../../../components/migwebsite/layout.js";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import ArrowRightOutlined from "@ant-design/icons/ArrowRightOutlined";
 import { Card, Col, Row, Space } from "antd";
@@ -8,6 +7,8 @@ import CountUp from "react-countup";
 import Flickity from "react-flickity-component";
 import { Link, animateScroll as scroll } from "react-scroll";
 import Slider from "react-slick";
+
+import Layout from "../../../components/migwebsite/layout.js";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 

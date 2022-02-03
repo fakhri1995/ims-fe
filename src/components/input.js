@@ -1,6 +1,7 @@
-import { Label } from "./typography";
 import { DatePicker, Input, Radio, Select, TreeSelect } from "antd";
 import React from "react";
+
+import { Label } from "./typography";
 
 const InputRequired = ({ label, name, defaultValue, onChangeInput, value }) => {
   return (

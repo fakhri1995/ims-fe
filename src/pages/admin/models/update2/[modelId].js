@@ -1,5 +1,3 @@
-import Layout from "../../../../components/layout-dashboard";
-import st from "../../../../components/layout-dashboard.module.css";
 import { DeleteOutlined } from "@ant-design/icons";
 import {
   CalendarOutlined,
@@ -23,12 +21,15 @@ import {
   notification,
 } from "antd";
 import Modal from "antd/lib/modal/Modal";
-import httpcookie from "cookie";
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
+
+import Layout from "../../../../components/layout-dashboard";
+import st from "../../../../components/layout-dashboard.module.css";
+import httpcookie from "cookie";
 
 const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
   //1.Init

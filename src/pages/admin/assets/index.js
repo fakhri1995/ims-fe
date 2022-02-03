@@ -1,5 +1,3 @@
-import Layout from "../../../components/layout-dashboard";
-import st from "../../../components/layout-dashboard.module.css";
 import {
   Button,
   Empty,
@@ -11,9 +9,12 @@ import {
   TreeSelect,
   notification,
 } from "antd";
-import httpcookie from "cookie";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+
+import Layout from "../../../components/layout-dashboard";
+import st from "../../../components/layout-dashboard.module.css";
+import httpcookie from "cookie";
 
 function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
   const rt = useRouter();

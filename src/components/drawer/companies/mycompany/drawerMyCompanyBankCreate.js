@@ -1,8 +1,9 @@
-import { InputRequired, RadioRequired } from "../../../input";
-import DrawerCore from "../../drawerCore";
 import { Spin, notification } from "antd";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
+
+import { InputRequired, RadioRequired } from "../../../input";
+import DrawerCore from "../../drawerCore";
 
 const DrawerBank = ({
   title,

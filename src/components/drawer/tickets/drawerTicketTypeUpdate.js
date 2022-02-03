@@ -1,8 +1,9 @@
-import { Label } from "../../typography";
-import DrawerCore from "../drawerCore";
 import { SearchOutlined } from "@ant-design/icons";
 import { Input, Select, Spin, notification } from "antd";
 import React, { useEffect, useState } from "react";
+
+import { Label } from "../../typography";
+import DrawerCore from "../drawerCore";
 
 const DrawerTicketTypeUpdate = ({
   title,

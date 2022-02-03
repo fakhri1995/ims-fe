@@ -1,3 +1,20 @@
+import { LoadingOutlined } from "@ant-design/icons";
+import {
+  DatePicker,
+  Empty,
+  Form,
+  Input,
+  Spin,
+  Switch,
+  notification,
+} from "antd";
+import moment from "moment";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import CountUp from "react-countup";
+import InfiniteScroll from "react-infinite-scroll-component";
+
 import Buttonsys from "../../../components/button";
 import DrawerBankClient from "../../../components/drawer/companies/clients/drawerClientCompanyBankCreate";
 import DrawerCore from "../../../components/drawer/drawerCore";
@@ -24,23 +41,7 @@ import {
 } from "../../../components/modal/modalCustom";
 import { TableCustomRelasi } from "../../../components/table/tableCustom";
 import { H1, H2, Label } from "../../../components/typography";
-import { LoadingOutlined } from "@ant-design/icons";
-import {
-  DatePicker,
-  Empty,
-  Form,
-  Input,
-  Spin,
-  Switch,
-  notification,
-} from "antd";
 import httpcookie from "cookie";
-import moment from "moment";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import CountUp from "react-countup";
-import InfiniteScroll from "react-infinite-scroll-component";
 
 const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
   const rt = useRouter();

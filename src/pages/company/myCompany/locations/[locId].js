@@ -1,3 +1,9 @@
+import { DownOutlined, LoadingOutlined } from "@ant-design/icons";
+import { Empty, Form, Input, Spin, Tree, notification } from "antd";
+import moment from "moment";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+
 import Buttonsys from "../../../../components/button";
 import DrawerSublokasi from "../../../../components/drawer/companies/drawerSubLokasi";
 import {
@@ -34,12 +40,7 @@ import {
 } from "../../../../components/modal/modalCustom";
 import { TableCustom } from "../../../../components/table/tableCustom";
 import { H1, Label, LabelDark, Text } from "../../../../components/typography";
-import { DownOutlined, LoadingOutlined } from "@ant-design/icons";
-import { Empty, Form, Input, Spin, Tree, notification } from "antd";
 import httpcookie from "cookie";
-import moment from "moment";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 
 function modifData(dataa) {
   for (var i = 0; i < dataa.length; i++) {

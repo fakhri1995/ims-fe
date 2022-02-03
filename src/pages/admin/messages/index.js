@@ -1,10 +1,11 @@
-import Layout from "../../../components/layout-dashboard";
-import st from "../../../components/layout-dashboard.module.css";
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Modal, Table } from "antd";
-import httpcookie from "cookie";
 import { useRouter } from "next/router";
 import { useState } from "react";
+
+import Layout from "../../../components/layout-dashboard";
+import st from "../../../components/layout-dashboard.module.css";
+import httpcookie from "cookie";
 
 const Messages = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
   const rt = useRouter();

@@ -1,9 +1,10 @@
-import { UserIconSvg } from "../../icon";
-import { H2, Label } from "../../typography";
-import DrawerCore from "../drawerCore";
 import { SearchOutlined } from "@ant-design/icons";
 import { Input, Spin, notification } from "antd";
 import React, { useEffect, useState } from "react";
+
+import { UserIconSvg } from "../../icon";
+import { H2, Label } from "../../typography";
+import DrawerCore from "../drawerCore";
 
 const DrawerTicketAssign = ({
   title,

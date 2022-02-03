@@ -1,7 +1,8 @@
+import jscookie from "js-cookie";
+
 import Layout from "../../components/layout-dashboard";
 import st from "../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
-import jscookie from "js-cookie";
 
 function DashboardIndex({ initProps, dataProfile, sidemenu }) {
   const tok = initProps;

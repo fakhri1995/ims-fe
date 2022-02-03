@@ -1,5 +1,3 @@
-import Layout from "../../../components/layout-dashboard";
-import st from "../../../components/layout-dashboard.module.css";
 import {
   ArrowLeftOutlined,
   ArrowRightOutlined,
@@ -15,11 +13,14 @@ import {
   Spin,
   notification,
 } from "antd";
-import httpcookie from "cookie";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import ScrollTo from "react-scroll-into-view";
 import Sticky from "wil-react-sticky";
+
+import Layout from "../../../components/layout-dashboard";
+import st from "../../../components/layout-dashboard.module.css";
+import httpcookie from "cookie";
 
 const ModulesIndex = ({
   initProps,

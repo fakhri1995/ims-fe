@@ -4,7 +4,12 @@
   "proseWrap": "never",
   "embeddedLanguageFormatting": "off",
   "tabWidth": 2,
-  "importOrder": [],
+  "importOrder": [
+    "^components/(.*)$",
+    "^styles/(.*)$",
+    "^[./(.css)]",
+    "^[./]"
+  ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true
 }

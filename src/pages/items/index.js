@@ -1,11 +1,12 @@
-import Layout from "../../components/layout-dashboard2";
-import st from "../../components/layout-dashboard.module.css";
 import { ExclamationCircleOutlined, SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Select, Spin, Table, Tooltip, TreeSelect } from "antd";
-import httpcookie from "cookie";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+
+import Layout from "../../components/layout-dashboard2";
+import st from "../../components/layout-dashboard.module.css";
+import httpcookie from "cookie";
 
 const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 1.Init

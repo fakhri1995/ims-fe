@@ -1,3 +1,6 @@
+import { Checkbox, Empty, Input, Select, Spin, notification } from "antd";
+import React, { useEffect, useState } from "react";
+
 import {
   AlertIconSvg,
   AlignJustifiedIconSvg,
@@ -13,8 +16,6 @@ import {
 import { InputRequired, RadioNotRequired, TextAreaRequired } from "../../input";
 import { H2, Label } from "../../typography";
 import DrawerCore from "../drawerCore";
-import { Checkbox, Empty, Input, Select, Spin, notification } from "antd";
-import React, { useEffect, useState } from "react";
 
 const DrawerTaskTypesCreate = ({
   title,

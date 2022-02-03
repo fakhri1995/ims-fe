@@ -1,4 +1,3 @@
-import Layout from "../../../components/migwebsite/layout.js";
 import ArrowRightOutlined from "@ant-design/icons/ArrowRightOutlined";
 import { Tabs } from "antd";
 import Link from "next/link";
@@ -6,6 +5,8 @@ import React, { useEffect, useState } from "react";
 import Flickity from "react-flickity-component";
 import Fade from "react-reveal/Fade";
 import Slider from "react-slick";
+
+import Layout from "../../../components/migwebsite/layout.js";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 

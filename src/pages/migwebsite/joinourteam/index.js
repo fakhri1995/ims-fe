@@ -1,4 +1,3 @@
-import Layout from "../../../components/migwebsite/layout.js";
 import ArrowRightOutlined from "@ant-design/icons/ArrowRightOutlined";
 import { Button, Card, Collapse } from "antd";
 import Head from "next/head";
@@ -6,6 +5,8 @@ import Link from "next/link";
 import React from "react";
 import Flickity from "react-flickity-component";
 import { Link as Linkk } from "react-scroll";
+
+import Layout from "../../../components/migwebsite/layout.js";
 
 function JoinOurTeam({ dataCareers }) {
   console.log(dataCareers);

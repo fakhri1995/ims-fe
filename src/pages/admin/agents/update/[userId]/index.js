@@ -1,12 +1,13 @@
-import Layout from "../../../../../components/layout-dashboard";
-import st from "../../../../../components/layout-dashboard.module.css";
 import { EditOutlined, LoadingOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Select, TreeSelect, notification } from "antd";
-import httpcookie from "cookie";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
+
+import Layout from "../../../../../components/layout-dashboard";
+import st from "../../../../../components/layout-dashboard.module.css";
+import httpcookie from "cookie";
 
 function AgentUpdate({
   initProps,

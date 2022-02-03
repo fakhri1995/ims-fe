@@ -1,10 +1,11 @@
-import Layout from "../../components/layout-dashboard-profile";
-import st from "../../components/layout-dashboard-profile.module.css";
 import EditOutlined from "@ant-design/icons/EditOutlined";
 import { DatePicker, Input, Modal, Tabs, notification } from "antd";
-import httpcookie from "cookie";
 import { useRouter } from "next/router";
 import { useState } from "react";
+
+import Layout from "../../components/layout-dashboard-profile";
+import st from "../../components/layout-dashboard-profile.module.css";
+import httpcookie from "cookie";
 
 function ProfileTabs({ dataProfile, editable2 }) {
   return (

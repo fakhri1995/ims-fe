@@ -1,3 +1,11 @@
+import { SearchOutlined } from "@ant-design/icons";
+import { Empty, Spin, notification } from "antd";
+import moment from "moment";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { Bar, Doughnut, Line } from "react-chartjs-2";
+import InfiniteScroll from "react-infinite-scroll-component";
+
 import ButtonSys from "../../../components/button";
 import DrawerTicketAssign from "../../../components/drawer/tickets/drawerTicketAssign";
 import DrawerTicketConnectItem from "../../../components/drawer/tickets/drawerTicketConnectItem";
@@ -27,8 +35,6 @@ import {
 } from "../../../components/modal/modalCustom";
 import { TableCustomTickets } from "../../../components/table/tableCustom";
 import { H1, H2, Label, Text } from "../../../components/typography";
-import { SearchOutlined } from "@ant-design/icons";
-import { Empty, Spin, notification } from "antd";
 import {
   ArcElement,
   BarElement,
@@ -40,11 +46,6 @@ import {
   Tooltip,
 } from "chart.js";
 import httpcookie from "cookie";
-import moment from "moment";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { Bar, Doughnut, Line } from "react-chartjs-2";
-import InfiniteScroll from "react-infinite-scroll-component";
 
 Chart.register(
   ArcElement,
@@ -515,7 +516,9 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                 <div className=" flex flex-col">
                   <div className=" flex flex-col mb-5">
                     <Label>Diajukan Oleh:</Label>
-                    <p className=" mb-0 text-gray-600">{displaydata.creator_name}</p>
+                    <p className=" mb-0 text-gray-600">
+                      {displaydata.creator_name}
+                    </p>
                   </div>
                   <div className=" flex flex-col mb-5">
                     <Label>Lokasi:</Label>

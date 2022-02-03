@@ -1,3 +1,9 @@
+import InboxOutlined from "@ant-design/icons/InboxOutlined";
+import TeamOutlined from "@ant-design/icons/TeamOutlined";
+import UserOutlined from "@ant-design/icons/UserOutlined";
+import Link from "next/link";
+import { useRouter } from "next/router";
+
 import {
   IconAgents,
   IconAssets,
@@ -17,12 +23,7 @@ import {
 } from "../../components/icon-admin";
 import Layout from "../../components/layout-dashboard";
 import st from "../../components/layout-dashboard.module.css";
-import InboxOutlined from "@ant-design/icons/InboxOutlined";
-import TeamOutlined from "@ant-design/icons/TeamOutlined";
-import UserOutlined from "@ant-design/icons/UserOutlined";
 import httpcookie from "cookie";
-import Link from "next/link";
-import { useRouter } from "next/router";
 
 function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
   // jscookie.remove('token')

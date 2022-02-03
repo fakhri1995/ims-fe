@@ -1,9 +1,10 @@
-import Layout from "../../../components/migwebsite/layout.js";
 import { CheckCircleTwoTone } from "@ant-design/icons";
 import { Checkbox, Collapse, Form, Input, notification } from "antd";
 import Head from "next/head";
 import Link from "next/link";
 import { React, useEffect, useState } from "react";
+
+import Layout from "../../../components/migwebsite/layout.js";
 
 function Talents({}) {
   const { Panel } = Collapse;

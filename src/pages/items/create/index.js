@@ -1,5 +1,3 @@
-import Layout from "../../../components/layout-dashboard2";
-import st from "../../../components/layout-dashboard.module.css";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import {
   Button,
@@ -18,12 +16,15 @@ import {
   TreeSelect,
   notification,
 } from "antd";
-import httpcookie from "cookie";
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
+
+import Layout from "../../../components/layout-dashboard2";
+import st from "../../../components/layout-dashboard.module.css";
+import httpcookie from "cookie";
 
 const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
   // 1.Init

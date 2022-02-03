@@ -1,3 +1,10 @@
+import { SearchOutlined } from "@ant-design/icons";
+import { DatePicker, Input, Select, TreeSelect } from "antd";
+import moment from "moment";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
+
 import ButtonSys from "../../../components/button";
 import { SearchIconSvg, UserIconSvg } from "../../../components/icon";
 import { BackIconSvg } from "../../../components/icon";
@@ -5,13 +12,7 @@ import st from "../../../components/layout-dashboard.module.css";
 import Layout from "../../../components/layout-dashboardNew";
 import { TableCustomTicketHistories } from "../../../components/table/tableCustom";
 import { H1, H2, Label, Text } from "../../../components/typography";
-import { SearchOutlined } from "@ant-design/icons";
-import { DatePicker, Input, Select, TreeSelect } from "antd";
 import httpcookie from "cookie";
-import moment from "moment";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
 
 const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
   //1.Init

@@ -1,4 +1,17 @@
 import {
+  DashboardTwoTone,
+  InboxOutlined,
+  SettingOutlined,
+  TeamOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+import Icon from "@ant-design/icons";
+import Layout from "antd/lib/layout";
+import Menu from "antd/lib/menu";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+import {
   IconAgents,
   IconAssets,
   IconCareer,
@@ -26,18 +39,6 @@ import {
   TicketIconSvg,
   UserIconSvg,
 } from "./icon";
-import {
-  DashboardTwoTone,
-  InboxOutlined,
-  SettingOutlined,
-  TeamOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import Icon from "@ant-design/icons";
-import Layout from "antd/lib/layout";
-import Menu from "antd/lib/menu";
-import Link from "next/link";
-import { useEffect, useState } from "react";
 
 const LayoutMenu = ({
   dataProfile,

@@ -1,5 +1,3 @@
-import Layout from "../../../components/layout-dashboard";
-import st from "../../../components/layout-dashboard.module.css";
 import UploadOutlined from "@ant-design/icons/UploadOutlined";
 import {
   Button,
@@ -13,11 +11,14 @@ import {
   Upload,
   notification,
 } from "antd";
-import httpcookie from "cookie";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import Sticky from "wil-react-sticky";
+
+import Layout from "../../../components/layout-dashboard";
+import st from "../../../components/layout-dashboard.module.css";
+import httpcookie from "cookie";
 
 function IncidentsCreate({ initProps, dataProfile, sidemenu }) {
   const rt = useRouter();

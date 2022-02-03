@@ -1,3 +1,18 @@
+import { SearchOutlined } from "@ant-design/icons";
+import {
+  Button,
+  DatePicker,
+  Empty,
+  Input,
+  Select,
+  Spin,
+  TreeSelect,
+} from "antd";
+import moment from "moment";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { Bar, Doughnut, Line } from "react-chartjs-2";
+
 import ButtonSys from "../../components/button";
 import DrawerTicketCreate from "../../components/drawer/tickets/drawerTicketCreate";
 import DrawerTicketExports from "../../components/drawer/tickets/drawerTicketExports";
@@ -15,16 +30,6 @@ import st from "../../components/layout-dashboard.module.css";
 import Layout from "../../components/layout-dashboardNew";
 import { TableCustomTickets } from "../../components/table/tableCustom";
 import { H1, H2, Label, Text } from "../../components/typography";
-import { SearchOutlined } from "@ant-design/icons";
-import {
-  Button,
-  DatePicker,
-  Empty,
-  Input,
-  Select,
-  Spin,
-  TreeSelect,
-} from "antd";
 import {
   ArcElement,
   BarElement,
@@ -36,10 +41,6 @@ import {
   Tooltip,
 } from "chart.js";
 import httpcookie from "cookie";
-import moment from "moment";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { Bar, Doughnut, Line } from "react-chartjs-2";
 
 Chart.register(
   ArcElement,

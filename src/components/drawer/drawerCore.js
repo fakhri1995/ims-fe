@@ -1,7 +1,8 @@
-import ButtonSys from "../button";
-import { CheckIconSvg } from "../icon";
 import { Drawer } from "antd";
 import React from "react";
+
+import ButtonSys from "../button";
+import { CheckIconSvg } from "../icon";
 
 const DrawerCore = ({
   title,
