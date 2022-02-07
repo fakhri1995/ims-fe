@@ -61,7 +61,7 @@ function IncidentsCreate({ initProps, dataProfile, sidemenu }) {
     //     console.log(value);
     //  }
     // console.log(formData.values().requester)
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addIncident`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addIncident`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(tok),
@@ -277,7 +277,7 @@ export async function getServerSideProps({ req, res }) {
   }
 
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

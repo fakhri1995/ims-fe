@@ -100,7 +100,7 @@ const AnggotaSide = ({ initProps, rolesid }) => {
   };
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getRoleUserFeatures?id=${rolesid}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoleUserFeatures?id=${rolesid}`,
       {
         method: `GET`,
         headers: {
@@ -251,7 +251,7 @@ const FiturSide = ({ initProps, rolesid }) => {
   ];
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getRoleUserFeatures?id=${rolesid}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoleUserFeatures?id=${rolesid}`,
       {
         method: `GET`,
         headers: {
@@ -317,7 +317,7 @@ const RolesDetail = ({ initProps, dataProfile, sidemenu, rolesid }) => {
   //handle
   const handleDeleteRole = () => {
     setloadingdelete(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteRole`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRole`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -350,7 +350,7 @@ const RolesDetail = ({ initProps, dataProfile, sidemenu, rolesid }) => {
 
   //useEffect
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getRole?id=${rolesid}`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRole?id=${rolesid}`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -371,7 +371,7 @@ const RolesDetail = ({ initProps, dataProfile, sidemenu, rolesid }) => {
       })
       .then(() => {
         fetch(
-          `https://boiling-thicket-46501.herokuapp.com/getRoleUserFeatures?id=${rolesid}`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoleUserFeatures?id=${rolesid}`,
           {
             method: `GET`,
             headers: {
@@ -523,7 +523,7 @@ export async function getServerSideProps({ req, res, params }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -539,7 +539,7 @@ export async function getServerSideProps({ req, res, params }) {
   //     res.end()
   // }
 
-  // const resourcesGR = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+  // const resourcesGR = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
   //     method: `GET`,
   //     headers: {
   //         'Authorization': JSON.parse(initProps)

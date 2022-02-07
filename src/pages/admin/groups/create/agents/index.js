@@ -63,7 +63,7 @@ function GroupsAgentsCreate({
   //----------------------------------------------
   const handleCreateGroup = () => {
     setLoadingbtn(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addAgentGroup`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addAgentGroup`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(tok),
@@ -304,7 +304,7 @@ export async function getServerSideProps({ req, res }) {
   }
 
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -321,7 +321,7 @@ export async function getServerSideProps({ req, res }) {
   // }
 
   const resourcesLA = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/getFilterUsers?type=${1}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=${1}`,
     {
       method: `GET`,
       headers: {

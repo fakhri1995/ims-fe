@@ -348,7 +348,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
       setassettypefilteract(false);
     } else {
       fetch(
-        `https://boiling-thicket-46501.herokuapp.com/getModels?rows=100&asset_id=${id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getModels?rows=100&asset_id=${id}`,
         {
           method: `GET`,
           headers: {
@@ -473,7 +473,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
       locationact ? (locationvalue === "" ? location_id1 : locationvalue) : ""
     }&sort_by=${sort_by}&sort_type=${sort_type}`;
     // setpraloading(true)
-    // fetch(`https://boiling-thicket-46501.herokuapp.com/getInventories?rows=100&asset_id=${assettypefilteract ? assettypevalue : ""}&model_id=${modelfilteract ? modelvalue : ""}&status_condition=${kondisifilteract ? kondisivalue : ""}&status_usage=${pemakaianfilteract ? pemakaianvalue : ""}&name=${namasearchact ? namavalue : ""}`, {
+    // fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventories?rows=100&asset_id=${assettypefilteract ? assettypevalue : ""}&model_id=${modelfilteract ? modelvalue : ""}&status_condition=${kondisifilteract ? kondisivalue : ""}&status_usage=${pemakaianfilteract ? pemakaianvalue : ""}&name=${namasearchact ? namavalue : ""}`, {
     //     method: `GET`,
     //     headers: {
     //         'Authorization': JSON.parse(initProps),
@@ -491,7 +491,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
   //5.useEffect
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getInventories?asset_id=${asset_id1}&model_id=${model_id1}&status_condition=${status_condition1}&status_usage=${status_usage1}&name=${name1}&mig_id=${migid1}&location_id=${location_id1}&sort_by=${sort_by}&sort_type=${sort_type}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventories?asset_id=${asset_id1}&model_id=${model_id1}&status_condition=${status_condition1}&status_usage=${status_usage1}&name=${name1}&mig_id=${migid1}&location_id=${location_id1}&sort_by=${sort_by}&sort_type=${sort_type}`,
       {
         method: `GET`,
         headers: {
@@ -508,7 +508,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryRelations`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventoryRelations`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -523,7 +523,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
   }, []);
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getModels?rows=50&asset_id=${
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getModels?rows=50&asset_id=${
         asset_id1 === "" ? "" : asset_id1
       }`,
       {
@@ -542,7 +542,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssets`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -642,9 +642,9 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                       onSearch={(value) => {
                         setfetchingmodel(true);
                         fetch(
-                          `https://boiling-thicket-46501.herokuapp.com/getFilterModels?name=${
-                            value !== "" ? value : ""
-                          }`,
+                          `${
+                            process.env.NEXT_PUBLIC_BACKEND_URL
+                          }/getFilterModels?name=${value !== "" ? value : ""}`,
                           {
                             method: `GET`,
                             headers: {
@@ -788,7 +788,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
               onChange: (page, pageSize) => {
                 setpraloading(true);
                 fetch(
-                  `https://boiling-thicket-46501.herokuapp.com/getInventories?page=${page}&rows=10&asset_id=${asset_id1}&model_id=${model_id1}&status_condition=${status_condition1}&status_usage=${status_usage1}&name=${name1}&mig_id=${migid1}&location_id=${location_id1}&sort_by=${sort_by}&sort_type=${sort_type}`,
+                  `${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventories?page=${page}&rows=10&asset_id=${asset_id1}&model_id=${model_id1}&status_condition=${status_condition1}&status_usage=${status_usage1}&name=${name1}&mig_id=${migid1}&location_id=${location_id1}&sort_by=${sort_by}&sort_type=${sort_type}`,
                   {
                     method: `GET`,
                     headers: {
@@ -1068,7 +1068,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

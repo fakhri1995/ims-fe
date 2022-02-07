@@ -416,7 +416,9 @@ function Requesters({
     setdatarawloading(true);
     setdatarawloading2(true);
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getRequesterList?name=${name1}&company_id=${
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_URL
+      }/getRequesterList?name=${name1}&company_id=${
         location_id1 === "" && company_id1 === "null"
           ? ""
           : location_id1 === ""
@@ -466,7 +468,7 @@ function Requesters({
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getCompanyClientList`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -481,7 +483,7 @@ function Requesters({
   useEffect(() => {
     setloadinglokasi(true);
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getLocations${
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocations${
         location_id1 !== "" ? `?company_id=${company_id1}` : ``
       }`,
       {
@@ -530,7 +532,7 @@ function Requesters({
     if (asallokasitrigger !== -1) {
       setloadinglokasi(true);
       fetch(
-        `https://boiling-thicket-46501.herokuapp.com/getLocations${
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocations${
           asalcompanyvalue !== null ? `?company_id=${asalcompanyvalue}` : ``
         }`,
         {
@@ -693,13 +695,15 @@ function Requesters({
                   onChange: (page, pageSize) => {
                     setpraloading(true);
                     fetch(
-                      `https://boiling-thicket-46501.herokuapp.com/getRequesterList?page=${page}&rows=10&name=${name1}&company_id=${
+                      `${
+                        process.env.NEXT_PUBLIC_BACKEND_URL
+                      }/getRequesterList?page=${page}&rows=10&name=${name1}&company_id=${
                         location_id1 === "" ? company_id1 : location_id1
                       }${
                         is_enabled1 === "" ? "" : `&is_enabled=${is_enabled1}`
                       }`,
                       {
-                        // fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
+                        // fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRequesterList`, {
                         method: `GET`,
                         headers: {
                           Authorization: JSON.parse(initProps),
@@ -800,7 +804,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -816,7 +820,7 @@ export async function getServerSideProps({ req, res }) {
   //     res.end()
   // }
 
-  // const resourcesLA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterList`, {
+  // const resourcesLA = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRequesterList`, {
   //     method: `POST`,
   //     headers: {
   //         'Authorization': JSON.parse(initProps),
@@ -827,7 +831,7 @@ export async function getServerSideProps({ req, res }) {
   // const resjsonLA = await resourcesLA.json()
   // const dataListRequester = resjsonLA
 
-  // const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
+  // const resourcesGCL = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getClientCompanyList`, {
   //     method: `POST`,
   //     headers: {
   //         'Authorization': JSON.parse(initProps),

@@ -76,7 +76,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
   };
   const handleCreateVendor = () => {
     setLoadingbtn(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addVendor`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addVendor`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(tok),
@@ -125,15 +125,12 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
   };
   const handleDeleteVendor = (key) => {
     setLoadingbtn(true);
-    fetch(
-      `https://boiling-thicket-46501.herokuapp.com/deleteVendor?id=${key}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: JSON.parse(tok),
-        },
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteVendor?id=${key}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: JSON.parse(tok),
+      },
+    })
       .then((res) => res.json())
       .then((res2) => {
         setLoadingbtn(false);
@@ -202,7 +199,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
   const handleEditVendor = () => {
     // console.log("isidata2: " + editvendor)
     setLoadingbtn(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateVendor`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateVendor`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(tok),
@@ -1144,7 +1141,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -1156,7 +1153,7 @@ export async function getServerSideProps({ req, res }) {
   const dataProfile = resjsonGP;
 
   const resourcesGetVendor = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/getVendors`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getVendors`,
     {
       method: `GET`,
       headers: {

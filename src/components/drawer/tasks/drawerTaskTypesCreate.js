@@ -55,7 +55,7 @@ const DrawerTaskTypesCreate = ({
   };
   const handleAddTipeTask = () => {
     setloadingcreate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addTaskType`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addTaskType`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -149,7 +149,7 @@ const DrawerTaskTypesCreate = ({
                     onBlur={(e) => {
                       setloadingtasktypenameexist(true);
                       fetch(
-                        `https://boiling-thicket-46501.herokuapp.com/getFilterTaskTypes?name=${e.target.value}`,
+                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTaskTypes?name=${e.target.value}`,
                         {
                           method: "GET",
                           headers: {

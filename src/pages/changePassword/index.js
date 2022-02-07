@@ -29,7 +29,7 @@ export default function ChangePassword({ initProps }) {
       });
     } else {
       setloadingbuatpass(true);
-      fetch(`https://boiling-thicket-46501.herokuapp.com/changePassword`, {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/changePassword`, {
         method: "POST",
         headers: {
           Authorization: token,

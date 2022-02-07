@@ -128,7 +128,7 @@ const DrawerSublokasi = ({
       setdisabledsave(true);
     } else {
       setlokasiloading(true);
-      fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanySub`, {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addCompanySub`, {
         method: "POST",
         headers: {
           Authorization: JSON.parse(initProps),
@@ -172,7 +172,7 @@ const DrawerSublokasi = ({
     }
   };
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getBranchCompanyList`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),

@@ -165,7 +165,7 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
   };
   const handleUpdateTicket = () => {
     setloadingupdate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateTicket`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateTicket`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -196,15 +196,12 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
   };
 
   useEffect(() => {
-    fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getTicket?id=${ticketid}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTicket?id=${ticketid}`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
       .then((res) => res.json())
       .then((res2) => {
         const updata = {
@@ -235,7 +232,7 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
         return res2.data.ticket.requester.company.id;
       })
       .then((res3) => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTicketRelation`, {
           method: `GET`,
           headers: {
             Authorization: JSON.parse(initProps),
@@ -249,7 +246,7 @@ const TicketUpdate = ({ initProps, dataProfile, sidemenu, ticketid }) => {
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterUsers`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -739,7 +736,7 @@ export async function getServerSideProps({ req, res, params }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

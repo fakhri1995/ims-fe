@@ -449,7 +449,7 @@ function JoinOurTeam({ dataCareers }) {
 }
 export async function getServerSideProps() {
   const resources = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/getCareers`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCareers`,
     {
       method: `GET`,
     }

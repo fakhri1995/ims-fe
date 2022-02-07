@@ -175,7 +175,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
   //4.handler
   const handleDeleteModel = () => {
     setloadingdelete(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteModel`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteModel`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -208,15 +208,12 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
 
   //5.useeffect
   useEffect(() => {
-    fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getModel?id=${modelid}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModel?id=${modelid}`, {
+      method: "GET",
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
       .then((res) => res.json())
       .then((res2) => {
         var t = {};
@@ -668,7 +665,7 @@ export async function getServerSideProps({ req, res, params }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

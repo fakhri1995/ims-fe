@@ -46,7 +46,7 @@ const DrawerTicketConnectItem = ({
   const handleSetAsset = () => {
     setloadingsave(true);
     setdisabledcreate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/setItemTicket`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/setItemTicket`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -80,7 +80,7 @@ const DrawerTicketConnectItem = ({
 
   //useEffect
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssets`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -93,7 +93,7 @@ const DrawerTicketConnectItem = ({
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterInventories`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterInventories`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -161,7 +161,7 @@ const DrawerTicketConnectItem = ({
                   setselectedassettype(extra.allCheckedNodes[0].node.props.id);
                   setloadinggetasset(true);
                   fetch(
-                    `https://boiling-thicket-46501.herokuapp.com/getFilterInventories?asset_id=${extra.allCheckedNodes[0].node.props.id}`,
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterInventories?asset_id=${extra.allCheckedNodes[0].node.props.id}`,
                     {
                       method: `GET`,
                       headers: {
@@ -205,7 +205,7 @@ const DrawerTicketConnectItem = ({
                 onSearch={(value) => {
                   setfetchingdataasset(true);
                   fetch(
-                    `https://boiling-thicket-46501.herokuapp.com/getFilterInventories?asset_id=${selectedassettype}&keyword=${value}`,
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterInventories?asset_id=${selectedassettype}&keyword=${value}`,
                     {
                       method: `GET`,
                       headers: {

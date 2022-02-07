@@ -35,7 +35,7 @@ const DrawerTicketAssign = ({
   const handleAssign = () => {
     setloadingsave(true);
     setdisabledcreate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/assignTicket`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/assignTicket`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -65,7 +65,7 @@ const DrawerTicketAssign = ({
 
   //useEffect
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterGroups`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -77,15 +77,12 @@ const DrawerTicketAssign = ({
       });
   }, []);
   useEffect(() => {
-    fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getFilterUsers?type=${1}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=${1}`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
       .then((res) => res.json())
       .then((res2) => {
         setlistengs(res2.data);
@@ -150,9 +147,9 @@ const DrawerTicketAssign = ({
                 if (datapayload.assignable_type === true) {
                   setloadinggetengs(true);
                   fetch(
-                    `https://boiling-thicket-46501.herokuapp.com/getFilterUsers?type=${1}&name=${
-                      e.target.value
-                    }`,
+                    `${
+                      process.env.NEXT_PUBLIC_BACKEND_URL
+                    }/getFilterUsers?type=${1}&name=${e.target.value}`,
                     {
                       method: `GET`,
                       headers: {
@@ -168,7 +165,7 @@ const DrawerTicketAssign = ({
                 } else {
                   setloadinggetgroups(true);
                   fetch(
-                    `https://boiling-thicket-46501.herokuapp.com/getFilterGroups?name=${e.target.value}`,
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups?name=${e.target.value}`,
                     {
                       method: `GET`,
                       headers: {

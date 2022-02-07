@@ -83,7 +83,7 @@ function ViewContract({
   const handleTerminateContract = (id) => {
     setWarningTerminate({ ...warningTerminate, loadingBtn: true });
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/deactivatingContract?id=${id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deactivatingContract?id=${id}`,
       {
         method: "PUT",
         headers: {
@@ -116,7 +116,7 @@ function ViewContract({
   const handleActivateContract = (id) => {
     setWarningActivate({ ...warningActivate, loadingBtn: true });
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/activatingContract?id=${id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/activatingContract?id=${id}`,
       {
         method: "PUT",
         headers: {
@@ -148,19 +148,16 @@ function ViewContract({
   //------------------handle delete contract-------------------
   const handleDeleteContract = (key) => {
     setWarningDelete({ ...warningDelete, loadingBtn: true });
-    fetch(
-      `https://boiling-thicket-46501.herokuapp.com/deleteContract?id=${key}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: JSON.parse(tok),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: key,
-        }),
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteContract?id=${key}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: JSON.parse(tok),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: key,
+      }),
+    })
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -518,7 +515,7 @@ export async function getServerSideProps({ req, res, params }) {
   }
 
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `POST`,
       headers: {
@@ -539,7 +536,7 @@ export async function getServerSideProps({ req, res, params }) {
   }
 
   const resourcesGetContract = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/getContract?id=${contractid}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContract?id=${contractid}`,
     {
       method: `GET`,
       headers: {
@@ -551,7 +548,7 @@ export async function getServerSideProps({ req, res, params }) {
   const dataContract = resjsonGetContract;
 
   const resourcesGetContractTypes = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/getContractTypes`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractTypes`,
     {
       method: `GET`,
       headers: {
@@ -564,7 +561,7 @@ export async function getServerSideProps({ req, res, params }) {
 
   // const assetId = dataContract.data.contract.asset_id
 
-  // const resourcesGetInventoryColumnAndVendor = await fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryColumns?id=${assetId}`, {
+  // const resourcesGetInventoryColumnAndVendor = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventoryColumns?id=${assetId}`, {
   //     method: `GET`,
   //     headers: {
   //         'Authorization': JSON.parse(initProps)
@@ -573,7 +570,7 @@ export async function getServerSideProps({ req, res, params }) {
   // const resjsonGetInventoryColumnAndVendor = await resourcesGetInventoryColumnAndVendor.json()
   // const dataInventoryColumnAndVendor = resjsonGetInventoryColumnAndVendor
 
-  // const resourcesGetInventoryActivityLog = await fetch(`https://boiling-thicket-46501.herokuapp.com/getActivityInventoryLogs?id=${inventoryid}`, {
+  // const resourcesGetInventoryActivityLog = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getActivityInventoryLogs?id=${inventoryid}`, {
   //     method: `GET`,
   //     headers: {
   //         'Authorization': JSON.parse(initProps)

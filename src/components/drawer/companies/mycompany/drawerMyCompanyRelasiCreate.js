@@ -82,17 +82,14 @@ const DrawerAddRelasi = ({
 
   const handleAddRelationshipItem = () => {
     setloadingadd(true);
-    fetch(
-      `https://boiling-thicket-46501.herokuapp.com/addRelationshipInventories`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataApiadd),
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addRelationshipInventories`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataApiadd),
+    })
       .then((res) => res.json())
       .then((res2) => {
         setloadingadd(false);
@@ -125,7 +122,7 @@ const DrawerAddRelasi = ({
       });
   };
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationships`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRelationships`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -139,7 +136,7 @@ const DrawerAddRelasi = ({
   useEffect(() => {
     if (subloctrig !== -1) {
       fetch(
-        `https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${subloctrig}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRelationshipInventoryDetailList?type_id=${subloctrig}`,
         {
           method: `GET`,
           headers: {
@@ -152,15 +149,12 @@ const DrawerAddRelasi = ({
           setsublocdata(res2.data.children);
         });
     } else if (detailtipeadd !== -10) {
-      fetch(
-        `https://boiling-thicket-46501.herokuapp.com/getFilterInventories`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterInventories`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
         .then((res) => res.json())
         .then((res2) => {
           setdetailtipedataadd(res2.data);
@@ -310,7 +304,9 @@ const DrawerAddRelasi = ({
                     onSearch={(value) => {
                       setfetchingmodel(true);
                       fetch(
-                        `https://boiling-thicket-46501.herokuapp.com/getFilterInventories?keyword=${
+                        `${
+                          process.env.NEXT_PUBLIC_BACKEND_URL
+                        }/getFilterInventories?keyword=${
                           value !== "" ? value : ""
                         }`,
                         {
@@ -353,7 +349,7 @@ const DrawerAddRelasi = ({
                                         <p className="mb-0">Item</p>
                                         <Select value={dataApiadd.connected_ids} mode="multiple" showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
                                             setfetchingmodel(true)
-                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&name=${value !== "" ? value : ""}`, {
+                                            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&name=${value !== "" ? value : ""}`, {
                                                 method: `GET`,
                                                 headers: {
                                                     'Authorization': JSON.parse(initProps),
@@ -385,7 +381,7 @@ const DrawerAddRelasi = ({
                                         <p className="mb-0">Detail Tipe</p>
                                         <Select value={dataApiadd.connected_ids} mode="multiple" showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
                                             setfetchingmodel(true)
-                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&name=${value !== "" ? value : ""}`, {
+                                            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&name=${value !== "" ? value : ""}`, {
                                                 method: `GET`,
                                                 headers: {
                                                     'Authorization': JSON.parse(initProps),
@@ -427,7 +423,7 @@ const DrawerAddRelasi = ({
                                         <p className="mb-0">Detail Tipe</p>
                                         <Select placeholder="Cari dengan Model ID" value={dataApiadd.connected_ids} mode="multiple" showSearch optionFilterProp="children" notFoundContent={fetchingmodel ? <Spin size="small" /> : null} onSearch={(value) => {
                                             setfetchingmodel(true)
-                                            fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&model_id=${value !== "" ? value : ""}`, {
+                                            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&model_id=${value !== "" ? value : ""}`, {
                                                 method: `GET`,
                                                 headers: {
                                                     'Authorization': JSON.parse(initProps),

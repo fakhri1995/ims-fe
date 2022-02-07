@@ -130,17 +130,14 @@ const CreateRelationshipItem = ({
   //handler
   const handleAddRelationshipItem = () => {
     setloadingadd(true);
-    fetch(
-      `https://boiling-thicket-46501.herokuapp.com/addRelationshipInventories`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newdata),
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addRelationshipInventories`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newdata),
+    })
       .then((res) => res.json())
       .then((res2) => {
         setloadingadd(false);
@@ -163,7 +160,7 @@ const CreateRelationshipItem = ({
   //useEffect
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryRelation?asset_id=${asset_id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRelationshipInventoryRelation?asset_id=${asset_id}`,
       {
         method: `GET`,
         headers: {
@@ -182,7 +179,7 @@ const CreateRelationshipItem = ({
     if (relitemdatatrigger !== -1) {
       setrelitemloading(true);
       fetch(
-        `https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?relationship_asset_id=${relitemdatatrigger}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRelationshipInventoryDetailList?relationship_asset_id=${relitemdatatrigger}`,
         {
           method: `GET`,
           headers: {
@@ -439,7 +436,7 @@ export async function getServerSideProps({ req, res, params }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

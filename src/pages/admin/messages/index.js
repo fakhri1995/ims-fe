@@ -219,7 +219,7 @@ export async function getServerSideProps({ req, res }) {
     }
   }
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -231,7 +231,7 @@ export async function getServerSideProps({ req, res }) {
   const dataProfile = resjsonGP;
 
   const resourcesGM = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/getMessages`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getMessages`,
     {
       method: `GET`,
       headers: {

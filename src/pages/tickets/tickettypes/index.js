@@ -215,7 +215,7 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
   //3. Handler
   const handleDeleteTipeTiket = () => {
     setloadingtickettypesdelete(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteTicketTaskType`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteTicketTaskType`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -248,7 +248,7 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
   useEffect(() => {
     setloadingtickettypes(true);
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getTicketTaskTypes?page=${pagetickettypes}&rows=${rowstickettypes}&keyword=${searcingtickettypes}&sort_by=${sortingtickettypes.sort_by}&sort_type=${sortingtickettypes.sort_type}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTicketTaskTypes?page=${pagetickettypes}&rows=${rowstickettypes}&keyword=${searcingtickettypes}&sort_by=${sortingtickettypes.sort_by}&sort_type=${sortingtickettypes.sort_type}`,
       {
         method: `GET`,
         headers: {
@@ -345,7 +345,7 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
                     setsearcingtickettypes(e.target.value);
                     setloadingtickettypes(true);
                     fetch(
-                      `https://boiling-thicket-46501.herokuapp.com/getTicketTaskTypes?page=${pagetickettypes}&rows=${rowstickettypes}&keyword=${e.target.value}&sort_by=${sortingtickettypes.sort_by}&sort_type=${sortingtickettypes.sort_type}`,
+                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTicketTaskTypes?page=${pagetickettypes}&rows=${rowstickettypes}&keyword=${e.target.value}&sort_by=${sortingtickettypes.sort_by}&sort_type=${sortingtickettypes.sort_type}`,
                       {
                         method: `GET`,
                         headers: {
@@ -448,7 +448,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

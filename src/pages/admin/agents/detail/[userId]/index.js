@@ -65,7 +65,7 @@ const Relationship = ({ userid, initProps }) => {
   useEffect(() => {
     setpraloadingrel(true);
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getRelationshipInventory?id=${userid}&type_id=-1`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRelationshipInventory?id=${userid}&type_id=-1`,
       {
         method: `GET`,
         headers: {
@@ -180,7 +180,7 @@ function AgentDetail({
       keaktifan = true;
       setloadingubahnonaktif(true);
     }
-    fetch(`https://boiling-thicket-46501.herokuapp.com/agentActivation`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/agentActivation`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -227,7 +227,7 @@ function AgentDetail({
   };
   const handleDeleteAgent = () => {
     setloadinghapus(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteAgent`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteAgent`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -259,7 +259,7 @@ function AgentDetail({
   //useEffect
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getAgentDetail?account_id=${userid}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAgentDetail?account_id=${userid}`,
       {
         method: `GET`,
         headers: {
@@ -594,7 +594,7 @@ export async function getServerSideProps({ req, res, params }) {
   }
   initProps = cookiesJSON1.token;
   const resources = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

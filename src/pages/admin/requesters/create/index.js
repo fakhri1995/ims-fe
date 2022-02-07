@@ -64,7 +64,7 @@ function RequestersCreate({
   //handleCreateButton
   const handleCreateAgents = () => {
     setLoadingcreate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addRequesterMember`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addRequesterMember`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(tok),
@@ -145,7 +145,7 @@ function RequestersCreate({
 
   //useEffect
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocations`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -159,7 +159,7 @@ function RequestersCreate({
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -451,7 +451,7 @@ export async function getServerSideProps({ req, res }) {
   initProps = cookiesJSON1.token;
 
   const resources = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -467,7 +467,7 @@ export async function getServerSideProps({ req, res }) {
   //     res.end()
   // }
 
-  // const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
+  // const resourcesGCL = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getClientCompanyList`, {
   //     method: `POST`,
   //     headers: {
   //         'Authorization': JSON.parse(initProps),

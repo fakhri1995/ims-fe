@@ -114,7 +114,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
       setsortedname("A-Z");
     } else {
       fetch(
-        `https://boiling-thicket-46501.herokuapp.com/${
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
           dataProfile.data.company.role !== 2
             ? `getMainLocations`
             : `getLocations?company_id=${dataProfile.data.company.company_id}`
@@ -324,7 +324,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
   //USE EFECT
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/${
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
         dataProfile.data.company.role !== 2
           ? `getMainLocations`
           : `getLocations?company_id=${dataProfile.data.company.company_id}`
@@ -353,7 +353,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
   useEffect(() => {
     if (selected === true) {
       fetch(
-        `https://boiling-thicket-46501.herokuapp.com/getSubCompanyProfile?id=${idselected}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getSubCompanyProfile?id=${idselected}`,
         {
           method: `GET`,
           headers: {
@@ -620,7 +620,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

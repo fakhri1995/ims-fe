@@ -174,7 +174,7 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
     var temp = loadingselectedrole;
     temp[index] = true;
     setloadingselectedrole(temp);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getRoleUsers?id=${id}`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoleUsers?id=${id}`, {
       method: "GET",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -195,7 +195,7 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
 
   const handleDeleteRoles = () => {
     setloadingdelete(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteRole`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRole`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -224,7 +224,7 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
       });
   };
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -374,7 +374,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -390,7 +390,7 @@ export async function getServerSideProps({ req, res }) {
   //     res.end()
   // }
 
-  // const resourcesGR = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+  // const resourcesGR = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
   //     method: `GET`,
   //     headers: {
   //         'Authorization': JSON.parse(initProps)

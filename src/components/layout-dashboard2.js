@@ -42,7 +42,7 @@ function LayoutDashboard2({
   };
   const handleLogout = () => {
     setloadingspin(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/logout`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

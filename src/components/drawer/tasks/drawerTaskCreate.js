@@ -96,7 +96,7 @@ const DrawerTaskCreate = ({
           : datacreate.subloc_id,
     };
     setloadingcreate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addTask`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addTask`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -149,7 +149,7 @@ const DrawerTaskCreate = ({
   //USEEFFECT
   //Tipe task
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterTaskTypes`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTaskTypes`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -162,7 +162,7 @@ const DrawerTaskCreate = ({
   }, []);
   //Referensi
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterTickets?id=`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTickets?id=`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -175,7 +175,7 @@ const DrawerTaskCreate = ({
   }, []);
   //Lokasi
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getAllCompanyList`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAllCompanyList`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -190,7 +190,7 @@ const DrawerTaskCreate = ({
   useEffect(() => {
     if (triggersubloc !== -1) {
       fetch(
-        `https://boiling-thicket-46501.herokuapp.com/getSubLocations?company_id=${triggersubloc}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getSubLocations?company_id=${triggersubloc}`,
         {
           method: `GET`,
           headers: {
@@ -206,7 +206,7 @@ const DrawerTaskCreate = ({
   }, [triggersubloc]);
   //Items
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterInventories`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterInventories`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -221,7 +221,7 @@ const DrawerTaskCreate = ({
   useEffect(() => {
     if (switchstaffgroup !== -1) {
       if (switchstaffgroup === 0) {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterGroups`, {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups`, {
           method: `GET`,
           headers: {
             Authorization: JSON.parse(initProps),
@@ -233,7 +233,7 @@ const DrawerTaskCreate = ({
           });
       } else if (switchstaffgroup === 1) {
         fetch(
-          `https://boiling-thicket-46501.herokuapp.com/getFilterUsers?type=${1}`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=${1}`,
           {
             method: `GET`,
             headers: {
@@ -249,7 +249,7 @@ const DrawerTaskCreate = ({
     }
   }, [switchstaffgroup]);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterGroups`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -261,15 +261,12 @@ const DrawerTaskCreate = ({
       });
   }, []);
   useEffect(() => {
-    fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getFilterUsers?type=${1}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=${1}`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
       .then((res) => res.json())
       .then((res2) => {
         setdatastaffgroup(res2.data);
@@ -358,7 +355,7 @@ const DrawerTaskCreate = ({
                 onSearch={(value) => {
                   setfetchingtasktypes(true);
                   fetch(
-                    `https://boiling-thicket-46501.herokuapp.com/getFilterTaskTypes?name=${value}`,
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTaskTypes?name=${value}`,
                     {
                       method: `GET`,
                       headers: {
@@ -421,7 +418,7 @@ const DrawerTaskCreate = ({
                 onSearch={(value) => {
                   setfetchingreferences(true);
                   fetch(
-                    `https://boiling-thicket-46501.herokuapp.com/getFilterTickets?id=${value}`,
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTickets?id=${value}`,
                     {
                       method: `GET`,
                       headers: {
@@ -563,7 +560,7 @@ const DrawerTaskCreate = ({
                 onSearch={(value) => {
                   setfetchingitems(true);
                   fetch(
-                    `https://boiling-thicket-46501.herokuapp.com/getFilterInventories?keyword=${value}`,
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterInventories?keyword=${value}`,
                     {
                       method: `GET`,
                       headers: {
@@ -680,7 +677,9 @@ const DrawerTaskCreate = ({
                   onSearch={(value) => {
                     setfetchingstaffgroup(true);
                     fetch(
-                      `https://boiling-thicket-46501.herokuapp.com/getFilterUsers?type=${1}&name=${value}`,
+                      `${
+                        process.env.NEXT_PUBLIC_BACKEND_URL
+                      }/getFilterUsers?type=${1}&name=${value}`,
                       {
                         method: `GET`,
                         headers: {
@@ -731,7 +730,7 @@ const DrawerTaskCreate = ({
                   onSearch={(value) => {
                     setfetchingstaffgroup(true);
                     fetch(
-                      `https://boiling-thicket-46501.herokuapp.com/getFilterGroups?name=${value}`,
+                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups?name=${value}`,
                       {
                         method: `GET`,
                         headers: {

@@ -61,19 +61,16 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
   //------------------handle delete contract-------------------
   const handleDeleteContract = (key) => {
     setmodaldelete(true);
-    fetch(
-      `https://boiling-thicket-46501.herokuapp.com/deleteContract?id=${key}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: JSON.parse(tok),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: key,
-        }),
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteContract?id=${key}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: JSON.parse(tok),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: key,
+      }),
+    })
       .then((res) => res.json())
       .then((res2) => {
         setmodaldelete(false);
@@ -373,7 +370,7 @@ export async function getServerSideProps({ req, res }) {
   }
 
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -390,7 +387,7 @@ export async function getServerSideProps({ req, res }) {
   // }
 
   const resourcesGetContracts = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/getContracts`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContracts`,
     {
       method: `GET`,
       headers: {

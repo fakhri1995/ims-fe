@@ -181,7 +181,9 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
     setpraloading(true);
     setdatarawloading(true);
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getAgentList?name=${name1}&company_id=${location_id1}${
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_URL
+      }/getAgentList?name=${name1}&company_id=${location_id1}${
         is_enabled1 === "" ? "" : `&is_enabled=${is_enabled1}`
       }`,
       {
@@ -227,7 +229,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getBranchCompanyList`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -350,7 +352,9 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                   onChange: (page, pageSize) => {
                     setpraloading(true);
                     fetch(
-                      `https://boiling-thicket-46501.herokuapp.com/getAgentList?page=${page}&rows=10&name=${name1}&company_id=${location_id1}${
+                      `${
+                        process.env.NEXT_PUBLIC_BACKEND_URL
+                      }/getAgentList?page=${page}&rows=10&name=${name1}&company_id=${location_id1}${
                         is_enabled1 === "" ? "" : `&is_enabled=${is_enabled1}`
                       }`,
                       {
@@ -433,7 +437,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

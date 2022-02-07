@@ -192,7 +192,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
   const onFilterTicketHistories = () => {
     setloadinghistories(true);
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getClosedTickets?page=${pagehistories}&rows=${rowshistories}&ticket_id=${searcingfilterhistories}&from=${fromfilterhistories}&to=${tofilterhistories}&location_id=${locfilterhistories}&from_res=${fromresfilterhistories}&to_res=${toresfilterhistories}&sort_by=${sortinghistories.sort_by}&sort_type=${sortinghistories.sort_type}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getClosedTickets?page=${pagehistories}&rows=${rowshistories}&ticket_id=${searcingfilterhistories}&from=${fromfilterhistories}&to=${tofilterhistories}&location_id=${locfilterhistories}&from_res=${fromresfilterhistories}&to_res=${toresfilterhistories}&sort_by=${sortinghistories.sort_by}&sort_type=${sortinghistories.sort_type}`,
       {
         method: `GET`,
         headers: {
@@ -210,7 +210,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
   };
   // const handleDeleteTicketHistories = () => {
   //     setloadinghistories(true)
-  //     fetch(`https://boiling-thicket-46501.herokuapp.com/deleteTicketTaskType`, {
+  //     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteTicketTaskType`, {
   //         method: 'DELETE',
   //         headers: {
   //             'Authorization': JSON.parse(initProps),
@@ -244,7 +244,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
   useEffect(() => {
     setloadinghistories(true);
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getClosedTickets?page=${pagehistories}&rows=${rowshistories}&ticket_id=${searcingfilterhistories}&from=${fromfilterhistories}&to=${tofilterhistories}&location_id=${locfilterhistories}&from_res=${fromresfilterhistories}&to_res=${toresfilterhistories}&sort_by=${sortinghistories.sort_by}&sort_type=${sortinghistories.sort_type}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getClosedTickets?page=${pagehistories}&rows=${rowshistories}&ticket_id=${searcingfilterhistories}&from=${fromfilterhistories}&to=${tofilterhistories}&location_id=${locfilterhistories}&from_res=${fromresfilterhistories}&to_res=${toresfilterhistories}&sort_by=${sortinghistories.sort_by}&sort_type=${sortinghistories.sort_type}`,
       {
         method: `GET`,
         headers: {
@@ -262,7 +262,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
   }, []);
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/${
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
         dataProfile.data.role === 1
           ? "getTicketRelation"
           : "getClientTicketRelation"
@@ -517,7 +517,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

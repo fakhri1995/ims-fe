@@ -34,7 +34,7 @@ const TableCustom = ({
           setloading(true);
           setpage(page);
           fetch(
-            `https://boiling-thicket-46501.herokuapp.com/getCompanyInventories?id=${locid}&page=${page}&rows=${pageSize}&keyword=${keyworditems}&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyInventories?id=${locid}&page=${page}&rows=${pageSize}&keyword=${keyworditems}&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}`,
             {
               method: `GET`,
               headers: {
@@ -59,7 +59,9 @@ const TableCustom = ({
               sort_type: sorter.order === "ascend" ? "asc" : "desc",
             });
             fetch(
-              `https://boiling-thicket-46501.herokuapp.com/getCompanyInventories?id=${locid}&page=${
+              `${
+                process.env.NEXT_PUBLIC_BACKEND_URL
+              }/getCompanyInventories?id=${locid}&page=${
                 pagination.current
               }&rows=${pagination.pageSize}&keyword=${keyworditems}&sort_by=${
                 sorter.column.dataIndex
@@ -81,7 +83,7 @@ const TableCustom = ({
             setloading(true);
             setsorting({ sort_by: "", sort_type: "" });
             fetch(
-              `https://boiling-thicket-46501.herokuapp.com/getCompanyInventories?id=${locid}&page=${pagination.current}&rows=${pagination.pageSize}&keyword=${keyworditems}&sort_by=&sort_type=`,
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyInventories?id=${locid}&page=${pagination.current}&rows=${pagination.pageSize}&keyword=${keyworditems}&sort_by=&sort_type=`,
               {
                 method: `GET`,
                 headers: {
@@ -128,7 +130,7 @@ const TableCustomRelasi = ({
           setpraloading(true);
           setpage(page);
           fetch(
-            `https://boiling-thicket-46501.herokuapp.com/getCompanyRelationshipInventory?id=${id}&page=${page}&rows=${pageSize}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyRelationshipInventory?id=${id}&page=${page}&rows=${pageSize}`,
             {
               method: `GET`,
               headers: {
@@ -179,7 +181,7 @@ const TableCustomTipeTask = ({
           setpraloading(true);
           setpage(page);
           fetch(
-            `https://boiling-thicket-46501.herokuapp.com/getTaskTypes?page=${page}&rows=${pageSize}&sort_by=${sortingtipetask.sort_by}&sort_type=${sortingtipetask.sort_type}&name=${searcingtipetask}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskTypes?page=${page}&rows=${pageSize}&sort_by=${sortingtipetask.sort_by}&sort_type=${sortingtipetask.sort_type}&name=${searcingtipetask}`,
             {
               method: `GET`,
               headers: {
@@ -205,7 +207,7 @@ const TableCustomTipeTask = ({
               sort_type: sorter.order === "ascend" ? "asc" : "desc",
             });
             fetch(
-              `https://boiling-thicket-46501.herokuapp.com/getTaskTypes?page=${
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskTypes?page=${
                 pagination.current
               }&rows=${pagination.pageSize}&sort_by=${
                 sorter.column.dataIndex
@@ -229,7 +231,7 @@ const TableCustomTipeTask = ({
             setpraloading(true);
             setsortingtipetask({ sort_by: "", sort_type: "" });
             fetch(
-              `https://boiling-thicket-46501.herokuapp.com/getTaskTypes?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=&sort_type=&name=${searcingtipetask}`,
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskTypes?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=&sort_type=&name=${searcingtipetask}`,
               {
                 method: `GET`,
                 headers: {
@@ -289,7 +291,7 @@ const TableCustomTask = ({
           setpraloading(true);
           setpage(page);
           fetch(
-            `https://boiling-thicket-46501.herokuapp.com/getUserTasks?page=${page}&rows=${pageSize}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserTasks?page=${page}&rows=${pageSize}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
             {
               method: `GET`,
               headers: {
@@ -330,7 +332,7 @@ const TableCustomTask = ({
               sort_type: sorter.order === "ascend" ? "asc" : "desc",
             });
             fetch(
-              `https://boiling-thicket-46501.herokuapp.com/getUserTasks?page=${
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserTasks?page=${
                 pagination.current
               }&rows=${pagination.pageSize}&sort_by=${
                 sorter.column.dataIndex
@@ -354,7 +356,7 @@ const TableCustomTask = ({
             setpraloading(true);
             setsortstate({ sort_by: "", sort_type: "" });
             fetch(
-              `https://boiling-thicket-46501.herokuapp.com/getUserTasks?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=&sort_type=&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserTasks?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=&sort_type=&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
               {
                 method: `GET`,
                 headers: {
@@ -414,7 +416,7 @@ const TableCustomAdminTask = ({
           setpraloading(true);
           setpage(page);
           fetch(
-            `https://boiling-thicket-46501.herokuapp.com/getTasks?page=${page}&rows=${pageSize}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTasks?page=${page}&rows=${pageSize}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
             {
               method: `GET`,
               headers: {
@@ -455,7 +457,7 @@ const TableCustomAdminTask = ({
               sort_type: sorter.order === "ascend" ? "asc" : "desc",
             });
             fetch(
-              `https://boiling-thicket-46501.herokuapp.com/getTasks?page=${
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTasks?page=${
                 pagination.current
               }&rows=${pagination.pageSize}&sort_by=${
                 sorter.column.dataIndex
@@ -479,7 +481,7 @@ const TableCustomAdminTask = ({
             setpraloading(true);
             setsortstate({ sort_by: "", sort_type: "" });
             fetch(
-              `https://boiling-thicket-46501.herokuapp.com/getTasks?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=&sort_type=&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTasks?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=&sort_type=&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
               {
                 method: `GET`,
                 headers: {
@@ -531,7 +533,7 @@ const TableCustomStaffTask = ({
           setpraloading(true);
           setpage(page);
           fetch(
-            `https://boiling-thicket-46501.herokuapp.com/getStaffTaskStatuses?page=${page}&rows=${pageSize}&name=${searcingstaff}&from=${intervaldatestaff.from}&to=${intervaldatestaff.to}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getStaffTaskStatuses?page=${page}&rows=${pageSize}&name=${searcingstaff}&from=${intervaldatestaff.from}&to=${intervaldatestaff.to}`,
             {
               method: `GET`,
               headers: {
@@ -557,7 +559,7 @@ const TableCustomStaffTask = ({
               sort_type: sorter.order === "ascend" ? "asc" : "desc",
             });
             fetch(
-              `https://boiling-thicket-46501.herokuapp.com/getStaffTaskStatuses?page=${pagination.current}&rows=${pagination.pageSize}&name=${searcingstaff}&from=${intervaldatestaff.from}&to=${intervaldatestaff.to}`,
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getStaffTaskStatuses?page=${pagination.current}&rows=${pagination.pageSize}&name=${searcingstaff}&from=${intervaldatestaff.from}&to=${intervaldatestaff.to}`,
               {
                 method: `GET`,
                 headers: {
@@ -575,7 +577,7 @@ const TableCustomStaffTask = ({
             setpraloading(true);
             setsortingstaff({ sort_by: "", sort_type: "" });
             fetch(
-              `https://boiling-thicket-46501.herokuapp.com/getStaffTaskStatuses?page=${pagination.current}&rows=${pagination.pageSize}&name=${searcingstaff}&from=${intervaldatestaff.from}&to=${intervaldatestaff.to}`,
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getStaffTaskStatuses?page=${pagination.current}&rows=${pagination.pageSize}&name=${searcingstaff}&from=${intervaldatestaff.from}&to=${intervaldatestaff.to}`,
               {
                 method: `GET`,
                 headers: {
@@ -631,7 +633,7 @@ const TableCustomTaskPick = ({
           setpraloading(true);
           setpage(page);
           fetch(
-            `https://boiling-thicket-46501.herokuapp.com/getTaskPickList?page=${page}&rows=${pageSize}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskPickList?page=${page}&rows=${pageSize}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}`,
             {
               method: `GET`,
               headers: {
@@ -656,7 +658,7 @@ const TableCustomTaskPick = ({
               sort_type: sorter.order === "ascend" ? "asc" : "desc",
             });
             fetch(
-              `https://boiling-thicket-46501.herokuapp.com/getTaskPickList?page=${
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskPickList?page=${
                 pagination.current
               }&rows=${
                 pagination.pageSize
@@ -680,7 +682,7 @@ const TableCustomTaskPick = ({
             setpraloading(true);
             setsortstate({ sort_by: "", sort_type: "" });
             fetch(
-              `https://boiling-thicket-46501.herokuapp.com/getTaskPickList?page=${pagination.current}&rows=${pagination.pageSize}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&sort_by=&sort_type=`,
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskPickList?page=${pagination.current}&rows=${pagination.pageSize}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&sort_by=&sort_type=`,
               {
                 method: `GET`,
                 headers: {
@@ -732,7 +734,7 @@ const TableCustomTicketTypes = ({
           setpraloading(true);
           setpage(page);
           fetch(
-            `https://boiling-thicket-46501.herokuapp.com/getTicketTaskTypes?page=${page}&rows=${pageSize}&keyword=${searching}&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTicketTaskTypes?page=${page}&rows=${pageSize}&keyword=${searching}&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}`,
             {
               method: `GET`,
               headers: {
@@ -757,7 +759,7 @@ const TableCustomTicketTypes = ({
               sort_type: sorter.order === "ascend" ? "asc" : "desc",
             });
             fetch(
-              `https://boiling-thicket-46501.herokuapp.com/getTicketTaskTypes?page=${
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTicketTaskTypes?page=${
                 pagination.current
               }&rows=${pagination.pageSize}&keyword=${searching}&sort_by=${
                 sorter.column.dataIndex
@@ -779,7 +781,7 @@ const TableCustomTicketTypes = ({
             setpraloading(true);
             setsorting({ sort_by: "", sort_type: "" });
             fetch(
-              `https://boiling-thicket-46501.herokuapp.com/getTicketTaskTypes?page=${pagination.current}&rows=${pagination.pageSize}&keyword=${searching}&sort_by=&sort_type=`,
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTicketTaskTypes?page=${pagination.current}&rows=${pagination.pageSize}&keyword=${searching}&sort_by=&sort_type=`,
               {
                 method: `GET`,
                 headers: {
@@ -839,7 +841,7 @@ const TableCustomTicketHistories = ({
           setpraloading(true);
           setpage(page);
           fetch(
-            `https://boiling-thicket-46501.herokuapp.com/getClosedTickets?page=${page}&rows=${pageSize}&ticket_id=${searching}&from=${fromdate}&to=${todate}&location_id=${location}&from_res=${fromres}&to_res=${tores}&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getClosedTickets?page=${page}&rows=${pageSize}&ticket_id=${searching}&from=${fromdate}&to=${todate}&location_id=${location}&from_res=${fromres}&to_res=${tores}&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}`,
             {
               method: `GET`,
               headers: {
@@ -864,7 +866,7 @@ const TableCustomTicketHistories = ({
               sort_type: sorter.order === "ascend" ? "asc" : "desc",
             });
             fetch(
-              `https://boiling-thicket-46501.herokuapp.com/getClosedTickets?page=${
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getClosedTickets?page=${
                 pagination.current
               }&rows=${
                 pagination.pageSize
@@ -888,7 +890,7 @@ const TableCustomTicketHistories = ({
             setpraloading(true);
             setsorting({ sort_by: "", sort_type: "" });
             fetch(
-              `https://boiling-thicket-46501.herokuapp.com/getClosedTickets?page=${pagination.current}&rows=${pagination.pageSize}&ticket_id=${searching}&from=${fromdate}&to=${todate}&location_id=${location}&from_res=${fromres}&to_res=${tores}&sort_by=&sort_type=`,
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getClosedTickets?page=${pagination.current}&rows=${pagination.pageSize}&ticket_id=${searching}&from=${fromdate}&to=${todate}&location_id=${location}&from_res=${fromres}&to_res=${tores}&sort_by=&sort_type=`,
               {
                 method: `GET`,
                 headers: {
@@ -963,7 +965,7 @@ const TableCustomTickets = ({
           setpraloading(true);
           setpage(page);
           fetch(
-            `https://boiling-thicket-46501.herokuapp.com/${
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
               dataprofile.data.role === 1 ? `getTickets` : `getClientTickets`
             }?page=${page}&rows=${pageSize}&ticket_id=${searching}&type_id=${tickettype}&from=${fromdate}&to=${todate}&location_id=${location}&status_id=${status}&sort_by=${
               sorting.sort_by
@@ -992,7 +994,7 @@ const TableCustomTickets = ({
               sort_type: sorter.order === "ascend" ? "asc" : "desc",
             });
             fetch(
-              `https://boiling-thicket-46501.herokuapp.com/${
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
                 dataprofile.data.role === 1 ? `getTickets` : `getClientTickets`
               }?page=${pagination.current}&rows=${
                 pagination.pageSize
@@ -1016,7 +1018,7 @@ const TableCustomTickets = ({
             setpraloading(true);
             setsorting({ sort_by: "", sort_type: "" });
             fetch(
-              `https://boiling-thicket-46501.herokuapp.com/${
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
                 dataprofile.data.role === 1 ? `getTickets` : `getClientTickets`
               }?page=${pagination.current}&rows=${
                 pagination.pageSize

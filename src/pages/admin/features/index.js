@@ -222,7 +222,7 @@ const FeaturesIndex = ({
   };
   const handleDelete = () => {
     setloadingdelete(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteFeature`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteFeature`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -260,7 +260,7 @@ const FeaturesIndex = ({
   };
   const handleCreate = () => {
     setloadingcreate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addFeature`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addFeature`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -518,7 +518,7 @@ export async function getServerSideProps({ req, res }) {
     }
   }
   const resources = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -530,7 +530,7 @@ export async function getServerSideProps({ req, res }) {
   const dataProfile = resjson;
 
   const resourcesGF = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/getFeatures`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFeatures`,
     {
       method: `GET`,
       headers: {

@@ -183,7 +183,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
     // rt.push(`/assets/update/${datanew.name}?originPath=Admin&title=${datanew.name}&parent=${datanew.parent}&create=true`)
     setloadingbtn(true);
     setloadingbtnparent(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addAsset`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addAsset`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(tok),
@@ -218,7 +218,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
   };
   const handleDeleteAssets = () => {
     setlaodingdelete(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteAsset`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteAsset`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(tok),
@@ -251,7 +251,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
 
   //useEffect
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssets`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -497,7 +497,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resources = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

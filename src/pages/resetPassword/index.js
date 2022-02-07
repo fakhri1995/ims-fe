@@ -30,7 +30,7 @@ export default function ResetPassword({ initProps }) {
       });
     } else {
       setloadingresetpass(true);
-      fetch(`https://boiling-thicket-46501.herokuapp.com/resetPassword`, {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/resetPassword`, {
         method: "POST",
         headers: {
           Authorization: token,

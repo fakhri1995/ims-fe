@@ -40,7 +40,7 @@ const DrawerBankClient = ({
   };
   const handleCreateBank = () => {
     setbankloading(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addClientBank`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addClientBank`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),

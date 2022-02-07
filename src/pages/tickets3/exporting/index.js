@@ -80,9 +80,9 @@ const TicketExporting = ({ initProps, dataProfile, sidemenu }) => {
     setattr({ ...attr, secondary_attributes: e.target.checked ? arr : arr2 });
   };
   const handleExport = () => {
-    // console.log(`https://boiling-thicket-46501.herokuapp.com/downloadTickets?group=${attr.group === null ? "" : attr.group}&engineer=${attr.engineer === null ? "" : attr.engineer}&type=${attr.type === null ? null : attr.type}&from=${attr.from}&to=${attr.to}&core_attributes=[${attr.core_attributes}]&secondary_attributes=[${attr.secondary_attributes}]`)
+    // console.log(`${process.env.NEXT_PUBLIC_BACKEND_URL}/downloadTickets?group=${attr.group === null ? "" : attr.group}&engineer=${attr.engineer === null ? "" : attr.engineer}&type=${attr.type === null ? null : attr.type}&from=${attr.from}&to=${attr.to}&core_attributes=[${attr.core_attributes}]&secondary_attributes=[${attr.secondary_attributes}]`)
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/ticketsExport?group=${
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/ticketsExport?group=${
         attr.group === null ? "" : attr.group
       }&engineer=${attr.engineer === null ? "" : attr.engineer}&type=${
         attr.type === null ? null : attr.type
@@ -118,7 +118,9 @@ const TicketExporting = ({ initProps, dataProfile, sidemenu }) => {
 
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getAssignToList?assignable_type=${0}`,
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_URL
+      }/getAssignToList?assignable_type=${0}`,
       {
         method: `GET`,
         headers: {
@@ -129,7 +131,9 @@ const TicketExporting = ({ initProps, dataProfile, sidemenu }) => {
       .then((res) => res.json())
       .then((res2) => {
         fetch(
-          `https://boiling-thicket-46501.herokuapp.com/getAssignToList?assignable_type=${1}`,
+          `${
+            process.env.NEXT_PUBLIC_BACKEND_URL
+          }/getAssignToList?assignable_type=${1}`,
           {
             method: `GET`,
             headers: {
@@ -173,7 +177,7 @@ const TicketExporting = ({ initProps, dataProfile, sidemenu }) => {
           >
             Batal
           </Button>
-          {/* <a href={`https://boiling-thicket-46501.herokuapp.com/downloadTickets`}> */}
+          {/* <a href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/downloadTickets`}> */}
           <Button
             size="large"
             type="primary"
@@ -426,7 +430,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

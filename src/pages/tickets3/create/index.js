@@ -109,7 +109,7 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
 
   const handleCreateTicket = () => {
     setloadingcreate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addTicket`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addTicket`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -137,7 +137,7 @@ const TicketCreate = ({ initProps, sidemenu, dataProfile }) => {
 
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/${
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
         dataProfile.data.role === 1
           ? "getTicketRelation"
           : "getClientTicketRelation"
@@ -466,7 +466,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

@@ -22,7 +22,7 @@ export default function RequestForgetPassword({ initProps }) {
   };
   const handleForgetPassword = () => {
     setloadingforgetpass(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/mailForgetPassword`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/mailForgetPassword`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
