@@ -65,29 +65,39 @@ const DrawerTicketAssign = ({
 
   //useEffect
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    /** NOTE: `assignable_type` === 0 is for group */
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=0`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         setlistgroups(res2.data);
       });
   }, []);
+
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=${1}`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    /** NOTE: `assignable_type` === 1 is for an engineer (individual) */
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=1`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         setlistengs(res2.data);
       });
   }, []);
+
   useEffect(() => {
     if (datapayload.assignable_id !== null) {
       setdisabledcreate(false);
@@ -147,9 +157,7 @@ const DrawerTicketAssign = ({
                 if (datapayload.assignable_type === true) {
                   setloadinggetengs(true);
                   fetch(
-                    `${
-                      process.env.NEXT_PUBLIC_BACKEND_URL
-                    }/getFilterUsers?type=${1}&name=${e.target.value}`,
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=1&name=${e.target.value}`,
                     {
                       method: `GET`,
                       headers: {
@@ -165,7 +173,7 @@ const DrawerTicketAssign = ({
                 } else {
                   setloadinggetgroups(true);
                   fetch(
-                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups?name=${e.target.value}`,
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=0&name=${e.target.value}`,
                     {
                       method: `GET`,
                       headers: {
