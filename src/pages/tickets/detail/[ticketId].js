@@ -529,7 +529,11 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                   <div className=" flex flex-col mb-5">
                     <Label>Tanggal Diajukan:</Label>
                     <p className=" mb-0 text-gray-600">
-                      {displaydata.raised_at}
+                      {!displaydata.raised_at
+                        ? "-"
+                        : moment(displaydata.raised_at)
+                            .locale("id")
+                            .format("LL")}
                     </p>
                   </div>
                   <div className=" flex flex-col mb-5">
