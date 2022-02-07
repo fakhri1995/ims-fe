@@ -319,7 +319,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
   const onClickSelectAsset = (id) => {
     setnewdata({ ...newdata, asset_id: Number(id) });
     setloadingspec(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getAsset?id=${id}`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAsset?id=${id}`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -377,7 +377,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
   };
   const onClickSelectAsset2 = (id) => {
     setloadingspec2(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getAsset?id=${id}`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAsset?id=${id}`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -454,7 +454,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
       }
     }
     setloadingcreate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addModel`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addModel`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -503,7 +503,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
       }
     }
     setloadingcreatemodel(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addModel`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addModel`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -541,7 +541,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
   };
   const handleAddManufacturer = () => {
     setloadingmanuf(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addManufacturer`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addManufacturer`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -574,7 +574,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
 
   //5.useEffect
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssets`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -587,7 +587,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getManufacturers`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getManufacturers`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -600,7 +600,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
       });
   }, [triggermanuf]);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getModels`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModels`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -2331,7 +2331,9 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                             onSearch={(value) => {
                               setfetchingpart(true);
                               fetch(
-                                `https://boiling-thicket-46501.herokuapp.com/getModels?rows=10&name=${
+                                `${
+                                  process.env.NEXT_PUBLIC_BACKEND_URL
+                                }/getModels?rows=10&name=${
                                   value !== "" ? value : ""
                                 }`,
                                 {
@@ -2401,7 +2403,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                           seteditpart(false);
                           setloadinggetmodel(true);
                           fetch(
-                            `https://boiling-thicket-46501.herokuapp.com/getModel?id=${currentidmodel}`,
+                            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getModel?id=${currentidmodel}`,
                             {
                               method: `GET`,
                               headers: {
@@ -3986,7 +3988,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resources = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

@@ -35,7 +35,7 @@ const DrawerTicketDeadline = ({
   const handleSetDeadline = () => {
     setloadingsave(true);
     setdisabledcreate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/setDeadline`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/setDeadline`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -90,7 +90,8 @@ const DrawerTicketDeadline = ({
       }}
       buttonOkText={buttonOkText}
       onClick={handleSetDeadline}
-      disabled={disabledcreate}>
+      disabled={disabledcreate}
+    >
       {loadingsave ? (
         <>
           <Spin />
@@ -141,7 +142,8 @@ const DrawerTicketDeadline = ({
                   });
                   setdisabledtrigger((prev) => prev + 1);
                 }}
-                value={datevalue}>
+                value={datevalue}
+              >
                 <div className="flex flex-col">
                   <div className="mb-3">
                     <Radio value={3}>3 Jam</Radio>
@@ -174,7 +176,8 @@ const DrawerTicketDeadline = ({
                   onChange={(date, datestring) => {
                     setdatapayload({ ...datapayload, deadline: datestring });
                     setdisabledtrigger((prev) => prev + 1);
-                  }}></DatePicker>
+                  }}
+                ></DatePicker>
               ) : null}
             </div>
           </div>

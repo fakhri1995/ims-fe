@@ -79,15 +79,12 @@ function Groups({
   //------------------handle delete groups-------------------
   const handleDeleteGroupAgent = (key) => {
     setloadingdelete(true);
-    fetch(
-      `https://boiling-thicket-46501.herokuapp.com/deleteAgentGroup?id=${key}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: JSON.parse(tok),
-        },
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteAgentGroup?id=${key}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: JSON.parse(tok),
+      },
+    })
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -113,7 +110,7 @@ function Groups({
   const handleDeleteGroupRequester = (key) => {
     setloadingdelete(true);
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/deleteRequesterGroup?id=${key}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRequesterGroup?id=${key}`,
       {
         method: "DELETE",
         headers: {
@@ -430,7 +427,7 @@ export async function getServerSideProps({ req, res }) {
   }
 
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -447,7 +444,7 @@ export async function getServerSideProps({ req, res }) {
   // }
 
   const resourcesGetGroupsAgents = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/getAgentGroups`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAgentGroups`,
     {
       method: `GET`,
       headers: {
@@ -459,7 +456,7 @@ export async function getServerSideProps({ req, res }) {
   const dataGroupsAgents = resjsonGetGroupsAgents;
 
   const resourcesGetGroupsRequesters = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/getRequesterGroups`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRequesterGroups`,
     {
       method: `GET`,
       headers: {

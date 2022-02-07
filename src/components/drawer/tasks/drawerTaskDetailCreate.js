@@ -67,7 +67,7 @@ const DrawerTaskDetailCreate = ({
   };
   const handleCreateTaskDetail = () => {
     setloadingcreate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addTaskDetail`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addTaskDetail`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),

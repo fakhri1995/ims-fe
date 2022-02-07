@@ -201,7 +201,7 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
   };
   const handleCreate = () => {
     setloadingcreate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addDepreciation`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addDepreciation`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -237,7 +237,7 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
   };
   const handleDelete = () => {
     setloadingdelete(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteDepreciation`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteDepreciation`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -269,7 +269,7 @@ function Financial({ initProps, dataProfile, dataGetDepreciations, sidemenu }) {
   };
   const handleEdit = () => {
     setloadingedit(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateDepreciation`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateDepreciation`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -617,7 +617,7 @@ export async function getServerSideProps({ req, res }) {
     }
   }
   const resources = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -634,7 +634,7 @@ export async function getServerSideProps({ req, res }) {
   // }
 
   const resourcesGD = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/getDepreciations`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getDepreciations`,
     {
       method: `GET`,
       headers: {

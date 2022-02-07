@@ -92,7 +92,7 @@ const DrawerTaskSpareParts = ({
   //handler
   const handleSendSpareParts = () => {
     setloadingspart(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/sendInventoriesTask`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sendInventoriesTask`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -123,7 +123,7 @@ const DrawerTaskSpareParts = ({
   useEffect(() => {
     setpraloadingin(true);
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getTaskSparePartList?type=masuk`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskSparePartList?type=masuk`,
       {
         method: `GET`,
         headers: {
@@ -141,7 +141,7 @@ const DrawerTaskSpareParts = ({
   useEffect(() => {
     setpraloadingout(true);
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getTaskSparePartList?type=keluar&id=${idtask}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskSparePartList?type=keluar&id=${idtask}`,
       {
         method: `GET`,
         headers: {
@@ -227,7 +227,7 @@ const DrawerTaskSpareParts = ({
                     onSearch={(value) => {
                       setfetchingstate(true);
                       fetch(
-                        `https://boiling-thicket-46501.herokuapp.com/getTaskSparePartList?type=masuk&keyword=${value}`,
+                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskSparePartList?type=masuk&keyword=${value}`,
                         {
                           method: `GET`,
                           headers: {

@@ -207,7 +207,7 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
   //handler
   const handleCreate = () => {
     setloadingcreate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addCareer`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addCareer`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -245,7 +245,7 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
   };
   const handleEdit = () => {
     setloadingedit(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateCareer`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateCareer`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -284,7 +284,7 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
   };
   const handleDelete = () => {
     setloadingdelete(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteCareer`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteCareer`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -594,7 +594,7 @@ export async function getServerSideProps({ req, res }) {
     }
   }
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -606,7 +606,7 @@ export async function getServerSideProps({ req, res }) {
   const dataProfile = resjsonGP;
 
   const resourcesGC = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/getCareers`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCareers`,
     {
       method: `GET`,
       headers: {

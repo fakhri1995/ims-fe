@@ -151,7 +151,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
       }
     }
     setloadingupdate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateAsset`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateAsset`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -181,15 +181,12 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
 
   //useEffect
   useEffect(() => {
-    fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getAsset?id=${assettypeid}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAsset?id=${assettypeid}`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
       .then((res) => res.json())
       .then((res2) => {
         setdisplaydata({
@@ -230,7 +227,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssets`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -305,7 +302,7 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
   useEffect(() => {
     if (childbound !== 0) {
       setloadingmodalchild(true);
-      fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssets`, {
         method: `GET`,
         headers: {
           Authorization: JSON.parse(initProps),
@@ -1166,7 +1163,7 @@ export async function getServerSideProps({ req, params }) {
   }
   initProps = cookiesJSON1.token;
   const resources = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

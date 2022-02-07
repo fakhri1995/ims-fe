@@ -171,7 +171,7 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
   //3. Handler
   const handleDeleteTipeTask = () => {
     setloadingtipetaskdelete(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteTaskType`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteTaskType`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -203,7 +203,7 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
   useEffect(() => {
     setloadingtipetasks(true);
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getTaskTypes?page=${pagetipetask}&rows=${rowstipetask}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskTypes?page=${pagetipetask}&rows=${rowstipetask}`,
       {
         method: `GET`,
         headers: {
@@ -269,7 +269,7 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
                       setsearcingtipetask(e.target.value);
                       setloadingtipetasks(true);
                       fetch(
-                        `https://boiling-thicket-46501.herokuapp.com/getTaskTypes?page=${pagetipetask}&rows=${rowstipetask}&name=${e.target.value}&sort_by=${sortingtipetask.sort_by}&sort_type=${sortingtipetask.sort_type}`,
+                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskTypes?page=${pagetipetask}&rows=${rowstipetask}&name=${e.target.value}&sort_by=${sortingtipetask.sort_by}&sort_type=${sortingtipetask.sort_type}`,
                         {
                           method: `GET`,
                           headers: {
@@ -368,7 +368,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

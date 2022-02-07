@@ -290,15 +290,12 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
       }&nama=${nama}`;
       setassettypefilteract(false);
     } else {
-      fetch(
-        `https://boiling-thicket-46501.herokuapp.com/getModels?asset_id=${id}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModels?asset_id=${id}`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
         .then((res) => res.json())
         .then((res2) => {
           res2.data.length === 0
@@ -351,7 +348,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
   };
   const handleAddItemPart = () => {
     setloadingadd(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addInventoryParts`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addInventoryParts`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -381,7 +378,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
   //useEffect
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getInventoryAddable?rows=10&page=1&asset_id=${asset_id1}&model_id=${model_id1}&name=${name1}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventoryAddable?rows=10&page=1&asset_id=${asset_id1}&model_id=${model_id1}&name=${name1}`,
       {
         method: `GET`,
         headers: {
@@ -422,7 +419,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
   }, []);
   useEffect(() => {
     setpraloading2(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssets`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -450,7 +447,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryRelations`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventoryRelations`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -462,7 +459,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterModels`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterModels`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -560,9 +557,9 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                   onSearch={(value) => {
                     setfetchingmodel(true);
                     fetch(
-                      `https://boiling-thicket-46501.herokuapp.com/getFilterModels?name=${
-                        value !== "" ? value : ""
-                      }`,
+                      `${
+                        process.env.NEXT_PUBLIC_BACKEND_URL
+                      }/getFilterModels?name=${value !== "" ? value : ""}`,
                       {
                         method: `GET`,
                         headers: {
@@ -646,7 +643,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
               onChange: (page, pageSize) => {
                 setpraloading(true);
                 fetch(
-                  `https://boiling-thicket-46501.herokuapp.com/getInventoryAddable?page=${page}&rows=10&asset_id=${asset_id1}&model_id=${model_id1}&name=${name1}`,
+                  `${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventoryAddable?page=${page}&rows=10&asset_id=${asset_id1}&model_id=${model_id1}&name=${name1}`,
                   {
                     method: `GET`,
                     headers: {
@@ -795,7 +792,7 @@ export async function getServerSideProps({ req, res, params }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

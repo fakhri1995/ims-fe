@@ -73,7 +73,7 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
   //4.handler
   const handleAddManufacturer = () => {
     setloadingadd(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addManufacturer`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addManufacturer`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -105,7 +105,7 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
   };
   const handleUpdateManufacturer = () => {
     setloadingupdate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateManufacturer`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateManufacturer`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -137,7 +137,7 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
   };
   const handleDeleteManufacturer = () => {
     setloadingdelete(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteManufacturer`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteManufacturer`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -167,7 +167,7 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
   //5.useEffect
   useEffect(() => {
     setpraloading(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getManufacturers`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getManufacturers`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -459,7 +459,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

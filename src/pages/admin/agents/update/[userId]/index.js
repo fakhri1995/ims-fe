@@ -82,7 +82,7 @@ function AgentUpdate({
   };
   const handleSubmitEditAccount = () => {
     setLoadingupdate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateAgentDetail`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateAgentDetail`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(tok),
@@ -114,7 +114,7 @@ function AgentUpdate({
   //useEffect
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getAgentDetail?account_id=${userid}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAgentDetail?account_id=${userid}`,
       {
         method: `GET`,
         headers: {
@@ -149,7 +149,7 @@ function AgentUpdate({
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getBranchCompanyList`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -161,7 +161,7 @@ function AgentUpdate({
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -413,7 +413,7 @@ export async function getServerSideProps({ req, res, resolvedUrl, params }) {
   initProps = cookiesJSON1.token;
 
   const resources = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

@@ -113,7 +113,7 @@ function RequestersUpdate({
   const handleSubmitEditAccount = () => {
     setLoadingupdate(true);
     // if ([133].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-    // fetch(`https://boiling-thicket-46501.herokuapp.com/updateFeatureRequester`, {
+    // fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateFeatureRequester`, {
     //     method: 'PUT',
     //     headers: {
     //         'Authorization': JSON.parse(tok),
@@ -127,7 +127,7 @@ function RequestersUpdate({
     //     })
     // }
     // if ([116].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateRequesterDetail`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRequesterDetail`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(tok),
@@ -164,7 +164,7 @@ function RequestersUpdate({
       keaktifan = true;
       setloadingubahnonaktif(true);
     }
-    fetch(`https://boiling-thicket-46501.herokuapp.com/requesterActivation`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/requesterActivation`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(tok),
@@ -204,17 +204,14 @@ function RequestersUpdate({
   };
   const handleUbahPassword = () => {
     setloadingubahpass(true);
-    fetch(
-      `https://boiling-thicket-46501.herokuapp.com/changeRequesterPassword`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: JSON.parse(tok),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(datapass),
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/changeRequesterPassword`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(tok),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(datapass),
+    })
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -240,7 +237,7 @@ function RequestersUpdate({
   //useEffect
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getRequesterDetail?account_id=${userid}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRequesterDetail?account_id=${userid}`,
       {
         method: `GET`,
         headers: {
@@ -279,7 +276,7 @@ function RequestersUpdate({
         setcompanyid(res2.data.company.id);
       })
       .then(() => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
           method: `GET`,
           headers: {
             Authorization: JSON.parse(initProps),
@@ -293,7 +290,7 @@ function RequestersUpdate({
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocations`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -668,7 +665,7 @@ export async function getServerSideProps({ req, res, resolvedUrl, params }) {
   initProps = cookiesJSON1.token;
 
   const resources = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -684,7 +681,7 @@ export async function getServerSideProps({ req, res, resolvedUrl, params }) {
   //     res.end()
   // }
 
-  // const resourcesDA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterDetail`, {
+  // const resourcesDA = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRequesterDetail`, {
   //     method: `POST`,
   //     headers: {
   //         'Authorization': JSON.parse(initProps),
@@ -701,7 +698,7 @@ export async function getServerSideProps({ req, res, resolvedUrl, params }) {
   // }
   // const dataDetailRequester = resjsonDA
 
-  // const resourcesRoles = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+  // const resourcesRoles = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
   //     method: `GET`,
   //     headers: {
   //         'Authorization': JSON.parse(initProps)

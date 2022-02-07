@@ -155,7 +155,7 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
   //4.handler
   const handleAddRelationships = () => {
     setloadingadd(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addRelationship`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addRelationship`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -187,7 +187,7 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
   };
   const handleUpdateRelationships = () => {
     setloadingupdate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateRelationship`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRelationship`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -219,7 +219,7 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
   };
   const handleDeleteRelationships = () => {
     setloadingdelete(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteRelationship`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRelationship`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -249,7 +249,7 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
   //5.useEffect
   useEffect(() => {
     setpraloading(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationships`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRelationships`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -609,7 +609,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

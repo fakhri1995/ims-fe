@@ -329,7 +329,7 @@ const ModulesIndex = ({
   //handler
   const handleAddModuleFeature = () => {
     setloadingcreate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addModuleFeature`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addModuleFeature`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -364,7 +364,7 @@ const ModulesIndex = ({
   };
   const handleDeleteModuleFeature = () => {
     setloadingdeletefeatmodule(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteModuleFeature`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteModuleFeature`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -399,7 +399,7 @@ const ModulesIndex = ({
   };
   const handleUpdate = () => {
     setloadingupdate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateModuleFeature`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateModuleFeature`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -435,7 +435,7 @@ const ModulesIndex = ({
   };
   const handleDeleteModule = () => {
     setloadingdelete(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteModule`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteModule`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -470,7 +470,7 @@ const ModulesIndex = ({
   };
   const handleDeleteFeature = () => {
     setloadingdelete2(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteFeature`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteFeature`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -506,7 +506,7 @@ const ModulesIndex = ({
 
   //useEffect
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModules`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -538,7 +538,7 @@ const ModulesIndex = ({
       });
   }, [moduletrigger]);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getFeatures`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFeatures`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -1124,7 +1124,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resources = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

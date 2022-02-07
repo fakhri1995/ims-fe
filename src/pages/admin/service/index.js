@@ -392,7 +392,7 @@ function ServiceCatalog({
   //handler
   const handleHapusCategory = () => {
     setloadingbtnhapuskateg(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteServiceCategory`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteServiceCategory`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -426,7 +426,7 @@ function ServiceCatalog({
   };
   const handleEditCategory = () => {
     setloadingbtneditkateg(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateServiceCategory`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateServiceCategory`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -458,7 +458,7 @@ function ServiceCatalog({
   };
   const handleTambahCategory = () => {
     setloadingbtntambahkateg(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addServiceCategory`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addServiceCategory`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -909,7 +909,7 @@ export async function getServerSideProps({ req, res }) {
     }
   }
   const resources = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -926,7 +926,7 @@ export async function getServerSideProps({ req, res }) {
   // }
 
   const resourcesGSI = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/getServiceItems`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getServiceItems`,
     {
       method: `GET`,
       headers: {
@@ -938,7 +938,7 @@ export async function getServerSideProps({ req, res }) {
   const dataListServiceItem = resjsonGSI;
 
   const resourcesGSC = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/getServiceCategories`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getServiceCategories`,
     {
       method: `GET`,
       headers: {

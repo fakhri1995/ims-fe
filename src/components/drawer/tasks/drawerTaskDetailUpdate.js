@@ -74,7 +74,7 @@ const DrawerTaskDetailUpdate = ({
   const handleUpdateTaskDetail = () => {
     // console.log(datadisplay, dataupdate)
     setloadingupdate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateTaskDetail`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateTaskDetail`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -105,15 +105,12 @@ const DrawerTaskDetailUpdate = ({
   useEffect(() => {
     if (id !== -1) {
       setloadingdetailtaskupdate(true);
-      fetch(
-        `https://boiling-thicket-46501.herokuapp.com/getTask?id=${taskid}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTask?id=${taskid}`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
         .then((res) => res.json())
         .then((res2) => {
           var worksdetail = res2.data.task_details.filter(

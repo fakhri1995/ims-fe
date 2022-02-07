@@ -72,7 +72,7 @@ const DrawerTaskTypesUpdate = ({
   const handleUpdateTipeTask = () => {
     // console.log(datadisplay, dataupdate, workslen)
     setloadingupdate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateTaskType`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateTaskType`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -103,7 +103,7 @@ const DrawerTaskTypesUpdate = ({
     if (trigger !== -1) {
       setloadingdetailtipetaskupdate(true);
       fetch(
-        `https://boiling-thicket-46501.herokuapp.com/getTaskType?id=${id.current}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskType?id=${id.current}`,
         {
           method: `GET`,
           headers: {

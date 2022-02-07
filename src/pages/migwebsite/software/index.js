@@ -9,7 +9,7 @@ import Layout from "../../../components/migwebsite/layout.js";
 function Software({}) {
   const [form] = Form.useForm();
   const handleSubmit = () => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addMessage`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addMessage`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

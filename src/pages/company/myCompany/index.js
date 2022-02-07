@@ -333,7 +333,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
       sethasmore(false);
     } else {
       fetch(
-        `https://boiling-thicket-46501.herokuapp.com/getCompanyLog?id=${displaydata.id}&page=${page}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyLog?id=${displaydata.id}&page=${page}`,
         {
           method: `GET`,
           headers: {
@@ -362,7 +362,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
       });
     }
     seteditloading(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateMainCompany`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateMainCompany`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -394,7 +394,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
   const handleDeleteBank = () => {
     setbankloadinghapus(true);
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/deleteMainBank?id=${hapusbankdata.id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteMainBank?id=${hapusbankdata.id}`,
       {
         method: "DELETE",
         headers: {
@@ -424,7 +424,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
   };
   const handleEditBank = () => {
     setbankloadingedit(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateMainBank`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateMainBank`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -455,7 +455,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
   const handleUpdateRelationshipItem = () => {
     setloadingupdate(true);
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/updateRelationshipInventory`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRelationshipInventory`,
       {
         method: "PUT",
         headers: {
@@ -499,7 +499,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
   const handleDeleteRelationshipItem = () => {
     setloadingdeleterelasi(true);
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/deleteRelationshipInventory`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRelationshipInventory`,
       {
         method: "DELETE",
         headers: {
@@ -532,7 +532,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
 
   //useEffect
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationships`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRelationships`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -546,7 +546,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
   useEffect(() => {
     if (subloctrig !== -1) {
       fetch(
-        `https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${subloctrig}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRelationshipInventoryDetailList?type_id=${subloctrig}`,
         {
           method: `GET`,
           headers: {
@@ -559,15 +559,12 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
           setsublocdata(res2.data.children);
         });
     } else if (detailtipeupdate !== -10) {
-      fetch(
-        `https://boiling-thicket-46501.herokuapp.com/getFilterInventories`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterInventories`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
         .then((res) => res.json())
         .then((res2) => {
           setdetailtipedataupdate(res2.data);
@@ -582,7 +579,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
   //useEffect
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getCompanyDetail?id=${dataProfile.data.company.id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyDetail?id=${dataProfile.data.company.id}`,
       {
         method: `GET`,
         headers: {
@@ -621,7 +618,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
       })
       .then((res3) => {
         fetch(
-          `https://boiling-thicket-46501.herokuapp.com/getCompanyLog?id=${res3}&page=${page}`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyLog?id=${res3}&page=${page}`,
           {
             method: `GET`,
             headers: {
@@ -639,7 +636,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getMainBanks`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getMainBanks`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(tok),
@@ -654,7 +651,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
     if (viewrelasi === true) {
       setloadingrelasi(true);
       fetch(
-        `https://boiling-thicket-46501.herokuapp.com/getCompanyRelationshipInventory?id=${dataProfile.data.company.id}&page=${pagerelasi}&rows=${rowsrelasi}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyRelationshipInventory?id=${dataProfile.data.company.id}&page=${pagerelasi}&rows=${rowsrelasi}`,
         {
           method: `GET`,
           headers: {
@@ -1184,7 +1181,9 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                         onSearch={(value) => {
                           setfetchingmodel(true);
                           fetch(
-                            `https://boiling-thicket-46501.herokuapp.com/getFilterInventories?keyword=${
+                            `${
+                              process.env.NEXT_PUBLIC_BACKEND_URL
+                            }/getFilterInventories?keyword=${
                               value !== "" ? value : ""
                             }`,
                             {
@@ -1764,7 +1763,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

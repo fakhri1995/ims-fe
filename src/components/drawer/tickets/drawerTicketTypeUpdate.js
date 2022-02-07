@@ -31,7 +31,7 @@ const DrawerTicketTypeUpdate = ({
   const handleUpdateTicketType = () => {
     setloadingsave(true);
     setdisabledsubmit(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateTicketTaskType`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateTicketTaskType`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -68,7 +68,7 @@ const DrawerTicketTypeUpdate = ({
 
   //useEffect
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterTaskTypes`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTaskTypes`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -80,7 +80,7 @@ const DrawerTicketTypeUpdate = ({
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTicketRelation`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -217,7 +217,7 @@ const DrawerTicketTypeUpdate = ({
                 onSearch={(value) => {
                   setfecthingtasktypes(true);
                   fetch(
-                    `https://boiling-thicket-46501.herokuapp.com/getFilterTaskTypes?name=${value}`,
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTaskTypes?name=${value}`,
                     {
                       method: `GET`,
                       headers: {

@@ -288,7 +288,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
       setsortedname("A-Z");
     } else {
       fetch(
-        `https://boiling-thicket-46501.herokuapp.com/getSubCompanyDetail?id=${locid}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getSubCompanyDetail?id=${locid}`,
         {
           method: `GET`,
           headers: {
@@ -313,7 +313,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
   const onSearchItems = (e) => {
     setpraloadingitem(true);
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getCompanyInventories?id=${locid}&page=1&rows=${rows}&keyword=${e.target.value}&sort_by=${sortingitems.sort_by}&sort_type=${sortingitems.sort_type}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyInventories?id=${locid}&page=1&rows=${rows}&keyword=${e.target.value}&sort_by=${sortingitems.sort_by}&sort_type=${sortingitems.sort_type}`,
       {
         method: `GET`,
         headers: {
@@ -332,7 +332,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
   };
   const handleEdit = () => {
     seteditloading(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateCompany`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateCompany`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -363,7 +363,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
   };
   const handleDelete = () => {
     setloadingdelete(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteCompany`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteCompany`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -579,7 +579,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
 
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getSubCompanyDetail?id=${locid}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getSubCompanyDetail?id=${locid}`,
       {
         method: `GET`,
         headers: {
@@ -648,7 +648,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
 
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getCompanyInventories?id=${locid}&page=${page}&rows=${rows}&keyword=${keyworditems}&sort_by=${sortingitems.sort_by}&sort_type=${sortingitems.sort_type}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyInventories?id=${locid}&page=${page}&rows=${rows}&keyword=${keyworditems}&sort_by=${sortingitems.sort_by}&sort_type=${sortingitems.sort_type}`,
       {
         method: `GET`,
         headers: {
@@ -665,7 +665,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
   }, []);
 
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getLocations`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocations`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -1593,7 +1593,7 @@ export async function getServerSideProps({ req, res, params }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

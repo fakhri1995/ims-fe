@@ -351,7 +351,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
       }`;
     }
     // setpraloading(true)
-    // fetch(`https://boiling-thicket-46501.herokuapp.com/getTickets?ticket_id=${namasearchact ? namavalue : ""}&location_id=${lokasifilteract ? lokasivalue : ""}&status_id=${statusfilteract ? statusvalue : ""}&from=${rangedatefilteract ? moment(rangedatevalue[0]).locale('id').format('YYYY-MM-DD') : ""}&to=${rangedatefilteract ? moment(rangedatevalue[1]).locale('id').format('YYYY-MM-DD') : ""}`, {
+    // fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTickets?ticket_id=${namasearchact ? namavalue : ""}&location_id=${lokasifilteract ? lokasivalue : ""}&status_id=${statusfilteract ? statusvalue : ""}&from=${rangedatefilteract ? moment(rangedatevalue[0]).locale('id').format('YYYY-MM-DD') : ""}&to=${rangedatefilteract ? moment(rangedatevalue[1]).locale('id').format('YYYY-MM-DD') : ""}`, {
     //     method: `GET`,
     //     headers: {
     //         'Authorization': JSON.parse(initProps),
@@ -367,7 +367,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
   //5.useEffect
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/${
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
         dataProfile.data.role === 1 ? "getTickets" : "getClientTickets"
       }?ticket_id=${ticketid1}&location_id=${locationid1}&status_id=${statusid1}&from=${from1}&to=${to1}`,
       {
@@ -388,7 +388,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
   }, []);
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/${
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
         dataProfile.data.role === 1
           ? "getTicketRelation"
           : "getClientTicketRelation"
@@ -644,7 +644,7 @@ const TicketsIndex = ({ dataProfile, sidemenu, initProps }) => {
                 onChange: (page, pageSize) => {
                   setpraloading(true);
                   fetch(
-                    `https://boiling-thicket-46501.herokuapp.com/${
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
                       dataProfile.data.role === 1
                         ? "getTickets"
                         : "getClientTickets"
@@ -720,7 +720,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

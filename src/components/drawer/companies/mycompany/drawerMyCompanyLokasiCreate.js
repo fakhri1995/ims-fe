@@ -122,7 +122,7 @@ const DrawerLokasi = ({
       // console.log(new RegExp(/(^\d+$)/).test(createdata.phone_number))
       if (createdata.email === "") {
         setlokasiloading(true);
-        fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyBranch`, {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addCompanyBranch`, {
           method: "POST",
           headers: {
             Authorization: JSON.parse(initProps),
@@ -186,7 +186,7 @@ const DrawerLokasi = ({
       }
     } else {
       setlokasiloading(true);
-      fetch(`https://boiling-thicket-46501.herokuapp.com/addCompanyBranch`, {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addCompanyBranch`, {
         method: "POST",
         headers: {
           Authorization: JSON.parse(initProps),
@@ -238,7 +238,7 @@ const DrawerLokasi = ({
     }
   };
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getBranchCompanyList`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),

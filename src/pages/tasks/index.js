@@ -580,7 +580,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
   const onFilterTask = () => {
     setloadingtasks(true);
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getUserTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
       {
         method: `GET`,
         headers: {
@@ -597,7 +597,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
   };
   const handleDeleteTipeTask = () => {
     setloadingtipetaskdelete(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteTaskType`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteTaskType`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -630,7 +630,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     if (viewdetailtipetask === true) {
       setloadingtipetasks(true);
       fetch(
-        `https://boiling-thicket-46501.herokuapp.com/getTaskTypes?page=${pagetipetask}&rows=${rowstipetask}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskTypes?page=${pagetipetask}&rows=${rowstipetask}`,
         {
           method: `GET`,
           headers: {
@@ -650,7 +650,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
   useEffect(() => {
     setloadingtasks(true);
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getUserTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
       {
         method: `GET`,
         headers: {
@@ -666,7 +666,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
       });
   }, [drawertaskcreate]);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getAllCompanyList`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAllCompanyList`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -683,7 +683,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
   }, []);
   useEffect(() => {
     setloadingtasks(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getUserLastTwoTasks`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserLastTwoTasks`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -696,7 +696,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getStatusTaskList`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getStatusTaskList`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -709,7 +709,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskTypeCounts`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskTypeCounts`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -722,7 +722,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getDeadlineTasks`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getDeadlineTasks`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -735,7 +735,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getTaskStaffCounts`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskStaffCounts`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -748,7 +748,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getStaffTaskStatuses`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getStaffTaskStatuses`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -762,7 +762,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
       });
   }, []);
   // useEffect(() => {
-  //     fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
+  //     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTicketRelation`, {
   //         method: `GET`,
   //         headers: {
   //             'Authorization': JSON.parse(initProps),
@@ -828,7 +828,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                             setsearcingtipetask(e.target.value);
                             setloadingtipetasks(true);
                             fetch(
-                              `https://boiling-thicket-46501.herokuapp.com/getTaskTypes?page=${pagetipetask}&rows=${rowstipetask}&name=${e.target.value}&sort_by=${sortingtipetask.sort_by}&sort_type=${sortingtipetask.sort_type}`,
+                              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskTypes?page=${pagetipetask}&rows=${rowstipetask}&name=${e.target.value}&sort_by=${sortingtipetask.sort_by}&sort_type=${sortingtipetask.sort_type}`,
                               {
                                 method: `GET`,
                                 headers: {
@@ -922,7 +922,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                             });
                             setloadingstaff(true);
                             fetch(
-                              `https://boiling-thicket-46501.herokuapp.com/getStaffTaskStatuses?page=${pagestaff}&rows=${rowsstaff}&from=${datestrings[0]}&to=${datestrings[1]}&name=${searcingstaff}`,
+                              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getStaffTaskStatuses?page=${pagestaff}&rows=${rowsstaff}&from=${datestrings[0]}&to=${datestrings[1]}&name=${searcingstaff}`,
                               {
                                 method: `GET`,
                                 headers: {
@@ -951,7 +951,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                             setsearcingstaff(e.target.value);
                             setloadingstaff(true);
                             fetch(
-                              `https://boiling-thicket-46501.herokuapp.com/getStaffTaskStatuses?page=${pagestaff}&rows=${rowsstaff}&name=${e.target.value}&from=${intervaldatestaff.from}&to=${intervaldatestaff.to}`,
+                              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getStaffTaskStatuses?page=${pagestaff}&rows=${rowsstaff}&name=${e.target.value}&from=${intervaldatestaff.from}&to=${intervaldatestaff.to}`,
                               {
                                 method: `GET`,
                                 headers: {
@@ -1142,7 +1142,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                         onClick={() => {
                           setloadingstatustaskdata(true);
                           fetch(
-                            `https://boiling-thicket-46501.herokuapp.com/getStatusTaskList?from=${statustaskdatestate.from}&to=${statustaskdatestate.to}&location=`,
+                            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getStatusTaskList?from=${statustaskdatestate.from}&to=${statustaskdatestate.to}&location=`,
                             {
                               method: `GET`,
                               headers: {
@@ -1174,7 +1174,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                             onClick={() => {
                               setloadingstatustaskdata(true);
                               fetch(
-                                `https://boiling-thicket-46501.herokuapp.com/getStatusTaskList?from=${statustaskdatestate.from}&to=${statustaskdatestate.to}&location=${nodeData.key}`,
+                                `${process.env.NEXT_PUBLIC_BACKEND_URL}/getStatusTaskList?from=${statustaskdatestate.from}&to=${statustaskdatestate.to}&location=${nodeData.key}`,
                                 {
                                   method: `GET`,
                                   headers: {
@@ -1226,7 +1226,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     onChange={(dates, datestrings) => {
                       setloadingstatustaskdata(true);
                       fetch(
-                        `https://boiling-thicket-46501.herokuapp.com/getStatusTaskList?from=${datestrings[0]}&to=${datestrings[1]}&location=${statustasklocstate}`,
+                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getStatusTaskList?from=${datestrings[0]}&to=${datestrings[1]}&location=${statustasklocstate}`,
                         {
                           method: `GET`,
                           headers: {
@@ -1363,7 +1363,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                         onClick={() => {
                           setloadingttcdata(true);
                           fetch(
-                            `https://boiling-thicket-46501.herokuapp.com/getTaskTypeCounts?location=`,
+                            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskTypeCounts?location=`,
                             {
                               method: `GET`,
                               headers: {
@@ -1394,7 +1394,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                             onClick={() => {
                               setloadingttcdata(true);
                               fetch(
-                                `https://boiling-thicket-46501.herokuapp.com/getTaskTypeCounts?location=${nodeData.key}`,
+                                `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskTypeCounts?location=${nodeData.key}`,
                                 {
                                   method: `GET`,
                                   headers: {
@@ -1526,7 +1526,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                         onClick={() => {
                           setloadingdtdata(true);
                           fetch(
-                            `https://boiling-thicket-46501.herokuapp.com/getDeadlineTasks?from=${dtdatestate.from}&to=${dtdatestate.to}&location=`,
+                            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getDeadlineTasks?from=${dtdatestate.from}&to=${dtdatestate.to}&location=`,
                             {
                               method: `GET`,
                               headers: {
@@ -1558,7 +1558,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                             onClick={() => {
                               setloadingdtdata(true);
                               fetch(
-                                `https://boiling-thicket-46501.herokuapp.com/getDeadlineTasks?from=${dtdatestate.from}&to=${dtdatestate.to}&location=${nodeData.key}`,
+                                `${process.env.NEXT_PUBLIC_BACKEND_URL}/getDeadlineTasks?from=${dtdatestate.from}&to=${dtdatestate.to}&location=${nodeData.key}`,
                                 {
                                   method: `GET`,
                                   headers: {
@@ -1610,7 +1610,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     onChange={(dates, datestrings) => {
                       setloadingdtdata(true);
                       fetch(
-                        `https://boiling-thicket-46501.herokuapp.com/getDeadlineTasks?from=${datestrings[0]}&to=${datestrings[1]}&location=${dtlocstate}`,
+                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getDeadlineTasks?from=${datestrings[0]}&to=${datestrings[1]}&location=${dtlocstate}`,
                         {
                           method: `GET`,
                           headers: {
@@ -1903,7 +1903,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     onSearch={(value) => {
                       setfetchingtasktypes(true);
                       fetch(
-                        `https://boiling-thicket-46501.herokuapp.com/getFilterTaskTypes?name=${value}`,
+                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTaskTypes?name=${value}`,
                         {
                           method: `GET`,
                           headers: {
@@ -2118,7 +2118,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -2142,7 +2142,7 @@ export default TaskIndex;
 
 // setsearchstate("")
 // setloadingtasks(true)
-// fetch(`https://boiling-thicket-46501.herokuapp.com/getUserTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=&status=${statusfilterstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}`, {
+// fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=&status=${statusfilterstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}`, {
 //     method: `GET`,
 //     headers: {
 //         'Authorization': JSON.parse(initProps),

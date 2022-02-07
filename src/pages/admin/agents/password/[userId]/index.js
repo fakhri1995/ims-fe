@@ -39,7 +39,7 @@ function AgentPassword({ initProps, dataProfile, sidemenu, userid }) {
       });
     } else {
       setloadingubahpass(true);
-      fetch(`https://boiling-thicket-46501.herokuapp.com/changeAgentPassword`, {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/changeAgentPassword`, {
         method: "PUT",
         headers: {
           Authorization: JSON.parse(tok),
@@ -198,7 +198,7 @@ export async function getServerSideProps({ req, res, params }) {
   initProps = cookiesJSON1.token;
 
   const resources = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

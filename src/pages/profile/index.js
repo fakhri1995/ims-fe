@@ -99,7 +99,7 @@ function SecurityTabs({ dataProfile, tok }) {
     });
   };
   const handleUbahPassword = () => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/changePassword`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/changePassword`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(tok),
@@ -259,7 +259,7 @@ export async function getServerSideProps({ req, res }) {
     }
   }
   const resources = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

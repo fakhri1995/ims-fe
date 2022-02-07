@@ -38,7 +38,7 @@ const ModuleUpdate = ({ initProps, sidemenu, dataProfile, idmodule }) => {
   //handleCreate
   const handleUpdateModule = () => {
     setloadingupdate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateModule`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateModule`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -69,7 +69,7 @@ const ModuleUpdate = ({ initProps, sidemenu, dataProfile, idmodule }) => {
 
   //useEffect
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModules`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -236,7 +236,7 @@ export async function getServerSideProps({ req, res, params }) {
   }
   initProps = cookiesJSON1.token;
   const resources = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

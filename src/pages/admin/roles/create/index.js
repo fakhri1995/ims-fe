@@ -71,7 +71,7 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
   };
   const handleCreateRoles = () => {
     setloadingcreate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addRole`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addRole`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -107,7 +107,7 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
 
   //useEffect
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModules`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -303,7 +303,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -319,7 +319,7 @@ export async function getServerSideProps({ req, res }) {
   //     res.end()
   // }
 
-  // const resourcesGM = await fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
+  // const resourcesGM = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModules`, {
   //     method: `POST`,
   //     headers: {
   //         'Authorization': JSON.parse(initProps)

@@ -24,7 +24,7 @@ export default function Home({ initProps }) {
   };
   const handleLogin = () => {
     setLoadinglogin(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/login`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

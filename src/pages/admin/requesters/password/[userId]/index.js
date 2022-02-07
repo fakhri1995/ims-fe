@@ -36,17 +36,14 @@ function RequestersPassword({ initProps, dataProfile, sidemenu, userid }) {
       });
     } else {
       setloadingubahpass(true);
-      fetch(
-        `https://boiling-thicket-46501.herokuapp.com/changeRequesterPassword`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: JSON.parse(tok),
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(datapass),
-        }
-      )
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/changeRequesterPassword`, {
+        method: "PUT",
+        headers: {
+          Authorization: JSON.parse(tok),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(datapass),
+      })
         .then((res) => res.json())
         .then((res2) => {
           setloadingubahpass(false);
@@ -200,7 +197,7 @@ export async function getServerSideProps({ req, res, params }) {
   initProps = cookiesJSON1.token;
 
   const resources = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -216,7 +213,7 @@ export async function getServerSideProps({ req, res, params }) {
   //     res.end()
   // }
 
-  // const resourcesGCL = await fetch(`https://boiling-thicket-46501.herokuapp.com/getClientCompanyList`, {
+  // const resourcesGCL = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getClientCompanyList`, {
   //     method: `POST`,
   //     headers: {
   //         'Authorization': JSON.parse(initProps),

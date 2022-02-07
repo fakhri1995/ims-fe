@@ -90,7 +90,7 @@ function RolesUpdate({
   };
   const handleUpdateRoles = () => {
     setloadingupdate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateRole`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRole`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -126,7 +126,7 @@ function RolesUpdate({
   };
   const handleDeleteRoles = () => {
     setloadingdelete(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteRole`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRole`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -159,7 +159,7 @@ function RolesUpdate({
 
   //useEffect
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getRole?id=${idrole}`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRole?id=${idrole}`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -185,7 +185,7 @@ function RolesUpdate({
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModules`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -494,7 +494,7 @@ export async function getServerSideProps({ req, res, params }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -510,7 +510,7 @@ export async function getServerSideProps({ req, res, params }) {
   //     res.end()
   // }
 
-  // const resourcesGR = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRole?id=${idrole}`, {
+  // const resourcesGR = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRole?id=${idrole}`, {
   //     method: `GET`,
   //     headers: {
   //         'Authorization': JSON.parse(initProps)
@@ -519,7 +519,7 @@ export async function getServerSideProps({ req, res, params }) {
   // const resjsonGR = await resourcesGR.json()
   // const dataRolesDetail = resjsonGR
 
-  // const resourcesGM = await fetch(`https://boiling-thicket-46501.herokuapp.com/getModules`, {
+  // const resourcesGM = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModules`, {
   //     method: `POST`,
   //     headers: {
   //         'Authorization': JSON.parse(initProps)

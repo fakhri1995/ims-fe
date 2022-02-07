@@ -77,7 +77,7 @@ const DrawerUpdateRelasi = ({
     setloadingadd(true);
     // delete dataApiadd.backup_connected_ids
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/updateRelationshipInventory`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRelationshipInventory`,
       {
         method: "PUT",
         headers: {
@@ -118,7 +118,7 @@ const DrawerUpdateRelasi = ({
       });
   };
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getRelationships`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRelationships`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -132,7 +132,7 @@ const DrawerUpdateRelasi = ({
   useEffect(() => {
     if (subloctrig !== -1) {
       fetch(
-        `https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${subloctrig}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRelationshipInventoryDetailList?type_id=${subloctrig}`,
         {
           method: `GET`,
           headers: {
@@ -146,7 +146,7 @@ const DrawerUpdateRelasi = ({
         });
     } else if (detailtipeadd !== -10) {
       fetch(
-        `https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${dataApiadd.type_id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRelationshipInventoryDetailList?type_id=${dataApiadd.type_id}`,
         {
           method: `GET`,
           headers: {
@@ -309,7 +309,9 @@ const DrawerUpdateRelasi = ({
                     onSearch={(value) => {
                       setfetchingmodel(true);
                       fetch(
-                        `https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&name=${
+                        `${
+                          process.env.NEXT_PUBLIC_BACKEND_URL
+                        }/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&name=${
                           value !== "" ? value : ""
                         }`,
                         {
@@ -359,7 +361,9 @@ const DrawerUpdateRelasi = ({
                     onSearch={(value) => {
                       setfetchingmodel(true);
                       fetch(
-                        `https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&name=${
+                        `${
+                          process.env.NEXT_PUBLIC_BACKEND_URL
+                        }/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&name=${
                           value !== "" ? value : ""
                         }`,
                         {
@@ -432,7 +436,9 @@ const DrawerUpdateRelasi = ({
                     onSearch={(value) => {
                       setfetchingmodel(true);
                       fetch(
-                        `https://boiling-thicket-46501.herokuapp.com/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&model_id=${
+                        `${
+                          process.env.NEXT_PUBLIC_BACKEND_URL
+                        }/getRelationshipInventoryDetailList?type_id=${detailtipeadd}&model_id=${
                           value !== "" ? value : ""
                         }`,
                         {

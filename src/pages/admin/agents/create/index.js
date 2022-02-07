@@ -55,7 +55,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
   //handle CreateAgent
   const handleCreateAgents = () => {
     setLoadingsave(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addAgentMember`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addAgentMember`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(tok),
@@ -142,7 +142,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
   //useEffect
   //get Asal Lokasi
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getBranchCompanyList`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getBranchCompanyList`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -156,7 +156,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
   }, []);
   //data Roles
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -425,7 +425,7 @@ export async function getServerSideProps({ req, res }) {
   }
 
   const resources = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

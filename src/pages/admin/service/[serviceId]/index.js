@@ -111,7 +111,7 @@ function ServiceUpdate({
       new_child_ids: idfields,
     };
     setloadingupdate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateServiceItem`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateServiceItem`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -142,7 +142,7 @@ function ServiceUpdate({
   };
   const handleHapusService = () => {
     setloadinghapus(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteServiceItem`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteServiceItem`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -174,19 +174,16 @@ function ServiceUpdate({
   };
   const handlePublish = () => {
     setloadinghapus(true);
-    fetch(
-      `https://boiling-thicket-46501.herokuapp.com/depublishingServiceItem`,
-      {
-        method: "PUT",
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: serviceid,
-        }),
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/depublishingServiceItem`, {
+      method: "PUT",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: serviceid,
+      }),
+    })
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -213,7 +210,7 @@ function ServiceUpdate({
 
   const handleNonPublish = () => {
     setloadinghapus(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/publishingServiceItem`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/publishingServiceItem`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -654,7 +651,7 @@ export async function getServerSideProps({ req, res, params }) {
     }
   }
   const resources = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -671,7 +668,7 @@ export async function getServerSideProps({ req, res, params }) {
   // }
 
   const resourcesGDI = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/getServiceItem?id=${parseInt(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getServiceItem?id=${parseInt(
       serviceid
     )}`,
     {
@@ -685,7 +682,7 @@ export async function getServerSideProps({ req, res, params }) {
   const dataDetailServiceItem = resjsonGDI;
 
   const resourcesGSI = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/getServiceItems`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getServiceItems`,
     {
       method: `GET`,
       headers: {
@@ -697,7 +694,7 @@ export async function getServerSideProps({ req, res, params }) {
   const dataListServiceItem = resjsonGSI;
 
   const resourcesGSC = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/getServiceCategories`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getServiceCategories`,
     {
       method: `GET`,
       headers: {

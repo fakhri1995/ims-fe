@@ -68,7 +68,7 @@ const DrawerTicketExports = ({
   //handler
   const handleExports = () => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/ticketsExport?group=${
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/ticketsExport?group=${
         datapayload.group === null ? "" : datapayload.group
       }&engineer=${
         datapayload.engineer === null ? "" : datapayload.engineer
@@ -106,7 +106,7 @@ const DrawerTicketExports = ({
 
   //useEffect
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterGroups`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -118,15 +118,12 @@ const DrawerTicketExports = ({
       });
   }, []);
   useEffect(() => {
-    fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getFilterUsers?type=${1}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=${1}`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
       .then((res) => res.json())
       .then((res2) => {
         setlistengs(res2.data);
@@ -227,7 +224,7 @@ const DrawerTicketExports = ({
                 onSearch={(value) => {
                   setfecthinggroups(true);
                   fetch(
-                    `https://boiling-thicket-46501.herokuapp.com/getFilterGroups?name=${value}`,
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups?name=${value}`,
                     {
                       method: `GET`,
                       headers: {
@@ -279,7 +276,9 @@ const DrawerTicketExports = ({
                 onSearch={(value) => {
                   setfecthingengs(true);
                   fetch(
-                    `https://boiling-thicket-46501.herokuapp.com/getFilterUsers?type=${1}&name=${value}`,
+                    `${
+                      process.env.NEXT_PUBLIC_BACKEND_URL
+                    }/getFilterUsers?type=${1}&name=${value}`,
                     {
                       method: `GET`,
                       headers: {

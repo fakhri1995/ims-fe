@@ -10,7 +10,7 @@ function ContactUs({}) {
   const [form] = Form.useForm();
   const { Option } = Select;
   const handleSubmit = () => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addMessage`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addMessage`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

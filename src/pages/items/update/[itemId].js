@@ -89,7 +89,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
       inventory_values: invcolumns,
     };
     setloadingupdate(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/updateInventory`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateInventory`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -118,15 +118,12 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
 
   //useEffect
   useEffect(() => {
-    fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getInventory?id=${itemid}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventory?id=${itemid}`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
       .then((res) => res.json())
       .then((res2) => {
         var t = {};
@@ -177,7 +174,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
         return res2.data.model_id;
       })
       .then((res3) => {
-        fetch(`https://boiling-thicket-46501.herokuapp.com/getModels?rows=50`, {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModels?rows=50`, {
           method: `GET`,
           headers: {
             Authorization: JSON.parse(initProps),
@@ -191,7 +188,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getInventoryRelations`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventoryRelations`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -1295,7 +1292,7 @@ export async function getServerSideProps({ req, res, params }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

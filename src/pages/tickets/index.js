@@ -291,7 +291,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
   const onFilterTickets = () => {
     setloadingtickets(true);
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/${
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
         dataProfile.data.role === 1 ? `getTickets` : `getClientTickets`
       }?page=${pagetickets}&rows=${rowstickets}&ticket_id=${searcingfiltertickets}&type_id=${tickettypefiltertickets}&from=${fromfiltertickets}&to=${tofiltertickets}&location_id=${locfiltertickets}&status_id=${statusfiltertickets}&sort_by=${
         sortingtickets.sort_by
@@ -315,7 +315,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
   //5.useEffect
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/${
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
         dataProfile.data.role === 1
           ? `getTicketStatusCounts`
           : `getClientTicketStatusCounts`
@@ -350,7 +350,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
   useEffect(() => {
     setloadingtickets(true);
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/${
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
         dataProfile.data.role === 1 ? `getTickets` : `getClientTickets`
       }?page=${pagetickets}&rows=${rowstickets}&ticket_id=${searcingfiltertickets}&type_id=${tickettypefiltertickets}&from=${fromfiltertickets}&to=${tofiltertickets}&location_id=${locfiltertickets}&status_id=${statusfiltertickets}&sort_by=${
         sortingtickets.sort_by
@@ -372,7 +372,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
   }, [refreshcreateticketscreate]);
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/${
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
         dataProfile.data.role === 1
           ? "getTicketRelation"
           : "getClientTicketRelation"
@@ -1071,7 +1071,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

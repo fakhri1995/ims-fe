@@ -712,7 +712,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
   };
   const handleDeleteTask = () => {
     setloadingtaskdelete(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteTask`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteTask`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -742,7 +742,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
   };
   const handleSwitchToOnHold = () => {
     setloadingchange(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/changeStatusToggle`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/changeStatusToggle`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -771,7 +771,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
   const handleAssignStaffTaskDetail = () => {
     const finaldata = currentstafftask.map((doc) => doc.id);
     setloadingstafftask(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/assignTaskDetail`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/assignTaskDetail`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -801,7 +801,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
   };
   const handleDeleteTaskDetail = () => {
     setloadingtaskdetaildelete(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteTaskDetail`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteTaskDetail`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -829,19 +829,16 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
   };
   const handleCheckInTask = () => {
     setloadingcheckin(true);
-    fetch(
-      `https://boiling-thicket-46501.herokuapp.com/changeAttendanceToggle`,
-      {
-        method: "PUT",
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: Number(taskid),
-        }),
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/changeAttendanceToggle`, {
+      method: "PUT",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: Number(taskid),
+      }),
+    })
       .then((res) => res.json())
       .then((res2) => {
         setloadingcheckin(false);
@@ -861,7 +858,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
   };
   const handleFillTaskDetail = () => {
     setloadingeditable(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/fillTaskDetail`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/fillTaskDetail`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -890,7 +887,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
   };
   const handleSubmitTask = () => {
     setloadingsubmittask(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/saveFilesTask`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/saveFilesTask`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -907,7 +904,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
         } else {
         }
       });
-    fetch(`https://boiling-thicket-46501.herokuapp.com/submitTask`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/submitTask`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -935,7 +932,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
       });
   };
   const handleReviseTask = () => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/declineTask`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/declineTask`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -960,7 +957,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
       });
   };
   const handleApproveTask = () => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/approveTask`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/approveTask`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -990,7 +987,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
   //USEEFFECT
   useEffect(() => {
     setpraloadingtask(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getTask?id=${taskid}`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTask?id=${taskid}`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -3338,7 +3335,7 @@ export async function getServerSideProps({ req, res, params }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

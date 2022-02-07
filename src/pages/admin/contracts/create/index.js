@@ -308,7 +308,7 @@ function ContractCreate({
   //-----------------Handle create contract-----------------------------
   const handleCreateContract = () => {
     setLoadingbtn(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/addContract`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addContract`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(tok),
@@ -727,7 +727,7 @@ export async function getServerSideProps({ req, res }) {
   }
 
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -744,7 +744,7 @@ export async function getServerSideProps({ req, res }) {
   // }
 
   const getContractInputData = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/getContractInputData`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractInputData`,
     {
       method: `GET`,
       headers: {

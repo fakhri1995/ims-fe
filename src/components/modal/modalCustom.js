@@ -259,7 +259,7 @@ function ModalHapusLokasiMoveChild({
   useEffect(() => {
     if (rawdata.level !== -1) {
       fetch(
-        `https://boiling-thicket-46501.herokuapp.com/getSubLocations?${
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getSubLocations?${
           rawdata.top_parent_id === null
             ? ``
             : `company_id=${rawdata.top_parent_id}`

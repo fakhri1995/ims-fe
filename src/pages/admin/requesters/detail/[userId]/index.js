@@ -65,7 +65,7 @@ const Relationship = ({ userid, initProps }) => {
   useEffect(() => {
     setpraloadingrel(true);
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getRelationshipInventory?id=${userid}&type_id=-2`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRelationshipInventory?id=${userid}&type_id=-2`,
       {
         method: `GET`,
         headers: {
@@ -228,17 +228,14 @@ function RequestersDetail({
     if (
       [133].every((curr) => dataProfile.data.registered_feature.includes(curr))
     ) {
-      fetch(
-        `https://boiling-thicket-46501.herokuapp.com/updateFeatureRequester`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: JSON.parse(tok),
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(datarole),
-        }
-      )
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateFeatureRequester`, {
+        method: "POST",
+        headers: {
+          Authorization: JSON.parse(tok),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(datarole),
+      })
         .then((res) => res.json())
         .then((res2) => {
           setLoadingupdate(false);
@@ -247,17 +244,14 @@ function RequestersDetail({
     if (
       [116].every((curr) => dataProfile.data.registered_feature.includes(curr))
     ) {
-      fetch(
-        `https://boiling-thicket-46501.herokuapp.com/updateRequesterDetail`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: JSON.parse(tok),
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data1),
-        }
-      )
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRequesterDetail`, {
+        method: "POST",
+        headers: {
+          Authorization: JSON.parse(tok),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data1),
+      })
         .then((res) => res.json())
         .then((res2) => {
           setLoadingupdate(false);
@@ -287,7 +281,7 @@ function RequestersDetail({
       keaktifan = true;
       setloadingubahnonaktif(true);
     }
-    fetch(`https://boiling-thicket-46501.herokuapp.com/requesterActivation`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/requesterActivation`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -327,7 +321,7 @@ function RequestersDetail({
   };
   const handleDeleteRequesters = () => {
     setloadinghapus(true);
-    fetch(`https://boiling-thicket-46501.herokuapp.com/deleteRequester`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRequester`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -357,17 +351,14 @@ function RequestersDetail({
   };
   const handleUbahPassword = () => {
     setloadingubahpass(true);
-    fetch(
-      `https://boiling-thicket-46501.herokuapp.com/changeRequesterPassword`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: JSON.parse(tok),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(datapass),
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/changeRequesterPassword`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(tok),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(datapass),
+    })
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -393,7 +384,7 @@ function RequestersDetail({
   //useEffect
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getRequesterDetail?account_id=${userid}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRequesterDetail?account_id=${userid}`,
       {
         method: `GET`,
         headers: {
@@ -432,7 +423,7 @@ function RequestersDetail({
         // return res2.data.roles
       });
     // .then(val => {
-    //     fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+    //     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
     //         method: `GET`,
     //         headers: {
     //             'Authorization': JSON.parse(initProps)
@@ -450,7 +441,7 @@ function RequestersDetail({
   }, [ubahstatus]);
 
   // useEffect(() => {
-  //     fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+  //     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
   //         method: `GET`,
   //         headers: {
   //             'Authorization': JSON.parse(initProps)
@@ -1001,7 +992,7 @@ export async function getServerSideProps({ req, res, params }) {
   }
   initProps = cookiesJSON1.token;
   const resources = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
@@ -1017,7 +1008,7 @@ export async function getServerSideProps({ req, res, params }) {
   //     res.end()
   // }
 
-  // const resourcesDA = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRequesterDetail`, {
+  // const resourcesDA = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRequesterDetail`, {
   //     method: `POST`,
   //     headers: {
   //         'Authorization': JSON.parse(initProps),
@@ -1034,7 +1025,7 @@ export async function getServerSideProps({ req, res, params }) {
   // }
   // const dataDetailRequester = resjsonDA
 
-  // const resourcesRoles = await fetch(`https://boiling-thicket-46501.herokuapp.com/getRoles`, {
+  // const resourcesRoles = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
   //     method: `GET`,
   //     headers: {
   //         'Authorization': JSON.parse(initProps)

@@ -144,7 +144,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
   //5.useEffect
   useEffect(() => {
     fetch(
-      `https://boiling-thicket-46501.herokuapp.com/getModels?asset_id=${asset_id1}&name=${name1}&sort_by=${sort_by}&sort_type=${sort_type}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getModels?asset_id=${asset_id1}&name=${name1}&sort_by=${sort_by}&sort_type=${sort_type}`,
       {
         method: `GET`,
         headers: {
@@ -162,7 +162,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getAssets`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssets`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -264,7 +264,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
               onChange: (page, pageSize) => {
                 setpraloading(true);
                 fetch(
-                  `https://boiling-thicket-46501.herokuapp.com/getModels?page=${page}&rows=10&asset_id=${asset_id1}&name=${name1}&sort_by=${sort_by}&sort_type=${sort_type}`,
+                  `${process.env.NEXT_PUBLIC_BACKEND_URL}/getModels?page=${page}&rows=10&asset_id=${asset_id1}&name=${name1}&sort_by=${sort_by}&sort_type=${sort_type}`,
                   {
                     method: `GET`,
                     headers: {
@@ -382,7 +382,7 @@ export async function getServerSideProps({ req, res }) {
   }
   initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
-    `https://boiling-thicket-46501.herokuapp.com/detailProfile`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {

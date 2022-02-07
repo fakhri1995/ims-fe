@@ -88,7 +88,7 @@ const DrawerTicketUpdate = ({
       if (datapayload.pic_contact === "") {
         setloadingsave(true);
         setdisabledsubmit(true);
-        fetch(`https://boiling-thicket-46501.herokuapp.com/updateTicket`, {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateTicket`, {
           method: "PUT",
           headers: {
             Authorization: JSON.parse(initProps),
@@ -140,7 +140,7 @@ const DrawerTicketUpdate = ({
     } else {
       setloadingsave(true);
       setdisabledsubmit(true);
-      fetch(`https://boiling-thicket-46501.herokuapp.com/updateTicket`, {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateTicket`, {
         method: "PUT",
         headers: {
           Authorization: JSON.parse(initProps),
@@ -185,7 +185,7 @@ const DrawerTicketUpdate = ({
 
   //useEffect
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getTicketRelation`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTicketRelation`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -199,7 +199,7 @@ const DrawerTicketUpdate = ({
       });
   }, []);
   useEffect(() => {
-    fetch(`https://boiling-thicket-46501.herokuapp.com/getFilterUsers`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
