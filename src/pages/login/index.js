@@ -1,7 +1,7 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Input, message } from "antd";
+import { Button, Input, message } from "antd";
 import { Form, notification } from "antd";
-import jscookie from "js-cookie";
+import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -41,11 +41,8 @@ export default function Home({ initProps }) {
             duration: 3,
           });
           // console.log("token: " + res2.data.token)
-          var date = new Date();
-          date.setTime(date.getTime() + 3600 * 1000 * 24);
-          jscookie.set("token", JSON.stringify(res2.data.token), {
-            expires: date,
-          });
+          /** Token will be expired in 1 day */
+          Cookies.set("token", JSON.stringify(res2.data.token), { expires: 1 });
           // console.log("token di session: " + JSON.parse(jscookie.get('token')))
           rt.push("/dashboard/home");
         } else if (!res2.success) {
