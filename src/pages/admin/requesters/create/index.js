@@ -145,7 +145,7 @@ function RequestersCreate({
 
   //useEffect
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocations`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getClientCompanyList`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
