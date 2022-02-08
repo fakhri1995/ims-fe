@@ -92,8 +92,6 @@ const ModulesIndex = ({
   });
   const [modaldelete, setmodaldelete] = useState(false);
   const [loadiingdelete, setloadingdelete] = useState(false);
-  const [modaldelete2, setmodaldelete2] = useState(false);
-  const [loadiingdelete2, setloadingdelete2] = useState(false);
 
   //5. Features list
   const [listfeat, setlistfeat] = useState([
@@ -468,41 +466,6 @@ const ModulesIndex = ({
         }
       });
   };
-  const handleDeleteFeature = () => {
-    setloadingdelete2(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteFeature`, {
-      method: "DELETE",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(datadeletefeature),
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          notification["success"]({
-            message: "Fitur berhasil dihapus",
-            duration: 3,
-          });
-          setdatadeletefeature({
-            id: 0,
-          });
-          setTimeout(() => {
-            setloadingdelete2(false);
-            setmodaldelete2(false);
-            window.location.href = `/admin/modules?module=&featuredisplay=`;
-          }, 300);
-        } else if (!res2.success) {
-          notification["error"]({
-            message: res2.message.errorInfo.status_detail,
-            duration: 3,
-          });
-          setloadingdelete2(false);
-          setmodaldelete2(false);
-        }
-      });
-  };
 
   //useEffect
   useEffect(() => {
@@ -786,7 +749,7 @@ const ModulesIndex = ({
           <div className=" col-span-1 md:col-span-3 flex flex-col p-3">
             <div className="flex justify-between mb-2 md:mb-5">
               <h1 className="font-bold text-xl">Feature</h1>
-              <Button
+              {/* <Button
                 type="primary"
                 onClick={() => {
                   rt.push(
@@ -795,7 +758,7 @@ const ModulesIndex = ({
                 }}
               >
                 Tambah
-              </Button>
+              </Button> */}
             </div>
             <div className="mb-2 md:mb-5">
               <Input
@@ -903,28 +866,7 @@ const ModulesIndex = ({
                   >
                     {listfeat.map((doc, idx) => {
                       return (
-                        <Panel
-                          key={idx}
-                          header={doc.name}
-                          extra={
-                            <div className="flex">
-                              <EditOutlined
-                                style={{ marginRight: `1rem` }}
-                                onClick={() => {
-                                  rt.push(
-                                    `/admin/modules/update/feature/${doc.id}?feature=${idx}`
-                                  );
-                                }}
-                              />
-                              <DeleteOutlined
-                                style={{ color: `red` }}
-                                onClick={() => {
-                                  setmodaldelete2(true);
-                                }}
-                              />
-                            </div>
-                          }
-                        >
+                        <Panel key={idx} header={doc.name}>
                           <p>{doc.description}</p>
                         </Panel>
                       );
@@ -1054,46 +996,6 @@ const ModulesIndex = ({
                       {idx + 1}. {doc.name}
                     </li>
                   );
-                })
-              : "-"}
-          </ol>
-        )}
-      </Modal>
-      <Modal
-        title="Konfirmasi hapus feature"
-        visible={modaldelete2}
-        onOk={handleDeleteFeature}
-        onCancel={() => setmodaldelete2(false)}
-        okText="Ya"
-        cancelText="Tidak"
-        okButtonProps={{ loading: loadiingdelete2 }}
-      >
-        <p>
-          Apakah Anda yakin untuk menghapus fitur{" "}
-          <strong>
-            {listfeat.length > 0 ? listfeat[checkedfeatures].name : null}
-          </strong>{" "}
-          yang terdaftar pada modul:
-        </p>
-        {listfeat.length < 1 ? (
-          <p className="font-semibold">-</p>
-        ) : (
-          <ol>
-            {datamodules
-              ? datamodules.map((doc, idx) => {
-                  const status =
-                    doc.features !== null
-                      ? doc.features
-                          .map((doc) => doc.id)
-                          .includes(listfeat[checkedfeatures].id)
-                      : false;
-                  if (status) {
-                    return (
-                      <li key={idx} className="font-semibold">
-                        - {doc.name}
-                      </li>
-                    );
-                  }
                 })
               : "-"}
           </ol>
