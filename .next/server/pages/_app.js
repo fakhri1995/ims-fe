@@ -96,17 +96,11 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-<<<<<<< HEAD
-module.exports = __webpack_require__("IlR1");
-=======
 module.exports = __webpack_require__("1TCz");
->>>>>>> main
 
 
 /***/ }),
 
-<<<<<<< HEAD
-=======
 /***/ "1TCz":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -175,7 +169,6 @@ function MyApp({
 
 /***/ }),
 
->>>>>>> main
 /***/ "4Q3z":
 /***/ (function(module, exports) {
 
@@ -190,16 +183,6 @@ module.exports = require("next/router");
 
 /***/ }),
 
-<<<<<<< HEAD
-/***/ "Ea3V":
-/***/ (function(module, exports) {
-
-
-
-/***/ }),
-
-=======
->>>>>>> main
 /***/ "F5FC":
 /***/ (function(module, exports) {
 
@@ -214,77 +197,6 @@ module.exports = require("nprogress");
 
 /***/ }),
 
-<<<<<<< HEAD
-/***/ "IlR1":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("F5FC");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var antd_dist_antd_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("TpwP");
-/* harmony import */ var antd_dist_antd_css__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(antd_dist_antd_css__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var next_head__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("xnum");
-/* harmony import */ var next_head__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(next_head__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("4Q3z");
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var nprogress__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("GvLQ");
-/* harmony import */ var nprogress__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(nprogress__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var nprogress_nprogress_css__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("pdi6");
-/* harmony import */ var nprogress_nprogress_css__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(nprogress_nprogress_css__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var react_datepicker_dist_react_datepicker_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("5Buo");
-/* harmony import */ var react_datepicker_dist_react_datepicker_css__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react_datepicker_dist_react_datepicker_css__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _styles_globals_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("Ea3V");
-/* harmony import */ var _styles_globals_css__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_styles_globals_css__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _styles_index_css__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("VxdY");
-/* harmony import */ var _styles_index_css__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_styles_index_css__WEBPACK_IMPORTED_MODULE_8__);
-
-
-
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-
-
-
-
-
-
-
-
-next_router__WEBPACK_IMPORTED_MODULE_3___default.a.events.on("routeChangeStart", () => nprogress__WEBPACK_IMPORTED_MODULE_4___default.a.start());
-next_router__WEBPACK_IMPORTED_MODULE_3___default.a.events.on("routeChangeComplete", () => nprogress__WEBPACK_IMPORTED_MODULE_4___default.a.done());
-next_router__WEBPACK_IMPORTED_MODULE_3___default.a.events.on("routeChangeError", () => nprogress__WEBPACK_IMPORTED_MODULE_4___default.a.done());
-
-function MyApp({
-  Component,
-  pageProps
-}) {
-  return /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsxs"])(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["Fragment"], {
-    children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsxs"])(next_head__WEBPACK_IMPORTED_MODULE_2___default.a, {
-      children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])("link", {
-        href: "https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap",
-        rel: "stylesheet"
-      }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])("link", {
-        rel: "stylesheet",
-        href: "https://unpkg.com/flickity@2/dist/flickity.min.css"
-      }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])("title", {
-        children: "MIGSys"
-      })]
-    }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(Component, _objectSpread({}, pageProps))]
-  });
-}
-
-/* harmony default export */ __webpack_exports__["default"] = (MyApp);
-
-/***/ }),
-
-=======
->>>>>>> main
 /***/ "TpwP":
 /***/ (function(module, exports) {
 
@@ -292,11 +204,7 @@ function MyApp({
 
 /***/ }),
 
-<<<<<<< HEAD
-/***/ "VxdY":
-=======
 /***/ "jqNJ":
->>>>>>> main
 /***/ (function(module, exports) {
 
 
@@ -315,8 +223,6 @@ function MyApp({
 
 module.exports = require("next/head");
 
-<<<<<<< HEAD
-=======
 /***/ }),
 
 /***/ "zPlV":
@@ -324,7 +230,6 @@ module.exports = require("next/head");
 
 
 
->>>>>>> main
 /***/ })
 
 /******/ });

@@ -88,11 +88,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-<<<<<<< HEAD
-/******/ 	return __webpack_require__(__webpack_require__.s = 47);
-=======
 /******/ 	return __webpack_require__(__webpack_require__.s = 49);
->>>>>>> main
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -104,17 +100,10 @@ module.exports = require("antd/lib/message");
 
 /***/ }),
 
-<<<<<<< HEAD
-/***/ 47:
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__("dv0F");
-=======
 /***/ 49:
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__("swZX");
->>>>>>> main
 
 
 /***/ }),
@@ -154,9 +143,6 @@ module.exports = require("react");
 
 /***/ }),
 
-<<<<<<< HEAD
-/***/ "dv0F":
-=======
 /***/ "eGmO":
 /***/ (function(module, exports) {
 
@@ -186,7 +172,6 @@ module.exports = require("cookie");
 /***/ }),
 
 /***/ "swZX":
->>>>>>> main
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -205,21 +190,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var antd_lib_message__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(antd_lib_message__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var antd_lib_notification__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("Gss8");
 /* harmony import */ var antd_lib_notification__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(antd_lib_notification__WEBPACK_IMPORTED_MODULE_5__);
-<<<<<<< HEAD
-/* harmony import */ var _ant_design_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("nZwT");
-/* harmony import */ var _ant_design_icons__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_ant_design_icons__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("4Q3z");
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("cDcd");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_8__);
-=======
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("cDcd");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var _ant_design_icons__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("nZwT");
 /* harmony import */ var _ant_design_icons__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_ant_design_icons__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("4Q3z");
 /* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_8__);
->>>>>>> main
 /* harmony import */ var cookie__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("rlPI");
 /* harmony import */ var cookie__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(cookie__WEBPACK_IMPORTED_MODULE_9__);
 
@@ -244,39 +220,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 function ChangePassword({
   initProps
 }) {
-<<<<<<< HEAD
-  const rt = Object(next_router__WEBPACK_IMPORTED_MODULE_7__["useRouter"])();
-=======
   const rt = Object(next_router__WEBPACK_IMPORTED_MODULE_8__["useRouter"])();
->>>>>>> main
   const {
     token
   } = rt.query;
   const {
     0: formdata,
     1: setFormdata
-<<<<<<< HEAD
-  } = Object(react__WEBPACK_IMPORTED_MODULE_8__["useState"])({
-    new_password: ""
-=======
   } = Object(react__WEBPACK_IMPORTED_MODULE_6__["useState"])({
     new_password: ''
->>>>>>> main
   });
   const {
     0: konfirmpass,
     1: setkonfirmpass
-<<<<<<< HEAD
-  } = Object(react__WEBPACK_IMPORTED_MODULE_8__["useState"])("");
-  const {
-    0: alerterror,
-    1: setAlerterror
-  } = Object(react__WEBPACK_IMPORTED_MODULE_8__["useState"])(false);
-  const {
-    0: loadingbuatpass,
-    1: setloadingbuatpass
-  } = Object(react__WEBPACK_IMPORTED_MODULE_8__["useState"])(false);
-=======
   } = Object(react__WEBPACK_IMPORTED_MODULE_6__["useState"])('');
   const {
     0: alerterror,
@@ -286,7 +242,6 @@ function ChangePassword({
     0: loadingbuatpass,
     1: setloadingbuatpass
   } = Object(react__WEBPACK_IMPORTED_MODULE_6__["useState"])(false);
->>>>>>> main
 
   const onChangeBuatPassword = e => {
     setFormdata(_objectSpread(_objectSpread({}, formdata), {}, {
@@ -296,30 +251,17 @@ function ChangePassword({
 
   const handleBuatPassword = () => {
     if (formdata.new_password !== konfirmpass) {
-<<<<<<< HEAD
-      antd_lib_notification__WEBPACK_IMPORTED_MODULE_5___default.a["error"]({
-        message: "Konfirmasi password tidak sama dengan password",
-=======
       antd_lib_notification__WEBPACK_IMPORTED_MODULE_5___default.a['error']({
         message: 'Konfirmasi password tidak sama dengan password',
->>>>>>> main
         duration: 2
       });
     } else {
       setloadingbuatpass(true);
-<<<<<<< HEAD
-      fetch(`${"https://service-staging.mig.id"}/changePassword`, {
-        method: "POST",
-        headers: {
-          Authorization: token,
-          "Content-Type": "application/json"
-=======
       fetch(`https://boiling-thicket-46501.herokuapp.com/changePassword`, {
         method: "POST",
         headers: {
           'Authorization': token,
           'Content-Type': 'application/json'
->>>>>>> main
         },
         body: JSON.stringify(formdata)
       }).then(res => res.json()).then(res2 => {
@@ -327,20 +269,12 @@ function ChangePassword({
         setloadingbuatpass(false);
 
         if (res2.success) {
-<<<<<<< HEAD
-          antd_lib_notification__WEBPACK_IMPORTED_MODULE_5___default.a["success"]({
-=======
           antd_lib_notification__WEBPACK_IMPORTED_MODULE_5___default.a['success']({
->>>>>>> main
             message: "Berhasil membuat password baru",
             duration: 3
           });
 
-<<<<<<< HEAD
-          rt.push("/login");
-=======
           rt.push('/login');
->>>>>>> main
         } else if (!res2.success) {
           antd_lib_message__WEBPACK_IMPORTED_MODULE_4___default.a.error({
             content: res2.message,
@@ -375,15 +309,6 @@ function ChangePassword({
               name: "new_password",
               rules: [{
                 required: true,
-<<<<<<< HEAD
-                message: "Password baru wajib diisi"
-              }, {
-                pattern: /([A-z0-9]{8})/,
-                message: "Password minimal 8 karakter"
-              }],
-              children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(antd_lib_input__WEBPACK_IMPORTED_MODULE_3___default.a.Password, {
-                prefix: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(_ant_design_icons__WEBPACK_IMPORTED_MODULE_6__["LockOutlined"], {
-=======
                 message: 'Password baru wajib diisi'
               }, {
                 pattern: /([A-z0-9]{8})/,
@@ -391,7 +316,6 @@ function ChangePassword({
               }],
               children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(antd_lib_input__WEBPACK_IMPORTED_MODULE_3___default.a.Password, {
                 prefix: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(_ant_design_icons__WEBPACK_IMPORTED_MODULE_7__["LockOutlined"], {
->>>>>>> main
                   className: "site-form-item-icon"
                 }),
                 name: "new_password",
@@ -404,27 +328,16 @@ function ChangePassword({
               name: "confirm_new_password",
               rules: [{
                 required: true,
-<<<<<<< HEAD
-                message: "Konfirmasi Password baru wajib diisi"
-              }, {
-                pattern: /([A-z0-9]{8})/,
-                message: "Password minimal 8 karakter"
-=======
                 message: 'Konfirmasi Password baru wajib diisi'
               }, {
                 pattern: /([A-z0-9]{8})/,
                 message: 'Password minimal 8 karakter'
->>>>>>> main
               }],
               style: {
                 marginBottom: `3rem`
               },
               children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(antd_lib_input__WEBPACK_IMPORTED_MODULE_3___default.a.Password, {
-<<<<<<< HEAD
-                prefix: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(_ant_design_icons__WEBPACK_IMPORTED_MODULE_6__["LockOutlined"], {
-=======
                 prefix: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(_ant_design_icons__WEBPACK_IMPORTED_MODULE_7__["LockOutlined"], {
->>>>>>> main
                   className: "site-form-item-icon"
                 }),
                 name: "confirm_new_password",
@@ -471,11 +384,7 @@ async function getServerSideProps({
         return {
           redirect: {
             permanent: false,
-<<<<<<< HEAD
-            destination: "/dashboard/home"
-=======
             destination: '/dashboard/home'
->>>>>>> main
           }
         };
       }
@@ -489,37 +398,6 @@ async function getServerSideProps({
   };
 }
 
-<<<<<<< HEAD
-/***/ }),
-
-/***/ "eGmO":
-/***/ (function(module, exports) {
-
-module.exports = require("antd/lib/button");
-
-/***/ }),
-
-/***/ "foLw":
-/***/ (function(module, exports) {
-
-module.exports = require("antd/lib/form");
-
-/***/ }),
-
-/***/ "nZwT":
-/***/ (function(module, exports) {
-
-module.exports = require("@ant-design/icons");
-
-/***/ }),
-
-/***/ "rlPI":
-/***/ (function(module, exports) {
-
-module.exports = require("cookie");
-
-=======
->>>>>>> main
 /***/ })
 
 /******/ });

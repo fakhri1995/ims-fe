@@ -88,11 +88,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-<<<<<<< HEAD
-/******/ 	return __webpack_require__(__webpack_require__.s = 65);
-=======
 /******/ 	return __webpack_require__(__webpack_require__.s = 67);
->>>>>>> main
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -111,17 +107,10 @@ module.exports = require("next/router");
 
 /***/ }),
 
-<<<<<<< HEAD
-/***/ 65:
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__("gMHI");
-=======
 /***/ 67:
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__("yfTL");
->>>>>>> main
 
 
 /***/ }),
@@ -168,9 +157,6 @@ module.exports = require("antd/lib/form");
 
 /***/ }),
 
-<<<<<<< HEAD
-/***/ "gMHI":
-=======
 /***/ "nZwT":
 /***/ (function(module, exports) {
 
@@ -193,7 +179,6 @@ module.exports = require("js-cookie");
 /***/ }),
 
 /***/ "yfTL":
->>>>>>> main
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -212,16 +197,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var antd_lib_message__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(antd_lib_message__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var antd_lib_notification__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("Gss8");
 /* harmony import */ var antd_lib_notification__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(antd_lib_notification__WEBPACK_IMPORTED_MODULE_5__);
-<<<<<<< HEAD
-/* harmony import */ var _ant_design_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("nZwT");
-/* harmony import */ var _ant_design_icons__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_ant_design_icons__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var js_cookie__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("vmXh");
-/* harmony import */ var js_cookie__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(js_cookie__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("4Q3z");
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("cDcd");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_9__);
-=======
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("cDcd");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var _ant_design_icons__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("nZwT");
@@ -230,7 +205,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_8__);
 /* harmony import */ var js_cookie__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("vmXh");
 /* harmony import */ var js_cookie__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(js_cookie__WEBPACK_IMPORTED_MODULE_9__);
->>>>>>> main
 /* harmony import */ var cookie__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("rlPI");
 /* harmony import */ var cookie__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(cookie__WEBPACK_IMPORTED_MODULE_10__);
 
@@ -261,32 +235,18 @@ function Home({
   const {
     0: formdata,
     1: setFormdata
-<<<<<<< HEAD
-  } = Object(react__WEBPACK_IMPORTED_MODULE_9__["useState"])({
-    email: "",
-    password: ""
-=======
   } = Object(react__WEBPACK_IMPORTED_MODULE_6__["useState"])({
     email: '',
     password: ''
->>>>>>> main
   });
   const {
     0: alerterror,
     1: setAlerterror
-<<<<<<< HEAD
-  } = Object(react__WEBPACK_IMPORTED_MODULE_9__["useState"])(false);
-  const {
-    0: loadinglogin,
-    1: setLoadinglogin
-  } = Object(react__WEBPACK_IMPORTED_MODULE_9__["useState"])(false);
-=======
   } = Object(react__WEBPACK_IMPORTED_MODULE_6__["useState"])(false);
   const {
     0: loadinglogin,
     1: setLoadinglogin
   } = Object(react__WEBPACK_IMPORTED_MODULE_6__["useState"])(false);
->>>>>>> main
 
   const onChangeLogin = e => {
     setFormdata(_objectSpread(_objectSpread({}, formdata), {}, {
@@ -296,17 +256,10 @@ function Home({
 
   const handleLogin = () => {
     setLoadinglogin(true);
-<<<<<<< HEAD
-    fetch(`${"https://service-staging.mig.id"}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-=======
     fetch(`https://boiling-thicket-46501.herokuapp.com/login`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json'
->>>>>>> main
       },
       // body: new URLSearchParams(formdata)
       body: JSON.stringify(formdata)
@@ -314,25 +267,11 @@ function Home({
       setLoadinglogin(false);
 
       if (res2.data) {
-<<<<<<< HEAD
-        antd_lib_notification__WEBPACK_IMPORTED_MODULE_5___default.a["success"]({
-=======
         antd_lib_notification__WEBPACK_IMPORTED_MODULE_5___default.a['success']({
->>>>>>> main
           message: "Selamat datang di MIGSYS",
           duration: 3
         }); // console.log("token: " + res2.data.token)
 
-<<<<<<< HEAD
-        /** Token will be expired in 1 day */
-
-
-        js_cookie__WEBPACK_IMPORTED_MODULE_7___default.a.set("token", JSON.stringify(res2.data.token), {
-          expires: 1
-        }); // console.log("token di session: " + JSON.parse(jscookie.get('token')))
-
-        rt.push("/dashboard/home");
-=======
 
         var date = new Date();
         date.setTime(date.getTime() + 3600 * 1000 * 24);
@@ -341,7 +280,6 @@ function Home({
         }); // console.log("token di session: " + JSON.parse(jscookie.get('token')))
 
         rt.push('/dashboard/home');
->>>>>>> main
       } else if (!res2.success) {
         // console.log("masuk ke error login")
         antd_lib_message__WEBPACK_IMPORTED_MODULE_4___default.a.error({
@@ -380,17 +318,10 @@ function Home({
               name: "email",
               rules: [{
                 required: true,
-<<<<<<< HEAD
-                message: "Please input your Email!"
-              }],
-              children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(antd_lib_input__WEBPACK_IMPORTED_MODULE_3___default.a, {
-                prefix: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(_ant_design_icons__WEBPACK_IMPORTED_MODULE_6__["UserOutlined"], {
-=======
                 message: 'Please input your Email!'
               }],
               children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(antd_lib_input__WEBPACK_IMPORTED_MODULE_3___default.a, {
                 prefix: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(_ant_design_icons__WEBPACK_IMPORTED_MODULE_7__["UserOutlined"], {
->>>>>>> main
                   className: "site-form-item-icon"
                 }),
                 name: "email",
@@ -402,21 +333,13 @@ function Home({
               name: "password",
               rules: [{
                 required: true,
-<<<<<<< HEAD
-                message: "Password!"
-=======
                 message: 'Password!'
->>>>>>> main
               }],
               style: {
                 marginBottom: `3rem`
               },
               children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(antd_lib_input__WEBPACK_IMPORTED_MODULE_3___default.a.Password, {
-<<<<<<< HEAD
-                prefix: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(_ant_design_icons__WEBPACK_IMPORTED_MODULE_6__["LockOutlined"], {
-=======
                 prefix: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(_ant_design_icons__WEBPACK_IMPORTED_MODULE_7__["LockOutlined"], {
->>>>>>> main
                   className: "site-form-item-icon"
                 }),
                 name: "password",
@@ -470,11 +393,7 @@ async function getServerSideProps({
         return {
           redirect: {
             permanent: false,
-<<<<<<< HEAD
-            destination: "/dashboard/home"
-=======
             destination: '/dashboard/home'
->>>>>>> main
           }
         };
       }
@@ -492,30 +411,6 @@ async function getServerSideProps({
   };
 }
 
-<<<<<<< HEAD
-/***/ }),
-
-/***/ "nZwT":
-/***/ (function(module, exports) {
-
-module.exports = require("@ant-design/icons");
-
-/***/ }),
-
-/***/ "rlPI":
-/***/ (function(module, exports) {
-
-module.exports = require("cookie");
-
-/***/ }),
-
-/***/ "vmXh":
-/***/ (function(module, exports) {
-
-module.exports = require("js-cookie");
-
-=======
->>>>>>> main
 /***/ })
 
 /******/ });

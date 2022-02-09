@@ -88,11 +88,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-<<<<<<< HEAD
-/******/ 	return __webpack_require__(__webpack_require__.s = 79);
-=======
 /******/ 	return __webpack_require__(__webpack_require__.s = 81);
->>>>>>> main
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -111,33 +107,7 @@ module.exports = require("next/router");
 
 /***/ }),
 
-<<<<<<< HEAD
-/***/ 79:
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__("QGQB");
-
-
-/***/ }),
-
-/***/ "F5FC":
-/***/ (function(module, exports) {
-
-module.exports = require("react/jsx-runtime");
-
-/***/ }),
-
-/***/ "Gss8":
-/***/ (function(module, exports) {
-
-module.exports = require("antd/lib/notification");
-
-/***/ }),
-
-/***/ "QGQB":
-=======
 /***/ "7X51":
->>>>>>> main
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -156,21 +126,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var antd_lib_message__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(antd_lib_message__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var antd_lib_notification__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("Gss8");
 /* harmony import */ var antd_lib_notification__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(antd_lib_notification__WEBPACK_IMPORTED_MODULE_5__);
-<<<<<<< HEAD
-/* harmony import */ var _ant_design_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("nZwT");
-/* harmony import */ var _ant_design_icons__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_ant_design_icons__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("4Q3z");
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("cDcd");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_8__);
-=======
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("cDcd");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var _ant_design_icons__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("nZwT");
 /* harmony import */ var _ant_design_icons__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_ant_design_icons__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("4Q3z");
 /* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_8__);
->>>>>>> main
 /* harmony import */ var cookie__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("rlPI");
 /* harmony import */ var cookie__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(cookie__WEBPACK_IMPORTED_MODULE_9__);
 
@@ -195,45 +156,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 function ResetPassword({
   initProps
 }) {
-<<<<<<< HEAD
-  const rt = Object(next_router__WEBPACK_IMPORTED_MODULE_7__["useRouter"])();
-=======
   const rt = Object(next_router__WEBPACK_IMPORTED_MODULE_8__["useRouter"])();
->>>>>>> main
   const {
     token
   } = rt.query;
   const {
     0: formdata,
     1: setFormdata
-<<<<<<< HEAD
-  } = Object(react__WEBPACK_IMPORTED_MODULE_8__["useState"])({
-    token: token,
-    password: "",
-    confirm_password: ""
-=======
   } = Object(react__WEBPACK_IMPORTED_MODULE_6__["useState"])({
     token: token,
     password: '',
     confirm_password: ''
->>>>>>> main
   });
   const {
     0: alerterror,
     1: setAlerterror
-<<<<<<< HEAD
-  } = Object(react__WEBPACK_IMPORTED_MODULE_8__["useState"])(false);
-  const {
-    0: loadingresetpass,
-    1: setloadingresetpass
-  } = Object(react__WEBPACK_IMPORTED_MODULE_8__["useState"])(false);
-=======
   } = Object(react__WEBPACK_IMPORTED_MODULE_6__["useState"])(false);
   const {
     0: loadingresetpass,
     1: setloadingresetpass
   } = Object(react__WEBPACK_IMPORTED_MODULE_6__["useState"])(false);
->>>>>>> main
 
   const onChangeResetPassword = e => {
     setFormdata(_objectSpread(_objectSpread({}, formdata), {}, {
@@ -243,30 +185,17 @@ function ResetPassword({
 
   const handleResetPassword = () => {
     if (formdata.password !== formdata.confirm_password) {
-<<<<<<< HEAD
-      antd_lib_notification__WEBPACK_IMPORTED_MODULE_5___default.a["error"]({
-        message: "Konfirmasi password tidak sama dengan password",
-=======
       antd_lib_notification__WEBPACK_IMPORTED_MODULE_5___default.a['error']({
         message: 'Konfirmasi password tidak sama dengan password',
->>>>>>> main
         duration: 2
       });
     } else {
       setloadingresetpass(true);
-<<<<<<< HEAD
-      fetch(`${"https://service-staging.mig.id"}/resetPassword`, {
-        method: "POST",
-        headers: {
-          Authorization: token,
-          "Content-Type": "application/json"
-=======
       fetch(`https://boiling-thicket-46501.herokuapp.com/resetPassword`, {
         method: "POST",
         headers: {
           'Authorization': token,
           'Content-Type': 'application/json'
->>>>>>> main
         },
         body: JSON.stringify(formdata)
       }).then(res => res.json()).then(res2 => {
@@ -274,20 +203,12 @@ function ResetPassword({
         setloadingresetpass(false);
 
         if (res2.success) {
-<<<<<<< HEAD
-          antd_lib_notification__WEBPACK_IMPORTED_MODULE_5___default.a["success"]({
-=======
           antd_lib_notification__WEBPACK_IMPORTED_MODULE_5___default.a['success']({
->>>>>>> main
             message: res2.data,
             duration: 3
           });
 
-<<<<<<< HEAD
-          rt.push("/login");
-=======
           rt.push('/login');
->>>>>>> main
         } else if (!res2.success) {
           antd_lib_message__WEBPACK_IMPORTED_MODULE_4___default.a.error({
             content: res2.message,
@@ -322,15 +243,6 @@ function ResetPassword({
               name: "password",
               rules: [{
                 required: true,
-<<<<<<< HEAD
-                message: "Password baru wajib diisi"
-              }, {
-                pattern: /([A-z0-9]{8})/,
-                message: "Password minimal 8 karakter"
-              }],
-              children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(antd_lib_input__WEBPACK_IMPORTED_MODULE_3___default.a.Password, {
-                prefix: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(_ant_design_icons__WEBPACK_IMPORTED_MODULE_6__["LockOutlined"], {
-=======
                 message: 'Password baru wajib diisi'
               }, {
                 pattern: /([A-z0-9]{8})/,
@@ -338,7 +250,6 @@ function ResetPassword({
               }],
               children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(antd_lib_input__WEBPACK_IMPORTED_MODULE_3___default.a.Password, {
                 prefix: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(_ant_design_icons__WEBPACK_IMPORTED_MODULE_7__["LockOutlined"], {
->>>>>>> main
                   className: "site-form-item-icon"
                 }),
                 name: "password",
@@ -351,27 +262,16 @@ function ResetPassword({
               name: "confirm_password",
               rules: [{
                 required: true,
-<<<<<<< HEAD
-                message: "Konfirmasi Password baru wajib diisi"
-              }, {
-                pattern: /([A-z0-9]{8})/,
-                message: "Password minimal 8 karakter"
-=======
                 message: 'Konfirmasi Password baru wajib diisi'
               }, {
                 pattern: /([A-z0-9]{8})/,
                 message: 'Password minimal 8 karakter'
->>>>>>> main
               }],
               style: {
                 marginBottom: `3rem`
               },
               children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(antd_lib_input__WEBPACK_IMPORTED_MODULE_3___default.a.Password, {
-<<<<<<< HEAD
-                prefix: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(_ant_design_icons__WEBPACK_IMPORTED_MODULE_6__["LockOutlined"], {
-=======
                 prefix: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(_ant_design_icons__WEBPACK_IMPORTED_MODULE_7__["LockOutlined"], {
->>>>>>> main
                   className: "site-form-item-icon"
                 }),
                 name: "confirm_password",
@@ -416,11 +316,7 @@ async function getServerSideProps({
         return {
           redirect: {
             permanent: false,
-<<<<<<< HEAD
-            destination: "/dashboard/home"
-=======
             destination: '/dashboard/home'
->>>>>>> main
           }
         };
       }
@@ -436,8 +332,6 @@ async function getServerSideProps({
 
 /***/ }),
 
-<<<<<<< HEAD
-=======
 /***/ 81:
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -460,7 +354,6 @@ module.exports = require("antd/lib/notification");
 
 /***/ }),
 
->>>>>>> main
 /***/ "Uqqx":
 /***/ (function(module, exports) {
 
