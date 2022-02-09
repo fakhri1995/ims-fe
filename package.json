@@ -5,7 +5,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start -p $PORT"
+    "build:analyze": "ANALYZE=true next build",
+    "start": "next start -p $PORT",
+    "format": "prettier --write \"src/**/*.{js,jsx,css}\"",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,css}": "prettier --write"
   },
   "dependencies": {
     "@react-pdf/renderer": "^2.1.0",
@@ -35,10 +41,17 @@
     "react-scroll-into-view": "^1.9.4",
     "react-slick": "^0.28.1",
     "slick-carousel": "^1.8.1",
-    "tailwindcss": "^2.0.3",
+    "tailwindcss": "^2.2.19",
     "wil-react-sticky": "^1.0.5"
   },
   "cacheDirectories": [
     ".next/cache"
-  ]
+  ],
+  "devDependencies": {
+    "@next/bundle-analyzer": "^12.0.10",
+    "@trivago/prettier-plugin-sort-imports": "^3.1.1",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.3",
+    "prettier": "^2.5.1"
+  }
 }

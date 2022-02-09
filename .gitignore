@@ -36,4 +36,5 @@ yarn-error.log*
 # Local Netlify folder
 .netlify
 
-/pages/coba.js
+# Webstorm's setting
+.idea
