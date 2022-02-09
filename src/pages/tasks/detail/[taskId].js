@@ -210,13 +210,21 @@ const TaskPDFTemplate = ({ detail, datatype4 }) => {
         {/* Informasi Detail */}
         <View style={styles.boxDetail}>
           <View
-            style={{ width: `100%`, flexDirection: `column`, marginBottom: 15 }}
+            style={{
+              width: `100%`,
+              flexDirection: `column`,
+              marginBottom: 15,
+            }}
           >
             <Text style={styles.label}>Jenis Task</Text>
             <Text style={styles.judul2}>Task Kelompok</Text>
           </View>
           <View
-            style={{ width: `100%`, flexDirection: `column`, marginBottom: 15 }}
+            style={{
+              width: `100%`,
+              flexDirection: `column`,
+              marginBottom: 15,
+            }}
           >
             <Text style={styles.label}>Deskripsi</Text>
             <Text style={styles.texter}>
@@ -298,7 +306,11 @@ const TaskPDFTemplate = ({ detail, datatype4 }) => {
           </View>
           {/* Hasil Pekerjaan */}
           <View
-            style={{ width: `100%`, flexDirection: `column`, marginBottom: 15 }}
+            style={{
+              width: `100%`,
+              flexDirection: `column`,
+              marginBottom: 15,
+            }}
           >
             <View style={{ marginBottom: 5 }}>
               <Text style={styles.label}>Hasil Pekerjaan</Text>
@@ -486,7 +498,11 @@ const TaskPDFTemplate = ({ detail, datatype4 }) => {
             ))}
           </View>
           <View
-            style={{ width: `100%`, flexDirection: `column`, marginBottom: 15 }}
+            style={{
+              width: `100%`,
+              flexDirection: `column`,
+              marginBottom: 15,
+            }}
           >
             <View style={{ marginBottom: 5 }}>
               <Text style={styles.label}>Lampiran</Text>
@@ -534,6 +550,11 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
   const pathArr = rt.pathname.split("/").slice(1);
   pathArr.splice(1, 2);
   pathArr.push(`Detail Task`);
+
+  const [isOnClient, setIsOnClient] = useState(false);
+  useEffect(() => {
+    setIsOnClient(true);
+  }, []);
 
   //USESTATE
   const [displaytask, setdisplaytask] = useState({
@@ -2992,29 +3013,34 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
               displaytask.status === 6 ? (
                 <div className="my-5 flex flex-col items-center">
                   <div className=" mb-3">
-                    <PDFDownloadLink
-                      document={
-                        <TaskPDFTemplate
-                          detail={displaytask}
-                          datatype4={datatype4}
-                        />
-                      }
-                      fileName={`T-000${displaytask.id}-${moment(new Date())
-                        .locale("id")
-                        .format(`L-LT`)}.pdf`}
-                    >
-                      <Buttonsys
-                        type={`primary`}
-                        onClick={() => {
-                          console.log(currentdataeditable);
-                        }}
+                    {isOnClient && (
+                      <PDFDownloadLink
+                        document={
+                          <TaskPDFTemplate
+                            detail={displaytask}
+                            datatype4={datatype4}
+                          />
+                        }
+                        fileName={`T-000${displaytask.id}-${moment(new Date())
+                          .locale("id")
+                          .format(`L-LT`)}.pdf`}
                       >
-                        <div className="mr-1 flex items-center">
-                          <ClipboardcheckIconSvg size={15} color={`#ffffff`} />
-                          Cetak Task
-                        </div>
-                      </Buttonsys>
-                    </PDFDownloadLink>
+                        <Buttonsys
+                          type={`primary`}
+                          onClick={() => {
+                            console.log(currentdataeditable);
+                          }}
+                        >
+                          <div className="mr-1 flex items-center">
+                            <ClipboardcheckIconSvg
+                              size={15}
+                              color={`#ffffff`}
+                            />
+                            Cetak Task
+                          </div>
+                        </Buttonsys>
+                      </PDFDownloadLink>
+                    )}
                   </div>
                 </div>
               ) : (
@@ -3051,6 +3077,41 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                     </Buttonsys>
                   </div>
                   <div className=" mb-3">
+                    {isOnClient && (
+                      <PDFDownloadLink
+                        document={
+                          <TaskPDFTemplate
+                            detail={displaytask}
+                            datatype4={datatype4}
+                          />
+                        }
+                        fileName={`T-000${displaytask.id}-${moment(new Date())
+                          .locale("id")
+                          .format(`L-LT`)}.pdf`}
+                      >
+                        <Buttonsys
+                          type={`primary`}
+                          onClick={() => {
+                            console.log(currentdataeditable);
+                          }}
+                        >
+                          <div className="mr-1 flex items-center">
+                            <ClipboardcheckIconSvg
+                              size={15}
+                              color={`#ffffff`}
+                            />
+                            Cetak Task
+                          </div>
+                        </Buttonsys>
+                      </PDFDownloadLink>
+                    )}
+                  </div>
+                </div>
+              )
+            ) : (
+              <div className="my-5 flex flex-col items-center">
+                <div className=" mb-3">
+                  {isOnClient && (
                     <PDFDownloadLink
                       document={
                         <TaskPDFTemplate
@@ -3074,35 +3135,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                         </div>
                       </Buttonsys>
                     </PDFDownloadLink>
-                  </div>
-                </div>
-              )
-            ) : (
-              <div className="my-5 flex flex-col items-center">
-                <div className=" mb-3">
-                  <PDFDownloadLink
-                    document={
-                      <TaskPDFTemplate
-                        detail={displaytask}
-                        datatype4={datatype4}
-                      />
-                    }
-                    fileName={`T-000${displaytask.id}-${moment(new Date())
-                      .locale("id")
-                      .format(`L-LT`)}.pdf`}
-                  >
-                    <Buttonsys
-                      type={`primary`}
-                      onClick={() => {
-                        console.log(currentdataeditable);
-                      }}
-                    >
-                      <div className="mr-1 flex items-center">
-                        <ClipboardcheckIconSvg size={15} color={`#ffffff`} />
-                        Cetak Task
-                      </div>
-                    </Buttonsys>
-                  </PDFDownloadLink>
+                  )}
                 </div>
               </div>
             )}
