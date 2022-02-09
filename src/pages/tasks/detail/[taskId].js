@@ -551,6 +551,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
   pathArr.splice(1, 2);
   pathArr.push(`Detail Task`);
 
+  /** State to only renders `<PDFDownloadLink>` component after this page mount (client-side) */
   const [isOnClient, setIsOnClient] = useState(false);
   useEffect(() => {
     setIsOnClient(true);
