@@ -47,6 +47,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
       return <Children doc={doc}></Children>;
     });
   };
+
   const Children = ({ doc }) => {
     return (
       <Timeline.Item>
@@ -687,7 +688,24 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        setmanufdata(res2.data);
+        const data = res2.data;
+
+        setmanufdata(data);
+
+        /** Set new inserted manufacturer as default selected option in the "Manufacturer" dropdown */
+        if (triggermanuf > -1) {
+          const latestInsertedManufacturer = data[data.length - 1];
+          const newManufacturerId = latestInsertedManufacturer.id;
+
+          /** Form control value */
+          instanceForm.setFieldsValue({ manufacturer_id: newManufacturerId });
+
+          /** It's necessary to update this state. This state will be used as a payload to the backend */
+          setnewdata((prev) => ({
+            ...prev,
+            manufacturer_id: newManufacturerId,
+          }));
+        }
       });
   }, [triggermanuf]);
   useEffect(() => {
@@ -1274,7 +1292,6 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                         onChange={(value) => {
                           setnewdata({ ...newdata, manufacturer_id: value });
                         }}
-                        name="manufacturer_id"
                       >
                         {manufdata.map((doc, idx) => {
                           return (
@@ -4462,7 +4479,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
               <Button
                 type="default"
                 onClick={() => {
-                  setmodalcreatemodel(false); /*console.log(newdata2)*/
+                  setmodalmanuf(false);
                 }}
                 style={{ marginRight: `1rem` }}
               >
