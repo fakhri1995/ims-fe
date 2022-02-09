@@ -88,7 +88,11 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
+<<<<<<< HEAD
 /******/ 	return __webpack_require__(__webpack_require__.s = 77);
+=======
+/******/ 	return __webpack_require__(__webpack_require__.s = 79);
+>>>>>>> main
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -116,7 +120,11 @@ function isDynamicRoute(route) {
 "use strict";
 
 
+<<<<<<< HEAD
 var _interopRequireDefault = __webpack_require__("AroE");
+=======
+var _interopRequireDefault = __webpack_require__("TqRt");
+>>>>>>> main
 
 exports.__esModule = true;
 exports.default = withRouter;
@@ -169,6 +177,7 @@ exports.default = _default;
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ "0QRd":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -882,6 +891,66 @@ async function getServerSideProps({
   };
 }
 /* harmony default export */ var profile = __webpack_exports__["default"] = (ProfileIndex);
+=======
+/***/ "284h":
+/***/ (function(module, exports, __webpack_require__) {
+
+var _typeof = __webpack_require__("cDf5");
+
+function _getRequireWildcardCache() {
+  if (typeof WeakMap !== "function") return null;
+  var cache = new WeakMap();
+
+  _getRequireWildcardCache = function _getRequireWildcardCache() {
+    return cache;
+  };
+
+  return cache;
+}
+
+function _interopRequireWildcard(obj) {
+  if (obj && obj.__esModule) {
+    return obj;
+  }
+
+  if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") {
+    return {
+      "default": obj
+    };
+  }
+
+  var cache = _getRequireWildcardCache();
+
+  if (cache && cache.has(obj)) {
+    return cache.get(obj);
+  }
+
+  var newObj = {};
+  var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
+
+  for (var key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
+
+      if (desc && (desc.get || desc.set)) {
+        Object.defineProperty(newObj, key, desc);
+      } else {
+        newObj[key] = obj[key];
+      }
+    }
+  }
+
+  newObj["default"] = obj;
+
+  if (cache) {
+    cache.set(obj, newObj);
+  }
+
+  return newObj;
+}
+
+module.exports = _interopRequireWildcard;
+>>>>>>> main
 
 /***/ }),
 
@@ -1307,14 +1376,22 @@ function prepareDestination(destination, params, query, appendParamsToQuery) {
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ 77:
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__("0QRd");
+=======
+/***/ 79:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__("dmPs");
+>>>>>>> main
 
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ "7KCV":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1376,6 +1453,8 @@ module.exports = _interopRequireWildcard;
 
 /***/ }),
 
+=======
+>>>>>>> main
 /***/ "83ri":
 /***/ (function(module, exports) {
 
@@ -1390,6 +1469,7 @@ module.exports = require("antd/lib/avatar");
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ "AroE":
 /***/ (function(module, exports) {
 
@@ -1426,6 +1506,8 @@ module.exports = _typeof;
 
 /***/ }),
 
+=======
+>>>>>>> main
 /***/ "DYL8":
 /***/ (function(module, exports) {
 
@@ -1454,6 +1536,7 @@ module.exports = require("antd/lib/dropdown");
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ "IaIK":
 /***/ (function(module, exports) {
 
@@ -1472,6 +1555,8 @@ module.exports = {
 
 /***/ }),
 
+=======
+>>>>>>> main
 /***/ "N6Fi":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1592,7 +1677,11 @@ exports.default = _default;
 "use strict";
 
 
+<<<<<<< HEAD
 var _interopRequireDefault = __webpack_require__("AroE");
+=======
+var _interopRequireDefault = __webpack_require__("TqRt");
+>>>>>>> main
 
 exports.__esModule = true;
 exports.markAssetError = markAssetError;
@@ -1934,6 +2023,22 @@ function resolveRewrites(asPath, pages, rewrites, query, resolveHref, locales) {
 
 /***/ }),
 
+<<<<<<< HEAD
+=======
+/***/ "TqRt":
+/***/ (function(module, exports) {
+
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : {
+    "default": obj
+  };
+}
+
+module.exports = _interopRequireDefault;
+
+/***/ }),
+
+>>>>>>> main
 /***/ "UhrY":
 /***/ (function(module, exports) {
 
@@ -2122,6 +2227,27 @@ module.exports = require("antd/lib/menu");
 
 /***/ }),
 
+<<<<<<< HEAD
+=======
+/***/ "bFyk":
+/***/ (function(module, exports) {
+
+// Exports
+module.exports = {
+	"menuToggle": "layout-dashboard-profile_menuToggle__bDoBY",
+	"menu": "layout-dashboard-profile_menu__1Eipo",
+	"siderLayout": "layout-dashboard-profile_siderLayout__3HLA5",
+	"trigger": "layout-dashboard-profile_trigger__18FmW",
+	"breadcrumbClients": "layout-dashboard-profile_breadcrumbClients__hU2Kb",
+	"siderLayoutSmall": "layout-dashboard-profile_siderLayoutSmall__1aGdD",
+	"triggerSmall": "layout-dashboard-profile_triggerSmall__3SwDh",
+	"breadcrumbClientsSmall": "layout-dashboard-profile_breadcrumbClientsSmall__3mrc6"
+};
+
+
+/***/ }),
+
+>>>>>>> main
 /***/ "cDcd":
 /***/ (function(module, exports) {
 
@@ -2129,13 +2255,43 @@ module.exports = require("react");
 
 /***/ }),
 
+<<<<<<< HEAD
+=======
+/***/ "cDf5":
+/***/ (function(module, exports) {
+
+function _typeof(obj) {
+  "@babel/helpers - typeof";
+
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    module.exports = _typeof = function _typeof(obj) {
+      return typeof obj;
+    };
+  } else {
+    module.exports = _typeof = function _typeof(obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
+
+  return _typeof(obj);
+}
+
+module.exports = _typeof;
+
+/***/ }),
+
+>>>>>>> main
 /***/ "cTJO":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
+<<<<<<< HEAD
 var _interopRequireWildcard = __webpack_require__("7KCV");
+=======
+var _interopRequireWildcard = __webpack_require__("284h");
+>>>>>>> main
 
 exports.__esModule = true;
 exports.default = void 0;
@@ -2350,6 +2506,725 @@ function mitt() {
 
 /***/ }),
 
+<<<<<<< HEAD
+=======
+/***/ "dmPs":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+// ESM COMPAT FLAG
+__webpack_require__.r(__webpack_exports__);
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "getServerSideProps", function() { return /* binding */ getServerSideProps; });
+
+// EXTERNAL MODULE: external "antd/lib/tabs"
+var tabs_ = __webpack_require__("zkM6");
+var tabs_default = /*#__PURE__*/__webpack_require__.n(tabs_);
+
+// EXTERNAL MODULE: external "antd/lib/modal"
+var modal_ = __webpack_require__("xKsY");
+var modal_default = /*#__PURE__*/__webpack_require__.n(modal_);
+
+// EXTERNAL MODULE: external "antd/lib/notification"
+var notification_ = __webpack_require__("Gss8");
+var notification_default = /*#__PURE__*/__webpack_require__.n(notification_);
+
+// EXTERNAL MODULE: external "antd/lib/date-picker"
+var date_picker_ = __webpack_require__("83ri");
+var date_picker_default = /*#__PURE__*/__webpack_require__.n(date_picker_);
+
+// EXTERNAL MODULE: external "react/jsx-runtime"
+var jsx_runtime_ = __webpack_require__("F5FC");
+
+// EXTERNAL MODULE: external "antd/lib/input"
+var input_ = __webpack_require__("Uqqx");
+var input_default = /*#__PURE__*/__webpack_require__.n(input_);
+
+// EXTERNAL MODULE: external "antd/lib/dropdown"
+var dropdown_ = __webpack_require__("HgHO");
+var dropdown_default = /*#__PURE__*/__webpack_require__.n(dropdown_);
+
+// EXTERNAL MODULE: external "antd/lib/avatar"
+var avatar_ = __webpack_require__("9ubE");
+var avatar_default = /*#__PURE__*/__webpack_require__.n(avatar_);
+
+// EXTERNAL MODULE: external "antd/lib/menu"
+var menu_ = __webpack_require__("a5Fm");
+var menu_default = /*#__PURE__*/__webpack_require__.n(menu_);
+
+// EXTERNAL MODULE: external "antd/lib/layout"
+var layout_ = __webpack_require__("VzA1");
+var layout_default = /*#__PURE__*/__webpack_require__.n(layout_);
+
+// EXTERNAL MODULE: external "react"
+var external_react_ = __webpack_require__("cDcd");
+
+// EXTERNAL MODULE: external "next/router"
+var router_ = __webpack_require__("4Q3z");
+
+// EXTERNAL MODULE: ./node_modules/next/link.js
+var next_link = __webpack_require__("YFqc");
+var link_default = /*#__PURE__*/__webpack_require__.n(next_link);
+
+// EXTERNAL MODULE: external "js-cookie"
+var external_js_cookie_ = __webpack_require__("vmXh");
+var external_js_cookie_default = /*#__PURE__*/__webpack_require__.n(external_js_cookie_);
+
+// EXTERNAL MODULE: external "@ant-design/icons/ExportOutlined"
+var ExportOutlined_ = __webpack_require__("jti4");
+var ExportOutlined_default = /*#__PURE__*/__webpack_require__.n(ExportOutlined_);
+
+// EXTERNAL MODULE: external "@ant-design/icons"
+var icons_ = __webpack_require__("nZwT");
+
+// CONCATENATED MODULE: ./components/layout-dashboard-profile.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function LayoutDashboardProfile({
+  children,
+  tok,
+  dataProfile,
+  edit,
+  setedit,
+  st
+}) {
+  const rt = Object(router_["useRouter"])();
+  const {
+    Sider,
+    Content,
+    Header
+  } = layout_default.a;
+  const {
+    0: coll,
+    1: setColl
+  } = Object(external_react_["useState"])(true);
+  const {
+    0: collsmall,
+    1: setCollsmall
+  } = Object(external_react_["useState"])(true);
+  const {
+    0: tinggi,
+    1: setTinggi
+  } = Object(external_react_["useState"])(90);
+
+  const handleColl = () => {
+    setColl(prev => !prev);
+  };
+
+  const handleCollSmall = () => {
+    setCollsmall(prev => !prev);
+  };
+
+  const handleLogout = () => {
+    fetch(`https://boiling-thicket-46501.herokuapp.com/logout`, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': JSON.parse(tok)
+      }
+    }).then(res => res.json()).then(res2 => {
+      console.log("isi dari res2: " + res2);
+
+      if (res2.data.is_success) {
+        external_js_cookie_default.a.remove('token');
+        console.log("token abis logout: " + external_js_cookie_default.a.get('token'));
+        rt.push('/');
+      }
+    }).catch(err => {
+      console.log(err.message);
+    });
+  };
+
+  const menuProfile2 = () => {
+    return /*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+      className: "w-auto h-auto flex flex-col shadow-md rounded bg-white space-y-4 px-10 py-5",
+      children: [/*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+        className: "flex justify-center space-x-3",
+        children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])("div", {
+          className: "w-10 h-10 rounded-full bg-blue-500 flex text-white text-center justify-center items-center",
+          children: /*#__PURE__*/Object(jsx_runtime_["jsx"])("img", {
+            src: dataProfile.data.profile_image,
+            alt: "imageProfile",
+            className: " object-cover w-full h-full"
+          })
+        }), /*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+          className: "flex flex-col",
+          children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])("h2", {
+            className: "text-lg font-semibold mb-1",
+            children: dataProfile.data.fullname
+          }), /*#__PURE__*/Object(jsx_runtime_["jsx"])("h2", {
+            className: "text-sm font-normal mb-1",
+            children: dataProfile.data.email
+          })]
+        })]
+      }), /*#__PURE__*/Object(jsx_runtime_["jsx"])("div", {
+        children: /*#__PURE__*/Object(jsx_runtime_["jsx"])("a", {
+          onClick: setedit,
+          children: "Edit Profile"
+        })
+      }), /*#__PURE__*/Object(jsx_runtime_["jsx"])("div", {
+        children: /*#__PURE__*/Object(jsx_runtime_["jsx"])("a", {
+          children: "Security Settings"
+        })
+      }), /*#__PURE__*/Object(jsx_runtime_["jsx"])("div", {
+        children: /*#__PURE__*/Object(jsx_runtime_["jsxs"])("a", {
+          target: "_blank",
+          rel: "noopener noreferrer",
+          onClick: handleLogout,
+          children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])(ExportOutlined_default.a, {}), " Logout"]
+        })
+      })]
+    });
+  };
+
+  Object(external_react_["useEffect"])(() => {
+    var h = window.innerHeight;
+    setTinggi(h);
+  }, []);
+  var pathBuilder = "";
+  return /*#__PURE__*/Object(jsx_runtime_["jsxs"])(layout_default.a, {
+    children: [/*#__PURE__*/Object(jsx_runtime_["jsxs"])(Sider, {
+      collapsible: true,
+      collapsed: coll,
+      trigger: null,
+      theme: "light",
+      style: {
+        borderRight: `1px solid #f0f0f0`
+      },
+      className: `${st.siderLayout} sider`,
+      children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])("div", {
+        className: "logo",
+        style: {
+          height: `32px`,
+          marginTop: `24px`,
+          marginLeft: `16px`,
+          marginRight: `16px`,
+          background: `gray`
+        }
+      }), /*#__PURE__*/Object(jsx_runtime_["jsx"])(menu_default.a, {
+        theme: "light",
+        mode: "inline",
+        defaultSelectedKeys: ['1'],
+        children: /*#__PURE__*/Object(jsx_runtime_["jsx"])(menu_default.a.Item, {
+          icon: /*#__PURE__*/Object(jsx_runtime_["jsx"])(icons_["DashboardTwoTone"], {}),
+          children: /*#__PURE__*/Object(jsx_runtime_["jsx"])(link_default.a, {
+            href: "/dashboard/home",
+            children: "Dashboard"
+          })
+        }, "1")
+      })]
+    }), /*#__PURE__*/Object(jsx_runtime_["jsxs"])(Sider, {
+      collapsible: true,
+      collapsed: collsmall,
+      trigger: null,
+      collapsedWidth: 0,
+      width: 45,
+      theme: "light",
+      className: st.siderLayoutSmall,
+      style: {
+        borderRight: `1px solid #f0f0f0`
+      },
+      children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])("div", {
+        className: "logo",
+        style: {
+          height: `32px`,
+          marginTop: `24px`,
+          marginLeft: `16px`,
+          marginRight: `16px`
+        }
+      }), /*#__PURE__*/Object(jsx_runtime_["jsx"])(menu_default.a, {
+        theme: "light",
+        mode: "inline",
+        defaultSelectedKeys: ['1'],
+        children: /*#__PURE__*/Object(jsx_runtime_["jsx"])(menu_default.a.Item, {
+          icon: /*#__PURE__*/Object(jsx_runtime_["jsx"])(icons_["DashboardTwoTone"], {}),
+          children: /*#__PURE__*/Object(jsx_runtime_["jsx"])(link_default.a, {
+            href: "/dashboard/home",
+            children: "Dashboard"
+          })
+        }, "1")
+      })]
+    }), /*#__PURE__*/Object(jsx_runtime_["jsxs"])(layout_default.a, {
+      className: "site-layout",
+      children: [/*#__PURE__*/Object(jsx_runtime_["jsxs"])(Header, {
+        className: "site-layout-background",
+        style: {
+          padding: 0,
+          backgroundColor: `white`,
+          display: `flex`,
+          flexDirection: `row`,
+          flexWrap: `wrap`,
+          justifyContent: `space-between`,
+          width: `100%`,
+          height: `auto`,
+          alignItems: `center`
+        },
+        children: [/*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+          className: "flex",
+          children: [coll ? /*#__PURE__*/Object(jsx_runtime_["jsx"])(icons_["MenuUnfoldOutlined"], {
+            onClick: handleColl,
+            style: {
+              padding: `24px`,
+              float: `left`,
+              marginTop: `0.3rem`
+            },
+            className: st.trigger
+          }) : /*#__PURE__*/Object(jsx_runtime_["jsx"])(icons_["MenuFoldOutlined"], {
+            onClick: handleColl,
+            style: {
+              padding: `24px`,
+              float: `left`
+            },
+            className: st.trigger
+          }), collsmall ? /*#__PURE__*/Object(jsx_runtime_["jsx"])(icons_["MenuUnfoldOutlined"], {
+            onClick: handleCollSmall,
+            style: {
+              padding: `24px`,
+              float: `left`,
+              marginTop: `0.3rem`
+            },
+            className: st.triggerSmall
+          }) : /*#__PURE__*/Object(jsx_runtime_["jsx"])(icons_["MenuFoldOutlined"], {
+            onClick: handleCollSmall,
+            style: {
+              padding: `24px`,
+              float: `left`
+            },
+            className: st.triggerSmall
+          }), /*#__PURE__*/Object(jsx_runtime_["jsx"])("div", {
+            className: "float-left px-8 py-8 font-bold text-base",
+            children: "Profile"
+          })]
+        }), /*#__PURE__*/Object(jsx_runtime_["jsx"])("label", {
+          htmlFor: `menutoggle`,
+          className: "pointer-cursor md:hidden block cursor-pointer",
+          children: /*#__PURE__*/Object(jsx_runtime_["jsxs"])("svg", {
+            className: "fill-current text-gray-900",
+            xmlns: "http://www.w3.org/2000/svg",
+            width: 20,
+            height: 20,
+            viewBox: "0 0 20 20",
+            children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])("title", {
+              children: "menu"
+            }), /*#__PURE__*/Object(jsx_runtime_["jsx"])("path", {
+              d: "M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"
+            })]
+          })
+        }), /*#__PURE__*/Object(jsx_runtime_["jsx"])("input", {
+          className: `hidden ${st.menuToggle}`,
+          type: "checkbox",
+          id: `menutoggle`
+        }), /*#__PURE__*/Object(jsx_runtime_["jsx"])("div", {
+          className: `hidden md:flex md:w-auto w-full ${st.menu}`,
+          children: /*#__PURE__*/Object(jsx_runtime_["jsx"])("div", {
+            style: {
+              marginRight: `3rem`,
+              marginTop: `2rem`,
+              marginBottom: `2rem`
+            },
+            children: /*#__PURE__*/Object(jsx_runtime_["jsx"])(dropdown_default.a, {
+              overlay: menuProfile2,
+              trigger: ['click'],
+              children: dataProfile.data.profile_image ? /*#__PURE__*/Object(jsx_runtime_["jsx"])("img", {
+                src: dataProfile.data.profile_image,
+                alt: "ava",
+                className: "w-8 h-8 rounded-full object-cover cursor-pointer"
+              }) : /*#__PURE__*/Object(jsx_runtime_["jsx"])(avatar_default.a, {
+                icon: /*#__PURE__*/Object(jsx_runtime_["jsx"])(icons_["UserOutlined"], {}),
+                style: {
+                  cursor: `pointer`
+                }
+              })
+            })
+          })
+        })]
+      }), /*#__PURE__*/Object(jsx_runtime_["jsx"])(Content, {
+        className: "slb",
+        style: {
+          padding: 24,
+          height: `${tinggi}px`,
+          backgroundColor: `white`
+        },
+        children: children
+      })]
+    })]
+  });
+}
+
+/* harmony default export */ var layout_dashboard_profile = (LayoutDashboardProfile);
+// EXTERNAL MODULE: external "cookie"
+var external_cookie_ = __webpack_require__("rlPI");
+var external_cookie_default = /*#__PURE__*/__webpack_require__.n(external_cookie_);
+
+// EXTERNAL MODULE: external "@ant-design/icons/EditOutlined"
+var EditOutlined_ = __webpack_require__("DYL8");
+var EditOutlined_default = /*#__PURE__*/__webpack_require__.n(EditOutlined_);
+
+// EXTERNAL MODULE: ./components/layout-dashboard-profile.module.css
+var layout_dashboard_profile_module = __webpack_require__("bFyk");
+var layout_dashboard_profile_module_default = /*#__PURE__*/__webpack_require__.n(layout_dashboard_profile_module);
+
+// CONCATENATED MODULE: ./pages/profile/index.js
+
+
+
+
+
+
+
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+
+
+
+
+
+function ProfileTabs({
+  dataProfile,
+  editable2
+}) {
+  return /*#__PURE__*/Object(jsx_runtime_["jsx"])("div", {
+    className: "p-4 flex flex-col w-full",
+    children: /*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+      className: "flex flex-col",
+      children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])("h1", {
+        className: "text-base font-normal mb-4",
+        children: "Work Information"
+      }), /*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+        className: "grid grid-cols-1 lg:grid-cols-3",
+        children: [/*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+          className: "mx-5 my-5",
+          children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])("h1", {
+            className: "text-xs text-gray-600 mb-1",
+            children: "Nama Lengkap"
+          }), editable2 ? /*#__PURE__*/Object(jsx_runtime_["jsx"])(input_default.a, {
+            defaultValue: dataProfile.data.fullname
+          }) : /*#__PURE__*/Object(jsx_runtime_["jsx"])("h1", {
+            className: "text-sm text-black",
+            children: dataProfile.data.fullname
+          })]
+        }), /*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+          className: "mx-5 my-5",
+          children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])("h1", {
+            className: "text-xs text-gray-600 mb-1",
+            children: "Email"
+          }), editable2 ? /*#__PURE__*/Object(jsx_runtime_["jsx"])(input_default.a, {
+            defaultValue: dataProfile.data.email
+          }) : /*#__PURE__*/Object(jsx_runtime_["jsx"])("h1", {
+            className: "text-sm text-black",
+            children: dataProfile.data.email
+          })]
+        }), /*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+          className: "mx-5 my-5",
+          children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])("h1", {
+            className: "text-xs text-gray-600 mb-1",
+            children: "Nomor Telepon"
+          }), editable2 ? /*#__PURE__*/Object(jsx_runtime_["jsx"])(input_default.a, {
+            defaultValue: dataProfile.data.phone_number
+          }) : /*#__PURE__*/Object(jsx_runtime_["jsx"])("h1", {
+            className: "text-sm text-black",
+            children: dataProfile.data.phone_number
+          })]
+        }), /*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+          className: "mx-5 my-5",
+          children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])("h1", {
+            className: "text-xs text-gray-600 mb-1",
+            children: "Tanggal Bergabung"
+          }), editable2 ?
+          /*#__PURE__*/
+          // <DatePicker defaultValue={dataProfile.data.create_time}></DatePicker>
+          Object(jsx_runtime_["jsx"])(date_picker_default.a, {
+            onChange: (date, dateString) => {}
+          }) : /*#__PURE__*/Object(jsx_runtime_["jsx"])("h1", {
+            className: "text-sm text-black",
+            children: dataProfile.data.create_time
+          })]
+        }), /*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+          className: "mx-5 my-5",
+          children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])("h1", {
+            className: "text-xs text-gray-600 mb-1",
+            children: "ID Perusahaan"
+          }), editable2 ? /*#__PURE__*/Object(jsx_runtime_["jsx"])(input_default.a, {
+            defaultValue: dataProfile.data.company_id
+          }) : /*#__PURE__*/Object(jsx_runtime_["jsx"])("h1", {
+            className: "text-sm text-black",
+            children: dataProfile.data.company_id
+          })]
+        }), /*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+          className: "mx-5 my-5",
+          children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])("h1", {
+            className: "text-xs text-gray-600 mb-1",
+            children: "Perusahaan"
+          }), editable2 ? /*#__PURE__*/Object(jsx_runtime_["jsx"])(input_default.a, {
+            defaultValue: dataProfile.data.company_name
+          }) : /*#__PURE__*/Object(jsx_runtime_["jsx"])("h1", {
+            className: "text-sm text-black",
+            children: dataProfile.data.company_name
+          })]
+        }), /*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+          className: "mx-5 my-5",
+          children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])("h1", {
+            className: "text-xs text-gray-600 mb-1",
+            children: "Posisi"
+          }), editable2 ? /*#__PURE__*/Object(jsx_runtime_["jsx"])(input_default.a, {
+            defaultValue: "-"
+          }) : /*#__PURE__*/Object(jsx_runtime_["jsx"])("h1", {
+            className: "text-sm text-black",
+            children: "-"
+          })]
+        })]
+      })]
+    })
+  });
+}
+
+function SecurityTabs({
+  dataProfile,
+  tok
+}) {
+  const rt = Object(router_["useRouter"])();
+  const {
+    0: pass,
+    1: setPass
+  } = Object(external_react_["useState"])({
+    new_password: ''
+  });
+  const {
+    0: visible,
+    1: setVisible
+  } = Object(external_react_["useState"])(false);
+
+  const onChangePassword = e => {
+    setPass(_objectSpread(_objectSpread({}, pass), {}, {
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  const handleUbahPassword = () => {
+    fetch(`https://boiling-thicket-46501.herokuapp.com/changePassword`, {
+      method: 'POST',
+      headers: {
+        'Authorization': JSON.parse(tok),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(pass)
+    }).then(res => res.json()).then(res2 => {
+      if (res2.data) {
+        setVisible(false);
+        setPass({
+          new_password: ''
+        });
+
+        notification_default.a['success']({
+          message: res2.data.message,
+          duration: 3
+        });
+
+        setTimeout(() => {
+          rt.push(`/profile`);
+        }, 500);
+      } else if (!res2.success) {
+        setVisible(false);
+        setPass({
+          new_password: ''
+        });
+
+        notification_default.a['error']({
+          message: res2.message.errorInfo.status_detail,
+          duration: 3
+        });
+      }
+    });
+  };
+
+  return /*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+    className: "p-4 grid grid-rows-1 w-full",
+    children: [/*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+      className: "col-span-1",
+      children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])(input_default.a.Password, {
+        name: "new_password",
+        placeholder: "Password Baru",
+        type: "password",
+        onChange: onChangePassword,
+        style: {
+          marginBottom: `2rem`
+        }
+      }), /*#__PURE__*/Object(jsx_runtime_["jsx"])("button", {
+        className: "w-auto h-auto py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded-md",
+        onClick: () => {
+          setVisible(true);
+        },
+        children: "Ubah Password"
+      })]
+    }), /*#__PURE__*/Object(jsx_runtime_["jsx"])(modal_default.a, {
+      title: "Konfirmasi Ubah Password",
+      visible: visible,
+      onOk: handleUbahPassword,
+      onCancel: () => setVisible(false),
+      children: "Apakah anda yakin ingin merubah password?"
+    })]
+  });
+}
+
+function ProfileIndex({
+  initProps,
+  dataProfile
+}) {
+  const {
+    TabPane
+  } = tabs_default.a;
+  const {
+    0: editable,
+    1: setEditable
+  } = Object(external_react_["useState"])(false);
+
+  const handleEditable = () => {
+    setEditable(true);
+  };
+
+  const handleCloseEditable = () => {
+    setEditable(false);
+  };
+
+  return /*#__PURE__*/Object(jsx_runtime_["jsx"])(layout_dashboard_profile, {
+    tok: initProps,
+    dataProfile: dataProfile,
+    edit: editable,
+    setedit: setEditable,
+    st: layout_dashboard_profile_module_default.a,
+    children: /*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+      className: "w-full h-auto border-t-2 p-4 relative",
+      children: [/*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+        className: "relative md:absolute md:top-4 md:right-8 mb-5",
+        children: [editable ? /*#__PURE__*/Object(jsx_runtime_["jsx"])("button", {
+          className: " bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md mr-5",
+          onClick: handleCloseEditable,
+          children: "Cancel"
+        }) : null, editable ? /*#__PURE__*/Object(jsx_runtime_["jsx"])("button", {
+          className: " bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md w-24 md:w-40",
+          children: "Save"
+        }) : /*#__PURE__*/Object(jsx_runtime_["jsxs"])("button", {
+          className: "border rounded-md p-2 hover:bg-gray-200 font-semibold text-sm",
+          onClick: handleEditable,
+          children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])(EditOutlined_default.a, {}), " Edit Profile"]
+        })]
+      }), /*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+        className: "flex flex-col justify-center",
+        children: [/*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+          className: "flex flex-col md:flex-row mb-8",
+          children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])("div", {
+            className: "md:mx-4",
+            children: /*#__PURE__*/Object(jsx_runtime_["jsx"])("img", {
+              src: dataProfile.data.profile_image,
+              alt: "imageProfile",
+              className: " object-cover w-10 md:w-20 h-10 md:h-20 rounded-full"
+            })
+          }), /*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+            className: "flex flex-col",
+            children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])("h1", {
+              className: " text-base md:text-2xl font-semibold mb-1",
+              children: dataProfile.data.fullname
+            }), /*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
+              className: "flex",
+              children: [/*#__PURE__*/Object(jsx_runtime_["jsxs"])("h1", {
+                className: " text-xs md:text-sm font-normal mr-1 md:mr-3 pt-1",
+                children: [dataProfile.data.email, " "]
+              }), /*#__PURE__*/Object(jsx_runtime_["jsx"])("div", {
+                className: "mr-1 md:mr-3 pt-1",
+                children: "|"
+              }), /*#__PURE__*/Object(jsx_runtime_["jsx"])("div", {
+                className: " bg-blue-100 text-blue-600 text-sm md:text-base border-blue-600 border py-1 md:py-1 px-1 md:px-3 rounded-md",
+                children: "USER"
+              })]
+            })]
+          })]
+        }), /*#__PURE__*/Object(jsx_runtime_["jsx"])("div", {
+          className: "flex w-full md:w-7/12",
+          children: /*#__PURE__*/Object(jsx_runtime_["jsxs"])(tabs_default.a, {
+            tabPosition: "top",
+            children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])(TabPane, {
+              tab: "Profile",
+              children: /*#__PURE__*/Object(jsx_runtime_["jsx"])(ProfileTabs, {
+                dataProfile: dataProfile,
+                editable2: editable
+              })
+            }, `profile`), /*#__PURE__*/Object(jsx_runtime_["jsx"])(TabPane, {
+              tab: "Security",
+              children: /*#__PURE__*/Object(jsx_runtime_["jsx"])(SecurityTabs, {
+                dataProfile: dataProfile,
+                tok: initProps
+              })
+            }, `security`)]
+          })
+        })]
+      })]
+    })
+  });
+}
+
+async function getServerSideProps({
+  req,
+  res
+}) {
+  var initProps = {};
+
+  if (req && req.headers) {
+    const cookies = req.headers.cookie;
+
+    if (!cookies) {
+      res.writeHead(302, {
+        Location: '/login'
+      });
+      res.end();
+    }
+
+    if (typeof cookies === 'string') {
+      const cookiesJSON = external_cookie_default.a.parse(cookies);
+      initProps = cookiesJSON.token; // console.log("cookie di admin dashboard ssr: " + initProps)
+    }
+  }
+
+  const resources = await fetch(`https://boiling-thicket-46501.herokuapp.com/detailProfile`, {
+    method: `GET`,
+    headers: {
+      'Authorization': JSON.parse(initProps)
+    }
+  });
+  const resjson = await resources.json();
+  const dataProfile = resjson;
+  return {
+    props: {
+      initProps,
+      dataProfile
+    }
+  };
+}
+/* harmony default export */ var profile = __webpack_exports__["default"] = (ProfileIndex);
+
+/***/ }),
+
+>>>>>>> main
 /***/ "elyg":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3659,9 +4534,15 @@ module.exports = require("@ant-design/icons/ExportOutlined");
 "use strict";
 
 
+<<<<<<< HEAD
 var _interopRequireWildcard = __webpack_require__("7KCV");
 
 var _interopRequireDefault = __webpack_require__("AroE");
+=======
+var _interopRequireWildcard = __webpack_require__("284h");
+
+var _interopRequireDefault = __webpack_require__("TqRt");
+>>>>>>> main
 
 exports.__esModule = true;
 exports.useRouter = useRouter;
@@ -3825,7 +4706,11 @@ module.exports = require("cookie");
 "use strict";
 
 
+<<<<<<< HEAD
 var _interopRequireDefault = __webpack_require__("AroE");
+=======
+var _interopRequireDefault = __webpack_require__("TqRt");
+>>>>>>> main
 
 exports.__esModule = true;
 exports.useIntersection = useIntersection;

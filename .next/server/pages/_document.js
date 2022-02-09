@@ -88,7 +88,11 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
+<<<<<<< HEAD
 /******/ 	return __webpack_require__(__webpack_require__.s = 91);
+=======
+/******/ 	return __webpack_require__(__webpack_require__.s = 99);
+>>>>>>> main
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -100,7 +104,11 @@ module.exports = require("styled-jsx/server");
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ 91:
+=======
+/***/ 99:
+>>>>>>> main
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__("VDXt");
@@ -119,6 +127,7 @@ const ESCAPE_LOOKUP={'&':'\\u0026','>':'\\u003e','<':'\\u003c','\u2028':'\\u2028
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ "GsEv":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -191,6 +200,8 @@ module.exports = function() {
 
 /***/ }),
 
+=======
+>>>>>>> main
 /***/ "UJjI":
 /***/ (function(module, exports) {
 
@@ -215,7 +226,11 @@ exports.Html = Html;
 exports.Main = Main;
 exports.NextScript = exports.Head = exports.default = void 0;
 
+<<<<<<< HEAD
 var _propTypes = _interopRequireDefault(__webpack_require__("lgD3"));
+=======
+var _propTypes = _interopRequireDefault(__webpack_require__("rf6O"));
+>>>>>>> main
 
 var _react = _interopRequireWildcard(__webpack_require__("cDcd"));
 
@@ -876,6 +891,7 @@ module.exports = require("next/dist/next-server/lib/utils.js");
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ "lgD3":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -915,6 +931,8 @@ module.exports = ReactPropTypesSecret;
 
 /***/ }),
 
+=======
+>>>>>>> main
 /***/ "nMq/":
 /***/ (function(module, exports) {
 
@@ -922,6 +940,16 @@ module.exports = require("next/dist/next-server/lib/document-context.js");
 
 /***/ }),
 
+<<<<<<< HEAD
+=======
+/***/ "rf6O":
+/***/ (function(module, exports) {
+
+module.exports = require("prop-types");
+
+/***/ }),
+
+>>>>>>> main
 /***/ "ri/Y":
 /***/ (function(module, exports) {
 

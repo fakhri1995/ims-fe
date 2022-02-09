@@ -46,6 +46,11 @@
   "/admin/service/create": "pages/admin/service/create.js",
   "/admin/service": "pages/admin/service.js",
   "/admin/vendors": "pages/admin/vendors.js",
+<<<<<<< HEAD
+=======
+  "/api/hello": "pages/api/hello.js",
+  "/api/upload": "pages/api/upload.js",
+>>>>>>> main
   "/changePassword": "pages/changePassword.js",
   "/company/clients/[companyId]": "pages/company/clients/[companyId].js",
   "/company/clients": "pages/company/clients.js",
@@ -88,6 +93,15 @@
   "/tickets/histories": "pages/tickets/histories.js",
   "/tickets": "pages/tickets.js",
   "/tickets/tickettypes": "pages/tickets/tickettypes.js",
+<<<<<<< HEAD
+=======
+  "/tickets3/create": "pages/tickets3/create.js",
+  "/tickets3/detail/[ticketId]": "pages/tickets3/detail/[ticketId].js",
+  "/tickets3/exporting": "pages/tickets3/exporting.js",
+  "/tickets3/histories": "pages/tickets3/histories.js",
+  "/tickets3": "pages/tickets3.js",
+  "/tickets3/update/[ticketId]": "pages/tickets3/update/[ticketId].js",
+>>>>>>> main
   "/warehouses": "pages/warehouses.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
