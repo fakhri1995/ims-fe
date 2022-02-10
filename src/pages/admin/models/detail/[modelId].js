@@ -331,10 +331,16 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
               <h1 className="font-semibold mb-1">Jumlah Item:</h1>
               <p className="mb-0 text-xs">{displaydata.inventories_count}</p>
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col mb-4">
               <h1 className="font-semibold mb-1">Serial Number:</h1>
               <p className="mb-0 text-xs">
                 {displaydata.required_sn ? "Wajib Ada" : "Tidak Wajib Ada"}
+              </p>
+            </div>
+            <div className="flex flex-col">
+              <h1 className="font-semibold mb-1">Tipe Model:</h1>
+              <p className="mb-0 text-xs">
+                {displaydata.is_consumable ? "Consumable" : "Tidak Consumable"}
               </p>
             </div>
           </div>

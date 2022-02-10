@@ -1503,7 +1503,6 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
               </Form.Item>
               {newdata.is_consumable === true && (
                 <Form.Item name="quantity" label="Jumlah Barang">
-                  {/* TODO: add outline hijau seperti yang diatasnya */}
                   <InputNumber
                     style={{ width: `100%` }}
                     disabled={disabledfielditem}
