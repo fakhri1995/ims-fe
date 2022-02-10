@@ -595,8 +595,24 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        setmanufdata(res2.data);
-        setpraloading(false);
+        const data = res2.data;
+
+        setmanufdata(data);
+
+        /** Set new inserted manufacturer as default selected option in the "Manufacturer" dropdown */
+        if (triggermanuf > -1) {
+          const latestInsertedManufacturer = data[data.length - 1];
+          const newManufacturerId = latestInsertedManufacturer.id;
+
+          /** Form control value */
+          instanceForm.setFieldsValue({ manufacturer_id: newManufacturerId });
+
+          /** It's necessary to update this state. This state will be used as a payload to the backend */
+          setnewdata((prev) => ({
+            ...prev,
+            manufacturer_id: newManufacturerId,
+          }));
+        }
       });
   }, [triggermanuf]);
   useEffect(() => {
@@ -885,7 +901,6 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                         onChange={(value) => {
                           setnewdata({ ...newdata, manufacturer_id: value });
                         }}
-                        name="manufacturer_id"
                       >
                         {manufdata.map((doc, idx) => {
                           return (
@@ -2585,7 +2600,6 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                 onChange={(value) => {
                   setnewdata2({ ...newdata2, manufacturer_id: value });
                 }}
-                name="manufacturer_id"
               >
                 {manufdata.map((doc, idx) => {
                   return (
@@ -3913,7 +3927,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
               <Button
                 type="default"
                 onClick={() => {
-                  setmodalcreatemodel(false); /*console.log(newdata2)*/
+                  setmodalmanuf(false);
                 }}
                 style={{ marginRight: `1rem` }}
               >
