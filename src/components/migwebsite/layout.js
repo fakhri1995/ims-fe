@@ -225,39 +225,21 @@ function layout({ children }) {
                 </p>
               </Button>
             </Dropdown>
-            <Button
-              href="/aboutus"
-              type="text"
-              className={""}
-              style={{ background: "white" }}
-              key="1"
-            >
-              <p className={"text-lg gilroy-medium menu-underlined"}>
+            <Link href="/aboutus">
+              <a className="text-lg gilroy-medium menu-underlined mx-4">
                 About Us
-              </p>
-            </Button>
-            <Button
-              href="/joinourteam"
-              type="text"
-              className={""}
-              style={{ background: "white" }}
-              key="2"
-            >
-              <p className={"text-lg gilroy-medium menu-underlined"}>
+              </a>
+            </Link>
+            <Link href="/joinourteam">
+              <a className="text-lg gilroy-medium menu-underlined mx-4">
                 Join Our Team
-              </p>
-            </Button>
-            <Button
-              href="/contactus"
-              type="text"
-              className={" mr-4 "}
-              style={{ background: "white" }}
-              key="3"
-            >
-              <p className={"text-lg gilroy-medium menu-underlined"}>
+              </a>
+            </Link>
+            <Link href="/contactus">
+              <a className="text-lg gilroy-medium menu-underlined mx-4">
                 Contact Us
-              </p>
-            </Button>
+              </a>
+            </Link>
           </div>
         </Header>
 
@@ -286,9 +268,9 @@ function layout({ children }) {
                     width={40}
                     src={"/image/navbar/hardware_black.png"}
                   ></img>
-                  <a href="/hardware" className="text-lg gilroy-medium pl-3">
-                    Hardware
-                  </a>
+                  <Link href="/hardware">
+                    <a className="text-lg gilroy-medium pl-3">Hardware</a>
+                  </Link>
                 </Menu.Item>
                 <Menu.Item key="2">
                   <img
@@ -297,9 +279,9 @@ function layout({ children }) {
                     width={40}
                     src={"/image/navbar/software_black.png"}
                   ></img>
-                  <a href="/software" className="text-lg gilroy-medium pl-3">
-                    Software
-                  </a>
+                  <Link href="/software">
+                    <a className="text-lg gilroy-medium pl-3">Software</a>
+                  </Link>
                 </Menu.Item>
                 <Menu.Item key="3">
                   <img
@@ -308,20 +290,20 @@ function layout({ children }) {
                     width={40}
                     src={"/image/navbar/talents_black.png"}
                   ></img>
-                  <a href="/talents" className="text-lg gilroy-medium pl-3">
-                    Talents
-                  </a>
+                  <Link href="/talents">
+                    <a className="text-lg gilroy-medium pl-3">Talents</a>
+                  </Link>
                 </Menu.Item>
               </SubMenu>
               <Menu.Item key="4">
-                <a href="/aboutus" className="text-lg gilroy-medium">
-                  About Us
-                </a>
+                <Link href="/aboutus">
+                  <a className="text-lg gilroy-medium">About Us</a>
+                </Link>
               </Menu.Item>
               <Menu.Item key="5">
-                <a href="/joinourteam" className="text-lg gilroy-medium">
-                  Join Our Team
-                </a>
+                <Link href="/joinourteam">
+                  <a className="text-lg gilroy-medium">Join Our Team</a>
+                </Link>
               </Menu.Item>
               {/* <Menu.Item key='6'
                             style={{
@@ -370,12 +352,9 @@ function layout({ children }) {
                 transition: "all 0.2s",
               }}
             >
-              <a
-                href="/contactus"
-                className="text-lg gilroy-medium menu-navbar"
-              >
-                Contact Us{" "}
-              </a>
+              <Link href="/contactus">
+                <a className="text-lg gilroy-medium menu-navbar">Contact Us </a>
+              </Link>
               &nbsp;&nbsp;
               <ArrowRightOutlined
                 style={{
