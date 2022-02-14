@@ -92,12 +92,15 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
     const { value } = e.target;
     const expandedKeys = dataList
       .map((item) => {
-        if (item.title.indexOf(value) > -1) {
+        if (item.title.toLowerCase().indexOf(value.toLowerCase()) > -1) {
           return getParentKey(item.key, maindata);
         }
         return null;
       })
-      .filter((item, i, self) => item && self.indexOf(item) === i);
+      .filter(
+        (item, i, self) => item && self.indexOf(item.toLowerCase()) === i
+      );
+
     if (value) {
       setExpandedKeys(expandedKeys);
       setSearchValue(value);
@@ -108,6 +111,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
       setAutoExpandParent(false);
     }
   };
+
   const filterTreeNode = (node) => {
     const title = node.title.props.children[0].props
       ? node.title.props.children[0].props.children[2]
@@ -119,16 +123,24 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
       : false;
     return result;
   };
+
   const loop = (data) =>
     data.map((item) => {
-      const index = item.title.indexOf(searchValue);
-      const beforeStr = item.title.substr(0, index);
-      const afterStr = item.title.substr(index + searchValue.length);
+      const index = item.title.toLowerCase().indexOf(searchValue.toLowerCase());
+      const beforeStr = item.title.substr(0, index).toUpperCase();
+      const afterStr = item.title
+        .substr(index + searchValue.length)
+        .toUpperCase();
+
+      // const index = itemTitleLowerCase.indexOf(searchValue);
+      // const beforeStr = itemTitleLowerCase.substr(0, index);
+      // const afterStr = itemTitleLowerCase.substr(index + searchValue.length);
+
       // const prt = item.value.substring(0, item.value.length - 4)
       const title =
         index > -1 ? (
           <div
-            className={`flex justify-between md:h-7 hover:bg-blue-100 text-black`}
+            className={`flex justify-between md:h-7 hover:bg-blue-100 font-normal bg-red-400`}
             onMouseOver={() => {
               var d = document.getElementById(`node${item.key}`);
               d.classList.add("flex");
@@ -147,7 +159,9 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
               }}
             >
               {beforeStr}
-              <span className=" text-blue-500">{searchValue}</span>
+              <span className="text-blue-500 font-medium">
+                {searchValue.toUpperCase()}
+              </span>
               {afterStr}
             </div>
             <div className={`hidden mx-2`} id={`node${item.key}`}>
@@ -167,8 +181,9 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
             </div>
           </div>
         ) : (
-          <span>{item.title}</span>
+          <span className="font-normal">{item.title.toUpperCase()}</span>
         );
+
       if (item.children) {
         return { title, key: item.key, children: loop(item.children) };
       }
