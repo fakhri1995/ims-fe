@@ -8,7 +8,7 @@ import Flickity from "react-flickity-component";
 import { Link, animateScroll as scroll } from "react-scroll";
 import Slider from "react-slick";
 
-import Layout from "../../../components/migwebsite/layout.js";
+import Layout from "../../../components/migwebsite/layout";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 
@@ -294,11 +294,11 @@ function LandingPage({}) {
       {/* <section className={'section3landingpage md:relative md:bottom-32 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'} style={{backgroundColor:'white'}}>
                     <div className={'h-auto flex justify-between md:px-30 pt-8 md:pt-16 pb-0: md:pb-4 container mx-auto'} >
                         <div className={'block md:flex py-0 md:py-8'} style={{width:'100%',margin:'0 auto 0'}}>
-                            
+
                             <div className={'flex-col mx-10 w-auto md:w-120 block md:hidden'} style={{margin:'auto'}}>
                                 <p className={'text-3xl pb-6 text-black gilroy-bold'} style={{ letterSpacing:'1.5px' }}> Bringing you the <span className={''} style={{borderBottom:'solid 3px green',paddingBottom:'2.5px'}}>advantages</span></p>
                             </div>
-                            
+
                             <div className={'flex-col md:mr-10 pb-8 md:pb-0 md:w-1/2'}>
                                 <img style={{  }} className={'w-full'} src='/image/landingpage/image-section3.png' />
                             </div>
@@ -783,7 +783,7 @@ function LandingPage({}) {
                             </p>
                         </Slider>
                     </div>
-                    <Slider 
+                    <Slider
                     className={'container mx-auto'}
                     autoplay={false}
                     autoplaySpeed={3000}

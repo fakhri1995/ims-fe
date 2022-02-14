@@ -123,7 +123,7 @@ const DrawerTaskSpareParts = ({
   useEffect(() => {
     setpraloadingin(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskSparePartList?type=masuk`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskSparePartList?type=masuk&id=${idtask}`,
       {
         method: `GET`,
         headers: {
@@ -133,7 +133,7 @@ const DrawerTaskSpareParts = ({
     )
       .then((res) => res.json())
       .then((res2) => {
-        setdataselectforin(res2.data);
+        setdataselectforin(res2.data.inventory_list);
 
         setpraloadingin(false);
       });
