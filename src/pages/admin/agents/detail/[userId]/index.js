@@ -143,6 +143,7 @@ function AgentDetail({
     name: "",
     role: "",
     phone_number: "",
+    nip: "",
     profile_image: `/default-users.jpeg`,
     position: "",
   });
@@ -275,6 +276,7 @@ function AgentDetail({
           name: res2.data.name,
           role: res2.data.roles,
           phone_number: res2.data.phone_number,
+          nip: res2.data?.nip || "-",
           profile_image:
             res2.data.profile_image === "" || res2.data.profile_image === "-"
               ? `/default-users.jpeg`
@@ -417,6 +419,12 @@ function AgentDetail({
                         </h1>
                       </div>
                       <div className="col-span-1 flex flex-col mb-5">
+                        <h1 className="font-semibold text-sm">NIP:</h1>
+                        <h1 className="text-sm font-normal text-black">
+                          {data1.nip}
+                        </h1>
+                      </div>
+                      <div className="col-span-1 flex flex-col mb-5">
                         <h1 className="font-semibold text-sm">Role:</h1>
                         <div className=" flex items-center">
                           {namarolearr.map((doc, idx) => (
@@ -499,6 +507,12 @@ function AgentDetail({
                         </h1>
                         <h1 className="text-sm font-normal text-black">
                           {data1.phone_number}
+                        </h1>
+                      </div>
+                      <div className="col-span-1 flex flex-col mb-5">
+                        <h1 className="font-semibold text-sm">NIP:</h1>
+                        <h1 className="text-sm font-normal text-black">
+                          {data1.nip}
                         </h1>
                       </div>
                       <div className="col-span-1 flex flex-col mb-5">
