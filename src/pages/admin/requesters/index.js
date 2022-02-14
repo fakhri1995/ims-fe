@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
+import { createKeyPressHandler } from "../../../lib/helper";
 import httpcookie from "cookie";
 
 function modifData(dataa) {
@@ -214,6 +215,8 @@ function Requesters({
         : ""
     }`;
   };
+
+  const { onKeyPressHandler } = createKeyPressHandler(onFinalClick, "Enter");
 
   const FilterAll = () => {
     setDataSource(dataraw);
@@ -602,6 +605,7 @@ function Requesters({
                         placeholder="Cari nama requester"
                         onChange={onChangeSearch}
                         allowClear
+                        onKeyPress={onKeyPressHandler}
                       ></Input>
                     </div>
                   )}

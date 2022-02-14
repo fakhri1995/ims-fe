@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
+import { createKeyPressHandler } from "../../../lib/helper";
 import httpcookie from "cookie";
 
 const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
@@ -140,6 +141,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
   };
 
   //4.handler
+  const { onKeyPressHandler } = createKeyPressHandler(onFinalClick, "Enter");
 
   //5.useEffect
   useEffect(() => {
@@ -221,6 +223,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
                     placeholder="Cari Nama Model"
                     onChange={onChangeSearch}
                     allowClear
+                    onKeyPress={onKeyPressHandler}
                   ></Input>
                 </div>
                 <div className="col-span-2 mr-1">

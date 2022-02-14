@@ -30,6 +30,7 @@ import st from "../../components/layout-dashboard.module.css";
 import Layout from "../../components/layout-dashboardNew";
 import { TableCustomTickets } from "../../components/table/tableCustom";
 import { H1, H2, Label, Text } from "../../components/typography";
+import { createKeyPressHandler } from "../../lib/helper";
 import {
   ArcElement,
   BarElement,
@@ -134,7 +135,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "num",
       render: (text, record, index) => {
         return {
-          children: <>{datarawtickets.from + index}</>,
+          children: <>{datarawtickets?.from + index}</>,
         };
       },
     },
@@ -311,6 +312,8 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
         setloadingtickets(false);
       });
   };
+
+  const { onKeyPressHandler } = createKeyPressHandler(onFilterTickets, "Enter");
 
   //5.useEffect
   useEffect(() => {
@@ -792,7 +795,10 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
             <div className="flex items-center justify-between mb-4">
               <H1>Semua Tiket</H1>
             </div>
-            <div className=" flex items-center mb-4">
+
+            {/* Start: Search criteria */}
+            <div className="flex items-center mb-4">
+              {/* Search by keyword (kata kunci) */}
               <div className="mx-1 w-2/12">
                 <Input
                   value={
@@ -808,8 +814,11 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                       setsearcingfiltertickets(e.target.value);
                     }
                   }}
+                  onKeyPress={onKeyPressHandler}
                 />
               </div>
+
+              {/* Filter by ticket (dropdown) */}
               <div className="mx-1 w-2/12">
                 <Select
                   value={
@@ -834,6 +843,8 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                   ))}
                 </Select>
               </div>
+
+              {/* Filter by date */}
               <div className=" w-3/12 mx-1">
                 <DatePicker.RangePicker
                   style={{ width: `100%` }}
@@ -850,6 +861,8 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                   }}
                 />
               </div>
+
+              {/* Search by location */}
               <div className=" mx-1 w-5/12">
                 <TreeSelect
                   style={{ width: `100%` }}
@@ -873,6 +886,8 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                   value={locfiltertickets === "" ? null : locfiltertickets}
                 ></TreeSelect>
               </div>
+
+              {/* Search by status (dropdown) */}
               <div className="mx-1 w-2/12">
                 <Select
                   value={
@@ -985,6 +1000,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                       })}
                 </Select>
               </div>
+
               <div className="mx-1 w-1/12">
                 <ButtonSys type={`primary`} onClick={onFilterTickets}>
                   {/* <div className='mr-1'>
@@ -994,6 +1010,8 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                 </ButtonSys>
               </div>
             </div>
+            {/* End: Search criteria */}
+
             <div>
               <TableCustomTickets
                 dataSource={datatickets}
@@ -1002,7 +1020,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                 loading={loadingtickets}
                 setpraloading={setloadingtickets}
                 pageSize={rowstickets}
-                total={datarawtickets.total}
+                total={datarawtickets?.total}
                 initProps={initProps}
                 setpage={setpagetickets}
                 pagefromsearch={pagetickets}
