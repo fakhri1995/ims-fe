@@ -97,9 +97,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
         }
         return null;
       })
-      .filter(
-        (item, i, self) => item && self.indexOf(item.toLowerCase()) === i
-      );
+      .filter((item, i, self) => item && self.indexOf(item) === i);
 
     if (value) {
       setExpandedKeys(expandedKeys);
