@@ -140,7 +140,7 @@ function AssetsIndex({ initProps, dataProfile, sidemenu, dataAssetsList }) {
       const title =
         index > -1 ? (
           <div
-            className={`flex justify-between md:h-7 hover:bg-blue-100 font-normal bg-red-400`}
+            className={`flex justify-between md:h-7 hover:bg-blue-100 font-normal`}
             onMouseOver={() => {
               var d = document.getElementById(`node${item.key}`);
               d.classList.add("flex");
