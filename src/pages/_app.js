@@ -1,12 +1,9 @@
-import "antd/dist/antd.css";
 import Head from "next/head";
 import Router from "next/router";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
-import "react-datepicker/dist/react-datepicker.css";
 
 import "../styles/globals.css";
-import "../styles/index.css";
 
 Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());

@@ -1,5 +1,8 @@
+const daisyui = require("daisyui");
+const lineClamp = require("@tailwindcss/line-clamp");
+
 module.exports = {
-  content: ["./src/**/*.{js,jsx}"],
+  content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       spacing: {
@@ -105,5 +108,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require("daisyui"), require("@tailwindcss/line-clamp")],
+  plugins: [daisyui, lineClamp],
 };
