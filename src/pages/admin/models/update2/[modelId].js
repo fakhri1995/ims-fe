@@ -2696,7 +2696,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                               <span className="judulassettype"></span>
                             </h1>
                             <div className="rounded bg-gray-200 w-full flex items-center my-auto h-12 px-2">
-                              <p className="mb-0 text-sm">{doc.name}</p>
+                              <p className="mb-0 text-sm">{doc.asset.name}</p>
                             </div>
                           </div>
                           {doc.model_columns.map((docmc, idxmc) => {
