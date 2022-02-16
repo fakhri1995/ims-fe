@@ -11,6 +11,7 @@ body {
 
 /* Button */
 .btn {
+  @apply text-white;
   text-transform: none !important;
 }
 
