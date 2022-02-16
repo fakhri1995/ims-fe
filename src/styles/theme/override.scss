@@ -1,12 +1,12 @@
-@import "~antd/dist/antd.css";
+/**
+ * File: override.scss
+ *
+ * Overriding classes or applying new rule for global context.
+ */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
+/**  Element level */
 body {
-  /** NOTE: font-family set to inherit to prevent Ant's rules overeride and breaks our web styling */
-  font-family: inherit;
+  @apply font-sans;
 }
 
 /* Button */
