@@ -4,6 +4,8 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 
 /** @type {import("next").NextConfig } */
 const nextConfig = {
+  reactStrictMode: true,
+  swcMinify: true,
   rewrites: async () => [
     { source: "/advantages", destination: "/migwebsite/advantages" },
     { source: "/hardware", destination: "/migwebsite/hardware" },
