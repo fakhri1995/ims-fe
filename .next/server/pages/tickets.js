@@ -2439,21 +2439,9 @@ module.exports = {
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _ant_design_icons_ExportOutlined__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("jti4");
 /* harmony import */ var _ant_design_icons_ExportOutlined__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_ant_design_icons_ExportOutlined__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _ant_design_icons_PlusCircleTwoTone__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("Nvpr");
-/* harmony import */ var _ant_design_icons_PlusCircleTwoTone__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_ant_design_icons_PlusCircleTwoTone__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _ant_design_icons_SelectOutlined__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("vr/X");
-/* harmony import */ var _ant_design_icons_SelectOutlined__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_ant_design_icons_SelectOutlined__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _ant_design_icons_UserOutlined__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("wzkg");
-/* harmony import */ var _ant_design_icons_UserOutlined__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_ant_design_icons_UserOutlined__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("YFqc");
-/* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(next_link__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("4Q3z");
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("ckOl");
-
-
-
-
+/* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("YFqc");
+/* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(next_link__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("ckOl");
 
 
 
@@ -2467,8 +2455,6 @@ function LayoutMenuHeader({
   handleLogout,
   st
 }) {
-  const rt = Object(next_router__WEBPACK_IMPORTED_MODULE_7__["useRouter"])();
-
   const menuProfile2 = () => {
     return /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsxs"])("div", {
       className: "w-auto h-auto flex flex-col shadow-md rounded bg-white space-y-4 px-10 py-5",
@@ -2514,22 +2500,22 @@ function LayoutMenuHeader({
       className: "w-48 h-auto grid grid-cols-1 md:grid-cols-1 shadow-md rounded bg-white",
       children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsxs"])("div", {
         className: " col-span-1 md:col-span-1 text-xs md:text-sm m-3 md:m-2 h-auto",
-        children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(next_link__WEBPACK_IMPORTED_MODULE_6___default.a, {
+        children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(next_link__WEBPACK_IMPORTED_MODULE_3___default.a, {
           href: `/incidents/create?originPath=Tickets`,
           children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsxs"])("div", {
             className: "flex justify-start pt-2 cursor-pointer hover:bg-gray-200",
-            children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(_icon__WEBPACK_IMPORTED_MODULE_8__[/* TicketIconSvg */ "gb"], {
+            children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(_icon__WEBPACK_IMPORTED_MODULE_4__[/* TicketIconSvg */ "gb"], {
               className: "pt-1"
             }), " \xA0 \xA0", " ", /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])("p", {
               className: "p-1",
               children: "Incident"
             })]
           })
-        }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(next_link__WEBPACK_IMPORTED_MODULE_6___default.a, {
+        }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(next_link__WEBPACK_IMPORTED_MODULE_3___default.a, {
           href: `/admin/contracts/create`,
           children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsxs"])("div", {
             className: "flex justify-start pt-2 cursor-pointer hover:bg-gray-200",
-            children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(_icon__WEBPACK_IMPORTED_MODULE_8__[/* ContractIconSvg */ "t"], {
+            children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(_icon__WEBPACK_IMPORTED_MODULE_4__[/* ContractIconSvg */ "t"], {
               className: "pt-1"
             }), " \xA0 \xA0", " ", /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])("p", {
               className: "p-1",
@@ -2545,13 +2531,13 @@ function LayoutMenuHeader({
     className: `hidden md:flex md:w-auto w-full ${st.menu} md:justify-end`,
     children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])("div", {
       className: "md:mr-8 mr-4 cursor-pointer",
-      children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(_icon__WEBPACK_IMPORTED_MODULE_8__[/* SearchIconSvg */ "W"], {
+      children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(_icon__WEBPACK_IMPORTED_MODULE_4__[/* SearchIconSvg */ "W"], {
         size: 28,
         color: `#000000`
       })
     }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])("div", {
       className: "md:mr-8 mr-4 cursor-pointer",
-      children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(_icon__WEBPACK_IMPORTED_MODULE_8__[/* NotifIconSvg */ "O"], {})
+      children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(_icon__WEBPACK_IMPORTED_MODULE_4__[/* NotifIconSvg */ "O"], {})
     }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsxs"])("div", {
       className: " md:mr-12 mr-4 mt-2 flex items-center",
       children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(antd_lib_dropdown__WEBPACK_IMPORTED_MODULE_0___default.a, {
@@ -2573,7 +2559,7 @@ function LayoutMenuHeader({
           children: dataProfile.data.name
         }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])("p", {
           className: "mb-0 text-xs",
-          children: dataProfile.data.role === 1 ? "Super Admin" : dataProfile.data.company.name
+          children: dataProfile.data.nip
         })]
       })]
     })]
@@ -4187,6 +4173,9 @@ var layout_dashboardNew = __webpack_require__("D1C7");
 // EXTERNAL MODULE: ./src/components/table/tableCustom.js
 var tableCustom = __webpack_require__("o8C9");
 
+// EXTERNAL MODULE: ./src/lib/helper.js
+var helper = __webpack_require__("a1/1");
+
 // EXTERNAL MODULE: external "chart.js"
 var external_chart_js_ = __webpack_require__("HAYV");
 
@@ -4195,6 +4184,7 @@ var external_cookie_ = __webpack_require__("rlPI");
 var external_cookie_default = /*#__PURE__*/__webpack_require__.n(external_cookie_);
 
 // CONCATENATED MODULE: ./src/pages/tickets/index.js
+
 
 
 
@@ -4367,7 +4357,7 @@ const TicketIndex2 = ({
     render: (text, record, index) => {
       return {
         children: /*#__PURE__*/Object(jsx_runtime_["jsx"])(jsx_runtime_["Fragment"], {
-          children: datarawtickets.from + index
+          children: (datarawtickets === null || datarawtickets === void 0 ? void 0 : datarawtickets.from) + index
         })
       };
     }
@@ -4507,8 +4497,11 @@ const TicketIndex2 = ({
       setdatafilterttickets(res2.data.data);
       setloadingtickets(false);
     });
-  }; //5.useEffect
+  };
 
+  const {
+    onKeyPressHandler
+  } = Object(helper["a" /* createKeyPressHandler */])(onFilterTickets, "Enter"); //5.useEffect
 
   Object(external_react_["useEffect"])(() => {
     fetch(`${"https://service-staging.mig.id"}/${dataProfile.data.role === 1 ? `getTicketStatusCounts` : `getClientTicketStatusCounts`}`, {
@@ -5009,7 +5002,7 @@ const TicketIndex2 = ({
               children: "Semua Tiket"
             })
           }), /*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
-            className: " flex items-center mb-4",
+            className: "flex items-center mb-4",
             children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])("div", {
               className: "mx-1 w-2/12",
               children: /*#__PURE__*/Object(jsx_runtime_["jsx"])(input_default.a, {
@@ -5025,7 +5018,8 @@ const TicketIndex2 = ({
                   } else {
                     setsearcingfiltertickets(e.target.value);
                   }
-                }
+                },
+                onKeyPress: onKeyPressHandler
               })
             }), /*#__PURE__*/Object(jsx_runtime_["jsx"])("div", {
               className: "mx-1 w-2/12",
@@ -5193,7 +5187,7 @@ const TicketIndex2 = ({
               loading: loadingtickets,
               setpraloading: setloadingtickets,
               pageSize: rowstickets,
-              total: datarawtickets.total,
+              total: datarawtickets === null || datarawtickets === void 0 ? void 0 : datarawtickets.total,
               initProps: initProps,
               setpage: setpagetickets,
               pagefromsearch: pagetickets,
@@ -5658,13 +5652,6 @@ function createRouteLoader(assetPrefix) {
 
 var _default = createRouteLoader;
 exports.default = _default;
-
-/***/ }),
-
-/***/ "Nvpr":
-/***/ (function(module, exports) {
-
-module.exports = require("@ant-design/icons/PlusCircleTwoTone");
 
 /***/ }),
 
@@ -6648,6 +6635,57 @@ const DrawerTicketCreate = ({
 };
 
 /* harmony default export */ __webpack_exports__["a"] = (DrawerTicketCreate);
+
+/***/ }),
+
+/***/ "a1/1":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return createKeyPressHandler; });
+/**
+ * A high order helper function to create `KeyboardEvent` handler.
+ * It primarily used to handle a keypress event when User pressing Enter key on search box.
+ *
+ * @param {Function} callback
+ * @param {string} keyIdentifier KeyboardEvent.key's value.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values
+ *
+ * @example
+ * ```javascriptreact
+ * function render() {
+ *  const { onKeyPressHandler } = createKeyPressHandler(fetchData, "Enter");
+ *
+ *  return (
+ *    <Input onKeyPress={onKeyPressHandler} />
+ *  )
+ * }
+ * ```
+ */
+const createKeyPressHandler = (callback, keyIdentifier) => {
+  if (!(callback instanceof Function)) {
+    throw new Error("Callback must be a Function");
+  }
+
+  if (typeof keyIdentifier !== "string") {
+    throw new Error("keyIdentifier must ba string");
+  }
+
+  const onKeyPressHandler =
+  /** @type {KeyboardEvent} */
+  event => {
+    if (event.key.toLowerCase() !== keyIdentifier.toLowerCase()) {
+      return;
+    }
+
+    callback();
+  };
+
+  return {
+    onKeyPressHandler
+  };
+};
 
 /***/ }),
 
@@ -12732,13 +12770,6 @@ module.exports = require("js-cookie");
 
 /***/ }),
 
-/***/ "vr/X":
-/***/ (function(module, exports) {
-
-module.exports = require("@ant-design/icons/SelectOutlined");
-
-/***/ }),
-
 /***/ "wkBG":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -12759,13 +12790,6 @@ module.exports = require("antd/lib/drawer");
 /***/ (function(module, exports) {
 
 module.exports = require("moment");
-
-/***/ }),
-
-/***/ "wzkg":
-/***/ (function(module, exports) {
-
-module.exports = require("@ant-design/icons/UserOutlined");
 
 /***/ }),
 

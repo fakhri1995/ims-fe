@@ -468,40 +468,25 @@ function layout({
                 })]
               })
             })
-          }), /*#__PURE__*/Object(jsx_runtime_["jsx"])(button_default.a, {
+          }), /*#__PURE__*/Object(jsx_runtime_["jsx"])(link_default.a, {
             href: "/aboutus",
-            type: "text",
-            className: "",
-            style: {
-              background: "white"
-            },
-            children: /*#__PURE__*/Object(jsx_runtime_["jsx"])("p", {
-              className: "text-lg gilroy-medium menu-underlined",
+            children: /*#__PURE__*/Object(jsx_runtime_["jsx"])("a", {
+              className: "text-lg gilroy-medium menu-underlined mx-4",
               children: "About Us"
             })
-          }, "1"), /*#__PURE__*/Object(jsx_runtime_["jsx"])(button_default.a, {
+          }), /*#__PURE__*/Object(jsx_runtime_["jsx"])(link_default.a, {
             href: "/joinourteam",
-            type: "text",
-            className: "",
-            style: {
-              background: "white"
-            },
-            children: /*#__PURE__*/Object(jsx_runtime_["jsx"])("p", {
-              className: "text-lg gilroy-medium menu-underlined",
+            children: /*#__PURE__*/Object(jsx_runtime_["jsx"])("a", {
+              className: "text-lg gilroy-medium menu-underlined mx-4",
               children: "Join Our Team"
             })
-          }, "2"), /*#__PURE__*/Object(jsx_runtime_["jsx"])(button_default.a, {
+          }), /*#__PURE__*/Object(jsx_runtime_["jsx"])(link_default.a, {
             href: "/contactus",
-            type: "text",
-            className: " mr-4 ",
-            style: {
-              background: "white"
-            },
-            children: /*#__PURE__*/Object(jsx_runtime_["jsx"])("p", {
-              className: "text-lg gilroy-medium menu-underlined",
+            children: /*#__PURE__*/Object(jsx_runtime_["jsx"])("a", {
+              className: "text-lg gilroy-medium menu-underlined mx-4",
               children: "Contact Us"
             })
-          }, "3")]
+          })]
         })]
       }), /*#__PURE__*/Object(jsx_runtime_["jsx"])("input", {
         className: `hidden menuToggle`,
@@ -529,10 +514,12 @@ function layout({
                   },
                   width: 40,
                   src: "/image/navbar/hardware_black.png"
-                }), /*#__PURE__*/Object(jsx_runtime_["jsx"])("a", {
+                }), /*#__PURE__*/Object(jsx_runtime_["jsx"])(link_default.a, {
                   href: "/hardware",
-                  className: "text-lg gilroy-medium pl-3",
-                  children: "Hardware"
+                  children: /*#__PURE__*/Object(jsx_runtime_["jsx"])("a", {
+                    className: "text-lg gilroy-medium pl-3",
+                    children: "Hardware"
+                  })
                 })]
               }, "1"), /*#__PURE__*/Object(jsx_runtime_["jsxs"])(menu_default.a.Item, {
                 children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])("img", {
@@ -542,10 +529,12 @@ function layout({
                   },
                   width: 40,
                   src: "/image/navbar/software_black.png"
-                }), /*#__PURE__*/Object(jsx_runtime_["jsx"])("a", {
+                }), /*#__PURE__*/Object(jsx_runtime_["jsx"])(link_default.a, {
                   href: "/software",
-                  className: "text-lg gilroy-medium pl-3",
-                  children: "Software"
+                  children: /*#__PURE__*/Object(jsx_runtime_["jsx"])("a", {
+                    className: "text-lg gilroy-medium pl-3",
+                    children: "Software"
+                  })
                 })]
               }, "2"), /*#__PURE__*/Object(jsx_runtime_["jsxs"])(menu_default.a.Item, {
                 children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])("img", {
@@ -555,23 +544,29 @@ function layout({
                   },
                   width: 40,
                   src: "/image/navbar/talents_black.png"
-                }), /*#__PURE__*/Object(jsx_runtime_["jsx"])("a", {
+                }), /*#__PURE__*/Object(jsx_runtime_["jsx"])(link_default.a, {
                   href: "/talents",
-                  className: "text-lg gilroy-medium pl-3",
-                  children: "Talents"
+                  children: /*#__PURE__*/Object(jsx_runtime_["jsx"])("a", {
+                    className: "text-lg gilroy-medium pl-3",
+                    children: "Talents"
+                  })
                 })]
               }, "3")]
             }, "sub 1"), /*#__PURE__*/Object(jsx_runtime_["jsx"])(menu_default.a.Item, {
-              children: /*#__PURE__*/Object(jsx_runtime_["jsx"])("a", {
+              children: /*#__PURE__*/Object(jsx_runtime_["jsx"])(link_default.a, {
                 href: "/aboutus",
-                className: "text-lg gilroy-medium",
-                children: "About Us"
+                children: /*#__PURE__*/Object(jsx_runtime_["jsx"])("a", {
+                  className: "text-lg gilroy-medium",
+                  children: "About Us"
+                })
               })
             }, "4"), /*#__PURE__*/Object(jsx_runtime_["jsx"])(menu_default.a.Item, {
-              children: /*#__PURE__*/Object(jsx_runtime_["jsx"])("a", {
+              children: /*#__PURE__*/Object(jsx_runtime_["jsx"])(link_default.a, {
                 href: "/joinourteam",
-                className: "text-lg gilroy-medium",
-                children: "Join Our Team"
+                children: /*#__PURE__*/Object(jsx_runtime_["jsx"])("a", {
+                  className: "text-lg gilroy-medium",
+                  children: "Join Our Team"
+                })
               })
             }, "5")]
           }), /*#__PURE__*/Object(jsx_runtime_["jsxs"])("div", {
@@ -583,10 +578,12 @@ function layout({
               zIndex: 1,
               transition: "all 0.2s"
             },
-            children: [/*#__PURE__*/Object(jsx_runtime_["jsxs"])("a", {
+            children: [/*#__PURE__*/Object(jsx_runtime_["jsx"])(link_default.a, {
               href: "/contactus",
-              className: "text-lg gilroy-medium menu-navbar",
-              children: ["Contact Us", " "]
+              children: /*#__PURE__*/Object(jsx_runtime_["jsx"])("a", {
+                className: "text-lg gilroy-medium menu-navbar",
+                children: "Contact Us "
+              })
             }), "\xA0\xA0", /*#__PURE__*/Object(jsx_runtime_["jsx"])(ArrowRightOutlined_default.a, {
               style: {
                 fontSize: "20px",
@@ -2028,7 +2025,7 @@ module.exports = require("next/dist/next-server/lib/router/utils/get-asset-path-
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getServerSideProps", function() { return getServerSideProps; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getStaticProps", function() { return getStaticProps; });
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("F5FC");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var antd_lib_collapse__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("QNhp");
@@ -2037,18 +2034,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ant_design_icons_ArrowRightOutlined__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_ant_design_icons_ArrowRightOutlined__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var next_head__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("xnum");
 /* harmony import */ var next_head__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(next_head__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("YFqc");
-/* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(next_link__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("cDcd");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var react_flickity_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("ZHLg");
-/* harmony import */ var react_flickity_component__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react_flickity_component__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var react_scroll__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("I/1N");
-/* harmony import */ var react_scroll__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(react_scroll__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _components_migwebsite_layout_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("/2qU");
-
-
-
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("cDcd");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var react_scroll__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("I/1N");
+/* harmony import */ var react_scroll__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react_scroll__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _components_migwebsite_layout_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("/2qU");
 
 
 
@@ -2063,27 +2053,11 @@ function JoinOurTeam({
 }) {
   var _dataCareers$data;
 
-  console.log(dataCareers);
   const careers = (_dataCareers$data = dataCareers.data) !== null && _dataCareers$data !== void 0 ? _dataCareers$data : [];
-  const flickityOption1 = {
-    prevNextButtons: false,
-    pageDots: true,
-    draggable: true,
-    initialIndex: 0
-  };
-  const flickityOption2 = {
-    prevNextButtons: true,
-    pageDots: false,
-    draggable: true,
-    initialIndex: 0
-  };
-  const flickityOption3 = {
-    prevNextButtons: false
-  };
   const {
     Panel
   } = antd_lib_collapse__WEBPACK_IMPORTED_MODULE_1___default.a;
-  return /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsxs"])(_components_migwebsite_layout_js__WEBPACK_IMPORTED_MODULE_8__[/* default */ "a"], {
+  return /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsxs"])(_components_migwebsite_layout_js__WEBPACK_IMPORTED_MODULE_6__[/* default */ "a"], {
     children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(next_head__WEBPACK_IMPORTED_MODULE_3___default.a, {
       children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])("title", {
         children: "Join Our Team"
@@ -2118,7 +2092,7 @@ function JoinOurTeam({
                 children: "See open position!"
               }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])("div", {
                 className: "md:center w-20 m-auto md:mx-0",
-                children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(react_scroll__WEBPACK_IMPORTED_MODULE_7__["Link"], {
+                children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(react_scroll__WEBPACK_IMPORTED_MODULE_5__["Link"], {
                   className: "flex-col md:center",
                   activeClass: "active",
                   to: "section7careers",
@@ -2156,7 +2130,7 @@ function JoinOurTeam({
         className: "block md:flex",
         children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsxs"])("div", {
           className: "flex py-4",
-          children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(react_scroll__WEBPACK_IMPORTED_MODULE_7__["Link"], {
+          children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(react_scroll__WEBPACK_IMPORTED_MODULE_5__["Link"], {
             activeClass: "active",
             to: "section3careers",
             spy: true,
@@ -2169,7 +2143,7 @@ function JoinOurTeam({
               style: {},
               children: "Our Values"
             })
-          }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(react_scroll__WEBPACK_IMPORTED_MODULE_7__["Link"], {
+          }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(react_scroll__WEBPACK_IMPORTED_MODULE_5__["Link"], {
             activeClass: "active",
             to: "section6careers",
             spy: true,
@@ -2182,7 +2156,7 @@ function JoinOurTeam({
               style: {},
               children: "Benefits"
             })
-          }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(react_scroll__WEBPACK_IMPORTED_MODULE_7__["Link"], {
+          }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(react_scroll__WEBPACK_IMPORTED_MODULE_5__["Link"], {
             activeClass: "active",
             to: "section7careers",
             spy: true,
@@ -2383,30 +2357,28 @@ function JoinOurTeam({
             defaultActiveKey: ["0"],
             expandIconPosition: "right",
             children: careers.map((item, idx) => {
-              return /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["Fragment"], {
-                children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(Panel, {
-                  className: "text-base",
-                  header: item.position_name,
-                  children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsxs"])("div", {
-                    children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsxs"])("div", {
-                      className: "text-base pb-4",
-                      children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])("p", {
-                        className: "gilroy-bold text-base",
-                        children: "Job Description:"
-                      }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])("p", {
-                        className: "text-base",
-                        children: item.job_description
-                      })]
-                    }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsxs"])("a", {
-                      className: "text-base hover:text-green-500",
-                      href: item.register_link,
-                      children: ["Apply Now", /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(_ant_design_icons_ArrowRightOutlined__WEBPACK_IMPORTED_MODULE_2___default.a, {
-                        className: "pl-2 relative -top-0.5"
-                      })]
+              return /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(Panel, {
+                className: "text-base",
+                header: item.position_name,
+                children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsxs"])("div", {
+                  children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsxs"])("div", {
+                    className: "text-base pb-4",
+                    children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])("p", {
+                      className: "gilroy-bold text-base",
+                      children: "Job Description:"
+                    }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])("p", {
+                      className: "text-base",
+                      children: item.job_description
                     })]
-                  })
-                }, idx)
-              });
+                  }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsxs"])("a", {
+                    className: "text-base hover:text-green-500",
+                    href: item.register_link,
+                    children: ["Apply Now", /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__["jsx"])(_ant_design_icons_ArrowRightOutlined__WEBPACK_IMPORTED_MODULE_2___default.a, {
+                      className: "pl-2 relative -top-0.5"
+                    })]
+                  })]
+                })
+              }, idx);
             })
           })
         })]
@@ -2415,7 +2387,7 @@ function JoinOurTeam({
   });
 }
 
-async function getServerSideProps() {
+async function getStaticProps() {
   const resources = await fetch(`${"https://service-staging.mig.id"}/getCareers`, {
     method: `GET`
   });
@@ -2424,7 +2396,8 @@ async function getServerSideProps() {
   return {
     props: {
       dataCareers
-    }
+    },
+    revalidate: 60
   };
 }
 /* harmony default export */ __webpack_exports__["default"] = (JoinOurTeam);
@@ -2595,13 +2568,6 @@ function getRouteRegex(normalizedRoute) {
     groups
   };
 }
-
-/***/ }),
-
-/***/ "ZHLg":
-/***/ (function(module, exports) {
-
-module.exports = require("react-flickity-component");
 
 /***/ }),
 

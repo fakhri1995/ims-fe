@@ -47,6 +47,7 @@ import {
   TableCustomTipeTask,
 } from "../../../components/table/tableCustom";
 import { H1, H2, Label, Text } from "../../../components/typography";
+import { createKeyPressHandler } from "../../../lib/helper";
 import {
   ArcElement,
   BarElement,
@@ -626,6 +627,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         }
       });
   };
+
+  const { onKeyPressHandler } = createKeyPressHandler(onFilterTask, "Enter");
 
   //USEEFFECT
   useEffect(() => {
@@ -1847,6 +1850,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                         setsearchstate(e.target.value);
                       }
                     }}
+                    onKeyPress={onKeyPressHandler}
                   />
                 </div>
                 <div className="mx-1 w-2/12">

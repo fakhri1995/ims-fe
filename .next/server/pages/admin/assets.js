@@ -2074,21 +2074,9 @@ module.exports = {
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _ant_design_icons_ExportOutlined__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("jti4");
 /* harmony import */ var _ant_design_icons_ExportOutlined__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_ant_design_icons_ExportOutlined__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _ant_design_icons_PlusCircleTwoTone__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("Nvpr");
-/* harmony import */ var _ant_design_icons_PlusCircleTwoTone__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_ant_design_icons_PlusCircleTwoTone__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _ant_design_icons_SelectOutlined__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("vr/X");
-/* harmony import */ var _ant_design_icons_SelectOutlined__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_ant_design_icons_SelectOutlined__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _ant_design_icons_UserOutlined__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("wzkg");
-/* harmony import */ var _ant_design_icons_UserOutlined__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_ant_design_icons_UserOutlined__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("YFqc");
-/* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(next_link__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("4Q3z");
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("ckOl");
-
-
-
-
+/* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("YFqc");
+/* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(next_link__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("ckOl");
 
 
 
@@ -2102,8 +2090,6 @@ function LayoutMenuHeader({
   handleLogout,
   st
 }) {
-  const rt = Object(next_router__WEBPACK_IMPORTED_MODULE_7__["useRouter"])();
-
   const menuProfile2 = () => {
     return /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsxs"])("div", {
       className: "w-auto h-auto flex flex-col shadow-md rounded bg-white space-y-4 px-10 py-5",
@@ -2149,22 +2135,22 @@ function LayoutMenuHeader({
       className: "w-48 h-auto grid grid-cols-1 md:grid-cols-1 shadow-md rounded bg-white",
       children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsxs"])("div", {
         className: " col-span-1 md:col-span-1 text-xs md:text-sm m-3 md:m-2 h-auto",
-        children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(next_link__WEBPACK_IMPORTED_MODULE_6___default.a, {
+        children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(next_link__WEBPACK_IMPORTED_MODULE_3___default.a, {
           href: `/incidents/create?originPath=Tickets`,
           children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsxs"])("div", {
             className: "flex justify-start pt-2 cursor-pointer hover:bg-gray-200",
-            children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(_icon__WEBPACK_IMPORTED_MODULE_8__[/* TicketIconSvg */ "gb"], {
+            children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(_icon__WEBPACK_IMPORTED_MODULE_4__[/* TicketIconSvg */ "gb"], {
               className: "pt-1"
             }), " \xA0 \xA0", " ", /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])("p", {
               className: "p-1",
               children: "Incident"
             })]
           })
-        }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(next_link__WEBPACK_IMPORTED_MODULE_6___default.a, {
+        }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(next_link__WEBPACK_IMPORTED_MODULE_3___default.a, {
           href: `/admin/contracts/create`,
           children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsxs"])("div", {
             className: "flex justify-start pt-2 cursor-pointer hover:bg-gray-200",
-            children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(_icon__WEBPACK_IMPORTED_MODULE_8__[/* ContractIconSvg */ "t"], {
+            children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(_icon__WEBPACK_IMPORTED_MODULE_4__[/* ContractIconSvg */ "t"], {
               className: "pt-1"
             }), " \xA0 \xA0", " ", /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])("p", {
               className: "p-1",
@@ -2180,13 +2166,13 @@ function LayoutMenuHeader({
     className: `hidden md:flex md:w-auto w-full ${st.menu} md:justify-end`,
     children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])("div", {
       className: "md:mr-8 mr-4 cursor-pointer",
-      children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(_icon__WEBPACK_IMPORTED_MODULE_8__[/* SearchIconSvg */ "W"], {
+      children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(_icon__WEBPACK_IMPORTED_MODULE_4__[/* SearchIconSvg */ "W"], {
         size: 28,
         color: `#000000`
       })
     }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])("div", {
       className: "md:mr-8 mr-4 cursor-pointer",
-      children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(_icon__WEBPACK_IMPORTED_MODULE_8__[/* NotifIconSvg */ "O"], {})
+      children: /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(_icon__WEBPACK_IMPORTED_MODULE_4__[/* NotifIconSvg */ "O"], {})
     }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsxs"])("div", {
       className: " md:mr-12 mr-4 mt-2 flex items-center",
       children: [/*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])(antd_lib_dropdown__WEBPACK_IMPORTED_MODULE_0___default.a, {
@@ -2208,7 +2194,7 @@ function LayoutMenuHeader({
           children: dataProfile.data.name
         }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__["jsx"])("p", {
           className: "mb-0 text-xs",
-          children: dataProfile.data.role === 1 ? "Super Admin" : dataProfile.data.company.name
+          children: dataProfile.data.nip
         })]
       })]
     })]
@@ -2885,7 +2871,7 @@ function AssetsIndex({
       value
     } = e.target;
     const expandedKeys = dataList.map(item => {
-      if (item.title.indexOf(value) > -1) {
+      if (item.title.toLowerCase().indexOf(value.toLowerCase()) > -1) {
         return getParentKey(item.key, maindata);
       }
 
@@ -2910,12 +2896,15 @@ function AssetsIndex({
   };
 
   const loop = data => data.map(item => {
-    const index = item.title.indexOf(searchValue);
-    const beforeStr = item.title.substr(0, index);
-    const afterStr = item.title.substr(index + searchValue.length); // const prt = item.value.substring(0, item.value.length - 4)
+    const index = item.title.toLowerCase().indexOf(searchValue.toLowerCase());
+    const beforeStr = item.title.substr(0, index).toUpperCase();
+    const afterStr = item.title.substr(index + searchValue.length).toUpperCase(); // const index = itemTitleLowerCase.indexOf(searchValue);
+    // const beforeStr = itemTitleLowerCase.substr(0, index);
+    // const afterStr = itemTitleLowerCase.substr(index + searchValue.length);
+    // const prt = item.value.substring(0, item.value.length - 4)
 
     const title = index > -1 ? /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__["jsxs"])("div", {
-      className: `flex justify-between md:h-7 hover:bg-blue-100 text-black`,
+      className: `flex justify-between md:h-7 hover:bg-blue-100 font-normal`,
       onMouseOver: () => {
         var d = document.getElementById(`node${item.key}`);
         d.classList.add("flex");
@@ -2932,8 +2921,8 @@ function AssetsIndex({
           rt.push(`/admin/assets/detail/${item.id}`);
         },
         children: [beforeStr, /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__["jsx"])("span", {
-          className: " text-blue-500",
-          children: searchValue
+          className: "text-blue-500 font-medium",
+          children: searchValue.toUpperCase()
         }), afterStr]
       }), /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__["jsx"])("div", {
         className: `hidden mx-2`,
@@ -2952,7 +2941,8 @@ function AssetsIndex({
         })
       })]
     }) : /*#__PURE__*/Object(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__["jsx"])("span", {
-      children: item.title
+      className: "font-normal",
+      children: item.title.toUpperCase()
     });
 
     if (item.children) {
@@ -3711,13 +3701,6 @@ function createRouteLoader(assetPrefix) {
 
 var _default = createRouteLoader;
 exports.default = _default;
-
-/***/ }),
-
-/***/ "Nvpr":
-/***/ (function(module, exports) {
-
-module.exports = require("@ant-design/icons/PlusCircleTwoTone");
 
 /***/ }),
 
@@ -9221,26 +9204,12 @@ module.exports = require("js-cookie");
 
 /***/ }),
 
-/***/ "vr/X":
-/***/ (function(module, exports) {
-
-module.exports = require("@ant-design/icons/SelectOutlined");
-
-/***/ }),
-
 /***/ "wkBG":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 exports.__esModule=true;exports.normalizePathSep=normalizePathSep;exports.denormalizePagePath=denormalizePagePath;function normalizePathSep(path){return path.replace(/\\/g,'/');}function denormalizePagePath(page){page=normalizePathSep(page);if(page.startsWith('/index/')){page=page.slice(6);}else if(page==='/index'){page='/';}return page;}
 //# sourceMappingURL=denormalize-page-path.js.map
-
-/***/ }),
-
-/***/ "wzkg":
-/***/ (function(module, exports) {
-
-module.exports = require("@ant-design/icons/UserOutlined");
 
 /***/ }),
 

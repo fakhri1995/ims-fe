@@ -1,22 +1,15 @@
 import ExportOutlined from "@ant-design/icons/ExportOutlined";
-import PlusCircleTwoTone from "@ant-design/icons/PlusCircleTwoTone";
-import SelectOutlined from "@ant-design/icons/SelectOutlined";
-import UserOutlined from "@ant-design/icons/UserOutlined";
-import { Avatar, Button, Dropdown } from "antd";
+import { Dropdown } from "antd";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 import {
   ContractIconSvg,
-  IconBroadcast,
-  Iconquestion,
   NotifIconSvg,
   SearchIconSvg,
   TicketIconSvg,
 } from "./icon";
 
 function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
-  const rt = useRouter();
   const menuProfile2 = () => {
     return (
       <div className="w-auto h-auto flex flex-col shadow-md rounded bg-white space-y-4 px-10 py-5">
@@ -125,11 +118,7 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
           <h1 className="font-semibold text-sm mb-0">
             {dataProfile.data.name}
           </h1>
-          <p className="mb-0 text-xs">
-            {dataProfile.data.role === 1
-              ? "Super Admin"
-              : dataProfile.data.company.name}
-          </p>
+          <p className="mb-0 text-xs">{dataProfile.data.nip}</p>
         </div>
       </div>
     </div>
