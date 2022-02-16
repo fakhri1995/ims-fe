@@ -1,1 +1,0 @@
-_N_E=(window.webpackJsonp_N_E=window.webpackJsonp_N_E||[]).push([[120],{nXws:function(n,w,_){(window.__NEXT_P=window.__NEXT_P||[]).push(["/migwebsite/landingpage",function(){return _("beov")}])}},[["nXws",0,2,1,3,4,10,24,27,35,38,36,40]]]);
