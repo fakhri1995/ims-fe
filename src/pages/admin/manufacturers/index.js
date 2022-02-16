@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
+import { createKeyPressHandler } from "../../../lib/helper";
 import httpcookie from "cookie";
 
 const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
@@ -71,6 +72,8 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
   };
 
   //4.handler
+  const { onKeyPressHandler } = createKeyPressHandler(onFinalClick, "Enter");
+
   const handleAddManufacturer = () => {
     setloadingadd(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addManufacturer`, {
@@ -216,6 +219,7 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
                   placeholder="Cari Nama Manufacturer"
                   onChange={onChangeSearch}
                   allowClear
+                  onKeyPress={onKeyPressHandler}
                 ></Input>
               </div>
               <div className=" col-span-1">

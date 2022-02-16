@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
+import { createKeyPressHandler } from "../../../lib/helper";
 import httpcookie from "cookie";
 
 const Relationships = ({ dataProfile, sidemenu, initProps }) => {
@@ -153,6 +154,8 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
   };
 
   //4.handler
+  const { onKeyPressHandler } = createKeyPressHandler(onFinalClick, "Enter");
+
   const handleAddRelationships = () => {
     setloadingadd(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addRelationship`, {
@@ -306,6 +309,7 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
                   placeholder="Cari Relationship Type atau Inverse Relationship Type"
                   onChange={onChangeSearch}
                   allowClear
+                  onKeyPress={onKeyPressHandler}
                 ></Input>
               </div>
               <div className=" col-span-1">

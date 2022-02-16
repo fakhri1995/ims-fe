@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import Layout from "../../components/layout-dashboard2";
 import st from "../../components/layout-dashboard.module.css";
+import { createKeyPressHandler } from "../../lib/helper";
 import httpcookie from "cookie";
 
 const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
@@ -487,6 +488,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
   };
 
   //4.handler
+  const { onKeyPressHandler } = createKeyPressHandler(onFinalClick, "Enter");
 
   //5.useEffect
   useEffect(() => {
@@ -600,6 +602,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     placeholder="Cari MIG ID"
                     onChange={onChangeMigid}
                     allowClear
+                    onKeyPress={onKeyPressHandler}
                   ></Input>
                 </div>
                 <div className="col-span-2 mr-1">

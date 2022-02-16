@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
+import { createKeyPressHandler } from "../../../lib/helper";
 import httpcookie from "cookie";
 
 function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
@@ -176,6 +177,8 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
     }`;
   };
 
+  const { onKeyPressHandler } = createKeyPressHandler(onFinalClick, "Enter");
+
   //useEffect
   useEffect(() => {
     setpraloading(true);
@@ -298,6 +301,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                         placeholder="Cari nama agent"
                         onChange={onChangeSearch}
                         allowClear
+                        onKeyPress={onKeyPressHandler}
                       ></Input>
                     </div>
                     <div className="col-span-2 mr-1">
