@@ -32,6 +32,7 @@ function AgentUpdate({
     profile_image: `/default-users.jpeg`,
     role_ids: [],
     position: "",
+    nip: "",
   });
   //data asal lokasi
   const [datacompanylist, setdatacompanylist] = useState([]);
@@ -137,6 +138,7 @@ function AgentUpdate({
           email: res2.data.email,
           role_ids: res2.data.roles.map((docmap) => docmap.id),
           position: res2.data.position,
+          nip: res2.data?.nip || "",
         };
         setdataupdate(temp);
         setdefaultroles(res2.data.roles.map((docmap) => docmap.id));
@@ -148,6 +150,7 @@ function AgentUpdate({
         setpreloading(false);
       });
   }, []);
+
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getBranchCompanyList`, {
       method: `GET`,
@@ -160,6 +163,7 @@ function AgentUpdate({
         setdatacompanylist([res2.data]);
       });
   }, []);
+
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
       method: `GET`,
@@ -358,6 +362,26 @@ function AgentUpdate({
                           name="phone_number"
                         />
                       }
+                    </Form.Item>
+                    <Form.Item
+                      label="NIP"
+                      name="nip"
+                      rules={[
+                        {
+                          required: true,
+                          message: "NIP wajib diisi",
+                        },
+                        {
+                          pattern: /^[0-9]*$/,
+                          message: "NIP harus berisi angka",
+                        },
+                      ]}
+                    >
+                      <Input
+                        value={dataupdate.nip}
+                        name="nip"
+                        onChange={onChangeEditAgents}
+                      />
                     </Form.Item>
                     <h1 className="text-sm">Role:</h1>
                     {

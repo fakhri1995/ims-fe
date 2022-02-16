@@ -35,6 +35,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
     email: "",
     role_ids: [],
     phone_number: "",
+    nip: "",
     profile_image: "",
     company_id: 1,
     password: "",
@@ -81,7 +82,6 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
           });
         }
       });
-    console.log("isi new user: " + newuser.profile_image);
   };
   //on change create agent
   const onChangeCreateAgents = (e) => {
@@ -89,10 +89,11 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
     if (e.target.name === "role") {
       val = parseInt(e.target.value);
     }
-    setNewuser({
-      ...newuser,
+
+    setNewuser((prev) => ({
+      ...prev,
       [e.target.name]: val,
-    });
+    }));
   };
   //handle before upload
   const beforeUploadProfileImage = (file) => {
@@ -328,6 +329,26 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                     <Input
                       value={newuser.phone_number}
                       name={`phone_number`}
+                      onChange={onChangeCreateAgents}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="NIP"
+                    name="nip"
+                    rules={[
+                      {
+                        required: true,
+                        message: "NIP wajib diisi",
+                      },
+                      {
+                        pattern: /^[0-9]*$/,
+                        message: "NIP harus berisi angka",
+                      },
+                    ]}
+                  >
+                    <Input
+                      value={newuser.nip}
+                      name="nip"
                       onChange={onChangeCreateAgents}
                     />
                   </Form.Item>
