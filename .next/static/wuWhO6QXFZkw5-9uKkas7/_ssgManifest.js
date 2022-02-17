@@ -1,1 +1,0 @@
-self.__SSG_MANIFEST=new Set(["\u002Fmigwebsite\u002Fjoinourteam"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()
