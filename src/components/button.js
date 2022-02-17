@@ -22,7 +22,7 @@ const ButtonSys = ({
         form={form}
         onClick={onClick}
         type={submit && "submit"}
-        className={`btn ${size === "large" ? "" : "btn-sm"} ${
+        className={`btn text-white ${size === "large" ? "" : "btn-sm"} ${
           typeof color === "undefined" && "bg-primary100"
         } ${color === "danger" && "bg-state1"} ${
           color === "white" && "bg-white"
@@ -44,7 +44,7 @@ const ButtonSys = ({
     return (
       <label
         onClick={onClick}
-        className={`btn ${size === "large" ? "" : "btn-sm"} ${
+        className={`btn text-white ${size === "large" ? "" : "btn-sm"} ${
           typeof color === "undefined"
             ? "bg-primary100"
             : color === "danger" && "bg-state1"
