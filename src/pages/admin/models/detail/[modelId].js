@@ -508,7 +508,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
                               </h1>
                               <div className="rounded bg-gray-200 w-full flex items-center my-auto h-12 px-2">
                                 <p className="mb-0 text-sm">
-                                  {docmp.asset_name}
+                                  {docmp.asset.name}
                                 </p>
                               </div>
                             </div>
