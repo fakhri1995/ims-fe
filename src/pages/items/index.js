@@ -122,18 +122,19 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   //3.Define
   const columnsTable = [
-    {
-      title: "MIG ID",
-      dataIndex: "mig_id",
-      sorter: (a, b) => a.mig_id.length - b.mig_id.length,
-      defaultSortOrder: `${
-        sort_type && sort_by === "mig_id"
-          ? sort_type === "asc"
-            ? "ascend"
-            : "descend"
-          : null
-      }`,
-    },
+    // {
+    //   title: "MIG ID",
+    //   dataIndex: "mig_id",
+    //   sorter: true,
+    //   // sorter: (a, b) => a.mig_id.length - b.mig_id.length,
+    //   defaultSortOrder: `${
+    //     sort_type && sort_by === "mig_id"
+    //       ? sort_type === "asc"
+    //         ? "ascend"
+    //         : "descend"
+    //       : null
+    //   }`,
+    // },
     {
       title: "Asset Type",
       dataIndex: "asset_name",
@@ -594,16 +595,16 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
         <div className="md:col-span-5 col-span-1 flex flex-col py-3">
           {praloading ? null : (
             <div className="flex mb-8">
-              <div className=" w-full mr-1 grid grid-cols-12">
+              <div className="w-full grid grid-cols-12">
                 <div className="col-span-2 mr-1">
-                  <Input
+                  {/* <Input
                     style={{ width: `100%`, marginRight: `0.5rem` }}
                     defaultValue={migid1}
                     placeholder="Cari MIG ID"
                     onChange={onChangeMigid}
                     allowClear
                     onKeyPress={onKeyPressHandler}
-                  ></Input>
+                  ></Input> */}
                 </div>
                 <div className="col-span-2 mr-1">
                   <TreeSelect
