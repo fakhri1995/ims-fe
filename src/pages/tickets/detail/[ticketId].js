@@ -749,7 +749,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                   ) : displaydata.assignment_operator_id === 0 ? (
                     dataProfile.data.role === 1 ? (
                       <button
-                        className=" btn btn-sm bg-state2 border-state2 hover:bg-onhold hover:border-onhold px-6 py-0"
+                        className="btn btn-sm text-white bg-state2 border-state2 hover:bg-onhold hover:border-onhold px-6 py-0"
                         onClick={() => {
                           setdrawerassignticket(true);
                         }}
@@ -822,7 +822,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                   ) : displaydata.deadline === "-" ? (
                     dataProfile.data.role === 1 ? (
                       <button
-                        className=" btn btn-sm bg-state2 border-state2 hover:bg-onhold hover:border-onhold px-6 py-0"
+                        className=" btn btn-sm text-white bg-state2 border-state2 hover:bg-onhold hover:border-onhold px-6 py-0"
                         onClick={() => {
                           setdrawedeadlineticket(true);
                         }}
@@ -1322,7 +1322,6 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
             setselectedassettype={setselectedassettype}
           />
           <DrawerTicketAssign
-            title={""}
             visible={drawerassignticket}
             onClose={() => {
               setdrawerassignticket(false);
