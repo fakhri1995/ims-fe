@@ -573,7 +573,7 @@ const DrawerTaskUpdate = ({
                 </Select>
               </div>
               {selecteditems.map((doc, idx) => (
-                <div className="mb-2 flex items-center">
+                <div className="mb-2 flex items-center" key={idx}>
                   <div className="mr-2 flex items-center">
                     <AssetIconSvg size={50} />
                   </div>
@@ -740,7 +740,7 @@ const DrawerTaskUpdate = ({
                 )}
               </div>
               {selectedstaffgroup.map((doc, idx) => (
-                <div className="mb-2 flex items-center">
+                <div className="mb-2 flex items-center" key={idx}>
                   <div className="mr-2 flex items-center">
                     {switchstaffgroup === 1 ? (
                       <div className=" w-10 h-10 rounded-full">
