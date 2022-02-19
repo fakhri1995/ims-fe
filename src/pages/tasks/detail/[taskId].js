@@ -12,7 +12,7 @@ import {
 import { Checkbox, Empty, Input, Select, Spin, notification } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Buttonsys from "../../../components/button";
 import DrawerTaskDetailCreate from "../../../components/drawer/tasks/drawerTaskDetailCreate";
@@ -246,7 +246,7 @@ const TaskPDFTemplate = ({ detail, datatype4 }) => {
               <Text style={styles.judul2}>Check Out</Text>
             </View>
             {detail.users.map((user, idx) => (
-              <>
+              <React.Fragment key={idx}>
                 <View
                   style={{
                     width: `10%`,
@@ -301,7 +301,7 @@ const TaskPDFTemplate = ({ detail, datatype4 }) => {
                     {user.check_out === null ? `-` : user.check_out}
                   </Text>
                 </View>
-              </>
+              </React.Fragment>
             ))}
           </View>
           {/* Hasil Pekerjaan */}
@@ -326,6 +326,7 @@ const TaskPDFTemplate = ({ detail, datatype4 }) => {
                   borderColor: `1px solid #bbbbbb`,
                   paddingVertical: 8,
                 }}
+                key={idx2}
               >
                 <View style={{ marginBottom: 4 }}>
                   <Text style={styles.judul2}>{task.component.name}</Text>
@@ -355,6 +356,7 @@ const TaskPDFTemplate = ({ detail, datatype4 }) => {
                           idx3 === task.component.lists.length - 1 ? 0 : 4,
                         flexDirection: `row`,
                       }}
+                      key={idx3}
                     >
                       <View style={{ marginRight: 3 }}>
                         <Image
@@ -694,6 +696,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
   const [nowend, setnowend] = useState(3);
   const [choosedateend, setchoosedateend] = useState(false);
   const [scrollidupdate, setscrollidupdate] = useState(-1);
+
   const [scrolltriggerupdate, setscrolltriggerupdate] = useState(true);
   const [repeatable, setrepeatable] = useState(false);
   const [regular, setregular] = useState(null);
@@ -1161,9 +1164,14 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     loadingeditable,
     loadingcheckin,
   ]);
+
   useEffect(() => {
+    if (!isOnClient) {
+      return;
+    }
+
     document.getElementById(`card${scrollidupdate}`).scrollIntoView(true);
-  }, [scrolltriggerupdate]);
+  }, [scrolltriggerupdate, isOnClient]);
 
   return (
     <Layout
@@ -1271,7 +1279,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                       <H2>Check Out</H2>
                     </div>
                     {displaytask.users.map((docusers, idxusers) => (
-                      <>
+                      <React.Fragment key={idxusers}>
                         <div className=" col-span-1 flex items-center py-2 pl-3">
                           <div className=" text-black mb-0 text-xs">
                             {idxusers + 1}
@@ -1314,7 +1322,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                   .format("lll")}
                           </div>
                         </div>
-                      </>
+                      </React.Fragment>
                     ))}
                   </div>
                 </div>
@@ -1409,7 +1417,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                         <H2>Check Out</H2>
                       </div>
                       {displaytask.users.map((docusers, idxusers) => (
-                        <>
+                        <React.Fragment key={idxusers}>
                           <div className=" col-span-1 flex items-center py-2 pl-3">
                             <div className=" text-black text-xs mb-0">
                               {idxusers + 1}
@@ -1452,7 +1460,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                     .format("lll")}
                             </div>
                           </div>
-                        </>
+                        </React.Fragment>
                       ))}
                     </div>
                   </div>
@@ -1521,7 +1529,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                   )
                   .map((doctask, idxtask) => {
                     return (
-                      <div className="flex flex-col mb-5">
+                      <div className="flex flex-col mb-5" key={idxtask}>
                         <div className="mb-3">
                           <p className={`font-bold text-lg text-gray-600 mb-0`}>
                             {doctask.component.name}
@@ -1538,7 +1546,10 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                           <div className="mb-3 flex items-center">
                             <div className="flex items-center">
                               {doctask.users.map((doctaskuser, idxtaskuser) => (
-                                <div className=" bg-primary100 bg-opacity-10 rounded p-1 flex items-center mr-2">
+                                <div
+                                  className=" bg-primary100 bg-opacity-10 rounded p-1 flex items-center mr-2"
+                                  key={idxtaskuser}
+                                >
                                   <div className="w-6 h-6 rounded-full mr-1">
                                     <img
                                       src={
@@ -1604,7 +1615,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                   ) : (
                                     currentstafftask.map((doc, idx) => {
                                       return (
-                                        <>
+                                        <React.Fragment key={idx}>
                                           <div className=" mb-4 flex items-center">
                                             <div className=" w-10 h-10 rounded-full">
                                               <img
@@ -1655,7 +1666,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                               </div>
                                             </div>
                                           </div>
-                                        </>
+                                        </React.Fragment>
                                       );
                                     })
                                   )}
@@ -1710,6 +1721,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                           temp.splice(idx, 1);
                                           setdisplaycurrentstafftask(temp);
                                         }}
+                                        key={idx}
                                       >
                                         <div className=" w-10 h-10 rounded-full">
                                           <img
@@ -1844,7 +1856,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                     <H2>Staf</H2>
                                   </div>
                                   {doctask.component.lists.map((doc3, idx3) => (
-                                    <>
+                                    <React.Fragment key={idx3}>
                                       <div className=" col-span-5 flex items-center py-2 px-2">
                                         <p className=" mb-0 text-sm text-gray-700">
                                           {doc3}
@@ -1876,14 +1888,14 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                           )}
                                         </div>
                                       </div>
-                                    </>
+                                    </React.Fragment>
                                   ))}
                                 </div>
                               </div>
                             ) : editable[idxtask] ? (
                               <div className=" mb-3 flex flex-col">
                                 {doctask.component.lists.map((doc3, idx3) => (
-                                  <div className=" mb-3">
+                                  <div className=" mb-3" key={idx3}>
                                     <Checkbox
                                       defaultChecked={
                                         doctask.component.values[idx3]
@@ -1914,7 +1926,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                     <H2>Staf</H2>
                                   </div>
                                   {doctask.component.lists.map((doc3, idx3) => (
-                                    <>
+                                    <React.Fragment key={idx3}>
                                       <div className=" col-span-5 flex items-center py-2 px-2">
                                         <p className=" mb-0 text-sm text-gray-700">
                                           {doc3}
@@ -1946,7 +1958,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                           )}
                                         </div>
                                       </div>
-                                    </>
+                                    </React.Fragment>
                                   ))}
                                 </div>
                               </div>
@@ -1985,7 +1997,10 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                   </div>
                                   {doctask.component.columns.map(
                                     (doccol, idxcol) => (
-                                      <div className=" col-span-2 flex items-center justify-center p-2">
+                                      <div
+                                        className=" col-span-2 flex items-center justify-center p-2"
+                                        key={idxcol}
+                                      >
                                         <H2>{doccol}</H2>
                                       </div>
                                     )
@@ -1997,7 +2012,10 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                       docfil[0]?.id === doctask.id
                                   )[0]
                                   ?.map((doc4, idx4) => (
-                                    <div className="grid grid-cols-12">
+                                    <div
+                                      className="grid grid-cols-12"
+                                      key={idx4}
+                                    >
                                       <div className=" col-span-4 flex items-center py-2 px-2">
                                         <p className=" mb-0 text-sm text-gray-700">
                                           {doc4.model}
@@ -2005,7 +2023,10 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                       </div>
                                       {doctask.component.columns.map(
                                         (doc41, idx41) => (
-                                          <div className=" col-span-2 flex items-center justify-center py-2 px-2">
+                                          <div
+                                            className=" col-span-2 flex items-center justify-center py-2 px-2"
+                                            key={idx4}
+                                          >
                                             {doc4[doc41] ? (
                                               <CheckIconSvg
                                                 size={18}
@@ -2031,7 +2052,10 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                   </div>
                                   {doctask.component.columns.map(
                                     (doccol, idxcol) => (
-                                      <div className=" col-span-2 flex items-center justify-center p-2">
+                                      <div
+                                        className=" col-span-2 flex items-center justify-center p-2"
+                                        key={idxcol}
+                                      >
                                         <H2>{doccol}</H2>
                                       </div>
                                     )

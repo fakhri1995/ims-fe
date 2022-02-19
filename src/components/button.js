@@ -1,5 +1,4 @@
-import { Button } from "antd";
-import React from "react";
+import clsx from "clsx";
 
 const ButtonSys = ({
   size,
@@ -14,148 +13,122 @@ const ButtonSys = ({
   disabled,
   fullWidth,
 }) => {
-  if (type === "primary") {
-    return (
-      <button
-        style={fullWidth && { width: `100%` }}
-        disabled={disabled}
-        form={form}
-        onClick={onClick}
-        type={submit && "submit"}
-        className={`btn text-white ${size === "large" ? "" : "btn-sm"} ${
-          typeof color === "undefined" && "bg-primary100"
-        } ${color === "danger" && "bg-state1"} ${
-          color === "white" && "bg-white"
-        }  ${typeof color === "undefined" && "hover:bg-primary75"} ${
-          color === "danger" && " hover:bg-state12"
-        }  ${color === "white" && "hover:bg-gray-100"} ${
-          typeof color === "undefined" && "border-primary100"
-        } ${color === "danger" && "border-state1"} ${
-          color === "white" && "border-white"
-        } ${typeof color === "undefined" && "hover:border-primary75"} ${
-          color === "danger" && "hover:border-state1"
-        } ${color === "white" && "hover:border-gray-100"} px-6`}
-      >
-        {children}
-      </button>
-    );
+  const commonButtonClassName = clsx(
+    {
+      "btn-sm": size !== "large",
+      "w-full": fullWidth,
+      "bg-disabled border-disabled": disabled,
+    },
+    "btn text-white font-semibold px-6 border"
+  );
+
+  const buttonSolidColorsClassName = clsx({
+    "bg-state1 hover:bg-state12 border-state1 hover:border-state1":
+      color === "danger" && !disabled,
+    "bg-white hover:bg-gray-100 border-white hover:border-gray-100":
+      color === "white" && !disabled,
+    "bg-primary100 hover:bg-primary75 border-primary100 hover:border-primary75":
+      !color && !disabled,
+  });
+
+  const buttonOutlineColorsClassName = clsx(
+    {
+      "text-state1 hover:bg-state1 border-state1": color === "danger",
+      "text-primary100 hover:bg-primary75 border-primary100 hover:border-primary75":
+        !color,
+    },
+    "hover:text-white bg-white"
+  );
+
+  const primaryButtonClassName = clsx(
+    commonButtonClassName,
+    buttonSolidColorsClassName
+  );
+  const defaultButtonClassName = clsx(
+    commonButtonClassName,
+    buttonOutlineColorsClassName
+  );
+  const ghostButtonClassName = clsx(
+    commonButtonClassName,
+    buttonOutlineColorsClassName,
+    "border-none"
+  );
+
+  const buttonType = submit ? "submit" : "button";
+
+  let buttonElement = null;
+  switch (type) {
+    case "primary":
+      buttonElement = (
+        <button
+          disabled={disabled}
+          form={form}
+          onClick={onClick}
+          type={buttonType}
+          className={primaryButtonClassName}
+        >
+          {children}
+        </button>
+      );
+      break;
+
+    case "default":
+      buttonElement = (
+        <button
+          disabled={disabled}
+          form={form}
+          onClick={onClick}
+          type={buttonType}
+          className={defaultButtonClassName}
+        >
+          {children}
+        </button>
+      );
+      break;
+
+    case "ghost":
+      buttonElement = (
+        <button
+          form={form}
+          onClick={onClick}
+          type={buttonType}
+          className={ghostButtonClassName}
+        >
+          {children}
+        </button>
+      );
+      break;
+
+    case "primaryInput":
+      buttonElement = (
+        <label onClick={onClick} className={primaryButtonClassName}>
+          <input
+            type="file"
+            style={{ display: `none` }}
+            name="urlgambarProduct"
+            onChange={onChangeGambar}
+          />
+          {children}
+        </label>
+      );
+      break;
+
+    case "defaultInput":
+      buttonElement = (
+        <label onClick={onClick} className={defaultButtonClassName}>
+          <input
+            type="file"
+            style={{ display: `none` }}
+            name="urlgambarProduct"
+            onChange={onChangeGambar}
+          />
+          {children}
+        </label>
+      );
+      break;
   }
-  if (type === "primaryInput") {
-    return (
-      <label
-        onClick={onClick}
-        className={`btn text-white ${size === "large" ? "" : "btn-sm"} ${
-          typeof color === "undefined"
-            ? "bg-primary100"
-            : color === "danger" && "bg-state1"
-        }  hover:${
-          typeof color === "undefined"
-            ? "bg-primary75"
-            : color === "danger" && "bg-state1"
-        } ${
-          typeof color === "undefined"
-            ? "border-primary100"
-            : color === "danger" && "border-state1"
-        } hover:${
-          typeof color === "undefined"
-            ? "border-primary75"
-            : color === "danger" && "border-state1"
-        } px-6`}
-      >
-        <input
-          type="file"
-          style={{ display: `none` }}
-          name="urlgambarProduct"
-          onChange={onChangeGambar}
-        />
-        {children}
-      </label>
-    );
-  } else if (type === "default") {
-    return (
-      <button
-        style={fullWidth && { width: `100%` }}
-        disabled={disabled}
-        form={form}
-        onClick={onClick}
-        type={submit ? "submit" : "button"}
-        className={`btn btn-outline ${size === "large" ? "" : "btn-sm"} ${
-          typeof color === "undefined"
-            ? "text-primary100"
-            : color === "danger" && "text-state1"
-        } hover:text-white hover:${
-          typeof color === "undefined"
-            ? "bg-primary75"
-            : color === "danger" && "bg-state1"
-        } ${
-          typeof color === "undefined"
-            ? "border-primary100"
-            : color === "danger" && "border-state1"
-        } hover:${
-          typeof color === "undefined"
-            ? "border-primary75"
-            : color === "danger" && "border-state1"
-        } px-6`}
-      >
-        {children}
-      </button>
-    );
-  } else if (type === "defaultInput") {
-    return (
-      <label
-        onClick={onClick}
-        className={`btn btn-outline ${size === "large" ? "" : "btn-sm"} ${
-          typeof color === "undefined"
-            ? "text-primary100"
-            : color === "danger" && "text-state1"
-        } hover:text-white hover:${
-          typeof color === "undefined"
-            ? "bg-primary75"
-            : color === "danger" && "bg-state1"
-        } hover:${
-          typeof color === "undefined"
-            ? "bg-primary75"
-            : color === "danger" && "bg-state1"
-        } ${
-          typeof color === "undefined"
-            ? "border-primary100"
-            : color === "danger" && "border-state1"
-        } hover:${
-          typeof color === "undefined"
-            ? "border-primary75"
-            : color === "danger" && "border-state1"
-        } px-6`}
-      >
-        <input
-          type="file"
-          style={{ display: `none` }}
-          name="urlgambarProduct"
-          onChange={onChangeGambar}
-        />
-        {children}
-      </label>
-    );
-  } else if (type === "ghost") {
-    return (
-      <button
-        style={fullWidth && { width: `100%` }}
-        form={form}
-        onClick={onClick}
-        type={submit ? "submit" : "button"}
-        className={`btn btn-outline border-none ${
-          size === "large" ? "" : "btn-sm"
-        } ${typeof color === "undefined" && "text-primary100"} ${
-          color === "danger" && "text-state1"
-        } ${selected && "bg-primary25"} hover:${
-          typeof color === "undefined"
-            ? "text-primary75"
-            : color === "danger" && "text-state1"
-        } px-6`}
-      >
-        {children}
-      </button>
-    );
-  }
+
+  return buttonElement;
 };
 
 export default ButtonSys;
