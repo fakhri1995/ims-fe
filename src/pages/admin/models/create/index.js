@@ -27,6 +27,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
+import { CreateConfigurationPart } from "components/form/models/CreateConfigurationPart";
+
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
@@ -620,6 +622,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
       });
   }, [triggermanuf]);
   useEffect(() => {
+    console.log("useEffect(modeltrigger)");
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModels`, {
       method: `GET`,
       headers: {
@@ -2137,6 +2140,11 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
             </Button>
           </div>
         </div>
+
+        {!newdata.is_consumable && (
+          <CreateConfigurationPart isAllowedToEditPart={!disabledaddpart} />
+        )}
+
         {!newdata.is_consumable && (
           <div className=" mb-8 col-span-1 md:col-span-4 px-5 flex flex-col bg-red-400 space-y-5">
             <div className="mb-5">
@@ -2341,7 +2349,6 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                           onSearch={(value) => {
                             setfetchingpart(true);
 
-                            /** TODO: a cleaner way to do this (async-await) */
                             ModelsService.find(axiosClient, {
                               rows: 10,
                               name: value,

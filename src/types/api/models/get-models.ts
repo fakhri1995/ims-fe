@@ -4,16 +4,24 @@
  * @see https://jsonformatter.org/json-to-typescript
  * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/149880837/Get+Models
  */
+export interface IGetModelsCriteria {
+  page?: number;
+  rows?: number;
+  asset_id?: number;
+  name?: string;
+  sort_by?: "name" | "count";
+  sort_type?: "asc" | "desc";
+}
 export interface IGetModels {
   success: boolean;
   message: string;
-  data: Data;
+  data: GetModelsData;
   status: number;
 }
 
-export interface Data {
+export interface GetModelsData {
   current_page: number;
-  data: Datum[];
+  data: GetModelsDatum[];
   first_page_url: string;
   from: number;
   last_page: number;
@@ -26,7 +34,7 @@ export interface Data {
   total: number;
 }
 
-export interface Datum {
+export interface GetModelsDatum {
   id: number;
   asset_id: number;
   name: string;

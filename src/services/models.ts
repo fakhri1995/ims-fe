@@ -1,15 +1,10 @@
 import { AxiosInstance } from "axios";
 import qs from "qs";
-import type { IGetModels } from "types/api/models/get-models";
-
-interface IGetModelsCriteria {
-  page?: number;
-  rows?: number;
-  asset_id?: number;
-  name?: string;
-  sort_by?: "name" | "count";
-  sort_type?: "asc" | "desc";
-}
+import { IGetModel } from "types/api/models/get-model";
+import type {
+  IGetModels,
+  IGetModelsCriteria,
+} from "types/api/models/get-models";
 
 export class ModelsService {
   /**
@@ -25,5 +20,16 @@ export class ModelsService {
     return await axiosClient.get<IGetModels>(
       "/getModels" + querySearchCriteria
     );
+  }
+
+  /**
+   * Retrieve a model by its ID.
+   *
+   * @access GET /getModel
+   */
+  static async findOne(axiosClient: AxiosInstance, id: string) {
+    const querySearchId = qs.stringify({ id }, { addQueryPrefix: true });
+
+    return await axiosClient.get<IGetModel>("/getModel" + querySearchId);
   }
 }
