@@ -605,13 +605,13 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
               <div className=" mb-7">
                 <H1>Bukti Kejadian</H1>
               </div>
-              {displaydata.ticketable.files.length === 0 ? (
+              {displaydata.ticketable.files?.length === 0 ? (
                 <>
                   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                 </>
               ) : (
                 <div className=" grid grid-cols-2">
-                  {displaydata.ticketable.files.map((doc, idx) => (
+                  {displaydata.ticketable.files?.map((doc, idx) => (
                     <a target={`_blank`} href={doc}>
                       <div className=" col-span-1 mx-1 flex flex-col items-center mb-2 cursor-pointer">
                         <img
