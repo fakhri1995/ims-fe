@@ -1,11 +1,4 @@
-import { useAxiosClient } from "hooks/use-axios-client";
-import { useCallback, useDebugValue, useEffect, useState } from "react";
-import {
-  GetModelsDatum,
-  IGetModelsCriteria,
-} from "types/api/models/get-models";
-
-import { ModelsService } from "services/models";
+import { useCallback, useDebugValue, useState } from "react";
 
 export type { ICreateConfigurationPart } from "./CreateConfigurationPart";
 export { CreateConfigurationPart } from "./CreateConfigurationPart";
@@ -18,42 +11,6 @@ enum PartQuantityFallbackValue {
 interface IModelParts {
   [id: number]: PartQuantity;
 }
-
-/**
- * Custom hook to retrieve all models and then used to show <Select>'s option in Edit Part Input form.
- */
-export const useModels = () => {
-  const { axiosClient } = useAxiosClient();
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
-
-  const [models, setModels] = useState<GetModelsDatum[]>([]);
-
-  const fetchModels = useCallback(async (criteria?: IGetModelsCriteria) => {
-    try {
-      const { data } = await ModelsService.find(axiosClient, criteria);
-
-      setModels(data.data.data);
-    } catch {
-      setModels([]);
-      setIsError(true);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  const refetchModels = useCallback((criteria?: IGetModelsCriteria) => {
-    setIsLoading(true);
-    fetchModels(criteria);
-  }, []);
-
-  useEffect(() => {
-    fetchModels();
-  }, []);
-
-  return { models, refetchModels, isLoading, isError };
-};
 
 /**
  * Custom hook to handle multiple "Konfigurasi Part Model" at the same time.
