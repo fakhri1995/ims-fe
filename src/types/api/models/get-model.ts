@@ -44,7 +44,7 @@ export interface ModelColumn {
   id: number;
   model_id: number;
   name: Name;
-  data_type: DataType;
+  data_type: DataType | string;
   default: null | string;
   required: number;
   deleted_at: null;

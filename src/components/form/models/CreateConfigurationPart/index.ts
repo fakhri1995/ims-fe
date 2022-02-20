@@ -77,6 +77,7 @@ export const useBulkConfigurationModelParts = (initialValue?: IModelParts) => {
 
   return {
     modelParts,
+    setModelParts,
 
     currentModelPartId,
     setCurrentModelPartId,
