@@ -1,11 +1,5 @@
 import { useAxiosClient } from "hooks/use-axios-client";
-import {
-  useCallback,
-  useDebugValue,
-  useEffect,
-  useReducer,
-  useState,
-} from "react";
+import { useCallback, useDebugValue, useEffect, useState } from "react";
 import {
   GetModelsDatum,
   IGetModelsCriteria,
@@ -16,6 +10,18 @@ import { ModelsService } from "services/models";
 export type { ICreateConfigurationPart } from "./CreateConfigurationPart";
 export { CreateConfigurationPart } from "./CreateConfigurationPart";
 
+type PartQuantity = number;
+enum PartQuantityFallbackValue {
+  FALLBACK,
+}
+
+interface IModelParts {
+  [id: number]: PartQuantity;
+}
+
+/**
+ * Custom hook to retrieve all models and then used to show <Select>'s option in Edit Part Input form.
+ */
 export const useModels = () => {
   const { axiosClient } = useAxiosClient();
 
@@ -49,94 +55,81 @@ export const useModels = () => {
   return { models, refetchModels, isLoading, isError };
 };
 
-type PartQuantity = number;
-interface IModelParts {
-  [id: number]: PartQuantity;
-}
+/**
+ * Custom hook to handle multiple "Konfigurasi Part Model" at the same time.
+ * We use the state `modelParts` as a payload to endpoint: POST /addModel
+ *  as `model_parts` property.
+ *
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/149880856/Add+Model
+ */
+export const useBulkConfigurationModelParts = (initialValue?: IModelParts) => {
+  const [modelParts, setModelParts] = useState<IModelParts>(initialValue || {});
 
-interface IModelPartsReducerAction {
-  type: "INSERT" | "INCREASE" | "DECREASE";
-  payload: {
-    modelPartId: number;
-    quantity?: PartQuantity;
-  };
-}
-const modelPartsReducer = (
-  state: IModelParts,
-  { type, payload }: IModelPartsReducerAction
-): IModelParts => {
-  switch (type) {
-    case "INSERT":
-      return {
-        ...state,
-        [payload.modelPartId]: payload.quantity || 1,
-      };
-
-    case "INCREASE":
-      return {
-        ...state,
-        [payload.modelPartId]: (state[payload.modelPartId] || 0) + 1,
-      };
-
-    case "DECREASE":
-      return {
-        ...state,
-        [payload.modelPartId]: (state[payload.modelPartId] || 0) - 1,
-      };
-
-    default:
-      return state;
-  }
-};
-
-export const useBulkModelParts = (initialValue?: IModelParts) => {
   const [currentModelPartId, setCurrentModelPartId] = useState<
     number | undefined
   >(undefined);
-  const [modelParts, dispatch] = useReducer(
-    modelPartsReducer,
-    initialValue || {}
-  );
 
-  useDebugValue({ modelParts, currentModelPartId });
+  const [currentModelPartQuantity, setCurrentModelPartQuantity] =
+    useState<number>(() => {
+      let _currentModelPartQuantity =
+        modelParts[currentModelPartId] || PartQuantityFallbackValue.FALLBACK;
 
-  const resetCurrentModelPartId = useCallback(() => {
+      return _currentModelPartQuantity;
+    });
+
+  useDebugValue({ modelParts, currentModelPartId, currentModelPartQuantity });
+
+  /**
+   * A function to update current (selected) model part ID and Quantity.
+   * Call this function to handle `onChange` event on a Select component.
+   */
+  const updateCurrentModelPart = (
+    modelId: number,
+    quantityFallback: number = 0
+  ) => {
+    /**
+     * Read if there is existing data from `modelParts`.
+     *  - YES -> load from that data.
+     *  - NO -> use the `quantityFallback` parameter.
+     */
+    const _currentModelPartQuantity = modelParts[modelId] || quantityFallback;
+
+    setCurrentModelPartId(modelId);
+    setCurrentModelPartQuantity(_currentModelPartQuantity);
+  };
+
+  /**
+   * Store current model part stat (id and quantity) into `moodelParts` state.
+   * Call this function only when the User click "Tambah" button.
+   */
+  const updateModelParts = () => {
+    setModelParts((prev) => ({
+      ...prev,
+      [currentModelPartId]: currentModelPartQuantity,
+    }));
+  };
+
+  /**
+   * Do not forget to clean up current model when the Input form is being closed.
+   * The terms "current model" is like a buffer and we need to flush them by calling `updateModelParts`.
+   */
+  const resetCurrentModelPart = useCallback(() => {
     setCurrentModelPartId(undefined);
+    setCurrentModelPartQuantity(PartQuantityFallbackValue.FALLBACK);
   }, []);
-
-  const updateModelPart = (quantity: PartQuantity) => {
-    dispatch({
-      type: "INSERT",
-      payload: { modelPartId: currentModelPartId, quantity },
-    });
-  };
-
-  const increaseModelPart = () => {
-    dispatch({
-      type: "INCREASE",
-      payload: { modelPartId: currentModelPartId },
-    });
-  };
-
-  const decreaseModelPart = () => {
-    dispatch({
-      type: "DECREASE",
-      payload: { modelPartId: currentModelPartId },
-    });
-  };
-
-  const currentModelPartQuantity =
-    typeof currentModelPartId === "undefined"
-      ? 0
-      : modelParts[currentModelPartId] || 0;
 
   return {
     modelParts,
+
+    currentModelPartId,
     setCurrentModelPartId,
-    resetCurrentModelPartId,
+
     currentModelPartQuantity,
-    updateModelPart,
-    increaseModelPart,
-    decreaseModelPart,
+    setCurrentModelPartQuantity,
+
+    resetCurrentModelPart,
+    updateCurrentModelPart,
+
+    updateModelParts,
   };
 };

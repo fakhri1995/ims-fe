@@ -15,22 +15,11 @@ import {
   Spin,
   Timeline,
 } from "antd";
-import { useAxiosClient } from "hooks/use-axios-client";
-import { FC, useEffect, useState } from "react";
-import {
-  GetModelsDatum,
-  IGetModelsCriteria,
-} from "types/api/models/get-models";
+import { FC, useState } from "react";
 
-import { useBulkModelParts, useModels } from ".";
-import { ModelsService } from "services/models";
+import { useBulkConfigurationModelParts, useModels } from ".";
 
 const { Panel } = Collapse;
-
-/** The key is the model ID (number) and the value should be quantity (number) */
-interface ModelParts {
-  [id: number]: number;
-}
 
 export interface ICreateConfigurationPart {
   isAllowedToEditPart?: boolean;
@@ -44,23 +33,36 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
   const { models, refetchModels, isLoading: isFetchingModels } = useModels();
   const {
     modelParts,
-    setCurrentModelPartId,
-    resetCurrentModelPartId,
     currentModelPartQuantity,
-    updateModelPart,
-  } = useBulkModelParts();
+    setCurrentModelPartQuantity,
+    resetCurrentModelPart,
+    updateCurrentModelPart,
+    updateModelParts,
+  } = useBulkConfigurationModelParts();
 
   const [isInputPartShown, setIsInputPartShown] = useState(false);
-  const toggleInputPart = () => {
-    setIsInputPartShown((prev) => !prev);
-  };
+
   const closeInputPart = () => {
     setIsInputPartShown(false);
-    resetCurrentModelPartId();
+    resetCurrentModelPart();
   };
 
   const onSearchHandler = (searchValue: string) => {
     refetchModels({ rows: 10, name: searchValue });
+  };
+
+  const onTambahButtonClicked = () => {
+    /**
+     * The order is important.
+     * - Trigger `updateModalPart()` first. Then close the input part form.
+     */
+    updateModelParts();
+    closeInputPart();
+
+    /**
+     * Reset our models select options.
+     */
+    refetchModels();
   };
 
   return (
@@ -100,9 +102,7 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
                     optionFilterProp="children"
                     placeholder="Cari nama modul"
                     onChange={(value) => {
-                      console.log("Select.onChange.value: ", value);
-                      setCurrentModelPartId(value);
-                      // setcurrentidmodel(value);
+                      updateCurrentModelPart(value);
                     }}
                     filterOption={(input, opt) => {
                       console.log("Select.filterOption: ", input, opt);
@@ -131,7 +131,7 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
                     id="part-quantity"
                     min={0}
                     value={currentModelPartQuantity}
-                    onChange={updateModelPart}
+                    onChange={(value) => setCurrentModelPartQuantity(value)}
                   />
 
                   <button
@@ -164,7 +164,8 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
                 type="primary"
                 onClick={() => {
                   console.log("Button(Tambah) is currently disabled...");
-                  closeInputPart();
+                  onTambahButtonClicked();
+
                   // seteditpart(false);
                   // setloadinggetmodel(true);
                   // fetch(
@@ -245,7 +246,7 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
         disabled={!isAllowedToEditPart || isInputPartShown}
         type="dashed"
         onClick={() => {
-          toggleInputPart();
+          setIsInputPartShown((prev) => !prev);
           // seteditpart(true);
         }}
         className="w-full h-16"
