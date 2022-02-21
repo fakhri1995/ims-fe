@@ -1,4 +1,4 @@
-import { Button } from "antd";
+import { Button, message } from "antd";
 import { useGetModel } from "hooks/api/models";
 import { FC, useState } from "react";
 
@@ -40,15 +40,29 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
   };
 
   const onTambahButtonClicked = () => {
+    if (!currentModelPartId && currentModelPartQuantity === 0) {
+      message.error({
+        content:
+          "Pastikan telah mengisi Nama Model dan Jumlah lebih besar dari 0.",
+      });
+      return;
+    }
+
     /**
      * The order is important.
      * - Trigger `updateModalPart()` first. Then close the input part form.
      * - Update model part data. (It will be rendered under Collapse component).
      */
+
+    /** Update id dan quantity */
     updateModelParts();
-    if (currentModelPartQuantity > 0) {
-      updateModelPartData(currentModelPartId.toString());
-    }
+
+    /** Update `modelPartData` untuk ditampilkan pada Accordion. */
+    updateModelPartData(currentModelPartId.toString());
+
+    message.success({
+      content: "Konfigurasi Part Berhasil diperbarui.",
+    });
 
     closeInputPart();
   };
