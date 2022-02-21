@@ -10,13 +10,19 @@ import { ModelPartTimelineItem } from "./ModelPartTimelineItem";
 export interface ICreateConfigurationPart {
   /** State to control whether the "Tambah Part Button" is enabled or disabled */
   isAllowedToEditPart?: boolean;
+
+  /** Toggle the modal to create new modal (passthrough props) */
+  toggleModalCreateModel: (isVisible: boolean) => void;
 }
 
+/**
+ * CreateConfigurationPart adalah komponen yang meng-handle section "Konfigurasi Part Model" pada screen atau halaman `/admin/models/create`.
+ */
 export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
   isAllowedToEditPart = false,
+  toggleModalCreateModel,
 }) => {
   const {
-    modelParts,
     setModelParts,
     currentModelPartId,
     currentModelPartQuantity,
@@ -40,7 +46,7 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
   };
 
   const onTambahButtonClicked = () => {
-    if (!currentModelPartId && currentModelPartQuantity === 0) {
+    if (!currentModelPartId || currentModelPartQuantity === 0) {
       message.error({
         content:
           "Pastikan telah mengisi Nama Model dan Jumlah lebih besar dari 0.",
@@ -53,7 +59,6 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
      * - Trigger `updateModalPart()` first. Then close the input part form.
      * - Update model part data. (It will be rendered under Collapse component).
      */
-
     /** Update id dan quantity */
     updateModelParts();
 
@@ -91,6 +96,10 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
     closeInputPart();
   };
 
+  const onModalCreateNewModelButtonClicked = () => {
+    toggleModalCreateModel(true);
+  };
+
   const renderChildPartModel = (item) => {
     return item.map((doc, idx) => {
       return (
@@ -122,6 +131,7 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
           onChangeModelSelection={updateCurrentModelPart}
           currentModelPartQuantity={currentModelPartQuantity}
           onCurrentModelPartQuantityChange={setCurrentModelPartQuantity}
+          onModalCrateNewModel={onModalCreateNewModelButtonClicked}
         />
       )}
 

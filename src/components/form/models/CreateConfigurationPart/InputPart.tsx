@@ -18,6 +18,9 @@ export interface IInputPart {
 
   /** Handler ketika InputNumber berubah. Callback ini akan memperbarui nilai `currentModelPartQuantity`. */
   onCurrentModelPartQuantityChange: (quantity: number) => void;
+
+  /** Callback untuk toggle modal create new model */
+  onModalCrateNewModel: () => void;
 }
 
 /**
@@ -33,6 +36,7 @@ export const InputPart: FC<IInputPart> = ({
   onChangeModelSelection,
   currentModelPartQuantity,
   onCurrentModelPartQuantityChange,
+  onModalCrateNewModel,
 }) => {
   const {
     data: models,
@@ -75,15 +79,7 @@ export const InputPart: FC<IInputPart> = ({
                 onChange={(value) => {
                   onChangeModelSelection(value);
                 }}
-                filterOption={(input, opt) => {
-                  console.log("Select.filterOption: ", input, opt);
-
-                  return true;
-
-                  // return opt.children
-                  //   .toLowerCase()
-                  //   .indexOf(input.toLowerCase()) >= 0
-                }}
+                filterOption
               >
                 {models.map((doc) => (
                   <Select.Option key={doc.id} value={doc.id}>
@@ -107,10 +103,7 @@ export const InputPart: FC<IInputPart> = ({
 
               <button
                 className="cursor-pointer bg-white/0"
-                onClick={() => {
-                  console.log("setModalCreateModel(true)");
-                  // setmodalcreatemodel(true);
-                }}
+                onClick={onModalCrateNewModel}
               >
                 <PlusSquareTwoTone style={{ fontSize: `1.5rem` }} />
               </button>
@@ -132,7 +125,6 @@ export const InputPart: FC<IInputPart> = ({
             // loading={loadinggetmodel}
             type="primary"
             onClick={() => {
-              console.log("Button(Tambah) is currently disabled...");
               onTambahButtonClicked();
 
               // seteditpart(false);
