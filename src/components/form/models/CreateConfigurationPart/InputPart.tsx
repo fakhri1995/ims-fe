@@ -45,7 +45,7 @@ export const InputPart: FC<IInputPart> = ({
   } = useGetModels();
 
   return (
-    <div className="shadow-md border p-8 flex flex-col rounded-md relative bg-green-400">
+    <div className="shadow-md border p-8 flex flex-col rounded-md relative">
       <button
         className="absolute top-2 right-5 text-lg cursor-pointer bg-white/0"
         onClick={onCloseInputPart}
@@ -53,7 +53,7 @@ export const InputPart: FC<IInputPart> = ({
         x
       </button>
 
-      <Form layout="vertical" className="bg-red-200">
+      <Form layout="vertical">
         <div className="flex mb-2 space-x-4">
           <div className="w-2/3">
             <Form.Item

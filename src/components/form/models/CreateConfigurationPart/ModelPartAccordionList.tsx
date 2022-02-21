@@ -6,6 +6,7 @@ import { GetModelData } from "types/api/models/get-model";
 const { Panel } = Collapse;
 
 export interface IModelPartAccordionList {
+  /** Data untuk menampilkan part-part yang telah ditambahkan oleh User */
   modelPartData: GetModelData[];
 
   /**
@@ -32,7 +33,7 @@ export const ModelPartAccordionList: FC<IModelPartAccordionList> = ({
   }
 
   return (
-    <Collapse accordion className="bg-indigo-400">
+    <Collapse accordion>
       {modelPartData.map((doc, idx) => {
         return (
           <Panel

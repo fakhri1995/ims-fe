@@ -1,4 +1,4 @@
-import { useCallback, useDebugValue, useState } from "react";
+import { useCallback, useState } from "react";
 
 export type { ICreateConfigurationPart } from "./CreateConfigurationPart";
 export { CreateConfigurationPart } from "./CreateConfigurationPart";
@@ -33,8 +33,6 @@ export const useBulkConfigurationModelParts = (initialValue?: IModelParts) => {
 
       return _currentModelPartQuantity;
     });
-
-  useDebugValue({ modelParts, currentModelPartId, currentModelPartQuantity });
 
   /**
    * A function to update current (selected) model part ID and Quantity.

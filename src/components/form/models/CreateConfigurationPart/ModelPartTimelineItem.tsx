@@ -9,11 +9,11 @@ const { Panel } = Collapse;
  *
  * @see {ModelPartAccordionList}
  */
-export const ModelPartTimelineItem: FC<{
-  doc: any;
-  idx: any;
-  renderChildPartModel: any;
-}> = ({ doc, renderChildPartModel, idx }) => (
+export const ModelPartTimelineItem: FC<any> = ({
+  doc,
+  renderChildPartModel,
+  idx,
+}) => (
   <Timeline.Item>
     <Collapse accordion>
       <Panel key={idx} header={doc.name}>

@@ -1,5 +1,5 @@
 import { useAxiosClient } from "hooks/use-axios-client";
-import { useCallback, useDebugValue, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { GetModelData } from "types/api/models/get-model";
 import {
   GetModelsDatum,
@@ -47,19 +47,22 @@ export const useGetModels = (criteria?: IGetModelsCriteria) => {
 
 /**
  * Custom hook to reterieve a model from the server.
+ *
+ * @access /getModel
  */
-export const useGetModel = (modelId?: string) => {
+export const useGetModel = (modelId?: number) => {
   const { axiosClient } = useAxiosClient();
 
   const [data, setData] = useState<GetModelData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
-  useDebugValue({ data });
-
-  const fetchModel = useCallback(async (modelId: string) => {
+  const fetchModel = useCallback(async (modelId: number) => {
     try {
-      const { data } = await ModelsService.findOne(axiosClient, modelId);
+      const { data } = await ModelsService.findOne(
+        axiosClient,
+        modelId.toString()
+      );
 
       const mappedData = { ...data.data };
       mappedData.model_columns = mappedData.model_columns.map((datum) => {
@@ -92,13 +95,13 @@ export const useGetModel = (modelId?: string) => {
     }
   }, []);
 
-  const refetchData = useCallback((modelId: string) => {
+  const refetchData = useCallback((modelId: number) => {
     setIsLoading(true);
     fetchModel(modelId);
   }, []);
 
   useEffect(() => {
-    if (modelId && modelId.length > 0) {
+    if (typeof modelId !== "undefined") {
       fetchModel(modelId);
     }
   }, [modelId]);

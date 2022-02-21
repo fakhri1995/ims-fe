@@ -13,6 +13,8 @@ export interface ICreateConfigurationPart {
 
   /** Toggle the modal to create new modal (passthrough props) */
   toggleModalCreateModel: (isVisible: boolean) => void;
+
+  onUpdateModelPartsPayload: (modelId: number, quantity: number) => void;
 }
 
 /**
@@ -21,6 +23,7 @@ export interface ICreateConfigurationPart {
 export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
   isAllowedToEditPart = false,
   toggleModalCreateModel,
+  onUpdateModelPartsPayload,
 }) => {
   const {
     setModelParts,
@@ -63,7 +66,10 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
     updateModelParts();
 
     /** Update `modelPartData` untuk ditampilkan pada Accordion. */
-    updateModelPartData(currentModelPartId.toString());
+    updateModelPartData(currentModelPartId);
+
+    /** Update parent's state untuk menjadi payload ke endpoint POST `/addModel` */
+    onUpdateModelPartsPayload(currentModelPartId, currentModelPartQuantity);
 
     message.success({
       content: "Konfigurasi Part Berhasil diperbarui.",
@@ -93,6 +99,9 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
       return mutatedPrevState;
     });
 
+    /** Update parent's state untuk menjadi payload ke endpoint POST `/addModel`. Quantity 0 untuk menghapus. */
+    onUpdateModelPartsPayload(modelId, 0);
+
     closeInputPart();
   };
 
@@ -113,7 +122,7 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
   };
 
   return (
-    <div className="mb-8 col-span-1 md:col-span-4 px-5 flex flex-col bg-red-400 space-y-5">
+    <div className="mb-8 col-span-1 md:col-span-4 px-5 flex flex-col space-y-5">
       <div className="mb-5">
         <h1 className="font-bold text-xl">Konfigurasi Part Model</h1>
       </div>

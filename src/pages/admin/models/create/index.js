@@ -1,15 +1,10 @@
 import { DeleteOutlined } from "@ant-design/icons";
-import {
-  CalendarOutlined,
-  CloseCircleOutlined,
-  PlusSquareTwoTone,
-} from "@ant-design/icons";
+import { CalendarOutlined, PlusSquareTwoTone } from "@ant-design/icons";
 import {
   Button,
   Checkbox,
   Collapse,
   DatePicker,
-  Empty,
   Form,
   Input,
   InputNumber,
@@ -21,7 +16,6 @@ import {
   notification,
 } from "antd";
 import Modal from "antd/lib/modal/Modal";
-import { useAxiosClient } from "hooks/use-axios-client";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -32,11 +26,8 @@ import { CreateConfigurationPart } from "components/form/models/CreateConfigurat
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
-import { ModelsService } from "services/models";
 
 const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
-  const { axiosClient } = useAxiosClient();
-
   //1.Init
   const rt = useRouter();
   var pathArr = rt.pathname.split("/").slice(1);
@@ -52,6 +43,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
       return <Children doc={doc}></Children>;
     });
   };
+
   const Children = ({ doc }) => {
     return (
       <Timeline.Item>
@@ -197,7 +189,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
   const [fielddata2, setfielddata2] = useState([]);
   const [fielddataa, setfielddataa] = useState([]);
   const [fielddataa2, setfielddataa2] = useState([]);
-  const [modelpartfielddata, setmodelpartfielddata] = useState([]);
+  // const [modelpartfielddata, setmodelpartfielddata] = useState([]);
   const [currentfield, setcurrentfield] = useState({
     name: "",
     data_type: "",
@@ -225,7 +217,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
   const [addedfieldtrigger3, setaddedfieldtrigger3] = useState(false);
   const [loadingcreate, setloadingcreate] = useState(false);
   const [loadingcreatemodel, setloadingcreatemodel] = useState(false);
-  const [loadinggetmodel, setloadinggetmodel] = useState(false);
+  // const [loadinggetmodel, setloadinggetmodel] = useState(false);
   const [praloading, setpraloading] = useState(true);
   const [loadingspec, setloadingspec] = useState(false);
   const [loadingspec2, setloadingspec2] = useState(false);
@@ -243,7 +235,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
   const [idxdropdowntrigger3, setidxdropdowntrigger3] = useState(-1);
   const [concatfieldtrigger, setconcatfieldtrigger] = useState(false);
   const [concatfieldtrigger2, setconcatfieldtrigger2] = useState(false);
-  const [editpart, seteditpart] = useState(false);
+  // const [editpart, seteditpart] = useState(false);
   const [modalcreatemodel, setmodalcreatemodel] = useState(false);
   const [newdatatrigger, setnewdatatrigger] = useState(false);
   const [newdatatrigger2, setnewdatatrigger2] = useState(false);
@@ -265,7 +257,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
   const [cd2part, setcd2part] = useState(["", ""]);
   const [cdpartidx, setcdpartidx] = useState(-1);
   const [cdparttrigger, setcdparttrigger] = useState(false);
-  const [fetchingpart, setfetchingpart] = useState(false);
+  // const [fetchingpart, setfetchingpart] = useState(false);
   //create manufacturer
   const [modalmanuf, setmodalmanuf] = useState(false);
   const [loadingmanuf, setloadingmanuf] = useState(false);
@@ -439,6 +431,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
   };
 
   //4.handle
+  /** Handler modal utama */
   const handleCreateModel = () => {
     var t = {};
     for (var prop in newdata) {
@@ -488,6 +481,8 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
         }
       });
   };
+
+  /** Handler pop over modal untuk "Form Tambah Model" */
   const handleCreateModelinModel = () => {
     var t = {};
     for (var prop in newdata2) {
@@ -535,7 +530,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
             model_parts: [],
           });
           setmodalcreatemodel(false);
-          seteditpart(false);
+          // seteditpart(false);
           setmodeltrigger(res2.id);
         } else if (!res2.success) {
           notification["error"]({
@@ -545,6 +540,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
         }
       });
   };
+
   const handleAddManufacturer = () => {
     setloadingmanuf(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addManufacturer`, {
@@ -576,6 +572,49 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
           });
         }
       });
+  };
+
+  /**
+   * A handler function to controll `newdata.model_parts` value from children component (CreateConfigurationPart).w
+   *
+   * @param {number} modelId
+   * @param {number} quantity
+   */
+  const handlerModelPartsPayload = (modelId, quantity) => {
+    setnewdata((prev) => {
+      /** @type {{ id: number, quantity: number }[]} */
+      let _modelParts = [...prev.model_parts];
+
+      /**
+       * If quantity is less or equal 0 then we remove it from the payload.
+       * Otherwise, update or insert.
+       */
+      if (quantity <= 0) {
+        _modelParts = _modelParts.filter(
+          (modelPart) => modelPart.id !== modelId
+        );
+      } else {
+        let isNewModelPart = true;
+
+        _modelParts = _modelParts.map((modelPart) => {
+          if (modelPart.id !== modelId) {
+            return modelPart;
+          }
+
+          isNewModelPart = false;
+          return { id: modelId, quantity };
+        });
+
+        if (isNewModelPart) {
+          _modelParts.push({ id: modelId, quantity });
+        }
+      }
+
+      return {
+        ...prev,
+        model_parts: _modelParts,
+      };
+    });
   };
 
   //5.useEffect
@@ -633,7 +672,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
       .then((res2) => {
         setmodeldata(res2.data.data);
         setcurrentidmodel(modeltrigger);
-        modeltrigger !== false ? seteditpart(true) : null;
+        // modeltrigger !== false ? seteditpart(true) : null;
       });
   }, [modeltrigger]);
   useEffect(() => {
@@ -2142,10 +2181,14 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
         </div>
 
         {!newdata.is_consumable && (
-          <CreateConfigurationPart isAllowedToEditPart={!disabledaddpart} />
+          <CreateConfigurationPart
+            isAllowedToEditPart={!disabledaddpart}
+            toggleModalCreateModel={setmodalcreatemodel}
+            onUpdateModelPartsPayload={handlerModelPartsPayload}
+          />
         )}
 
-        {!newdata.is_consumable && (
+        {/* {!newdata.is_consumable && (
           <div className=" mb-8 col-span-1 md:col-span-4 px-5 flex flex-col bg-red-400 space-y-5">
             <div className="mb-5">
               <h1 className="font-bold text-xl">Konfigurasi Part Model</h1>
@@ -2429,7 +2472,9 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                         )
                           .then((res) => res.json())
                           .then((res2) => {
+                            // NOTE: state setmodelpartfielddata itu adalah array of GetModelData
                             setmodelpartfielddata((prev) => {
+                              console.log("prev: ", prev);
                               var temp1 = prev;
                               var t = {};
                               for (var prop in res2.data) {
@@ -2452,6 +2497,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                 }
                               }
                               temp1 = [...temp1, t];
+                              console.log("temp1: ", temp1);
                               return temp1;
                             });
                             // setconcatpartvalue(res2.data.model_parts)
@@ -2501,8 +2547,9 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
               + Tambah Part Model
             </Button>
           </div>
-        )}
+        )} */}
       </div>
+
       <Modal
         title={
           <div className="flex justify-between p-5 mt-5">
