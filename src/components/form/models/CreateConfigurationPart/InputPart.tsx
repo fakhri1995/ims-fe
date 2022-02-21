@@ -4,16 +4,29 @@ import { useGetModels } from "hooks/api/models";
 import type { FC } from "react";
 
 export interface IInputPart {
+  /** Handler ketika close / trash can button diklik */
   onCloseInputPart: () => void;
 
+  /** Handler ketika tombol "Tambah" diklik */
   onTambahButtonClicked: () => void;
 
+  /** Handler untuk select component */
   onChangeModelSelection: (modelId: number) => void;
 
+  /** Jumlah quantity dari model yang sedang dipilih. Ini harus sync dengan state `modelParts` */
   currentModelPartQuantity: number;
+
+  /** Handler ketika InputNumber berubah. Callback ini akan memperbarui nilai `currentModelPartQuantity`. */
   onCurrentModelPartQuantityChange: (quantity: number) => void;
 }
 
+/**
+ * InputPart adalah komponen untuk melakukan input data Konfigurasi Part Model.
+ *
+ * Terdapat 2 jenis input data:
+ * 1. Select - mencari dan memilih nama model yang diinginkan.
+ * 2. InputNumber - menentukan banyaknya jumlah model tersebut.
+ */
 export const InputPart: FC<IInputPart> = ({
   onCloseInputPart,
   onTambahButtonClicked,

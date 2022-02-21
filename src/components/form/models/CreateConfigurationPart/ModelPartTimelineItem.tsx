@@ -4,6 +4,11 @@ import { FC } from "react";
 
 const { Panel } = Collapse;
 
+/**
+ * ModelPartTimelineItem adalah subkomponen dari komponen ModelPartAccordionList.
+ *
+ * @see {ModelPartAccordionList}
+ */
 export const ModelPartTimelineItem: FC<{
   doc: any;
   idx: any;
@@ -56,7 +61,8 @@ export const ModelPartTimelineItem: FC<{
                             color: `rgba(229, 231, 235,1)`,
                           }}
                         >
-                          {default2.opsi.map((doc2, idx2) => (
+                          {default2["opsi"].map((doc2, idx2) => (
+                            // {default2.opsi.map((doc2, idx2) => (
                             <Select.Option disabled value={idx2}>
                               {doc2}
                             </Select.Option>
@@ -65,7 +71,8 @@ export const ModelPartTimelineItem: FC<{
                       )}
                       {docmc2.data_type === "checkbox" && (
                         <div className="w-full flex flex-col">
-                          {default2.opsi.map((doc3, idx3) => (
+                          {default2["opsi"].map((doc3, idx3) => (
+                            // {default2.opsi.map((doc3, idx3) => (
                             <div className="flex mb-1">
                               <Checkbox
                                 disabled
