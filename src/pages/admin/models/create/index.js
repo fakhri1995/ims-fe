@@ -21,7 +21,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
-import { CreateConfigurationPart } from "components/form/models/CreateConfigurationPart";
+import { CreateConfigurationPart } from "components/screen/models/CreateConfigurationPart";
 
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
