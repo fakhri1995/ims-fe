@@ -18,16 +18,11 @@
  * }
  * ```
  */
-export const createKeyPressHandler = (callback, keyIdentifier) => {
-  if (!(callback instanceof Function)) {
-    throw new Error("Callback must be a Function");
-  }
-
-  if (typeof keyIdentifier !== "string") {
-    throw new Error("keyIdentifier must ba string");
-  }
-
-  const onKeyPressHandler = (/** @type {KeyboardEvent} */ event) => {
+export const createKeyPressHandler = (
+  callback: Function,
+  keyIdentifier: string
+) => {
+  const onKeyPressHandler = (event: KeyboardEvent) => {
     if (event.key.toLowerCase() !== keyIdentifier.toLowerCase()) {
       return;
     }
