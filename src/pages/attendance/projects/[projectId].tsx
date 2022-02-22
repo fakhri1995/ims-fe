@@ -44,7 +44,7 @@ const ProjectsDetailPage: NextPage<ProtectedPageProps> = ({
         </div>
 
         {/* Second Column */}
-        <div className="w-full md:w-2/3 h-4 bg-indigo-400">
+        <div className="w-full md:w-2/3 h-4">
           {/* Staff (editable) card */}
           <div></div>
 
