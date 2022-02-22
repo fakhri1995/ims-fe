@@ -7,7 +7,7 @@ export const getStaticProps: GetStaticProps = () => {
   return {
     redirect: {
       permanent: false,
-      destination: "/attandance/projects",
+      destination: "/attendance/projects",
     },
   };
 };

@@ -7,7 +7,7 @@ export interface ITotalProjectCard {
 export const TotalProjectCard: FC<ITotalProjectCard> = ({ projectCount }) => {
   return (
     <div className="py-6 px-6 flex items-center justify-between rounded-md bg-white shadow-md">
-      <span className="font-bold text-lg">Total Project</span>
+      <span className="font-bold text-lg text-mono30">Total Project</span>
 
       <span className="text-5xl text-primary100">{projectCount}</span>
     </div>
