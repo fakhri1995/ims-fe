@@ -91,7 +91,7 @@ const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
                   <Form.Item noStyle>
                     <Button
                       htmlType="submit"
-                      className="rounded-md bg-primary100 hover:bg-primary75 hover:border-primary75 hover:text-white text-white font-medium flex items-center px-6"
+                      className="rounded-md bg-primary100 hover:bg-primary75 focus:bg-primary100 hover:border-primary75 focus:border-primary100 hover:text-white focus:text-white text-white font-medium flex items-center px-6"
                       icon={<SearchOutlined />}
                     >
                       Cari
