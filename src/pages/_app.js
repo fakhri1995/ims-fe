@@ -2,7 +2,6 @@ import Head from "next/head";
 import Router from "next/router";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
-import { CookiesProvider } from "react-cookie";
 
 import "../styles/globals.scss";
 
@@ -26,9 +25,7 @@ function MyApp({ Component, pageProps }) {
         <title>MIGSys</title>
       </Head>
 
-      <CookiesProvider>
-        <Component {...pageProps} />
-      </CookiesProvider>
+      <Component {...pageProps} />
     </>
   );
 }
