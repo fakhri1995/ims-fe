@@ -1,23 +1,23 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 import { useMemo } from "react";
+import { useCookies } from "react-cookie";
 
 /**
  * A React custom hook to use axios client with token attached on it.
  */
 export const useAxiosClient = () => {
-  const token = JSON.parse(Cookies.get("token"));
+  const [cookies] = useCookies(["token"]);
 
   const tokenizedAxiosClient = useMemo(() => {
     const axiosClient = axios.create({
       baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
       headers: {
-        Authorization: token,
+        Authorization: cookies.token,
       },
     });
 
     return axiosClient;
-  }, [token]);
+  }, [cookies.token]);
 
   return { axiosClient: tokenizedAxiosClient };
 };
