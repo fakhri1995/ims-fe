@@ -1,7 +1,8 @@
+import type { FC } from "react";
+
 import AddNewProjectIcon from "assets/vectors/add-new-project.svg";
 import BlobLowerIcon from "assets/vectors/blob-lower.svg";
 import BlobUpperIcon from "assets/vectors/blob-upper.svg";
-import type { FC } from "react";
 
 export interface IAddNewProjectButton {
   onButtonClicked: () => void;

@@ -1,10 +1,7 @@
 import { DownloadOutlined, SearchOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
-import { parseToken } from "lib/auth";
-import { getAxiosClient } from "lib/axios-client";
 import type { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import { IGetDetailProfile } from "types/api/login/get-detailprofile";
 
 import ButtonSys from "components/button";
 import styles from "components/layout-dashboard.module.css";
@@ -14,7 +11,12 @@ import {
   TotalProjectCard,
 } from "components/screen/projects/ListProject";
 
+import { parseToken } from "lib/auth";
+import { getAxiosClient } from "lib/axios-client";
+
 import { LoginService } from "services/auth";
+
+import { IGetDetailProfile } from "types/api/login/get-detailprofile";
 
 interface IProjecsPage {
   token: string;

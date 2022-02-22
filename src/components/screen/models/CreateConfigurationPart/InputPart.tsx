@@ -1,7 +1,8 @@
 import { DeleteOutlined, PlusSquareTwoTone } from "@ant-design/icons";
 import { Button, Form, InputNumber, Select, Spin } from "antd";
-import { useGetModels } from "hooks/api/models";
 import type { FC } from "react";
+
+import { useGetModels } from "hooks/api/models";
 
 export interface IInputPart {
   /** Handler ketika close / trash can button diklik */

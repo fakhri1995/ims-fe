@@ -1,6 +1,7 @@
 import { CalendarOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { Checkbox, Collapse, Popconfirm, Timeline } from "antd";
 import type { FC, ReactNode } from "react";
+
 import { GetModelData } from "types/api/models/get-model";
 
 const { Panel } = Collapse;
