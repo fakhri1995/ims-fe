@@ -1,5 +1,14 @@
 import { ExclamationCircleOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Select, Spin, Table, Tooltip, TreeSelect } from "antd";
+import {
+  Button,
+  Input,
+  Select,
+  Spin,
+  Table,
+  TableColumnsType,
+  Tooltip,
+  TreeSelect,
+} from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -121,6 +130,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [fetchingmodel, setfetchingmodel] = useState(false);
 
   //3.Define
+  /** @type {TableColumnsType<{ mig_id: string | null }>} */
   const columnsTable = [
     {
       title: "MIG ID",
@@ -139,6 +149,10 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
             : "descend"
           : null
       }`,
+      render: (_, _record, __) => {
+        /** If mig_id === null then replace it with "-" */
+        return _record.mig_id || "-";
+      },
     },
     {
       title: "Asset Type",
@@ -496,18 +510,6 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
   //4.handler
   const { onKeyPressHandler } = createKeyPressHandler(onFinalClick, "Enter");
 
-  /**
-   * Map nilai `mig_id` yang null menjadi "-". Digunakan ketika update state `setdisplaydata`.
-   *
-   * @param {GetInventoriesDatum[]} inventories
-   */
-  const mapDataSource = (/** @type {GetInventoriesDatum[]} */ inventories) => {
-    return inventories.map((datum) => ({
-      ...datum,
-      mig_id: datum.mig_id || "-",
-    }));
-  };
-
   //5.useEffect
   useEffect(() => {
     fetch(
@@ -522,7 +524,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         setdisplayentiredata(res2);
-        setdisplaydata(mapDataSource(res2.data.data));
+        setdisplaydata(res2.data.data);
         setdisplaydata1(res2.data.data);
         setdisplaydata2(res2.data.data);
       });
@@ -820,7 +822,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                   .then((res) => res.json())
                   .then((res2) => {
                     setdisplayentiredata(res2);
-                    setdisplaydata(mapDataSource(res2.data.data));
+                    setdisplaydata(res2.data.data);
                     setdisplaydata1(res2.data.data);
                     setdisplaydata2(res2.data.data);
                     setpraloading(false);
