@@ -13,7 +13,7 @@ export const AddNewProjectButton: FC<IAddNewProjectButton> = ({
 }) => {
   return (
     <button
-      className="w-full h-full flex items-center transition-colors py-6 px-6 bg-primary100 rounded-md shadow-md text-white relative hover:bg-primary75 overflow-hidden"
+      className="w-full h-full flex items-center transition-colors p-6 bg-primary100 rounded-md shadow-md text-white relative hover:bg-primary75 overflow-hidden"
       onClick={onButtonClicked}
     >
       <div className="h-full mr-6 flex items-center">

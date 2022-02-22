@@ -1,0 +1,1 @@
+export { DetailProjectCard } from "./DetailProjectCard";

@@ -16,15 +16,9 @@ import { getAxiosClient } from "lib/axios-client";
 
 import { LoginService } from "services/auth";
 
-import { IGetDetailProfile } from "types/api/login/get-detailprofile";
+import { ProtectedPageProps } from "types/common";
 
-interface IProjecsPage {
-  token: string;
-  sidemenu: string;
-  dataProfile: IGetDetailProfile;
-}
-
-const ProjectsPage: NextPage<IProjecsPage> = ({ token, dataProfile }) => {
+const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
   const router = useRouter();
   const pathArr = router.pathname.split("/").slice(1);
 
@@ -116,10 +110,10 @@ const ProjectsPage: NextPage<IProjecsPage> = ({ token, dataProfile }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps<IProjecsPage> = async (
-  ctx
-) => {
-  let defaultProps: IProjecsPage = {} as IProjecsPage;
+export const getServerSideProps: GetServerSideProps<
+  ProtectedPageProps
+> = async (ctx) => {
+  let defaultProps: ProtectedPageProps = {} as ProtectedPageProps;
 
   const { token, hasNoToken } = parseToken(ctx);
   if (hasNoToken) {
