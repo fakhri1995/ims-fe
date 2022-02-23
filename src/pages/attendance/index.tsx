@@ -7,7 +7,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   return {
     redirect: {
       permanent: false,
-      destination: "/attendance/projects",
+      destination: "/attendance/form-aktivitas",
     },
   };
 };

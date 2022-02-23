@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 
 import LayoutDashboard from "components/layout-dashboard";
 import styles from "components/layout-dashboard.module.css";
-import { DetailProjectCard } from "components/screen/projects/DetailProject";
+import { DetailProjectCard } from "components/screen/form-aktivitas/DetailProject";
 
 import { parseToken } from "lib/auth";
 import { getAxiosClient } from "lib/axios-client";

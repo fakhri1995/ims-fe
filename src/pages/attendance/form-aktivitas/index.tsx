@@ -1,5 +1,5 @@
 import { DownloadOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, Table } from "antd";
 import type { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
 
@@ -7,9 +7,9 @@ import ButtonSys from "components/button";
 import styles from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
 import {
-  AddNewProjectButton,
-  TotalProjectCard,
-} from "components/screen/projects/ListProject";
+  AddNewAktivitasButton,
+  TotalFormAktivitasCard,
+} from "components/screen/form-aktivitas/ListFormAktivitas";
 
 import { parseToken } from "lib/auth";
 import { getAxiosClient } from "lib/axios-client";
@@ -36,12 +36,12 @@ const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
         <div className="flex mb-6 md:space-x-6 space-y-6 md:space-y-0 flex-wrap md:flex-nowrap">
           {/* Total Project */}
           <div className="w-full md:w-1/2">
-            <TotalProjectCard projectCount={120} />
+            <TotalFormAktivitasCard totalFormAktivitasCount={120} />
           </div>
 
           {/* Create new project */}
           <div className="w-full md:w-1/2">
-            <AddNewProjectButton
+            <AddNewAktivitasButton
               onButtonClicked={() => {
                 console.log("clicked!");
               }}
@@ -51,13 +51,13 @@ const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
 
         {/* Second Row */}
         <div className="w-full">
-          {/* Table: Role Activity */}
+          {/* Table: Form Aktivitas */}
           <div className="w-full bg-white rounded-md shadow-md p-6">
             {/* Table header */}
             <div className="flex items-center justify-between overflow-x-auto">
               {/* Title */}
               <span className="text-mono30 font-bold text-lg">
-                Role Activity
+                Form Aktivitas
               </span>
 
               {/* Buttons and Input */}
@@ -103,6 +103,7 @@ const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
             {/* End: Table header */}
 
             {/* TODO: Table */}
+            <Table />
           </div>
         </div>
       </>
