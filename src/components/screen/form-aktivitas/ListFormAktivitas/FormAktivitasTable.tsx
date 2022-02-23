@@ -4,12 +4,31 @@ import { ColumnsType } from "antd/lib/table";
 import { format } from "date-fns";
 import idLocale from "date-fns/locale/id";
 import { useRouter } from "next/router";
-import type { FC } from "react";
+import { FC, useMemo } from "react";
 
 export interface IFormAktivitasTable {}
 
 export const FormAktivitasTable: FC<IFormAktivitasTable> = () => {
   const router = useRouter();
+
+  /** TODO: use actual data */
+  const tableData: AktivitasData[] = useMemo(
+    () =>
+      Array(100)
+        .fill(0)
+        .map(() => {
+          return {
+            id: faker.random.alphaNumeric(5),
+            title: faker.name.title(),
+            updatedDate: format(faker.date.past(), "dd MMM yyyy, hh:mm", {
+              locale: idLocale,
+            }),
+            staffCount: faker.datatype.number(),
+            description: faker.random.words(4),
+          };
+        }),
+    []
+  );
 
   const onPaginationChange = (pageNumber: number, pageSize: number) => {
     /** TODO: trigger data fetching on page change? */
@@ -58,6 +77,7 @@ const tableColumns: ColumnsType<AktivitasData> = [
     title: "No.",
     dataIndex: "id",
     render: (_, __, index) => `${++index}.`,
+    width: 48,
   },
   {
     key: "id",
@@ -90,18 +110,3 @@ const tableColumns: ColumnsType<AktivitasData> = [
     ellipsis: { showTitle: true },
   },
 ];
-
-/** TODO: use actual data */
-const tableData: AktivitasData[] = Array(100)
-  .fill(0)
-  .map(() => {
-    return {
-      id: faker.random.alphaNumeric(5),
-      title: faker.name.title(),
-      updatedDate: format(faker.date.past(), "dd MMM yyyy, hh:mm", {
-        locale: idLocale,
-      }),
-      staffCount: faker.datatype.number(),
-      description: faker.random.words(4),
-    };
-  });
