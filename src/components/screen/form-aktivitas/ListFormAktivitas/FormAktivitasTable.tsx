@@ -3,28 +3,28 @@ import { Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { format } from "date-fns";
 import idLocale from "date-fns/locale/id";
+import { useRouter } from "next/router";
 import type { FC } from "react";
 
 export interface IFormAktivitasTable {}
 
 export const FormAktivitasTable: FC<IFormAktivitasTable> = () => {
+  const router = useRouter();
+
   const onPaginationChange = (pageNumber: number, pageSize: number) => {
     /** TODO: trigger data fetching on page change? */
     console.log(`pagination.onChange(${pageNumber}, ${pageSize})`);
   };
 
   const onRowClicked = (record: AktivitasData) => {
-    alert(`Clicked id: ${record.id}`);
+    if (router.isReady) {
+      router.push(`/attendance/form-aktivitas/${record.id}`);
+    }
   };
 
   return (
     <Table<AktivitasData>
-      onRow={(datum, index) => {
-        return {
-          onClick: () => onRowClicked(datum),
-          className: "hover:cursor-pointer",
-        };
-      }}
+      bordered
       size="middle"
       columns={tableColumns}
       dataSource={tableData}
@@ -33,6 +33,12 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = () => {
         position: ["bottomLeft"],
         className: "pt-6",
         onChange: onPaginationChange,
+      }}
+      onRow={(datum, index) => {
+        return {
+          onClick: () => onRowClicked(datum),
+          className: "hover:cursor-pointer",
+        };
       }}
     />
   );
