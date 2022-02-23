@@ -95,7 +95,7 @@ const tableData: AktivitasData[] = Array(100)
       updatedDate: format(faker.date.past(), "dd MMM yyyy, hh:mm", {
         locale: idLocale,
       }),
-      staffCount: faker.random.number(),
+      staffCount: faker.datatype.number(),
       description: faker.random.words(4),
     };
   });
