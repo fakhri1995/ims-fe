@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import idLocale from "date-fns/locale/id";
-import { FC, memo, useMemo } from "react";
+import { FC, memo } from "react";
 
 import AddNewProjectIcon from "assets/vectors/add-new-project.svg";
 import BlobLowerIcon from "assets/vectors/blob-lower.svg";

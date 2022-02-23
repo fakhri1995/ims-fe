@@ -4,27 +4,27 @@ import React from "react";
 
 import ButtonSys from "components/button";
 
-export interface IDetailProjectCard {
+export interface IDetailFormAktivitasCard {
   title: string;
 
-  onUbahProjectButtonClicked: () => void;
+  onUbahButtonClicked: () => void;
 
   description: string;
 
   updatedDate: string;
 
-  staffCount: string | number;
+  staffCount: number;
 
   createdBy: { avatarUrl: string; name: string };
 }
 
-export const DetailProjectCard: FC<IDetailProjectCard> = ({
+export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = ({
   title,
   description,
   updatedDate,
   staffCount,
   createdBy = { avatarUrl: "", name: "" },
-  onUbahProjectButtonClicked,
+  onUbahButtonClicked,
 }) => {
   return (
     <div className="bg-white rounded-md p-6 shadow-md space-y-4 flex flex-col">
@@ -33,7 +33,7 @@ export const DetailProjectCard: FC<IDetailProjectCard> = ({
 
       {/* Button Edit */}
       <div className="self-center">
-        <ButtonSys type="default" onClick={onUbahProjectButtonClicked}>
+        <ButtonSys type="default" onClick={onUbahButtonClicked}>
           <EditOutlined className="mr-2" />
           Ubah Project
         </ButtonSys>

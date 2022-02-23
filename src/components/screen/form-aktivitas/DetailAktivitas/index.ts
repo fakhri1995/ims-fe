@@ -1,0 +1,1 @@
+export { DetailFormAktivitasCard } from "./DetailFormAktivitasCard";

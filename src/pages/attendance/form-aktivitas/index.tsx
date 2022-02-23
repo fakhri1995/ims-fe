@@ -1,13 +1,12 @@
-import { DownloadOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Table } from "antd";
 import type { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
 
-import ButtonSys from "components/button";
 import styles from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
 import {
   AddNewAktivitasButton,
+  FormAktivitasTable,
+  FormAktivitasTableHeader,
   TotalFormAktivitasCard,
 } from "components/screen/form-aktivitas/ListFormAktivitas";
 
@@ -21,8 +20,6 @@ import { ProtectedPageProps } from "types/common";
 const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
   const router = useRouter();
   const pathArr = router.pathname.split("/").slice(1);
-
-  const [searchForm] = Form.useForm();
 
   return (
     <LayoutDashboard
@@ -54,56 +51,16 @@ const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
           {/* Table: Form Aktivitas */}
           <div className="w-full bg-white rounded-md shadow-md p-6">
             {/* Table header */}
-            <div className="flex items-center justify-between overflow-x-auto">
-              {/* Title */}
-              <span className="text-mono30 font-bold text-lg">
-                Form Aktivitas
-              </span>
+            <FormAktivitasTableHeader
+              onSearchTriggered={(searchValue) => {
+                alert(`Search value: ${searchValue}`);
+              }}
+            />
 
-              {/* Buttons and Input */}
-              <div className="flex space-x-4">
-                <ButtonSys type="default">
-                  <DownloadOutlined
-                    className="mr-2"
-                    onClick={
-                      /** TODO */ () => {
-                        console.log("Table Downloaded...");
-                      }
-                    }
-                  />
-                  Unduh Tabel
-                </ButtonSys>
-
-                <Form
-                  form={searchForm}
-                  layout="inline"
-                  onFinish={
-                    /** TODO */ () => {
-                      console.log(searchForm.getFieldValue("search"));
-                      console.log("Finishing the form...");
-                    }
-                  }
-                >
-                  <Form.Item name="search">
-                    <Input placeholder="Cari..." />
-                  </Form.Item>
-
-                  <Form.Item noStyle>
-                    <Button
-                      htmlType="submit"
-                      className="rounded-md bg-primary100 hover:bg-primary75 focus:bg-primary100 hover:border-primary75 focus:border-primary100 hover:text-white focus:text-white text-white font-medium flex items-center px-6"
-                      icon={<SearchOutlined />}
-                    >
-                      Cari
-                    </Button>
-                  </Form.Item>
-                </Form>
-              </div>
+            {/* Table */}
+            <div className="my-6">
+              <FormAktivitasTable />
             </div>
-            {/* End: Table header */}
-
-            {/* TODO: Table */}
-            <Table />
           </div>
         </div>
       </>
