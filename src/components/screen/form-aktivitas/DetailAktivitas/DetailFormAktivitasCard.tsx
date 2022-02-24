@@ -105,12 +105,18 @@ export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
 );
 DetailFormAktivitasCard.displayName = "DetailFormAktivitasCard";
 
+/**
+ * @private
+ */
 interface IDetailInformation {
   label: string;
   children: ReactNode | string;
   loading?: boolean;
 }
 
+/**
+ * @private
+ */
 const DetailInformation: FC<IDetailInformation> = ({
   label,
   children,

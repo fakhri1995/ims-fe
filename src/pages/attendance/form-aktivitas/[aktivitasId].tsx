@@ -6,6 +6,7 @@ import styles from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
 import {
   AktivitasTableInfoCard,
+  AktivitasUserListEditableCard,
   DetailFormAktivitasCard,
 } from "components/screen/form-aktivitas/DetailAktivitas";
 
@@ -48,9 +49,9 @@ const ProjectsDetailPage: NextPage<ProtectedPageProps> = ({
         </div>
 
         {/* Second Column */}
-        <div className="w-full md:w-2/3 h-4">
+        <div className="w-full md:w-2/3 h-4 space-y-6">
           {/* Staff (editable) card */}
-          <div></div>
+          <AktivitasUserListEditableCard aktivitasId={+aktivitasId} />
 
           {/* Aktivitas info card */}
           <AktivitasTableInfoCard aktivitasId={+aktivitasId} />
