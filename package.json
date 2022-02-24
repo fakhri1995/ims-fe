@@ -8,7 +8,8 @@
     "build:analyze": "ANALYZE=true next build",
     "start": "next start -p $PORT",
     "format": "prettier --write \"src/**/*.{js,ts,jsx,tsx,css,scss}\"",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "new:component": "plop component"
   },
   "lint-staged": {
     "src/**/*.{js,ts,jsx,tsx,css,scss}": "prettier --write"
@@ -60,6 +61,7 @@
     "autoprefixer": "^10.4.2",
     "husky": "^7.0.4",
     "lint-staged": "^12.3.3",
+    "plop": "^3.0.5",
     "postcss": "^8.4.6",
     "prettier": "^2.5.1",
     "sass": "^1.49.7",
