@@ -757,6 +757,15 @@ const KonfigurasiPart = ({
                     onChangeAssetType(extra.allCheckedNodes[0].node.props.id);
                   }
                 }}
+                showSearch
+                treeNodeFilterProp="title"
+                filterTreeNode={(search, item) => {
+                  /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                  /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                  return (
+                    item.title.toLowerCase().indexOf(search.toLowerCase()) >= 0
+                  );
+                }}
               />
             </div>
             <div className="col-span-3 mr-1">
@@ -885,6 +894,15 @@ const KonfigurasiPart = ({
             <TreeSelect
               treeData={datatable3}
               defaultValue={datachanged.key}
+              showSearch
+              treeNodeFilterProp="title"
+              filterTreeNode={(search, item) => {
+                /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                return (
+                  item.title.toLowerCase().indexOf(search.toLowerCase()) >= 0
+                );
+              }}
             ></TreeSelect>
             <style jsx>
               {`
@@ -926,6 +944,15 @@ const KonfigurasiPart = ({
                 });
               }}
               treeData={datareplacements}
+              showSearch
+              treeNodeFilterProp="title"
+              filterTreeNode={(search, item) => {
+                /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                return (
+                  item.title.toLowerCase().indexOf(search.toLowerCase()) >= 0
+                );
+              }}
             >
               {/* {
                                 datareplacements.map((doc, idx) => {
@@ -1658,6 +1685,17 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                       });
                       setsubloctrig(value);
                     }}
+                    showSearch
+                    treeNodeFilterProp="title"
+                    filterTreeNode={(search, item) => {
+                      /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                      /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                      return (
+                        item.title
+                          .toLowerCase()
+                          .indexOf(search.toLowerCase()) >= 0
+                      );
+                    }}
                   ></TreeSelect>
                 </div>
               )}
@@ -1733,6 +1771,15 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                   } else {
                     setdataApiadd({ ...dataApiadd, connected_ids: value });
                   }
+                }}
+                showSearch
+                treeNodeFilterProp="title"
+                filterTreeNode={(search, item) => {
+                  /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                  /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                  return (
+                    item.title.toLowerCase().indexOf(search.toLowerCase()) >= 0
+                  );
                 }}
               ></TreeSelect>
             </div>
@@ -3371,6 +3418,17 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                         : null;
                       setdisabledusage(false);
                     }}
+                    showSearch
+                    treeNodeFilterProp="title"
+                    filterTreeNode={(search, item) => {
+                      /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                      /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                      return (
+                        item.title
+                          .toLowerCase()
+                          .indexOf(search.toLowerCase()) >= 0
+                      );
+                    }}
                   ></TreeSelect>
                 ) : (
                   <Select
@@ -3419,6 +3477,17 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                         ...changeusage,
                         detail_connected_id: value,
                       });
+                    }}
+                    showSearch
+                    treeNodeFilterProp="title"
+                    filterTreeNode={(search, item) => {
+                      /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                      /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                      return (
+                        item.title
+                          .toLowerCase()
+                          .indexOf(search.toLowerCase()) >= 0
+                      );
                     }}
                   ></TreeSelect>
                 </div>

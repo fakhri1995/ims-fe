@@ -648,6 +648,17 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                         modelvalue !== null ? setmodelvalue(null) : null;
                       }
                     }}
+                    showSearch
+                    treeNodeFilterProp="title"
+                    filterTreeNode={(search, item) => {
+                      /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                      /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                      return (
+                        item.title
+                          .toLowerCase()
+                          .indexOf(search.toLowerCase()) >= 0
+                      );
+                    }}
                   />
                 </div>
                 {praloading2 ? (
@@ -736,6 +747,17 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                         );
                         setnamaasset(extra.allCheckedNodes[0].node.props.title);
                       }
+                    }}
+                    showSearch
+                    treeNodeFilterProp="title"
+                    filterTreeNode={(search, item) => {
+                      /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                      /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                      return (
+                        item.title
+                          .toLowerCase()
+                          .indexOf(search.toLowerCase()) >= 0
+                      );
                     }}
                   />
                 </div>
