@@ -1,6 +1,7 @@
 import type { AxiosInstance } from "axios";
 import QueryString from "qs";
 
+import { IGetAttendanceForm } from "types/api/attendances/get-attendance-form";
 import type {
   IGetAttendanceForms,
   IGetAttendanceFormsCriteria,
@@ -24,6 +25,20 @@ export class FormAktivitasService {
 
     return await axiosClient.get<IGetAttendanceForms>(
       "/getAttendanceForms" + querySearchCriteria
+    );
+  }
+
+  /**
+   * @see {FormAktivitasQueryKeys.FIND} Query key attach with `aktivitasId` (e.g. [FIND, aktivitasId]).
+   */
+  static async findOne(axiosClient: AxiosInstance, aktivitasId: number) {
+    const querySearchCriteria = QueryString.stringify(
+      { id: aktivitasId },
+      { addQueryPrefix: true }
+    );
+
+    return await axiosClient.get<IGetAttendanceForm>(
+      "/getAttendanceForm" + querySearchCriteria
     );
   }
 }

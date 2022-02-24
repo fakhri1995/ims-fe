@@ -1,72 +1,102 @@
 import { EditOutlined } from "@ant-design/icons";
+import { Button, Skeleton } from "antd";
+import { format } from "date-fns";
+import idLocale from "date-fns/locale/id";
 import { FC, ReactNode, memo } from "react";
 import React from "react";
+import { useQuery } from "react-query";
 
-import ButtonSys from "components/button";
+import { useAxiosClient } from "hooks/use-axios-client";
+
+import {
+  FormAktivitasQueryKeys,
+  FormAktivitasService,
+} from "services/form-aktivitas";
 
 export interface IDetailFormAktivitasCard {
-  title: string;
-
   onUbahButtonClicked: () => void;
 
-  description: string;
-
-  updatedDate: string;
-
-  staffCount: number;
-
-  createdBy: { avatarUrl: string; name: string };
+  aktivitasId?: number;
 }
 
 export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
-  ({
-    title,
-    description,
-    updatedDate,
-    staffCount,
-    createdBy = { avatarUrl: "", name: "" },
-    onUbahButtonClicked,
-  }) => {
+  ({ onUbahButtonClicked, aktivitasId }) => {
+    const { axiosClient } = useAxiosClient();
+    const { data, isLoading } = useQuery(
+      [FormAktivitasQueryKeys.FIND, aktivitasId],
+      () => FormAktivitasService.findOne(axiosClient, aktivitasId),
+      {
+        select: (record) => {
+          /** Reformart date value and replace profile_image with null if there is no image atm */
+          return {
+            ...record.data.data,
+            updated_at: format(
+              new Date(record.data.data.updated_at.toString()),
+              "dd MMMM yyyy",
+              { locale: idLocale }
+            ),
+            creator: {
+              ...record.data.data.creator,
+              profile_image:
+                record.data.data.creator.profile_image === "-"
+                  ? null
+                  : record.data.data.creator.profile_image,
+            },
+          };
+        },
+      }
+    );
+
     return (
       <div className="bg-white rounded-md p-6 shadow-md space-y-4 flex flex-col">
         {/* Title */}
         <span className="text-center text-mono30 font-bold text-lg">
-          {title}
+          {isLoading && <Skeleton active round paragraph={{ rows: 1 }} />}
+          {!isLoading && data?.name}
         </span>
 
         {/* Button Edit */}
         <div className="self-center">
-          <ButtonSys type="default" onClick={onUbahButtonClicked}>
+          <Button
+            type="ghost"
+            className="text-primary100 border-primary100 hover:text-primary75 hover:border-primary75 focus:text-primary75 focus:border-primary75 rounded-md flex items-center py-2 px-6"
+            disabled={isLoading}
+            onClick={onUbahButtonClicked}
+          >
             <EditOutlined className="mr-2" />
             Ubah Project
-          </ButtonSys>
+          </Button>
         </div>
 
         {/* Deskripsi */}
-        <DetailInformation label="Deskripsi Project">
-          {description}
+        <DetailInformation label="Deskripsi Project" loading={isLoading}>
+          {data?.description}
         </DetailInformation>
 
         {/* Tanggal Diubah */}
-        <DetailInformation label="Tanggal Diubah">
-          {updatedDate}
+        <DetailInformation label="Tanggal Diubah" loading={isLoading}>
+          {data?.updated_at}
         </DetailInformation>
 
         {/* Jumlah Staff */}
-        <DetailInformation label="Jumlah Staff">{staffCount}</DetailInformation>
+        <DetailInformation label="Jumlah Staff" loading={isLoading}>
+          {data?.users.length}
+        </DetailInformation>
 
         {/* Nama Pembuat */}
-        <DetailInformation label="Nama Pembuat">
+        <DetailInformation label="Nama Pembuat" loading={isLoading}>
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 rounded-full bg-mono80">
-              <img
-                className="w-full h-full bg-cover"
-                src={createdBy.avatarUrl}
-                alt="Avatar"
-              />
+              {data?.creator.profile_image && (
+                <img
+                  className="w-full h-full bg-cover"
+                  src={data?.creator.profile_image}
+                  alt="Avatar"
+                />
+              )}
             </div>
 
-            <span>{createdBy.name}</span>
+            <span>{data?.creator.name}</span>
           </div>
         </DetailInformation>
       </div>
@@ -78,16 +108,27 @@ DetailFormAktivitasCard.displayName = "DetailFormAktivitasCard";
 interface IDetailInformation {
   label: string;
   children: ReactNode | string;
+  loading?: boolean;
 }
 
-const DetailInformation: FC<IDetailInformation> = ({ label, children }) => {
+const DetailInformation: FC<IDetailInformation> = ({
+  label,
+  children,
+  loading = true,
+}) => {
   return (
     <div className="space-y-2">
       <span className="text-mono80 font-medium text-xs">{label}</span>
       {!React.isValidElement(children) ? (
-        <p className="text-mono30 text-sm">{children}</p>
+        <>
+          {loading && <Skeleton round active paragraph={{ rows: 1 }} />}
+          {!loading && <p className="text-mono30 text-sm">{children}</p>}
+        </>
       ) : (
-        children
+        <>
+          {loading && <Skeleton avatar round active paragraph={{ rows: 1 }} />}
+          {!loading && children}
+        </>
       )}
     </div>
   );
