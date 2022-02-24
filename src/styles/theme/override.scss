@@ -243,3 +243,18 @@ body {
 .slick-next:before {
   color: black !important;
 }
+
+/* TREESELECT */
+.ant-select-tree
+  .ant-select-tree-node-content-wrapper.ant-select-tree-node-selected {
+  /** Dropdown tree item yang ter-select */
+  background-color: #c4d8c7;
+}
+.ant-select-tree
+  .ant-select-tree-treenode:not(.ant-select-tree
+    .ant-select-tree-treenode-disabled).filter-node
+  .ant-select-tree-title {
+  /** Dropdown tree item yang ter-highlight */
+  color: #35763b;
+  font-weight: 600;
+}

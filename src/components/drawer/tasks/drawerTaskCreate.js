@@ -494,6 +494,14 @@ const DrawerTaskCreate = ({
               treeData={datalocations}
               treeDefaultExpandAll
               value={datacreate.location_id}
+              treeNodeFilterProp="title"
+              filterTreeNode={(search, item) => {
+                /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                return (
+                  item.title.toLowerCase().indexOf(search.toLowerCase()) >= 0
+                );
+              }}
             ></TreeSelect>
           </div>
           {datacreate.location_id !== null ? (
@@ -516,6 +524,14 @@ const DrawerTaskCreate = ({
                 treeData={datasublocs}
                 treeDefaultExpandAll
                 value={datacreate.subloc_id}
+                treeNodeFilterProp="title"
+                filterTreeNode={(search, item) => {
+                  /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                  /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                  return (
+                    item.title.toLowerCase().indexOf(search.toLowerCase()) >= 0
+                  );
+                }}
               ></TreeSelect>
             </div>
           ) : null}
