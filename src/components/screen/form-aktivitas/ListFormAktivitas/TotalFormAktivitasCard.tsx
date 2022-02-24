@@ -1,22 +1,40 @@
+import { Spin } from "antd";
 import { FC, memo } from "react";
+import { useQuery } from "react-query";
 
-export interface ITotalFormAktivitasCard {
-  totalFormAktivitasCount: number;
-}
+import { useAxiosClient } from "hooks/use-axios-client";
 
-export const TotalFormAktivitasCard: FC<ITotalFormAktivitasCard> = memo(
-  ({ totalFormAktivitasCount }) => {
-    return (
-      <div className="p-6 flex items-center justify-between rounded-md bg-white shadow-md">
-        <span className="font-bold text-lg text-mono30">
-          Total Form Aktivitas
-        </span>
+import {
+  FormAktivitasQueryKeys,
+  FormAktivitasService,
+} from "services/form-aktivitas";
 
-        <span className="text-5xl text-primary100">
-          {totalFormAktivitasCount}
-        </span>
-      </div>
-    );
-  }
-);
+export interface ITotalFormAktivitasCard {}
+
+export const TotalFormAktivitasCard: FC<ITotalFormAktivitasCard> = memo(() => {
+  const { axiosClient } = useAxiosClient();
+  const { data, isLoading, isError } = useQuery(
+    FormAktivitasQueryKeys.FIND,
+    () => FormAktivitasService.find(axiosClient)
+  );
+
+  return (
+    <div className="p-6 flex items-center justify-between rounded-md bg-white shadow-md">
+      <span className="font-bold text-lg text-mono30">
+        Total Form Aktivitas
+      </span>
+
+      <span className="text-5xl text-primary100">
+        {!isError ? (
+          <>
+            {isLoading && <Spin />}
+            {data && data.data.data.total}
+          </>
+        ) : (
+          "-"
+        )}
+      </span>
+    </div>
+  );
+});
 TotalFormAktivitasCard.displayName = "TotalFormAktivitasCard";

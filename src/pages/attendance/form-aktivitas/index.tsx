@@ -33,7 +33,7 @@ const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
         <div className="flex mb-6 md:space-x-6 space-y-6 md:space-y-0 flex-wrap md:flex-nowrap">
           {/* Total Project */}
           <div className="w-full md:w-1/2">
-            <TotalFormAktivitasCard totalFormAktivitasCount={120} />
+            <TotalFormAktivitasCard />
           </div>
 
           {/* Create new project */}
