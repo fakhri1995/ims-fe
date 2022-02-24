@@ -446,6 +446,14 @@ const DrawerTicketCreate = ({
                 treeData={dataloctickets}
                 treeDefaultExpandAll
                 value={datapayload.location_id}
+                treeNodeFilterProp="title"
+                filterTreeNode={(search, item) => {
+                  /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                  /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                  return (
+                    item.title.toLowerCase().indexOf(search.toLowerCase()) >= 0
+                  );
+                }}
               ></TreeSelect>
             </div>
           </div>

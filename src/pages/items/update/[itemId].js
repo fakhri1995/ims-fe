@@ -442,6 +442,17 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                     onChange={(value) => {
                       setupdatedata({ ...updatedata, location: value });
                     }}
+                    showSearch
+                    treeNodeFilterProp="title"
+                    filterTreeNode={(search, item) => {
+                      /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                      /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                      return (
+                        item.title
+                          .toLowerCase()
+                          .indexOf(search.toLowerCase()) >= 0
+                      );
+                    }}
                   ></TreeSelect>
                 </Form.Item>
                 <Form.Item name="vendor_id" label="Vendor">

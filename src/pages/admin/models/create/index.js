@@ -109,7 +109,9 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                                   <div className="flex mb-1">
                                     <Checkbox
                                       disabled
-                                      style={{ marginRight: `0.5rem` }}
+                                      style={{
+                                        marginRight: `0.5rem`,
+                                      }}
                                     ></Checkbox>
                                     <p className="mb-0">{doc3}</p>
                                   </div>
@@ -918,6 +920,17 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                         }
                       }}
                       allowClear
+                      showSearch
+                      treeNodeFilterProp="title"
+                      filterTreeNode={(search, item) => {
+                        /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                        /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                        return (
+                          item.title
+                            .toLowerCase()
+                            .indexOf(search.toLowerCase()) >= 0
+                        );
+                      }}
                     />
                   </Form.Item>
                   <Form.Item
@@ -1550,7 +1563,9 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                             >
                               <div className="flex items-center mr-4 hover:text-red-500 cursor-pointer">
                                 <DeleteOutlined
-                                  style={{ fontSize: `1.25rem` }}
+                                  style={{
+                                    fontSize: `1.25rem`,
+                                  }}
                                 ></DeleteOutlined>
                               </div>
                             </Popconfirm>
@@ -2607,6 +2622,16 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                     }
                   }}
                   allowClear
+                  showSearch
+                  treeNodeFilterProp="title"
+                  filterTreeNode={(search, item) => {
+                    /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                    /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                    return (
+                      item.title.toLowerCase().indexOf(search.toLowerCase()) >=
+                      0
+                    );
+                  }}
                 />
               </Form.Item>
               <Form.Item
@@ -3346,7 +3371,9 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                             >
                               <div className="flex items-center mr-4 hover:text-red-500 cursor-pointer">
                                 <DeleteOutlined
-                                  style={{ fontSize: `1.25rem` }}
+                                  style={{
+                                    fontSize: `1.25rem`,
+                                  }}
                                 ></DeleteOutlined>
                               </div>
                             </Popconfirm>
