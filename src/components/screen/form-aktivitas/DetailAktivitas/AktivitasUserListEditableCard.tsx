@@ -2,9 +2,10 @@ import {
   CloseOutlined,
   LeftOutlined,
   SearchOutlined,
+  UserAddOutlined,
   UserDeleteOutlined,
 } from "@ant-design/icons";
-import { Button, Form, Input, Spin } from "antd";
+import { Button, Form, Input, Pagination, Spin } from "antd";
 import { FC, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 
@@ -56,6 +57,14 @@ export const AktivitasUserListEditableCard: FC<
 
   const triggerChangePhase = (phase: CardPhaseType) => {
     setCardPhase(phase);
+
+    /** Check for "remove" phase and apply `isOnRemoveState` to true */
+    setStaffData((prev) =>
+      [...prev].map((staffData) => ({
+        ...staffData,
+        isOnRemoveState: phase === "remove",
+      }))
+    );
   };
 
   const onSearchStaff = (searchValue: string) => {
@@ -84,17 +93,35 @@ export const AktivitasUserListEditableCard: FC<
             <span className="text-mono50 animate-pulse">Memuat data...</span>
           </>
         )}
+
         {/* Staff Item */}
-        {!isLoading &&
-          staffData.map((props, idx) => (
-            <StaffGridItem
-              key={idx}
-              onRemoveStaff={(staffId) => {
-                alert(`Try to remove staff with ID: ${staffId}`);
-              }}
-              {...props}
-            />
-          ))}
+        {!isLoading && (
+          <>
+            {staffData.map((props, idx) => (
+              <StaffGridItem
+                key={idx}
+                onRemoveStaff={(staffId) => {
+                  alert(`Try to remove staff with ID: ${staffId}`);
+                }}
+                {...props}
+              />
+            ))}
+
+            {cardPhase === "default" && (
+              <div
+                className="flex flex-col items-center space-y-3 hover:cursor-pointer"
+                onClick={() => triggerChangePhase("add")}
+              >
+                <Button className="rounded-full bg-primary100/25 w-12 h-12 flex items-center justify-center hover:border-primary100 focus:border-primary100">
+                  <UserAddOutlined className="text-xl text-primary100" />
+                </Button>
+
+                <span className="text-mono30">Tambah Staff</span>
+              </div>
+            )}
+          </>
+        )}
+
         {/* {!isLoading && (
                     Array(10)
                         .fill(0)
@@ -115,6 +142,92 @@ export const AktivitasUserListEditableCard: FC<
       </div>
 
       {/* Pagination and Action button */}
+      <CardFooter
+        cardPhase={cardPhase}
+        onBatalkanClicked={() => triggerChangePhase("default")}
+        onDeleteStaffClicked={() => {}}
+        onAddStaffClicked={() => {}}
+      />
+    </div>
+  );
+};
+
+interface ICardFooter {
+  cardPhase: CardPhaseType;
+  onBatalkanClicked: () => void;
+
+  onDeleteStaffClicked: () => void;
+  onAddStaffClicked: () => void;
+}
+
+const CardFooter: FC<ICardFooter> = ({
+  cardPhase,
+  onBatalkanClicked,
+  onDeleteStaffClicked,
+  onAddStaffClicked,
+}) => {
+  const baseButtonClassName =
+    "rounded-md text-xs font-medium py-2 px-6 flex items-center";
+  const batalkanButtonClassName = clsx(baseButtonClassName, {
+    "text-state1 border-state1 hover:text-state1 hover:border-state1 focus:text-state1 focus:border-state1":
+      cardPhase === "remove",
+    "text-primary100 border-primary100 hover:text-primary100 hover:border-primary100 focus:text-primary100 focus:border-primary100":
+      cardPhase === "add",
+  });
+
+  const actionButtonClassName = clsx(baseButtonClassName, {
+    "text-white hover:text-white focus:text-white bg-state1 border-state1 hover:bg-state12 hover:border-state12 focus:bg-state12 focus:border-state12":
+      cardPhase === "remove",
+    "text-white hover:text-white focus:text-white bg-primary100 border-primary100 hover:bg-primary75 hover:border-primary75 focus:bg-primary75 focus:border-primary75":
+      cardPhase === "add",
+  });
+
+  const onActionButtonClicked = () => {
+    if (cardPhase === "add") {
+      onAddStaffClicked();
+    } else {
+      onDeleteStaffClicked();
+    }
+  };
+
+  return (
+    <div className="flex justify-between">
+      {/* LHS: Pagination */}
+      <div>
+        {cardPhase !== "remove" && (
+          <Pagination
+            defaultCurrent={1}
+            total={50}
+            pageSize={10}
+            showSizeChanger={false}
+          />
+        )}
+      </div>
+
+      {/* RHS: Acttion Button */}
+      {cardPhase !== "default" && (
+        <div className="flex space-x-4">
+          <Button
+            type="ghost"
+            className={batalkanButtonClassName}
+            onClick={onBatalkanClicked}
+          >
+            Batalkan
+          </Button>
+
+          <Button
+            className={actionButtonClassName}
+            onClick={onActionButtonClicked}
+          >
+            {cardPhase === "add" ? (
+              <UserAddOutlined className="text-base" />
+            ) : (
+              <UserDeleteOutlined className="text-base" />
+            )}
+            {cardPhase === "add" ? "Tambah" : "Hapus Terpilih"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
@@ -220,7 +333,10 @@ const CardHeader: FC<ICardHeader> = ({
 /**
  * @private
  */
-type StaffGridItemType = Pick<User, "id" | "nip" | "name" | "profile_image">;
+type StaffGridItemType = Pick<
+  User,
+  "id" | "name" | "profile_image" | "position"
+>;
 interface IStaffGridItem {
   isOnRemoveState?: boolean;
   onRemoveStaff: (staffId: number) => void;
@@ -237,7 +353,7 @@ const StaffGridItem: FC<StaffGridItemType & IStaffGridItem> = ({
   ...staff
 }) => {
   const gridItemClassName = clsx(
-    "flex flex-col justify-center items-center space-y-3",
+    "flex flex-col justify-start items-center space-y-3",
     {
       "hover:cursor-pointer": isOnRemoveState,
     }
@@ -273,8 +389,8 @@ const StaffGridItem: FC<StaffGridItemType & IStaffGridItem> = ({
       {/* Staff name */}
       <span className="block text-mono30 text-center">{staff.name}</span>
 
-      {/* Staff ID */}
-      <span className="block text-mono50 text-xs">{staff.nip}</span>
+      {/* Staff Position */}
+      <span className="block text-mono50 text-xs">{staff.position}</span>
     </div>
   );
 };
