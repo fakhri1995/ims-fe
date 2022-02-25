@@ -46,7 +46,7 @@ export const FormAktivitasTableHeader: FC<IFormAktivitasTableHeader> = ({
           <Form.Item noStyle>
             <Button
               htmlType="submit"
-              className="rounded-md bg-primary100 hover:bg-primary75 focus:bg-primary100 hover:border-primary75 focus:border-primary100 hover:text-white focus:text-white text-white font-medium flex items-center px-6"
+              className="mig-button mig-button--solid-primary"
               icon={<SearchOutlined />}
             >
               Cari

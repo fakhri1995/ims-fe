@@ -152,86 +152,6 @@ export const AktivitasUserListEditableCard: FC<
   );
 };
 
-interface ICardFooter {
-  cardPhase: CardPhaseType;
-  onBatalkanClicked: () => void;
-
-  onDeleteStaffClicked: () => void;
-  onAddStaffClicked: () => void;
-}
-
-const CardFooter: FC<ICardFooter> = ({
-  cardPhase,
-  onBatalkanClicked,
-  onDeleteStaffClicked,
-  onAddStaffClicked,
-}) => {
-  const baseButtonClassName =
-    "rounded-md text-xs font-medium py-2 px-6 flex items-center";
-  const batalkanButtonClassName = clsx(baseButtonClassName, {
-    "text-state1 border-state1 hover:text-state1 hover:border-state1 focus:text-state1 focus:border-state1":
-      cardPhase === "remove",
-    "text-primary100 border-primary100 hover:text-primary100 hover:border-primary100 focus:text-primary100 focus:border-primary100":
-      cardPhase === "add",
-  });
-
-  const actionButtonClassName = clsx(baseButtonClassName, {
-    "text-white hover:text-white focus:text-white bg-state1 border-state1 hover:bg-state12 hover:border-state12 focus:bg-state12 focus:border-state12":
-      cardPhase === "remove",
-    "text-white hover:text-white focus:text-white bg-primary100 border-primary100 hover:bg-primary75 hover:border-primary75 focus:bg-primary75 focus:border-primary75":
-      cardPhase === "add",
-  });
-
-  const onActionButtonClicked = () => {
-    if (cardPhase === "add") {
-      onAddStaffClicked();
-    } else {
-      onDeleteStaffClicked();
-    }
-  };
-
-  return (
-    <div className="flex justify-between">
-      {/* LHS: Pagination */}
-      <div>
-        {cardPhase !== "remove" && (
-          <Pagination
-            defaultCurrent={1}
-            total={50}
-            pageSize={10}
-            showSizeChanger={false}
-          />
-        )}
-      </div>
-
-      {/* RHS: Acttion Button */}
-      {cardPhase !== "default" && (
-        <div className="flex space-x-4">
-          <Button
-            type="ghost"
-            className={batalkanButtonClassName}
-            onClick={onBatalkanClicked}
-          >
-            Batalkan
-          </Button>
-
-          <Button
-            className={actionButtonClassName}
-            onClick={onActionButtonClicked}
-          >
-            {cardPhase === "add" ? (
-              <UserAddOutlined className="text-base" />
-            ) : (
-              <UserDeleteOutlined className="text-base" />
-            )}
-            {cardPhase === "add" ? "Tambah" : "Hapus Terpilih"}
-          </Button>
-        </div>
-      )}
-    </div>
-  );
-};
-
 /**
  * Terdapat 3 phase:
  *
@@ -297,7 +217,7 @@ const CardHeader: FC<ICardHeader> = ({
         {cardPhase === "default" && (
           <Button
             type="ghost"
-            className="rounded-md text-state1 hover:text-state12 focus:text-state12 font-medium border-state1 hover:border-state12 focus:border-state12 flex items-center"
+            className="mig-button mig-button--outlined-danger"
             onClick={onRemoveButtonClicked}
           >
             <UserDeleteOutlined />
@@ -318,7 +238,7 @@ const CardHeader: FC<ICardHeader> = ({
           <Form.Item noStyle>
             <Button
               htmlType="submit"
-              className="rounded-md bg-primary100 hover:bg-primary75 focus:bg-primary100 hover:border-primary75 focus:border-primary100 hover:text-white focus:text-white text-white font-medium flex items-center px-6"
+              className="mig-button mig-button--solid-primary"
               icon={<SearchOutlined />}
             >
               Cari
@@ -391,6 +311,87 @@ const StaffGridItem: FC<StaffGridItemType & IStaffGridItem> = ({
 
       {/* Staff Position */}
       <span className="block text-mono50 text-xs">{staff.position}</span>
+    </div>
+  );
+};
+
+/**
+ * @private
+ */
+interface ICardFooter {
+  cardPhase: CardPhaseType;
+  onBatalkanClicked: () => void;
+
+  onDeleteStaffClicked: () => void;
+  onAddStaffClicked: () => void;
+}
+
+/**
+ * @private
+ */
+const CardFooter: FC<ICardFooter> = ({
+  cardPhase,
+  onBatalkanClicked,
+  onDeleteStaffClicked,
+  onAddStaffClicked,
+}) => {
+  const baseButtonClassName = "mig-button";
+  const batalkanButtonClassName = clsx(baseButtonClassName, {
+    "mig-button--outlined-danger": cardPhase === "remove",
+    "mig-button--outlined-primary": cardPhase === "add",
+  });
+
+  const actionButtonClassName = clsx(baseButtonClassName, {
+    "mig-button--solid-danger": cardPhase === "remove",
+    "mig-button--solid-primary": cardPhase === "add",
+  });
+
+  const onActionButtonClicked = () => {
+    if (cardPhase === "add") {
+      onAddStaffClicked();
+    } else {
+      onDeleteStaffClicked();
+    }
+  };
+
+  return (
+    <div className="flex justify-between">
+      {/* LHS: Pagination */}
+      <div>
+        {cardPhase !== "remove" && (
+          <Pagination
+            defaultCurrent={1}
+            total={50}
+            pageSize={10}
+            showSizeChanger={false}
+          />
+        )}
+      </div>
+
+      {/* RHS: Acttion Button */}
+      {cardPhase !== "default" && (
+        <div className="flex space-x-4">
+          <Button
+            type="ghost"
+            className={batalkanButtonClassName}
+            onClick={onBatalkanClicked}
+          >
+            Batalkan
+          </Button>
+
+          <Button
+            className={actionButtonClassName}
+            onClick={onActionButtonClicked}
+          >
+            {cardPhase === "add" ? (
+              <UserAddOutlined className="text-base" />
+            ) : (
+              <UserDeleteOutlined className="text-base" />
+            )}
+            {cardPhase === "add" ? "Tambah" : "Hapus Terpilih"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

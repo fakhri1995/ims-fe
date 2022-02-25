@@ -59,7 +59,7 @@ export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
         <div className="self-center">
           <Button
             type="ghost"
-            className="text-primary100 border-primary100 hover:text-primary75 hover:border-primary75 focus:text-primary75 focus:border-primary75 rounded-md flex items-center py-2 px-6"
+            className="mig-button mig-button--outlined-primary"
             disabled={isLoading}
             onClick={onUbahButtonClicked}
           >
