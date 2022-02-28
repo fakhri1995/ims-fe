@@ -5,7 +5,7 @@ import { Breadcrumb, Spin } from "antd";
 import jscookie from "js-cookie";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import LayoutMenu from "./layout-menu";
 import LayoutMenuHeader from "./layout-menu-header";
@@ -24,6 +24,7 @@ function LayoutDashboard({
   const rt = useRouter();
   var rootBreadcrumb = "";
   var childBreacrumb = [];
+
   if (pathArr) {
     if (pathArr[0] === "dashboard") {
       rootBreadcrumb = pathArr[1];
@@ -35,21 +36,27 @@ function LayoutDashboard({
       }
     }
   }
+
   const childBreacrumbCC = childBreacrumb.map((doc, idx) => {
     return doc[0].toUpperCase() + doc.slice(1);
   });
+
   const childBreacrumbDD = childBreacrumbCC;
+  console.log(childBreacrumbDD);
   const { Sider, Content, Header } = Layout;
   const [coll, setColl] = useState(true);
   const [collsmall, setCollsmall] = useState(true);
   const [tinggi, setTinggi] = useState(90);
   const [loadingspin, setloadingspin] = useState(false);
+
   const handleColl = () => {
     setColl((prev) => !prev);
   };
+
   const handleCollSmall = () => {
     setCollsmall((prev) => !prev);
   };
+
   const handleLogout = () => {
     setloadingspin(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/logout`, {
@@ -73,14 +80,48 @@ function LayoutDashboard({
         console.log(err.message);
       });
   };
+
   useEffect(() => {
     var h = window.innerHeight;
     setTinggi(h);
   }, []);
   var pathBuilder = "";
+
+  /**
+   * NOTE: just for this one... I don't have enough time to understand how previous developers built this thing :(
+   *
+   * Maybe I'll rewrite this in the future.
+   */
+  const attendanceFormAktivitasBreadcrumb = useMemo(() => {
+    if (childBreacrumbDD[0] !== "Attendance") {
+      return null;
+    }
+
+    const rootPathName = "Form Aktivitas";
+
+    // ['Attendance', 'Form-aktivitas']
+    if (childBreacrumbDD.length === 2) {
+      return <strong>{rootPathName}</strong>;
+    }
+
+    return (
+      <>
+        <Breadcrumb.Item>
+          <Link href="/attendance/form-aktivitas">
+            <a>{rootPathName}</a>
+          </Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>
+          <strong>Detail Form Aktivitas</strong>
+        </Breadcrumb.Item>
+      </>
+    );
+  }, [childBreacrumbDD]);
+
   return (
     <Spin spinning={loadingspin}>
       <div className=" min-h-screen flex">
+        {/* Left sider */}
         <LayoutMenu
           dataProfile={dataProfile}
           handleCollSmall={handleCollSmall}
@@ -88,7 +129,9 @@ function LayoutDashboard({
           coll={coll}
           collsmall={collsmall}
           st={st}
-        ></LayoutMenu>
+        />
+
+        {/* Header + Main Content */}
         <div className="h-auto w-full">
           <Header
             className="site-layout-background"
@@ -122,6 +165,7 @@ function LayoutDashboard({
                   className={st.trigger}
                 ></MenuFoldOutlined>
               )}
+
               {collsmall ? (
                 <MenuUnfoldOutlined
                   onClick={handleCollSmall}
@@ -139,6 +183,7 @@ function LayoutDashboard({
                   className={st.triggerSmall}
                 ></MenuFoldOutlined>
               )}
+
               {pathArr ? (
                 <Breadcrumb
                   separator=">"
@@ -201,6 +246,7 @@ function LayoutDashboard({
                       })}
                     </>
                   )}
+
                   {childBreacrumbDD[0] === "Tasks" && (
                     <>
                       {childBreacrumbDD.map((doc, idx) => {
@@ -263,6 +309,7 @@ function LayoutDashboard({
                       })}
                     </>
                   )}
+
                   {childBreacrumbDD[0] === "Company" && (
                     <>
                       {childBreacrumbDD.map((doc, idx) => {
@@ -363,9 +410,15 @@ function LayoutDashboard({
                       })}
                     </>
                   )}
+
+                  {/* {childBreacrumbDD[0] === "Attendance" && (
+                    <Breadcrumb.Item className="font-bold">Form Aktivitas</Breadcrumb.Item>
+                  )} */}
+                  {attendanceFormAktivitasBreadcrumb}
                 </Breadcrumb>
               ) : null}
             </div>
+
             <label
               htmlFor={`menutoggle`}
               className="pointer-cursor md:hidden block cursor-pointer mr-4"
@@ -381,17 +434,20 @@ function LayoutDashboard({
                 <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
               </svg>
             </label>
+
             <input
               className={`hidden ${st.menuToggle}`}
               type="checkbox"
               id={`menutoggle`}
             />
+
             <LayoutMenuHeader
               dataProfile={dataProfile}
               Linkheader={Link}
               handleLogout={handleLogout}
               st={st}
             ></LayoutMenuHeader>
+
             {pathArr ? (
               <Breadcrumb
                 separator=">"
@@ -444,6 +500,7 @@ function LayoutDashboard({
               </Breadcrumb>
             ) : null}
           </Header>
+
           <main
             className="slb min-h-screen bg-backdrop"
             style={{ padding: 24 }}
