@@ -99,10 +99,18 @@ function LayoutDashboard({
 
     const rootPathName = "Form Aktivitas";
 
+    // corner case
     // ['Attendance', 'Form-aktivitas']
     if (childBreacrumbDD.length === 2) {
-      return <strong>{rootPathName}</strong>;
+      return (
+        <Breadcrumb.Item>
+          <strong>{rootPathName}</strong>
+        </Breadcrumb.Item>
+      );
     }
+
+    // ['Attendance', 'Form-aktivitas', '[aktivitasId]', 'Dynamic Data From The Server']
+    const formAktivitasName = childBreacrumbDD.pop();
 
     return (
       <>
@@ -112,7 +120,7 @@ function LayoutDashboard({
           </Link>
         </Breadcrumb.Item>
         <Breadcrumb.Item>
-          <strong>Detail Form Aktivitas</strong>
+          <strong>{formAktivitasName}</strong>
         </Breadcrumb.Item>
       </>
     );

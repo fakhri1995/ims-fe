@@ -1,6 +1,7 @@
 import type { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
+import { useQuery } from "react-query";
 
 import styles from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
@@ -10,10 +11,16 @@ import {
   DetailFormAktivitasCard,
 } from "components/screen/form-aktivitas/DetailAktivitas";
 
+import { useAxiosClient } from "hooks/use-axios-client";
+
 import { parseToken } from "lib/auth";
 import { getAxiosClient } from "lib/axios-client";
 
 import { LoginService } from "services/auth";
+import {
+  FormAktivitasQueryKeys,
+  FormAktivitasService,
+} from "services/form-aktivitas";
 
 import { ProtectedPageProps } from "types/common";
 
@@ -25,6 +32,19 @@ const ProjectsDetailPage: NextPage<ProtectedPageProps> = ({
   const { aktivitasId } = router.query;
   const pathArr = router.pathname.split("/").slice(1);
 
+  const { axiosClient } = useAxiosClient();
+  const { data } = useQuery([FormAktivitasQueryKeys.FIND, +aktivitasId], () =>
+    FormAktivitasService.findOne(axiosClient, +aktivitasId)
+  );
+
+  const modifiedPathArr = useMemo(() => {
+    if (!data) {
+      return pathArr;
+    }
+
+    return [...pathArr, data.data.data.name];
+  }, [data]);
+
   /** TODO: always memo props to be sent to the <DetailFormAktivitasCard> component. Especially the ones that's not primitive value. */
   const _onUbahButtonClicked = useCallback(() => {
     console.log("Ubah Project clicked...");
@@ -34,7 +54,7 @@ const ProjectsDetailPage: NextPage<ProtectedPageProps> = ({
     <LayoutDashboard
       dataProfile={dataProfile}
       tok={token}
-      pathArr={pathArr}
+      pathArr={modifiedPathArr}
       st={styles}
     >
       {/* First Row */}
