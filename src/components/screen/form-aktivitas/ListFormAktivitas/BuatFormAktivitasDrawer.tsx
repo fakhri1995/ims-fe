@@ -215,7 +215,7 @@ export const BuatFormAktivitasDrawer: FC<any> = ({
                       <div className="col-span-1 ml-1 mb-3">
                         <Select
                           key={idx}
-                          name={`name`}
+                          // name={`name`}
                           value={doc.type}
                           style={{ width: `100%` }}
                           onChange={(value) => {
@@ -333,7 +333,7 @@ export const BuatFormAktivitasDrawer: FC<any> = ({
                               <div
                                 className="mr-1 cursor-pointer hover:text-primary100"
                                 onClick={() => {
-                                  settempcb("");
+                                  settempcb([]);
                                   var temp = [...datacreate.works];
                                   temp[idx].lists.push(tempcb[idx]);
                                   setdatacreate((prev) => ({
