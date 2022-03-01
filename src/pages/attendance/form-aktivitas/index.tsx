@@ -6,7 +6,7 @@ import {
   withDefault,
 } from "next-query-params";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useQuery } from "react-query";
 
 import styles from "components/layout-dashboard.module.css";
@@ -68,6 +68,15 @@ const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
 
   const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
 
+  const onAddNewAktivitasButtonClicked = useCallback(() => {
+    setCreateDrawerShown(true);
+  }, []);
+  const onSearchTriggered = useCallback((searchValue: string) => {
+    onTriggerChangeCriteria({
+      keyword: searchValue,
+    });
+  }, []);
+
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -86,9 +95,7 @@ const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
           {/* Create new Form Aktivitas */}
           <div className="w-full md:w-1/2">
             <AddNewAktivitasButton
-              onButtonClicked={() => {
-                setCreateDrawerShown(true);
-              }}
+              onButtonClicked={onAddNewAktivitasButtonClicked}
             />
           </div>
         </div>
@@ -97,13 +104,7 @@ const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
         {/* Table: Form Aktivitas */}
         <div className="w-full bg-white rounded-md shadow-md p-6">
           {/* Table header */}
-          <FormAktivitasTableHeader
-            onSearchTriggered={(searchValue) => {
-              onTriggerChangeCriteria({
-                keyword: searchValue,
-              });
-            }}
-          />
+          <FormAktivitasTableHeader onSearchTriggered={onSearchTriggered} />
 
           {/* Table */}
           <div className="my-6">
