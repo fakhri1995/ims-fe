@@ -42,7 +42,6 @@ function LayoutDashboard({
   });
 
   const childBreacrumbDD = childBreacrumbCC;
-  console.log(childBreacrumbDD);
   const { Sider, Content, Header } = Layout;
   const [coll, setColl] = useState(true);
   const [collsmall, setCollsmall] = useState(true);

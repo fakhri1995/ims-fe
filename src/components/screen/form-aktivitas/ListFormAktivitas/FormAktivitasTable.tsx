@@ -63,7 +63,7 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = () => {
       size="middle"
       columns={tableColumns}
       dataSource={data?.data.data.data || []}
-      scroll={{ y: 640 }}
+      scroll={{ x: 1500 }}
       pagination={{
         position: ["bottomLeft"],
         className: "pt-6",

@@ -31,12 +31,12 @@ const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
       <>
         {/* First Row */}
         <div className="flex mb-6 md:space-x-6 space-y-6 md:space-y-0 flex-wrap md:flex-nowrap">
-          {/* Total Project */}
+          {/* Total Form Aktivitas */}
           <div className="w-full md:w-1/2">
             <TotalFormAktivitasCard />
           </div>
 
-          {/* Create new project */}
+          {/* Create new Form Aktivitas */}
           <div className="w-full md:w-1/2">
             <AddNewAktivitasButton
               onButtonClicked={() => {
@@ -47,20 +47,18 @@ const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
         </div>
 
         {/* Second Row */}
-        <div className="w-full">
-          {/* Table: Form Aktivitas */}
-          <div className="w-full bg-white rounded-md shadow-md p-6">
-            {/* Table header */}
-            <FormAktivitasTableHeader
-              onSearchTriggered={(searchValue) => {
-                alert(`Search value: ${searchValue}`);
-              }}
-            />
+        {/* Table: Form Aktivitas */}
+        <div className="w-full bg-white rounded-md shadow-md p-6">
+          {/* Table header */}
+          <FormAktivitasTableHeader
+            onSearchTriggered={(searchValue) => {
+              alert(`Search value: ${searchValue}`);
+            }}
+          />
 
-            {/* Table */}
-            <div className="my-6">
-              <FormAktivitasTable />
-            </div>
+          {/* Table */}
+          <div className="my-6">
+            <FormAktivitasTable />
           </div>
         </div>
       </>

@@ -72,7 +72,7 @@ export const AktivitasUserListEditableCard: FC<
   };
 
   const contentClassName = clsx("my-10", {
-    "grid grid-cols-5 gap-y-6": !isLoading,
+    "grid grid-cols-3 md:grid-cols-5 gap-y-6": !isLoading,
     "flex flex-col space-y-6 items-center justify-center": isLoading,
   });
 
@@ -116,7 +116,7 @@ export const AktivitasUserListEditableCard: FC<
                   <UserAddOutlined className="text-xl text-primary100" />
                 </Button>
 
-                <span className="text-mono30">Tambah Staff</span>
+                <span className="text-mono30 text-center">Tambah Staff</span>
               </div>
             )}
           </>
@@ -273,7 +273,7 @@ const StaffGridItem: FC<StaffGridItemType & IStaffGridItem> = ({
   ...staff
 }) => {
   const gridItemClassName = clsx(
-    "flex flex-col justify-start items-center space-y-3",
+    "flex flex-col justify-start items-center space-y-3 text-center",
     {
       "hover:cursor-pointer": isOnRemoveState,
     }
@@ -307,7 +307,7 @@ const StaffGridItem: FC<StaffGridItemType & IStaffGridItem> = ({
       </div>
 
       {/* Staff name */}
-      <span className="block text-mono30 text-center">{staff.name}</span>
+      <span className="block text-mono30">{staff.name}</span>
 
       {/* Staff Position */}
       <span className="block text-mono50 text-xs">{staff.position}</span>
