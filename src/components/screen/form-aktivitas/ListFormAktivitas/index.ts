@@ -13,7 +13,7 @@ export { AddNewAktivitasButton } from "./AddNewAktivitasButton";
 export { TotalFormAktivitasCard } from "./TotalFormAktivitasCard";
 export { FormAktivitasTable } from "./FormAktivitasTable";
 export { FormAktivitasTableHeader } from "./FormAktivitasTableHeader";
-export { BuatFormAktivitasDrawer } from "./BuatFormAktivitasDrawer";
+export { FormAktivitasDrawer } from "./FormAktivitasDrawer";
 
 /**
  * Custom mutation hook to add new Form Aktivitas data and trigger

@@ -9,6 +9,7 @@ import {
 } from "antd";
 import type { FC } from "react";
 import React, { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 
 import DrawerCore from "components/drawer/drawerCore";
 import {
@@ -22,23 +23,81 @@ import {
 import { TextAreaRequired } from "components/input";
 import { H2, Label } from "components/typography";
 
+import { useAxiosClient } from "hooks/use-axios-client";
+
+import {
+  FormAktivitasQueryKeys,
+  FormAktivitasService,
+} from "services/form-aktivitas";
+
 import { useAddFormAktivitas } from ".";
 
 /**
  * Component BuatFormAktivitasDrawer's props.
  */
-export interface IBuatFormAktivitasDrawer {}
+export interface IFormAktivitasDrawer {
+  /**
+   * Flag to let the drawer behave to update and not to create.
+   * Use this flag on detail page only.
+   *
+   * If it is left undefined, then the drawer will behave to add new data.
+   */
+  formAktivitasId?: number;
+
+  title: string;
+  buttonOkText: string;
+
+  visible: boolean;
+  onvisible: (visibleValue: boolean) => void;
+}
 
 /**
  * Component BuatFormAktivitasDrawer
  */
-export const BuatFormAktivitasDrawer: FC<any> = ({
+export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
   title,
   visible,
   onvisible,
   buttonOkText,
+  formAktivitasId,
 }) => {
-  const { mutate: addFormAktivitas, isLoading } = useAddFormAktivitas();
+  const axiosClient = useAxiosClient();
+  const { mutate: addFormAktivitas, isLoading: addFormLoading } =
+    useAddFormAktivitas();
+  const {
+    data,
+    isLoading: getFormLoading,
+    refetch,
+  } = useQuery(
+    [FormAktivitasQueryKeys.FIND, formAktivitasId],
+    () => FormAktivitasService.findOne(axiosClient, formAktivitasId),
+    {
+      select: (response) => {
+        const mapDetailsToWorks = [...response.data.data.details].map(
+          (detail) => {
+            let mapped = {
+              name: detail.name,
+              type: detail.type,
+              description: detail.description,
+            };
+
+            // special case for type === 3 || type === 5 (checkbox and dropdown)
+            if (detail.type === 3 || detail.type === 5) {
+              mapped["lists"] = detail.list || [];
+            }
+
+            return mapped;
+          }
+        );
+
+        return {
+          name: response.data.data.name,
+          description: response.data.data.description,
+          works: mapDetailsToWorks,
+        };
+      },
+    }
+  );
 
   //USESTATE
   const [datacreate, setdatacreate] = useState({
@@ -48,7 +107,6 @@ export const BuatFormAktivitasDrawer: FC<any> = ({
   });
 
   const [disabledcreate, setdisabledcreate] = useState(true);
-  const [disabledtrigger, setdisabledtrigger] = useState(-1);
   //checkbox
   const [tempcb, settempcb] = useState([]);
 
@@ -58,14 +116,21 @@ export const BuatFormAktivitasDrawer: FC<any> = ({
       ...datacreate,
       [e.target.name]: e.target.value,
     });
-    setdisabledtrigger((prev) => prev + 1);
+    // setdisabledtrigger((prev) => prev + 1);
   };
+
   const handleAddTipeTask = () => {
     const payload = {
       name: datacreate.name,
       description: datacreate.description,
       details: datacreate.works,
     };
+
+    /**
+     * TODO: hit endpoint berdasarkan state drawer.
+     * Update ya update
+     * Create ya create...
+     */
 
     addFormAktivitas(payload, {
       onSuccess: (response) => {
@@ -90,32 +155,54 @@ export const BuatFormAktivitasDrawer: FC<any> = ({
 
   //USEEFFECT
   useEffect(() => {
-    if (disabledtrigger !== -1) {
-      if (datacreate.name !== "" && datacreate.description !== "") {
-        setdisabledcreate(false);
-      } else {
-        setdisabledcreate(true);
-      }
+    if (
+      datacreate.name !== "" &&
+      datacreate.description !== "" &&
+      datacreate.works.length !== 0
+    ) {
+      setdisabledcreate(false);
+    } else {
+      setdisabledcreate(true);
     }
-  }, [disabledtrigger]);
+    // if (disabledtrigger !== -1) {
+    // }
+  }, [datacreate]);
+
+  // useEffect(() => {
+  //   if (!formAktivitasId) {
+  //     return;
+  //   }
+
+  //   refetch();
+  // }, [formAktivitasId]);
+
+  useEffect(() => {
+    if (!data) {
+      return;
+    }
+
+    setdatacreate(data);
+  }, [data]);
 
   return (
     <DrawerCore
       title={title}
       visible={visible}
       onClose={() => {
-        setdatacreate({
-          name: "",
-          description: "",
-          works: [],
-        });
+        if (!formAktivitasId) {
+          setdatacreate({
+            name: "",
+            description: "",
+            works: [],
+          });
+        }
         onvisible(false);
       }}
       buttonOkText={buttonOkText}
       onClick={handleAddTipeTask}
       disabled={disabledcreate}
     >
-      <Spin spinning={isLoading}>
+      <Spin spinning={addFormLoading}>
         <div className="flex flex-col">
           <div className="mb-8">
             <p className="mb-0 text-red-500 text-xs italic">
@@ -497,14 +584,16 @@ export const BuatFormAktivitasDrawer: FC<any> = ({
           <div
             className="mb-4 border border-dashed border-primary100 hover:border-primary75 py-2 flex justify-center items-center w-full rounded-md cursor-pointer"
             onClick={() => {
-              setdatacreate((prev) => ({
-                ...prev,
-                works: [
-                  ...prev.works,
-                  { type: 1, name: "", description: "", required: false },
-                ],
-              }));
-              settempcb([...tempcb, ""]);
+              if (!formAktivitasId) {
+                setdatacreate((prev) => ({
+                  ...prev,
+                  works: [
+                    ...prev.works,
+                    { type: 1, name: "", description: "", required: false },
+                  ],
+                }));
+                settempcb([...tempcb, ""]);
+              }
             }}
           >
             <div className="text-primary100 hover:text-primary75">

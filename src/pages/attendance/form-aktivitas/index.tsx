@@ -13,7 +13,7 @@ import styles from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
 import {
   AddNewAktivitasButton,
-  BuatFormAktivitasDrawer,
+  FormAktivitasDrawer,
   FormAktivitasTable,
   FormAktivitasTableHeader,
   TotalFormAktivitasCard,
@@ -33,7 +33,10 @@ import {
 import { IGetAttendanceFormsCriteria } from "types/api/attendances/get-attendance-forms";
 import { ProtectedPageProps } from "types/common";
 
-const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
+const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
+  token,
+  dataProfile,
+}) => {
   const router = useRouter();
   const pathArr = router.pathname.split("/").slice(1);
 
@@ -115,7 +118,7 @@ const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
           </div>
         </div>
 
-        <BuatFormAktivitasDrawer
+        <FormAktivitasDrawer
           title="Tambah Form Aktivitas Baru"
           buttonOkText="Simpan Project"
           onvisible={setCreateDrawerShown}
@@ -164,4 +167,4 @@ export const getServerSideProps: GetServerSideProps<
   };
 };
 
-export default ProjectsPage;
+export default ListFormAktivitasPage;

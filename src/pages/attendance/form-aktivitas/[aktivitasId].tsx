@@ -1,6 +1,6 @@
 import type { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
 import styles from "components/layout-dashboard.module.css";
@@ -10,6 +10,7 @@ import {
   AktivitasUserListEditableCard,
   DetailFormAktivitasCard,
 } from "components/screen/form-aktivitas/DetailAktivitas";
+import { FormAktivitasDrawer } from "components/screen/form-aktivitas/ListFormAktivitas";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
@@ -24,7 +25,7 @@ import {
 
 import { ProtectedPageProps } from "types/common";
 
-const ProjectsDetailPage: NextPage<ProtectedPageProps> = ({
+const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
   dataProfile,
   token,
 }) => {
@@ -37,6 +38,8 @@ const ProjectsDetailPage: NextPage<ProtectedPageProps> = ({
     FormAktivitasService.findOne(axiosClient, +aktivitasId)
   );
 
+  const [isDrawerShown, setIsDrawerShown] = useState(false);
+
   const modifiedPathArr = useMemo(() => {
     if (!data) {
       return pathArr;
@@ -45,9 +48,8 @@ const ProjectsDetailPage: NextPage<ProtectedPageProps> = ({
     return [...pathArr, data.data.data.name];
   }, [data]);
 
-  /** TODO: always memo props to be sent to the <DetailFormAktivitasCard> component. Especially the ones that's not primitive value. */
   const _onUbahButtonClicked = useCallback(() => {
-    console.log("Ubah Project clicked...");
+    setIsDrawerShown(true);
   }, []);
 
   return (
@@ -77,6 +79,14 @@ const ProjectsDetailPage: NextPage<ProtectedPageProps> = ({
           <AktivitasTableInfoCard aktivitasId={+aktivitasId} />
         </div>
       </div>
+
+      <FormAktivitasDrawer
+        title="Perbarui Form Aktivitas"
+        buttonOkText="Simpan Form"
+        onvisible={setIsDrawerShown}
+        visible={isDrawerShown}
+        formAktivitasId={+aktivitasId}
+      />
     </LayoutDashboard>
   );
 };
@@ -119,4 +129,4 @@ export const getServerSideProps: GetServerSideProps<
   };
 };
 
-export default ProjectsDetailPage;
+export default FormAktivitasDetailPage;
