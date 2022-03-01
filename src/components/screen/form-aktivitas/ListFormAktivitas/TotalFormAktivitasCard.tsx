@@ -12,7 +12,7 @@ import {
 export interface ITotalFormAktivitasCard {}
 
 export const TotalFormAktivitasCard: FC<ITotalFormAktivitasCard> = memo(() => {
-  const { axiosClient } = useAxiosClient();
+  const axiosClient = useAxiosClient();
   const { data, isLoading, isError } = useQuery(
     FormAktivitasQueryKeys.FIND,
     () => FormAktivitasService.find(axiosClient)

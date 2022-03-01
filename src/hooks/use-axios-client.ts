@@ -4,6 +4,9 @@ import { useCookies } from "react-cookie";
 
 /**
  * A React custom hook to use axios client with token attached on it.
+ *
+ * This function will produce a new AxiosInstance and use hook `useCookies` to
+ *  retrieve the token.
  */
 export const useAxiosClient = () => {
   const [cookies] = useCookies(["token"]);
@@ -21,5 +24,5 @@ export const useAxiosClient = () => {
     return axiosClient;
   }, [cookies.token]);
 
-  return { axiosClient: tokenizedAxiosClient };
+  return tokenizedAxiosClient;
 };

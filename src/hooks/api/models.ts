@@ -16,7 +16,7 @@ import {
  * @access GET /getModels
  */
 export const useGetModels = (criteria?: IGetModelsCriteria) => {
-  const { axiosClient } = useAxiosClient();
+  const axiosClient = useAxiosClient();
 
   const [data, setData] = useState<GetModelsDatum[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -53,7 +53,7 @@ export const useGetModels = (criteria?: IGetModelsCriteria) => {
  * @access /getModel
  */
 export const useGetModel = (modelId?: number) => {
-  const { axiosClient } = useAxiosClient();
+  const axiosClient = useAxiosClient();
 
   const [data, setData] = useState<GetModelData[]>([]);
   const [isLoading, setIsLoading] = useState(false);

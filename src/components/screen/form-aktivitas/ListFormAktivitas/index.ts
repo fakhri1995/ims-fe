@@ -15,8 +15,14 @@ export { FormAktivitasTable } from "./FormAktivitasTable";
 export { FormAktivitasTableHeader } from "./FormAktivitasTableHeader";
 export { BuatFormAktivitasDrawer } from "./BuatFormAktivitasDrawer";
 
+/**
+ * Custom mutation hook to add new Form Aktivitas data and trigger
+ *  cache invalidation on succeed.
+ *
+ * It's used just to add new form aktivitas.
+ */
 export const useAddFormAktivitas = () => {
-  const { axiosClient } = useAxiosClient();
+  const axiosClient = useAxiosClient();
   const queryClient = useQueryClient();
 
   return useMutation(

@@ -26,7 +26,7 @@ export interface IAktivitasTableInfoCard {
 export const AktivitasTableInfoCard: FC<IAktivitasTableInfoCard> = ({
   aktivitasId,
 }) => {
-  const { axiosClient } = useAxiosClient();
+  const axiosClient = useAxiosClient();
   const { data, isLoading } = useQuery(
     [FormAktivitasQueryKeys.FIND, aktivitasId],
     () => FormAktivitasService.findOne(axiosClient, aktivitasId),

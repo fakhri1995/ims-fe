@@ -32,7 +32,7 @@ const ProjectsDetailPage: NextPage<ProtectedPageProps> = ({
   const { aktivitasId } = router.query;
   const pathArr = router.pathname.split("/").slice(1);
 
-  const { axiosClient } = useAxiosClient();
+  const axiosClient = useAxiosClient();
   const { data } = useQuery([FormAktivitasQueryKeys.FIND, +aktivitasId], () =>
     FormAktivitasService.findOne(axiosClient, +aktivitasId)
   );

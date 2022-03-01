@@ -21,7 +21,7 @@ export interface IDetailFormAktivitasCard {
 
 export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
   ({ onUbahButtonClicked, aktivitasId }) => {
-    const { axiosClient } = useAxiosClient();
+    const axiosClient = useAxiosClient();
     const { data, isLoading } = useQuery(
       [FormAktivitasQueryKeys.FIND, aktivitasId],
       () => FormAktivitasService.findOne(axiosClient, aktivitasId),

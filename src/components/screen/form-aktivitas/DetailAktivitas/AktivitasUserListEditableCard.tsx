@@ -33,7 +33,7 @@ export interface IAktivitasUserListEditableCard {
 export const AktivitasUserListEditableCard: FC<
   IAktivitasUserListEditableCard
 > = ({ aktivitasId }) => {
-  const { axiosClient } = useAxiosClient();
+  const axiosClient = useAxiosClient();
   const { data, isLoading } = useQuery(
     [FormAktivitasQueryKeys.FIND, aktivitasId],
     () => FormAktivitasService.findOne(axiosClient, aktivitasId)

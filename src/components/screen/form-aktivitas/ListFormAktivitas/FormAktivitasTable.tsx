@@ -20,7 +20,7 @@ export interface IFormAktivitasTable {}
 export const FormAktivitasTable: FC<IFormAktivitasTable> = () => {
   const router = useRouter();
 
-  const { axiosClient } = useAxiosClient();
+  const axiosClient = useAxiosClient();
   const { data, isLoading } = useQuery(
     FormAktivitasQueryKeys.FIND,
     () => FormAktivitasService.find(axiosClient),
