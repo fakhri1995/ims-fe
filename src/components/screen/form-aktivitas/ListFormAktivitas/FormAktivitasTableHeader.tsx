@@ -40,7 +40,18 @@ export const FormAktivitasTableHeader: FC<IFormAktivitasTableHeader> = ({
           }}
         >
           <Form.Item name="search">
-            <Input placeholder="Cari..." />
+            <Input
+              placeholder="Cari..."
+              allowClear
+              onChange={(event) => {
+                if (
+                  event.target.value.length === 0 ||
+                  event.target.value === ""
+                ) {
+                  onSearchTriggered("");
+                }
+              }}
+            />
           </Form.Item>
 
           <Form.Item noStyle>

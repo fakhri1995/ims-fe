@@ -1,3 +1,4 @@
+import { NextQueryParamProvider } from "next-query-params";
 import Head from "next/head";
 import Router from "next/router";
 import NProgress from "nprogress";
@@ -38,9 +39,11 @@ function MyApp({ Component, pageProps }) {
       </Head>
 
       <QueryClientProvider client={queryClient.current}>
-        <CookiesProvider>
-          <Component {...pageProps} />
-        </CookiesProvider>
+        <NextQueryParamProvider>
+          <CookiesProvider>
+            <Component {...pageProps} />
+          </CookiesProvider>
+        </NextQueryParamProvider>
       </QueryClientProvider>
     </>
   );

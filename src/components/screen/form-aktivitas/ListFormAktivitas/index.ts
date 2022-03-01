@@ -30,7 +30,8 @@ export const useAddFormAktivitas = () => {
       FormAktivitasService.add(axiosClient, payload),
     {
       onSuccess: () => {
-        return queryClient.invalidateQueries(FormAktivitasQueryKeys.FIND);
+        /** NOTE: do not return anything. Let it run asynchronously!!! */
+        queryClient.invalidateQueries(FormAktivitasQueryKeys.FIND);
       },
     }
   );

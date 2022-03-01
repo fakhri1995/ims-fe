@@ -1,8 +1,9 @@
 export interface IGetAttendanceFormsCriteria {
   page?: number;
   rows?: number;
-  sort_by?: "name" | "description" | "updated_at" | "count";
+  sort_by?: "name" | "description" | "updated_at" | "count" | string;
   sort_type?: string;
+  keyword?: string;
 }
 
 /**

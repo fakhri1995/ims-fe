@@ -1,6 +1,13 @@
 import type { GetServerSideProps, NextPage } from "next";
+import {
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { useQuery } from "react-query";
 
 import styles from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
@@ -12,16 +19,52 @@ import {
   TotalFormAktivitasCard,
 } from "components/screen/form-aktivitas/ListFormAktivitas";
 
+import { useAxiosClient } from "hooks/use-axios-client";
+
 import { parseToken } from "lib/auth";
 import { getAxiosClient } from "lib/axios-client";
 
 import { LoginService } from "services/auth";
+import {
+  FormAktivitasQueryKeys,
+  FormAktivitasService,
+} from "services/form-aktivitas";
 
+import { IGetAttendanceFormsCriteria } from "types/api/attendances/get-attendance-forms";
 import { ProtectedPageProps } from "types/common";
 
 const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
   const router = useRouter();
   const pathArr = router.pathname.split("/").slice(1);
+
+  const [criteria, setCriteria] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+    sort_by: withDefault(StringParam, ""),
+    sort_type: withDefault(StringParam, ""),
+    keyword: withDefault(StringParam, ""),
+  });
+
+  const onTriggerChangeCriteria = (
+    newCriteria: Partial<IGetAttendanceFormsCriteria>
+  ) => {
+    setCriteria({
+      page: newCriteria.page,
+      rows: newCriteria.rows,
+      sort_by: newCriteria.sort_by,
+      sort_type: newCriteria.sort_type,
+      keyword: newCriteria.keyword,
+    });
+  };
+
+  const axiosClient = useAxiosClient();
+  const { data, isLoading } = useQuery(
+    [FormAktivitasQueryKeys.FIND, criteria],
+    () => FormAktivitasService.find(axiosClient, criteria),
+    {
+      refetchOnMount: true,
+    }
+  );
 
   const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
 
@@ -56,13 +99,21 @@ const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
           {/* Table header */}
           <FormAktivitasTableHeader
             onSearchTriggered={(searchValue) => {
-              alert(`Search value: ${searchValue}`);
+              onTriggerChangeCriteria({
+                keyword: searchValue,
+              });
             }}
           />
 
           {/* Table */}
           <div className="my-6">
-            <FormAktivitasTable />
+            <FormAktivitasTable
+              data={data?.data.data.data}
+              tablePageSize={criteria.rows}
+              tableTotalData={data?.data.data.total}
+              isLoading={isLoading}
+              onTriggerChangeCriteria={onTriggerChangeCriteria}
+            />
           </div>
         </div>
 
