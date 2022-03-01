@@ -1,10 +1,12 @@
 import type { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 import styles from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
 import {
   AddNewAktivitasButton,
+  BuatFormAktivitasDrawer,
   FormAktivitasTable,
   FormAktivitasTableHeader,
   TotalFormAktivitasCard,
@@ -20,6 +22,8 @@ import { ProtectedPageProps } from "types/common";
 const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
   const router = useRouter();
   const pathArr = router.pathname.split("/").slice(1);
+
+  const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
 
   return (
     <LayoutDashboard
@@ -40,7 +44,7 @@ const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
           <div className="w-full md:w-1/2">
             <AddNewAktivitasButton
               onButtonClicked={() => {
-                console.log("clicked!");
+                setCreateDrawerShown(true);
               }}
             />
           </div>
@@ -61,6 +65,13 @@ const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
             <FormAktivitasTable />
           </div>
         </div>
+
+        <BuatFormAktivitasDrawer
+          title="Tambah Form Aktivitas Baru"
+          buttonOkText="Simpan Project"
+          onvisible={setCreateDrawerShown}
+          visible={isCreateDrawerShown}
+        />
       </>
     </LayoutDashboard>
   );

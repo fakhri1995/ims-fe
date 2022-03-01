@@ -1,6 +1,10 @@
 import type { AxiosInstance } from "axios";
 import QueryString from "qs";
 
+import {
+  IAddAttendanceFormPayload,
+  IAddAttendanceFormResponse,
+} from "types/api/attendances/add-attendance-form";
 import { IGetAttendanceForm } from "types/api/attendances/get-attendance-form";
 import type {
   IGetAttendanceForms,
@@ -39,6 +43,21 @@ export class FormAktivitasService {
 
     return await axiosClient.get<IGetAttendanceForm>(
       "/getAttendanceForm" + querySearchCriteria
+    );
+  }
+
+  /**
+   * @see {FormAktivitasQueryKeys.FIND} Use this key to invalidate cache
+   *
+   * @access POST /addAttendanceForm
+   */
+  static async add(
+    axiosClient: AxiosInstance,
+    payload: IAddAttendanceFormPayload
+  ) {
+    return await axiosClient.post<IAddAttendanceFormResponse>(
+      "/addAttendanceForm",
+      payload
     );
   }
 }

@@ -13,6 +13,8 @@ export const useAxiosClient = () => {
       baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
       headers: {
         Authorization: cookies.token,
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
     });
 
