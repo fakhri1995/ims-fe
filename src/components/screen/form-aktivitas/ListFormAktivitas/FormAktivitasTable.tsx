@@ -113,6 +113,7 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = ({
         className: "pt-6",
         pageSize: tablePageSize,
         total: tableTotalData,
+        showSizeChanger: true,
       }}
       onRow={(datum) => {
         return {

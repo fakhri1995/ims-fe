@@ -60,10 +60,7 @@ const ProjectsPage: NextPage<ProtectedPageProps> = ({ token, dataProfile }) => {
   const axiosClient = useAxiosClient();
   const { data, isLoading } = useQuery(
     [FormAktivitasQueryKeys.FIND, criteria],
-    () => FormAktivitasService.find(axiosClient, criteria),
-    {
-      refetchOnMount: true,
-    }
+    () => FormAktivitasService.find(axiosClient, criteria)
   );
 
   const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);

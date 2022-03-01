@@ -115,7 +115,7 @@ function LayoutDashboard({
       <>
         <Breadcrumb.Item>
           <Link href="/attendance/form-aktivitas">
-            <a>{rootPathName}</a>
+            <a className="font-bold">{rootPathName}</a>
           </Link>
         </Breadcrumb.Item>
         <Breadcrumb.Item>
