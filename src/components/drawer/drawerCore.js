@@ -13,6 +13,8 @@ const DrawerCore = ({
   onClick,
   disabled,
   drawerStyle,
+  buttonCancelText,
+  onButtonCancelClicked,
 }) => {
   return (
     <Drawer
@@ -24,7 +26,19 @@ const DrawerCore = ({
       width={420}
       drawerStyle={drawerStyle}
       footer={
-        <div style={{ textAlign: "right" }}>
+        <div className="flex items-center justify-end space-x-6">
+          {/* Additional button on the LHS for Cancelling the action, etc. */}
+          {buttonCancelText && onButtonCancelClicked && (
+            <ButtonSys
+              disabled={disabled}
+              type="default"
+              color="danger"
+              onClick={onButtonCancelClicked}
+            >
+              {buttonCancelText}
+            </ButtonSys>
+          )}
+
           <ButtonSys disabled={disabled} type="primary" onClick={onClick}>
             <CheckIconSvg size={15} color="#FFFFFF" />
             {buttonOkText}

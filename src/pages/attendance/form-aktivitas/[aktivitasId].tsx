@@ -1,3 +1,4 @@
+import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
 import type { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
@@ -5,12 +6,12 @@ import { useQuery } from "react-query";
 
 import styles from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
+import { FormAktivitasDrawer } from "components/screen/form-aktivitas";
 import {
   AktivitasTableInfoCard,
   AktivitasUserListEditableCard,
   DetailFormAktivitasCard,
 } from "components/screen/form-aktivitas/DetailAktivitas";
-import { FormAktivitasDrawer } from "components/screen/form-aktivitas/ListFormAktivitas";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
@@ -18,10 +19,6 @@ import { parseToken } from "lib/auth";
 import { getAxiosClient } from "lib/axios-client";
 
 import { LoginService } from "services/auth";
-import {
-  FormAktivitasQueryKeys,
-  FormAktivitasService,
-} from "services/form-aktivitas";
 
 import { ProtectedPageProps } from "types/common";
 
@@ -34,8 +31,9 @@ const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
   const pathArr = router.pathname.split("/").slice(1);
 
   const axiosClient = useAxiosClient();
-  const { data } = useQuery([FormAktivitasQueryKeys.FIND, +aktivitasId], () =>
-    FormAktivitasService.findOne(axiosClient, +aktivitasId)
+  const { data } = useQuery(
+    [AttendanceServiceQueryKeys.FIND_ONE, +aktivitasId],
+    () => AttendanceService.findOne(axiosClient, +aktivitasId)
   );
 
   const [isDrawerShown, setIsDrawerShown] = useState(false);

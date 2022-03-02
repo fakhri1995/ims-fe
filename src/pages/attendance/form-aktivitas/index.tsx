@@ -1,3 +1,8 @@
+import {
+  AttendanceService,
+  AttendanceServiceQueryKeys,
+  IGetAttendanceFormsParams,
+} from "apis/attendance";
 import type { GetServerSideProps, NextPage } from "next";
 import {
   NumberParam,
@@ -17,7 +22,7 @@ import {
   FormAktivitasTable,
   FormAktivitasTableHeader,
   TotalFormAktivitasCard,
-} from "components/screen/form-aktivitas/ListFormAktivitas";
+} from "components/screen/form-aktivitas";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
@@ -25,12 +30,7 @@ import { parseToken } from "lib/auth";
 import { getAxiosClient } from "lib/axios-client";
 
 import { LoginService } from "services/auth";
-import {
-  FormAktivitasQueryKeys,
-  FormAktivitasService,
-} from "services/form-aktivitas";
 
-import { IGetAttendanceFormsCriteria } from "types/api/attendances/get-attendance-forms";
 import { ProtectedPageProps } from "types/common";
 
 const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
@@ -49,7 +49,7 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
   });
 
   const onTriggerChangeCriteria = (
-    newCriteria: Partial<IGetAttendanceFormsCriteria>
+    newCriteria: Partial<IGetAttendanceFormsParams>
   ) => {
     setCriteria({
       page: newCriteria.page,
@@ -62,8 +62,8 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
 
   const axiosClient = useAxiosClient();
   const { data, isLoading } = useQuery(
-    [FormAktivitasQueryKeys.FIND, criteria],
-    () => FormAktivitasService.find(axiosClient, criteria)
+    [AttendanceServiceQueryKeys.FIND, criteria],
+    () => AttendanceService.find(axiosClient, criteria)
   );
 
   const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
@@ -120,7 +120,7 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
 
         <FormAktivitasDrawer
           title="Tambah Form Aktivitas Baru"
-          buttonOkText="Simpan Project"
+          buttonOkText="Simpan Form"
           onvisible={setCreateDrawerShown}
           visible={isCreateDrawerShown}
         />

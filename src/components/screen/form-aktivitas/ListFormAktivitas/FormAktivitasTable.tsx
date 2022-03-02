@@ -1,14 +1,13 @@
 import { Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import {
+  GetAttendanceFormsDatum,
+  IGetAttendanceFormsParams,
+} from "apis/attendance";
 import { format } from "date-fns";
 import idLocale from "date-fns/locale/id";
 import { useRouter } from "next/router";
 import { FC, useMemo } from "react";
-
-import type {
-  GetAttendanceFormsDatum,
-  IGetAttendanceFormsCriteria,
-} from "types/api/attendances/get-attendance-forms";
 
 export interface IFormAktivitasTable {
   isLoading: boolean;
@@ -18,7 +17,7 @@ export interface IFormAktivitasTable {
   tableTotalData: number;
 
   onTriggerChangeCriteria: (
-    newCriteria: Partial<IGetAttendanceFormsCriteria>
+    newCriteria: Partial<IGetAttendanceFormsParams>
   ) => void;
 }
 
@@ -95,7 +94,7 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = ({
       dataSource={mappedData || []}
       scroll={{ x: 1500 }}
       onChange={(pagination, _, sorter) => {
-        let criteria: IGetAttendanceFormsCriteria = {
+        let criteria: IGetAttendanceFormsParams = {
           page: pagination.current,
           rows: pagination.pageSize,
         };

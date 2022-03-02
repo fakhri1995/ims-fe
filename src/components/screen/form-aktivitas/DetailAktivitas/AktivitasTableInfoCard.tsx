@@ -1,17 +1,14 @@
-import { PlusOutlined } from "@ant-design/icons";
-import { Button, Table } from "antd";
+import { Table } from "antd";
 import { ColumnsType } from "antd/es/table";
+import {
+  AttendanceService,
+  AttendanceServiceQueryKeys,
+  Detail,
+} from "apis/attendance";
 import { FC, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 
 import { useAxiosClient } from "hooks/use-axios-client";
-
-import {
-  FormAktivitasQueryKeys,
-  FormAktivitasService,
-} from "services/form-aktivitas";
-
-import { Detail } from "types/api/attendances/get-attendance-form";
 
 /**
  * Component AktivitasTableInfoCard's props.
@@ -28,8 +25,8 @@ export const AktivitasTableInfoCard: FC<IAktivitasTableInfoCard> = ({
 }) => {
   const axiosClient = useAxiosClient();
   const { data, isLoading } = useQuery(
-    [FormAktivitasQueryKeys.FIND, aktivitasId],
-    () => FormAktivitasService.findOne(axiosClient, aktivitasId),
+    [AttendanceServiceQueryKeys.FIND_ONE, aktivitasId],
+    () => AttendanceService.findOne(axiosClient, aktivitasId),
     {
       select: (response) => {
         /** Transform the data into @type {AktivitasDetailType[]} */
@@ -102,15 +99,6 @@ export const AktivitasTableInfoCard: FC<IAktivitasTableInfoCard> = ({
             onClick: () => onRowClicked(datum),
           })}
         />
-
-        <Button
-          type="ghost"
-          block
-          className="mt-6 py-3 flex items-center justify-center text-primary100 focus:text-primary100 hover:text-primary75 border-none border-primary100 focus:border-primary100 hover:border-primary75"
-        >
-          <PlusOutlined className="mr-2" />
-          Tambah Aktivitas
-        </Button>
       </div>
 
       {/* Content */}

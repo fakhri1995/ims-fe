@@ -6,19 +6,17 @@ import {
   UserDeleteOutlined,
 } from "@ant-design/icons";
 import { Button, Form, Input, Pagination, Spin } from "antd";
+import {
+  AttendanceService,
+  AttendanceServiceQueryKeys,
+  User,
+} from "apis/attendance";
 import { FC, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
-import {
-  FormAktivitasQueryKeys,
-  FormAktivitasService,
-} from "services/form-aktivitas";
-
 import clsx from "clsx";
-
-import type { User } from "types/api/attendances/get-attendance-form";
 
 /**
  * Component AktivitasUserListEditableCard's props.
@@ -35,8 +33,8 @@ export const AktivitasUserListEditableCard: FC<
 > = ({ aktivitasId }) => {
   const axiosClient = useAxiosClient();
   const { data, isLoading } = useQuery(
-    [FormAktivitasQueryKeys.FIND, aktivitasId],
-    () => FormAktivitasService.findOne(axiosClient, aktivitasId)
+    [AttendanceServiceQueryKeys.FIND_ONE, aktivitasId],
+    () => AttendanceService.findOne(axiosClient, aktivitasId)
   );
 
   const [cardPhase, setCardPhase] = useState<CardPhaseType>("default");

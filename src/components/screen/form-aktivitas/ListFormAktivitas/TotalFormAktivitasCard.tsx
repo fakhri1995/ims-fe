@@ -1,21 +1,17 @@
 import { Spin } from "antd";
+import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
 import { FC, memo } from "react";
 import { useQuery } from "react-query";
 
 import { useAxiosClient } from "hooks/use-axios-client";
-
-import {
-  FormAktivitasQueryKeys,
-  FormAktivitasService,
-} from "services/form-aktivitas";
 
 export interface ITotalFormAktivitasCard {}
 
 export const TotalFormAktivitasCard: FC<ITotalFormAktivitasCard> = memo(() => {
   const axiosClient = useAxiosClient();
   const { data, isLoading, isError } = useQuery(
-    FormAktivitasQueryKeys.FIND,
-    () => FormAktivitasService.find(axiosClient)
+    AttendanceServiceQueryKeys.FIND,
+    () => AttendanceService.find(axiosClient)
   );
 
   return (

@@ -1,5 +1,6 @@
 import { EditOutlined } from "@ant-design/icons";
 import { Button, Skeleton } from "antd";
+import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
 import { format } from "date-fns";
 import idLocale from "date-fns/locale/id";
 import { FC, ReactNode, memo } from "react";
@@ -7,11 +8,6 @@ import React from "react";
 import { useQuery } from "react-query";
 
 import { useAxiosClient } from "hooks/use-axios-client";
-
-import {
-  FormAktivitasQueryKeys,
-  FormAktivitasService,
-} from "services/form-aktivitas";
 
 export interface IDetailFormAktivitasCard {
   onUbahButtonClicked: () => void;
@@ -23,8 +19,8 @@ export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
   ({ onUbahButtonClicked, aktivitasId }) => {
     const axiosClient = useAxiosClient();
     const { data, isLoading } = useQuery(
-      [FormAktivitasQueryKeys.FIND, aktivitasId],
-      () => FormAktivitasService.findOne(axiosClient, aktivitasId),
+      [AttendanceServiceQueryKeys.FIND_ONE, aktivitasId],
+      () => AttendanceService.findOne(axiosClient, aktivitasId),
       {
         select: (record) => {
           /** Reformart date value and replace profile_image with null if there is no image atm */
@@ -64,12 +60,12 @@ export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
             onClick={onUbahButtonClicked}
           >
             <EditOutlined className="mr-2" />
-            Ubah Project
+            Ubah Form
           </Button>
         </div>
 
         {/* Deskripsi */}
-        <DetailInformation label="Deskripsi Project" loading={isLoading}>
+        <DetailInformation label="Deskripsi Form" loading={isLoading}>
           {data?.description}
         </DetailInformation>
 
