@@ -64,10 +64,6 @@ export const AktivitasUserListEditableCard: FC<
     Pick<StaffModelType, "id" | "name">[]
   >([]);
 
-  useEffect(() => {
-    console.log(selectedStaffBuffer);
-  }, [selectedStaffBuffer]);
-
   const updateSelectedStaffBuffer = (
     actionType: "insert" | "delete",
     payload: Pick<StaffModelType, "id" | "name">
