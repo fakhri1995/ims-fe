@@ -64,6 +64,10 @@ export const AktivitasUserListEditableCard: FC<
     Pick<StaffModelType, "id" | "name">[]
   >([]);
 
+  useEffect(() => {
+    console.log(selectedStaffBuffer);
+  }, [selectedStaffBuffer]);
+
   const updateSelectedStaffBuffer = (
     actionType: "insert" | "delete",
     payload: Pick<StaffModelType, "id" | "name">
@@ -591,51 +595,43 @@ const StaffSectionOnRemoveContainer: FC<IStaffSectionOnRemoveContainer> = ({
     bottom: StaffModelType[];
   }>({ top: [], bottom: currentStaff });
 
-  const handleClickedItem = useCallback((source: "top" | "bottom") => {
-    return (staffId: number) => {
-      setItems((prev) => {
-        let sourceIndex = null;
-        let updatedTop: typeof prev.top;
-        let updatedBottom: typeof prev.bottom;
+  const handleItemClickedFromTop = (staffId: number) => {
+    const candidateStaffIndex = items.top.findIndex(
+      (staff) => staff.id === staffId
+    );
+    const candidateStaff = items.top[candidateStaffIndex];
 
-        if (source === "bottom") {
-          updatedBottom = prev.bottom.filter((staff, index) => {
-            if (staff.id !== staffId) {
-              return true;
-            }
+    setItems((prev) => {
+      return {
+        top: prev.top.filter((staff) => staff.id !== staffId),
+        bottom: [...prev.bottom, candidateStaff],
+      };
+    });
 
-            sourceIndex = index;
-            return false;
-          });
+    updateSelectedStaffBuffer("delete", {
+      id: candidateStaff.id,
+      name: candidateStaff.name,
+    });
+  };
 
-          const movedStaff = prev.bottom[sourceIndex];
-          updatedTop = [...prev.top, movedStaff];
-          updateSelectedStaffBuffer("insert", {
-            id: movedStaff.id,
-            name: movedStaff.name,
-          });
-        } else {
-          updatedTop = prev.top.filter((staff, index) => {
-            if (staff.id !== staffId) {
-              return true;
-            }
+  const handleItemClickedFromBottom = (staffId: number) => {
+    const candidateStaffIndex = items.bottom.findIndex(
+      (staff) => staff.id === staffId
+    );
+    const candidateStaff = items.bottom[candidateStaffIndex];
 
-            sourceIndex = index;
-            return false;
-          });
+    setItems((prev) => {
+      return {
+        top: [...prev.top, candidateStaff],
+        bottom: prev.bottom.filter((staff) => staff.id !== staffId),
+      };
+    });
 
-          const movedStaff = prev.top[sourceIndex];
-          updatedBottom = [...prev.bottom, movedStaff];
-          updateSelectedStaffBuffer("delete", {
-            id: movedStaff.id,
-            name: movedStaff.name,
-          });
-        }
-
-        return { top: updatedTop, bottom: updatedBottom };
-      });
-    };
-  }, []);
+    updateSelectedStaffBuffer("insert", {
+      id: candidateStaff.id,
+      name: candidateStaff.name,
+    });
+  };
 
   /** Filter bottom data to match with the `searchValue` */
   const mappedBottomData = useMemo(() => {
@@ -655,7 +651,7 @@ const StaffSectionOnRemoveContainer: FC<IStaffSectionOnRemoveContainer> = ({
         isItemHoverable
         isSelectableSection
         emptyMessage="Pilih staff untuk dihapus"
-        onItemClicked={handleClickedItem("top")}
+        onItemClicked={handleItemClickedFromTop}
       />
 
       <hr />
@@ -665,7 +661,7 @@ const StaffSectionOnRemoveContainer: FC<IStaffSectionOnRemoveContainer> = ({
         isItemHoverable
         isSelectableSection={false}
         emptyMessage="Semua staff akan terhapus"
-        onItemClicked={handleClickedItem("bottom")}
+        onItemClicked={handleItemClickedFromBottom}
       />
     </>
   );
@@ -747,7 +743,7 @@ const StaffSectionOnAddContainer: FC<IStaffSectionOnAddContainer> = ({
         data={agentList || []}
         isItemHoverable
         isSelectableSection={false}
-        emptyMessage="Semua staff akan terhapus"
+        emptyMessage="Daftar staff kosong"
         onItemClicked={handleItemClickedFromBottom}
         isLoading={loadingAgentList}
       />
