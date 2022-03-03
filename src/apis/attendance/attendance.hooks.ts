@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { useMutation, useQueryClient } from "react-query";
 
 import { useAxiosClient } from "hooks/use-axios-client";
@@ -44,6 +45,24 @@ export const useUpdateFormAktivitas = () => {
           AttendanceServiceQueryKeys.FIND_ONE,
           payload.id,
         ]);
+      },
+    }
+  );
+};
+
+/**
+ * @param redirectTo Halaman ketika operasi delete berhasil.
+ */
+export const useDeleteFormAktivitas = (redirectTo: string) => {
+  const router = useRouter();
+  const axiosClient = useAxiosClient();
+
+  return useMutation(
+    (formAktivitasId: number) =>
+      AttendanceService.remove(axiosClient, formAktivitasId),
+    {
+      onSuccess: () => {
+        router.push(redirectTo);
       },
     }
   );

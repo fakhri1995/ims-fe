@@ -2,6 +2,7 @@ import {
   Checkbox,
   Empty,
   Input,
+  Modal,
   Select,
   Spin,
   Switch,
@@ -11,6 +12,7 @@ import {
   AttendanceService,
   AttendanceServiceQueryKeys,
   useAddFormAktivitas,
+  useDeleteFormAktivitas,
   useUpdateFormAktivitas,
 } from "apis/attendance";
 import type { FC } from "react";
@@ -30,6 +32,8 @@ import { TextAreaRequired } from "components/input";
 import { H2, Label } from "components/typography";
 
 import { useAxiosClient } from "hooks/use-axios-client";
+
+const { confirm } = Modal;
 
 /**
  * Component BuatFormAktivitasDrawer's props.
@@ -65,6 +69,9 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
     useAddFormAktivitas();
   const { mutate: updateFormAktivitas, isLoading: updateFormLoading } =
     useUpdateFormAktivitas();
+  const { mutateAsync: deleteFormAktivitas } = useDeleteFormAktivitas(
+    "/attendance/form-aktivitas"
+  );
 
   const {
     data: existingFormAktivitasData,
@@ -182,6 +189,23 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
     }
   };
 
+  const onDeleteButtonClicked = () => {
+    confirm({
+      title: "Konfirmasi Penghapusan Form Aktivitas!",
+      content: (
+        <p>
+          Apakah Anda yakin untuk menghapus Form Aktivitas{" "}
+          <strong>{existingFormAktivitasData.name}</strong> dengan ID{" "}
+          <strong>{formAktivitasId}</strong>?
+        </p>
+      ),
+      onOk: () => {
+        return deleteFormAktivitas(formAktivitasId);
+      },
+      centered: true,
+    });
+  };
+
   //USEEFFECT
   useEffect(() => {
     if (
@@ -231,7 +255,9 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
       }}
       buttonOkText={buttonOkText}
       buttonCancelText={formAktivitasId ? "Hapus Form" : undefined}
-      onButtonCancelClicked={formAktivitasId ? () => {} : undefined}
+      onButtonCancelClicked={
+        formAktivitasId ? onDeleteButtonClicked : undefined
+      }
       onClick={handleAddTipeTask}
       disabled={disabledcreate}
     >
