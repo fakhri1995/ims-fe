@@ -41,17 +41,9 @@ export interface Detail {
 
 export interface User {
   id: number;
-  email: string;
   name: string;
-  nip: string;
   profile_image: string;
-  phone_number: string;
-  company_id: number;
-  role: number;
   position: string;
-  is_enabled: number;
-  created_time: Date;
-  deleted_at: null;
 }
 
 /**
@@ -133,5 +125,20 @@ export interface IUpdateAttendanceFormSucceedResponse {
   message: string;
   status: number;
 }
-/** Alias */
+
+/**
+ * @access POST /addUserAttendanceForm
+ * @access DELETE /removeUserAttendanceForm
+ */
+export interface IAddUserAttendanceFormPayload {
+  id: number;
+  user_ids: number[];
+}
+export type IRemoveUserAttendanceFormPayload = IAddUserAttendanceFormPayload;
+
+/** Aliases */
 export type IDeleteAttendanceFormSucceedResponse = IUpdateAttendanceFormPayload;
+export type IAddUserAttendanceFormSucceedResponse =
+  IUpdateAttendanceFormPayload;
+export type IRemoveUserAttendanceFormSucceedResponse =
+  IUpdateAttendanceFormPayload;

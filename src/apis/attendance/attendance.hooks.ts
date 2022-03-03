@@ -7,6 +7,8 @@ import { AttendanceService } from "./attendance.service";
 import {
   AttendanceServiceQueryKeys,
   IAddAttendanceFormPayload,
+  IAddUserAttendanceFormPayload,
+  IRemoveUserAttendanceFormPayload,
   IUpdateAttendanceFormPayload,
 } from "./attendance.types";
 
@@ -63,6 +65,42 @@ export const useDeleteFormAktivitas = (redirectTo: string) => {
     {
       onSuccess: () => {
         router.push(redirectTo);
+      },
+    }
+  );
+};
+
+export const useDeleteFormAktivitasStaff = () => {
+  const axiosClient = useAxiosClient();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    (payload: IRemoveUserAttendanceFormPayload) =>
+      AttendanceService.removeUsers(axiosClient, payload),
+    {
+      onSuccess: (_, payload) => {
+        queryClient.invalidateQueries([
+          AttendanceServiceQueryKeys.FIND_ONE,
+          payload.id,
+        ]);
+      },
+    }
+  );
+};
+
+export const useAddFormAktivitasStaff = () => {
+  const axiosClient = useAxiosClient();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    (payload: IAddUserAttendanceFormPayload) =>
+      AttendanceService.addUsers(axiosClient, payload),
+    {
+      onSuccess: (_, payload) => {
+        queryClient.invalidateQueries([
+          AttendanceServiceQueryKeys.FIND_ONE,
+          payload.id,
+        ]);
       },
     }
   );

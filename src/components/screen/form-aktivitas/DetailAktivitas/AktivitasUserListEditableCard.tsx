@@ -1,22 +1,33 @@
 import {
   CloseOutlined,
+  ExclamationCircleOutlined,
   LeftOutlined,
   SearchOutlined,
   UserAddOutlined,
   UserDeleteOutlined,
 } from "@ant-design/icons";
-import { Button, Form, Input, Pagination, Spin } from "antd";
+import { Button, Empty, Form, Input, Modal, Pagination, Spin } from "antd";
 import {
   AttendanceService,
   AttendanceServiceQueryKeys,
   User,
+  useAddFormAktivitasStaff,
+  useDeleteFormAktivitasStaff,
 } from "apis/attendance";
-import { FC, useEffect, useState } from "react";
+import {
+  FilterUsersTypeParamEnum,
+  GetFilterUsersParamsType,
+  UserService,
+  UserServiceQueryKeys,
+} from "apis/user";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import clsx from "clsx";
+
+const { confirm, info } = Modal;
 
 /**
  * Component AktivitasUserListEditableCard's props.
@@ -32,47 +43,152 @@ export const AktivitasUserListEditableCard: FC<
   IAktivitasUserListEditableCard
 > = ({ aktivitasId }) => {
   const axiosClient = useAxiosClient();
-  const { data, isLoading } = useQuery(
+  const {
+    data: currentFormAktivitasUsers,
+    isLoading: currentFormAktivitasUsersLoading,
+  } = useQuery(
     [AttendanceServiceQueryKeys.FIND_ONE, aktivitasId],
-    () => AttendanceService.findOne(axiosClient, aktivitasId)
+    () => AttendanceService.findOne(axiosClient, aktivitasId),
+    {
+      select: (response) => response.data.data.users as StaffModelType[],
+    }
   );
 
+  const { mutateAsync: deleteFormAktivitasStaff } =
+    useDeleteFormAktivitasStaff();
+  const { mutateAsync: addFormAktivitasStaff } = useAddFormAktivitasStaff();
+
   const [cardPhase, setCardPhase] = useState<CardPhaseType>("default");
+  const [searchValue, setSearchValue] = useState("");
+  const [selectedStaffBuffer, setSelectedStaffBuffer] = useState<
+    Pick<StaffModelType, "id" | "name">[]
+  >([]);
 
-  const [staffData, setStaffData] = useState<StaffGridItemData[]>([]);
-  useEffect(() => {
-    if (!data) {
-      return;
+  const updateSelectedStaffBuffer = (
+    actionType: "insert" | "delete",
+    payload: Pick<StaffModelType, "id" | "name">
+  ) => {
+    switch (actionType) {
+      case "insert":
+        setSelectedStaffBuffer([...selectedStaffBuffer, payload]);
+        break;
+
+      case "delete":
+        setSelectedStaffBuffer((prev) =>
+          prev.filter((staff) => staff.id !== payload.id)
+        );
+        break;
     }
-
-    setStaffData(() => {
-      return data.data.data.users.map((user) => ({
-        ...user,
-        isOnRemoveState: false,
-      }));
-    });
-  }, [data]);
+  };
 
   const triggerChangePhase = (phase: CardPhaseType) => {
     setCardPhase(phase);
-
-    /** Check for "remove" phase and apply `isOnRemoveState` to true */
-    setStaffData((prev) =>
-      [...prev].map((staffData) => ({
-        ...staffData,
-        isOnRemoveState: phase === "remove",
-      }))
-    );
+    setSelectedStaffBuffer([]);
   };
 
   const onSearchStaff = (searchValue: string) => {
-    alert(searchValue);
+    setSearchValue(searchValue);
   };
 
-  const contentClassName = clsx("my-10", {
-    "grid grid-cols-3 md:grid-cols-5 gap-y-6": !isLoading,
-    "flex flex-col space-y-6 items-center justify-center": isLoading,
-  });
+  const selectedStaffNames = useMemo(
+    () => selectedStaffBuffer.map((staff) => staff.name),
+    [selectedStaffBuffer.length]
+  );
+  const selectedStaffIds = useMemo(
+    () => selectedStaffBuffer.map((staff) => staff.id),
+    [selectedStaffBuffer.length]
+  );
+
+  const onDeleteStaffButtonClicked = () => {
+    confirm({
+      title: "Hapus Staff",
+      icon: <ExclamationCircleOutlined style={{ color: "rgb(191 74 64)" }} />,
+      content: (
+        <p>
+          Apakah Anda yakin ingin menghapus staff{" "}
+          <strong>{selectedStaffNames.join(", ")}</strong>?
+        </p>
+      ),
+      width: 640,
+      centered: true,
+      okText: "Ya, saya yakin dan hapus staff",
+      okType: "danger",
+      cancelText: "Kembali",
+      onOk: () => {
+        return deleteFormAktivitasStaff(
+          { id: aktivitasId, user_ids: selectedStaffIds },
+          {
+            onSuccess: () => {
+              setCardPhase("default");
+              info({
+                title: "Staff Berhasil Dihapus",
+                content: (
+                  <p>
+                    Staff <strong>{selectedStaffNames.join(", ")}</strong> telah
+                    terhapus
+                  </p>
+                ),
+                width: 640,
+                centered: true,
+              });
+            },
+          }
+        );
+      },
+      modalRender: (node) => (
+        <div className="custom-modal-confirm-danger">{node}</div>
+      ),
+    });
+  };
+
+  const onAddStaffButtonClicked = () => {
+    confirm({
+      title: "Tambah Staff",
+      icon: <ExclamationCircleOutlined style={{ color: "rgb(191 74 64)" }} />,
+      content: (
+        <>
+          <p>
+            Apakah Anda yakin ingin menambah staff{" "}
+            <strong>{selectedStaffNames.join(", ")}</strong>?
+          </p>
+          <br />
+          <p>
+            Menambahkan staff akan mengeluarkannya dari aktivitas mereka saat
+            ini.
+          </p>
+        </>
+      ),
+      width: 640,
+      centered: true,
+      okText: "Ya, saya yakin dan tambah staff",
+      okType: "primary",
+      cancelText: "Kembali",
+      onOk: () => {
+        return addFormAktivitasStaff(
+          { id: aktivitasId, user_ids: selectedStaffIds },
+          {
+            onSuccess: () => {
+              setCardPhase("default");
+              info({
+                title: "Staff Berhasil Ditambahkan",
+                content: (
+                  <p>
+                    Staff <strong>{selectedStaffNames.join(", ")}</strong> telah
+                    ditambahkan
+                  </p>
+                ),
+                width: 640,
+                centered: true,
+              });
+            },
+          }
+        );
+      },
+      modalRender: (node) => (
+        <div className="custom-modal-confirm-default">{node}</div>
+      ),
+    });
+  };
 
   return (
     <div className="w-full bg-white p-6 rounded-md shadow-md overflow-x-auto">
@@ -81,70 +197,60 @@ export const AktivitasUserListEditableCard: FC<
         cardPhase={cardPhase}
         onSearch={onSearchStaff}
         onChangePhase={triggerChangePhase}
+        isAllowedToDeleteStaff={currentFormAktivitasUsers?.length > 0}
       />
 
       {/* Content Container */}
-      <div className={contentClassName}>
-        {isLoading && (
-          <>
-            <Spin />
-            <span className="text-mono50 animate-pulse">Memuat data...</span>
-          </>
-        )}
-
-        {/* Staff Item */}
-        {!isLoading && (
-          <>
-            {staffData.map((props, idx) => (
-              <StaffGridItem
-                key={idx}
-                onRemoveStaff={(staffId) => {
-                  alert(`Try to remove staff with ID: ${staffId}`);
-                }}
-                {...props}
-              />
-            ))}
-
-            {cardPhase === "default" && (
+      <div className="my-10">
+        <div className="w-full">
+          {cardPhase === "default" && (
+            <StaffSectionContainer
+              data={currentFormAktivitasUsers || []}
+              isLoading={currentFormAktivitasUsersLoading}
+              isSelectableSection={false}
+              onItemClicked={() => {
+                /** noop */
+              }}
+            >
               <div
-                className="flex flex-col items-center space-y-3 hover:cursor-pointer"
+                className="flex flex-col items-center space-y-3 group hover:cursor-pointer"
                 onClick={() => triggerChangePhase("add")}
               >
-                <Button className="rounded-full bg-primary100/25 w-12 h-12 flex items-center justify-center hover:border-primary100 focus:border-primary100">
+                <Button className="rounded-full bg-primary100/25 w-12 h-12 flex items-center justify-center group-hover:border-primary100 group-hover:bg-primary100/50 focus:border-primary100">
                   <UserAddOutlined className="text-xl text-primary100" />
                 </Button>
 
                 <span className="text-mono30 text-center">Tambah Staff</span>
               </div>
-            )}
-          </>
-        )}
+            </StaffSectionContainer>
+          )}
 
-        {/* {!isLoading && (
-                    Array(10)
-                        .fill(0)
-                        .map((_, idx) => (
-                            <StaffGridItem
-                                key={idx}
-                                id={1}
-                                name="Bintang"
-                                nip="12031289"
-                                profile_image="-"
-                                isOnRemoveState={cardPhase === "remove"}
-                                onRemoveStaff={(staffId) => {
-                                    alert(`Try to remove staff with ID: ${staffId}`);
-                                }}
-                            />
-                        ))
-                )} */}
+          {cardPhase === "remove" && (
+            <StaffSectionOnRemoveContainer
+              currentStaff={currentFormAktivitasUsers || []}
+              searchValue={searchValue}
+              updateSelectedStaffBuffer={updateSelectedStaffBuffer}
+            />
+          )}
+
+          {cardPhase === "add" && (
+            <StaffSectionOnAddContainer
+              currentStaff={currentFormAktivitasUsers || []}
+              currentSelectedStaff={selectedStaffBuffer}
+              searchValue={searchValue}
+              updateSelectedStaffBuffer={updateSelectedStaffBuffer}
+            />
+          )}
+        </div>
       </div>
 
       {/* Pagination and Action button */}
       <CardFooter
         cardPhase={cardPhase}
         onBatalkanClicked={() => triggerChangePhase("default")}
-        onDeleteStaffClicked={() => {}}
-        onAddStaffClicked={() => {}}
+        onDeleteStaffClicked={onDeleteStaffButtonClicked}
+        onAddStaffClicked={onAddStaffButtonClicked}
+        disableActionButton={selectedStaffBuffer.length === 0}
       />
     </div>
   );
@@ -168,6 +274,7 @@ interface ICardHeader {
   cardPhase: CardPhaseType;
   onChangePhase: (phase: CardPhaseType) => void;
   onSearch: (searchValue: string) => void;
+  isAllowedToDeleteStaff?: boolean;
 }
 
 /**
@@ -177,6 +284,7 @@ const CardHeader: FC<ICardHeader> = ({
   cardPhase,
   onChangePhase,
   onSearch,
+  isAllowedToDeleteStaff = false,
 }) => {
   const [searchForm] = Form.useForm();
 
@@ -212,7 +320,7 @@ const CardHeader: FC<ICardHeader> = ({
 
       {/* RHS: Search Input, Button */}
       <div className="flex space-x-4">
-        {cardPhase === "default" && (
+        {cardPhase === "default" && isAllowedToDeleteStaff && (
           <Button
             type="ghost"
             className="mig-button mig-button--outlined-danger"
@@ -222,6 +330,7 @@ const CardHeader: FC<ICardHeader> = ({
             Hapus Staff
           </Button>
         )}
+
         <Form
           form={searchForm}
           layout="inline"
@@ -230,7 +339,15 @@ const CardHeader: FC<ICardHeader> = ({
           }}
         >
           <Form.Item name="search">
-            <Input placeholder="Cari..." />
+            <Input
+              allowClear
+              placeholder="Cari..."
+              onChange={(ev) => {
+                if (ev.target.value === "") {
+                  onSearch("");
+                }
+              }}
+            />
           </Form.Item>
 
           <Form.Item noStyle>
@@ -251,73 +368,15 @@ const CardHeader: FC<ICardHeader> = ({
 /**
  * @private
  */
-type StaffGridItemType = Pick<
-  User,
-  "id" | "name" | "profile_image" | "position"
->;
-interface IStaffGridItem {
-  isOnRemoveState?: boolean;
-  onRemoveStaff: (staffId: number) => void;
-}
-type StaffGridItemData = StaffGridItemType &
-  Pick<IStaffGridItem, "isOnRemoveState">;
-
-/**
- * @private
- */
-const StaffGridItem: FC<StaffGridItemType & IStaffGridItem> = ({
-  isOnRemoveState = false,
-  onRemoveStaff,
-  ...staff
-}) => {
-  const gridItemClassName = clsx(
-    "flex flex-col justify-start items-center space-y-3 text-center",
-    {
-      "hover:cursor-pointer": isOnRemoveState,
-    }
-  );
-
-  const onGridItemClicked = () => {
-    if (!isOnRemoveState) {
-      return;
-    }
-
-    onRemoveStaff(staff.id);
-  };
-
-  return (
-    <div className={gridItemClassName} onClick={onGridItemClicked}>
-      {/* Avatar */}
-      <div className="w-12 h-12 rounded-full bg-mono80 relative">
-        {staff.profile_image !== "-" && (
-          <img
-            className="w-full h-full bg-cover"
-            alt={`${staff.name}'s Avatar`}
-            src={staff.profile_image}
-          />
-        )}
-
-        {isOnRemoveState && (
-          <button className="bg-state1/40 rounded-full flex items-center p-1 absolute -top-1 -right-2">
-            <CloseOutlined className="text-state1" />
-          </button>
-        )}
-      </div>
-
-      {/* Staff name */}
-      <span className="block text-mono30">{staff.name}</span>
-
-      {/* Staff Position */}
-      <span className="block text-mono50 text-xs">{staff.position}</span>
-    </div>
-  );
-};
+type StaffModelType = Pick<User, "id" | "name" | "profile_image" | "position">;
 
 /**
  * @private
  */
 interface ICardFooter {
   cardPhase: CardPhaseType;
+  disableActionButton: boolean;
+
   onBatalkanClicked: () => void;
 
   onDeleteStaffClicked: () => void;
@@ -329,6 +388,7 @@ interface ICardFooter {
  */
 const CardFooter: FC<ICardFooter> = ({
   cardPhase,
+  disableActionButton,
   onBatalkanClicked,
   onDeleteStaffClicked,
   onAddStaffClicked,
@@ -356,14 +416,14 @@ const CardFooter: FC<ICardFooter> = ({
     <div className="flex justify-between">
       {/* LHS: Pagination */}
       <div>
-        {cardPhase !== "remove" && (
+        {/* {cardPhase !== "remove" && (
           <Pagination
             defaultCurrent={1}
             total={50}
             pageSize={10}
             showSizeChanger={false}
           />
-        )}
+        )} */}
       </div>
 
       {/* RHS: Acttion Button */}
@@ -380,6 +440,7 @@ const CardFooter: FC<ICardFooter> = ({
           <Button
             className={actionButtonClassName}
             onClick={onActionButtonClicked}
+            disabled={disableActionButton}
           >
             {cardPhase === "add" ? (
               <UserAddOutlined className="text-base" />
@@ -391,5 +452,305 @@ const CardFooter: FC<ICardFooter> = ({
         </div>
       )}
     </div>
+  );
+};
+
+interface IStaffListItem {
+  id: number;
+  name: string;
+  position: string | null;
+  profileImageUrl: string;
+
+  isSelected: boolean;
+  isSelectable?: boolean;
+
+  onClick: (id: number) => void;
+}
+
+const StaffListItem: FC<IStaffListItem> = ({
+  id,
+  name,
+  position,
+  profileImageUrl,
+  isSelected,
+  isSelectable = false,
+  onClick,
+}) => {
+  const gridItemClassName = clsx(
+    "flex flex-col justify-start items-center space-y-3 text-center rounded-lg mx-4 py-2",
+    {
+      "hover:cursor-pointer transition-colors duration-300 bg-white/0 hover:bg-primary100/10":
+        isSelectable,
+      // "hover:cursor-pointer": isSelected,
+    }
+  );
+
+  const onClickHandler = () => onClick(id);
+
+  return (
+    <div className={gridItemClassName} onClick={onClickHandler}>
+      {/* Avatar */}
+      <div className="relative">
+        <div className="w-12 h-12 rounded-full bg-mono80 overflow-hidden">
+          {profileImageUrl !== "-" && (
+            <img
+              className="w-full h-full bg-cover"
+              alt={`${name}'s Avatar`}
+              src={profileImageUrl}
+            />
+          )}
+        </div>
+        {isSelected && (
+          <button className="bg-state1/40 rounded-full flex items-center p-1 absolute -top-1 -right-2">
+            <CloseOutlined className="text-state1" />
+          </button>
+        )}
+      </div>
+
+      {/* Staff name */}
+      <span className="block text-mono30">{name}</span>
+
+      {/* Staff Position */}
+      <span className="block text-mono50 text-xs">{position}</span>
+    </div>
+  );
+};
+
+interface IStaffSectionContainer {
+  data: StaffModelType[];
+  isSelectableSection: boolean;
+
+  onItemClicked: (id: number) => void;
+
+  emptyMessage?: string;
+  isLoading?: boolean;
+  isItemHoverable?: boolean;
+}
+
+const StaffSectionContainer: FC<IStaffSectionContainer> = ({
+  data,
+  isSelectableSection,
+  isItemHoverable,
+  isLoading = false,
+  emptyMessage,
+  onItemClicked,
+  children,
+}) => {
+  const sectionClassName = clsx("py-6 h-80 overflow-x-auto", {
+    "flex flex-col space-y-6 items-center justify-center": isLoading,
+    "grid grid-cols-3 md:grid-cols-5 gap-y-6 auto-rows-min":
+      !isLoading && (data.length > 0 || React.Children.count(children) > 0),
+  });
+
+  return (
+    <section className={sectionClassName}>
+      {isLoading && <Spin />}
+
+      {data.length === 0 && React.Children.count(children) === 0 && (
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description={emptyMessage || "Tidak ada daftar staff"}
+        />
+      )}
+
+      {data.map(({ id, name, position, profile_image }) => (
+        <StaffListItem
+          key={id}
+          id={id}
+          name={name}
+          position={position}
+          profileImageUrl={profile_image}
+          onClick={onItemClicked}
+          isSelected={isSelectableSection}
+          isSelectable={isItemHoverable}
+        />
+      ))}
+
+      {!isLoading && children}
+    </section>
+  );
+};
+
+type UpdateSelectedStaffBufferType = (
+  actionType: "insert" | "delete",
+  payload: Pick<StaffModelType, "id" | "name">
+) => void;
+
+interface IStaffSectionOnRemoveContainer {
+  currentStaff: StaffModelType[];
+  searchValue?: string;
+  updateSelectedStaffBuffer: UpdateSelectedStaffBufferType;
+}
+const StaffSectionOnRemoveContainer: FC<IStaffSectionOnRemoveContainer> = ({
+  currentStaff,
+  updateSelectedStaffBuffer,
+  searchValue,
+}) => {
+  const [items, setItems] = useState<{
+    top: StaffModelType[];
+    bottom: StaffModelType[];
+  }>({ top: [], bottom: currentStaff });
+
+  const handleClickedItem = useCallback((source: "top" | "bottom") => {
+    return (staffId: number) => {
+      setItems((prev) => {
+        let sourceIndex = null;
+        let updatedTop: typeof prev.top;
+        let updatedBottom: typeof prev.bottom;
+
+        if (source === "bottom") {
+          updatedBottom = prev.bottom.filter((staff, index) => {
+            if (staff.id !== staffId) {
+              return true;
+            }
+
+            sourceIndex = index;
+            return false;
+          });
+
+          const movedStaff = prev.bottom[sourceIndex];
+          updatedTop = [...prev.top, movedStaff];
+          updateSelectedStaffBuffer("insert", {
+            id: movedStaff.id,
+            name: movedStaff.name,
+          });
+        } else {
+          updatedTop = prev.top.filter((staff, index) => {
+            if (staff.id !== staffId) {
+              return true;
+            }
+
+            sourceIndex = index;
+            return false;
+          });
+
+          const movedStaff = prev.top[sourceIndex];
+          updatedBottom = [...prev.bottom, movedStaff];
+          updateSelectedStaffBuffer("delete", {
+            id: movedStaff.id,
+            name: movedStaff.name,
+          });
+        }
+
+        return { top: updatedTop, bottom: updatedBottom };
+      });
+    };
+  }, []);
+
+  /** Filter bottom data to match with the `searchValue` */
+  const mappedBottomData = useMemo(() => {
+    if (searchValue === "" || items.bottom.length === 0) {
+      return items.bottom;
+    }
+
+    return items.bottom.filter((staff) => {
+      return staff.name.toLowerCase().includes(searchValue.toLowerCase());
+    });
+  }, [searchValue, items.bottom]);
+
+  return (
+    <>
+      <StaffSectionContainer
+        data={items.top}
+        isItemHoverable
+        isSelectableSection
+        emptyMessage="Pilih staff untuk dihapus"
+        onItemClicked={handleClickedItem("top")}
+      />
+
+      <hr />
+
+      <StaffSectionContainer
+        data={mappedBottomData}
+        isItemHoverable
+        isSelectableSection={false}
+        emptyMessage="Semua staff akan terhapus"
+        onItemClicked={handleClickedItem("bottom")}
+      />
+    </>
+  );
+};
+
+interface IStaffSectionOnAddContainer extends IStaffSectionOnRemoveContainer {
+  currentSelectedStaff: Pick<StaffModelType, "id" | "name">[];
+}
+const StaffSectionOnAddContainer: FC<IStaffSectionOnAddContainer> = ({
+  currentStaff,
+  searchValue,
+  currentSelectedStaff,
+  updateSelectedStaffBuffer,
+}) => {
+  const axiosClient = useAxiosClient();
+  const [topItems, setTopItems] = useState<StaffModelType[]>([]);
+
+  const excludeStaffIds = useMemo(() => {
+    const selectedStaffIds = currentSelectedStaff.map((staff) => staff.id);
+    const currentStaffIds = currentStaff.map((staff) => staff.id);
+
+    return Array.from(new Set([...selectedStaffIds, ...currentStaffIds]));
+  }, [currentSelectedStaff, currentStaff]);
+
+  const { data: agentList, isLoading: loadingAgentList } = useQuery(
+    [
+      UserServiceQueryKeys.FILTER_USERS,
+      { name: searchValue, type: FilterUsersTypeParamEnum.AGENT },
+    ],
+    (queries) => {
+      const params = queries.queryKey[1] as GetFilterUsersParamsType;
+
+      return UserService.filterUsers(axiosClient, {
+        name: params.name === "" ? undefined : params.name,
+        type: params.type,
+      });
+    },
+    {
+      select: (response) =>
+        response.data.data
+          .filter((agent) => !excludeStaffIds.includes(agent.id))
+          .map((agent) => ({
+            id: agent.id,
+            name: agent.name,
+            position: agent.position,
+            profile_image: agent.profile_image,
+          })) as StaffModelType[],
+    }
+  );
+
+  const handleItemClickedFromTop = (selectedAgentId: number) => {
+    setTopItems((prev) => prev.filter((agent) => agent.id !== selectedAgentId));
+    updateSelectedStaffBuffer("delete", { id: selectedAgentId, name: "" });
+  };
+
+  const handleItemClickedFromBottom = (agentId: number) => {
+    const selectedAgent = agentList.find((agent) => agent.id === agentId);
+
+    setTopItems((prev) => [...prev, selectedAgent]);
+    updateSelectedStaffBuffer("insert", {
+      id: agentId,
+      name: selectedAgent.name,
+    });
+  };
+
+  return (
+    <>
+      <StaffSectionContainer
+        data={topItems}
+        isItemHoverable
+        isSelectableSection
+        emptyMessage="Pilih staff untuk ditambahkan"
+        onItemClicked={handleItemClickedFromTop}
+      />
+
+      <hr />
+
+      <StaffSectionContainer
+        data={agentList || []}
+        isItemHoverable
+        isSelectableSection={false}
+        emptyMessage="Semua staff akan terhapus"
+        onItemClicked={handleItemClickedFromBottom}
+        isLoading={loadingAgentList}
+      />
+    </>
   );
 };

@@ -4,10 +4,14 @@ import QueryString from "qs";
 import {
   IAddAttendanceFormPayload,
   IAddAttendanceFormSucceedResponse,
+  IAddUserAttendanceFormPayload,
+  IAddUserAttendanceFormSucceedResponse,
   IDeleteAttendanceFormSucceedResponse,
   IGetAttendanceFormSucceedResponse,
   IGetAttendanceFormsParams,
   IGetAttendanceFormsSucceedResponse,
+  IRemoveUserAttendanceFormPayload,
+  IRemoveUserAttendanceFormSucceedResponse,
   IUpdateAttendanceFormPayload,
   IUpdateAttendanceFormSucceedResponse,
 } from "./attendance.types";
@@ -81,6 +85,34 @@ export class AttendanceService {
         data: {
           id: aktivitasId,
         },
+      }
+    );
+  }
+
+  /**
+   * @access POST /addUserAttendanceForm
+   */
+  static async addUsers(
+    axiosClient: AxiosInstance,
+    payload: IAddUserAttendanceFormPayload
+  ) {
+    return await axiosClient.post<IAddUserAttendanceFormSucceedResponse>(
+      "/addUserAttendanceForm",
+      payload
+    );
+  }
+
+  /**
+   * @access DELETE /removeUserAttendanceForm
+   */
+  static async removeUsers(
+    axiosClient: AxiosInstance,
+    payload: IRemoveUserAttendanceFormPayload
+  ) {
+    return await axiosClient.delete<IRemoveUserAttendanceFormSucceedResponse>(
+      "/removeUserAttendanceForm",
+      {
+        data: payload,
       }
     );
   }
