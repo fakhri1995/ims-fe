@@ -2612,7 +2612,8 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
             </Button>
           </div>
         </div>
-        {newdata.is_consumable === false && (
+
+        {newdata.is_consumable === 0 && (
           <div className=" mb-8 col-span-1 md:col-span-4 px-5 flex flex-col">
             <div className="mb-5">
               <h1 className="font-bold text-xl">Konfigurasi Part Model</h1>
