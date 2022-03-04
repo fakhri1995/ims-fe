@@ -190,6 +190,16 @@ export const AktivitasUserListEditableCard: FC<
     });
   };
 
+  const filteredCurrentFormAktivitasUsers = useMemo(() => {
+    if (!currentFormAktivitasUsers) {
+      return [];
+    }
+
+    return currentFormAktivitasUsers.filter((staff) =>
+      staff.name.toLowerCase().includes(searchValue.toLowerCase())
+    );
+  }, [searchValue, currentFormAktivitasUsers]);
+
   return (
     <div className="w-full bg-white p-6 rounded-md shadow-md overflow-x-auto">
       {/* Header */}
@@ -205,7 +215,7 @@ export const AktivitasUserListEditableCard: FC<
         <div className="w-full">
           {cardPhase === "default" && (
             <StaffSectionContainer
-              data={currentFormAktivitasUsers || []}
+              data={filteredCurrentFormAktivitasUsers || []}
               isLoading={currentFormAktivitasUsersLoading}
               isSelectableSection={false}
               onItemClicked={() => {
