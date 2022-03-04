@@ -1,8 +1,7 @@
-import { QuestionCircleOutlined } from "@ant-design/icons";
+// import { QuestionCircleOutlined } from "@ant-design/icons";
 import {
   Button,
-  Checkbox,
-  Collapse,
+  Checkbox, // Collapse,
   DatePicker,
   Empty,
   Form,
@@ -10,8 +9,7 @@ import {
   InputNumber,
   Modal,
   Select,
-  Spin,
-  Timeline,
+  Spin, // Timeline,
   TreeSelect,
   notification,
 } from "antd";
@@ -33,7 +31,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
   pathArr[pathArr.length - 1] = "Ubah Item";
   const [instanceForm] = Form.useForm();
   const [instanceForm2] = Form.useForm();
-  const { Panel } = Collapse;
+  // const { Panel } = Collapse;
 
   //2.useState
   const [updatedata, setupdatedata] = useState({
@@ -54,6 +52,9 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
     additional_attributes: [],
     inventory_values: [],
   });
+  useEffect(() => {
+    console.log(updatedata);
+  }, [updatedata]);
   const [invrelations, setinvrelations] = useState({
     models: [],
     assets: [],
@@ -1249,7 +1250,8 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
       <Modal
         title={
           <h1 className="font-semibold">
-            Apakah anda yakin ingin mengubah item "{updatedata.inventory_name}"?
+            Apakah anda yakin ingin mengubah item "
+            {updatedata?.model_inventory?.name}"?
           </h1>
         }
         visible={modalupdate}

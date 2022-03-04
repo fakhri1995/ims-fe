@@ -22,7 +22,7 @@ import {
   notification,
 } from "antd";
 import moment from "moment";
-import Link from "next/link";
+// import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
@@ -41,7 +41,7 @@ const Overview = ({
 }) => {
   const rt = useRouter();
   //useState
-  const [invrelations2, setinvrelations2] = useState({});
+  // const [invrelations2, setinvrelations2] = useState({});
 
   //helper
 
@@ -1289,7 +1289,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
           dataApiadd.type_id === -1 && setdetailtipedataadd(res2.data);
           dataApiadd.type_id === -2 && setdetailtipedataadd(res2.data);
           dataApiadd.type_id === -4 && setdetailtipedataadd(res2.data.data);
-          console.log();
+          // console.log();
         });
     }
   }, [detailtipeadd, subloctrig]);
@@ -1404,7 +1404,8 @@ const Relationship = ({ initProps, maindata, itemid }) => {
         title={
           <div className="flex justify-between p-5 mt-5">
             <h1 className="font-bold text-xl">
-              Form Tambah Relationship "{maindata.name}"
+              Form Tambah Relationship{" "}
+              {`\"${maindata.mig_id} - ${maindata.model_inventory.name}\"`}
             </h1>
             <div className="flex">
               <>
@@ -3633,8 +3634,8 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
       <Modal
         title={
           <h1 className="font-semibold">
-            Apakah anda yakin ingin menghapus item "{maindata.inventory_name} -{" "}
-            {maindata.mig_id}"?
+            Apakah anda yakin ingin menghapus item{" "}
+            {`\"${maindata.mig_id} - ${maindata.model_inventory.name}\"`}?
           </h1>
         }
         visible={modaldelete}
