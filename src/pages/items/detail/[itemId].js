@@ -841,6 +841,17 @@ const KonfigurasiPart = ({
             onMouseLeave: (event) => {
               setevents(0);
             },
+            onClick: (ev) => {
+              /** Only trigger redirection by clicking the row (<td> element) */
+              if (ev.target.tagName !== "TD") {
+                return;
+              }
+
+              const destination = "/items/detail/" + record.id;
+              rt.push(destination);
+              rt.reload();
+            },
+            className: "hover:cursor-pointer",
           };
         }}
       ></Table>
