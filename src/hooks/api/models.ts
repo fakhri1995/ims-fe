@@ -1,12 +1,14 @@
-import { useAxiosClient } from "hooks/use-axios-client";
 import { useCallback, useEffect, useState } from "react";
+
+import { useAxiosClient } from "hooks/use-axios-client";
+
+import { ModelsService } from "services/models";
+
 import { GetModelData } from "types/api/models/get-model";
 import {
   GetModelsDatum,
   IGetModelsCriteria,
 } from "types/api/models/get-models";
-
-import { ModelsService } from "services/models";
 
 /**
  * Custom hook to retrieve all models.
@@ -14,7 +16,7 @@ import { ModelsService } from "services/models";
  * @access GET /getModels
  */
 export const useGetModels = (criteria?: IGetModelsCriteria) => {
-  const { axiosClient } = useAxiosClient();
+  const axiosClient = useAxiosClient();
 
   const [data, setData] = useState<GetModelsDatum[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -51,7 +53,7 @@ export const useGetModels = (criteria?: IGetModelsCriteria) => {
  * @access /getModel
  */
 export const useGetModel = (modelId?: number) => {
-  const { axiosClient } = useAxiosClient();
+  const axiosClient = useAxiosClient();
 
   const [data, setData] = useState<GetModelData[]>([]);
   const [isLoading, setIsLoading] = useState(false);

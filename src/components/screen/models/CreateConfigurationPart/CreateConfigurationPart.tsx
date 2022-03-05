@@ -1,6 +1,7 @@
 import { Button, message } from "antd";
-import { useGetModel } from "hooks/api/models";
 import { FC, useState } from "react";
+
+import { useGetModel } from "hooks/api/models";
 
 import { useBulkConfigurationModelParts } from ".";
 import { InputPart } from "./InputPart";

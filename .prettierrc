@@ -6,9 +6,14 @@
   "tabWidth": 2,
   "importOrder": [
     "^components/(.*)$",
+    "^hooks/(.*)$",
+    "^lib/(.*)$",
+    "^services/(.*)$",
+    "^assets/(.*)$",
     "^styles/(.*)$",
-    "^[./(.css)]",
-    "^[./]"
+    "^[./(.css|scss)]",
+    "^[./]",
+    "^types/(.*)$"
   ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true

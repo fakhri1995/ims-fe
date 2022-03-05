@@ -1,5 +1,6 @@
 import { AxiosInstance } from "axios";
 import qs from "qs";
+
 import { IGetModel } from "types/api/models/get-model";
 import type {
   IGetModels,

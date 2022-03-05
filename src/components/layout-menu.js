@@ -5,7 +5,7 @@ import {
   TeamOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import Icon from "@ant-design/icons";
+import { CheckSquareOutlined } from "@ant-design/icons";
 import Layout from "antd/lib/layout";
 import Menu from "antd/lib/menu";
 import Link from "next/link";
@@ -78,6 +78,7 @@ const LayoutMenu = ({
       <path d="M18 10l4 4-8 8-4-4zM31.298 9.297l-2.297-2.297-1 1c-0.512 0.512-1.219 0.828-2 0.828-1.562 0-2.829-1.266-2.829-2.828 0-0.781 0.317-1.489 0.829-2.001l1-1-2.297-2.297c-0.936-0.936-2.469-0.936-3.405 0l-18.595 18.595c-0.936 0.936-0.936 2.469 0 3.405l2.297 2.297 0.999-0.999c0.512-0.513 1.22-0.83 2.001-0.83 1.562 0 2.828 1.266 2.828 2.828 0 0.781-0.317 1.489-0.829 2.001l-1 1 2.297 2.297c0.936 0.936 2.469 0.936 3.405 0l18.595-18.595c0.936-0.937 0.936-2.469 0-3.406zM14 26l-8-8 12-12 8 8-12 12z"></path>
     </svg>
   );
+
   return (
     <div>
       <div
@@ -94,6 +95,7 @@ const LayoutMenu = ({
         className={`${st.siderLayout} sider`}
         style={{ borderRight: `1px solid #f0f0f0`, height: "100%" }}
       >
+        {/* Sider Header (image) */}
         <div className="logo flex items-center justify-center my-5">
           <img
             src="/image/Brand.png"
@@ -106,6 +108,7 @@ const LayoutMenu = ({
             </h1>
           )}
         </div>
+
         <Menu
           theme="light"
           mode="inline"
@@ -168,12 +171,7 @@ const LayoutMenu = ({
             <Link href="/items">Items</Link>
             {/* </Menu.Item> */}
           </Menu.Item>
-          <SubMenu
-            style={{ marginBottom: `1.5rem` }}
-            title="Perusahaan"
-            key="5"
-            icon={<CompanyIconSvg />}
-          >
+          <SubMenu title="Perusahaan" key="5" icon={<CompanyIconSvg />}>
             {
               // [144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
               <Menu.Item key="51">
@@ -187,6 +185,28 @@ const LayoutMenu = ({
               </Menu.Item>
             }
           </SubMenu>
+
+          {/* Q: ASsign key ke menu/submenu apakah ada aturan / ketentuan tertenu? */}
+          <SubMenu
+            style={{ marginBottom: `1.5rem` }}
+            title="Attendance"
+            key="124124"
+            icon={<CheckSquareOutlined className="text-[#597e8d]" />}
+          >
+            {
+              // [144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+              <Menu.Item key="21412">
+                <Link href="/attendance/form-aktivitas">Form Aktivitas</Link>
+              </Menu.Item>
+            }
+            {/* {
+              // [155, 156, 157, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+              <Menu.Item key="52">
+                <Link href="/company/clients">Klien</Link>
+              </Menu.Item>
+            } */}
+          </SubMenu>
+
           {!coll && (
             <p
               className={`mb-2 ${
@@ -418,6 +438,7 @@ const LayoutMenu = ({
           </SubMenu>
         </Menu>
       </Sider>
+
       <Sider
         collapsible
         collapsed={collsmall}

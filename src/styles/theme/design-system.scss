@@ -1,0 +1,24 @@
+/** Buttons */
+.mig-button {
+  @apply rounded-md text-sm font-medium py-2 px-6 flex items-center;
+
+  &--outlined {
+    &-primary {
+      @apply text-primary100 border-primary100 hover:text-primary100 hover:border-primary100 focus:text-primary100 focus:border-primary100;
+    }
+
+    &-danger {
+      @apply text-state1 border-state1 hover:text-state1 hover:border-state1 focus:text-state1 focus:border-state1;
+    }
+  }
+
+  &--solid {
+    &-primary {
+      @apply text-white hover:text-white focus:text-white bg-primary100 border-primary100 hover:bg-primary75 hover:border-primary75 focus:bg-primary75 focus:border-primary75;
+    }
+
+    &-danger {
+      @apply text-white hover:text-white focus:text-white bg-state1 border-state1 hover:bg-state12 hover:border-state12 focus:bg-state12 focus:border-state12;
+    }
+  }
+}
