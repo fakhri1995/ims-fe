@@ -84,7 +84,7 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
       pathArr={pathArr}
       st={styles}
     >
-      <>
+      <div className="px-5">
         {/* First Row */}
         <div className="flex mb-6 md:space-x-6 space-y-6 md:space-y-0 flex-wrap md:flex-nowrap">
           {/* Total Form Aktivitas */}
@@ -124,7 +124,7 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
           onvisible={setCreateDrawerShown}
           visible={isCreateDrawerShown}
         />
-      </>
+      </div>
     </LayoutDashboard>
   );
 };

@@ -46,7 +46,7 @@ const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
     return [...pathArr, data.data.data.name];
   }, [data]);
 
-  const _onUbahButtonClicked = useCallback(() => {
+  const onUbahButtonClicked = useCallback(() => {
     setIsDrawerShown(true);
   }, []);
 
@@ -57,24 +57,26 @@ const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
       pathArr={modifiedPathArr}
       st={styles}
     >
-      {/* First Row */}
-      <div className="flex flex-wrap md:flex-nowrap md:space-x-6 space-y-6 md:space-y-0">
-        {/* First Column */}
-        <div className="w-full md:w-1/3">
-          {/* Project detail card */}
-          <DetailFormAktivitasCard
-            aktivitasId={+aktivitasId}
-            onUbahButtonClicked={_onUbahButtonClicked}
-          />
-        </div>
+      <div className="px-5">
+        {/* First Row */}
+        <div className="flex flex-wrap md:flex-nowrap md:space-x-6 space-y-6 md:space-y-0">
+          {/* First Column */}
+          <div className="w-full md:w-1/3">
+            {/* Project detail card */}
+            <DetailFormAktivitasCard
+              aktivitasId={+aktivitasId}
+              onUbahButtonClicked={onUbahButtonClicked}
+            />
+          </div>
 
-        {/* Second Column */}
-        <div className="w-full md:w-2/3 h-4 space-y-6">
-          {/* Staff (editable) card */}
-          <AktivitasUserListEditableCard aktivitasId={+aktivitasId} />
+          {/* Second Column */}
+          <div className="w-full md:w-2/3 space-y-6">
+            {/* Staff (editable) card */}
+            <AktivitasUserListEditableCard aktivitasId={+aktivitasId} />
 
-          {/* Aktivitas info card */}
-          <AktivitasTableInfoCard aktivitasId={+aktivitasId} />
+            {/* Aktivitas info card */}
+            <AktivitasTableInfoCard aktivitasId={+aktivitasId} />
+          </div>
         </div>
       </div>
 

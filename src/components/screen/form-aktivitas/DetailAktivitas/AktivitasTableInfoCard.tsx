@@ -29,17 +29,10 @@ export const AktivitasTableInfoCard: FC<IAktivitasTableInfoCard> = ({
     () => AttendanceService.findOne(axiosClient, aktivitasId),
     {
       select: (response) => {
-        /** Transform the data into @type {AktivitasDetailType[]} */
-        const mappedData: AktivitasDetailType[] = [
-          ...response.data.data.details,
-        ].map((datum) => {
-          return {
-            ...datum,
-            selected: false,
-          };
-        });
-
-        return mappedData;
+        return response.data.data.details.map((datum) => ({
+          ...datum,
+          selected: false,
+        })) as AktivitasDetailType[];
       },
     }
   );

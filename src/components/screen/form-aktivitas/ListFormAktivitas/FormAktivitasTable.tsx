@@ -53,7 +53,7 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = ({
         title: "No.",
         dataIndex: "id",
         render: (_, __, index) => `${++index}.`,
-        width: 48,
+        width: 64,
       },
       {
         key: "id",
@@ -75,6 +75,7 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = ({
         dataIndex: "users_count",
         sorter: true,
         sortDirections: ["ascend", "descend", "ascend"],
+        width: 192,
       },
       {
         key: "id",
@@ -87,9 +88,7 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = ({
 
   return (
     <Table<GetAttendanceFormsDatum>
-      bordered
       loading={isLoading}
-      size="middle"
       columns={tableColumns}
       dataSource={mappedData || []}
       scroll={{ x: 1500 }}
@@ -108,7 +107,7 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = ({
         onTriggerChangeCriteria(criteria);
       }}
       pagination={{
-        position: ["bottomLeft"],
+        position: ["bottomRight"],
         className: "pt-6",
         pageSize: tablePageSize,
         total: tableTotalData,
