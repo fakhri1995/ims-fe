@@ -5,10 +5,12 @@ import { Breadcrumb, Spin } from "antd";
 import jscookie from "js-cookie";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import LayoutMenu from "./layout-menu";
 import LayoutMenuHeader from "./layout-menu-header";
+
+const { Header } = Layout;
 
 function LayoutDashboard({
   children,
@@ -19,7 +21,6 @@ function LayoutDashboard({
   st,
   prevpath,
   idpage,
-  extra,
 }) {
   const rt = useRouter();
   var rootBreadcrumb = "";
@@ -42,10 +43,9 @@ function LayoutDashboard({
   });
 
   const childBreacrumbDD = childBreacrumbCC;
-  const { Sider, Content, Header } = Layout;
   const [coll, setColl] = useState(true);
   const [collsmall, setCollsmall] = useState(true);
-  const [tinggi, setTinggi] = useState(90);
+  // const [tinggi, setTinggi] = useState(90);
   const [loadingspin, setloadingspin] = useState(false);
 
   const handleColl = () => {
@@ -80,10 +80,10 @@ function LayoutDashboard({
       });
   };
 
-  useEffect(() => {
-    var h = window.innerHeight;
-    setTinggi(h);
-  }, []);
+  // useEffect(() => {
+  //   var h = window.innerHeight;
+  //   setTinggi(h);
+  // }, []);
   var pathBuilder = "";
 
   /**
@@ -127,7 +127,7 @@ function LayoutDashboard({
 
   return (
     <Spin spinning={loadingspin}>
-      <div className=" min-h-screen flex">
+      <div className="min-h-screen flex">
         {/* Left sider */}
         <LayoutMenu
           dataProfile={dataProfile}
@@ -139,7 +139,7 @@ function LayoutDashboard({
         />
 
         {/* Header + Main Content */}
-        <div className="h-auto w-full">
+        <div className="w-full">
           <Header
             className="site-layout-background"
             style={{
@@ -508,12 +508,7 @@ function LayoutDashboard({
             ) : null}
           </Header>
 
-          <main
-            className="slb min-h-screen bg-backdrop"
-            style={{ padding: 24 }}
-          >
-            {children}
-          </main>
+          <main className="h-full bg-backdrop p-6">{children}</main>
         </div>
       </div>
     </Spin>
