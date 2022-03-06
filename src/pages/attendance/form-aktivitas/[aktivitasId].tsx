@@ -1,5 +1,3 @@
-import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
-import { AuthService } from "apis/auth";
 import type { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
@@ -18,6 +16,9 @@ import { useAxiosClient } from "hooks/use-axios-client";
 
 import { parseToken } from "lib/auth";
 import { getAxiosClient } from "lib/axios-client";
+
+import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
+import { AuthService } from "apis/auth";
 
 import { ProtectedPageProps } from "types/common";
 

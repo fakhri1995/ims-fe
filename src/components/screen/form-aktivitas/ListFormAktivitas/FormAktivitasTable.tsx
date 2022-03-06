@@ -1,13 +1,14 @@
 import { Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
-import {
-  GetAttendanceFormsDatum,
-  IGetAttendanceFormsParams,
-} from "apis/attendance";
 import { format } from "date-fns";
 import idLocale from "date-fns/locale/id";
 import { useRouter } from "next/router";
 import { FC, useMemo } from "react";
+
+import {
+  GetAttendanceFormsDatum,
+  IGetAttendanceFormsParams,
+} from "apis/attendance";
 
 export interface IFormAktivitasTable {
   isLoading: boolean;

@@ -1,14 +1,15 @@
 import { Table } from "antd";
 import { ColumnsType } from "antd/es/table";
+import { FC, useEffect, useState } from "react";
+import { useQuery } from "react-query";
+
+import { useAxiosClient } from "hooks/use-axios-client";
+
 import {
   AttendanceService,
   AttendanceServiceQueryKeys,
   Detail,
 } from "apis/attendance";
-import { FC, useEffect, useState } from "react";
-import { useQuery } from "react-query";
-
-import { useAxiosClient } from "hooks/use-axios-client";
 
 /**
  * Component AktivitasTableInfoCard's props.

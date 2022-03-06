@@ -1,6 +1,5 @@
 import { EditOutlined } from "@ant-design/icons";
 import { Button, Skeleton } from "antd";
-import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
 import { FC, memo, useMemo } from "react";
 import React from "react";
 import { useQuery } from "react-query";
@@ -10,6 +9,8 @@ import { DetailCard, IDetailCard } from "components/cards/DetailCard";
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import { formatDateToLocale } from "lib/date-utils";
+
+import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
 
 export interface IDetailFormAktivitasCard {
   onUbahButtonClicked: () => void;

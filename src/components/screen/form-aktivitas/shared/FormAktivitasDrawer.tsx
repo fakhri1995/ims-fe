@@ -8,13 +8,6 @@ import {
   Switch,
   notification,
 } from "antd";
-import {
-  AttendanceService,
-  AttendanceServiceQueryKeys,
-  useAddFormAktivitas,
-  useDeleteFormAktivitas,
-  useUpdateFormAktivitas,
-} from "apis/attendance";
 import type { FC } from "react";
 import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
@@ -32,6 +25,14 @@ import { TextAreaRequired } from "components/input";
 import { H2, Label } from "components/typography";
 
 import { useAxiosClient } from "hooks/use-axios-client";
+
+import {
+  AttendanceService,
+  AttendanceServiceQueryKeys,
+  useAddFormAktivitas,
+  useDeleteFormAktivitas,
+  useUpdateFormAktivitas,
+} from "apis/attendance";
 
 const { confirm } = Modal;
 

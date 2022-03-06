@@ -8,6 +8,7 @@
     "^components/(.*)$",
     "^hooks/(.*)$",
     "^lib/(.*)$",
+    "^apis/(.*)$",
     "^services/(.*)$",
     "^assets/(.*)$",
     "^styles/(.*)$",
