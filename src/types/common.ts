@@ -1,4 +1,4 @@
-import { IGetDetailProfile } from "./api/login/get-detailprofile";
+import type { IDetailProfileSucceedResponse } from "apis/auth";
 
 /**
  * Props yang digunakan untuk pages (mungkin semua) yang menggunakan SSR.
@@ -9,5 +9,5 @@ import { IGetDetailProfile } from "./api/login/get-detailprofile";
  */
 export interface ProtectedPageProps {
   token: string;
-  dataProfile: IGetDetailProfile;
+  dataProfile: IDetailProfileSucceedResponse;
 }

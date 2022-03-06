@@ -1,10 +1,13 @@
-export interface IGetDetailProfile {
+/**
+ * @access GET /detailProfile
+ */
+export interface IDetailProfileSucceedResponse {
   success: boolean;
-  data: GetDetailProfileData;
+  data: IDetailProfileData;
   status: number;
 }
 
-export interface GetDetailProfileData {
+export interface IDetailProfileData {
   id: number;
   email: string;
   name: string;

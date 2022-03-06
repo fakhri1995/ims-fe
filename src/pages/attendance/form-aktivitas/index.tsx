@@ -3,6 +3,7 @@ import {
   AttendanceServiceQueryKeys,
   IGetAttendanceFormsParams,
 } from "apis/attendance";
+import { AuthService } from "apis/auth";
 import type { GetServerSideProps, NextPage } from "next";
 import {
   NumberParam,
@@ -28,8 +29,6 @@ import { useAxiosClient } from "hooks/use-axios-client";
 
 import { parseToken } from "lib/auth";
 import { getAxiosClient } from "lib/axios-client";
-
-import { LoginService } from "services/auth";
 
 import { ProtectedPageProps } from "types/common";
 
@@ -149,7 +148,7 @@ export const getServerSideProps: GetServerSideProps<
 
   const axiosClient = getAxiosClient(token);
   try {
-    const { data } = await LoginService.me(axiosClient);
+    const { data } = await AuthService.whoAmI(axiosClient);
 
     defaultProps.dataProfile = data;
   } catch {
