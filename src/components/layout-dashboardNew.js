@@ -12,15 +12,21 @@ import LayoutMenuHeader from "./layout-menu-header";
 
 const { Header } = Layout;
 
+/**
+ * @param {{ fixedBreadcrumbValues: { name: string; hrefValue?: string; }[] }} param0
+ */
 function LayoutDashboard({
   children,
   tok,
   dataProfile,
-  pathArr,
+  pathArr = [],
   sidemenu,
   st,
   prevpath,
   idpage,
+
+  fixedBreadcrumbValues = [],
+  forceNewBreadcrumbStrategy = false,
 }) {
   const rt = useRouter();
   var rootBreadcrumb = "";
@@ -201,227 +207,249 @@ function LayoutDashboard({
                   }}
                   className={st.breadcrumbClients}
                 >
-                  {childBreacrumbDD[0] === "Tickets" && (
-                    <>
-                      {childBreacrumbDD.map((doc, idx) => {
-                        pathBuilder = pathBuilder + `/${pathArr[idx]}`;
-                        if (idx === 0) {
-                          if (childBreacrumbDD[1] === "Detail Tiket")
-                            return (
-                              <Breadcrumb.Item key={idx} href={`/tickets`}>
-                                {" "}
-                                <strong>{doc}</strong>{" "}
-                              </Breadcrumb.Item>
-                            );
-                          else if (childBreacrumbDD[1] === "Riwayat Tiket")
-                            return (
-                              <Breadcrumb.Item key={idx} href={`/tickets`}>
-                                {" "}
-                                <strong>{doc}</strong>{" "}
-                              </Breadcrumb.Item>
-                            );
-                          else if (childBreacrumbDD[1] === "Tipe Task Tiket")
-                            return (
-                              <Breadcrumb.Item key={idx} href={`/tickets`}>
-                                {" "}
-                                <strong>{doc}</strong>{" "}
-                              </Breadcrumb.Item>
-                            );
-                          else if (childBreacrumbDD.length === 1) {
-                            return (
-                              <Breadcrumb.Item key={idx}>
-                                <strong>{doc}</strong>
-                              </Breadcrumb.Item>
-                            );
-                          }
-                        } else if (
-                          idx === childBreacrumbDD.length - 1 &&
-                          idx > 0
-                        )
-                          return (
-                            <Breadcrumb.Item key={idx}>
-                              {" "}
-                              <strong>{doc}</strong>{" "}
-                            </Breadcrumb.Item>
-                          );
-                        else
-                          return (
-                            <Breadcrumb.Item key={idx} href={pathBuilder}>
-                              <strong>{doc}</strong>{" "}
-                            </Breadcrumb.Item>
-                          );
-                      })}
-                    </>
-                  )}
+                  {forceNewBreadcrumbStrategy &&
+                    fixedBreadcrumbValues.length > 0 &&
+                    fixedBreadcrumbValues.map((breadcrumbItem) => {
+                      return (
+                        <Breadcrumb.Item key={breadcrumbItem.name}>
+                          {breadcrumbItem.hrefValue === undefined ? (
+                            <strong>{breadcrumbItem.name}</strong>
+                          ) : (
+                            <Link href={breadcrumbItem.hrefValue}>
+                              <a className="font-bold">{breadcrumbItem.name}</a>
+                            </Link>
+                          )}
+                        </Breadcrumb.Item>
+                      );
+                    })}
 
-                  {childBreacrumbDD[0] === "Tasks" && (
+                  {!forceNewBreadcrumbStrategy && (
                     <>
-                      {childBreacrumbDD.map((doc, idx) => {
-                        pathBuilder = pathBuilder + `/${pathArr[idx]}`;
-                        if (idx === 0) {
-                          if (
-                            childBreacrumbDD[1] === "Admin" ||
-                            childBreacrumbDD[1] === "My Task"
-                          )
-                            return (
-                              <Breadcrumb.Item
-                                key={idx}
-                                href={`/tasks/${prevpath}`}
-                              >
-                                {" "}
-                                <strong>
-                                  {childBreacrumbDD[1] === "Admin"
-                                    ? "Admin Task"
-                                    : "My Task"}
-                                </strong>{" "}
-                              </Breadcrumb.Item>
-                            );
-                          else if (childBreacrumbDD[1] === "Detail Task")
-                            return (
-                              <Breadcrumb.Item
-                                key={idx}
-                                href={`/tasks/${prevpath}`}
-                              >
-                                {" "}
-                                <strong>
-                                  {prevpath === "admin"
-                                    ? "Admin Task"
-                                    : "My Task"}
-                                </strong>{" "}
-                              </Breadcrumb.Item>
-                            );
-                          else if (childBreacrumbDD[1] === "Tasktypes")
-                            return (
-                              <Breadcrumb.Item key={idx} href={`/tasks/admin`}>
-                                {" "}
-                                <strong>Admin Task</strong>{" "}
-                              </Breadcrumb.Item>
-                            );
-                        } else if (
-                          idx === childBreacrumbDD.length - 1 &&
-                          idx > 0
-                        )
-                          return (
-                            <Breadcrumb.Item key={idx}>
-                              {" "}
-                              <strong>{doc}</strong>{" "}
-                            </Breadcrumb.Item>
-                          );
-                        else
-                          return (
-                            <Breadcrumb.Item key={idx} href={pathBuilder}>
-                              <strong>{doc}</strong>{" "}
-                            </Breadcrumb.Item>
-                          );
-                      })}
-                    </>
-                  )}
+                      {childBreacrumbDD[0] === "Tickets" && (
+                        <>
+                          {childBreacrumbDD.map((doc, idx) => {
+                            pathBuilder = pathBuilder + `/${pathArr[idx]}`;
+                            if (idx === 0) {
+                              if (childBreacrumbDD[1] === "Detail Tiket")
+                                return (
+                                  <Breadcrumb.Item key={idx} href={`/tickets`}>
+                                    {" "}
+                                    <strong>{doc}</strong>{" "}
+                                  </Breadcrumb.Item>
+                                );
+                              else if (childBreacrumbDD[1] === "Riwayat Tiket")
+                                return (
+                                  <Breadcrumb.Item key={idx} href={`/tickets`}>
+                                    {" "}
+                                    <strong>{doc}</strong>{" "}
+                                  </Breadcrumb.Item>
+                                );
+                              else if (
+                                childBreacrumbDD[1] === "Tipe Task Tiket"
+                              )
+                                return (
+                                  <Breadcrumb.Item key={idx} href={`/tickets`}>
+                                    {" "}
+                                    <strong>{doc}</strong>{" "}
+                                  </Breadcrumb.Item>
+                                );
+                              else if (childBreacrumbDD.length === 1) {
+                                return (
+                                  <Breadcrumb.Item key={idx}>
+                                    <strong>{doc}</strong>
+                                  </Breadcrumb.Item>
+                                );
+                              }
+                            } else if (
+                              idx === childBreacrumbDD.length - 1 &&
+                              idx > 0
+                            )
+                              return (
+                                <Breadcrumb.Item key={idx}>
+                                  {" "}
+                                  <strong>{doc}</strong>{" "}
+                                </Breadcrumb.Item>
+                              );
+                            else
+                              return (
+                                <Breadcrumb.Item key={idx} href={pathBuilder}>
+                                  <strong>{doc}</strong>{" "}
+                                </Breadcrumb.Item>
+                              );
+                          })}
+                        </>
+                      )}
 
-                  {childBreacrumbDD[0] === "Company" && (
-                    <>
-                      {childBreacrumbDD.map((doc, idx) => {
-                        pathBuilder = pathBuilder + `/${pathArr[idx]}`;
-                        if (idx === 0) {
-                          if (childBreacrumbDD[1] !== "Clients") {
-                            if (childBreacrumbDD[1] !== "myCompany") {
+                      {childBreacrumbDD[0] === "Tasks" && (
+                        <>
+                          {childBreacrumbDD.map((doc, idx) => {
+                            pathBuilder = pathBuilder + `/${pathArr[idx]}`;
+                            if (idx === 0) {
+                              if (
+                                childBreacrumbDD[1] === "Admin" ||
+                                childBreacrumbDD[1] === "My Task"
+                              )
+                                return (
+                                  <Breadcrumb.Item
+                                    key={idx}
+                                    href={`/tasks/${prevpath}`}
+                                  >
+                                    {" "}
+                                    <strong>
+                                      {childBreacrumbDD[1] === "Admin"
+                                        ? "Admin Task"
+                                        : "My Task"}
+                                    </strong>{" "}
+                                  </Breadcrumb.Item>
+                                );
+                              else if (childBreacrumbDD[1] === "Detail Task")
+                                return (
+                                  <Breadcrumb.Item
+                                    key={idx}
+                                    href={`/tasks/${prevpath}`}
+                                  >
+                                    {" "}
+                                    <strong>
+                                      {prevpath === "admin"
+                                        ? "Admin Task"
+                                        : "My Task"}
+                                    </strong>{" "}
+                                  </Breadcrumb.Item>
+                                );
+                              else if (childBreacrumbDD[1] === "Tasktypes")
+                                return (
+                                  <Breadcrumb.Item
+                                    key={idx}
+                                    href={`/tasks/admin`}
+                                  >
+                                    {" "}
+                                    <strong>Admin Task</strong>{" "}
+                                  </Breadcrumb.Item>
+                                );
+                            } else if (
+                              idx === childBreacrumbDD.length - 1 &&
+                              idx > 0
+                            )
+                              return (
+                                <Breadcrumb.Item key={idx}>
+                                  {" "}
+                                  <strong>{doc}</strong>{" "}
+                                </Breadcrumb.Item>
+                              );
+                            else
+                              return (
+                                <Breadcrumb.Item key={idx} href={pathBuilder}>
+                                  <strong>{doc}</strong>{" "}
+                                </Breadcrumb.Item>
+                              );
+                          })}
+                        </>
+                      )}
+
+                      {childBreacrumbDD[0] === "Company" && (
+                        <>
+                          {childBreacrumbDD.map((doc, idx) => {
+                            pathBuilder = pathBuilder + `/${pathArr[idx]}`;
+                            if (idx === 0) {
+                              if (childBreacrumbDD[1] !== "Clients") {
+                                if (childBreacrumbDD[1] !== "myCompany") {
+                                  return (
+                                    <Breadcrumb.Item
+                                      key={idx}
+                                      href={`/company/myCompany`}
+                                    >
+                                      {" "}
+                                      <strong>My Company</strong>{" "}
+                                    </Breadcrumb.Item>
+                                  );
+                                } else {
+                                  childBreacrumbDD[1] === "Locations" && (
+                                    <Breadcrumb.Item
+                                      key={idx}
+                                      href={`/company/myCompany`}
+                                    >
+                                      {" "}
+                                      <strong>My Company</strong>{" "}
+                                    </Breadcrumb.Item>
+                                  );
+                                  childBreacrumbDD[1] !== "Locations" && (
+                                    <Breadcrumb.Item
+                                      key={idx}
+                                      href={`/company/myCompany`}
+                                    >
+                                      {" "}
+                                      <strong>My Company</strong>{" "}
+                                    </Breadcrumb.Item>
+                                  );
+                                }
+                              } else if (childBreacrumbDD[1] === "Clients") {
+                                return (
+                                  <Breadcrumb.Item
+                                    key={idx}
+                                    href={`/company/clients/${idpage}`}
+                                  >
+                                    {" "}
+                                    <strong>Clients</strong>{" "}
+                                  </Breadcrumb.Item>
+                                );
+                              }
+                            } else if (
+                              idx === childBreacrumbDD.length - 1 &&
+                              idx > 0
+                            )
+                              return (
+                                <Breadcrumb.Item key={idx}>
+                                  {" "}
+                                  <strong>{doc}</strong>{" "}
+                                </Breadcrumb.Item>
+                              );
+                            else if (childBreacrumbDD[2] === "Detail Lokasi") {
                               return (
                                 <Breadcrumb.Item
                                   key={idx}
-                                  href={`/company/myCompany`}
+                                  href={`/company/myCompany/locations`}
                                 >
                                   {" "}
-                                  <strong>My Company</strong>{" "}
-                                </Breadcrumb.Item>
-                              );
-                            } else {
-                              childBreacrumbDD[1] === "Locations" && (
-                                <Breadcrumb.Item
-                                  key={idx}
-                                  href={`/company/myCompany`}
-                                >
-                                  {" "}
-                                  <strong>My Company</strong>{" "}
-                                </Breadcrumb.Item>
-                              );
-                              childBreacrumbDD[1] !== "Locations" && (
-                                <Breadcrumb.Item
-                                  key={idx}
-                                  href={`/company/myCompany`}
-                                >
-                                  {" "}
-                                  <strong>My Company</strong>{" "}
+                                  <strong>{doc}</strong>{" "}
                                 </Breadcrumb.Item>
                               );
                             }
-                          } else if (childBreacrumbDD[1] === "Clients") {
-                            return (
-                              <Breadcrumb.Item
-                                key={idx}
-                                href={`/company/clients/${idpage}`}
-                              >
-                                {" "}
-                                <strong>Clients</strong>{" "}
-                              </Breadcrumb.Item>
-                            );
-                          }
-                        } else if (
-                          idx === childBreacrumbDD.length - 1 &&
-                          idx > 0
-                        )
-                          return (
-                            <Breadcrumb.Item key={idx}>
-                              {" "}
-                              <strong>{doc}</strong>{" "}
-                            </Breadcrumb.Item>
-                          );
-                        else if (childBreacrumbDD[2] === "Detail Lokasi") {
-                          return (
-                            <Breadcrumb.Item
-                              key={idx}
-                              href={`/company/myCompany/locations`}
-                            >
-                              {" "}
-                              <strong>{doc}</strong>{" "}
-                            </Breadcrumb.Item>
-                          );
-                        }
-                        if (childBreacrumbDD[1] === "Clients") {
-                          if (childBreacrumbDD[2] === "Locations") {
-                            return (
-                              <Breadcrumb.Item
-                                key={idx}
-                                href={`/company/clients`}
-                              >
-                                {" "}
-                                <strong>{doc}</strong>{" "}
-                              </Breadcrumb.Item>
-                            );
-                          } else {
-                            return (
-                              <Breadcrumb.Item
-                                key={idx}
-                                href={`/company/clients/${idpage}`}
-                              >
-                                {" "}
-                                <strong>{doc}</strong>{" "}
-                              </Breadcrumb.Item>
-                            );
-                          }
-                        } else {
-                          return (
-                            <Breadcrumb.Item key={idx} href={pathBuilder}>
-                              <strong>{doc}</strong>{" "}
-                            </Breadcrumb.Item>
-                          );
-                        }
-                      })}
+                            if (childBreacrumbDD[1] === "Clients") {
+                              if (childBreacrumbDD[2] === "Locations") {
+                                return (
+                                  <Breadcrumb.Item
+                                    key={idx}
+                                    href={`/company/clients`}
+                                  >
+                                    {" "}
+                                    <strong>{doc}</strong>{" "}
+                                  </Breadcrumb.Item>
+                                );
+                              } else {
+                                return (
+                                  <Breadcrumb.Item
+                                    key={idx}
+                                    href={`/company/clients/${idpage}`}
+                                  >
+                                    {" "}
+                                    <strong>{doc}</strong>{" "}
+                                  </Breadcrumb.Item>
+                                );
+                              }
+                            } else {
+                              return (
+                                <Breadcrumb.Item key={idx} href={pathBuilder}>
+                                  <strong>{doc}</strong>{" "}
+                                </Breadcrumb.Item>
+                              );
+                            }
+                          })}
+                        </>
+                      )}
+
+                      {attendanceFormAktivitasBreadcrumb}
                     </>
                   )}
-
-                  {/* {childBreacrumbDD[0] === "Attendance" && (
-                    <Breadcrumb.Item className="font-bold">Form Aktivitas</Breadcrumb.Item>
-                  )} */}
-                  {attendanceFormAktivitasBreadcrumb}
                 </Breadcrumb>
               ) : null}
             </div>

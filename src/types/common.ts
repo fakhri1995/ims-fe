@@ -11,3 +11,12 @@ export interface ProtectedPageProps {
   token: string;
   dataProfile: IDetailProfileSucceedResponse;
 }
+
+/**
+ * Digunakan untuk implementasi breadcrumb dengan strategi baru (fixed and defined ahead of time)
+ *  pada komponen <LayoutDashboard> (layout-dashboardNew).
+ */
+export interface PageBreadcrumbValue {
+  name: string;
+  hrefValue?: string;
+}
