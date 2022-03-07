@@ -16,9 +16,12 @@ export const useCheckInOutTimer = (
     throw new Error("Argument `attendSafeHour` hanya valid dengan rentan 0-23");
   }
 
+  const [isMounted, setIsMounted] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
+    setIsMounted(true);
+
     const timeTicker = setInterval(() => setCurrentTime(new Date()), 1000);
 
     return () => clearInterval(timeTicker);
@@ -26,10 +29,16 @@ export const useCheckInOutTimer = (
 
   return {
     /** Clock ticker */
-    currentTime: formatDateToLocale(currentTime, realtimeFormat),
+    currentTime: isMounted
+      ? formatDateToLocale(currentTime, realtimeFormat)
+      : "",
     /** Date hari ini dengan locale indonesia dan timezone asia jakarta */
-    currentDate: formatDateToLocale(currentTime, "EEEE, d MMMM yyyy"),
+    currentDate: isMounted
+      ? formatDateToLocale(currentTime, "EEEE, d MMMM yyyy")
+      : "",
     /** Validasi apakah `currentTime` sudah melewati batas aman absen (terlambat atau tidaknya) */
-    isOverAttendTime: currentTime.getHours() > attendSafeHour,
+    isOverAttendTime: isMounted
+      ? currentTime.getHours() > attendSafeHour
+      : false,
   };
 };
