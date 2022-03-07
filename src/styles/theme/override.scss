@@ -259,6 +259,19 @@ body {
   font-weight: 600;
 }
 
+/* TABS */
+.ant-tabs-tab {
+  @apply font-bold text-sm hover:text-primary75 text-mono80;
+
+  &.ant-tabs-tab-active > .ant-tabs-tab-btn {
+    @apply text-primary100;
+  }
+}
+.ant-tabs-ink-bar {
+  /** Active tab line indicator */
+  @apply bg-primary100;
+}
+
 /**
  * NOTE: this is a little bit tricky. We can not customize ant's Modal.confirm footer programmatically.
  *
