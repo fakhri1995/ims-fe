@@ -30,3 +30,11 @@
     }
   }
 }
+
+/** Typography: Refer to Figma design */
+.mig-heading {
+  /** H4 */
+  &--4 {
+    @apply text-mono30 font-bold text-lg;
+  }
+}

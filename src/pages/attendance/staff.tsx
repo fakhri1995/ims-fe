@@ -1,5 +1,7 @@
+import { DownloadOutlined } from "@ant-design/icons";
 import { GetServerSideProps, NextPage } from "next";
 
+import ButtonSys from "components/button";
 import styles from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
 import {
@@ -48,7 +50,31 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
         </div>
 
         {/* Column 2: Aktivitas card (Table and Tabs), Kehadiran card (table) */}
-        <div className="w-full lg:w-3/5 xl:w-4/5 bg-red-400"></div>
+        <div className="w-full lg:w-3/5 xl:w-4/5 bg-red-400 space-y-6">
+          {/* Card: Aktivitas Table */}
+          <div className="bg-white rounded-md shadow-md p-6">
+            <h3 className="mig-heading--4">Aktivitas</h3>
+          </div>
+
+          {/* Card: Kehadiran Table */}
+          <div className="bg-white rounded-md shadow-md p-6">
+            {/* Header: Title and Unduh Table button */}
+            <div className="flex items-center justify-between">
+              <h3 className="mig-heading--4">Kehadiran</h3>
+              <ButtonSys
+                type="default"
+                onClick={() => {
+                  alert("Button Unduh Tabel clicked");
+                }}
+              >
+                <DownloadOutlined className="mr-2" />
+                Unduh Tabel
+              </ButtonSys>
+            </div>
+
+            {/* TODO: Table */}
+          </div>
+        </div>
       </div>
     </LayoutDashboard>
   );

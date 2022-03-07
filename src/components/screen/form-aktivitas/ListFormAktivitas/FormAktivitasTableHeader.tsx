@@ -15,7 +15,7 @@ export const FormAktivitasTableHeader: FC<IFormAktivitasTableHeader> = memo(
     return (
       <div className="flex items-center justify-between overflow-x-auto">
         {/* Title */}
-        <span className="text-mono30 font-bold text-lg">Form Aktivitas</span>
+        <span className="mig-heading--4">Form Aktivitas</span>
 
         {/* Buttons and Input */}
         <div className="flex space-x-4">
