@@ -83,6 +83,7 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
       tok={token}
       pathArr={pathArr}
       st={styles}
+      sidemenu="attendance/form-aktivitas"
     >
       <div className="px-5">
         {/* First Row */}
