@@ -10,6 +10,10 @@
     &-danger {
       @apply text-state1 border-state1 hover:text-state1 hover:border-state1 focus:text-state1 focus:border-state1;
     }
+
+    &-notice {
+      @apply text-notice border-notice hover:text-notice hover:border-notice focus:text-notice focus:border-notice;
+    }
   }
 
   &--solid {
@@ -19,6 +23,10 @@
 
     &-danger {
       @apply text-white hover:text-white focus:text-white bg-state1 border-state1 hover:bg-state12 hover:border-state12 focus:bg-state12 focus:border-state12;
+    }
+
+    &-notice {
+      @apply text-white hover:text-white focus:text-white bg-notice border-notice hover:bg-notice/75 hover:border-notice/75 focus:bg-notice/75 focus:border-notice/75;
     }
   }
 }

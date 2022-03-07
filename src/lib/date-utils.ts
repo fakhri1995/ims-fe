@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
 import idLocale from "date-fns/locale/id";
 
 /**
@@ -9,5 +9,11 @@ import idLocale from "date-fns/locale/id";
  * @returns string
  */
 export const formatDateToLocale = (date: number | Date, dateFormat: string) => {
-  return format(date, dateFormat, { locale: idLocale });
+  if (!date) {
+    return "";
+  }
+
+  return formatInTimeZone(date, "Asia/Jakarta", dateFormat, {
+    locale: idLocale,
+  });
 };

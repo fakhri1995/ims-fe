@@ -38,7 +38,8 @@ module.exports = {
         closed: `#808080`,
         canceled: `#F46780`,
         bgBackdropOverdue: `#f9edec`,
-        disabled: "#d4d5d7"
+        disabled: "#d4d5d7",
+        notice: "#DDB44A",
       },
       borderColor: {
         primary: "#1890ff",
@@ -65,7 +66,8 @@ module.exports = {
         completed: `#6AAA70`,
         canceled: `#F46780`,
         closed: `#808080`,
-        disabled: "#d4d5d7"
+        disabled: "#d4d5d7",
+        notice: "#DDB44A",
       },
       textColor: {
         primary: "#1890ff",
@@ -92,6 +94,7 @@ module.exports = {
         completed: `#6AAA70`,
         canceled: `#F46780`,
         closed: `#808080`,
+        notice: "#DDB44A",
       },
       gradientColorStops: {
         state1: `#799F0C`,
@@ -109,6 +112,6 @@ module.exports = {
   },
   plugins: [require("daisyui"), require("@tailwindcss/line-clamp")],
   daisyui: {
-    styled: false
-  }
+    styled: false,
+  },
 };
