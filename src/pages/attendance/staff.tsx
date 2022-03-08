@@ -1,4 +1,3 @@
-import { Tabs } from "antd";
 import { GetServerSideProps, NextPage } from "next";
 
 import styles from "components/layout-dashboard.module.css";
@@ -10,6 +9,7 @@ import {
   AttendanceStaffStatisticCard,
   CheckInOutCard,
 } from "components/screen/attendance";
+import { AttendanceStaffCheckInDrawer } from "components/screen/attendance/staff/AttendanceStaffCheckInDrawer";
 
 import { parseToken } from "lib/auth";
 import { getAxiosClient } from "lib/axios-client";
@@ -59,6 +59,8 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
           <AttendanceStaffKehadiranSection />
         </div>
       </div>
+
+      <AttendanceStaffCheckInDrawer />
     </LayoutDashboard>
   );
 };
