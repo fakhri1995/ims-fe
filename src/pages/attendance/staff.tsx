@@ -10,6 +10,7 @@ import {
   StaffAttendanceStatisticCard,
   StaffDetailCard,
 } from "components/screen/attendance";
+import { StaffAttendanceKehadiranTable } from "components/screen/attendance/staff/StaffAttendanceKehadiranTable";
 
 import { parseToken } from "lib/auth";
 import { getAxiosClient } from "lib/axios-client";
@@ -17,6 +18,8 @@ import { getAxiosClient } from "lib/axios-client";
 import { AuthService } from "apis/auth";
 
 import { PageBreadcrumbValue, ProtectedPageProps } from "types/common";
+
+// import { DataEmptyState } from "components/states/DataEmptyState";
 
 const { TabPane } = Tabs;
 
@@ -90,7 +93,7 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
           </div>
 
           {/* Card: Kehadiran Table */}
-          <div className="bg-white rounded-md shadow-md p-6">
+          <div className="bg-white rounded-md shadow-md p-6 space-y-6">
             {/* Header: Title and Unduh Table button */}
             <div className="flex items-center justify-between">
               <h3 className="mig-heading--4">Kehadiran</h3>
@@ -106,6 +109,7 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
             </div>
 
             {/* TODO: Table */}
+            <StaffAttendanceKehadiranTable />
           </div>
         </div>
       </div>
