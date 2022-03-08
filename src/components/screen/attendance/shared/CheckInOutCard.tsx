@@ -23,10 +23,8 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
   showButtonCheckInOut = true,
   onCheckInOutButtonClicked,
 }) => {
-  const { currentTime, currentDate, isOverAttendTime } = useCheckInOutTimer(
-    "HH:mm:ss",
-    8
-  );
+  const { currentTime, currentDate, isOverAttendTime } =
+    useCheckInOutTimer("HH:mm:ss");
 
   /**
    * Dummy data
