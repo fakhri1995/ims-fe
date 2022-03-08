@@ -1,16 +1,15 @@
-import { AppstoreAddOutlined, DownloadOutlined } from "@ant-design/icons";
 import { Tabs } from "antd";
 import { GetServerSideProps, NextPage } from "next";
 
-import ButtonSys from "components/button";
 import styles from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
 import {
+  AttendanceStaffAktivitasSection,
+  AttendanceStaffDetailCard,
+  AttendanceStaffKehadiranSection,
+  AttendanceStaffStatisticCard,
   CheckInOutCard,
-  StaffAttendanceStatisticCard,
-  StaffDetailCard,
 } from "components/screen/attendance";
-import { StaffAttendanceKehadiranTable } from "components/screen/attendance/staff/StaffAttendanceKehadiranTable";
 
 import { parseToken } from "lib/auth";
 import { getAxiosClient } from "lib/axios-client";
@@ -18,10 +17,6 @@ import { getAxiosClient } from "lib/axios-client";
 import { AuthService } from "apis/auth";
 
 import { PageBreadcrumbValue, ProtectedPageProps } from "types/common";
-
-// import { DataEmptyState } from "components/states/DataEmptyState";
-
-const { TabPane } = Tabs;
 
 const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
   dataProfile,
@@ -49,68 +44,19 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
           <CheckInOutCard />
 
           {/* Staff Detail Card */}
-          <StaffDetailCard staffId={0} />
+          <AttendanceStaffDetailCard staffId={0} />
 
           {/* Statistic Card */}
-          <StaffAttendanceStatisticCard staffId={0} />
+          <AttendanceStaffStatisticCard staffId={0} />
         </div>
 
-        {/* Column 2: Aktivitas card (Table and Tabs), Kehadiran card (table) */}
+        {/* Column 2: Aktivitas section (Table and Tabs), Kehadiran section (table) */}
         <div className="w-full lg:w-3/5 xl:w-4/5 space-y-6">
-          {/* <div className="w-full lg:w-3/5 xl:w-4/5 bg-red-400 space-y-6"> */}
-          {/* Card: Aktivitas Table */}
-          <div className="mig-platform space-y-6">
-            <h3 className="mig-heading--4">Aktivitas</h3>
+          {/* Section: Aktivitas Table */}
+          <AttendanceStaffAktivitasSection />
 
-            <div className="flex items-center justify-between">
-              <Tabs defaultActiveKey="1" className="w-1/2">
-                <TabPane tab="Hari Ini" key="1" />
-                <TabPane tab="Riwayat" key="2" />
-              </Tabs>
-
-              <div className="flex space-x-6 w-1/2 justify-end items-center">
-                <ButtonSys
-                  type="default"
-                  onClick={() => {
-                    alert("Button Unduh Tabel clicked");
-                  }}
-                >
-                  <DownloadOutlined className="mr-2" />
-                  Unduh Tabel
-                </ButtonSys>
-
-                <ButtonSys
-                  type="primary"
-                  onClick={() => {
-                    alert("Button Masukkan Aktivitas Clicked");
-                  }}
-                >
-                  <AppstoreAddOutlined className="mr-2" />
-                  Masukkan Aktivitas
-                </ButtonSys>
-              </div>
-            </div>
-          </div>
-
-          {/* Card: Kehadiran Table */}
-          <div className="mig-platform space-y-6">
-            {/* Header: Title and Unduh Table button */}
-            <div className="flex items-center justify-between">
-              <h3 className="mig-heading--4">Kehadiran</h3>
-              <ButtonSys
-                type="default"
-                onClick={() => {
-                  alert("Button Unduh Tabel clicked");
-                }}
-              >
-                <DownloadOutlined className="mr-2" />
-                Unduh Tabel
-              </ButtonSys>
-            </div>
-
-            {/* TODO: Table */}
-            <StaffAttendanceKehadiranTable />
-          </div>
+          {/* Section: Kehadiran Table */}
+          <AttendanceStaffKehadiranSection />
         </div>
       </div>
     </LayoutDashboard>

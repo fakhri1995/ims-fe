@@ -5,16 +5,18 @@ import ButtonSys from "components/button";
 import { DetailCard } from "components/cards/DetailCard";
 
 /**
- * Component StaffDetailCard's props.
+ * Component AttendanceStaffDetailCard's props.
  */
-export interface IStaffDetailCard {
+export interface IAttendanceStaffDetailCard {
   staffId: number;
 }
 
 /**
- * Component StaffDetailCard
+ * Component AttendanceStaffDetailCard
  */
-export const StaffDetailCard: FC<IStaffDetailCard> = ({ staffId }) => {
+export const AttendanceStaffDetailCard: FC<IAttendanceStaffDetailCard> = ({
+  staffId,
+}) => {
   const [dummyLoading] = useState(false);
 
   /**

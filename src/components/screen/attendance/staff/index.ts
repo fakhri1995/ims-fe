@@ -1,2 +1,4 @@
-export * from "./StaffDetailCard";
-export * from "./StaffAttendanceStatisticCard";
+export * from "./AttendanceStaffDetailCard";
+export * from "./AttendanceStaffStatisticCard";
+export * from "./AttendanceStaffKehadiranSection";
+export * from "./AttendanceStaffAktivitasSection";

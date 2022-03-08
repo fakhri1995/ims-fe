@@ -34,6 +34,11 @@ export const DataEmptyState: FC<IDataEmptyState> = memo(
       captionClassName
     );
 
+    const mIllustrationImageClassName = clsx(
+      "pointer-events-none select-none",
+      illustrationImageClassName
+    );
+
     return (
       <div className="flex items-center justify-center">
         {/* Illustration and Text */}
@@ -41,7 +46,7 @@ export const DataEmptyState: FC<IDataEmptyState> = memo(
           <img
             src={illustrationImageUrl || "/404-illustration.png"}
             alt="Empty state data"
-            className={illustrationImageClassName}
+            className={mIllustrationImageClassName}
           />
           <span className={mCaptionClassName}>{caption}</span>
         </div>

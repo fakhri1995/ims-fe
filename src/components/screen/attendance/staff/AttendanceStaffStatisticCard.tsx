@@ -2,17 +2,17 @@ import { Skeleton } from "antd";
 import { FC, useState } from "react";
 
 /**
- * Component StaffAttendanceStatisticCard's props.
+ * Component AttendanceStaffStatisticCard's props.
  */
-export interface IStaffAttendanceStatisticCard {
+export interface IAttendanceStaffStatisticCard {
   staffId: number;
 }
 
 /**
- * Component StaffAttendanceStatisticCard
+ * Component AttendanceStaffStatisticCard
  */
-export const StaffAttendanceStatisticCard: FC<
-  IStaffAttendanceStatisticCard
+export const AttendanceStaffStatisticCard: FC<
+  IAttendanceStaffStatisticCard
 > = ({ staffId }) => {
   const [dummyLoading] = useState(false);
 
