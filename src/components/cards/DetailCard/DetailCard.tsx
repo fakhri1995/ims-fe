@@ -106,7 +106,10 @@ const CardContent: FC<CardContentType> = memo(
       return <Skeleton round active paragraph={{ rows: 1 }} />;
     }
 
-    const mLabelClassName = clsx("text-gray-400 text-xs block", labelClassName);
+    const mLabelClassName = clsx(
+      "mig-caption mig-caption--medium text-gray-400 block",
+      labelClassName
+    );
     const mContentClassName = clsx("text-gray-600 block", contentClassName);
 
     /** True => ReactNode, False => string */

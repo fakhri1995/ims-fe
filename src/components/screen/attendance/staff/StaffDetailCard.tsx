@@ -58,7 +58,9 @@ export const StaffDetailCard: FC<IStaffDetailCard> = ({ staffId }) => {
             {/* Name and NIP? */}
             <div className="text-center space-y-2">
               <h3 className="mig-heading--4">Yusron Taufiq</h3>
-              <p className="text-xs text-mono80">121223</p>
+              <p className="mig-caption mig-caption--medium text-mono80">
+                121223
+              </p>
             </div>
           </div>
         )

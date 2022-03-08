@@ -38,3 +38,14 @@
     @apply text-mono30 font-bold text-lg;
   }
 }
+.mig-caption {
+  @apply text-xs;
+
+  &--medium {
+    @apply font-medium;
+  }
+
+  &--bold {
+    @apply font-bold;
+  }
+}

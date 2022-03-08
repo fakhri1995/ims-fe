@@ -6,4 +6,7 @@
 @tailwind utilities;
 
 @import "./theme/override.scss";
-@import "./theme/design-system.scss";
+
+@layer components {
+  @import "./theme/design-system.scss";
+}
