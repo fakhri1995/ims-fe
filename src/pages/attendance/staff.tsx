@@ -1,4 +1,5 @@
 import { GetServerSideProps, NextPage } from "next";
+import { useCallback, useState } from "react";
 
 import styles from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
@@ -28,6 +29,27 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
     },
   ];
 
+  const [isCheckInDrawerShown, setIsCheckInDrawerShown] = useState(false);
+
+  /**
+   * Sync these states with server data.
+   */
+  const [isUserHasCheckedIn, setIsUserHasCheckedIn] = useState(false);
+  const [attendeeStatus, setAttendeeStatus] = useState<"checkin" | "checkout">(
+    "checkout"
+  );
+
+  const toggleCheckInDrawer = useCallback(() => {
+    return setIsCheckInDrawerShown((prev) => !prev);
+  }, []);
+
+  const handleAttendanceButtonClicked = useCallback(() => {
+    /**
+     * TODO: add more functional logic
+     */
+    setIsCheckInDrawerShown(true);
+  }, []);
+
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -41,7 +63,11 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
         {/* Column 1: Check In/Out Button, Staff detail card, Statistic Card */}
         <div className="w-full lg:w-2/5 xl:w-1/5 space-y-6">
           {/* Card Check In/Out */}
-          <CheckInOutCard />
+          <CheckInOutCard
+            onButtonClicked={handleAttendanceButtonClicked}
+            isUserHasCheckedIn={isUserHasCheckedIn}
+            attendeeStatus={attendeeStatus}
+          />
 
           {/* Staff Detail Card */}
           <AttendanceStaffDetailCard staffId={0} />
@@ -60,7 +86,10 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
         </div>
       </div>
 
-      <AttendanceStaffCheckInDrawer />
+      <AttendanceStaffCheckInDrawer
+        visible={isCheckInDrawerShown}
+        onClose={toggleCheckInDrawer}
+      />
     </LayoutDashboard>
   );
 };

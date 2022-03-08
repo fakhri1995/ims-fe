@@ -11,14 +11,17 @@ import { getBase64 } from "lib/helper";
 /**
  * Component AttendanceStaffCheckInDrawer's props.
  */
-export interface IAttendanceStaffCheckInDrawer {}
+export interface IAttendanceStaffCheckInDrawer {
+  visible: boolean;
+  onClose: () => void;
+}
 
 /**
  * Component AttendanceStaffCheckInDrawer
  */
-export const AttendanceStaffCheckInDrawer: FC<IAttendanceStaffCheckInDrawer> = (
-  props
-) => {
+export const AttendanceStaffCheckInDrawer: FC<
+  IAttendanceStaffCheckInDrawer
+> = ({ visible, onClose }) => {
   /** Uploaded file object. Wrapped as RcFile. */
   const [uploadedEvidencePicture, setUploadedEvidencePicture] =
     useState<RcFile | null>(null);
@@ -73,7 +76,12 @@ export const AttendanceStaffCheckInDrawer: FC<IAttendanceStaffCheckInDrawer> = (
 
   return (
     <>
-      <DrawerCore title="Check In" buttonOkText="Check In" visible>
+      <DrawerCore
+        title="Check In"
+        buttonOkText="Check In"
+        visible={visible}
+        onClose={onClose}
+      >
         <div className="space-y-6">
           {/* Required field information */}
           <em className="text-state1">* Informasi ini harus diisi</em>
@@ -138,7 +146,7 @@ export const AttendanceStaffCheckInDrawer: FC<IAttendanceStaffCheckInDrawer> = (
         onCancel={() => setIsPreviewEvidencePicutre(false)}
         centered
       >
-        <img alt="" src={previewEvidencePictureData} />
+        <img alt="Preview Evidence Picture" src={previewEvidencePictureData} />
       </Modal>
     </>
   );
