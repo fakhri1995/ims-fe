@@ -1,4 +1,4 @@
-import { Button } from "antd";
+import { Button, Spin } from "antd";
 import { FC, useState } from "react";
 
 import { useCheckInOutTimer } from "hooks/use-checkinout-timer";
@@ -77,24 +77,30 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
   };
 
   return (
-    <div className="rounded-md shadow-md flex bg-white flex-col items-center space-y-6 py-8 relative overflow-hidden">
-      <div className={timeTextClassName}>
-        {/* <Clock format="HH:mm:ss" ticking timezone="Asia/Jakarta" className="block text-5xl" /> */}
-        <span className="text-5xl block">{currentTime}</span>
-        <span className="font-bold text-xs">{currentDate}</span>
-      </div>
+    <div className="rounded-md shadow-md flex bg-white flex-col items-center justify-center space-y-6 py-8 relative overflow-hidden min-h-[12rem]">
+      {currentTime === "" && <Spin size="large" />}
 
-      {showButtonCheckInOut && (
-        <Button
-          className={buttonClassName}
-          onClick={handleOnCheckInOutButtonClicked}
-        >
-          {attendanceStatus === "checkin" ? "Check Out" : "Check In"}
-        </Button>
+      {currentTime !== "" && (
+        <>
+          <div className={timeTextClassName}>
+            {/* <Clock format="HH:mm:ss" ticking timezone="Asia/Jakarta" className="block text-5xl" /> */}
+            <span className="text-5xl block">{currentTime}</span>
+            <span className="font-bold text-xs">{currentDate}</span>
+          </div>
+
+          {showButtonCheckInOut && (
+            <Button
+              className={buttonClassName}
+              onClick={handleOnCheckInOutButtonClicked}
+            >
+              {attendanceStatus === "checkin" ? "Check Out" : "Check In"}
+            </Button>
+          )}
+
+          <BlobLeft className={`${blobClassName} -top-20 -left-48`} />
+          <BlobRight className={`${blobClassName} -top-44 -right-56`} />
+        </>
       )}
-
-      <BlobLeft className={`${blobClassName} -top-20 -left-48`} />
-      <BlobRight className={`${blobClassName} -top-44 -right-56`} />
     </div>
   );
 };
