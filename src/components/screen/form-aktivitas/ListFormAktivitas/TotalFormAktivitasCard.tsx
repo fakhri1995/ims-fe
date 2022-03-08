@@ -16,7 +16,7 @@ export const TotalFormAktivitasCard: FC<ITotalFormAktivitasCard> = memo(() => {
   );
 
   return (
-    <div className="p-6 flex items-center justify-between rounded-md bg-white shadow-md">
+    <div className="mig-platform flex items-center justify-between">
       <span className="font-bold text-lg text-mono30">
         Total Form Aktivitas
       </span>

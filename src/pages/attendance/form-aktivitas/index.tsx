@@ -103,7 +103,7 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
 
         {/* Second Row */}
         {/* Table: Form Aktivitas */}
-        <div className="w-full bg-white rounded-md shadow-md p-6">
+        <div className="mig-platform">
           {/* Table header */}
           <FormAktivitasTableHeader onSearchTriggered={onSearchTriggered} />
 

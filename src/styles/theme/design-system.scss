@@ -1,3 +1,9 @@
+/** Platforms */
+.mig-platform {
+  /** Class name ini untuk setiap komponen yang terlihat seperti "card". Hampir semua widget pada dashboard memiliki tampilan seperti ini. */
+  @apply bg-white rounded-md shadow-md p-6;
+}
+
 /** Buttons */
 .mig-button {
   @apply rounded-md text-sm font-medium py-2 px-6 flex items-center;

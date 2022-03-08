@@ -44,10 +44,7 @@ export const DetailCard: FC<IDetailCard> = ({
   estimatedContentLength = 3,
   className,
 }) => {
-  const wrapperClassName = clsx(
-    "flex flex-col rounded-md shadow-md bg-white p-5",
-    className
-  );
+  const wrapperClassName = clsx("mig-platform flex flex-col", className);
 
   return (
     <div className={wrapperClassName}>

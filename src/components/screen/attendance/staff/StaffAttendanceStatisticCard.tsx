@@ -17,7 +17,7 @@ export const StaffAttendanceStatisticCard: FC<
   const [dummyLoading] = useState(false);
 
   return (
-    <div className="rounded-md shadow-md py-6 px-5 bg-white space-y-6">
+    <div className="mig-platform space-y-6">
       <h3 className="mig-heading--4">Statistik</h3>
 
       {dummyLoading && <Skeleton active round paragraph={{ rows: 1 }} />}

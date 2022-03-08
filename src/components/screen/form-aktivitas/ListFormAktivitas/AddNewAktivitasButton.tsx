@@ -19,7 +19,7 @@ export const AddNewAktivitasButton: FC<IAddNewAktivitasButton> = memo(
 
     return (
       <button
-        className="w-full h-full flex items-center transition-colors p-6 bg-primary100 rounded-md shadow-md text-white relative hover:bg-primary75 overflow-hidden"
+        className="mig-platform w-full h-full flex items-center transition-colors text-white relative bg-primary100 hover:bg-primary75 overflow-hidden"
         onClick={onButtonClicked}
       >
         <div className="h-full mr-6 flex items-center">

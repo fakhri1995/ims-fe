@@ -75,7 +75,7 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
   };
 
   return (
-    <div className="rounded-md shadow-md flex bg-white flex-col items-center justify-center space-y-6 py-8 relative overflow-hidden min-h-[12rem]">
+    <div className="mig-platform flex flex-col items-center justify-center space-y-6 py-8 relative overflow-hidden min-h-[12rem]">
       {currentTime === "" && <Spin size="large" />}
 
       {currentTime !== "" && (

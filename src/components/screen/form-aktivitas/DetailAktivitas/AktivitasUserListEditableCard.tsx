@@ -202,7 +202,7 @@ export const AktivitasUserListEditableCard: FC<
   }, [searchValue, currentFormAktivitasUsers]);
 
   return (
-    <div className="w-full bg-white p-6 rounded-md shadow-md overflow-x-auto">
+    <div className="mig-platform w-full overflow-x-auto">
       {/* Header */}
       <CardHeader
         cardPhase={cardPhase}

@@ -59,7 +59,7 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
         <div className="w-full lg:w-3/5 xl:w-4/5 space-y-6">
           {/* <div className="w-full lg:w-3/5 xl:w-4/5 bg-red-400 space-y-6"> */}
           {/* Card: Aktivitas Table */}
-          <div className="bg-white rounded-md shadow-md p-6 space-y-6">
+          <div className="mig-platform space-y-6">
             <h3 className="mig-heading--4">Aktivitas</h3>
 
             <div className="flex items-center justify-between">
@@ -93,7 +93,7 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
           </div>
 
           {/* Card: Kehadiran Table */}
-          <div className="bg-white rounded-md shadow-md p-6 space-y-6">
+          <div className="mig-platform space-y-6">
             {/* Header: Title and Unduh Table button */}
             <div className="flex items-center justify-between">
               <h3 className="mig-heading--4">Kehadiran</h3>
