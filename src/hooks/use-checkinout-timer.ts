@@ -7,10 +7,12 @@ import { formatDateToLocale } from "lib/date-utils";
  *
  * @param realtimeFormat Format untuk si Timer (realtime ticking value). Default HH:mm:ss.
  * @param attendSafeHour Batas waktu absen yang dinyatakan aman (belum terlambat). Default 8. Jam 8 pagi, format 0-23.
+ * @param attendSafeMinute Sama seperti `attendSafeHour` namun untuk nilai menit. Default 15. Lewat 15 menit, format 1-60.
  */
 export const useCheckInOutTimer = (
   realtimeFormat: string = "HH:mm:ss",
-  attendSafeHour: number = 8
+  attendSafeHour: number = 8,
+  attendSafeMinute: number = 15
 ) => {
   if (attendSafeHour < 0 || attendSafeHour > 23) {
     throw new Error("Argument `attendSafeHour` hanya valid dengan rentan 0-23");
@@ -38,7 +40,8 @@ export const useCheckInOutTimer = (
       : "",
     /** Validasi apakah `currentTime` sudah melewati batas aman absen (terlambat atau tidaknya) */
     isOverAttendTime: isMounted
-      ? currentTime.getHours() > attendSafeHour
+      ? currentTime.getHours() >= attendSafeHour &&
+        currentTime.getMinutes() >= attendSafeMinute
       : false,
   };
 };
