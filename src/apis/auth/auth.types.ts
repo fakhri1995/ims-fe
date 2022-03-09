@@ -1,3 +1,5 @@
+import { HttpRequestWithDataSucceedResponse } from "types/common";
+
 export enum AuthServiceQueryKeys {
   DETAIL_PROFILE = "GET_DETAIL_PROFILE",
 }
@@ -5,11 +7,8 @@ export enum AuthServiceQueryKeys {
 /**
  * @access GET /detailProfile
  */
-export interface IDetailProfileSucceedResponse {
-  success: boolean;
-  data: IDetailProfileData;
-  status: number;
-}
+export type IDetailProfileSucceedResponse =
+  HttpRequestWithDataSucceedResponse<IDetailProfileData>;
 
 export interface IDetailProfileData {
   id: number;

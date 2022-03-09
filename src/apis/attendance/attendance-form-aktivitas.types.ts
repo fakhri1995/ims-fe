@@ -1,3 +1,8 @@
+import {
+  HttpRequestBaseSucceedResponse,
+  HttpRequestWithDataSucceedResponse,
+} from "types/common";
+
 export enum AttendanceFormAktivitasServiceQueryKeys {
   FIND = "ATTENDANCE_FORMS_GET",
   FIND_ONE = "ATTENDANCE_FORM_GET",
@@ -6,12 +11,8 @@ export enum AttendanceFormAktivitasServiceQueryKeys {
 /**
  * @access GET /getAttendanceForm?id=[aktivitasId]
  */
-export interface IGetAttendanceFormSucceedResponse {
-  success: boolean;
-  message: string;
-  data: GetAttendanceFormData;
-  status: number;
-}
+export type IGetAttendanceFormSucceedResponse =
+  HttpRequestWithDataSucceedResponse<GetAttendanceFormData>;
 
 export interface GetAttendanceFormData {
   id: number;
@@ -57,12 +58,8 @@ export interface IGetAttendanceFormsParams {
   keyword?: string;
 }
 
-export interface IGetAttendanceFormsSucceedResponse {
-  success: boolean;
-  message: string;
-  data: GetAttendanceFormsData;
-  status: number;
-}
+export type IGetAttendanceFormsSucceedResponse =
+  HttpRequestWithDataSucceedResponse<GetAttendanceFormsData>;
 
 export interface GetAttendanceFormsData {
   current_page: number;
@@ -96,11 +93,9 @@ export interface IAddAttendanceFormPayload {
   details: Detail[];
 }
 
-export interface IAddAttendanceFormSucceedResponse {
-  success: boolean;
-  message: string;
+export interface IAddAttendanceFormSucceedResponse
+  extends HttpRequestBaseSucceedResponse {
   id: number;
-  status: number;
 }
 
 export interface Detail {
@@ -120,11 +115,8 @@ export interface IUpdateAttendanceFormPayload {
   description: string;
 }
 
-export interface IUpdateAttendanceFormSucceedResponse {
-  success: boolean;
-  message: string;
-  status: number;
-}
+export type IUpdateAttendanceFormSucceedResponse =
+  HttpRequestBaseSucceedResponse;
 
 /**
  * @access POST /addUserAttendanceForm
@@ -137,8 +129,9 @@ export interface IAddUserAttendanceFormPayload {
 export type IRemoveUserAttendanceFormPayload = IAddUserAttendanceFormPayload;
 
 /** Aliases */
-export type IDeleteAttendanceFormSucceedResponse = IUpdateAttendanceFormPayload;
+export type IDeleteAttendanceFormSucceedResponse =
+  HttpRequestBaseSucceedResponse;
 export type IAddUserAttendanceFormSucceedResponse =
-  IUpdateAttendanceFormPayload;
+  HttpRequestBaseSucceedResponse;
 export type IRemoveUserAttendanceFormSucceedResponse =
-  IUpdateAttendanceFormPayload;
+  HttpRequestBaseSucceedResponse;

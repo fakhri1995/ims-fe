@@ -1,3 +1,5 @@
+import { HttpRequestWithDataSucceedResponse } from "types/common";
+
 export enum UserServiceQueryKeys {
   FILTER_USERS = "USERS_GET",
 }
@@ -20,12 +22,9 @@ export type GetFilterUsersParamsType = Partial<{
 /**
  * @access GET /getFilterUsers
  */
-export interface IGetFilterUsersSucceedResponse {
-  success: boolean;
-  message: string;
-  data: GetFilterUsersDatum[];
-  status: number;
-}
+export type IGetFilterUsersSucceedResponse = HttpRequestWithDataSucceedResponse<
+  GetFilterUsersDatum[]
+>;
 
 /** a.k.a User */
 export interface GetFilterUsersDatum {
