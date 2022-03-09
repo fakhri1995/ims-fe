@@ -7,7 +7,7 @@ import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
   AttendanceFormAktivitasService,
-  AttendanceServiceQueryKeys,
+  AttendanceFormAktivitasServiceQueryKeys,
   Detail,
 } from "apis/attendance";
 
@@ -26,7 +26,7 @@ export const AktivitasTableInfoCard: FC<IAktivitasTableInfoCard> = ({
 }) => {
   const axiosClient = useAxiosClient();
   const { data, isLoading } = useQuery(
-    [AttendanceServiceQueryKeys.FIND_ONE, aktivitasId],
+    [AttendanceFormAktivitasServiceQueryKeys.FIND_ONE, aktivitasId],
     () => AttendanceFormAktivitasService.findOne(axiosClient, aktivitasId),
     {
       select: (response) => {

@@ -26,7 +26,7 @@ import { getAxiosClient } from "lib/axios-client";
 
 import {
   AttendanceFormAktivitasService,
-  AttendanceServiceQueryKeys,
+  AttendanceFormAktivitasServiceQueryKeys,
   IGetAttendanceFormsParams,
 } from "apis/attendance";
 import { AuthService } from "apis/auth";
@@ -62,7 +62,7 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
 
   const axiosClient = useAxiosClient();
   const { data, isLoading } = useQuery(
-    [AttendanceServiceQueryKeys.FIND, criteria],
+    [AttendanceFormAktivitasServiceQueryKeys.FIND, criteria],
     () => AttendanceFormAktivitasService.find(axiosClient, criteria)
   );
 

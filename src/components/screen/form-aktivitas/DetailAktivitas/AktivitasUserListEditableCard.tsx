@@ -14,7 +14,7 @@ import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
   AttendanceFormAktivitasService,
-  AttendanceServiceQueryKeys,
+  AttendanceFormAktivitasServiceQueryKeys,
   User,
   useAddFormAktivitasStaff,
   useDeleteFormAktivitasStaff,
@@ -48,7 +48,7 @@ export const AktivitasUserListEditableCard: FC<
     data: currentFormAktivitasUsers,
     isLoading: currentFormAktivitasUsersLoading,
   } = useQuery(
-    [AttendanceServiceQueryKeys.FIND_ONE, aktivitasId],
+    [AttendanceFormAktivitasServiceQueryKeys.FIND_ONE, aktivitasId],
     () => AttendanceFormAktivitasService.findOne(axiosClient, aktivitasId),
     {
       select: (response) => response.data.data.users as StaffModelType[],

@@ -6,7 +6,7 @@ import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
   AttendanceFormAktivitasService,
-  AttendanceServiceQueryKeys,
+  AttendanceFormAktivitasServiceQueryKeys,
 } from "apis/attendance";
 
 export interface ITotalFormAktivitasCard {}
@@ -14,7 +14,7 @@ export interface ITotalFormAktivitasCard {}
 export const TotalFormAktivitasCard: FC<ITotalFormAktivitasCard> = memo(() => {
   const axiosClient = useAxiosClient();
   const { data, isLoading, isError } = useQuery(
-    AttendanceServiceQueryKeys.FIND,
+    AttendanceFormAktivitasServiceQueryKeys.FIND,
     () => AttendanceFormAktivitasService.find(axiosClient)
   );
 

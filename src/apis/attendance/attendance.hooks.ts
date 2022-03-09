@@ -5,12 +5,12 @@ import { useAxiosClient } from "hooks/use-axios-client";
 
 import { AttendanceFormAktivitasService } from "./attendance-form-aktivitas.service";
 import {
-  AttendanceServiceQueryKeys,
+  AttendanceFormAktivitasServiceQueryKeys,
   IAddAttendanceFormPayload,
   IAddUserAttendanceFormPayload,
   IRemoveUserAttendanceFormPayload,
   IUpdateAttendanceFormPayload,
-} from "./attendance.types";
+} from "./attendance-form-aktivitas.types";
 
 /**
  * Custom mutation hook to add new Form Aktivitas data and trigger
@@ -28,7 +28,9 @@ export const useAddFormAktivitas = () => {
     {
       onSuccess: () => {
         /** NOTE: do not return anything. Let it run asynchronously!!! */
-        queryClient.invalidateQueries(AttendanceServiceQueryKeys.FIND);
+        queryClient.invalidateQueries(
+          AttendanceFormAktivitasServiceQueryKeys.FIND
+        );
       },
     }
   );
@@ -44,7 +46,7 @@ export const useUpdateFormAktivitas = () => {
     {
       onSuccess: (_, payload) => {
         queryClient.invalidateQueries([
-          AttendanceServiceQueryKeys.FIND_ONE,
+          AttendanceFormAktivitasServiceQueryKeys.FIND_ONE,
           payload.id,
         ]);
       },
@@ -80,7 +82,7 @@ export const useDeleteFormAktivitasStaff = () => {
     {
       onSuccess: (_, payload) => {
         queryClient.invalidateQueries([
-          AttendanceServiceQueryKeys.FIND_ONE,
+          AttendanceFormAktivitasServiceQueryKeys.FIND_ONE,
           payload.id,
         ]);
       },
@@ -98,7 +100,7 @@ export const useAddFormAktivitasStaff = () => {
     {
       onSuccess: (_, payload) => {
         queryClient.invalidateQueries([
-          AttendanceServiceQueryKeys.FIND_ONE,
+          AttendanceFormAktivitasServiceQueryKeys.FIND_ONE,
           payload.id,
         ]);
       },

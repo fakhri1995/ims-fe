@@ -12,7 +12,7 @@ import { formatDateToLocale } from "lib/date-utils";
 
 import {
   AttendanceFormAktivitasService,
-  AttendanceServiceQueryKeys,
+  AttendanceFormAktivitasServiceQueryKeys,
 } from "apis/attendance";
 
 export interface IDetailFormAktivitasCard {
@@ -25,7 +25,7 @@ export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
   ({ onUbahButtonClicked, aktivitasId }) => {
     const axiosClient = useAxiosClient();
     const { data, isLoading } = useQuery(
-      [AttendanceServiceQueryKeys.FIND_ONE, aktivitasId],
+      [AttendanceFormAktivitasServiceQueryKeys.FIND_ONE, aktivitasId],
       () => AttendanceFormAktivitasService.findOne(axiosClient, aktivitasId),
       {
         select: (response) => {

@@ -14,11 +14,11 @@ import {
   IRemoveUserAttendanceFormSucceedResponse,
   IUpdateAttendanceFormPayload,
   IUpdateAttendanceFormSucceedResponse,
-} from "./attendance.types";
+} from "./attendance-form-aktivitas.types";
 
 export class AttendanceFormAktivitasService {
   /**
-   * @see {AttendanceServiceQueryKeys.FIND} Query key
+   * @see {AttendanceFormAktivitasServiceQueryKeys.FIND} Query key
    * @access GEt /getAttendanceForms
    */
   static async find(
@@ -35,7 +35,7 @@ export class AttendanceFormAktivitasService {
   }
 
   /**
-   * @see {AttendanceServiceQueryKeys.FIND_ONE} Query key attach with `aktivitasId` (e.g. [FIND, aktivitasId]).
+   * @see {AttendanceFormAktivitasServiceQueryKeys.FIND_ONE} Query key attach with `aktivitasId` (e.g. [FIND, aktivitasId]).
    * @access GET /getAttendanceForm
    */
   static async findOne(axiosClient: AxiosInstance, aktivitasId: number) {
@@ -50,7 +50,7 @@ export class AttendanceFormAktivitasService {
   }
 
   /**
-   * @see {AttendanceServiceQueryKeys.FIND} Use this key to invalidate cache
+   * @see {AttendanceFormAktivitasServiceQueryKeys.FIND} Use this key to invalidate cache
    *
    * @access POST /addAttendanceForm
    */

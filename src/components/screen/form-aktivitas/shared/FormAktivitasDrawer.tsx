@@ -28,7 +28,7 @@ import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
   AttendanceFormAktivitasService,
-  AttendanceServiceQueryKeys,
+  AttendanceFormAktivitasServiceQueryKeys,
   useAddFormAktivitas,
   useDeleteFormAktivitas,
   useUpdateFormAktivitas,
@@ -79,7 +79,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
     refetch: refetchExistingFormAktivitasData,
     isStale: isExistingDataStale,
   } = useQuery(
-    [AttendanceServiceQueryKeys.FIND_ONE, formAktivitasId],
+    [AttendanceFormAktivitasServiceQueryKeys.FIND_ONE, formAktivitasId],
     () => AttendanceFormAktivitasService.findOne(axiosClient, formAktivitasId),
     {
       enabled: false,
