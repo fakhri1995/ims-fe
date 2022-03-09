@@ -127,11 +127,3 @@ export interface IAddUserAttendanceFormPayload {
   user_ids: number[];
 }
 export type IRemoveUserAttendanceFormPayload = IAddUserAttendanceFormPayload;
-
-/** Aliases */
-export type IDeleteAttendanceFormSucceedResponse =
-  HttpRequestBaseSucceedResponse;
-export type IAddUserAttendanceFormSucceedResponse =
-  HttpRequestBaseSucceedResponse;
-export type IRemoveUserAttendanceFormSucceedResponse =
-  HttpRequestBaseSucceedResponse;

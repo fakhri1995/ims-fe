@@ -1,14 +1,12 @@
+import { HttpRequestWithDataSucceedResponse } from "types/common";
+
 /**
  * @access GET /getAttendancesUser
  */
-export interface IGetAttendancesUserSucceedResponse {
-  success: boolean;
-  message: string;
-  data: IGetAttendancesUserData[];
-  status: number;
-}
+export type IGetAttendancesUserSucceedResponse =
+  HttpRequestWithDataSucceedResponse<GetAttendancesUserData[]>;
 
-export interface IGetAttendancesUserData {
+export interface GetAttendancesUserData {
   id: number;
   user_id: number;
   check_in: Date;

@@ -5,16 +5,15 @@ import {
   IAddAttendanceFormPayload,
   IAddAttendanceFormSucceedResponse,
   IAddUserAttendanceFormPayload,
-  IAddUserAttendanceFormSucceedResponse,
-  IDeleteAttendanceFormSucceedResponse,
   IGetAttendanceFormSucceedResponse,
   IGetAttendanceFormsParams,
   IGetAttendanceFormsSucceedResponse,
   IRemoveUserAttendanceFormPayload,
-  IRemoveUserAttendanceFormSucceedResponse,
   IUpdateAttendanceFormPayload,
   IUpdateAttendanceFormSucceedResponse,
 } from "./attendance-form-aktivitas.types";
+
+import type { HttpRequestBaseSucceedResponse } from "types/common";
 
 export class AttendanceFormAktivitasService {
   /**
@@ -81,7 +80,7 @@ export class AttendanceFormAktivitasService {
    * @access DELETE /deleteAttendanceForm
    */
   static async remove(axiosClient: AxiosInstance, aktivitasId: number) {
-    return await axiosClient.delete<IDeleteAttendanceFormSucceedResponse>(
+    return await axiosClient.delete<HttpRequestBaseSucceedResponse>(
       "/deleteAttendanceForm",
       {
         data: {
@@ -98,7 +97,7 @@ export class AttendanceFormAktivitasService {
     axiosClient: AxiosInstance,
     payload: IAddUserAttendanceFormPayload
   ) {
-    return await axiosClient.post<IAddUserAttendanceFormSucceedResponse>(
+    return await axiosClient.post<HttpRequestBaseSucceedResponse>(
       "/addUserAttendanceForm",
       payload
     );
@@ -111,7 +110,7 @@ export class AttendanceFormAktivitasService {
     axiosClient: AxiosInstance,
     payload: IRemoveUserAttendanceFormPayload
   ) {
-    return await axiosClient.delete<IRemoveUserAttendanceFormSucceedResponse>(
+    return await axiosClient.delete<HttpRequestBaseSucceedResponse>(
       "/removeUserAttendanceForm",
       {
         data: payload,
