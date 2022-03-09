@@ -1,10 +1,12 @@
 import { UploadOutlined } from "@ant-design/icons";
-import type { UploadProps } from "antd";
+import { Input, UploadProps } from "antd";
 import { Button, Form, Modal, Radio, Upload, message } from "antd";
 import { RcFile } from "antd/lib/upload";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 
 import DrawerCore from "components/drawer/drawerCore";
+
+import { useGeolocationAPI } from "hooks/use-geolocation-api";
 
 import { getBase64 } from "lib/helper";
 
@@ -22,6 +24,19 @@ export interface IAttendanceStaffCheckInDrawer {
 export const AttendanceStaffCheckInDrawer: FC<
   IAttendanceStaffCheckInDrawer
 > = ({ visible, onClose }) => {
+  const [form] = Form.useForm();
+
+  /**
+   * TODO: implement prompt
+   */
+  const {
+    position,
+    error: geolocationError,
+    isPermissionBlocked,
+  } = useGeolocationAPI();
+  const [showLocationPermissionPrompt, setShowLocationPermissionPrompt] =
+    useState(false);
+
   /** Uploaded file object. Wrapped as RcFile. */
   const [uploadedEvidencePicture, setUploadedEvidencePicture] =
     useState<RcFile | null>(null);
@@ -33,6 +48,8 @@ export const AttendanceStaffCheckInDrawer: FC<
   /** Either empty string or long long string (base64) from a file (`uploadedEvidencePicture`). */
   const [previewEvidencePictureData, setPreviewEvidencePictureData] =
     useState("");
+
+  // useEffect(() => { console.table({ position, geolocationError, isPermissionBlocked }) }, [position, geolocationError, isPermissionBlocked])
 
   /**
    * Validating uploaded file before finally attached to the paylaod.
@@ -74,6 +91,21 @@ export const AttendanceStaffCheckInDrawer: FC<
     setIsPreviewEvidencePicutre(true);
   }, [uploadedEvidencePicture]);
 
+  const onFormSubmitted = useCallback(
+    (value: { work_from: "WFO" | "WFH" }) => {
+      /**
+       * TODO: handle this callback properly
+       *
+       * 1. Retrieve location
+       * 2. Send the image to cloudinary
+       *    -> retrieve new URL from cloudinary
+       * 3. Hit toggle attendance endpoint
+       */
+      console.table({ work_from: value.work_from, uploadedEvidencePicture });
+    },
+    [uploadedEvidencePicture]
+  );
+
   return (
     <>
       <DrawerCore
@@ -81,22 +113,35 @@ export const AttendanceStaffCheckInDrawer: FC<
         buttonOkText="Check In"
         visible={visible}
         onClose={onClose}
+        onClick={() => form.submit()}
       >
         <div className="space-y-6">
           {/* Required field information */}
           <em className="text-state1">* Informasi ini harus diisi</em>
 
-          {/* Location */}
+          <Form form={form} onFinish={onFormSubmitted}>
+            {/* Location */}
+            <Form.Item
+              name="current_location"
+              label="Lokasi saat ini"
+              className="block"
+            >
+              <Input
+                disabled
+                placeholder="Cibubur, Jakarta Timur"
+                className="text-mono30 placeholder-gray-900 disabled:bg-transparent font-bold border-none p-0"
+              />
+            </Form.Item>
 
-          {/* Kerja Dari */}
-          <Form>
+            {/* Kerja Dari */}
             <Form.Item
               name="work_from"
               label="Kerja Dari"
               required
               className="block"
+              initialValue="WFH"
             >
-              <Radio.Group defaultValue="WFH">
+              <Radio.Group>
                 <Radio value="WFH" className="block">
                   WFH
                 </Radio>
@@ -106,6 +151,7 @@ export const AttendanceStaffCheckInDrawer: FC<
               </Radio.Group>
             </Form.Item>
 
+            {/* Bukti Kehadran */}
             <Form.Item
               name="evidence_image"
               label="Bukti Kehadiran"
@@ -134,8 +180,6 @@ export const AttendanceStaffCheckInDrawer: FC<
               </div>
             </Form.Item>
           </Form>
-
-          {/* Bukti Kehadiran */}
         </div>
       </DrawerCore>
 
@@ -147,6 +191,21 @@ export const AttendanceStaffCheckInDrawer: FC<
         centered
       >
         <img alt="Preview Evidence Picture" src={previewEvidencePictureData} />
+      </Modal>
+
+      <Modal
+        title="Izin Akses Lokasi"
+        visible={showLocationPermissionPrompt}
+        onCancel={() => setShowLocationPermissionPrompt(false)}
+        centered
+        zIndex={50}
+        footer={null}
+      >
+        <p>
+          Mohon izinkan browser untuk dapat mengakses lokasi Anda saat ini
+          dengan cara klik <strong>Allow</strong> pada Popup yang muncul di
+          sebelah kiri atas.
+        </p>
       </Modal>
     </>
   );

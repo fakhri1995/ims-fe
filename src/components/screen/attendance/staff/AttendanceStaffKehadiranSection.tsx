@@ -29,6 +29,8 @@ export interface IAttendanceStaffKehadiranSection {}
 
 /**
  * Component AttendanceStaffKehadiranSection
+ *
+ * TODO: add pagination table in this component. (Local pagination...).
  */
 export const AttendanceStaffKehadiranSection: FC<
   IAttendanceStaffKehadiranSection
@@ -56,6 +58,7 @@ export const AttendanceStaffKehadiranSection: FC<
             geo_loc_check_in: datum.geo_loc_check_in || "-",
             geo_loc_check_out: datum.geo_loc_check_out || "-",
             is_wfo: datum.is_wfo === 1 ? "WFO" : "WFH",
+            key: datum.id.toString(),
           } as IModifiedDataKehadiran;
         }),
     }
@@ -214,6 +217,7 @@ interface IModifiedDataKehadiran
     | "geo_loc_check_out"
     | "is_wfo"
   > {
+  key: string;
   check_out: string;
   check_in: string;
   geo_loc_check_in: string;
