@@ -12,6 +12,7 @@ import { useGeolocationAPI } from "hooks/use-geolocation-api";
 import { getBase64 } from "lib/helper";
 
 import { useGetAttendeeInfo, useToggleCheckInCheckOut } from "apis/attendance";
+import { useNominatimReverseGeocode } from "apis/nominatim";
 
 /**
  * Component AttendanceStaffCheckInDrawer's props.
@@ -38,13 +39,11 @@ export const AttendanceStaffCheckInDrawer: FC<
   /**
    * TODO: implement prompt
    */
-  const {
-    position,
-    error: geolocationError,
-    isPermissionBlocked,
-  } = useGeolocationAPI();
+  const { position } = useGeolocationAPI();
   const [showLocationPermissionPrompt, setShowLocationPermissionPrompt] =
     useState(false);
+
+  const { data: locationDisplayName } = useNominatimReverseGeocode(position);
 
   /** Uploaded file object. Wrapped as RcFile. */
   const [uploadedEvidencePicture, setUploadedEvidencePicture] =
@@ -114,7 +113,7 @@ export const AttendanceStaffCheckInDrawer: FC<
       toggleCheckInCheckOut(
         {
           evidence: value?.evidence_image || "",
-          geo_loc: "",
+          geo_loc: locationDisplayName || "",
           lat: position?.coords.latitude.toString(),
           long: position?.coords.longitude.toString(),
           wfo: value?.work_from === "WFO",
@@ -163,7 +162,7 @@ export const AttendanceStaffCheckInDrawer: FC<
             >
               <Input
                 disabled
-                placeholder="Cibubur, Jakarta Timur"
+                placeholder={locationDisplayName || ""}
                 className="text-mono30 placeholder-gray-900 disabled:bg-transparent font-bold border-none p-0"
               />
             </Form.Item>
