@@ -1,3 +1,7 @@
+export enum AuthServiceQueryKeys {
+  DETAIL_PROFILE = "GET_DETAIL_PROFILE",
+}
+
 /**
  * @access GET /detailProfile
  */
@@ -20,7 +24,23 @@ export interface IDetailProfileData {
   features: any[];
   company: Company;
   groups: Group[];
+  attendance_forms: AttendanceForm[];
   roles: Group[];
+}
+
+export interface AttendanceForm {
+  id: number;
+  name: string;
+  description: string;
+  details: Detail[];
+}
+
+export interface Detail {
+  key: string;
+  name: string;
+  type: 1 | 2 | 3 | 4 | 5;
+  description: string;
+  list?: string[];
 }
 
 export interface Company {

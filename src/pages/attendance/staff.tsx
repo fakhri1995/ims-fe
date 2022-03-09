@@ -70,7 +70,7 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
           />
 
           {/* Staff Detail Card */}
-          <AttendanceStaffDetailCard staffId={0} />
+          <AttendanceStaffDetailCard />
 
           {/* Statistic Card */}
           <AttendanceStaffStatisticCard staffId={0} />
