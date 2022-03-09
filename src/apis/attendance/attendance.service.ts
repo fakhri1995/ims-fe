@@ -14,7 +14,7 @@ export class AttendanceService {
    * @see {AttendanceServiceQueryKeys.ATTENDANCES_USER_GET}
    * @access GET /getAttendancesUser
    */
-  static async getAttendancesLog(axiosClient: AxiosInstance) {
+  static async find(axiosClient: AxiosInstance) {
     return await axiosClient.get<IGetAttendancesUserSucceedResponse>(
       "/getAttendancesUser"
     );

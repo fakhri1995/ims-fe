@@ -33,7 +33,8 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
   onButtonClicked,
 }) => {
   const { currentTime, currentDate, isOverAttendTime } = useCheckInOutTimer();
-  const { hasCheckedInToday, attendeeStatus, query } = useGetAttendeeInfo();
+  const { hasCheckedInToday, attendeeStatus, isItSafeToCheckOut, query } =
+    useGetAttendeeInfo();
 
   useEffect(() => {
     if (!onlyShowTime) {

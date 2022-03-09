@@ -5,6 +5,8 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
+import { AttendanceActivityServivce } from "./attendance-activity.service";
+import { AttendanceActivityQueryKeys } from "./attendance-activity.types";
 import { AttendanceFormAktivitasService } from "./attendance-form-aktivitas.service";
 import {
   AttendanceFormAktivitasServiceQueryKeys,
@@ -123,6 +125,7 @@ export const useAddFormAktivitasStaff = () => {
  * @returns {{
  *   hasCheckedInToday: boolean;
  *   attendeeStatus: "checkout" | "checkin" | undefined;
+ *   isItSafeToCheckOut: boolean;
  *   query: UseQueryResult;
  * }}
  */
@@ -137,25 +140,38 @@ export const useGetAttendeeInfo = () => {
   >(undefined);
   const [isItSafeToCheckOut, setIsItSafeToCheckOut] = useState(false);
 
-  /** TODO: remove this debug hook */
-  useDebugValue({ hasCheckedInToday, attendeeStatus });
+  const { data: todayActivitiesLength, refetch: refetchActivities } = useQuery(
+    AttendanceActivityQueryKeys.FIND,
+    () => AttendanceActivityServivce.find(axiosClient),
+    {
+      enabled: false,
+      select: (response) => response.data.data.today_activities.length,
+    }
+  );
 
-  const query = useQuery(
+  const attendancesLogQuery = useQuery(
     AttendanceServiceQueryKeys.ATTENDANCES_USER_GET,
-    () => AttendanceService.getAttendancesLog(axiosClient),
+    () => AttendanceService.find(axiosClient),
     {
       refetchOnMount: false,
       select: (response) => response.data.data,
+      onSuccess: () => {
+        refetchActivities();
+      },
     }
   );
 
   useEffect(() => {
-    if (!query.data) {
+    setIsItSafeToCheckOut(todayActivitiesLength > 0);
+  }, [todayActivitiesLength]);
+
+  useEffect(() => {
+    if (!attendancesLogQuery.data) {
       return;
     }
 
     /** Special case: when the user is new or the data is just empty */
-    if (query.data.length === 0) {
+    if (attendancesLogQuery.data.length === 0) {
       setHasCheckedInToday(false);
       setAttendeeStatus("checkout");
 
@@ -166,18 +182,26 @@ export const useGetAttendeeInfo = () => {
      * Backend guarantee kalau index === 0 adalah data / log check in dan check out
      *  paling terbaru (sorted by time).
      */
-    const latestAttendanceData = query.data[0];
+    const latestAttendanceData = attendancesLogQuery.data[0];
     const latestCheckInTime = new Date(latestAttendanceData.check_in);
 
     setHasCheckedInToday(isToday(latestCheckInTime));
     setAttendeeStatus(
       latestAttendanceData.check_out === null ? "checkin" : "checkout"
     );
-  }, [query.data]);
+  }, [attendancesLogQuery.data]);
 
   return {
+    /** Check apakah user sudah melakukan checkin untuk hari ini */
     hasCheckedInToday,
+
+    /** Check status si user saat ini apakah sedang checkin atau checkout */
     attendeeStatus,
-    query,
+
+    /** Digunakan untuk mengatur button "Check Out" state (whether disabled or not) */
+    isItSafeToCheckOut,
+
+    /** Pass ke consumer untuk melakukan refetching secara manual */
+    query: attendancesLogQuery,
   };
 };
