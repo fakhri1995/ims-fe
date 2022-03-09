@@ -50,7 +50,7 @@ export const AttendanceStaffKehadiranSection: FC<
                     "dd MMM yyyy, HH:mm:ss"
                   ),
             check_in: formatDateToLocale(
-              new Date(datum.check_out),
+              new Date(datum.check_in),
               "dd MMM yyyy, HH:mm:ss"
             ),
             geo_loc_check_in: datum.geo_loc_check_in || "-",
