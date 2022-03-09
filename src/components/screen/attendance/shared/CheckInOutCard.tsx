@@ -1,7 +1,9 @@
 import { Button, Spin } from "antd";
-import { FC, useState } from "react";
+import { FC, useEffect } from "react";
 
 import { useCheckInOutTimer } from "hooks/use-checkinout-timer";
+
+import { useGetAttendeeInfo } from "apis/attendance";
 
 import BlobLeft from "assets/vectors/blob-left.svg";
 import BlobRight from "assets/vectors/blob-right.svg";
@@ -20,9 +22,6 @@ export interface ICheckInOutCard {
    */
   onlyShowTime?: boolean;
 
-  isUserHasCheckedIn?: boolean;
-  attendeeStatus?: "checkin" | "checkout";
-
   onButtonClicked?: () => void;
 }
 
@@ -32,11 +31,15 @@ export interface ICheckInOutCard {
 export const CheckInOutCard: FC<ICheckInOutCard> = ({
   onlyShowTime = false,
   onButtonClicked,
-
-  isUserHasCheckedIn = false,
-  attendeeStatus = "checkout",
 }) => {
   const { currentTime, currentDate, isOverAttendTime } = useCheckInOutTimer();
+  const { hasCheckedInToday, attendeeStatus, query } = useGetAttendeeInfo();
+
+  useEffect(() => {
+    if (!onlyShowTime) {
+      query.refetch();
+    }
+  }, [onlyShowTime]);
 
   const buttonClassName = clsx(
     "mig-button relative z-10",
@@ -44,7 +47,7 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
       "mig-button--solid-danger":
         !isOverAttendTime && attendeeStatus === "checkin",
     },
-    isOverAttendTime && !isUserHasCheckedIn && !onlyShowTime
+    isOverAttendTime && !hasCheckedInToday && !onlyShowTime
       ? "mig-button--solid-notice"
       : {
           "mig-button--solid-primary": attendeeStatus === "checkout",
@@ -54,23 +57,26 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
 
   const timeTextClassName = clsx(
     "text-center space-y-1 relative z-10",
-    isOverAttendTime && !isUserHasCheckedIn && !onlyShowTime
+    isOverAttendTime && !hasCheckedInToday && !onlyShowTime
       ? "text-notice"
       : "text-gray-600"
   );
 
   const blobClassName = clsx(
     "absolute h-120 -z-0",
-    isOverAttendTime && !isUserHasCheckedIn && !onlyShowTime
+    isOverAttendTime && !hasCheckedInToday && !onlyShowTime
       ? "text-notice/10"
       : "text-primary100/10"
   );
 
+  const shouldRenderSpinner =
+    currentTime === "" || (!onlyShowTime && attendeeStatus === undefined);
+
   return (
     <div className="mig-platform flex flex-col items-center justify-center space-y-6 py-8 relative overflow-hidden min-h-[12rem]">
-      {currentTime === "" && <Spin size="large" />}
-
-      {currentTime !== "" && (
+      {shouldRenderSpinner ? (
+        <Spin size="large" />
+      ) : (
         <>
           <div className={timeTextClassName}>
             <span className="text-5xl block">{currentTime}</span>

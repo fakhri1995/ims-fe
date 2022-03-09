@@ -11,6 +11,7 @@ export class AttendanceService {
   /**
    * Retrieve all current user's attandance log (history).
    *
+   * @see {AttendanceServiceQueryKeys.ATTENDANCES_USER_GET}
    * @access GET /getAttendancesUser
    */
   static async getAttendancesLog(axiosClient: AxiosInstance) {

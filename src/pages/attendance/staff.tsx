@@ -31,14 +31,6 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
 
   const [isCheckInDrawerShown, setIsCheckInDrawerShown] = useState(false);
 
-  /**
-   * Sync these states with server data.
-   */
-  const [isUserHasCheckedIn, setIsUserHasCheckedIn] = useState(false);
-  const [attendeeStatus, setAttendeeStatus] = useState<"checkin" | "checkout">(
-    "checkout"
-  );
-
   const toggleCheckInDrawer = useCallback(() => {
     return setIsCheckInDrawerShown((prev) => !prev);
   }, []);
@@ -63,11 +55,7 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
         {/* Column 1: Check In/Out Button, Staff detail card, Statistic Card */}
         <div className="w-full lg:w-2/5 xl:w-1/5 space-y-6">
           {/* Card Check In/Out */}
-          <CheckInOutCard
-            onButtonClicked={handleAttendanceButtonClicked}
-            isUserHasCheckedIn={isUserHasCheckedIn}
-            attendeeStatus={attendeeStatus}
-          />
+          <CheckInOutCard onButtonClicked={handleAttendanceButtonClicked} />
 
           {/* Staff Detail Card */}
           <AttendanceStaffDetailCard />

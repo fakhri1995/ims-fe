@@ -1,5 +1,9 @@
 import { HttpRequestWithDataSucceedResponse } from "types/common";
 
+export enum AttendanceServiceQueryKeys {
+  ATTENDANCES_USER_GET = "ATTENDANCES_USER_GET",
+}
+
 /**
  * @access GET /getAttendancesUser
  */
