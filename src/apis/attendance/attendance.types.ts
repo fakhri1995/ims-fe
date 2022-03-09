@@ -19,10 +19,10 @@ export interface GetAttendancesUserData {
   lat_check_in: string;
   long_check_out: string;
   lat_check_out: string;
-  geo_loc_check_in: null;
-  geo_loc_check_out: null;
+  geo_loc_check_in: string | null;
+  geo_loc_check_out: string | null;
   evidence: Evidence;
-  is_wfo: number;
+  is_wfo: number /** 1 = true, 0 = false */;
 }
 
 export interface Evidence {

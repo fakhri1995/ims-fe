@@ -1,6 +1,7 @@
 import { isAfter } from "date-fns";
 import { useEffect, useMemo, useState } from "react";
 
+import { ATTENDANCE_SAFE_TIME } from "lib/constants";
 import { formatDateToLocale } from "lib/date-utils";
 
 /**
@@ -14,8 +15,8 @@ import { formatDateToLocale } from "lib/date-utils";
  */
 export const useCheckInOutTimer = (
   realtimeFormat: string = "HH:mm:ss",
-  attendSafeHour: number = 8,
-  attendSafeMinute: number = 15
+  attendSafeHour: number = ATTENDANCE_SAFE_TIME.HOUR,
+  attendSafeMinute: number = ATTENDANCE_SAFE_TIME.MINUTE
 ) => {
   if (attendSafeHour < 0 || attendSafeHour > 23) {
     throw new Error("Argument `attendSafeHour` hanya valid dengan rentan 0-23");
@@ -35,15 +36,18 @@ export const useCheckInOutTimer = (
   /**
    * It's necessary to memoized this date instance. We do not need to update each interval.
    */
-  const attendComparabableTime = useMemo(() => {
-    /** Instantiate new Date instance to have hour and minute equals to `attendSafeHour` and `attendSafeMinute` */
-    const attendLateTime = new Date();
-    attendLateTime.setHours(attendSafeHour);
-    attendLateTime.setMinutes(attendSafeMinute);
-    attendLateTime.setSeconds(0);
-
-    return attendLateTime;
-  }, [attendSafeHour, attendSafeMinute]);
+  const attendComparabableTime = useMemo(
+    () =>
+      new Date(
+        currentTime.getFullYear(),
+        currentTime.getMonth(),
+        currentTime.getDate(),
+        attendSafeHour,
+        attendSafeMinute,
+        0
+      ),
+    [attendSafeHour, attendSafeMinute]
+  );
 
   return {
     /** Clock ticker */
