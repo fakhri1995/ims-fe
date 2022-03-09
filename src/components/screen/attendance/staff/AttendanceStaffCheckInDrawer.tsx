@@ -1,7 +1,8 @@
 import { UploadOutlined } from "@ant-design/icons";
-import { Input, UploadProps } from "antd";
+import { Input, UploadProps, notification } from "antd";
 import { Button, Form, Modal, Radio, Upload, message } from "antd";
 import { RcFile } from "antd/lib/upload";
+import { AxiosError } from "axios";
 import { FC, useCallback, useEffect, useState } from "react";
 
 import DrawerCore from "components/drawer/drawerCore";
@@ -9,6 +10,8 @@ import DrawerCore from "components/drawer/drawerCore";
 import { useGeolocationAPI } from "hooks/use-geolocation-api";
 
 import { getBase64 } from "lib/helper";
+
+import { useGetAttendeeInfo, useToggleCheckInCheckOut } from "apis/attendance";
 
 /**
  * Component AttendanceStaffCheckInDrawer's props.
@@ -25,6 +28,12 @@ export const AttendanceStaffCheckInDrawer: FC<
   IAttendanceStaffCheckInDrawer
 > = ({ visible, onClose }) => {
   const [form] = Form.useForm();
+
+  const { attendeeStatus } = useGetAttendeeInfo();
+  const {
+    mutate: toggleCheckInCheckOut,
+    isLoading: toggleCheckInCheckOutLoading,
+  } = useToggleCheckInCheckOut();
 
   /**
    * TODO: implement prompt
@@ -69,8 +78,8 @@ export const AttendanceStaffCheckInDrawer: FC<
       (uploadedFile.size / 1024 / 1024).toFixed(4)
     );
     if (fileSizeInMb > 5) {
-      message.error({
-        content: "Ukuran file melebih batas persyaratan!",
+      notification.error({
+        message: "Ukuran file melebih batas persyaratan!",
       });
       return Upload.LIST_IGNORE;
     }
@@ -92,7 +101,7 @@ export const AttendanceStaffCheckInDrawer: FC<
   }, [uploadedEvidencePicture]);
 
   const onFormSubmitted = useCallback(
-    (value: { work_from: "WFO" | "WFH" }) => {
+    (value: { work_from?: "WFO" | "WFH"; evidence_image?: string }) => {
       /**
        * TODO: handle this callback properly
        *
@@ -101,16 +110,42 @@ export const AttendanceStaffCheckInDrawer: FC<
        *    -> retrieve new URL from cloudinary
        * 3. Hit toggle attendance endpoint
        */
-      console.table({ work_from: value.work_from, uploadedEvidencePicture });
+      // console.table({ work_from: value.work_from, uploadedEvidencePicture });
+      toggleCheckInCheckOut(
+        {
+          evidence: value?.evidence_image || "",
+          geo_loc: "",
+          lat: position?.coords.latitude.toString(),
+          long: position?.coords.longitude.toString(),
+          wfo: value?.work_from === "WFO",
+        },
+        {
+          onSuccess: (response) => {
+            setUploadedEvidencePicture(null);
+
+            form.resetFields();
+            onClose();
+
+            notification.success({ message: response.data.message });
+          },
+          onError: (error: AxiosError) =>
+            notification.error({ message: error.response.data.message }),
+        }
+      );
     },
     [uploadedEvidencePicture]
   );
 
+  const drawerTitleAndButtonContent =
+    attendeeStatus === "checkout" ? "Check In" : "Check Out";
+  const evidencePictureLabel =
+    attendeeStatus === "checkout" ? "Bukti Kehadiran" : "Bukti Check Out";
+
   return (
     <>
       <DrawerCore
-        title="Check In"
-        buttonOkText="Check In"
+        title={drawerTitleAndButtonContent}
+        buttonOkText={drawerTitleAndButtonContent}
         visible={visible}
         onClose={onClose}
         onClick={() => form.submit()}
@@ -133,28 +168,30 @@ export const AttendanceStaffCheckInDrawer: FC<
               />
             </Form.Item>
 
-            {/* Kerja Dari */}
-            <Form.Item
-              name="work_from"
-              label="Kerja Dari"
-              required
-              className="block"
-              initialValue="WFH"
-            >
-              <Radio.Group>
-                <Radio value="WFH" className="block">
-                  WFH
-                </Radio>
-                <Radio value="WFO" className="block">
-                  WFO
-                </Radio>
-              </Radio.Group>
-            </Form.Item>
+            {/* Kerja Dari: hanya tampilkan ketika Check In */}
+            {attendeeStatus === "checkout" && (
+              <Form.Item
+                name="work_from"
+                label="Kerja Dari"
+                required
+                className="block"
+                initialValue="WFH"
+              >
+                <Radio.Group>
+                  <Radio value="WFH" className="block">
+                    WFH
+                  </Radio>
+                  <Radio value="WFO" className="block">
+                    WFO
+                  </Radio>
+                </Radio.Group>
+              </Form.Item>
+            )}
 
             {/* Bukti Kehadran */}
             <Form.Item
               name="evidence_image"
-              label="Bukti Kehadiran"
+              label={evidencePictureLabel}
               required
               className="block"
             >

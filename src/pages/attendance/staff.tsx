@@ -36,9 +36,6 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
   }, []);
 
   const handleAttendanceButtonClicked = useCallback(() => {
-    /**
-     * TODO: add more functional logic
-     */
     setIsCheckInDrawerShown(true);
   }, []);
 

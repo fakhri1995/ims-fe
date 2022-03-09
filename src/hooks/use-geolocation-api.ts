@@ -44,7 +44,7 @@ export const useGeolocationAPI = (options?: PositionOptions) => {
       return;
     }
 
-    if (!position && error.code === 1) {
+    if (!position && error?.code === 1) {
       setIsPermissionBlocked(true);
     }
   }, [position, error]);

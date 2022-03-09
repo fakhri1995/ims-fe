@@ -97,6 +97,7 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
                   <Button
                     className={buttonClassName}
                     onClick={onButtonClicked}
+                    loading={query.isLoading || query.isRefetching}
                     disabled
                   >
                     {attendeeStatus === "checkin" ? "Check Out" : "Check In"}
@@ -104,7 +105,11 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
                 </Tooltip>
               )}
               {!shouldDisableCheckOutButton && (
-                <Button className={buttonClassName} onClick={onButtonClicked}>
+                <Button
+                  className={buttonClassName}
+                  onClick={onButtonClicked}
+                  loading={query.isLoading || query.isRefetching}
+                >
                   {attendeeStatus === "checkin" ? "Check Out" : "Check In"}
                 </Button>
               )}

@@ -16,7 +16,10 @@ import {
   IUpdateAttendanceFormPayload,
 } from "./attendance-form-aktivitas.types";
 import { AttendanceService } from "./attendance.service";
-import { AttendanceServiceQueryKeys } from "./attendance.types";
+import {
+  AttendanceServiceQueryKeys,
+  ISetAttendanceTogglePayload,
+} from "./attendance.types";
 
 /**
  * Custom mutation hook to add new Form Aktivitas data and trigger
@@ -204,4 +207,21 @@ export const useGetAttendeeInfo = () => {
     /** Pass ke consumer untuk melakukan refetching secara manual */
     query: attendancesLogQuery,
   };
+};
+
+export const useToggleCheckInCheckOut = () => {
+  const axiosClient = useAxiosClient();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    (payload: ISetAttendanceTogglePayload) =>
+      AttendanceService.toggleCheckInCheckOut(axiosClient, payload),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(
+          AttendanceServiceQueryKeys.ATTENDANCES_USER_GET
+        );
+      },
+    }
+  );
 };

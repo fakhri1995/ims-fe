@@ -36,7 +36,11 @@ export const AttendanceStaffKehadiranSection: FC<
   IAttendanceStaffKehadiranSection
 > = () => {
   const axiosClient = useAxiosClient();
-  const { data: kehadiranData, isLoading } = useQuery(
+  const {
+    data: kehadiranData,
+    isLoading,
+    isRefetching,
+  } = useQuery(
     AttendanceServiceQueryKeys.ATTENDANCES_USER_GET,
     () => AttendanceService.find(axiosClient),
     {
@@ -170,7 +174,7 @@ export const AttendanceStaffKehadiranSection: FC<
           columns={tableColumns}
           dataSource={kehadiranData}
           pagination={tablePaginationConf}
-          loading={isLoading}
+          loading={isLoading || isRefetching}
           onRow={(datum) => {
             /**
              * TODO: ini perlu di discuss lagi.
