@@ -6,14 +6,14 @@ import {
   UserAddOutlined,
   UserDeleteOutlined,
 } from "@ant-design/icons";
-import { Button, Empty, Form, Input, Modal, Pagination, Spin } from "antd";
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { Button, Empty, Form, Input, Modal, Spin } from "antd";
+import React, { FC, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
-  AttendanceService,
+  AttendanceFormAktivitasService,
   AttendanceServiceQueryKeys,
   User,
   useAddFormAktivitasStaff,
@@ -49,7 +49,7 @@ export const AktivitasUserListEditableCard: FC<
     isLoading: currentFormAktivitasUsersLoading,
   } = useQuery(
     [AttendanceServiceQueryKeys.FIND_ONE, aktivitasId],
-    () => AttendanceService.findOne(axiosClient, aktivitasId),
+    () => AttendanceFormAktivitasService.findOne(axiosClient, aktivitasId),
     {
       select: (response) => response.data.data.users as StaffModelType[],
     }

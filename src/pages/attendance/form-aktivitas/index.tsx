@@ -25,7 +25,7 @@ import { parseToken } from "lib/auth";
 import { getAxiosClient } from "lib/axios-client";
 
 import {
-  AttendanceService,
+  AttendanceFormAktivitasService,
   AttendanceServiceQueryKeys,
   IGetAttendanceFormsParams,
 } from "apis/attendance";
@@ -63,7 +63,7 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
   const axiosClient = useAxiosClient();
   const { data, isLoading } = useQuery(
     [AttendanceServiceQueryKeys.FIND, criteria],
-    () => AttendanceService.find(axiosClient, criteria)
+    () => AttendanceFormAktivitasService.find(axiosClient, criteria)
   );
 
   const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);

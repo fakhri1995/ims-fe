@@ -27,7 +27,7 @@ import { H2, Label } from "components/typography";
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
-  AttendanceService,
+  AttendanceFormAktivitasService,
   AttendanceServiceQueryKeys,
   useAddFormAktivitas,
   useDeleteFormAktivitas,
@@ -80,7 +80,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
     isStale: isExistingDataStale,
   } = useQuery(
     [AttendanceServiceQueryKeys.FIND_ONE, formAktivitasId],
-    () => AttendanceService.findOne(axiosClient, formAktivitasId),
+    () => AttendanceFormAktivitasService.findOne(axiosClient, formAktivitasId),
     {
       enabled: false,
       select: (response) => {

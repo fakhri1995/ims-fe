@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "react-query";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
-import { AttendanceService } from "./attendance.service";
+import { AttendanceFormAktivitasService } from "./attendance-form-aktivitas.service";
 import {
   AttendanceServiceQueryKeys,
   IAddAttendanceFormPayload,
@@ -24,7 +24,7 @@ export const useAddFormAktivitas = () => {
 
   return useMutation(
     (payload: IAddAttendanceFormPayload) =>
-      AttendanceService.add(axiosClient, payload),
+      AttendanceFormAktivitasService.add(axiosClient, payload),
     {
       onSuccess: () => {
         /** NOTE: do not return anything. Let it run asynchronously!!! */
@@ -40,7 +40,7 @@ export const useUpdateFormAktivitas = () => {
 
   return useMutation(
     (payload: IUpdateAttendanceFormPayload) =>
-      AttendanceService.update(axiosClient, payload),
+      AttendanceFormAktivitasService.update(axiosClient, payload),
     {
       onSuccess: (_, payload) => {
         queryClient.invalidateQueries([
@@ -61,7 +61,7 @@ export const useDeleteFormAktivitas = (redirectTo: string) => {
 
   return useMutation(
     (formAktivitasId: number) =>
-      AttendanceService.remove(axiosClient, formAktivitasId),
+      AttendanceFormAktivitasService.remove(axiosClient, formAktivitasId),
     {
       onSuccess: () => {
         router.push(redirectTo);
@@ -76,7 +76,7 @@ export const useDeleteFormAktivitasStaff = () => {
 
   return useMutation(
     (payload: IRemoveUserAttendanceFormPayload) =>
-      AttendanceService.removeUsers(axiosClient, payload),
+      AttendanceFormAktivitasService.removeUsers(axiosClient, payload),
     {
       onSuccess: (_, payload) => {
         queryClient.invalidateQueries([
@@ -94,7 +94,7 @@ export const useAddFormAktivitasStaff = () => {
 
   return useMutation(
     (payload: IAddUserAttendanceFormPayload) =>
-      AttendanceService.addUsers(axiosClient, payload),
+      AttendanceFormAktivitasService.addUsers(axiosClient, payload),
     {
       onSuccess: (_, payload) => {
         queryClient.invalidateQueries([

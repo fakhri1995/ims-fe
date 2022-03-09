@@ -17,7 +17,10 @@ import { useAxiosClient } from "hooks/use-axios-client";
 import { parseToken } from "lib/auth";
 import { getAxiosClient } from "lib/axios-client";
 
-import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
+import {
+  AttendanceFormAktivitasService,
+  AttendanceServiceQueryKeys,
+} from "apis/attendance";
 import { AuthService } from "apis/auth";
 
 import { ProtectedPageProps } from "types/common";
@@ -33,7 +36,7 @@ const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
   const axiosClient = useAxiosClient();
   const { data } = useQuery(
     [AttendanceServiceQueryKeys.FIND_ONE, +aktivitasId],
-    () => AttendanceService.findOne(axiosClient, +aktivitasId)
+    () => AttendanceFormAktivitasService.findOne(axiosClient, +aktivitasId)
   );
 
   const [isDrawerShown, setIsDrawerShown] = useState(false);
