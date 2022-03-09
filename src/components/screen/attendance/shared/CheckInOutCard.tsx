@@ -1,4 +1,4 @@
-import { Button, Spin } from "antd";
+import { Button, Spin, Tooltip } from "antd";
 import { FC, useEffect } from "react";
 
 import { useCheckInOutTimer } from "hooks/use-checkinout-timer";
@@ -73,6 +73,9 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
   const shouldRenderSpinner =
     currentTime === "" || (!onlyShowTime && attendeeStatus === undefined);
 
+  const shouldDisableCheckOutButton =
+    attendeeStatus === "checkin" && !isItSafeToCheckOut;
+
   return (
     <div className="mig-platform flex flex-col items-center justify-center space-y-6 py-8 relative overflow-hidden min-h-[12rem]">
       {shouldRenderSpinner ? (
@@ -85,9 +88,27 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
           </div>
 
           {!onlyShowTime && (
-            <Button className={buttonClassName} onClick={onButtonClicked}>
-              {attendeeStatus === "checkin" ? "Check Out" : "Check In"}
-            </Button>
+            <>
+              {shouldDisableCheckOutButton && (
+                <Tooltip
+                  title="Check Out bisa dilakukan setelah mengisi aktivitas"
+                  placement="bottom"
+                >
+                  <Button
+                    className={buttonClassName}
+                    onClick={onButtonClicked}
+                    disabled
+                  >
+                    {attendeeStatus === "checkin" ? "Check Out" : "Check In"}
+                  </Button>
+                </Tooltip>
+              )}
+              {!shouldDisableCheckOutButton && (
+                <Button className={buttonClassName} onClick={onButtonClicked}>
+                  {attendeeStatus === "checkin" ? "Check Out" : "Check In"}
+                </Button>
+              )}
+            </>
           )}
 
           <BlobLeft className={`${blobClassName} -top-20 -left-48`} />
