@@ -2,14 +2,14 @@ import { AppstoreAddOutlined } from "@ant-design/icons";
 import { ConfigProvider, Tabs } from "antd";
 import { Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import ButtonSys from "components/button";
 import { DataEmptyState } from "components/states/DataEmptyState";
 
 import { getAntdTablePaginationConfig } from "lib/standard-config";
 
-import { useGetUserActivities } from "apis/attendance";
+import { useGetUserAttendanceActivities } from "apis/attendance";
 
 const { TabPane } = Tabs;
 
@@ -28,9 +28,17 @@ export const AttendanceStaffAktivitasSection: FC<
 > = ({ onAddActivityButtonClicked }) => {
   /** 1 => Hari Ini, 2 => Riwayat */
   const [tabActiveKey, setTabActiveKey] = useState<"1" | "2" | string>("1");
-  const { dynamicActivityColumns } = useGetUserActivities(
+  const { dynamicActivityColumns, dataSource } = useGetUserAttendanceActivities(
     tabActiveKey === "1" ? "today" : "past"
   );
+
+  useEffect(() => {
+    if (!dataSource) {
+      return;
+    }
+
+    console.log(dataSource);
+  }, [dataSource]);
 
   /**
    * TODO: generate tableColumns dynamically sesuai data backend

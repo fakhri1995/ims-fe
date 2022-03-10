@@ -15,6 +15,7 @@ import {
 import { AttendanceFormAktivitasService } from "./attendance-form-aktivitas.service";
 import {
   AttendanceFormAktivitasServiceQueryKeys,
+  FormAktivitasTypes,
   IAddAttendanceFormPayload,
   IAddUserAttendanceFormPayload,
   IRemoveUserAttendanceFormPayload,
@@ -249,30 +250,122 @@ export const useToggleCheckInCheckOut = () => {
  * 1. Array of columns value    => Column pada table bersifat dinamis sesuai dengan form aktivitas si user.
  * 2. Data source               => Data untuk table itu sendiri. Data berubah menyesuaikan argument `criteria`.
  */
-export const useGetUserActivities = (criteria: "today" | "past" = "today") => {
+export const useGetUserAttendanceActivities = (
+  criteria: "today" | "past" = "today"
+) => {
   const axiosClient = useAxiosClient();
+
+  /**
+   * TODO: trrigger query everytime arg `criteria` changes (?).
+   */
+  const { data: rawDataSource, refetch: refetchAttendanceActivities } =
+    useQuery(
+      AttendanceActivityQueryKeys.FIND,
+      () => AttendanceActivityServivce.find(axiosClient),
+      {
+        enabled: false,
+        select: (response) => {
+          return criteria === "today"
+            ? response.data.data.today_activities
+            : response.data.data.last_two_month_activities;
+        },
+      }
+    );
 
   const { data: userAtendanceForms } = useQuery(
     AuthServiceQueryKeys.DETAIL_PROFILE,
     () => AuthService.whoAmI(axiosClient),
     {
       select: (response) => response.data.data.attendance_forms,
+      onSuccess: () => {
+        refetchAttendanceActivities();
+      },
     }
   );
 
-  const dynamicActivityColumns = useMemo<string[]>(() => {
-    if (!userAtendanceForms) {
-      return [];
+  const { dynamicColumNames, dynamicFieldKeys, keyValuePairs } = useMemo<{
+    dynamicColumNames: string[];
+    dynamicFieldKeys: string[];
+    keyValuePairs: { [key: string]: string[] };
+  }>(() => {
+    if (!userAtendanceForms || userAtendanceForms.length === 0) {
+      return { dynamicColumNames: [], dynamicFieldKeys: [], keyValuePairs: {} };
     }
 
-    if (userAtendanceForms.length === 0) {
-      return [];
-    }
+    const dynamicColumNames = userAtendanceForms[0].details.map(
+      (detail) => detail.name
+    );
 
-    return userAtendanceForms[0].details.map((detail) => detail.name);
+    const dynamicFieldKeys = userAtendanceForms[0].details.map(
+      (detail) => detail.key
+    );
+
+    const keyValuePairs = userAtendanceForms[0].details.reduce((accu, curr) => {
+      const newAccu = { ...accu };
+      if (curr.list && curr.type === FormAktivitasTypes.CHECKLIST) {
+        newAccu[curr.key] = curr.list;
+        return newAccu;
+      }
+
+      return newAccu;
+    }, {} as { [key: string]: string[] });
+
+    return { dynamicColumNames, dynamicFieldKeys, keyValuePairs };
   }, [userAtendanceForms]);
 
-  return { dynamicActivityColumns };
+  const mappedDataSource = useMemo(() => {
+    if (!rawDataSource || !userAtendanceForms) {
+      return undefined;
+    }
+
+    const result: DynamicTableTypes[] = [];
+
+    rawDataSource.forEach((activity) => {
+      activity.details.forEach((activityDetail) => {
+        if (!dynamicFieldKeys.includes(activityDetail.key)) {
+          return;
+        }
+
+        const buffer: DynamicTableTypes = {
+          activityId: activity.id,
+          key: activityDetail.key,
+          value: activityDetail.value,
+          updated_at: activity.updated_at.toString(),
+        };
+
+        if (buffer.value instanceof Array) {
+          const actualListValue = keyValuePairs[buffer.key] || [];
+
+          if (actualListValue) {
+            const actualValues = [];
+
+            buffer.value.forEach((valueIndex) => {
+              actualValues.push(actualListValue[valueIndex]);
+            });
+
+            // finally flush to buffer
+            buffer.value = actualValues.join(", ");
+          }
+        }
+
+        if (buffer) result.push(buffer);
+      });
+    });
+
+    return result;
+  }, [rawDataSource, userAtendanceForms]);
+
+  return {
+    dynamicActivityColumns: dynamicColumNames,
+    dataSource: mappedDataSource,
+  };
+};
+
+type DynamicTableTypes = {
+  activityId: number;
+  key: string;
+  value: number[] | string;
+  updated_at: string;
 };
 
 export const useAddAttendanceActivity = () => {
