@@ -9,6 +9,8 @@ import { DataEmptyState } from "components/states/DataEmptyState";
 
 import { getAntdTablePaginationConfig } from "lib/standard-config";
 
+import { useGetUserActivities } from "apis/attendance";
+
 const { TabPane } = Tabs;
 
 /**
@@ -24,30 +26,38 @@ export const AttendanceStaffAktivitasSection: FC<
 > = (props) => {
   /** 1 => Hari Ini, 2 => Riwayat */
   const [tabActiveKey, setTabActiveKey] = useState<"1" | "2" | string>("1");
+  const { dynamicActivityColumns } = useGetUserActivities(
+    tabActiveKey === "1" ? "today" : "past"
+  );
 
   /**
    * TODO: generate tableColumns dynamically sesuai data backend
    */
-  const tableColums = useMemo<ColumnsType<{}>>(
-    () => {
-      return [
-        {
-          key: "id",
-          title: "No.",
-          render: (_, __, index) => `${++index}`,
-          width: 64,
-        },
-        {
-          key: "id",
-          title: "Waktu Pengisian",
-          sorter: true,
-        },
-      ];
-    },
-    [
-      /** TODO */
-    ]
-  );
+  const tableColums = useMemo<ColumnsType<{}>>(() => {
+    const columns: ColumnsType<{}> = [
+      {
+        key: "id",
+        title: "No.",
+        render: (_, __, index) => `${++index}`,
+        width: 64,
+      },
+      {
+        key: "id",
+        title: "Waktu Pengisian",
+        sorter: true,
+      },
+    ];
+
+    /** Append dynamic columns into fixed columns */
+    dynamicActivityColumns.forEach((column) => {
+      columns.push({
+        key: "id",
+        title: column,
+      });
+    });
+
+    return columns;
+  }, [dynamicActivityColumns]);
 
   const tablePaginationConf = useMemo(
     () => getAntdTablePaginationConfig(),

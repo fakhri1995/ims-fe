@@ -1,9 +1,11 @@
 import isToday from "date-fns/isToday";
 import { useRouter } from "next/router";
-import { useDebugValue, useEffect, useState } from "react";
+import { useDebugValue, useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import { useAxiosClient } from "hooks/use-axios-client";
+
+import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 
 import { AttendanceActivityServivce } from "./attendance-activity.service";
 import { AttendanceActivityQueryKeys } from "./attendance-activity.types";
@@ -209,6 +211,12 @@ export const useGetAttendeeInfo = () => {
   };
 };
 
+/**
+ * Custom hook untuk switch status kehadiran User. Jika transaksi berhasil,
+ *  trigger query invalidation dengan key @see AttendanceServiceQueryKeys.ATTENDANCES_USER_GET .
+ *
+ * Hook ini digunakan ketika drawer check in or out dijalankan.
+ */
 export const useToggleCheckInCheckOut = () => {
   const axiosClient = useAxiosClient();
   const queryClient = useQueryClient();
@@ -224,4 +232,42 @@ export const useToggleCheckInCheckOut = () => {
       },
     }
   );
+};
+
+/**
+ * Custom hook yang mempermudah mendapatkan data untuk table Aktivitas.
+ * Terdapat dua jenis data:
+ * 1. Hari Ini  => Seluruh aktivitas yang ditambahkan hari ini
+ * 2. Riwayat   => 2 bulan ke belakang dari hari ini
+ *
+ * Riwayat tidak dapat diubah (immutable), sedangkan Hari Ini dapat diperbarui (update dan delete).
+ *
+ * Hooks ini akan menghasilkan:
+ * 1. Array of columns value    => Column pada table bersifat dinamis sesuai dengan form aktivitas si user.
+ * 2. Data source               => Data untuk table itu sendiri. Data berubah menyesuaikan argument `criteria`.
+ */
+export const useGetUserActivities = (criteria: "today" | "past" = "today") => {
+  const axiosClient = useAxiosClient();
+
+  const { data: userAtendanceForms } = useQuery(
+    AuthServiceQueryKeys.DETAIL_PROFILE,
+    () => AuthService.whoAmI(axiosClient),
+    {
+      select: (response) => response.data.data.attendance_forms,
+    }
+  );
+
+  const dynamicActivityColumns = useMemo<string[]>(() => {
+    if (!userAtendanceForms) {
+      return [];
+    }
+
+    if (userAtendanceForms.length === 0) {
+      return [];
+    }
+
+    return userAtendanceForms[0].details.map((detail) => detail.name);
+  }, [userAtendanceForms]);
+
+  return { dynamicActivityColumns };
 };
