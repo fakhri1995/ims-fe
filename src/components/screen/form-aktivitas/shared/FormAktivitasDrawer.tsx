@@ -8,6 +8,7 @@ import {
   Switch,
   notification,
 } from "antd";
+import type { AxiosError } from "axios";
 import type { FC } from "react";
 import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
@@ -29,6 +30,7 @@ import { useAxiosClient } from "hooks/use-axios-client";
 import {
   AttendanceFormAktivitasService,
   AttendanceFormAktivitasServiceQueryKeys,
+  Detail,
   FormAktivitasTypes,
   useAddFormAktivitas,
   useDeleteFormAktivitas,
@@ -140,16 +142,24 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
       details: datacreate.works,
     };
 
+    /**
+     * Replace `payload.lists` menjadi `payload.list`.
+     */
+    payload.details = payload.details.map((detail) => {
+      let mappedPayload = {
+        ...detail,
+        list: detail.lists,
+      };
+      delete mappedPayload.lists;
+
+      return mappedPayload;
+    }) as Detail[];
+
     const resetDrawerState = () => {
       onvisible(false);
       setdatacreate({ name: "", description: "", works: [] });
     };
 
-    /**
-     * TODO: hit endpoint berdasarkan state drawer.
-     * Update ya update
-     * Create ya create...
-     */
     if (!formAktivitasId) {
       addFormAktivitas(payload, {
         onSuccess: (response) => {
@@ -160,9 +170,9 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
 
           resetDrawerState();
         },
-        onError: () => {
+        onError: (error: AxiosError) => {
           notification.error({
-            message: "Gagal menambahkan form aktivitas",
+            message: `Gagal menambahkan form aktivitas. ${error.response.data.message}`,
             duration: 3,
           });
         },
@@ -183,9 +193,9 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
 
             resetDrawerState();
           },
-          onError: () => {
+          onError: (error: AxiosError) => {
             notification.error({
-              message: "Gagal memperbarui form aktivitas",
+              message: `Gagal memperbarui form aktivitas. ${error.response.data.message}`,
               duration: 3,
             });
           },
