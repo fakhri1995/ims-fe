@@ -1,3 +1,5 @@
+import { FormAktivitasTypes } from "apis/attendance";
+
 import { HttpRequestWithDataSucceedResponse } from "types/common";
 
 export enum AuthServiceQueryKeys {
@@ -37,7 +39,7 @@ export interface AttendanceForm {
 export interface Detail {
   key: string;
   name: string;
-  type: 1 | 2 | 3 | 4 | 5;
+  type: FormAktivitasTypes;
   description: string;
   list?: string[];
   required?: boolean;

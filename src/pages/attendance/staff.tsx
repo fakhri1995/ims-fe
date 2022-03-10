@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import styles from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
 import {
+  AttendanceStaffAktivitasDrawer,
   AttendanceStaffAktivitasSection,
   AttendanceStaffDetailCard,
   AttendanceStaffKehadiranSection,
@@ -75,6 +76,8 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
         visible={isCheckInDrawerShown}
         onClose={toggleCheckInDrawer}
       />
+
+      <AttendanceStaffAktivitasDrawer visible onClose={() => {}} />
     </LayoutDashboard>
   );
 };
