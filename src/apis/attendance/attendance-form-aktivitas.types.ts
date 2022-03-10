@@ -3,6 +3,17 @@ import {
   HttpRequestWithDataSucceedResponse,
 } from "types/common";
 
+/**
+ * Tipe field untuk form aktivitas.
+ */
+export enum FormAktivitasTypes {
+  TEKS = 1,
+  PARAGRAPH,
+  CHECKLIST, // value = []
+  NUMERAL,
+  DROPDOWN, // value = []
+}
+
 export enum AttendanceFormAktivitasServiceQueryKeys {
   FIND = "ATTENDANCE_FORMS_GET",
   FIND_ONE = "ATTENDANCE_FORM_GET",

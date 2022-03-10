@@ -29,6 +29,7 @@ import { useAxiosClient } from "hooks/use-axios-client";
 import {
   AttendanceFormAktivitasService,
   AttendanceFormAktivitasServiceQueryKeys,
+  FormAktivitasTypes,
   useAddFormAktivitas,
   useDeleteFormAktivitas,
   useUpdateFormAktivitas,
@@ -93,7 +94,10 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
             };
 
             // special case for type === 3 || type === 5 (checkbox and dropdown)
-            if (detail.type === 3 || detail.type === 5) {
+            if (
+              detail.type === FormAktivitasTypes.CHECKLIST ||
+              detail.type === FormAktivitasTypes.DROPDOWN
+            ) {
               mapped["lists"] = detail.list || [];
             }
 
@@ -372,9 +376,11 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                                 var temp = [...datacreate.works];
                                 delete temp[idx].lists;
                                 temp[idx].type = value;
-                                if (value === 3) {
+                                if (value === FormAktivitasTypes.CHECKLIST) {
                                   temp[idx].lists = [];
-                                } else if (value === 5) {
+                                } else if (
+                                  value === FormAktivitasTypes.DROPDOWN
+                                ) {
                                   temp[idx].lists = [];
                                 }
                                 temp[idx].required = false;
@@ -384,7 +390,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                                 }));
                               }}
                             >
-                              <Select.Option value={1}>
+                              <Select.Option value={FormAktivitasTypes.TEKS}>
                                 <div className="flex items-center">
                                   <AlignJustifiedIconSvg
                                     size={12}
@@ -393,7 +399,9 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                                   Teks
                                 </div>
                               </Select.Option>
-                              <Select.Option value={2}>
+                              <Select.Option
+                                value={FormAktivitasTypes.PARAGRAPH}
+                              >
                                 <div className="flex items-center">
                                   <AlignJustifiedIconSvg
                                     size={12}
@@ -402,7 +410,9 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                                   Paragraf
                                 </div>
                               </Select.Option>
-                              <Select.Option value={3}>
+                              <Select.Option
+                                value={FormAktivitasTypes.CHECKLIST}
+                              >
                                 <div className="flex items-center">
                                   <CheckboxIconSvg
                                     size={12}
@@ -411,13 +421,15 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                                   Ceklis
                                 </div>
                               </Select.Option>
-                              <Select.Option value={4}>
+                              <Select.Option value={FormAktivitasTypes.NUMERAL}>
                                 <div className="flex items-center">
                                   <ListNumbersSvg size={12} color={`#35763B`} />
                                   Numeral
                                 </div>
                               </Select.Option>
-                              <Select.Option value={5}>
+                              <Select.Option
+                                value={FormAktivitasTypes.DROPDOWN}
+                              >
                                 <div className="flex items-center">
                                   <ListNumbersSvg size={12} color={`#35763B`} />
                                   Dropdown
@@ -441,7 +453,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                             ></Input>
                           </div>
 
-                          {doc.type === 3 && (
+                          {doc.type === FormAktivitasTypes.CHECKLIST && (
                             <div className="flex flex-col mb-3 col-span-2">
                               <div className="mb-3 flex flex-col">
                                 <div className="mb-1">
@@ -512,7 +524,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                             </div>
                           )}
 
-                          {doc.type === 5 && (
+                          {doc.type === FormAktivitasTypes.DROPDOWN && (
                             <div className="flex flex-col mb-3 col-span-2">
                               {doc.lists.map((doc4, idx4) => {
                                 return (
@@ -585,26 +597,35 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                               className="mx-1 cursor-pointer"
                               onClick={() => {
                                 var templastdata = {};
-                                if (doc.type === 1 || doc.type === 2) {
+                                if (
+                                  doc.type === FormAktivitasTypes.TEKS ||
+                                  doc.type === FormAktivitasTypes.PARAGRAPH
+                                ) {
                                   templastdata = {
                                     name: doc.name,
                                     type: doc.type,
                                     description: doc.description,
                                   };
-                                } else if (doc.type === 3) {
+                                } else if (
+                                  doc.type === FormAktivitasTypes.CHECKLIST
+                                ) {
                                   templastdata = {
                                     name: doc.name,
                                     type: doc.type,
                                     description: doc.description,
                                     lists: [...doc.lists],
                                   };
-                                } else if (doc.type === 4) {
+                                } else if (
+                                  doc.type === FormAktivitasTypes.NUMERAL
+                                ) {
                                   templastdata = {
                                     name: doc.name,
                                     type: doc.type,
                                     description: doc.description,
                                   };
-                                } else if (doc.type === 5) {
+                                } else if (
+                                  doc.type === FormAktivitasTypes.DROPDOWN
+                                ) {
                                   templastdata = {
                                     name: doc.name,
                                     type: doc.type,
@@ -655,7 +676,12 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                       ...prev,
                       works: [
                         ...prev.works,
-                        { type: 1, name: "", description: "", required: false },
+                        {
+                          type: FormAktivitasTypes.TEKS,
+                          name: "",
+                          description: "",
+                          required: false,
+                        },
                       ],
                     }));
                     settempcb([...tempcb, ""]);
