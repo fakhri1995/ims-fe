@@ -8,21 +8,28 @@ export enum AttendanceServiceQueryKeys {
  * @access GET /getAttendancesUser
  */
 export type IGetAttendancesUserSucceedResponse =
-  HttpRequestWithDataSucceedResponse<GetAttendancesUserData[]>;
+  HttpRequestWithDataSucceedResponse<GetAttendancesUserData>;
 
 export interface GetAttendancesUserData {
+  user_attendances: UserAttendance[];
+  late_count: number;
+  on_time_count: number;
+}
+
+export interface UserAttendance {
   id: number;
   user_id: number;
   check_in: Date;
-  check_out: Date;
+  check_out: Date | null;
   long_check_in: string;
   lat_check_in: string;
-  long_check_out: string;
-  lat_check_out: string;
-  geo_loc_check_in: string | null;
-  geo_loc_check_out: string | null;
+  long_check_out: null | string;
+  lat_check_out: null | string;
+  geo_loc_check_in: null | string;
+  geo_loc_check_out: null | string;
   evidence: Evidence;
-  is_wfo: number /** 1 = true, 0 = false */;
+  is_wfo: number;
+  is_late: boolean;
 }
 
 export interface Evidence {

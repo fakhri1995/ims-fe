@@ -176,7 +176,7 @@ export const useGetAttendeeInfo = () => {
     }
 
     /** Special case: when the user is new or the data is just empty */
-    if (attendancesLogQuery.data.length === 0) {
+    if (attendancesLogQuery.data.user_attendances.length === 0) {
       setHasCheckedInToday(false);
       setAttendeeStatus("checkout");
 
@@ -187,7 +187,7 @@ export const useGetAttendeeInfo = () => {
      * Backend guarantee kalau index === 0 adalah data / log check in dan check out
      *  paling terbaru (sorted by time).
      */
-    const latestAttendanceData = attendancesLogQuery.data[0];
+    const latestAttendanceData = attendancesLogQuery.data.user_attendances[0];
     const latestCheckInTime = new Date(latestAttendanceData.check_in);
 
     setHasCheckedInToday(isToday(latestCheckInTime));

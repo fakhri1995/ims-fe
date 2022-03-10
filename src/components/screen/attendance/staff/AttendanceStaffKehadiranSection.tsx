@@ -1,7 +1,6 @@
 import { DownloadOutlined } from "@ant-design/icons";
 import { ConfigProvider, Table } from "antd";
-import { ColumnsType } from "antd/lib/table";
-import { isAfter } from "date-fns";
+import type { ColumnsType } from "antd/lib/table";
 import { FC, useCallback, useMemo } from "react";
 import { useQuery } from "react-query";
 
@@ -10,14 +9,13 @@ import { DataEmptyState } from "components/states/DataEmptyState";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
-import { ATTENDANCE_SAFE_TIME } from "lib/constants";
 import { formatDateToLocale } from "lib/date-utils";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
 
 import {
   AttendanceService,
   AttendanceServiceQueryKeys,
-  GetAttendancesUserData,
+  UserAttendance,
 } from "apis/attendance";
 
 import clsx from "clsx";
@@ -45,7 +43,7 @@ export const AttendanceStaffKehadiranSection: FC<
     () => AttendanceService.find(axiosClient),
     {
       select: (response) =>
-        response.data.data.map((datum) => {
+        response.data.data.user_attendances.map((datum) => {
           return {
             ...datum,
             check_out:
@@ -74,17 +72,12 @@ export const AttendanceStaffKehadiranSection: FC<
         sorter: true,
       };
 
-      /**
-       * TODO: render text warna merah ketika `Waktu Check In` dan `Waktu Check Out` terlambat.
-       */
       return [
         {
           key: "id",
           title: "No.",
           render: (_, datum, index) => {
-            const spanClassName = _isCheckInLate(datum.check_in)
-              ? "text-state1"
-              : "";
+            const spanClassName = datum.is_late ? "text-state1" : "";
 
             return <span className={spanClassName}>{++index}.</span>;
           },
@@ -95,9 +88,7 @@ export const AttendanceStaffKehadiranSection: FC<
           title: "Waktu Check In",
           dataIndex: "check_in",
           render: (_, datum) => {
-            const spanClassName = _isCheckInLate(datum.check_in)
-              ? "text-state1"
-              : "";
+            const spanClassName = datum.is_late ? "text-state1" : "";
 
             return <span className={spanClassName}>{datum.check_in}</span>;
           },
@@ -108,9 +99,7 @@ export const AttendanceStaffKehadiranSection: FC<
           title: "Waktu Check Out",
           dataIndex: "check_out",
           render: (_, datum) => {
-            const spanClassName = _isCheckInLate(datum.check_in)
-              ? "text-state1"
-              : "";
+            const spanClassName = datum.is_late ? "text-state1" : "";
 
             return <span className={spanClassName}>{datum.check_out}</span>;
           },
@@ -176,23 +165,8 @@ export const AttendanceStaffKehadiranSection: FC<
           pagination={tablePaginationConf}
           loading={isLoading || isRefetching}
           onRow={(datum) => {
-            /**
-             * TODO: ini perlu di discuss lagi.
-             *
-             * Fact: Untuk saat ini, setiap waktu check in yang lebih dari waktu absen akan di mark
-             *      dengan background merah. Karena itu cara paling mudah dan memungkinkan.
-             *
-             * Question: Gimana kalau checkin pertama hari ini tidak terlambat, kemudian checkout,
-             *      dan checkin lagi di jam siang (lebih dari waktu terlambat)?
-             *      Hasilnya, akan tetap di mark dengan background merah.
-             *
-             * Workaround / solution:
-             *      Backend memberikan "flag" untuk menandai apakah record itu terlambat secara valid
-             *      atau tidak.
-             *
-             */
             const rowClassName = clsx("hover:cursor-pointer", {
-              "bg-state1/10": _isCheckInLate(datum.check_in),
+              "bg-state1/10": datum.is_late,
             });
 
             return {
@@ -214,7 +188,7 @@ export const AttendanceStaffKehadiranSection: FC<
  */
 interface IModifiedDataKehadiran
   extends Omit<
-    GetAttendancesUserData,
+    UserAttendance,
     | "check_out"
     | "check_in"
     | "geo_loc_check_in"
@@ -228,20 +202,3 @@ interface IModifiedDataKehadiran
   geo_loc_check_out: string;
   is_wfo: string;
 }
-
-/**
- * @private
- */
-const _isCheckInLate = (_checkInTime: string): boolean => {
-  const checkInTime = new Date(_checkInTime);
-  const attendSafeTime = new Date(
-    checkInTime.getFullYear(),
-    checkInTime.getMonth(),
-    checkInTime.getDate(),
-    ATTENDANCE_SAFE_TIME.HOUR,
-    ATTENDANCE_SAFE_TIME.MINUTE,
-    0
-  );
-
-  return isAfter(checkInTime, attendSafeTime);
-};
