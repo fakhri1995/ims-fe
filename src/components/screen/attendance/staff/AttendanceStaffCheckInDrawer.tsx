@@ -153,13 +153,9 @@ export const AttendanceStaffCheckInDrawer: FC<
           {/* Required field information */}
           <em className="text-state1">* Informasi ini harus diisi</em>
 
-          <Form form={form} onFinish={onFormSubmitted}>
+          <Form form={form} onFinish={onFormSubmitted} layout="vertical">
             {/* Location */}
-            <Form.Item
-              name="current_location"
-              label="Lokasi saat ini"
-              className="block"
-            >
+            <Form.Item name="current_location" label="Lokasi saat ini">
               <Input
                 disabled
                 placeholder={locationDisplayName || ""}
@@ -173,7 +169,6 @@ export const AttendanceStaffCheckInDrawer: FC<
                 name="work_from"
                 label="Kerja Dari"
                 required
-                className="block"
                 initialValue="WFH"
               >
                 <Radio.Group>
@@ -192,7 +187,6 @@ export const AttendanceStaffCheckInDrawer: FC<
               name="evidence_image"
               label={evidencePictureLabel}
               required
-              className="block"
             >
               <div className="flex flex-col space-y-6">
                 <Upload

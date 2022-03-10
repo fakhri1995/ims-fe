@@ -1,4 +1,13 @@
-import { Checkbox, Form, Input, InputNumber, Select, Skeleton } from "antd";
+import {
+  Checkbox,
+  Form,
+  Input,
+  InputNumber,
+  Select,
+  Skeleton,
+  notification,
+} from "antd";
+import type { AxiosError } from "axios";
 import { FC, useCallback } from "react";
 import { useQuery } from "react-query";
 
@@ -6,7 +15,11 @@ import DrawerCore from "components/drawer/drawerCore";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
-import { FormAktivitasTypes } from "apis/attendance";
+import {
+  FormAktivitasTypes,
+  IAddAttendanceActivityPayload,
+  useAddAttendanceActivity,
+} from "apis/attendance";
 import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 import { Detail } from "apis/auth";
 
@@ -14,6 +27,13 @@ import { Detail } from "apis/auth";
  * Component AttendanceStaffAktivitasDrawer's props.
  */
 export interface IAttendanceStaffAktivitasDrawer {
+  action: "create" | "update";
+
+  /**
+   * Arg ini diperlukan untuk `action === "update"`.
+   */
+  activityFormId?: number;
+
   visible: boolean;
   onClose: () => void;
 }
@@ -23,7 +43,7 @@ export interface IAttendanceStaffAktivitasDrawer {
  */
 export const AttendanceStaffAktivitasDrawer: FC<
   IAttendanceStaffAktivitasDrawer
-> = ({ visible, onClose }) => {
+> = ({ action = "create", visible, onClose }) => {
   const [form] = Form.useForm();
 
   const axiosClient = useAxiosClient();
@@ -34,50 +54,93 @@ export const AttendanceStaffAktivitasDrawer: FC<
       select: (response) => response.data.data.attendance_forms[0] || null,
     }
   );
+  const { mutate: addAttendanceActivity } = useAddAttendanceActivity();
 
-  const handleOnFormSubmitted = useCallback((value) => {
-    console.log(value);
-  }, []);
+  const handleOnFormSubmitted = useCallback(
+    (formValues?: { [key: string]: any }) => {
+      if (action === "create") {
+        const payload: IAddAttendanceActivityPayload = {
+          attendance_form_id: userAttendanceForm.id,
+          details: [],
+        };
+
+        for (const [key, value] of Object.entries(formValues)) {
+          payload.details.push({ key, value: value || "" });
+        }
+
+        addAttendanceActivity(payload, {
+          onSuccess: (response) => {
+            form.resetFields();
+
+            onClose();
+
+            notification.success({ message: response.data.message });
+          },
+          onError: (error: AxiosError) => {
+            notification.error({ message: error.response.data.message });
+          },
+        });
+      } else {
+      }
+    },
+    []
+  );
 
   return (
     <DrawerCore
-      title="Masukkan Aktivitas"
+      title={`${action === "create" ? "Masukkan" : "Mengubah"} Aktivitas`}
       buttonOkText="Simpan Aktivitas"
       visible={visible}
       onClose={onClose}
       onClick={() => form.submit()}
     >
       <div className="space-y-6">
-        <em className="text-state1">* Informasi ini harus diisi</em>
+        {isLoading && (
+          <div className="flex flex-col space-y-6">
+            <Skeleton active round paragraph={{ rows: 4 }} />
+            <Skeleton active round paragraph={{ rows: 2 }} />
+            <Skeleton active round paragraph={{ rows: 3 }} />
+          </div>
+        )}
 
-        <Form form={form} layout="vertical" onFinish={handleOnFormSubmitted}>
-          {isLoading && (
-            <div className="flex flex-col space-y-6">
-              <Skeleton active round paragraph={{ rows: 4 }} />
-              <Skeleton active round paragraph={{ rows: 2 }} />
-              <Skeleton active round paragraph={{ rows: 3 }} />
-            </div>
-          )}
-          {!isLoading &&
-            userAttendanceForm.details.map(
-              ({ name, description, type, key, list, required }) => {
-                return (
-                  <Form.Item label={name} required={!!required} key={key}>
-                    <p className="mb-4 mt-2">{description}</p>
+        {!isLoading && (
+          <>
+            <em className="text-state1">* Informasi ini harus diisi</em>
 
-                    <Form.Item name={key} required={!!required}>
-                      {_renderDynamicInput(type, list)}
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={handleOnFormSubmitted}
+              validateMessages={{
+                required: "Field ini harus diisi!",
+              }}
+            >
+              {userAttendanceForm.details.map(
+                ({ name, description, type, key, list, required }) => {
+                  return (
+                    <Form.Item label={name} required={!!required} key={key}>
+                      <p className="mb-4 mt-2">{description}</p>
+
+                      <Form.Item name={key} rules={[{ required }]}>
+                        {_renderDynamicInput(type, list)}
+                      </Form.Item>
                     </Form.Item>
-                  </Form.Item>
-                );
-              }
-            )}
-        </Form>
+                  );
+                }
+              )}
+            </Form>
+          </>
+        )}
       </div>
     </DrawerCore>
   );
 };
 
+/**
+ * Generates a child for <Form.Item> component respective to its type argument.
+ *
+ * @private
+ */
 const _renderDynamicInput = (
   type: FormAktivitasTypes,
   list?: Pick<Detail, "list">["list"]

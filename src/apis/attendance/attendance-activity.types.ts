@@ -22,11 +22,11 @@ export interface Activity {
   id: number;
   user_id: number;
   attendance_form_id: number;
-  details: AcivityDetail[];
+  details: ActivityDetail[];
   updated_at: Date;
 }
 
-export interface AcivityDetail {
+export interface ActivityDetail {
   value: number[] | string;
   key: string;
 }
@@ -36,7 +36,7 @@ export interface AcivityDetail {
  */
 export interface IAddAttendanceActivityPayload {
   attendance_form_id: number;
-  details: AcivityDetail[];
+  details: ActivityDetail[];
 }
 
 export interface IAddAttendanceActivitySucceedResponse
@@ -49,5 +49,5 @@ export interface IAddAttendanceActivitySucceedResponse
  */
 export interface IUpdateAttendanceActivityPayload {
   id: number;
-  details: AcivityDetail[];
+  details: ActivityDetail[];
 }

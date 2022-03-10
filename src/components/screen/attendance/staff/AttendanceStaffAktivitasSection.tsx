@@ -1,4 +1,4 @@
-import { AppstoreAddOutlined, DownloadOutlined } from "@ant-design/icons";
+import { AppstoreAddOutlined } from "@ant-design/icons";
 import { ConfigProvider, Tabs } from "antd";
 import { Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
@@ -16,14 +16,16 @@ const { TabPane } = Tabs;
 /**
  * Component AttendanceStaffAktivitasSection's props.
  */
-export interface IAttendanceStaffAktivitasSection {}
+export interface IAttendanceStaffAktivitasSection {
+  onAddActivityButtonClicked: () => void;
+}
 
 /**
  * Component AttendanceStaffAktivitasSection
  */
 export const AttendanceStaffAktivitasSection: FC<
   IAttendanceStaffAktivitasSection
-> = (props) => {
+> = ({ onAddActivityButtonClicked }) => {
   /** 1 => Hari Ini, 2 => Riwayat */
   const [tabActiveKey, setTabActiveKey] = useState<"1" | "2" | string>("1");
   const { dynamicActivityColumns } = useGetUserActivities(
@@ -81,22 +83,7 @@ export const AttendanceStaffAktivitasSection: FC<
         </Tabs>
 
         <div className="flex space-x-6 w-1/2 justify-end items-center">
-          {/* <ButtonSys
-            type="default"
-            onClick={() => {
-              alert("Button Unduh Tabel clicked");
-            }}
-          >
-            <DownloadOutlined className="mr-2" />
-            Unduh Tabel
-          </ButtonSys> */}
-
-          <ButtonSys
-            type="primary"
-            onClick={() => {
-              alert("Button Masukkan Aktivitas Clicked");
-            }}
-          >
+          <ButtonSys type="primary" onClick={onAddActivityButtonClicked}>
             <AppstoreAddOutlined className="mr-2" />
             Masukkan Aktivitas
           </ButtonSys>

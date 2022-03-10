@@ -8,7 +8,10 @@ import { useAxiosClient } from "hooks/use-axios-client";
 import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 
 import { AttendanceActivityServivce } from "./attendance-activity.service";
-import { AttendanceActivityQueryKeys } from "./attendance-activity.types";
+import {
+  AttendanceActivityQueryKeys,
+  IAddAttendanceActivityPayload,
+} from "./attendance-activity.types";
 import { AttendanceFormAktivitasService } from "./attendance-form-aktivitas.service";
 import {
   AttendanceFormAktivitasServiceQueryKeys,
@@ -270,4 +273,19 @@ export const useGetUserActivities = (criteria: "today" | "past" = "today") => {
   }, [userAtendanceForms]);
 
   return { dynamicActivityColumns };
+};
+
+export const useAddAttendanceActivity = () => {
+  const axiosClient = useAxiosClient();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    (payload: IAddAttendanceActivityPayload) =>
+      AttendanceActivityServivce.add(axiosClient, payload),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(AttendanceActivityQueryKeys.FIND);
+      },
+    }
+  );
 };

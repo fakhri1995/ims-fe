@@ -31,6 +31,15 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
   ];
 
   const [isCheckInDrawerShown, setIsCheckInDrawerShown] = useState(false);
+  const [activityDrawerProps, setActivityDrawerProps] = useState<{
+    action: "create" | "update";
+    activityFormId?: number;
+    visible: boolean;
+  }>({
+    action: "create",
+    activityFormId: undefined,
+    visible: false,
+  });
 
   const toggleCheckInDrawer = useCallback(() => {
     return setIsCheckInDrawerShown((prev) => !prev);
@@ -65,7 +74,15 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
         {/* Column 2: Aktivitas section (Table and Tabs), Kehadiran section (table) */}
         <div className="w-full lg:w-3/5 xl:w-4/5 space-y-6">
           {/* Section: Aktivitas Table */}
-          <AttendanceStaffAktivitasSection />
+          <AttendanceStaffAktivitasSection
+            onAddActivityButtonClicked={() => {
+              setActivityDrawerProps({
+                action: "create",
+                visible: true,
+                activityFormId: undefined,
+              });
+            }}
+          />
 
           {/* Section: Kehadiran Table */}
           <AttendanceStaffKehadiranSection />
@@ -77,7 +94,18 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
         onClose={toggleCheckInDrawer}
       />
 
-      <AttendanceStaffAktivitasDrawer visible onClose={() => {}} />
+      <AttendanceStaffAktivitasDrawer
+        visible={activityDrawerProps.visible}
+        action={activityDrawerProps.action}
+        activityFormId={activityDrawerProps.activityFormId}
+        onClose={() => {
+          setActivityDrawerProps({
+            action: "create",
+            visible: false,
+            activityFormId: undefined,
+          });
+        }}
+      />
     </LayoutDashboard>
   );
 };
