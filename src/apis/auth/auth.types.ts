@@ -32,7 +32,6 @@ export interface AttendanceForm {
   name: string;
   description: string;
   details: Detail[];
-  required?: boolean;
 }
 
 export interface Detail {
@@ -41,6 +40,7 @@ export interface Detail {
   type: 1 | 2 | 3 | 4 | 5;
   description: string;
   list?: string[];
+  required?: boolean;
 }
 
 export interface Company {
