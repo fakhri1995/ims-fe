@@ -32,6 +32,7 @@ export interface AttendanceForm {
   name: string;
   description: string;
   details: Detail[];
+  required?: boolean;
 }
 
 export interface Detail {
