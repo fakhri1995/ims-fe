@@ -58,7 +58,7 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
           <AttendanceStaffDetailCard />
 
           {/* Statistic Card */}
-          <AttendanceStaffStatisticCard staffId={0} />
+          <AttendanceStaffStatisticCard />
         </div>
 
         {/* Column 2: Aktivitas section (Table and Tabs), Kehadiran section (table) */}
