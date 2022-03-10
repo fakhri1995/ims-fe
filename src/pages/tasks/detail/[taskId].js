@@ -1206,8 +1206,10 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 <div className="mr-1 flex items-center">
                   <ClockIconSvg size={15} color={`#BF4A40`} />
                 </div>
-                Berakhir{" "}
-                {moment(displaytask.deadline).locale("id").format("lll")}
+                Berakhir {/* Nullable: */}
+                {displaytask.deadline
+                  ? moment(displaytask.deadline).locale("id").format("lll")
+                  : "-"}
               </div>
             </div>
             <div className="flex flex-col mb-7">
@@ -2221,9 +2223,9 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                 {datatype4
                                   .filter(
                                     (docfil, idxfil) =>
-                                      docfil[0].id === doctask.id
+                                      docfil[0]?.id === doctask.id
                                   )[0]
-                                  .map((doc4, idx4) => (
+                                  ?.map((doc4, idx4) => (
                                     <div className="grid grid-cols-12">
                                       <div className=" col-span-4 flex items-center py-2 px-2">
                                         <p className=" mb-0 text-sm text-gray-700">
