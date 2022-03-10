@@ -1,3 +1,4 @@
+import { InfoCircleOutlined } from "@ant-design/icons";
 import { Button, Spin, Tooltip } from "antd";
 import { FC, useEffect } from "react";
 
@@ -90,10 +91,7 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
           {!onlyShowTime && (
             <>
               {shouldDisableCheckOutButton && (
-                <Tooltip
-                  title="Check Out bisa dilakukan setelah mengisi aktivitas"
-                  placement="bottom"
-                >
+                <div className="flex items-center space-x-1">
                   <Button
                     className={buttonClassName}
                     onClick={onButtonClicked}
@@ -102,7 +100,15 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
                   >
                     {attendeeStatus === "checkin" ? "Check Out" : "Check In"}
                   </Button>
-                </Tooltip>
+
+                  <Tooltip
+                    title="Check Out bisa dilakukan setelah mengisi aktivitas"
+                    placement="right"
+                    className="relative z-10"
+                  >
+                    <InfoCircleOutlined className="p-2 hover:cursor-help" />
+                  </Tooltip>
+                </div>
               )}
               {!shouldDisableCheckOutButton && (
                 <Button
