@@ -6,14 +6,23 @@ import idLocale from "date-fns/locale/id";
  *
  * @param date Date value to be formatted
  * @param dateFormat Format in string
+ * @param fallbackValue A fallback value in case `formatInTimeZone` catch an error.
  * @returns string
  */
-export const formatDateToLocale = (date: number | Date, dateFormat: string) => {
-  if (!date) {
-    return "";
-  }
+export const formatDateToLocale = (
+  date: number | Date,
+  dateFormat: string,
+  fallbackValue?: string
+) => {
+  let result = "";
 
-  return formatInTimeZone(date, "Asia/Jakarta", dateFormat, {
-    locale: idLocale,
-  });
+  try {
+    result = formatInTimeZone(date, "Asia/Jakarta", dateFormat, {
+      locale: idLocale,
+    });
+  } catch {
+    result = fallbackValue || "";
+  } finally {
+    return result;
+  }
 };
