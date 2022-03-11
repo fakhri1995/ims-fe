@@ -1,12 +1,14 @@
 import { AppstoreAddOutlined } from "@ant-design/icons";
 import { ConfigProvider, Tabs } from "antd";
 import { Table } from "antd";
-import { ColumnsType } from "antd/lib/table";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import type { ColumnsType } from "antd/lib/table";
+import { isBefore } from "date-fns";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import ButtonSys from "components/button";
 import { DataEmptyState } from "components/states/DataEmptyState";
 
+import { formatDateToLocale } from "lib/date-utils";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
 
 import { useGetUserAttendanceActivities } from "apis/attendance";
@@ -28,46 +30,48 @@ export const AttendanceStaffAktivitasSection: FC<
 > = ({ onAddActivityButtonClicked }) => {
   /** 1 => Hari Ini, 2 => Riwayat */
   const [tabActiveKey, setTabActiveKey] = useState<"1" | "2" | string>("1");
-  const { dynamicActivityColumns, dataSource } = useGetUserAttendanceActivities(
-    tabActiveKey === "1" ? "today" : "past"
-  );
+  const { dataSource, dynamicNameFieldPairs, isDataSourceLoading } =
+    useGetUserAttendanceActivities(tabActiveKey === "1" ? "today" : "past");
 
-  useEffect(() => {
-    if (!dataSource) {
-      return;
-    }
-
-    console.log(dataSource);
-  }, [dataSource]);
-
-  /**
-   * TODO: generate tableColumns dynamically sesuai data backend
-   */
-  const tableColums = useMemo<ColumnsType<{}>>(() => {
-    const columns: ColumnsType<{}> = [
+  const tableColums = useMemo<ColumnsType>(() => {
+    const columns: ColumnsType = [
       {
         key: "id",
         title: "No.",
-        render: (_, __, index) => `${++index}`,
+        render: (_, __, index) => `${++index}.`,
         width: 64,
       },
       {
         key: "id",
         title: "Waktu Pengisian",
-        sorter: true,
+        dataIndex: "updated_at",
+        sorter: (a: string, b: string) => {
+          const lhsDate = new Date(a);
+          const rhsDate = new Date(b);
+
+          return isBefore(rhsDate, lhsDate) ? -1 : 1;
+        },
+        render: (value) => {
+          const formattedDate = formatDateToLocale(
+            new Date(value),
+            tabActiveKey === "1" ? "HH:mm" : "dd MMM yyyy, HH:mm"
+          );
+
+          return <>{formattedDate}</>;
+        },
       },
     ];
 
-    /** Append dynamic columns into fixed columns */
-    dynamicActivityColumns.forEach((column) => {
+    dynamicNameFieldPairs.columnNames.forEach((column, index) => {
       columns.push({
-        key: "id",
+        key: dynamicNameFieldPairs.fieldKeys[index],
         title: column,
+        dataIndex: dynamicNameFieldPairs.fieldKeys[index],
       });
     });
 
     return columns;
-  }, [dynamicActivityColumns]);
+  }, [tabActiveKey, dynamicNameFieldPairs]);
 
   const tablePaginationConf = useMemo(
     () => getAntdTablePaginationConfig(),
@@ -77,6 +81,7 @@ export const AttendanceStaffAktivitasSection: FC<
   );
 
   const onRowItemClicked = useCallback((datum) => {
+    console.log(datum);
     alert(`Row with id ${datum} is clicked!`);
   }, []);
 
@@ -105,9 +110,9 @@ export const AttendanceStaffAktivitasSection: FC<
       >
         <Table
           columns={tableColums}
-          // TODO: render data berdasarkan state si tab
-          dataSource={[]}
+          dataSource={dataSource}
           pagination={tablePaginationConf}
+          loading={isDataSourceLoading}
           onRow={(datum) => {
             return {
               className: "hover:cursor-pointer",

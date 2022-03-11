@@ -1,6 +1,6 @@
 import isToday from "date-fns/isToday";
 import { useRouter } from "next/router";
-import { useDebugValue, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import { useAxiosClient } from "hooks/use-axios-client";
@@ -239,6 +239,18 @@ export const useToggleCheckInCheckOut = () => {
 };
 
 /**
+ * Internal type acquisition for `useGetUserAttendanceActivities` hook.
+ *
+ * @private
+ */
+type DynamicTableTypes = {
+  key: number;
+  updated_at: string;
+
+  [key: string]: string | number;
+};
+
+/**
  * Custom hook yang mempermudah mendapatkan data untuk table Aktivitas.
  * Terdapat dua jenis data:
  * 1. Hari Ini  => Seluruh aktivitas yang ditambahkan hari ini
@@ -247,72 +259,87 @@ export const useToggleCheckInCheckOut = () => {
  * Riwayat tidak dapat diubah (immutable), sedangkan Hari Ini dapat diperbarui (update dan delete).
  *
  * Hooks ini akan menghasilkan:
- * 1. Array of columns value    => Column pada table bersifat dinamis sesuai dengan form aktivitas si user.
- * 2. Data source               => Data untuk table itu sendiri. Data berubah menyesuaikan argument `criteria`.
+ * 1. Data untuk nilai dari table component (`dataSource`).
+ * 2. Pasangan antara dynamic column name dengan key.
+ * 3. Indikator loading ketika data diperbarui (sync) dengan backend.
  */
 export const useGetUserAttendanceActivities = (
   criteria: "today" | "past" = "today"
 ) => {
   const axiosClient = useAxiosClient();
 
-  /**
-   * TODO: trrigger query everytime arg `criteria` changes (?).
-   */
-  const { data: rawDataSource, refetch: refetchAttendanceActivities } =
-    useQuery(
-      AttendanceActivityQueryKeys.FIND,
-      () => AttendanceActivityServivce.find(axiosClient),
-      {
-        enabled: false,
-        select: (response) => {
-          return criteria === "today"
-            ? response.data.data.today_activities
-            : response.data.data.last_two_month_activities;
-        },
-      }
-    );
+  const {
+    data: rawDataSource,
+    isLoading: isDataSourceLoading,
+    isRefetching: isDataSourceRefetching,
+  } = useQuery(
+    AttendanceActivityQueryKeys.FIND,
+    () => AttendanceActivityServivce.find(axiosClient),
+    {
+      select: (response) => {
+        return criteria === "today"
+          ? response.data.data.today_activities
+          : response.data.data.last_two_month_activities;
+      },
+    }
+  );
 
   const { data: userAtendanceForms } = useQuery(
     AuthServiceQueryKeys.DETAIL_PROFILE,
     () => AuthService.whoAmI(axiosClient),
     {
       select: (response) => response.data.data.attendance_forms,
-      onSuccess: () => {
-        refetchAttendanceActivities();
-      },
     }
   );
 
-  const { dynamicColumNames, dynamicFieldKeys, keyValuePairs } = useMemo<{
-    dynamicColumNames: string[];
-    dynamicFieldKeys: string[];
+  const { dynamic, keyValuePairs } = useMemo<{
+    dynamic: {
+      columnNames: string[];
+      fieldKeys: string[];
+    };
     keyValuePairs: { [key: string]: string[] };
   }>(() => {
     if (!userAtendanceForms || userAtendanceForms.length === 0) {
-      return { dynamicColumNames: [], dynamicFieldKeys: [], keyValuePairs: {} };
+      return {
+        dynamic: { columnNames: [], fieldKeys: [] },
+        keyValuePairs: {},
+      };
     }
 
-    const dynamicColumNames = userAtendanceForms[0].details.map(
-      (detail) => detail.name
-    );
-
-    const dynamicFieldKeys = userAtendanceForms[0].details.map(
-      (detail) => detail.key
-    );
-
-    const keyValuePairs = userAtendanceForms[0].details.reduce((accu, curr) => {
-      const newAccu = { ...accu };
-      if (curr.list && curr.type === FormAktivitasTypes.CHECKLIST) {
-        newAccu[curr.key] = curr.list;
-        return newAccu;
+    const dynamic = userAtendanceForms[0].details.reduce(
+      (prevValue, currValue) => {
+        return {
+          ...prevValue,
+          columnNames: [...prevValue.columnNames, currValue.name],
+          fieldKeys: [...prevValue.fieldKeys, currValue.key],
+        };
+      },
+      {
+        columnNames: [],
+        fieldKeys: [],
+      } as {
+        columnNames: string[];
+        fieldKeys: string[];
       }
+    );
 
-      return newAccu;
-    }, {} as { [key: string]: string[] });
+    const keyValuePairs = userAtendanceForms[0].details.reduce(
+      (previousValue, curr) => {
+        const newValue = { ...previousValue };
+        if (curr.list && curr.type === FormAktivitasTypes.CHECKLIST) {
+          newValue[curr.key] = curr.list;
+          return newValue;
+        }
 
-    return { dynamicColumNames, dynamicFieldKeys, keyValuePairs };
+        return newValue;
+      },
+      {} as { [key: string]: string[] }
+    );
+
+    return { dynamic, keyValuePairs };
   }, [userAtendanceForms]);
 
+  /** Menghasilkan dataSource untuk table. */
   const mappedDataSource = useMemo(() => {
     if (!rawDataSource || !userAtendanceForms) {
       return undefined;
@@ -320,52 +347,67 @@ export const useGetUserAttendanceActivities = (
 
     const result: DynamicTableTypes[] = [];
 
+    /** NOTE: iterasi di bawah ini cukup berat. Sangat mungkin menjadi performance issue. */
     rawDataSource.forEach((activity) => {
+      const buffer: DynamicTableTypes = {
+        key: activity.id,
+        updated_at: activity.updated_at.toString(),
+      };
+
       activity.details.forEach((activityDetail) => {
-        if (!dynamicFieldKeys.includes(activityDetail.key)) {
+        if (!dynamic.fieldKeys.includes(activityDetail.key)) {
           return;
         }
 
-        const buffer: DynamicTableTypes = {
-          activityId: activity.id,
-          key: activityDetail.key,
-          value: activityDetail.value,
-          updated_at: activity.updated_at.toString(),
-        };
+        if (activityDetail.value instanceof Array) {
+          const actualListValues = keyValuePairs[activityDetail.key];
 
-        if (buffer.value instanceof Array) {
-          const actualListValue = keyValuePairs[buffer.key] || [];
+          const actualValues = [];
+          activityDetail.value.forEach((valueIndex) => {
+            actualValues.push(actualListValues[valueIndex]);
+          });
 
-          if (actualListValue) {
-            const actualValues = [];
-
-            buffer.value.forEach((valueIndex) => {
-              actualValues.push(actualListValue[valueIndex]);
-            });
-
-            // finally flush to buffer
-            buffer.value = actualValues.join(", ");
-          }
+          buffer[activityDetail.key] = actualValues.join(", ");
+        } else {
+          buffer[activityDetail.key] = activityDetail.value;
         }
-
-        if (buffer) result.push(buffer);
       });
+
+      result.push(buffer);
     });
 
     return result;
   }, [rawDataSource, userAtendanceForms]);
 
   return {
-    dynamicActivityColumns: dynamicColumNames,
+    /**
+     * Murni data yang akan ditampilkan ke component <Table> tidak perlu mapping lagi pada consumer component.
+     *
+     *
+     * @example
+     * ```tsx
+     * <Table dataSource={dataSource} />
+     * ```
+     */
     dataSource: mappedDataSource,
-  };
-};
 
-type DynamicTableTypes = {
-  activityId: number;
-  key: string;
-  value: number[] | string;
-  updated_at: string;
+    /** An indicator when there is data loading (refer to `dataSource` property above) */
+    isDataSourceLoading: isDataSourceLoading || isDataSourceRefetching,
+
+    /**
+     * Object yang berisi pasangan column name beserta keynya.
+     *
+     * Object ini digunakan untuk mapping dynamic table column header dengan assign dataIndex sesuai
+     *  key dari column namenya.
+     *
+     *
+     * @example
+     * ```ts
+     * dynamicNameFieldPairs.columnNames[0]: dynamicNameFieldPairs.fieldKey[0]
+     * ```
+     */
+    dynamicNameFieldPairs: dynamic,
+  };
 };
 
 export const useAddAttendanceActivity = () => {
