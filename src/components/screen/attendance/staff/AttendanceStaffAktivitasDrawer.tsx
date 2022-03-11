@@ -3,12 +3,13 @@ import {
   Form,
   Input,
   InputNumber,
+  Modal,
   Select,
   Skeleton,
   notification,
 } from "antd";
 import type { AxiosError } from "axios";
-import { FC, useCallback } from "react";
+import { FC, useCallback, useEffect } from "react";
 import { useQuery } from "react-query";
 
 import DrawerCore from "components/drawer/drawerCore";
@@ -19,6 +20,7 @@ import {
   FormAktivitasTypes,
   IAddAttendanceActivityPayload,
   useAddAttendanceActivity,
+  useGetAttendeeInfo,
 } from "apis/attendance";
 import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 import { Detail } from "apis/auth";
@@ -47,17 +49,23 @@ export const AttendanceStaffAktivitasDrawer: FC<
   const [form] = Form.useForm();
 
   const axiosClient = useAxiosClient();
+  const { attendeeStatus } = useGetAttendeeInfo();
+  const { mutate: addAttendanceActivity } = useAddAttendanceActivity();
+
   const { data: userAttendanceForm, isLoading } = useQuery(
     AuthServiceQueryKeys.DETAIL_PROFILE,
     () => AuthService.whoAmI(axiosClient),
     {
-      select: (response) => response.data.data.attendance_forms[0] || null,
+      select: (response) => response.data.data.attendance_forms[0],
     }
   );
-  const { mutate: addAttendanceActivity } = useAddAttendanceActivity();
 
   const handleOnFormSubmitted = useCallback(
     (formValues?: { [key: string]: any }) => {
+      if (!userAttendanceForm) {
+        return;
+      }
+
       if (action === "create") {
         const payload: IAddAttendanceActivityPayload = {
           attendance_form_id: userAttendanceForm.id,
@@ -65,7 +73,10 @@ export const AttendanceStaffAktivitasDrawer: FC<
         };
 
         for (const [key, value] of Object.entries(formValues)) {
-          payload.details.push({ key, value: value || "" });
+          payload.details.push({
+            key,
+            value: typeof value === "number" ? String(value) : value || "",
+          });
         }
 
         addAttendanceActivity(payload, {
@@ -81,10 +92,44 @@ export const AttendanceStaffAktivitasDrawer: FC<
           },
         });
       } else {
+        /** TODO */
       }
     },
-    []
+    [userAttendanceForm]
   );
+
+  /** Guard to prevent User fill the form when they're not signed in yet. */
+  useEffect(() => {
+    if (visible && attendeeStatus !== "checkin") {
+      Modal.error({
+        centered: true,
+        title: "Perhatian!",
+        content:
+          "Anda perlu Check In terlebih dahulu untuk menambahkan aktivitas!",
+        okText: "Kembali",
+        onOk: () => onClose(),
+        onCancel: () => onClose(),
+        closable: true,
+      });
+
+      return;
+    }
+
+    if (visible && !userAttendanceForm) {
+      Modal.error({
+        centered: true,
+        title: "Terjadi kesalahan!",
+        content:
+          "Anda belum memiliki form aktivitas. Mohon hubungi Admin untuk segera menambahkan Anda ke dalam form aktivitas.",
+        okText: "Kembali",
+        onOk: () => onClose(),
+        onCancel: () => onClose(),
+        closable: true,
+      });
+
+      return;
+    }
+  }, [visible, attendeeStatus, userAttendanceForm]);
 
   return (
     <DrawerCore
@@ -103,7 +148,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
           </div>
         )}
 
-        {!isLoading && (
+        {!isLoading && !!userAttendanceForm && attendeeStatus !== "checkout" && (
           <>
             <em className="text-state1">* Informasi ini harus diisi</em>
 

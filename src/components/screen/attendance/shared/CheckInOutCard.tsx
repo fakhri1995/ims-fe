@@ -34,14 +34,8 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
   onButtonClicked,
 }) => {
   const { currentTime, currentDate, isOverAttendTime } = useCheckInOutTimer();
-  const { hasCheckedInToday, attendeeStatus, isItSafeToCheckOut, query } =
+  const { hasCheckedInToday, attendeeStatus, isItSafeToCheckOut } =
     useGetAttendeeInfo();
-
-  useEffect(() => {
-    if (!onlyShowTime) {
-      query.refetch();
-    }
-  }, [onlyShowTime]);
 
   const buttonClassName = clsx(
     "mig-button relative z-10",
@@ -95,7 +89,6 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
                   <Button
                     className={buttonClassName}
                     onClick={onButtonClicked}
-                    loading={query.isLoading || query.isRefetching}
                     disabled
                   >
                     {attendeeStatus === "checkin" ? "Check Out" : "Check In"}
@@ -110,12 +103,9 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
                   </Tooltip>
                 </div>
               )}
+
               {!shouldDisableCheckOutButton && (
-                <Button
-                  className={buttonClassName}
-                  onClick={onButtonClicked}
-                  loading={query.isLoading || query.isRefetching}
-                >
+                <Button className={buttonClassName} onClick={onButtonClicked}>
                   {attendeeStatus === "checkin" ? "Check Out" : "Check In"}
                 </Button>
               )}

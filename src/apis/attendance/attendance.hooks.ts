@@ -128,15 +128,6 @@ export const useAddFormAktivitasStaff = () => {
  *
  * Hook ini juga ditambah logic untuk memastikan bahwa user sudah login hari ini dan
  *  logic untuk memastikan status kehadiran user. Apakah saat ini user sedang checked in atau checked out.
- *
- * TODO: check juga logic untuk apakah user bisa checkout (aktivitas hari ini tidak kosong)
- *
- * @returns {{
- *   hasCheckedInToday: boolean;
- *   attendeeStatus: "checkout" | "checkin" | undefined;
- *   isItSafeToCheckOut: boolean;
- *   query: UseQueryResult;
- * }}
  */
 export const useGetAttendeeInfo = () => {
   const axiosClient = useAxiosClient();
@@ -149,24 +140,38 @@ export const useGetAttendeeInfo = () => {
   >(undefined);
   const [isItSafeToCheckOut, setIsItSafeToCheckOut] = useState(false);
 
-  const { data: todayActivitiesLength, refetch: refetchActivities } = useQuery(
-    AttendanceActivityQueryKeys.FIND,
-    () => AttendanceActivityServivce.find(axiosClient),
+  const { data: userAttendanceForm } = useQuery(
+    AuthServiceQueryKeys.DETAIL_PROFILE,
+    () => AuthService.whoAmI(axiosClient),
     {
-      enabled: false,
-      select: (response) => response.data.data.today_activities.length,
+      select: (response) => response.data.data.attendance_forms,
     }
   );
 
-  const attendancesLogQuery = useQuery(
+  const { data: todayActivitiesLength } = useQuery(
+    AttendanceActivityQueryKeys.FIND,
+    () => AttendanceActivityServivce.find(axiosClient),
+    {
+      enabled: !!userAttendanceForm,
+      select: (response) => {
+        if (!userAttendanceForm || userAttendanceForm.length === 0) {
+          return 0;
+        }
+
+        const userAttendanceFormId = userAttendanceForm[0].id;
+
+        return response.data.data.today_activities.filter(
+          (activity) => activity.id === userAttendanceFormId
+        ).length;
+      },
+    }
+  );
+
+  const { data: attendancesLog } = useQuery(
     AttendanceServiceQueryKeys.ATTENDANCES_USER_GET,
     () => AttendanceService.find(axiosClient),
     {
-      refetchOnMount: false,
       select: (response) => response.data.data,
-      onSuccess: () => {
-        refetchActivities();
-      },
     }
   );
 
@@ -175,12 +180,12 @@ export const useGetAttendeeInfo = () => {
   }, [todayActivitiesLength]);
 
   useEffect(() => {
-    if (!attendancesLogQuery.data) {
+    if (!attendancesLog) {
       return;
     }
 
     /** Special case: when the user is new or the data is just empty */
-    if (attendancesLogQuery.data.user_attendances.length === 0) {
+    if (attendancesLog.user_attendances.length === 0) {
       setHasCheckedInToday(false);
       setAttendeeStatus("checkout");
 
@@ -191,14 +196,14 @@ export const useGetAttendeeInfo = () => {
      * Backend guarantee kalau index === 0 adalah data / log check in dan check out
      *  paling terbaru (sorted by time).
      */
-    const latestAttendanceData = attendancesLogQuery.data.user_attendances[0];
+    const latestAttendanceData = attendancesLog.user_attendances[0];
     const latestCheckInTime = new Date(latestAttendanceData.check_in);
 
     setHasCheckedInToday(isToday(latestCheckInTime));
     setAttendeeStatus(
       latestAttendanceData.check_out === null ? "checkin" : "checkout"
     );
-  }, [attendancesLogQuery.data]);
+  }, [attendancesLog]);
 
   return {
     /** Check apakah user sudah melakukan checkin untuk hari ini */
@@ -209,9 +214,6 @@ export const useGetAttendeeInfo = () => {
 
     /** Digunakan untuk mengatur button "Check Out" state (whether disabled or not) */
     isItSafeToCheckOut,
-
-    /** Pass ke consumer untuk melakukan refetching secara manual */
-    query: attendancesLogQuery,
   };
 };
 
@@ -268,6 +270,14 @@ export const useGetUserAttendanceActivities = (
 ) => {
   const axiosClient = useAxiosClient();
 
+  const { data: userAttendanceForm } = useQuery(
+    AuthServiceQueryKeys.DETAIL_PROFILE,
+    () => AuthService.whoAmI(axiosClient),
+    {
+      select: (response) => response.data.data.attendance_forms,
+    }
+  );
+
   const {
     data: rawDataSource,
     isLoading: isDataSourceLoading,
@@ -276,19 +286,22 @@ export const useGetUserAttendanceActivities = (
     AttendanceActivityQueryKeys.FIND,
     () => AttendanceActivityServivce.find(axiosClient),
     {
+      enabled: !!userAttendanceForm,
       select: (response) => {
-        return criteria === "today"
-          ? response.data.data.today_activities
-          : response.data.data.last_two_month_activities;
-      },
-    }
-  );
+        if (!userAttendanceForm || userAttendanceForm.length === 0) {
+          return [];
+        }
 
-  const { data: userAtendanceForms } = useQuery(
-    AuthServiceQueryKeys.DETAIL_PROFILE,
-    () => AuthService.whoAmI(axiosClient),
-    {
-      select: (response) => response.data.data.attendance_forms,
+        return criteria === "today"
+          ? response.data.data.today_activities.filter(
+              (activity) =>
+                activity.attendance_form_id === userAttendanceForm[0].id
+            )
+          : response.data.data.last_two_month_activities.filter(
+              (activity) =>
+                activity.attendance_form_id === userAttendanceForm[0].id
+            );
+      },
     }
   );
 
@@ -299,14 +312,14 @@ export const useGetUserAttendanceActivities = (
     };
     keyValuePairs: { [key: string]: string[] };
   }>(() => {
-    if (!userAtendanceForms || userAtendanceForms.length === 0) {
+    if (!userAttendanceForm || userAttendanceForm.length === 0) {
       return {
         dynamic: { columnNames: [], fieldKeys: [] },
         keyValuePairs: {},
       };
     }
 
-    const dynamic = userAtendanceForms[0].details.reduce(
+    const dynamic = userAttendanceForm[0].details.reduce(
       (prevValue, currValue) => {
         return {
           ...prevValue,
@@ -323,7 +336,7 @@ export const useGetUserAttendanceActivities = (
       }
     );
 
-    const keyValuePairs = userAtendanceForms[0].details.reduce(
+    const keyValuePairs = userAttendanceForm[0].details.reduce(
       (previousValue, curr) => {
         const newValue = { ...previousValue };
         if (curr.list && curr.type === FormAktivitasTypes.CHECKLIST) {
@@ -337,11 +350,16 @@ export const useGetUserAttendanceActivities = (
     );
 
     return { dynamic, keyValuePairs };
-  }, [userAtendanceForms]);
+  }, [userAttendanceForm]);
 
   /** Menghasilkan dataSource untuk table. */
   const mappedDataSource = useMemo(() => {
-    if (!rawDataSource || !userAtendanceForms) {
+    if (
+      !rawDataSource ||
+      rawDataSource.length === 0 ||
+      !userAttendanceForm ||
+      userAttendanceForm.length === 0
+    ) {
       return undefined;
     }
 
@@ -377,7 +395,7 @@ export const useGetUserAttendanceActivities = (
     });
 
     return result;
-  }, [rawDataSource, userAtendanceForms]);
+  }, [rawDataSource, userAttendanceForm]);
 
   return {
     /**

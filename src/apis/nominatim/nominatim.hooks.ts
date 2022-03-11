@@ -18,7 +18,7 @@ export const useNominatimReverseGeocode = (position?: GeolocationPosition) => {
    * TBD: perlu di polling tidak untuk get latest location?
    */
   return useQuery(
-    ["nominatim-reverse", position],
+    ["NOMATIM_REVERSE_GEOCODE", position],
     (variables) => {
       const mPosition: GeolocationPosition | undefined = variables
         .queryKey[1] as GeolocationPosition;
