@@ -73,9 +73,28 @@ export const AttendanceStaffAktivitasDrawer: FC<
         };
 
         for (const [key, value] of Object.entries(formValues)) {
+          let mValue;
+
+          if (value instanceof Number) {
+            mValue = value.toString();
+          } else if (value instanceof Array) {
+            /**
+             * NOTE: it's necessary to sort the index from lowest to highest! Do not change this code.
+             *
+             * Soalnya jawaban dari backend nanti akan kita gunakan pada update / delete aktivitas.
+             * Kecuali backend memberikan API yang jauh lebih mudah.
+             *
+             * Misal backend menyediakan API untuk retrieve data per form aktivitas (e.g. by id).
+             */
+            mValue = value.sort((a, b) => (a < b ? -1 : 1));
+          } else {
+            // it must be a string
+            mValue = value;
+          }
+
           payload.details.push({
             key,
-            value: typeof value === "number" ? String(value) : value || "",
+            value: mValue,
           });
         }
 

@@ -80,10 +80,17 @@ export const AttendanceStaffAktivitasSection: FC<
     ]
   );
 
-  const onRowItemClicked = useCallback((datum) => {
-    console.log(datum);
-    alert(`Row with id ${datum} is clicked!`);
-  }, []);
+  const onRowItemClicked = useCallback(
+    (datum) => {
+      if (tabActiveKey === "2") {
+        /** Only allow this click callback when user is on "Hari Ini" tab */
+        return;
+      }
+
+      alert(`Row with id ${datum.key} is clicked!`);
+    },
+    [tabActiveKey]
+  );
 
   return (
     <section className="mig-platform space-y-6">

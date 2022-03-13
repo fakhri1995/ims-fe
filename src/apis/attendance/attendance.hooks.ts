@@ -159,10 +159,11 @@ export const useGetAttendeeInfo = () => {
         }
 
         const userAttendanceFormId = userAttendanceForm[0].id;
+        const userTodayActivities = response.data.data.today_activities.filter(
+          (activity) => activity.attendance_form_id === userAttendanceFormId
+        );
 
-        return response.data.data.today_activities.filter(
-          (activity) => activity.id === userAttendanceFormId
-        ).length;
+        return userTodayActivities.length;
       },
     }
   );

@@ -1,5 +1,5 @@
 import { UploadOutlined } from "@ant-design/icons";
-import { Input, UploadProps, notification } from "antd";
+import { Input, Spin, UploadProps, notification } from "antd";
 import { Button, Form, Modal, Radio, Upload, message } from "antd";
 import { RcFile } from "antd/lib/upload";
 import { AxiosError } from "axios";
@@ -39,11 +39,12 @@ export const AttendanceStaffCheckInDrawer: FC<
   /**
    * TODO: implement prompt
    */
-  const { position } = useGeolocationAPI();
+  const { position, isPermissionBlocked } = useGeolocationAPI();
   const [showLocationPermissionPrompt, setShowLocationPermissionPrompt] =
     useState(false);
 
-  const { data: locationDisplayName } = useNominatimReverseGeocode(position);
+  const { data: locationDisplayName, isLoading: locationDisplayNameLoading } =
+    useNominatimReverseGeocode(position);
 
   /** Uploaded file object. Wrapped as RcFile. */
   const [uploadedEvidencePicture, setUploadedEvidencePicture] =
@@ -135,6 +136,22 @@ export const AttendanceStaffCheckInDrawer: FC<
     [uploadedEvidencePicture]
   );
 
+  useEffect(() => {
+    if (visible && isPermissionBlocked) {
+      Modal.error({
+        centered: true,
+        title: "Perhatian!",
+        content:
+          "Anda perlu mengizinkan akses lokasi pada browser untuk melakukan check in atau check out.",
+        okText: "Kembali",
+        onOk: () => onClose(),
+        onCancel: () => onClose(),
+        closable: true,
+      });
+      return;
+    }
+  }, [visible, isPermissionBlocked]);
+
   const drawerTitleAndButtonContent =
     attendeeStatus === "checkout" ? "Check In" : "Check Out";
   const evidencePictureLabel =
@@ -151,65 +168,74 @@ export const AttendanceStaffCheckInDrawer: FC<
       >
         <div className="space-y-6">
           {/* Required field information */}
-          <em className="text-state1">* Informasi ini harus diisi</em>
 
-          <Form form={form} onFinish={onFormSubmitted} layout="vertical">
-            {/* Location */}
-            <Form.Item name="current_location" label="Lokasi saat ini">
-              <Input
-                disabled
-                placeholder={locationDisplayName || ""}
-                className="text-mono30 placeholder-gray-900 disabled:bg-transparent font-bold border-none p-0"
-              />
-            </Form.Item>
+          {!isPermissionBlocked && (
+            <>
+              <em className="text-state1">* Informasi ini harus diisi</em>
 
-            {/* Kerja Dari: hanya tampilkan ketika Check In */}
-            {attendeeStatus === "checkout" && (
-              <Form.Item
-                name="work_from"
-                label="Kerja Dari"
-                required
-                initialValue="WFH"
-              >
-                <Radio.Group>
-                  <Radio value="WFH" className="block">
-                    WFH
-                  </Radio>
-                  <Radio value="WFO" className="block">
-                    WFO
-                  </Radio>
-                </Radio.Group>
-              </Form.Item>
-            )}
+              <Form form={form} onFinish={onFormSubmitted} layout="vertical">
+                {/* Location */}
+                <Form.Item name="current_location" label="Lokasi saat ini">
+                  {!locationDisplayNameLoading ? (
+                    <Input
+                      disabled
+                      placeholder={locationDisplayName || ""}
+                      className="text-mono30 placeholder-gray-900 disabled:bg-transparent font-bold border-none p-0"
+                    />
+                  ) : (
+                    <Spin />
+                  )}
+                </Form.Item>
 
-            {/* Bukti Kehadran */}
-            <Form.Item
-              name="evidence_image"
-              label={evidencePictureLabel}
-              required
-            >
-              <div className="flex flex-col space-y-6">
-                <Upload
-                  capture
-                  listType="picture"
-                  name="file"
-                  accept="image/png, image/jpeg"
-                  maxCount={1}
-                  beforeUpload={beforeUploadEvidencePicture}
-                  onRemove={onRemoveEvidencePicture}
-                  onPreview={onPreviewEvidencePicture}
+                {/* Kerja Dari: hanya tampilkan ketika Check In */}
+                {attendeeStatus === "checkout" && (
+                  <Form.Item
+                    name="work_from"
+                    label="Kerja Dari"
+                    required
+                    initialValue="WFH"
+                  >
+                    <Radio.Group>
+                      <Radio value="WFH" className="block">
+                        WFH
+                      </Radio>
+                      <Radio value="WFO" className="block">
+                        WFO
+                      </Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                )}
+
+                {/* Bukti Kehadran */}
+                <Form.Item
+                  name="evidence_image"
+                  label={evidencePictureLabel}
+                  required
                 >
-                  <Button className="mig-button mig-button--outlined-primary">
-                    <UploadOutlined />
-                    Unggah File
-                  </Button>
-                </Upload>
-                <em className="text-mono50">
-                  Unggah File JPEG (Maksimal 5 MB)
-                </em>
-              </div>
-            </Form.Item>
-          </Form>
+                  <div className="flex flex-col space-y-6">
+                    <Upload
+                      capture
+                      listType="picture"
+                      name="file"
+                      accept="image/png, image/jpeg"
+                      maxCount={1}
+                      beforeUpload={beforeUploadEvidencePicture}
+                      onRemove={onRemoveEvidencePicture}
+                      onPreview={onPreviewEvidencePicture}
+                    >
+                      <Button className="mig-button mig-button--outlined-primary">
+                        <UploadOutlined />
+                        Unggah File
+                      </Button>
+                    </Upload>
+                    <em className="text-mono50">
+                      Unggah File JPEG (Maksimal 5 MB)
+                    </em>
+                  </div>
+                </Form.Item>
+              </Form>
+            </>
+          )}
         </div>
       </DrawerCore>
 
