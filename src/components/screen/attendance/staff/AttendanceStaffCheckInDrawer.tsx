@@ -1,6 +1,6 @@
 import { UploadOutlined } from "@ant-design/icons";
 import { Input, Spin, UploadProps, notification } from "antd";
-import { Button, Form, Modal, Radio, Upload, message } from "antd";
+import { Button, Form, Modal, Radio, Upload } from "antd";
 import { RcFile } from "antd/lib/upload";
 import { AxiosError } from "axios";
 import { FC, useCallback, useEffect, useState } from "react";
@@ -36,12 +36,7 @@ export const AttendanceStaffCheckInDrawer: FC<
     isLoading: toggleCheckInCheckOutLoading,
   } = useToggleCheckInCheckOut();
 
-  /**
-   * TODO: implement prompt
-   */
   const { position, isPermissionBlocked } = useGeolocationAPI();
-  const [showLocationPermissionPrompt, setShowLocationPermissionPrompt] =
-    useState(false);
 
   const { data: locationDisplayName, isLoading: locationDisplayNameLoading } =
     useNominatimReverseGeocode(position);
@@ -141,8 +136,13 @@ export const AttendanceStaffCheckInDrawer: FC<
       Modal.error({
         centered: true,
         title: "Perhatian!",
-        content:
-          "Anda perlu mengizinkan akses lokasi pada browser untuk melakukan check in atau check out.",
+        content: (
+          <p>
+            Mohon izinkan browser untuk dapat mengakses lokasi Anda saat ini
+            dengan cara klik <strong>Allow</strong> pada Popup yang muncul di
+            sebelah kiri atas.
+          </p>
+        ),
         okText: "Kembali",
         onOk: () => onClose(),
         onCancel: () => onClose(),
@@ -247,21 +247,6 @@ export const AttendanceStaffCheckInDrawer: FC<
         centered
       >
         <img alt="Preview Evidence Picture" src={previewEvidencePictureData} />
-      </Modal>
-
-      <Modal
-        title="Izin Akses Lokasi"
-        visible={showLocationPermissionPrompt}
-        onCancel={() => setShowLocationPermissionPrompt(false)}
-        centered
-        zIndex={50}
-        footer={null}
-      >
-        <p>
-          Mohon izinkan browser untuk dapat mengakses lokasi Anda saat ini
-          dengan cara klik <strong>Allow</strong> pada Popup yang muncul di
-          sebelah kiri atas.
-        </p>
       </Modal>
     </>
   );

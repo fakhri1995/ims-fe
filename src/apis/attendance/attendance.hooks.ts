@@ -1,13 +1,14 @@
 import isToday from "date-fns/isToday";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 
-import { AttendanceActivityServivce } from "./attendance-activity.service";
+import { IUpdateAttendanceActivityPayload } from ".";
+import { AttendanceActivityService } from "./attendance-activity.service";
 import {
   AttendanceActivityQueryKeys,
   IAddAttendanceActivityPayload,
@@ -150,7 +151,7 @@ export const useGetAttendeeInfo = () => {
 
   const { data: todayActivitiesLength } = useQuery(
     AttendanceActivityQueryKeys.FIND,
-    () => AttendanceActivityServivce.find(axiosClient),
+    () => AttendanceActivityService.find(axiosClient),
     {
       enabled: !!userAttendanceForm,
       select: (response) => {
@@ -285,7 +286,7 @@ export const useGetUserAttendanceActivities = (
     isRefetching: isDataSourceRefetching,
   } = useQuery(
     AttendanceActivityQueryKeys.FIND,
-    () => AttendanceActivityServivce.find(axiosClient),
+    () => AttendanceActivityService.find(axiosClient),
     {
       enabled: !!userAttendanceForm,
       select: (response) => {
@@ -428,18 +429,84 @@ export const useGetUserAttendanceActivities = (
     dynamicNameFieldPairs: dynamic,
   };
 };
+/**
+ * Custom hook untuk mendapatkan list seluruh aktivitas hari ini per User.
+ *
+ * NOTE: data yang dihasilkan tidak difilter untuk menyesuaikan form_attendance User. Hal ini tidak diperlukan
+ *  karena yang kita butuhkan hanya 1 object aktivitas. Setiap object aktivitas memiliki ID yang unique.
+ *
+ * @example
+ * ```
+ * const { findTodayActivity } = useGetUserAttendanceTodayActivities();
+ *
+ * const activity: Activity | undefined = findTodayActivity(23);
+ * ```
+ */
+export const useGetUserAttendanceTodayActivities = () => {
+  const axiosClient = useAxiosClient();
 
-export const useAddAttendanceActivity = () => {
+  const { data } = useQuery(
+    AttendanceActivityQueryKeys.FIND,
+    () => AttendanceActivityService.find(axiosClient),
+    {
+      select: (response) => response.data.data.today_activities,
+    }
+  );
+
+  const findById = useCallback(
+    (selectId: number) => {
+      if (!data) {
+        return;
+      }
+
+      return data.find((activity) => activity.id === selectId);
+    },
+    [data]
+  );
+
+  return {
+    todayActivities: data,
+    findTodayActivity: findById,
+  };
+};
+
+/**
+ * Custom hook untuk mutate data Aktivitas (attendance).
+ * Konteks mutate: add, update, delete.
+ *
+ * Setiap mutasi berhasil akan update @see AttendanceActivityQueryKeys.FIND agar UI sync dengan backend.
+ */
+export const useMutateAttendanceActivity = () => {
   const axiosClient = useAxiosClient();
   const queryClient = useQueryClient();
 
-  return useMutation(
+  const onSucceed = useCallback(() => {
+    queryClient.invalidateQueries(AttendanceActivityQueryKeys.FIND);
+  }, []);
+
+  const addMutation = useMutation(
     (payload: IAddAttendanceActivityPayload) =>
-      AttendanceActivityServivce.add(axiosClient, payload),
+      AttendanceActivityService.add(axiosClient, payload),
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries(AttendanceActivityQueryKeys.FIND);
-      },
+      onSuccess: onSucceed,
     }
   );
+
+  const updateMutation = useMutation(
+    (payload: IUpdateAttendanceActivityPayload) =>
+      AttendanceActivityService.update(axiosClient, payload),
+    {
+      onSuccess: onSucceed,
+    }
+  );
+
+  const deleteMutation = useMutation(
+    (activityId: number) =>
+      AttendanceActivityService.remove(axiosClient, activityId),
+    {
+      onSuccess: onSucceed,
+    }
+  );
+
+  return { addMutation, updateMutation, deleteMutation };
 };

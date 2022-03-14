@@ -20,6 +20,7 @@ const { TabPane } = Tabs;
  */
 export interface IAttendanceStaffAktivitasSection {
   onAddActivityButtonClicked: () => void;
+  onRowItemClicked: (activityId: number) => void;
 }
 
 /**
@@ -27,7 +28,7 @@ export interface IAttendanceStaffAktivitasSection {
  */
 export const AttendanceStaffAktivitasSection: FC<
   IAttendanceStaffAktivitasSection
-> = ({ onAddActivityButtonClicked }) => {
+> = ({ onAddActivityButtonClicked, onRowItemClicked }) => {
   /** 1 => Hari Ini, 2 => Riwayat */
   const [tabActiveKey, setTabActiveKey] = useState<"1" | "2" | string>("1");
   const { dataSource, dynamicNameFieldPairs, isDataSourceLoading } =
@@ -80,16 +81,17 @@ export const AttendanceStaffAktivitasSection: FC<
     ]
   );
 
-  const onRowItemClicked = useCallback(
-    (datum) => {
+  const mOnRowItemClicked = useCallback(
+    (datum: typeof dataSource[0]) => {
       if (tabActiveKey === "2") {
         /** Only allow this click callback when user is on "Hari Ini" tab */
         return;
       }
 
-      alert(`Row with id ${datum.key} is clicked!`);
+      /** datum.key adalah unique ID dari aktivitas tersebut. Hanya di map menjadi "key" */
+      onRowItemClicked(datum.key);
     },
-    [tabActiveKey]
+    [tabActiveKey, onRowItemClicked]
   );
 
   return (
@@ -115,7 +117,7 @@ export const AttendanceStaffAktivitasSection: FC<
           <DataEmptyState caption="Belum ada aktivitas. Silakan masukkan aktivitas untuk hari ini" />
         )}
       >
-        <Table
+        <Table<typeof dataSource[0]>
           columns={tableColums}
           dataSource={dataSource}
           pagination={tablePaginationConf}
@@ -123,7 +125,7 @@ export const AttendanceStaffAktivitasSection: FC<
           onRow={(datum) => {
             return {
               className: "hover:cursor-pointer",
-              onClick: () => onRowItemClicked(datum),
+              onClick: () => mOnRowItemClicked(datum),
             };
           }}
         />

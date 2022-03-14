@@ -8,7 +8,7 @@ import {
   Skeleton,
   notification,
 } from "antd";
-import type { AxiosError } from "axios";
+import type { AxiosError, AxiosResponse } from "axios";
 import { FC, useCallback, useEffect } from "react";
 import { useQuery } from "react-query";
 
@@ -19,8 +19,10 @@ import { useAxiosClient } from "hooks/use-axios-client";
 import {
   FormAktivitasTypes,
   IAddAttendanceActivityPayload,
-  useAddAttendanceActivity,
+  IUpdateAttendanceActivityPayload,
   useGetAttendeeInfo,
+  useGetUserAttendanceTodayActivities,
+  useMutateAttendanceActivity,
 } from "apis/attendance";
 import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 import { Detail } from "apis/auth";
@@ -45,12 +47,19 @@ export interface IAttendanceStaffAktivitasDrawer {
  */
 export const AttendanceStaffAktivitasDrawer: FC<
   IAttendanceStaffAktivitasDrawer
-> = ({ action = "create", visible, onClose }) => {
+> = ({ action = "create", visible, onClose, activityFormId }) => {
   const [form] = Form.useForm();
 
   const axiosClient = useAxiosClient();
   const { attendeeStatus } = useGetAttendeeInfo();
-  const { mutate: addAttendanceActivity } = useAddAttendanceActivity();
+  const { todayActivities, findTodayActivity } =
+    useGetUserAttendanceTodayActivities();
+
+  const {
+    addMutation: { mutate: addAttendanceActivity },
+    updateMutation: { mutate: updateAttendanceActivity },
+    deleteMutation: { mutate: deleteAttendanceActivity },
+  } = useMutateAttendanceActivity();
 
   const { data: userAttendanceForm, isLoading } = useQuery(
     AuthServiceQueryKeys.DETAIL_PROFILE,
@@ -59,6 +68,18 @@ export const AttendanceStaffAktivitasDrawer: FC<
       select: (response) => response.data.data.attendance_forms[0],
     }
   );
+
+  const onMutationSucceed = useCallback((response: AxiosResponse<any, any>) => {
+    form.resetFields();
+
+    onClose();
+
+    notification.success({ message: response.data.message });
+  }, []);
+
+  const onMutationFailed = useCallback((error: AxiosError) => {
+    notification.error({ message: error.response.data.message });
+  }, []);
 
   const handleOnFormSubmitted = useCallback(
     (formValues?: { [key: string]: any }) => {
@@ -73,49 +94,58 @@ export const AttendanceStaffAktivitasDrawer: FC<
         };
 
         for (const [key, value] of Object.entries(formValues)) {
-          let mValue;
-
-          if (value instanceof Number) {
-            mValue = value.toString();
-          } else if (value instanceof Array) {
-            /**
-             * NOTE: it's necessary to sort the index from lowest to highest! Do not change this code.
-             *
-             * Soalnya jawaban dari backend nanti akan kita gunakan pada update / delete aktivitas.
-             * Kecuali backend memberikan API yang jauh lebih mudah.
-             *
-             * Misal backend menyediakan API untuk retrieve data per form aktivitas (e.g. by id).
-             */
-            mValue = value.sort((a, b) => (a < b ? -1 : 1));
-          } else {
-            // it must be a string
-            mValue = value;
-          }
-
           payload.details.push({
             key,
-            value: mValue,
+            value: _safeCastPayloadValue(value),
           });
         }
 
         addAttendanceActivity(payload, {
-          onSuccess: (response) => {
-            form.resetFields();
-
-            onClose();
-
-            notification.success({ message: response.data.message });
-          },
-          onError: (error: AxiosError) => {
-            notification.error({ message: error.response.data.message });
-          },
+          onSuccess: onMutationSucceed,
+          onError: onMutationFailed,
         });
       } else {
-        /** TODO */
+        const payload: IUpdateAttendanceActivityPayload = {
+          id: activityFormId,
+          details: [],
+        };
+
+        for (const [key, value] of Object.entries(formValues)) {
+          payload.details.push({
+            key,
+            value: _safeCastPayloadValue(value),
+          });
+        }
+
+        updateAttendanceActivity(payload, {
+          onSuccess: onMutationSucceed,
+          onError: onMutationFailed,
+        });
       }
     },
-    [userAttendanceForm]
+    [activityFormId, userAttendanceForm]
   );
+
+  const handleOnDeleteAktivitas = useCallback(() => {
+    if (action !== "update") {
+      return;
+    }
+
+    Modal.confirm({
+      centered: true,
+      title: "Perhatian!",
+      content: "Apakah Anda yakin untuk menghapus aktivitas ini?",
+      okText: "Hapus Aktivitas",
+      cancelText: "Kembali",
+      onOk: () => {
+        deleteAttendanceActivity(activityFormId, {
+          onSuccess: onMutationSucceed,
+          onError: onMutationFailed,
+        });
+      },
+      onCancel: () => onClose(),
+    });
+  }, [action, activityFormId]);
 
   /** Guard to prevent User fill the form when they're not signed in yet. */
   useEffect(() => {
@@ -148,7 +178,29 @@ export const AttendanceStaffAktivitasDrawer: FC<
 
       return;
     }
+
+    /** Always clean up the form fields on close */
+    if (!visible) {
+      form.resetFields();
+    }
   }, [visible, attendeeStatus, userAttendanceForm]);
+
+  useEffect(() => {
+    if (action !== "update" || !todayActivities) {
+      return;
+    }
+
+    const formFieldsValue = {};
+
+    const clickedActivityData = findTodayActivity(activityFormId);
+    clickedActivityData.details.forEach((detail) => {
+      const { key, value } = detail;
+
+      formFieldsValue[key] = value;
+    });
+
+    form.setFieldsValue(formFieldsValue);
+  }, [form, action, todayActivities]);
 
   return (
     <DrawerCore
@@ -157,6 +209,8 @@ export const AttendanceStaffAktivitasDrawer: FC<
       visible={visible}
       onClose={onClose}
       onClick={() => form.submit()}
+      buttonCancelText={action === "update" ? "Hapus Aktivitas" : undefined}
+      onButtonCancelClicked={handleOnDeleteAktivitas}
     >
       <div className="space-y-6">
         {isLoading && (
@@ -232,7 +286,7 @@ const _renderDynamicInput = (
 
     case FormAktivitasTypes.DROPDOWN:
       return (
-        <Select placeholder="Pilih nilai">
+        <Select placeholder="Pilih nilai" allowClear>
           {list?.map((value, idx) => (
             <Select.Option value={value} key={idx}>
               {value}
@@ -241,4 +295,28 @@ const _renderDynamicInput = (
         </Select>
       );
   }
+};
+
+/**
+ * Safely cast the given `value` before we send it to the backend.
+ *
+ * @private
+ */
+const _safeCastPayloadValue = (value: any) => {
+  let mValue;
+
+  switch (typeof value) {
+    case "number":
+      mValue = value.toString();
+      break;
+    case "undefined":
+    case "string":
+      mValue = value || "";
+      break;
+    default:
+      mValue = value;
+      break;
+  }
+
+  return mValue;
 };

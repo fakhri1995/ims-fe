@@ -9,7 +9,7 @@ import {
 
 import { HttpRequestBaseSucceedResponse } from "types/common";
 
-export class AttendanceActivityServivce {
+export class AttendanceActivityService {
   /**
    * Retrieve all attendance activities for current logged in user.
    *
