@@ -12,6 +12,7 @@ import { useGeolocationAPI } from "hooks/use-geolocation-api";
 import { getBase64 } from "lib/helper";
 
 import { useGetAttendeeInfo, useToggleCheckInCheckOut } from "apis/attendance";
+import { useCloudinaryUploadOne } from "apis/cloudinary";
 import { useNominatimReverseGeocode } from "apis/nominatim";
 
 /**
@@ -31,10 +32,9 @@ export const AttendanceStaffCheckInDrawer: FC<
   const [form] = Form.useForm();
 
   const { attendeeStatus } = useGetAttendeeInfo();
-  const {
-    mutate: toggleCheckInCheckOut,
-    isLoading: toggleCheckInCheckOutLoading,
-  } = useToggleCheckInCheckOut();
+  const { mutate: toggleCheckInCheckOut } = useToggleCheckInCheckOut();
+  const { mutate: uploadPictureCloudinary, isLoading: uploadPictureLoading } =
+    useCloudinaryUploadOne();
 
   const { position, isPermissionBlocked } = useGeolocationAPI();
 
@@ -52,8 +52,6 @@ export const AttendanceStaffCheckInDrawer: FC<
   /** Either empty string or long long string (base64) from a file (`uploadedEvidencePicture`). */
   const [previewEvidencePictureData, setPreviewEvidencePictureData] =
     useState("");
-
-  // useEffect(() => { console.table({ position, geolocationError, isPermissionBlocked }) }, [position, geolocationError, isPermissionBlocked])
 
   /**
    * Validating uploaded file before finally attached to the paylaod.
@@ -97,36 +95,38 @@ export const AttendanceStaffCheckInDrawer: FC<
 
   const onFormSubmitted = useCallback(
     (value: { work_from?: "WFO" | "WFH"; evidence_image?: string }) => {
-      /**
-       * TODO: handle this callback properly
-       *
-       * 1. Retrieve location
-       * 2. Send the image to cloudinary
-       *    -> retrieve new URL from cloudinary
-       * 3. Hit toggle attendance endpoint
-       */
-      // console.table({ work_from: value.work_from, uploadedEvidencePicture });
-      toggleCheckInCheckOut(
-        {
-          evidence: value?.evidence_image || "",
-          geo_loc: locationDisplayName || "",
-          lat: position?.coords.latitude.toString(),
-          long: position?.coords.longitude.toString(),
-          wfo: value?.work_from === "WFO",
+      uploadPictureCloudinary(uploadedEvidencePicture, {
+        onSuccess: (response) => {
+          const imageUrl = response.data.secure_url;
+
+          toggleCheckInCheckOut(
+            {
+              evidence: imageUrl,
+              geo_loc: locationDisplayName || "",
+              lat: position?.coords.latitude.toString(),
+              long: position?.coords.longitude.toString(),
+              wfo: value?.work_from === "WFO",
+            },
+            {
+              onSuccess: (response) => {
+                setUploadedEvidencePicture(null);
+
+                form.resetFields();
+                onClose();
+
+                notification.success({ message: response.data.message });
+              },
+              onError: (error: AxiosError) =>
+                notification.error({ message: error.response.data.message }),
+            }
+          );
         },
-        {
-          onSuccess: (response) => {
-            setUploadedEvidencePicture(null);
-
-            form.resetFields();
-            onClose();
-
-            notification.success({ message: response.data.message });
-          },
-          onError: (error: AxiosError) =>
-            notification.error({ message: error.response.data.message }),
-        }
-      );
+        onError: () => {
+          notification.error({
+            message: "Terjadi kesalahan ketika upload picture.",
+          });
+        },
+      });
     },
     [uploadedEvidencePicture]
   );
@@ -165,12 +165,12 @@ export const AttendanceStaffCheckInDrawer: FC<
         visible={visible}
         onClose={onClose}
         onClick={() => form.submit()}
+        disabled={uploadPictureLoading}
       >
         <div className="space-y-6">
-          {/* Required field information */}
-
           {!isPermissionBlocked && (
             <>
+              {/* Required field information */}
               <em className="text-state1">* Informasi ini harus diisi</em>
 
               <Form form={form} onFinish={onFormSubmitted} layout="vertical">
@@ -195,7 +195,7 @@ export const AttendanceStaffCheckInDrawer: FC<
                     required
                     initialValue="WFH"
                   >
-                    <Radio.Group>
+                    <Radio.Group disabled={uploadPictureLoading}>
                       <Radio value="WFH" className="block">
                         WFH
                       </Radio>
@@ -222,8 +222,12 @@ export const AttendanceStaffCheckInDrawer: FC<
                       beforeUpload={beforeUploadEvidencePicture}
                       onRemove={onRemoveEvidencePicture}
                       onPreview={onPreviewEvidencePicture}
+                      disabled={uploadPictureLoading}
                     >
-                      <Button className="mig-button mig-button--outlined-primary">
+                      <Button
+                        className="mig-button mig-button--outlined-primary"
+                        loading={uploadPictureLoading}
+                      >
                         <UploadOutlined />
                         Unggah File
                       </Button>
@@ -234,6 +238,15 @@ export const AttendanceStaffCheckInDrawer: FC<
                   </div>
                 </Form.Item>
               </Form>
+
+              {uploadPictureLoading && (
+                <div className="flex flex-col items-center space-y-3">
+                  <Spin size="large" />
+                  <span className="mig-caption text-mono50">
+                    Sedang mengupload foto...
+                  </span>
+                </div>
+              )}
             </>
           )}
         </div>
