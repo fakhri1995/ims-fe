@@ -19,6 +19,8 @@ export interface IFormAktivitasTable {
   tablePageSize: number;
   tableTotalData: number;
 
+  currentPage?: number;
+
   onTriggerChangeCriteria: (
     newCriteria: Partial<IGetAttendanceFormsParams>
   ) => void;
@@ -29,6 +31,7 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = ({
   data,
   tablePageSize,
   tableTotalData,
+  currentPage,
   onTriggerChangeCriteria,
 }) => {
   const router = useRouter();
@@ -56,28 +59,23 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = ({
         title: "No.",
         dataIndex: "id",
         render: (_, __, index) => `${++index}.`,
+        // render: (_, __, index) => `${(((currentPage || 1) - 1) * 10 + index) + 1}.`,
         width: 64,
       },
       {
-        key: "id",
         title: "Form Aktivitas",
         dataIndex: "name",
         sorter: true,
-        sortDirections: ["ascend", "descend", "ascend"],
       },
       {
-        key: "id",
         title: "Tanggal Diubah",
         dataIndex: "updated_at",
         sorter: true,
-        sortDirections: ["ascend", "descend", "ascend"],
       },
       {
-        key: "id",
         title: "Jumlah Staff",
         dataIndex: "users_count",
         sorter: true,
-        sortDirections: ["ascend", "descend", "ascend"],
         width: 192,
       },
       {
@@ -93,15 +91,17 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = ({
     return getAntdTablePaginationConfig({
       pageSize: tablePageSize,
       total: tableTotalData,
+      current: currentPage || 1,
     });
-  }, [tablePageSize, tableTotalData]);
+  }, [tablePageSize, tableTotalData, currentPage]);
 
   return (
     <Table<GetAttendanceFormsDatum>
       loading={isLoading}
       columns={tableColumns}
-      dataSource={mappedData || []}
-      scroll={{ x: 1500 }}
+      dataSource={mappedData}
+      scroll={{ x: 640 }}
+      className="tableTypeTask"
       onChange={(pagination, _, sorter) => {
         let criteria: IGetAttendanceFormsParams = {
           page: pagination.current,
@@ -110,8 +110,17 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = ({
 
         if ("field" in sorter) {
           criteria.sort_by =
-            sorter.field === "users_count" ? "count" : sorter.field?.toString();
-          criteria.sort_type = sorter.order === "ascend" ? "asc" : "desc";
+            sorter.order === undefined
+              ? ""
+              : sorter.field === "users_count"
+              ? "count"
+              : sorter.field?.toString();
+          criteria.sort_type =
+            sorter.order === undefined
+              ? ""
+              : sorter.order === "ascend"
+              ? "asc"
+              : "desc";
         }
 
         onTriggerChangeCriteria(criteria);

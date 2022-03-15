@@ -112,6 +112,7 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
             <FormAktivitasTable
               data={data?.data.data.data}
               tablePageSize={criteria.rows}
+              currentPage={criteria.page}
               tableTotalData={data?.data.data.total}
               isLoading={isLoading}
               onTriggerChangeCriteria={onTriggerChangeCriteria}
