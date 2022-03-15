@@ -53,7 +53,7 @@ export const AttendanceStaffDetailCard: FC<IAttendanceStaffDetailCard> = memo(
     }, [data]);
 
     const onUnduhIdCardButtonClicked = useCallback(() => {
-      alert("Unduh ID Card clicked!");
+      /** TODO: implement ini */
     }, []);
 
     return (

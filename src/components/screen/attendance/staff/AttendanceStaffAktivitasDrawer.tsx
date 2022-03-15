@@ -154,7 +154,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
         centered: true,
         title: "Perhatian!",
         content:
-          "Anda perlu Check In terlebih dahulu untuk menambahkan aktivitas!",
+          "Anda perlu Check In terlebih dahulu untuk menambahkan atau memperbarui aktivitas!",
         okText: "Kembali",
         onOk: () => onClose(),
         onCancel: () => onClose(),

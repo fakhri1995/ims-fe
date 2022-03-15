@@ -2,7 +2,7 @@ import { DownloadOutlined } from "@ant-design/icons";
 import { ConfigProvider, Table } from "antd";
 import type { ColumnsType } from "antd/lib/table";
 import { isBefore } from "date-fns";
-import { FC, useCallback, useMemo } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
@@ -19,6 +19,7 @@ import {
   UserAttendance,
 } from "apis/attendance";
 
+import { EksporAbsensiDrawer } from "../shared/EksporAbsensiDrawer";
 import clsx from "clsx";
 
 /**
@@ -33,6 +34,9 @@ export const AttendanceStaffKehadiranSection: FC<
   IAttendanceStaffKehadiranSection
 > = () => {
   const axiosClient = useAxiosClient();
+
+  const [isExportDrawerShown, setIsExportDrawerShown] = useState(false);
+
   const {
     data: kehadiranData,
     isLoading,
@@ -68,7 +72,6 @@ export const AttendanceStaffKehadiranSection: FC<
           width: 64,
         },
         {
-          key: "id",
           title: "Waktu Check In",
           dataIndex: "check_in",
           render: (_, datum) => {
@@ -89,7 +92,6 @@ export const AttendanceStaffKehadiranSection: FC<
           },
         },
         {
-          key: "id",
           title: "Waktu Check Out",
           dataIndex: "check_out",
           render: (_, datum) => {
@@ -110,7 +112,6 @@ export const AttendanceStaffKehadiranSection: FC<
           },
         },
         {
-          key: "id",
           title: "Kerja",
           dataIndex: "is_wfo",
           sorter: (a, b) => (b.is_wfo < a.is_wfo ? -1 : 1),
@@ -140,47 +141,56 @@ export const AttendanceStaffKehadiranSection: FC<
   );
 
   const onRowItemClicked = useCallback((datum: IModifiedDataKehadiran) => {
-    alert(`Row with id ${datum.id} is clicked!`);
+    /** TODO: redirect to detail page */
   }, []);
 
   return (
-    <section className="mig-platform space-y-6">
-      {/* Header: Title and Unduh Table button */}
-      <div className="flex items-center justify-between">
-        <h3 className="mig-heading--4">Kehadiran</h3>
-        <ButtonSys
-          type="default"
-          onClick={() => {
-            alert("Button Unduh Tabel clicked");
-          }}
+    <>
+      <section className="mig-platform space-y-6">
+        {/* Header: Title and Unduh Table button */}
+        <div className="flex items-center justify-between">
+          <h3 className="mig-heading--4">Kehadiran</h3>
+          <ButtonSys
+            type="default"
+            onClick={() => setIsExportDrawerShown(true)}
+          >
+            <DownloadOutlined className="mr-2" />
+            Unduh Tabel
+          </ButtonSys>
+        </div>
+
+        {/* TODO: Table */}
+        <ConfigProvider
+          renderEmpty={() => (
+            <DataEmptyState caption="Data kehadiran kosong." />
+          )}
         >
-          <DownloadOutlined className="mr-2" />
-          Unduh Tabel
-        </ButtonSys>
-      </div>
+          <Table<IModifiedDataKehadiran>
+            columns={tableColumns}
+            dataSource={kehadiranData}
+            pagination={tablePaginationConf}
+            loading={isLoading || isRefetching}
+            scroll={{ x: 640 }}
+            className="tableTypeTask"
+            onRow={(datum) => {
+              const rowClassName = clsx("hover:cursor-pointer", {
+                "bg-state1/10": datum.is_late,
+              });
 
-      {/* TODO: Table */}
-      <ConfigProvider
-        renderEmpty={() => <DataEmptyState caption="Data kehadiran kosong." />}
-      >
-        <Table<IModifiedDataKehadiran>
-          columns={tableColumns}
-          dataSource={kehadiranData}
-          pagination={tablePaginationConf}
-          loading={isLoading || isRefetching}
-          onRow={(datum) => {
-            const rowClassName = clsx("hover:cursor-pointer", {
-              "bg-state1/10": datum.is_late,
-            });
+              return {
+                className: rowClassName,
+                onClick: () => onRowItemClicked(datum),
+              };
+            }}
+          />
+        </ConfigProvider>
+      </section>
 
-            return {
-              className: rowClassName,
-              onClick: () => onRowItemClicked(datum),
-            };
-          }}
-        />
-      </ConfigProvider>
-    </section>
+      <EksporAbsensiDrawer
+        visible={isExportDrawerShown}
+        onClose={() => setIsExportDrawerShown(false)}
+      />
+    </>
   );
 };
 

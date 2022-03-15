@@ -3,7 +3,7 @@ import { ConfigProvider, Tabs } from "antd";
 import { Table } from "antd";
 import type { ColumnsType } from "antd/lib/table";
 import { isBefore } from "date-fns";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useReducer, useState } from "react";
 
 import ButtonSys from "components/button";
 import { DataEmptyState } from "components/states/DataEmptyState";
@@ -13,26 +13,30 @@ import { getAntdTablePaginationConfig } from "lib/standard-config";
 
 import { useGetUserAttendanceActivities } from "apis/attendance";
 
+import { AttendanceStaffAktivitasDrawer } from "./AttendanceStaffAktivitasDrawer";
+
 const { TabPane } = Tabs;
 
 /**
  * Component AttendanceStaffAktivitasSection's props.
  */
-export interface IAttendanceStaffAktivitasSection {
-  onAddActivityButtonClicked: () => void;
-  onRowItemClicked: (activityId: number) => void;
-}
+export interface IAttendanceStaffAktivitasSection {}
 
 /**
  * Component AttendanceStaffAktivitasSection
  */
 export const AttendanceStaffAktivitasSection: FC<
   IAttendanceStaffAktivitasSection
-> = ({ onAddActivityButtonClicked, onRowItemClicked }) => {
+> = () => {
   /** 1 => Hari Ini, 2 => Riwayat */
   const [tabActiveKey, setTabActiveKey] = useState<"1" | "2" | string>("1");
   const { dataSource, dynamicNameFieldPairs, isDataSourceLoading } =
     useGetUserAttendanceActivities(tabActiveKey === "1" ? "today" : "past");
+
+  const [activityDrawerState, dispatch] = useReducer(
+    _aktivitasDrawerToggleReducer,
+    { visible: false }
+  );
 
   const tableColums = useMemo<ColumnsType>(() => {
     const columns: ColumnsType = [
@@ -89,47 +93,129 @@ export const AttendanceStaffAktivitasSection: FC<
       }
 
       /** datum.key adalah unique ID dari aktivitas tersebut. Hanya di map menjadi "key" */
-      onRowItemClicked(datum.key);
+      // onRowItemClicked(datum.key);
+      dispatch({
+        type: "update",
+        visible: true,
+        selectedActivityFormId: datum.key,
+      });
     },
-    [tabActiveKey, onRowItemClicked]
+    [tabActiveKey]
   );
+
+  const mOnAddActivityButtonClicked = useCallback(() => {
+    dispatch({ type: "create", visible: true });
+  }, []);
 
   return (
-    <section className="mig-platform space-y-6">
-      <h3 className="mig-heading--4">Aktivitas</h3>
+    <>
+      <section className="mig-platform space-y-6">
+        <h3 className="mig-heading--4">Aktivitas</h3>
 
-      <div className="flex items-center justify-between">
-        <Tabs defaultActiveKey="1" className="w-1/2" onChange={setTabActiveKey}>
-          <TabPane tab="Hari Ini" key="1" />
-          <TabPane tab="Riwayat" key="2" />
-        </Tabs>
+        <div className="flex items-center justify-between">
+          <Tabs
+            defaultActiveKey="1"
+            className="w-1/2"
+            onChange={setTabActiveKey}
+          >
+            <TabPane tab="Hari Ini" key="1" />
+            <TabPane tab="Riwayat" key="2" />
+          </Tabs>
 
-        <div className="flex space-x-6 w-1/2 justify-end items-center">
-          <ButtonSys type="primary" onClick={onAddActivityButtonClicked}>
-            <AppstoreAddOutlined className="mr-2" />
-            Masukkan Aktivitas
-          </ButtonSys>
+          <div className="flex space-x-6 w-1/2 justify-end items-center">
+            <ButtonSys type="primary" onClick={mOnAddActivityButtonClicked}>
+              <AppstoreAddOutlined className="mr-2" />
+              Masukkan Aktivitas
+            </ButtonSys>
+          </div>
         </div>
-      </div>
 
-      <ConfigProvider
-        renderEmpty={() => (
-          <DataEmptyState caption="Belum ada aktivitas. Silakan masukkan aktivitas untuk hari ini" />
-        )}
-      >
-        <Table<typeof dataSource[0]>
-          columns={tableColums}
-          dataSource={dataSource}
-          pagination={tablePaginationConf}
-          loading={isDataSourceLoading}
-          onRow={(datum) => {
-            return {
-              className: "hover:cursor-pointer",
-              onClick: () => mOnRowItemClicked(datum),
-            };
-          }}
-        />
-      </ConfigProvider>
-    </section>
+        <ConfigProvider
+          renderEmpty={() => (
+            <DataEmptyState caption="Belum ada aktivitas. Silakan masukkan aktivitas untuk hari ini" />
+          )}
+        >
+          <Table<typeof dataSource[0]>
+            columns={tableColums}
+            dataSource={dataSource}
+            pagination={tablePaginationConf}
+            loading={isDataSourceLoading}
+            scroll={{ x: 640 }}
+            className="tableTypeTask"
+            onRow={(datum) => {
+              return {
+                className: "hover:cursor-pointer",
+                onClick: () => mOnRowItemClicked(datum),
+              };
+            }}
+          />
+        </ConfigProvider>
+      </section>
+
+      <AttendanceStaffAktivitasDrawer
+        visible={activityDrawerState.visible}
+        action={activityDrawerState.openDrawerAs}
+        activityFormId={activityDrawerState.selectedActivityFormId}
+        onClose={() => dispatch({ type: "create", visible: false })}
+      />
+    </>
   );
+};
+
+/**
+ * @private
+ */
+type AktivitasDrawerActionTypes = "create" | "update";
+
+/**
+ * @private
+ */
+interface IAktivitasDrawerState {
+  visible: boolean;
+  openDrawerAs?: AktivitasDrawerActionTypes;
+  selectedActivityFormId?: number;
+}
+
+/**
+ * @private
+ */
+type AktivitasDrawerAction = {
+  type: AktivitasDrawerActionTypes;
+} & IAktivitasDrawerState;
+
+/**
+ * @private
+ */
+const _aktivitasDrawerToggleReducer = (
+  state: IAktivitasDrawerState,
+  payload: AktivitasDrawerAction
+): IAktivitasDrawerState => {
+  switch (payload.type) {
+    case "create":
+      return {
+        ...state,
+        visible: payload.visible,
+        openDrawerAs: payload.type,
+        selectedActivityFormId: undefined,
+      };
+
+    case "update":
+      if (typeof payload.selectedActivityFormId !== "number") {
+        throw new Error(
+          "Nilai dari action.selectedActivityFormId harus berupa number!"
+        );
+      }
+
+      return {
+        ...state,
+        visible: payload.visible,
+        openDrawerAs: payload.type,
+        selectedActivityFormId: payload.selectedActivityFormId,
+      };
+
+    default:
+      throw new Error(
+        `Type reducer ${payload.type} tidak diketahui! Gunakan action: \"create\" atau \"update\"`
+      );
+  }
 };
