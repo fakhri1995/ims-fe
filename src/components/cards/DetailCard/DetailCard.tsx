@@ -44,10 +44,7 @@ export const DetailCard: FC<IDetailCard> = ({
   estimatedContentLength = 3,
   className,
 }) => {
-  const wrapperClassName = clsx(
-    "flex flex-col rounded-md shadow-md bg-white p-5",
-    className
-  );
+  const wrapperClassName = clsx("mig-platform flex flex-col", className);
 
   return (
     <div className={wrapperClassName}>
@@ -106,7 +103,10 @@ const CardContent: FC<CardContentType> = memo(
       return <Skeleton round active paragraph={{ rows: 1 }} />;
     }
 
-    const mLabelClassName = clsx("text-gray-400 text-xs block", labelClassName);
+    const mLabelClassName = clsx(
+      "mig-caption mig-caption--medium text-gray-400 block",
+      labelClassName
+    );
     const mContentClassName = clsx("text-gray-600 block", contentClassName);
 
     /** True => ReactNode, False => string */

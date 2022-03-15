@@ -20,3 +20,41 @@ export interface PageBreadcrumbValue {
   name: string;
   hrefValue?: string;
 }
+
+/**
+ * Response dari backend ketika melakukan komunikasi ke beberapa endpoint.
+ * Biasanya endpoint dengan method POST, PUT, atau DELETE.
+ *
+ * Menandakan kalau transaksi (data) berhasil.
+ */
+export interface HttpRequestBaseSucceedResponse {
+  success: boolean;
+  message: string;
+  status: number;
+}
+
+/**
+ * Response backend ketika endpoint mengahsilkan suatu data.
+ */
+export interface HttpRequestWithDataSucceedResponse<DataType>
+  extends HttpRequestBaseSucceedResponse {
+  data: DataType;
+}
+
+/**
+ * Sama seperti @see HttpRequestBaseSucceedResponse akan tetapi digunakan ketika
+ * transaksi gagal.
+ *
+ * NOTE: Saya belum pernah ketemu response / kondisi ini, tapi siapin aja :) -kennan
+ */
+export interface HttpRequestBaseFailedResponse {
+  success: boolean;
+  message: {
+    errorInfo: {
+      status: number;
+      reason: string;
+      server_code: number;
+      status_detail: string;
+    };
+  };
+}

@@ -1,144 +1,49 @@
+import { HttpRequestWithDataSucceedResponse } from "types/common";
+
 export enum AttendanceServiceQueryKeys {
-  FIND = "ATTENDANCE_FORMS_GET",
-  FIND_ONE = "ATTENDANCE_FORM_GET",
+  ATTENDANCES_USER_GET = "ATTENDANCES_USER_GET",
 }
 
 /**
- * @access GET /getAttendanceForm?id=[aktivitasId]
+ * @access GET /getAttendancesUser
  */
-export interface IGetAttendanceFormSucceedResponse {
-  success: boolean;
-  message: string;
-  data: GetAttendanceFormData;
-  status: number;
+export type IGetAttendancesUserSucceedResponse =
+  HttpRequestWithDataSucceedResponse<GetAttendancesUserData>;
+
+export interface GetAttendancesUserData {
+  user_attendances: UserAttendance[];
+  late_count: number;
+  on_time_count: number;
 }
 
-export interface GetAttendanceFormData {
+export interface UserAttendance {
   id: number;
-  name: string;
-  description: string;
-  details: Detail[];
-  updated_at: Date | string;
-  deleted_at: null;
-  users: User[];
-  creator: Creator;
+  user_id: number;
+  check_in: Date;
+  check_out: Date | null;
+  long_check_in: string;
+  lat_check_in: string;
+  long_check_out: null | string;
+  lat_check_out: null | string;
+  geo_loc_check_in: null | string;
+  geo_loc_check_out: null | string;
+  evidence: Evidence;
+  is_wfo: number;
+  is_late: boolean;
 }
 
-export interface Creator {
-  id: number;
-  name: string;
-  profile_image: string;
-  position: string;
-}
-
-export interface Detail {
-  key: string;
-  name: string;
-  type: number;
-  description: string;
-  list?: string[];
-}
-
-export interface User {
-  id: number;
-  name: string;
-  profile_image: string;
-  position: string;
+export interface Evidence {
+  check_in_evidence: string;
+  check_out_evidence: string;
 }
 
 /**
- * @access GET /getAttendanceForms
+ * @access POST /setAttendanceToggle
  */
-export interface IGetAttendanceFormsParams {
-  page?: number;
-  rows?: number;
-  sort_by?: "name" | "description" | "updated_at" | "count" | string;
-  sort_type?: string;
-  keyword?: string;
+export interface ISetAttendanceTogglePayload {
+  long: string;
+  lat: string;
+  geo_loc: string | null;
+  evidence: string;
+  wfo: boolean;
 }
-
-export interface IGetAttendanceFormsSucceedResponse {
-  success: boolean;
-  message: string;
-  data: GetAttendanceFormsData;
-  status: number;
-}
-
-export interface GetAttendanceFormsData {
-  current_page: number;
-  data: GetAttendanceFormsDatum[];
-  first_page_url: string;
-  from: number;
-  last_page: number;
-  last_page_url: string;
-  next_page_url: null;
-  path: string;
-  per_page: number;
-  prev_page_url: null;
-  to: number;
-  total: number;
-}
-
-export interface GetAttendanceFormsDatum {
-  id: number;
-  name: string;
-  description: string;
-  updated_at: Date | string;
-  users_count: number;
-}
-
-/**
- * @access POST /addAttendanceForm
- */
-export interface IAddAttendanceFormPayload {
-  name: string;
-  description: string;
-  details: Detail[];
-}
-
-export interface IAddAttendanceFormSucceedResponse {
-  success: boolean;
-  message: string;
-  id: number;
-  status: number;
-}
-
-export interface Detail {
-  name: string;
-  description: string;
-  type: number;
-  required: boolean;
-  list?: string[];
-}
-
-/**
- * @access PUT /updateAttendanceForm
- */
-export interface IUpdateAttendanceFormPayload {
-  id: number;
-  name: string;
-  description: string;
-}
-
-export interface IUpdateAttendanceFormSucceedResponse {
-  success: boolean;
-  message: string;
-  status: number;
-}
-
-/**
- * @access POST /addUserAttendanceForm
- * @access DELETE /removeUserAttendanceForm
- */
-export interface IAddUserAttendanceFormPayload {
-  id: number;
-  user_ids: number[];
-}
-export type IRemoveUserAttendanceFormPayload = IAddUserAttendanceFormPayload;
-
-/** Aliases */
-export type IDeleteAttendanceFormSucceedResponse = IUpdateAttendanceFormPayload;
-export type IAddUserAttendanceFormSucceedResponse =
-  IUpdateAttendanceFormPayload;
-export type IRemoveUserAttendanceFormSucceedResponse =
-  IUpdateAttendanceFormPayload;

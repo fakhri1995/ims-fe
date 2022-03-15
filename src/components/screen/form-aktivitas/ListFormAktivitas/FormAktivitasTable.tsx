@@ -1,9 +1,11 @@
 import { Table } from "antd";
-import { ColumnsType } from "antd/lib/table";
+import type { ColumnsType } from "antd/lib/table";
 import { format } from "date-fns";
 import idLocale from "date-fns/locale/id";
 import { useRouter } from "next/router";
 import { FC, useMemo } from "react";
+
+import { getAntdTablePaginationConfig } from "lib/standard-config";
 
 import {
   GetAttendanceFormsDatum,
@@ -47,7 +49,7 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = ({
         }),
       }));
 
-  const tableColumns: ColumnsType<GetAttendanceFormsDatum> = useMemo(() => {
+  const tableColumns = useMemo<ColumnsType<GetAttendanceFormsDatum>>(() => {
     return [
       {
         key: "id",
@@ -87,6 +89,13 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = ({
     ];
   }, []);
 
+  const tablePaginationConf = useMemo(() => {
+    return getAntdTablePaginationConfig({
+      pageSize: tablePageSize,
+      total: tableTotalData,
+    });
+  }, [tablePageSize, tableTotalData]);
+
   return (
     <Table<GetAttendanceFormsDatum>
       loading={isLoading}
@@ -107,13 +116,7 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = ({
 
         onTriggerChangeCriteria(criteria);
       }}
-      pagination={{
-        position: ["bottomRight"],
-        className: "pt-6",
-        pageSize: tablePageSize,
-        total: tableTotalData,
-        showSizeChanger: true,
-      }}
+      pagination={tablePaginationConf}
       onRow={(datum) => {
         return {
           onClick: () => onRowClicked(datum),

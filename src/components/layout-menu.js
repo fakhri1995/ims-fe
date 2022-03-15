@@ -195,9 +195,14 @@ const LayoutMenu = ({
           >
             {
               // [144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-              <Menu.Item key="21412">
-                <Link href="/attendance/form-aktivitas">Form Aktivitas</Link>
-              </Menu.Item>
+              <>
+                <Menu.Item key="attendance/form-aktivitas">
+                  <Link href="/attendance/form-aktivitas">Form Aktivitas</Link>
+                </Menu.Item>
+                <Menu.Item key="attendance/staff">
+                  <Link href="/attendance/staff">My Attendance</Link>
+                </Menu.Item>
+              </>
             }
             {/* {
               // [155, 156, 157, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&

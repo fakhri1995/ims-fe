@@ -25,8 +25,8 @@ import { parseToken } from "lib/auth";
 import { getAxiosClient } from "lib/axios-client";
 
 import {
-  AttendanceService,
-  AttendanceServiceQueryKeys,
+  AttendanceFormAktivitasService,
+  AttendanceFormAktivitasServiceQueryKeys,
   IGetAttendanceFormsParams,
 } from "apis/attendance";
 import { AuthService } from "apis/auth";
@@ -62,8 +62,8 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
 
   const axiosClient = useAxiosClient();
   const { data, isLoading } = useQuery(
-    [AttendanceServiceQueryKeys.FIND, criteria],
-    () => AttendanceService.find(axiosClient, criteria)
+    [AttendanceFormAktivitasServiceQueryKeys.FIND, criteria],
+    () => AttendanceFormAktivitasService.find(axiosClient, criteria)
   );
 
   const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
@@ -83,6 +83,7 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
       tok={token}
       pathArr={pathArr}
       st={styles}
+      sidemenu="attendance/form-aktivitas"
     >
       <div className="px-5">
         {/* First Row */}
@@ -102,7 +103,7 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
 
         {/* Second Row */}
         {/* Table: Form Aktivitas */}
-        <div className="w-full bg-white rounded-md shadow-md p-6">
+        <div className="mig-platform">
           {/* Table header */}
           <FormAktivitasTableHeader onSearchTriggered={onSearchTriggered} />
 

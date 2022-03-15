@@ -6,6 +6,7 @@ import "nprogress/nprogress.css";
 import { useRef } from "react";
 import { CookiesProvider } from "react-cookie";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 import "../styles/globals.scss";
 
@@ -44,6 +45,8 @@ function MyApp({ Component, pageProps }) {
             <Component {...pageProps} />
           </CookiesProvider>
         </NextQueryParamProvider>
+
+        {process.env.NODE_ENV === "development" && <ReactQueryDevtools />}
       </QueryClientProvider>
     </>
   );

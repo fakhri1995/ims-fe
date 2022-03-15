@@ -17,7 +17,10 @@ import { useAxiosClient } from "hooks/use-axios-client";
 import { parseToken } from "lib/auth";
 import { getAxiosClient } from "lib/axios-client";
 
-import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
+import {
+  AttendanceFormAktivitasService,
+  AttendanceFormAktivitasServiceQueryKeys,
+} from "apis/attendance";
 import { AuthService } from "apis/auth";
 
 import { ProtectedPageProps } from "types/common";
@@ -32,8 +35,8 @@ const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
 
   const axiosClient = useAxiosClient();
   const { data } = useQuery(
-    [AttendanceServiceQueryKeys.FIND_ONE, +aktivitasId],
-    () => AttendanceService.findOne(axiosClient, +aktivitasId)
+    [AttendanceFormAktivitasServiceQueryKeys.FIND_ONE, +aktivitasId],
+    () => AttendanceFormAktivitasService.findOne(axiosClient, +aktivitasId)
   );
 
   const [isDrawerShown, setIsDrawerShown] = useState(false);
@@ -56,27 +59,26 @@ const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
       tok={token}
       pathArr={modifiedPathArr}
       st={styles}
+      sidemenu="attendance/form-aktivitas"
     >
-      <div className="px-5">
-        {/* First Row */}
-        <div className="flex flex-wrap md:flex-nowrap md:space-x-6 space-y-6 md:space-y-0">
-          {/* First Column */}
-          <div className="w-full md:w-1/3">
-            {/* Project detail card */}
-            <DetailFormAktivitasCard
-              aktivitasId={+aktivitasId}
-              onUbahButtonClicked={onUbahButtonClicked}
-            />
-          </div>
+      {/* First Row */}
+      <div className="px-5 flex flex-wrap lg:flex-nowrap lg:space-x-6 space-y-6 lg:space-y-0">
+        {/* First Column */}
+        <div className="w-full lg:w-2/5 xl:w-1/5">
+          {/* Project detail card */}
+          <DetailFormAktivitasCard
+            aktivitasId={+aktivitasId}
+            onUbahButtonClicked={onUbahButtonClicked}
+          />
+        </div>
 
-          {/* Second Column */}
-          <div className="w-full md:w-2/3 space-y-6">
-            {/* Staff (editable) card */}
-            <AktivitasUserListEditableCard aktivitasId={+aktivitasId} />
+        {/* Second Column */}
+        <div className="w-full lg:w-3/5 xl:w-4/5 space-y-6">
+          {/* Staff (editable) card */}
+          <AktivitasUserListEditableCard aktivitasId={+aktivitasId} />
 
-            {/* Aktivitas info card */}
-            <AktivitasTableInfoCard aktivitasId={+aktivitasId} />
-          </div>
+          {/* Aktivitas info card */}
+          <AktivitasTableInfoCard aktivitasId={+aktivitasId} />
         </div>
       </div>
 

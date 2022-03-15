@@ -6,8 +6,8 @@ import { useQuery } from "react-query";
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
-  AttendanceService,
-  AttendanceServiceQueryKeys,
+  AttendanceFormAktivitasService,
+  AttendanceFormAktivitasServiceQueryKeys,
   Detail,
 } from "apis/attendance";
 
@@ -26,8 +26,8 @@ export const AktivitasTableInfoCard: FC<IAktivitasTableInfoCard> = ({
 }) => {
   const axiosClient = useAxiosClient();
   const { data, isLoading } = useQuery(
-    [AttendanceServiceQueryKeys.FIND_ONE, aktivitasId],
-    () => AttendanceService.findOne(axiosClient, aktivitasId),
+    [AttendanceFormAktivitasServiceQueryKeys.FIND_ONE, aktivitasId],
+    () => AttendanceFormAktivitasService.findOne(axiosClient, aktivitasId),
     {
       select: (response) => {
         return response.data.data.details.map((datum) => ({
@@ -74,7 +74,7 @@ export const AktivitasTableInfoCard: FC<IAktivitasTableInfoCard> = ({
   };
 
   return (
-    <div className="w-full bg-white p-6 rounded-md shadow-md flex flex-wrap md:flex-nowrap md:space-x-10 space-y-6 md:space-y-0">
+    <div className="mig-platform w-full flex flex-wrap md:flex-nowrap md:space-x-10 space-y-6 md:space-y-0">
       {/* Table */}
       <div className="w-full md:w-1/3">
         <Table<AktivitasDetailType>

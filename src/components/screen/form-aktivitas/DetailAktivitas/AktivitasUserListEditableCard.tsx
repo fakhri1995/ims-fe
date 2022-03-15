@@ -6,15 +6,15 @@ import {
   UserAddOutlined,
   UserDeleteOutlined,
 } from "@ant-design/icons";
-import { Button, Empty, Form, Input, Modal, Pagination, Spin } from "antd";
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { Button, Empty, Form, Input, Modal, Spin } from "antd";
+import React, { FC, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
-  AttendanceService,
-  AttendanceServiceQueryKeys,
+  AttendanceFormAktivitasService,
+  AttendanceFormAktivitasServiceQueryKeys,
   User,
   useAddFormAktivitasStaff,
   useDeleteFormAktivitasStaff,
@@ -48,8 +48,8 @@ export const AktivitasUserListEditableCard: FC<
     data: currentFormAktivitasUsers,
     isLoading: currentFormAktivitasUsersLoading,
   } = useQuery(
-    [AttendanceServiceQueryKeys.FIND_ONE, aktivitasId],
-    () => AttendanceService.findOne(axiosClient, aktivitasId),
+    [AttendanceFormAktivitasServiceQueryKeys.FIND_ONE, aktivitasId],
+    () => AttendanceFormAktivitasService.findOne(axiosClient, aktivitasId),
     {
       select: (response) => response.data.data.users as StaffModelType[],
     }
@@ -202,7 +202,7 @@ export const AktivitasUserListEditableCard: FC<
   }, [searchValue, currentFormAktivitasUsers]);
 
   return (
-    <div className="w-full bg-white p-6 rounded-md shadow-md overflow-x-auto">
+    <div className="mig-platform w-full overflow-x-auto">
       {/* Header */}
       <CardHeader
         cardPhase={cardPhase}

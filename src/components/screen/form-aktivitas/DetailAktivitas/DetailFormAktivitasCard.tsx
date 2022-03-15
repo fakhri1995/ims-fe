@@ -10,7 +10,10 @@ import { useAxiosClient } from "hooks/use-axios-client";
 
 import { formatDateToLocale } from "lib/date-utils";
 
-import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
+import {
+  AttendanceFormAktivitasService,
+  AttendanceFormAktivitasServiceQueryKeys,
+} from "apis/attendance";
 
 export interface IDetailFormAktivitasCard {
   onUbahButtonClicked: () => void;
@@ -22,8 +25,8 @@ export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
   ({ onUbahButtonClicked, aktivitasId }) => {
     const axiosClient = useAxiosClient();
     const { data, isLoading } = useQuery(
-      [AttendanceServiceQueryKeys.FIND_ONE, aktivitasId],
-      () => AttendanceService.findOne(axiosClient, aktivitasId),
+      [AttendanceFormAktivitasServiceQueryKeys.FIND_ONE, aktivitasId],
+      () => AttendanceFormAktivitasService.findOne(axiosClient, aktivitasId),
       {
         select: (response) => {
           /** Reformart date value and replace profile_image with null if there is no image atm */
