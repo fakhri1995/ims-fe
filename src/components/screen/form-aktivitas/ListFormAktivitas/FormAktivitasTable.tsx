@@ -1,137 +1,167 @@
 import { Table } from "antd";
 import type { ColumnsType } from "antd/lib/table";
-import { format } from "date-fns";
-import idLocale from "date-fns/locale/id";
 import { useRouter } from "next/router";
-import { FC, useMemo } from "react";
+import { FC, memo, useMemo } from "react";
+import { useQuery } from "react-query";
 
+import { useAxiosClient } from "hooks/use-axios-client";
+
+import { formatDateToLocale } from "lib/date-utils";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
 
 import {
+  AttendanceFormAktivitasService,
+  AttendanceFormAktivitasServiceQueryKeys,
   GetAttendanceFormsDatum,
   IGetAttendanceFormsParams,
 } from "apis/attendance";
 
 export interface IFormAktivitasTable {
-  isLoading: boolean;
-
-  data?: GetAttendanceFormsDatum[];
-  tablePageSize: number;
-  tableTotalData: number;
-
-  currentPage?: number;
+  page: number;
+  rows: number;
+  sort_by: string;
+  sort_type: string;
+  keyword: string;
 
   onTriggerChangeCriteria: (
     newCriteria: Partial<IGetAttendanceFormsParams>
   ) => void;
 }
 
-export const FormAktivitasTable: FC<IFormAktivitasTable> = ({
-  isLoading,
-  data,
-  tablePageSize,
-  tableTotalData,
-  currentPage,
-  onTriggerChangeCriteria,
-}) => {
-  const router = useRouter();
+export const FormAktivitasTable: FC<IFormAktivitasTable> = memo(
+  ({
+    onTriggerChangeCriteria,
+    page = 1,
+    rows = 10,
+    sort_by = "",
+    sort_type = "",
+    keyword = "",
+  }) => {
+    const router = useRouter();
+    const axiosClient = useAxiosClient();
 
-  const onRowClicked = (record: GetAttendanceFormsDatum) => {
-    if (router.isReady) {
-      router.push(`/attendance/form-aktivitas/${record.id}`);
-    }
-  };
+    const tableQueryCriteria = useMemo(
+      () => ({
+        page,
+        rows,
+        sort_by,
+        sort_type,
+        keyword,
+      }),
+      [page, rows, sort_by, sort_type, keyword]
+    );
 
-  const mappedData = !data
-    ? []
-    : [...data].map((datum) => ({
-        ...datum,
-        key: datum.id,
-        updated_at: format(new Date(datum.updated_at), "dd MMM yyyy, hh:mm", {
-          locale: idLocale,
-        }),
-      }));
-
-  const tableColumns = useMemo<ColumnsType<GetAttendanceFormsDatum>>(() => {
-    return [
+    const { data, isLoading } = useQuery(
+      [AttendanceFormAktivitasServiceQueryKeys.FIND, tableQueryCriteria],
+      () =>
+        AttendanceFormAktivitasService.find(axiosClient, tableQueryCriteria),
       {
-        key: "id",
-        title: "No.",
-        dataIndex: "id",
-        render: (_, __, index) => `${++index}.`,
-        // render: (_, __, index) => `${(((currentPage || 1) - 1) * 10 + index) + 1}.`,
-        width: 64,
-      },
-      {
-        title: "Form Aktivitas",
-        dataIndex: "name",
-        sorter: true,
-      },
-      {
-        title: "Tanggal Diubah",
-        dataIndex: "updated_at",
-        sorter: true,
-      },
-      {
-        title: "Jumlah Staff",
-        dataIndex: "users_count",
-        sorter: true,
-        width: 192,
-      },
-      {
-        key: "id",
-        title: "Deskripsi",
-        dataIndex: "description",
-        ellipsis: { showTitle: true },
-      },
-    ];
-  }, []);
+        select: (response) => {
+          const mappedData = response.data.data.data.map((datum) => {
+            return {
+              ...datum,
+              key: datum.id,
+              updated_at: formatDateToLocale(
+                new Date(datum.updated_at),
+                "dd MMM yyyy, hh:mm"
+              ),
+            } as GetAttendanceFormsDatum;
+          });
 
-  const tablePaginationConf = useMemo(() => {
-    return getAntdTablePaginationConfig({
-      pageSize: tablePageSize,
-      total: tableTotalData,
-      current: currentPage || 1,
-    });
-  }, [tablePageSize, tableTotalData, currentPage]);
+          response.data.data.data = mappedData;
 
-  return (
-    <Table<GetAttendanceFormsDatum>
-      loading={isLoading}
-      columns={tableColumns}
-      dataSource={mappedData}
-      scroll={{ x: 640 }}
-      className="tableTypeTask"
-      onChange={(pagination, _, sorter) => {
-        let criteria: IGetAttendanceFormsParams = {
-          page: pagination.current,
-          rows: pagination.pageSize,
-        };
+          return response;
+        },
+      }
+    );
 
-        if ("field" in sorter) {
-          criteria.sort_by =
-            sorter.order === undefined
-              ? ""
-              : sorter.field === "users_count"
-              ? "count"
-              : sorter.field?.toString();
-          criteria.sort_type =
-            sorter.order === undefined
-              ? ""
-              : sorter.order === "ascend"
-              ? "asc"
-              : "desc";
-        }
+    const onRowClicked = (record: GetAttendanceFormsDatum) => {
+      if (router.isReady) {
+        router.push(`/attendance/form-aktivitas/${record.id}`);
+      }
+    };
 
-        onTriggerChangeCriteria(criteria);
-      }}
-      pagination={tablePaginationConf}
-      onRow={(datum) => {
-        return {
-          onClick: () => onRowClicked(datum),
-          className: "hover:cursor-pointer",
-        };
-      }}
-    />
-  );
-};
+    const tableColumns = useMemo<ColumnsType<GetAttendanceFormsDatum>>(() => {
+      return [
+        {
+          key: "id",
+          title: "No.",
+          dataIndex: "id",
+          render: (_, __, index) => `${data?.data.data.from + index}.`,
+          width: 64,
+        },
+        {
+          title: "Form Aktivitas",
+          dataIndex: "name",
+          sorter: true,
+        },
+        {
+          title: "Tanggal Diubah",
+          dataIndex: "updated_at",
+          sorter: true,
+        },
+        {
+          title: "Jumlah Staff",
+          dataIndex: "users_count",
+          sorter: true,
+          width: 192,
+        },
+        {
+          key: "id",
+          title: "Deskripsi",
+          dataIndex: "description",
+          ellipsis: { showTitle: true },
+        },
+      ];
+    }, [data]);
+
+    const tablePaginationConf = useMemo(() => {
+      return getAntdTablePaginationConfig({
+        pageSize: rows,
+        total: data?.data.data.total || 0,
+        current: page || 1,
+      });
+    }, [rows, data, page]);
+
+    return (
+      <Table<GetAttendanceFormsDatum>
+        loading={isLoading}
+        columns={tableColumns}
+        dataSource={data?.data.data.data || []}
+        scroll={{ x: 640 }}
+        className="tableTypeTask"
+        onChange={(pagination, _, sorter) => {
+          let criteria: IGetAttendanceFormsParams = {
+            page: pagination.current,
+            rows: pagination.pageSize,
+          };
+
+          if ("field" in sorter) {
+            criteria.sort_by =
+              sorter.order === undefined
+                ? ""
+                : sorter.field === "users_count"
+                ? "count"
+                : sorter.field?.toString();
+            criteria.sort_type =
+              sorter.order === undefined
+                ? ""
+                : sorter.order === "ascend"
+                ? "asc"
+                : "desc";
+          }
+
+          onTriggerChangeCriteria(criteria);
+        }}
+        pagination={tablePaginationConf}
+        onRow={(datum) => {
+          return {
+            onClick: () => onRowClicked(datum),
+            className: "hover:cursor-pointer",
+          };
+        }}
+      />
+    );
+  }
+);
+FormAktivitasTable.displayName = "FormAktivitasTable";

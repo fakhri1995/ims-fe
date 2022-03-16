@@ -7,7 +7,6 @@ import {
 } from "next-query-params";
 import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
-import { useQuery } from "react-query";
 
 import styles from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
@@ -19,16 +18,10 @@ import {
   TotalFormAktivitasCard,
 } from "components/screen/form-aktivitas";
 
-import { useAxiosClient } from "hooks/use-axios-client";
-
 import { parseToken } from "lib/auth";
 import { getAxiosClient } from "lib/axios-client";
 
-import {
-  AttendanceFormAktivitasService,
-  AttendanceFormAktivitasServiceQueryKeys,
-  IGetAttendanceFormsParams,
-} from "apis/attendance";
+import { IGetAttendanceFormsParams } from "apis/attendance";
 import { AuthService } from "apis/auth";
 
 import { ProtectedPageProps } from "types/common";
@@ -48,22 +41,17 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
     keyword: withDefault(StringParam, ""),
   });
 
-  const onTriggerChangeCriteria = (
-    newCriteria: Partial<IGetAttendanceFormsParams>
-  ) => {
-    setCriteria({
-      page: newCriteria.page,
-      rows: newCriteria.rows,
-      sort_by: newCriteria.sort_by,
-      sort_type: newCriteria.sort_type,
-      keyword: newCriteria.keyword,
-    });
-  };
-
-  const axiosClient = useAxiosClient();
-  const { data, isLoading } = useQuery(
-    [AttendanceFormAktivitasServiceQueryKeys.FIND, criteria],
-    () => AttendanceFormAktivitasService.find(axiosClient, criteria)
+  const onTriggerChangeCriteria = useCallback(
+    (newCriteria: Partial<IGetAttendanceFormsParams>) => {
+      setCriteria({
+        page: newCriteria.page,
+        rows: newCriteria.rows,
+        sort_by: newCriteria.sort_by,
+        sort_type: newCriteria.sort_type,
+        keyword: newCriteria.keyword,
+      });
+    },
+    []
   );
 
   const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
@@ -110,11 +98,11 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
           {/* Table */}
           <div className="my-6">
             <FormAktivitasTable
-              data={data?.data.data.data}
-              tablePageSize={criteria.rows}
-              currentPage={criteria.page}
-              tableTotalData={data?.data.data.total}
-              isLoading={isLoading}
+              page={criteria.page}
+              rows={criteria.rows}
+              sort_by={criteria.sort_by}
+              sort_type={criteria.sort_type}
+              keyword={criteria.keyword}
               onTriggerChangeCriteria={onTriggerChangeCriteria}
             />
           </div>
