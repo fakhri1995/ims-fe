@@ -36,6 +36,7 @@ export const AttendanceStaffKehadiranSection: FC<
   const axiosClient = useAxiosClient();
 
   const [isExportDrawerShown, setIsExportDrawerShown] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const {
     data: kehadiranData,
@@ -58,83 +59,85 @@ export const AttendanceStaffKehadiranSection: FC<
     }
   );
 
-  const tableColumns = useMemo<ColumnsType<IModifiedDataKehadiran>>(
-    () => {
-      return [
-        {
-          key: "id",
-          title: "No.",
-          render: (_, datum, index) => {
-            const spanClassName = datum.is_late ? "text-state1" : "";
+  const tableColumns = useMemo<ColumnsType<IModifiedDataKehadiran>>(() => {
+    return [
+      {
+        key: "id",
+        title: "No.",
+        render: (_, datum, index) => {
+          const spanClassName = datum.is_late ? "text-state1" : "";
 
-            return <span className={spanClassName}>{++index}.</span>;
-          },
-          width: 64,
+          return (
+            <span className={spanClassName}>
+              {(currentPage - 1) * 10 + index + 1}.
+            </span>
+          );
         },
-        {
-          title: "Waktu Check In",
-          dataIndex: "check_in",
-          render: (_, datum) => {
-            const spanClassName = datum.is_late ? "text-state1" : "";
-            const formattedDate = formatDateToLocale(
-              datum.check_in,
-              "dd MMM yyyy, HH:mm:ss",
-              "-"
-            );
+        width: 64,
+      },
+      {
+        title: "Waktu Check In",
+        dataIndex: "check_in",
+        render: (_, datum) => {
+          const spanClassName = datum.is_late ? "text-state1" : "";
+          const formattedDate = formatDateToLocale(
+            datum.check_in,
+            "dd MMM yyyy, HH:mm:ss",
+            "-"
+          );
 
-            return <span className={spanClassName}>{formattedDate}</span>;
-          },
-          sorter: (a, b) => {
-            const lhsDate = new Date(a.check_in);
-            const rhsDate = new Date(b.check_in);
+          return <span className={spanClassName}>{formattedDate}</span>;
+        },
+        sorter: (a, b) => {
+          const lhsDate = new Date(a.check_in);
+          const rhsDate = new Date(b.check_in);
 
-            return isBefore(rhsDate, lhsDate) ? -1 : 1;
-          },
+          return isBefore(rhsDate, lhsDate) ? -1 : 1;
         },
-        {
-          title: "Waktu Check Out",
-          dataIndex: "check_out",
-          render: (_, datum) => {
-            const spanClassName = datum.is_late ? "text-state1" : "";
-            const formattedDate = formatDateToLocale(
-              datum.check_out,
-              "dd MMM yyyy, HH:mm:ss",
-              "-"
-            );
+      },
+      {
+        title: "Waktu Check Out",
+        dataIndex: "check_out",
+        render: (_, datum) => {
+          const spanClassName = datum.is_late ? "text-state1" : "";
+          const formattedDate = formatDateToLocale(
+            datum.check_out,
+            "dd MMM yyyy, HH:mm:ss",
+            "-"
+          );
 
-            return <span className={spanClassName}>{formattedDate}</span>;
-          },
-          sorter: (a, b) => {
-            const lhsDate = new Date(a.check_out);
-            const rhsDate = new Date(b.check_out);
+          return <span className={spanClassName}>{formattedDate}</span>;
+        },
+        sorter: (a, b) => {
+          const lhsDate = new Date(a.check_out);
+          const rhsDate = new Date(b.check_out);
 
-            return isBefore(rhsDate, lhsDate) ? -1 : 1;
-          },
+          return isBefore(rhsDate, lhsDate) ? -1 : 1;
         },
-        {
-          title: "Kerja",
-          dataIndex: "is_wfo",
-          sorter: (a, b) => (b.is_wfo < a.is_wfo ? -1 : 1),
-        },
-        {
-          key: "id",
-          title: "Lokasi Check In",
-          dataIndex: "geo_loc_check_in",
-        },
-        {
-          key: "id",
-          title: "Lokasi Check Out",
-          dataIndex: "geo_loc_check_out",
-        },
-      ];
-    },
-    [
-      /** TODO */
-    ]
-  );
+      },
+      {
+        title: "Kerja",
+        dataIndex: "is_wfo",
+        sorter: (a, b) => (b.is_wfo < a.is_wfo ? -1 : 1),
+      },
+      {
+        key: "id",
+        title: "Lokasi Check In",
+        dataIndex: "geo_loc_check_in",
+      },
+      {
+        key: "id",
+        title: "Lokasi Check Out",
+        dataIndex: "geo_loc_check_out",
+      },
+    ];
+  }, [currentPage]);
 
   const tablePaginationConf = useMemo(
-    () => getAntdTablePaginationConfig(),
+    () =>
+      getAntdTablePaginationConfig({
+        onChange: (pageNumber) => setCurrentPage(pageNumber),
+      }),
     [
       /**TODO */
     ]

@@ -33,6 +33,8 @@ export const AttendanceStaffAktivitasSection: FC<
   const { dataSource, dynamicNameFieldPairs, isDataSourceLoading } =
     useGetUserAttendanceActivities(tabActiveKey === "1" ? "today" : "past");
 
+  const [currentPage, setCurrentPage] = useState(1);
+
   const [activityDrawerState, dispatch] = useReducer(
     _aktivitasDrawerToggleReducer,
     { visible: false }
@@ -43,7 +45,7 @@ export const AttendanceStaffAktivitasSection: FC<
       {
         key: "id",
         title: "No.",
-        render: (_, __, index) => `${++index}.`,
+        render: (_, __, index) => `${(currentPage - 1) * 10 + index + 1}.`,
         width: 64,
       },
       {
@@ -79,7 +81,10 @@ export const AttendanceStaffAktivitasSection: FC<
   }, [tabActiveKey, dynamicNameFieldPairs]);
 
   const tablePaginationConf = useMemo(
-    () => getAntdTablePaginationConfig(),
+    () =>
+      getAntdTablePaginationConfig({
+        onChange: (pageNumber) => setCurrentPage(pageNumber),
+      }),
     [
       /**TODO */
     ]
