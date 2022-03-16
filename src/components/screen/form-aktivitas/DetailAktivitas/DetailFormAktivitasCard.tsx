@@ -1,9 +1,10 @@
 import { EditOutlined } from "@ant-design/icons";
-import { Button, Skeleton } from "antd";
+import { Skeleton } from "antd";
 import { FC, memo, useMemo } from "react";
 import React from "react";
 import { useQuery } from "react-query";
 
+import ButtonSys from "components/button";
 import { DetailCard, IDetailCard } from "components/cards/DetailCard";
 
 import { useAxiosClient } from "hooks/use-axios-client";
@@ -77,15 +78,13 @@ export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
       detailCardContent.content.push({
         label: "Nama Pembuat",
         content: (
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3 text-gray-500">
             <div className="w-8 h-8 rounded-full bg-mono80">
-              {data.creator.profile_image && (
-                <img
-                  className="w-full h-full bg-cover"
-                  src={data.creator.profile_image}
-                  alt="Avatar"
-                />
-              )}
+              <img
+                className="w-full h-full bg-cover"
+                src={data.creator.profile_image || "/image/staffTask.png"}
+                alt="Avatar"
+              />
             </div>
 
             <span>{data.creator.name}</span>
@@ -107,15 +106,14 @@ export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
         {/* Button Edit */}
         <div className="self-center">
           {!isLoading && (
-            <Button
-              type="ghost"
-              className="mig-button mig-button--outlined-primary"
+            <ButtonSys
+              type="default"
               disabled={isLoading}
               onClick={onUbahButtonClicked}
             >
               <EditOutlined className="mr-2" />
               Ubah Form
-            </Button>
+            </ButtonSys>
           )}
         </div>
       </div>

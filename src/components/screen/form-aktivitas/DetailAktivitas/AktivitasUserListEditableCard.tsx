@@ -503,13 +503,15 @@ const StaffListItem: FC<IStaffListItem> = ({
       {/* Avatar */}
       <div className="relative">
         <div className="w-12 h-12 rounded-full bg-mono80 overflow-hidden">
-          {profileImageUrl !== "-" && (
-            <img
-              className="w-full h-full bg-cover"
-              alt={`${name}'s Avatar`}
-              src={profileImageUrl}
-            />
-          )}
+          <img
+            className="w-full h-full bg-cover"
+            alt={`${name}'s Avatar`}
+            src={
+              profileImageUrl === "-" || profileImageUrl === ""
+                ? "/image/staffTask.png"
+                : profileImageUrl
+            }
+          />
         </div>
         {isSelected && (
           <button className="bg-state1/40 rounded-full flex items-center p-1 absolute -top-1 -right-2">

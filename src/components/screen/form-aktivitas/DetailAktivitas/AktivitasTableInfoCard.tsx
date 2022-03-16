@@ -1,6 +1,6 @@
 import { Table } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
 import { useAxiosClient } from "hooks/use-axios-client";
@@ -73,6 +73,24 @@ export const AktivitasTableInfoCard: FC<IAktivitasTableInfoCard> = ({
     setAktivitasDescription(record.description);
   };
 
+  const tableColumns = useMemo<ColumnsType<AktivitasDetailType>>(
+    () => [
+      {
+        key: "id",
+        title: "Aktivitas",
+        dataIndex: "name",
+        sorter: (a, b) => +(a.name > b.name) || -(a.name < b.name),
+        showSorterTooltip: false,
+        render: (value, record) => {
+          const selectedClassname = record.selected ? "text-primary100" : "";
+
+          return <span className={selectedClassname}>{value}</span>;
+        },
+      },
+    ],
+    []
+  );
+
   return (
     <div className="mig-platform w-full flex flex-wrap md:flex-nowrap md:space-x-10 space-y-6 md:space-y-0">
       {/* Table */}
@@ -81,7 +99,7 @@ export const AktivitasTableInfoCard: FC<IAktivitasTableInfoCard> = ({
           loading={isLoading}
           columns={tableColumns}
           dataSource={dataSource}
-          scroll={{ y: 480 }}
+          className="tableTypeTask"
           pagination={{
             pageSize: 100,
             position: [
@@ -108,18 +126,3 @@ export const AktivitasTableInfoCard: FC<IAktivitasTableInfoCard> = ({
 };
 
 type AktivitasDetailType = Detail & { selected: boolean };
-
-const tableColumns: ColumnsType<AktivitasDetailType> = [
-  {
-    key: "id",
-    title: "Aktivitas",
-    dataIndex: "name",
-    sorter: (a, b) => +(a.name > b.name) || -(a.name < b.name),
-    showSorterTooltip: false,
-    render: (value, record) => {
-      const selectedClassname = record.selected ? "text-primary100" : "";
-
-      return <span className={selectedClassname}>{value}</span>;
-    },
-  },
-];
