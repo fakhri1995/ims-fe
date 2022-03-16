@@ -164,26 +164,11 @@ export const AttendanceStaffAktivitasDrawer: FC<
       return;
     }
 
-    if (visible && !userAttendanceForm) {
-      Modal.error({
-        centered: true,
-        title: "Terjadi kesalahan!",
-        content:
-          "Anda belum memiliki form aktivitas. Mohon hubungi Admin untuk segera menambahkan Anda ke dalam form aktivitas.",
-        okText: "Kembali",
-        onOk: () => onClose(),
-        onCancel: () => onClose(),
-        closable: true,
-      });
-
-      return;
-    }
-
     /** Always clean up the form fields on close */
     if (!visible) {
       form.resetFields();
     }
-  }, [visible, attendeeStatus, userAttendanceForm]);
+  }, [visible, attendeeStatus]);
 
   useEffect(() => {
     if (action !== "update" || !todayActivities) {
