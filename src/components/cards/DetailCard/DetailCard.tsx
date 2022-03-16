@@ -104,10 +104,10 @@ const CardContent: FC<CardContentType> = memo(
     }
 
     const mLabelClassName = clsx(
-      "mig-caption mig-caption--medium text-gray-400 block",
+      "mig-caption text-gray-400 block mb-2",
       labelClassName
     );
-    const mContentClassName = clsx("text-gray-600 block", contentClassName);
+    const mContentClassName = clsx("text-gray-500 block", contentClassName);
 
     /** True => ReactNode, False => string */
     const isContentReactNode = React.isValidElement(content);
