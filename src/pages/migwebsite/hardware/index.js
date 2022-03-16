@@ -501,7 +501,7 @@ function Hardware({}) {
                 <button
                   type={"submit"}
                   className={
-                    "text-black text-base border border-black px-4 py-1 focus:outline-none gilroy-medium hover:text-white hover:bg-black"
+                    "text-black text-base border border-black px-4 py-1 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
                   }
                 >
                   Submit

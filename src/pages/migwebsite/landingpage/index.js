@@ -33,17 +33,26 @@ function LandingPage({}) {
   const sliderSettings = {
     infinite: true,
     speed: 500,
-    slidesToShow: 2,
+    slidesToShow: 3,
     slidesToScroll: 1,
     centerMode: true,
     arrows: false,
-    dots: false,
+    dots: true,
     swipeToSlide: true,
+    centerMode: false,
     responsive: [
       {
         breakpoint: 768,
         settings: {
           slidesToShow: 1,
+          centerMode: false,
+          dots: true,
+        },
+      },
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
           centerMode: false,
           dots: true,
         },
@@ -347,7 +356,7 @@ function LandingPage({}) {
           <Linkk href="/hardware">
             <button
               className={
-                "text-lg text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 focus:outline-none gilroy-medium hover:text-white hover:bg-black"
+                "text-lg text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
               }
             >
               Get yours
@@ -376,7 +385,7 @@ function LandingPage({}) {
           <Linkk href="/software">
             <button
               className={
-                "text-lg text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 focus:outline-none gilroy-medium hover:text-white hover:bg-black"
+                "text-lg text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
               }
             >
               Build now
@@ -405,7 +414,7 @@ function LandingPage({}) {
           <Linkk href="/people">
             <button
               className={
-                "text-lg text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 focus:outline-none gilroy-medium hover:text-white hover:bg-black"
+                "text-lg text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
               }
             >
               Set up your team
@@ -500,7 +509,7 @@ function LandingPage({}) {
               <Linkk href="/hardware">
                 <button
                   className={
-                    "flex text-xl text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black"
+                    "flex text-xl text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
                   }
                 >
                   <p className={"pl-4 pr-8"}>Get&nbsp;yours</p>
@@ -549,7 +558,7 @@ function LandingPage({}) {
               <Linkk href="/software">
                 <button
                   className={
-                    "flex text-xl text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black"
+                    "flex text-xl text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
                   }
                 >
                   <p className={"pl-4 pr-8"}>Build now</p>
@@ -586,7 +595,7 @@ function LandingPage({}) {
               <Linkk href="/talents">
                 <button
                   className={
-                    "flex text-xl text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black"
+                    "flex text-xl text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
                   }
                 >
                   <p className={"pl-4 pr-8"}>Set up your team</p>
@@ -877,13 +886,13 @@ function LandingPage({}) {
         </p>
         <br></br>
         <div
-          className={"pb-8 center md:content-around text-xl h-max"}
-          style={{ maxWidth: 1000 }}
+          className={"pb-8 center md:content-around text-xl"}
+          // style={{ maxWidth: 1000 }}
         >
           <Slider {...sliderSettings}>
             <div>
               <Card>
-                <div className="h-auto md:h-36">
+                <div className="h-auto">
                   <Row
                     className="hidden md:flex pb-4"
                     style={{ alignItems: "center" }}
@@ -923,7 +932,7 @@ function LandingPage({}) {
             </div>
             <div>
               <Card>
-                <div className="h-auto md:h-36">
+                <div className="h-auto">
                   <Row
                     className="hidden md:flex pb-4"
                     style={{ alignItems: "center" }}
@@ -965,7 +974,7 @@ function LandingPage({}) {
             </div>
             <div>
               <Card>
-                <div className="h-auto md:h-36">
+                <div className="h-auto">
                   <Row
                     className="hidden md:flex pb-4"
                     style={{ alignItems: "center" }}
@@ -1004,7 +1013,7 @@ function LandingPage({}) {
             </div>
             <div>
               <Card>
-                <div className="h-auto md:h-36">
+                <div className="h-auto">
                   <Row
                     className="hidden md:flex pb-4"
                     style={{ alignItems: "center" }}
@@ -1043,7 +1052,7 @@ function LandingPage({}) {
             </div>
             <div>
               <Card>
-                <div className="h-auto md:h-36 pb-4">
+                <div className="h-auto">
                   <Row
                     className="hidden md:flex pb-4"
                     style={{ alignItems: "center" }}
@@ -1094,7 +1103,7 @@ function LandingPage({}) {
           <Linkk href="/contactus">
             <button
               className={
-                "text-xl text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black"
+                "text-xl text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
               }
             >
               <p className={"px-8 gilroy-bold"}>Contact Us</p>

@@ -30,7 +30,7 @@ const Head = (props) => (
 
     {/* <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'></link> */}
     <link
-      href="http://fonts.cdnfonts.com/css/gilroy-bold"
+      href="https://fonts.cdnfonts.com/css/gilroy-bold"
       rel="stylesheet"
     ></link>
   </NextHead>

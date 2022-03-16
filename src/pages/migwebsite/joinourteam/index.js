@@ -3,12 +3,25 @@ import { Collapse } from "antd";
 import Head from "next/head";
 import React from "react";
 import { Link as Linkk } from "react-scroll";
+import Slider from "react-slick";
 
 import Layout from "../../../components/migwebsite/layout.js";
+import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
 
-function JoinOurTeam({ dataCareers }) {
+function JoinOurTeam({ dataCareers, empData }) {
   const careers = dataCareers.data ?? [];
   const { Panel } = Collapse;
+  const sliderSettings2 = {
+    adaptiveHeight: true,
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    swipeToSlide: true,
+    arrows: false,
+  };
   return (
     <Layout>
       <Head>
@@ -40,8 +53,7 @@ function JoinOurTeam({ dataCareers }) {
                 of highly motivated, positive and hardworking individuals.
               </p>
               <div className={"text-center md:text-left"}>
-                <p className={"text-xl gilroy-regular"}>See open position!</p>
-                <div className={"md:center w-20 m-auto md:mx-0"}>
+                <div className={"md:center w-max m-auto md:mx-0"}>
                   <Linkk
                     className={"flex-col md:center"}
                     activeClass="active"
@@ -50,11 +62,16 @@ function JoinOurTeam({ dataCareers }) {
                     offset={-150}
                     duration={500}
                   >
-                    <img
-                      className={"mt-5 animate-bounce"}
-                      src="/image/landingpage/arrow-down.png"
-                      style={{ width: 60 }}
-                    />
+                    <p className={"text-xl gilroy-regular"}>
+                      See open position!
+                    </p>
+                    <div className="grid justify-items-center">
+                      <img
+                        className={"mt-5 animate-bounce"}
+                        src="/image/landingpage/arrow-down.png"
+                        style={{ width: 60 }}
+                      />
+                    </div>
                   </Linkk>
                 </div>
               </div>
@@ -87,11 +104,29 @@ function JoinOurTeam({ dataCareers }) {
             >
               <button
                 className={
-                  "gilroy-regular text-xl text-black cursor-pointer flex-col focus:outline-none jot-underlined"
+                  "gilroy-regular text-xl text-black cursor-pointer flex-col focus:outline-none jot-underlined bg-transparent"
                 }
                 style={{}}
               >
                 Our Values
+              </button>
+            </Linkk>
+            <Linkk
+              activeClass="active"
+              to="section8careers"
+              spy={true}
+              smooth={true}
+              offset={-120}
+              className={"mr-12"}
+              duration={500}
+            >
+              <button
+                className={
+                  "gilroy-regular text-xl text-black cursor-pointer flex-col focus:outline-none jot-underlined bg-transparent"
+                }
+                style={{}}
+              >
+                Employee Stories
               </button>
             </Linkk>
             <Linkk
@@ -105,7 +140,7 @@ function JoinOurTeam({ dataCareers }) {
             >
               <button
                 className={
-                  "gilroy-regular text-xl text-black cursor-pointer flex-col focus:outline-none jot-underlined"
+                  "gilroy-regular text-xl text-black cursor-pointer flex-col focus:outline-none jot-underlined bg-transparent"
                 }
                 style={{}}
               >
@@ -123,7 +158,7 @@ function JoinOurTeam({ dataCareers }) {
             >
               <button
                 className={
-                  "gilroy-regular text-xl text-black cursor-pointer flex-col focus:outline-none jot-underlined"
+                  "gilroy-regular text-xl text-black cursor-pointer flex-col focus:outline-none jot-underlined bg-transparent"
                 }
                 style={{}}
               >
@@ -194,6 +229,44 @@ function JoinOurTeam({ dataCareers }) {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section
+        className={
+          "section8careers py-10 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 h-auto"
+        }
+      >
+        <div className={"justify-center"}>
+          <p className={"text-center gilroy-bold text-3xl md:text-4xl pb-8"}>
+            Employee Stories
+          </p>
+        </div>
+        <div className="bg-green-600 h-auto">
+          <Slider {...sliderSettings2}>
+            {empData.map((data, idx) => {
+              return (
+                <div key={idx}>
+                  <div
+                    className={"h-auto py-8 lg:py-14 grid justify-items-center"}
+                  >
+                    <p
+                      className={
+                        "w-3/4 lg:w-2/3 xl:w-1/2 mb-10 text-white text-center text-ld md:text-xl gilroy-bold"
+                      }
+                    >
+                      {data.story}
+                    </p>
+                    <div
+                      className={"h-14 w-14 mb-2 bg-gray-500 rounded-full"}
+                    ></div>
+                    <p className={"text-white font-bold"}>{data.name}</p>
+                    <p className={"text-white font-bold"}>{data.role}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </Slider>
         </div>
       </section>
 
@@ -376,9 +449,30 @@ export async function getStaticProps() {
   );
   const resjson = await resources.json();
   const dataCareers = resjson;
+  const empData = [
+    {
+      story:
+        "I gained the professional skills of project management, problem solving, flexibility, time management, mediation, and stakeholder management",
+      name: "Bintang Agung",
+      role: "Associate Product Manager",
+    },
+    {
+      story:
+        "The internship at MIG gave me experience of management and communication with developers. I learned a lot about product management and my mentor trusted me enough to fully develop my soft skills and hard skills.",
+      name: "Hanifah Rahmajati",
+      role: "Product Mangement Intern",
+    },
+    {
+      story:
+        "I work by challenging incidental operations so that each time they occur, new incidental problems enable me to learn new things about them. I am working to help engineers across Indonesia increase my strong analytical and communication skills.",
+      name: "Aninditya Satriawan",
+      role: "Operation Specialist",
+    },
+  ];
   return {
     props: {
       dataCareers,
+      empData,
     },
     revalidate: 60,
   };
