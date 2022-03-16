@@ -39,6 +39,7 @@ export interface GetFilterUsersDatum {
 
 export interface AttendanceForm {
   id: number;
+  name: string;
 }
 
 export interface Company {

@@ -7,7 +7,7 @@ import {
   UserDeleteOutlined,
 } from "@ant-design/icons";
 import { Button, Empty, Form, Input, Modal, Spin } from "antd";
-import React, { FC, useMemo, useState } from "react";
+import React, { FC, useCallback, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
 import { useAxiosClient } from "hooks/use-axios-client";
@@ -21,6 +21,7 @@ import {
 } from "apis/attendance";
 import {
   FilterUsersTypeParamEnum,
+  GetFilterUsersDatum,
   GetFilterUsersParamsType,
   UserService,
   UserServiceQueryKeys,
@@ -61,13 +62,14 @@ export const AktivitasUserListEditableCard: FC<
 
   const [cardPhase, setCardPhase] = useState<CardPhaseType>("default");
   const [searchValue, setSearchValue] = useState("");
+
   const [selectedStaffBuffer, setSelectedStaffBuffer] = useState<
-    Pick<StaffModelType, "id" | "name">[]
+    UpdateSelectedStaffPayloadType[]
   >([]);
 
   const updateSelectedStaffBuffer = (
     actionType: "insert" | "delete",
-    payload: Pick<StaffModelType, "id" | "name">
+    payload: UpdateSelectedStaffPayloadType
   ) => {
     switch (actionType) {
       case "insert":
@@ -142,20 +144,51 @@ export const AktivitasUserListEditableCard: FC<
     });
   };
 
-  const onAddStaffButtonClicked = () => {
+  const onAddStaffButtonClicked = useCallback(() => {
+    const mSelectedStaffNames = [];
+    const mSelectedStaffIds = [];
+    const mSelectedStaffNameAndFormActivities = {};
+    let someStaffHaveFormAttendance = false;
+
+    selectedStaffBuffer.forEach((buffer) => {
+      mSelectedStaffNames.push(buffer.name);
+      mSelectedStaffIds.push(buffer.id);
+
+      if (buffer.attendance_form) {
+        mSelectedStaffNameAndFormActivities[buffer.name] =
+          buffer.attendance_form.name;
+
+        if (!someStaffHaveFormAttendance) {
+          someStaffHaveFormAttendance = true;
+        }
+      }
+    });
+
     confirm({
-      title: "Tambah Staff",
+      title: "Menambahkan Staff",
       icon: <ExclamationCircleOutlined style={{ color: "rgb(191 74 64)" }} />,
       content: (
         <>
+          {someStaffHaveFormAttendance && (
+            <div className="flex flex-col space-y-6 mb-6">
+              <p>Beberapa staff sebelumnya memiliki aktivitas.</p>
+              <ul>
+                {Object.entries(mSelectedStaffNameAndFormActivities).map(
+                  ([staffName, staffFormAktivitas], idx) => (
+                    <li key={idx}>
+                      <strong>
+                        {++idx}. {staffName} ({staffFormAktivitas})
+                      </strong>
+                    </li>
+                  )
+                )}
+              </ul>
+            </div>
+          )}
           <p>
-            Apakah Anda yakin ingin menambah staff{" "}
-            <strong>{selectedStaffNames.join(", ")}</strong>?
-          </p>
-          <br />
-          <p>
-            Menambahkan staff akan mengeluarkannya dari aktivitas mereka saat
-            ini.
+            Apakah Anda yakin ingin menambahkan staff{" "}
+            <strong>{mSelectedStaffNames.join(", ")}</strong>? Staff yang
+            memiliki aktivitas akan terhapus dari aktivitas sebelumnya.
           </p>
         </>
       ),
@@ -166,7 +199,7 @@ export const AktivitasUserListEditableCard: FC<
       cancelText: "Kembali",
       onOk: () => {
         return addFormAktivitasStaff(
-          { id: aktivitasId, user_ids: selectedStaffIds },
+          { id: aktivitasId, user_ids: mSelectedStaffIds },
           {
             onSuccess: () => {
               setCardPhase("default");
@@ -174,8 +207,8 @@ export const AktivitasUserListEditableCard: FC<
                 title: "Staff Berhasil Ditambahkan",
                 content: (
                   <p>
-                    Staff <strong>{selectedStaffNames.join(", ")}</strong> telah
-                    ditambahkan
+                    Staff <strong>{mSelectedStaffNames.join(", ")}</strong>{" "}
+                    telah ditambahkan
                   </p>
                 ),
                 width: 640,
@@ -189,7 +222,7 @@ export const AktivitasUserListEditableCard: FC<
         <div className="custom-modal-confirm-default">{node}</div>
       ),
     });
-  };
+  }, [aktivitasId, selectedStaffBuffer]);
 
   const filteredCurrentFormAktivitasUsers = useMemo(() => {
     if (!currentFormAktivitasUsers) {
@@ -379,7 +412,10 @@ const CardHeader: FC<ICardHeader> = ({
 /**
  * @private
  */
-type StaffModelType = Pick<User, "id" | "name" | "profile_image" | "position">;
+type StaffModelType = Pick<
+  GetFilterUsersDatum,
+  "id" | "name" | "profile_image" | "position" | "attendance_forms"
+>;
 
 /**
  * @private
@@ -584,9 +620,12 @@ const StaffSectionContainer: FC<IStaffSectionContainer> = ({
   );
 };
 
+type UpdateSelectedStaffPayloadType = Pick<StaffModelType, "id" | "name"> & {
+  attendance_form?: { id: number; name: string };
+};
 type UpdateSelectedStaffBufferType = (
   actionType: "insert" | "delete",
-  payload: Pick<StaffModelType, "id" | "name">
+  payload: UpdateSelectedStaffPayloadType
 ) => void;
 
 interface IStaffSectionOnRemoveContainer {
@@ -696,16 +735,13 @@ const StaffSectionOnAddContainer: FC<IStaffSectionOnAddContainer> = ({
   }, [currentSelectedStaff, currentStaff]);
 
   const { data: agentList, isLoading: loadingAgentList } = useQuery(
-    [
-      UserServiceQueryKeys.FILTER_USERS,
-      { name: searchValue, type: FilterUsersTypeParamEnum.AGENT },
-    ],
+    [UserServiceQueryKeys.FILTER_USERS, { name: searchValue }],
     (queries) => {
       const params = queries.queryKey[1] as GetFilterUsersParamsType;
 
       return UserService.filterUsers(axiosClient, {
         name: params.name === "" ? undefined : params.name,
-        type: params.type,
+        type: FilterUsersTypeParamEnum.AGENT,
       });
     },
     {
@@ -717,6 +753,7 @@ const StaffSectionOnAddContainer: FC<IStaffSectionOnAddContainer> = ({
             name: agent.name,
             position: agent.position,
             profile_image: agent.profile_image,
+            attendance_forms: agent.attendance_forms,
           })) as StaffModelType[],
     }
   );
@@ -728,11 +765,20 @@ const StaffSectionOnAddContainer: FC<IStaffSectionOnAddContainer> = ({
 
   const handleItemClickedFromBottom = (agentId: number) => {
     const selectedAgent = agentList.find((agent) => agent.id === agentId);
+    const selectedAgentCurrentAttendanceForm =
+      selectedAgent.attendance_forms[0];
 
     setTopItems((prev) => [...prev, selectedAgent]);
     updateSelectedStaffBuffer("insert", {
       id: agentId,
       name: selectedAgent.name,
+      attendance_form:
+        selectedAgentCurrentAttendanceForm === undefined
+          ? undefined
+          : {
+              id: selectedAgentCurrentAttendanceForm.id,
+              name: selectedAgentCurrentAttendanceForm.name,
+            },
     });
   };
 
