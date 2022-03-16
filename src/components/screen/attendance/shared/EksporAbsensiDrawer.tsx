@@ -311,13 +311,16 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                             <div className="flex items-center space-x-4">
                               {/* Profile Picture */}
                               <div className="w-8 h-8 bg-mono80 rounded-full overflow-hidden">
-                                {user.profile_image !== "-" && (
-                                  <img
-                                    src={user.profile_image}
-                                    alt={`${user.name}'s Avatar`}
-                                    className="w-full h-full bg-cover"
-                                  />
-                                )}
+                                <img
+                                  src={
+                                    user.profile_image === "-" ||
+                                    user.profile_image === ""
+                                      ? "/image/staffTask.png"
+                                      : user.profile_image
+                                  }
+                                  alt={`${user.name}'s Avatar`}
+                                  className="w-full h-full bg-cover"
+                                />
                               </div>
 
                               {/* Staff name */}
