@@ -1,17 +1,21 @@
 import { AppstoreAddOutlined } from "@ant-design/icons";
-import { ConfigProvider, Tabs } from "antd";
+import { ConfigProvider, Modal, Tabs } from "antd";
 import { Table } from "antd";
 import type { ColumnsType } from "antd/lib/table";
 import { isBefore } from "date-fns";
 import { FC, useCallback, useMemo, useReducer, useState } from "react";
+import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
 import { DataEmptyState } from "components/states/DataEmptyState";
+
+import { useAxiosClient } from "hooks/use-axios-client";
 
 import { formatDateToLocale } from "lib/date-utils";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
 
 import { useGetUserAttendanceActivities } from "apis/attendance";
+import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 
 import { AttendanceStaffAktivitasDrawer } from "./AttendanceStaffAktivitasDrawer";
 
@@ -28,6 +32,8 @@ export interface IAttendanceStaffAktivitasSection {}
 export const AttendanceStaffAktivitasSection: FC<
   IAttendanceStaffAktivitasSection
 > = () => {
+  const axiosClient = useAxiosClient();
+
   /** 1 => Hari Ini, 2 => Riwayat */
   const [tabActiveKey, setTabActiveKey] = useState<"1" | "2" | string>("1");
   const { dataSource, dynamicNameFieldPairs, isDataSourceLoading } =
@@ -38,6 +44,14 @@ export const AttendanceStaffAktivitasSection: FC<
   const [activityDrawerState, dispatch] = useReducer(
     _aktivitasDrawerToggleReducer,
     { visible: false }
+  );
+
+  const { data: userAttendanceForm } = useQuery(
+    AuthServiceQueryKeys.DETAIL_PROFILE,
+    () => AuthService.whoAmI(axiosClient),
+    {
+      select: (response) => response.data.data.attendance_forms[0],
+    }
   );
 
   const tableColums = useMemo<ColumnsType>(() => {
@@ -98,7 +112,6 @@ export const AttendanceStaffAktivitasSection: FC<
       }
 
       /** datum.key adalah unique ID dari aktivitas tersebut. Hanya di map menjadi "key" */
-      // onRowItemClicked(datum.key);
       dispatch({
         type: "update",
         visible: true,
@@ -109,8 +122,21 @@ export const AttendanceStaffAktivitasSection: FC<
   );
 
   const mOnAddActivityButtonClicked = useCallback(() => {
+    if (!userAttendanceForm) {
+      Modal.error({
+        centered: true,
+        title: "Terjadi kesalahan!",
+        content:
+          "Anda belum memiliki form aktivitas. Mohon hubungi Admin untuk segera menambahkan Anda ke dalam form aktivitas.",
+        okText: "Kembali",
+        closable: true,
+      });
+
+      return;
+    }
+
     dispatch({ type: "create", visible: true });
-  }, []);
+  }, [userAttendanceForm]);
 
   return (
     <>
