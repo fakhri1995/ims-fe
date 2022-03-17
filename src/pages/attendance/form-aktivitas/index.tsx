@@ -18,11 +18,9 @@ import {
   TotalFormAktivitasCard,
 } from "components/screen/form-aktivitas";
 
-import { parseToken } from "lib/auth";
-import { getAxiosClient } from "lib/axios-client";
-
 import { IGetAttendanceFormsParams } from "apis/attendance";
-import { AuthService } from "apis/auth";
+
+import httpcookie from "cookie";
 
 import { ProtectedPageProps } from "types/common";
 
@@ -122,38 +120,42 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
 export const getServerSideProps: GetServerSideProps<
   ProtectedPageProps
 > = async (ctx) => {
-  let defaultProps: ProtectedPageProps = {} as ProtectedPageProps;
-
-  const { token, hasNoToken } = parseToken(ctx);
-  if (hasNoToken) {
+  var initProps = "";
+  if (!ctx.req.headers.cookie) {
     return {
       redirect: {
-        destination: "/login",
         permanent: false,
+        destination: "/login",
       },
-      props: defaultProps,
     };
   }
-
-  defaultProps.token = token;
-
-  const axiosClient = getAxiosClient(token);
-  try {
-    const { data } = await AuthService.whoAmI(axiosClient);
-
-    defaultProps.dataProfile = data;
-  } catch {
+  const cookiesJSON1 = httpcookie.parse(ctx.req.headers.cookie);
+  if (!cookiesJSON1.token) {
     return {
       redirect: {
-        destination: "/login",
         permanent: false,
+        destination: "/login",
       },
-      props: defaultProps,
     };
   }
+  initProps = cookiesJSON1.token;
+  const resourcesGP = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
+    {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    }
+  );
+  const resjsonGP = await resourcesGP.json();
+  const dataProfile = resjsonGP;
 
   return {
-    props: defaultProps,
+    props: {
+      dataProfile,
+      token: initProps,
+    },
   };
 };
 
