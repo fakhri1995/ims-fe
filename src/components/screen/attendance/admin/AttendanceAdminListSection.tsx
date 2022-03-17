@@ -13,31 +13,36 @@ import { EksporAbsensiDrawer } from "../shared/EksporAbsensiDrawer";
 const { TabPane } = Tabs;
 
 /**
- * Component AttendanceAdminTable's props.
+ * Component AttendanceAdminListSection's props.
  */
-export interface IAttendanceAdminTable {}
+export interface IAttendanceAdminListSection {}
 
 /**
- * Component AttendanceAdminTable
+ * Component AttendanceAdminListSection
  */
-export const AttendanceAdminTable: FC<IAttendanceAdminTable> = () => {
+export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = (
+  props
+) => {
+  /** 1 -> Hadir, 2 -> Absen */
+  const [activeTab, setActiveTab] = useState<"1" | "2">("1");
   const [isExportDrawerShown, setIsExportDrawerShown] = useState(false);
   const [searchValue, setSearchValue] = useState("");
 
   return (
     <>
-      <div className="mig-platform">
+      <div className="mig-platform space-y-6">
         {/* Header: tabs, buttons, and search box */}
         <div className="flex items-center justify-between">
           <Tabs
             defaultActiveKey="1"
             className="w-1/3"
-            // onChange={setTabActiveKey}
+            onChange={(value) => setActiveTab(value as "1" | "2")}
           >
             <TabPane tab="Hadir" key="1" />
             <TabPane tab="Absen" key="2" />
           </Tabs>
 
+          {/* Table's header */}
           <div className="flex space-x-4 w-2/3 justify-end items-center">
             <ButtonSys
               type="default"
@@ -82,7 +87,14 @@ export const AttendanceAdminTable: FC<IAttendanceAdminTable> = () => {
         </div>
 
         {/* Actual table */}
-        <HadirTable />
+        <ConfigProvider
+          renderEmpty={() => (
+            <DataEmptyState caption="Data kehadiran kosong." />
+          )}
+        >
+          {activeTab === "1" && <HadirTable />}
+          {activeTab === "2" && <AbsenTable />}
+        </ConfigProvider>
       </div>
 
       <EksporAbsensiDrawer
@@ -98,11 +110,12 @@ export const AttendanceAdminTable: FC<IAttendanceAdminTable> = () => {
  * @private
  */
 const HadirTable: FC = () => {
-  const tableHadirColumns = useMemo<ColumnsType<{}>>(() => {
+  const tableHadirColumns = useMemo<ColumnsType<any>>(() => {
     return [
       {
         key: "id",
         title: "No.",
+        // (currentPage - 1) * 10 + index + 1
         render: (_, __, index) => <>{++index}.</>,
       },
       {
@@ -133,24 +146,69 @@ const HadirTable: FC = () => {
   );
 
   return (
-    <ConfigProvider
-      renderEmpty={() => <DataEmptyState caption="Data kehadiran kosong." />}
-    >
-      <Table
-        columns={tableHadirColumns}
-        dataSource={[]}
-        pagination={tablePaginationConf}
-        // scroll={{ x: 240 }}
-        className="tableTypeTask"
-        onRow={() => {
-          /**
-           * TODO: redirect to detail page
-           */
-          return {
-            className: "hover:cursor-pointer",
-          };
-        }}
-      />
-    </ConfigProvider>
+    <Table
+      columns={tableHadirColumns}
+      dataSource={[]}
+      pagination={tablePaginationConf}
+      // scroll={{ x: 640 }}
+      className="tableTypeTask"
+      onRow={() => {
+        /**
+         * TODO: redirect to detail page
+         */
+        return {
+          className: "hover:cursor-pointer",
+        };
+      }}
+    />
+  );
+};
+
+/**
+ * @private
+ */
+const AbsenTable: FC = () => {
+  const tableAbsenColumns = useMemo<ColumnsType<any>>(() => {
+    return [
+      {
+        title: "No.",
+        // (currentPage - 1) * 10 + index + 1
+        render: (_, __, index) => <>{++index}.</>,
+      },
+      {
+        title: "Nama",
+        sorter: true,
+      },
+      {
+        title: "Jabatan",
+        sorter: true,
+      },
+      {
+        title: "Form Aktivitas",
+        sorter: true,
+      },
+    ];
+  }, []);
+
+  const tablePaginationConf = useMemo(
+    () => getAntdTablePaginationConfig(),
+    [
+      /**TODO */
+    ]
+  );
+
+  return (
+    <Table
+      columns={tableAbsenColumns}
+      dataSource={[]}
+      pagination={tablePaginationConf}
+      // scroll={{ x: 640 }}
+      className="tableTypeTask"
+      onRow={() => {
+        return {
+          className: "hover:cursor-pointer",
+        };
+      }}
+    />
   );
 };

@@ -1,18 +1,15 @@
-import { TeamOutlined } from "@ant-design/icons";
 import { GetServerSideProps, NextPage } from "next";
 
 import styles from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
 import {
-  AttendanceAdminTable,
+  AttendanceAdminListSection,
   AttendanceAdminTodayStatCard,
   CheckInOutCard,
 } from "components/screen/attendance";
+import { AttendanceAdminLeafletMapNoSSR } from "components/screen/attendance";
 
-import { parseToken } from "lib/auth";
-import { getAxiosClient } from "lib/axios-client";
-
-import { AuthService } from "apis/auth";
+import httpcookie from "cookie";
 
 import { PageBreadcrumbValue, ProtectedPageProps } from "types/common";
 
@@ -47,14 +44,13 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
           {/* Second column: maps */}
           <div className="flex w-full lg:w-3/5 xl:w-4/5">
             <div className="mig-platform w-full">
-              {/* TODO: Leaflet's map */}
-              <div className="w-full h-full bg-slate-50 rounded-xl border border-mono80"></div>
+              <AttendanceAdminLeafletMapNoSSR />
             </div>
           </div>
         </div>
 
         {/* Second row: Table all attendance */}
-        <AttendanceAdminTable />
+        <AttendanceAdminListSection />
       </div>
     </LayoutDashboard>
   );
@@ -63,38 +59,42 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
 export const getServerSideProps: GetServerSideProps<
   ProtectedPageProps
 > = async (ctx) => {
-  let defaultProps: ProtectedPageProps = {} as ProtectedPageProps;
-
-  const { token, hasNoToken } = parseToken(ctx);
-  if (hasNoToken) {
+  var initProps = "";
+  if (!ctx.req.headers.cookie) {
     return {
       redirect: {
-        destination: "/login",
         permanent: false,
+        destination: "/login",
       },
-      props: defaultProps,
     };
   }
-
-  defaultProps.token = token;
-
-  const axiosClient = getAxiosClient(token);
-  try {
-    const { data } = await AuthService.whoAmI(axiosClient);
-
-    defaultProps.dataProfile = data;
-  } catch {
+  const cookiesJSON1 = httpcookie.parse(ctx.req.headers.cookie);
+  if (!cookiesJSON1.token) {
     return {
       redirect: {
-        destination: "/login",
         permanent: false,
+        destination: "/login",
       },
-      props: defaultProps,
     };
   }
+  initProps = cookiesJSON1.token;
+  const resourcesGP = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
+    {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    }
+  );
+  const resjsonGP = await resourcesGP.json();
+  const dataProfile = resjsonGP;
 
   return {
-    props: defaultProps,
+    props: {
+      dataProfile,
+      token: initProps,
+    },
   };
 };
 

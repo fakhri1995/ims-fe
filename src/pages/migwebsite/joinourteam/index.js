@@ -468,6 +468,12 @@ export async function getStaticProps() {
       name: "Aninditya Satriawan",
       role: "Operation Specialist",
     },
+    {
+      story:
+        "Working here was an amazing opportunity to learn many soft skills apart from your specialties. The workmates are also kind and caring so that I never had any major struggles understanding how thing works in the company",
+      name: "Yusron Taufiq",
+      role: "UI UX Intern",
+    },
   ];
   return {
     props: {
