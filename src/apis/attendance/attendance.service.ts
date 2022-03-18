@@ -1,6 +1,7 @@
 import type { AxiosInstance } from "axios";
 
 import {
+  IGetAttendanceUsersSucceedResponse,
   IGetAttendancesUserSucceedResponse,
   ISetAttendanceTogglePayload,
 } from "./attendance.types";
@@ -17,6 +18,18 @@ export class AttendanceService {
   static async find(axiosClient: AxiosInstance) {
     return await axiosClient.get<IGetAttendancesUserSucceedResponse>(
       "/getAttendancesUser"
+    );
+  }
+
+  /**
+   * Retrieve all attendances as an Admin.
+   *
+   * @see {AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET}
+   * @access GET /getAttendancesUsers
+   */
+  static async findAsAdmin(axiosClient: AxiosInstance) {
+    return await axiosClient.get<IGetAttendanceUsersSucceedResponse>(
+      "/getAttendancesUsers"
     );
   }
 

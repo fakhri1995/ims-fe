@@ -1,11 +1,19 @@
 import { icon } from "leaflet";
+import type { LeafletEventHandlerFnMap } from "leaflet";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import "leaflet/dist/leaflet.css";
-import { FC, useEffect, useMemo } from "react";
+import { FC, useMemo } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import MarkerClusterGroup from "react-leaflet-markercluster";
+import "react-leaflet-markercluster/dist/styles.min.css";
+import { useQuery } from "react-query";
 
-import { useGeolocationAPI } from "hooks/use-geolocation-api";
+import { useAxiosClient } from "hooks/use-axios-client";
+
+import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
+
+import styles from "./AttendanceAdminLeafletMap.module.scss";
 
 /**
  * Component AttendanceAdminLeafletMap's props.
@@ -16,17 +24,16 @@ export interface IAttendanceAdminLeafletMap {}
  * Component AttendanceAdminLeafletMap
  */
 export const AttendanceAdminLeafletMap: FC<IAttendanceAdminLeafletMap> = () => {
-  const dummyPositions = useMemo<[number, number][]>(
-    () => [
-      [-7.21, 109.65],
-      [-7.73, 111.69],
-    ],
-    []
-  );
-
   return (
     <div className="w-full h-full bg-slate-50 rounded-xl border border-mono80 overflow-hidden min-h-[24rem]">
-      <MapContainer center={[-1.62, 113.23]} zoom={5} className="w-full h-full">
+      <MapContainer
+        center={[-1.62, 113.23]}
+        zoom={5}
+        className={"markercluster-map w-full h-full".concat(
+          " ",
+          styles["custom-map-cluster"]
+        )}
+      >
         <TileLayer
           attribution={`Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>`}
           url="https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw"
@@ -35,48 +42,87 @@ export const AttendanceAdminLeafletMap: FC<IAttendanceAdminLeafletMap> = () => {
           zoomOffset={-1}
         />
 
-        <CurrentUserLocationMarker />
-
-        {dummyPositions.map((pos) => (
-          <Marker
-            position={pos}
-            icon={icon({
-              iconUrl: "/image/leaflet/location-pin.png",
-              iconSize: [28, 28],
-            })}
-          >
-            <Popup>Attendance pin.</Popup>
-          </Marker>
-        ))}
+        <AttendanceMarkers />
       </MapContainer>
     </div>
   );
 };
 
-const CurrentUserLocationMarker: FC<{ center?: boolean }> = ({
-  center = false,
-}) => {
-  const { position } = useGeolocationAPI();
+/**
+ * @private
+ */
+type AttendanceMarkerDataType = {
+  staffName: string;
+
+  checkInLocation: {
+    latlng: [number, number];
+    displayName?: string;
+  };
+};
+
+/**
+ * @private
+ */
+const AttendanceMarkers: FC = () => {
   const map = useMap();
 
-  /**
-   * Change map's camera view to current position.
-   */
-  useEffect(() => {
-    if (!position || !center) {
-      return;
+  const axiosClient = useAxiosClient();
+  const { data } = useQuery(
+    AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET,
+    () => AttendanceService.findAsAdmin(axiosClient),
+    {
+      select: (response) =>
+        response.data.data.users_attendances.map((attendance) => ({
+          staffName: attendance.user.name,
+          checkInLocation: {
+            latlng: [+attendance.lat_check_in, +attendance.long_check_in],
+            displayName: attendance.geo_loc_check_in,
+          },
+        })) as AttendanceMarkerDataType[],
     }
+  );
 
-    map.flyTo([position.coords.latitude, position.coords.longitude], 9);
-  }, [position, map, center]);
+  const attendanceMarkerIcon = useMemo(
+    () =>
+      icon({
+        iconUrl: "/image/leaflet/location-pin.png",
+        iconSize: [48, 48],
+      }),
+    []
+  );
 
-  if (!position) {
+  const markerHandlers = useMemo<LeafletEventHandlerFnMap>(
+    () => ({
+      click: (event) => {
+        map.flyTo(event.latlng, Math.max(13, map.getZoom()));
+      },
+    }),
+    []
+  );
+
+  if (!data) {
     return null;
   }
 
   return (
-    <Marker position={[position.coords.latitude, position.coords.longitude]}>
-      <Popup>Anda berada di sini!</Popup>
-    </Marker>
+    <MarkerClusterGroup>
+      {data.map((attendanceMarker) => (
+        <Marker
+          position={attendanceMarker.checkInLocation.latlng}
+          icon={attendanceMarkerIcon}
+          eventHandlers={markerHandlers}
+        >
+          <Popup>
+            <p className="text-mono30">
+              <strong>Nama:</strong> {attendanceMarker.staffName}
+            </p>
+            <p className="text-mono30">
+              <strong>Alamat: </strong>{" "}
+              {attendanceMarker.checkInLocation.displayName || "-"}
+            </p>
+          </Popup>
+        </Marker>
+      ))}
+    </MarkerClusterGroup>
   );
 };

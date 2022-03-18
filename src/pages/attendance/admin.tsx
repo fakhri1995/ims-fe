@@ -35,10 +35,14 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
         {/* First row: real time clock, today attendance stat, maps */}
         <div className="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-6">
           {/* First column: real time clock, today attendance stat */}
-          <div className="flex flex-col w-full lg:w-2/5 xl:w-1/5 space-y-6">
-            <CheckInOutCard onlyShowTime />
+          <div className="flex flex-col w-full lg:w-2/5 xl:w-1/5 space-y-6 justify-around">
+            <div className="min-h-[12rem] flex-grow">
+              <CheckInOutCard onlyShowTime />
+            </div>
 
-            <AttendanceAdminTodayStatCard />
+            <div className="min-h-[12rem] flex-grow h-full">
+              <AttendanceAdminTodayStatCard />
+            </div>
           </div>
 
           {/* Second column: maps */}
