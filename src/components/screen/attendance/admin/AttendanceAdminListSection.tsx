@@ -1,12 +1,24 @@
 import { DownloadOutlined, SearchOutlined } from "@ant-design/icons";
 import { Button, ConfigProvider, Form, Input, Table, Tabs } from "antd";
 import type { ColumnsType } from "antd/lib/table";
+import { isBefore } from "date-fns";
 import { FC, useMemo, useState } from "react";
+import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
 import { DataEmptyState } from "components/states/DataEmptyState";
 
+import { useAxiosClient } from "hooks/use-axios-client";
+
+import { formatDateToLocale } from "lib/date-utils";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
+
+import {
+  AbsentUser,
+  AttendanceService,
+  AttendanceServiceQueryKeys,
+  UsersAttendance,
+} from "apis/attendance";
 
 import { EksporAbsensiDrawer } from "../shared/EksporAbsensiDrawer";
 
@@ -36,7 +48,10 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = (
           <Tabs
             defaultActiveKey="1"
             className="w-1/3"
-            onChange={(value) => setActiveTab(value as "1" | "2")}
+            onChange={(value) => {
+              setActiveTab(value as "1" | "2");
+              setSearchValue("");
+            }}
           >
             <TabPane tab="Hadir" key="1" />
             <TabPane tab="Absen" key="2" />
@@ -58,7 +73,7 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = (
                 setSearchValue(values.search);
               }}
             >
-              <Form.Item name="search">
+              <Form.Item>
                 <Input
                   placeholder="Cari..."
                   allowClear
@@ -92,8 +107,8 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = (
             <DataEmptyState caption="Data kehadiran kosong." />
           )}
         >
-          {activeTab === "1" && <HadirTable />}
-          {activeTab === "2" && <AbsenTable />}
+          {activeTab === "1" && <HadirTable searchValue={searchValue} />}
+          {activeTab === "2" && <AbsenTable searchValue={searchValue} />}
         </ConfigProvider>
       </div>
 
@@ -109,48 +124,123 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = (
 /**
  * @private
  */
-const HadirTable: FC = () => {
+interface ITable {
+  searchValue?: string;
+}
+
+/**
+ * @private
+ */
+const HadirTable: FC<ITable> = ({ searchValue }) => {
+  const axiosClient = useAxiosClient();
+  const { data, isLoading } = useQuery(
+    AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET,
+    () => AttendanceService.findAsAdmin(axiosClient),
+    {
+      refetchOnMount: false,
+      select: (response) => response.data.data.users_attendances,
+    }
+  );
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const filteredData = useMemo(() => {
+    if (!data) {
+      return [];
+    }
+
+    if (!searchValue || searchValue === "") {
+      return data;
+    }
+
+    return data.filter((attendance) =>
+      attendance.user.name.toLocaleLowerCase().includes(searchValue)
+    );
+  }, [searchValue, data]);
+
   const tableHadirColumns = useMemo<ColumnsType<any>>(() => {
     return [
       {
         key: "id",
         title: "No.",
-        // (currentPage - 1) * 10 + index + 1
-        render: (_, __, index) => <>{++index}.</>,
+        width: 64,
+        render: (_, __, index) => `${(currentPage - 1) * 10 + index + 1}.`,
       },
       {
         title: "Nama",
-        sorter: true,
+        ellipsis: true,
+        dataIndex: ["user", "name"],
+        sorter: (a: UsersAttendance, b: UsersAttendance) =>
+          a.user.name < b.user.name ? -1 : 1,
+        render: (value, record: UsersAttendance) => {
+          const profilePictureSrc =
+            record.user.profile_image === "-" ||
+            record.user.profile_image === ""
+              ? "/image/staffTask.png"
+              : record.user.profile_image;
+
+          return (
+            <div className="flex items-center space-x-3">
+              {/* Image */}
+              <div className="w-8 h-8 bg-mono80 rounded-full overflow-hidden">
+                <img
+                  src={profilePictureSrc}
+                  alt={`${record.user.name}'s Avatar`}
+                  className="w-full h-full bg-cover"
+                />
+              </div>
+
+              <span>{value}</span>
+            </div>
+          );
+        },
       },
       {
         title: "Kerja",
+        dataIndex: "is_wfo",
+        width: 96,
+        render: (is_wfo) => (is_wfo === 0 ? "WFO" : "WFH"),
       },
       {
         title: "Waktu Check In",
-        sorter: true,
+        dataIndex: "check_in",
+        width: 196,
+        render: (check_in) =>
+          formatDateToLocale(check_in, "dd MMM yyyy, HH:mm"),
+        sorter: (a: UsersAttendance, b: UsersAttendance) =>
+          isBefore(a.check_in, b.check_in) ? 1 : -1,
       },
       {
         title: "Lokasi Check In",
+        dataIndex: "geo_loc_check_in",
+        ellipsis: true,
       },
       {
         title: "Waktu Check Out",
+        dataIndex: "check_out",
+        width: 196,
+        render: (check_out) =>
+          !check_out
+            ? "-"
+            : formatDateToLocale(check_out, "dd MMM yyyy, HH:mm"),
       },
     ];
-  }, []);
+  }, [currentPage]);
 
   const tablePaginationConf = useMemo(
-    () => getAntdTablePaginationConfig(),
-    [
-      /**TODO */
-    ]
+    () =>
+      getAntdTablePaginationConfig({
+        onChange: (pageNumber) => setCurrentPage(pageNumber),
+      }),
+    []
   );
 
   return (
     <Table
       columns={tableHadirColumns}
-      dataSource={[]}
+      dataSource={filteredData}
       pagination={tablePaginationConf}
-      // scroll={{ x: 640 }}
+      loading={isLoading}
       className="tableTypeTask"
       onRow={() => {
         /**
@@ -167,42 +257,108 @@ const HadirTable: FC = () => {
 /**
  * @private
  */
-const AbsenTable: FC = () => {
+const AbsenTable: FC<ITable> = ({ searchValue }) => {
+  const axiosClient = useAxiosClient();
+  const { data, isLoading } = useQuery(
+    AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET,
+    () => AttendanceService.findAsAdmin(axiosClient),
+    {
+      refetchOnMount: false,
+      select: (response) => response.data.data.absent_users,
+    }
+  );
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const filteredData = useMemo(() => {
+    if (!data) {
+      return [];
+    }
+
+    if (!searchValue || searchValue === "") {
+      return data;
+    }
+
+    return data.filter((attendance) =>
+      attendance.name.toLowerCase().includes(searchValue.toLowerCase())
+    );
+  }, [searchValue, data]);
+
   const tableAbsenColumns = useMemo<ColumnsType<any>>(() => {
     return [
       {
         title: "No.",
-        // (currentPage - 1) * 10 + index + 1
-        render: (_, __, index) => <>{++index}.</>,
+        width: 64,
+        render: (_, __, index) => `${(currentPage - 1) * 10 + index + 1}.`,
       },
       {
         title: "Nama",
-        sorter: true,
+        dataIndex: "name",
+        ellipsis: true,
+        sorter: (a: AbsentUser, b: AbsentUser) => (a.name < b.name ? -1 : 1),
+        render: (value, record: AbsentUser) => {
+          const profilePictureSrc =
+            record.profile_image === "-" || record.profile_image === ""
+              ? "/image/staffTask.png"
+              : record.profile_image;
+
+          return (
+            <div className="flex items-center space-x-3">
+              {/* Image */}
+              <div className="w-8 h-8 bg-mono80 rounded-full overflow-hidden">
+                <img
+                  src={profilePictureSrc}
+                  alt={`${record.name}'s Avatar`}
+                  className="w-full h-full bg-cover"
+                />
+              </div>
+
+              <span>{value}</span>
+            </div>
+          );
+        },
       },
       {
         title: "Jabatan",
         sorter: true,
+        dataIndex: "position",
       },
       {
         title: "Form Aktivitas",
-        sorter: true,
+        dataIndex: ["attendance_forms", 0, "name"],
+        render: (value) => (!value ? "-" : value),
+        sorter: (a: AbsentUser, b: AbsentUser) => {
+          const aAttendanceForm = a.attendance_forms[0];
+          const bAttendanceForm = b.attendance_forms[0];
+
+          if (!aAttendanceForm) {
+            return 1;
+          }
+
+          if (!bAttendanceForm) {
+            return -1;
+          }
+
+          return aAttendanceForm.name < bAttendanceForm.name ? -1 : 1;
+        },
       },
     ];
-  }, []);
+  }, [currentPage]);
 
   const tablePaginationConf = useMemo(
-    () => getAntdTablePaginationConfig(),
-    [
-      /**TODO */
-    ]
+    () =>
+      getAntdTablePaginationConfig({
+        onChange: (pageNumber) => setCurrentPage(pageNumber),
+      }),
+    []
   );
 
   return (
     <Table
       columns={tableAbsenColumns}
-      dataSource={[]}
+      dataSource={filteredData}
       pagination={tablePaginationConf}
-      // scroll={{ x: 640 }}
+      loading={isLoading}
       className="tableTypeTask"
       onRow={() => {
         return {

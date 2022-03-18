@@ -90,7 +90,7 @@ export interface UsersAttendance {
   geo_loc_check_out: string | null;
   evidence: Evidence;
   is_wfo: number;
-  user: User;
+  user: UsersAttendanceUser;
 }
 
 export interface Evidence {
@@ -99,7 +99,7 @@ export interface Evidence {
   check_out_evidence: string;
 }
 
-export interface User {
+export interface UsersAttendanceUser {
   id: number;
   name: string;
   profile_image: string;
