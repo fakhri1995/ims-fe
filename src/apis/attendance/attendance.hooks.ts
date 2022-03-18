@@ -129,8 +129,11 @@ export const useAddFormAktivitasStaff = () => {
  *
  * Hook ini juga ditambah logic untuk memastikan bahwa user sudah login hari ini dan
  *  logic untuk memastikan status kehadiran user. Apakah saat ini user sedang checked in atau checked out.
+ *
+ * NOTE: pass false as its arg to disable all three queries inside. It's useful when the consumer does not consume the data.
+ *        for example when <CheckInOutCard> component rendered in Admin's attendance page.
  */
-export const useGetAttendeeInfo = () => {
+export const useGetAttendeeInfo = (isEnabled: boolean = true) => {
   const axiosClient = useAxiosClient();
 
   const [hasCheckedInToday, setHasCheckedInToday] = useState<
@@ -145,6 +148,7 @@ export const useGetAttendeeInfo = () => {
     AuthServiceQueryKeys.DETAIL_PROFILE,
     () => AuthService.whoAmI(axiosClient),
     {
+      enabled: isEnabled,
       select: (response) => response.data.data.attendance_forms,
     }
   );
@@ -173,6 +177,7 @@ export const useGetAttendeeInfo = () => {
     AttendanceServiceQueryKeys.ATTENDANCES_USER_GET,
     () => AttendanceService.find(axiosClient),
     {
+      enabled: isEnabled,
       select: (response) => response.data.data,
     }
   );

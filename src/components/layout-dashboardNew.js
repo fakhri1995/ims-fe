@@ -26,7 +26,6 @@ function LayoutDashboard({
   idpage,
 
   fixedBreadcrumbValues = [],
-  forceNewBreadcrumbStrategy = false,
 }) {
   const rt = useRouter();
   var rootBreadcrumb = "";
@@ -207,7 +206,7 @@ function LayoutDashboard({
                   }}
                   className={st.breadcrumbClients}
                 >
-                  {forceNewBreadcrumbStrategy &&
+                  {fixedBreadcrumbValues &&
                     fixedBreadcrumbValues.length > 0 &&
                     fixedBreadcrumbValues.map((breadcrumbItem) => {
                       return (
@@ -223,7 +222,7 @@ function LayoutDashboard({
                       );
                     })}
 
-                  {!forceNewBreadcrumbStrategy && (
+                  {!fixedBreadcrumbValues && (
                     <>
                       {childBreacrumbDD[0] === "Tickets" && (
                         <>

@@ -1,0 +1,370 @@
+import { DownloadOutlined, SearchOutlined } from "@ant-design/icons";
+import { Button, ConfigProvider, Form, Input, Table, Tabs } from "antd";
+import type { ColumnsType } from "antd/lib/table";
+import { isBefore } from "date-fns";
+import { FC, useMemo, useState } from "react";
+import { useQuery } from "react-query";
+
+import ButtonSys from "components/button";
+import { DataEmptyState } from "components/states/DataEmptyState";
+
+import { useAxiosClient } from "hooks/use-axios-client";
+
+import { formatDateToLocale } from "lib/date-utils";
+import { getAntdTablePaginationConfig } from "lib/standard-config";
+
+import {
+  AbsentUser,
+  AttendanceService,
+  AttendanceServiceQueryKeys,
+  UsersAttendance,
+} from "apis/attendance";
+
+import { EksporAbsensiDrawer } from "../shared/EksporAbsensiDrawer";
+
+const { TabPane } = Tabs;
+
+/**
+ * Component AttendanceAdminListSection's props.
+ */
+export interface IAttendanceAdminListSection {}
+
+/**
+ * Component AttendanceAdminListSection
+ */
+export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = (
+  props
+) => {
+  /** 1 -> Hadir, 2 -> Absen */
+  const [activeTab, setActiveTab] = useState<"1" | "2">("1");
+  const [isExportDrawerShown, setIsExportDrawerShown] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+
+  return (
+    <>
+      <div className="mig-platform space-y-6">
+        {/* Header: tabs, buttons, and search box */}
+        <div className="flex items-center justify-between">
+          <Tabs
+            defaultActiveKey="1"
+            className="w-1/3"
+            onChange={(value) => {
+              setActiveTab(value as "1" | "2");
+              setSearchValue("");
+            }}
+          >
+            <TabPane tab="Hadir" key="1" />
+            <TabPane tab="Absen" key="2" />
+          </Tabs>
+
+          {/* Table's header */}
+          <div className="flex space-x-4 w-2/3 justify-end items-center">
+            <ButtonSys
+              type="default"
+              onClick={() => setIsExportDrawerShown(true)}
+            >
+              <DownloadOutlined className="mr-2" />
+              Unduh Tabel
+            </ButtonSys>
+
+            <Form
+              layout="inline"
+              onFinish={(values) => {
+                setSearchValue(values.search);
+              }}
+            >
+              <Form.Item>
+                <Input
+                  placeholder="Cari..."
+                  allowClear
+                  onChange={(event) => {
+                    if (
+                      event.target.value.length === 0 ||
+                      event.target.value === ""
+                    ) {
+                      setSearchValue("");
+                    }
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item noStyle>
+                <Button
+                  htmlType="submit"
+                  className="mig-button mig-button--solid-primary"
+                  icon={<SearchOutlined />}
+                >
+                  Cari
+                </Button>
+              </Form.Item>
+            </Form>
+          </div>
+        </div>
+
+        {/* Actual table */}
+        <ConfigProvider
+          renderEmpty={() => (
+            <DataEmptyState caption="Data kehadiran kosong." />
+          )}
+        >
+          {activeTab === "1" && <HadirTable searchValue={searchValue} />}
+          {activeTab === "2" && <AbsenTable searchValue={searchValue} />}
+        </ConfigProvider>
+      </div>
+
+      <EksporAbsensiDrawer
+        exportAsAdmin
+        visible={isExportDrawerShown}
+        onClose={() => setIsExportDrawerShown(false)}
+      />
+    </>
+  );
+};
+
+/**
+ * @private
+ */
+interface ITable {
+  searchValue?: string;
+}
+
+/**
+ * @private
+ */
+const HadirTable: FC<ITable> = ({ searchValue }) => {
+  const axiosClient = useAxiosClient();
+  const { data, isLoading } = useQuery(
+    AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET,
+    () => AttendanceService.findAsAdmin(axiosClient),
+    {
+      refetchOnMount: false,
+      select: (response) => response.data.data.users_attendances,
+    }
+  );
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const filteredData = useMemo(() => {
+    if (!data) {
+      return [];
+    }
+
+    if (!searchValue || searchValue === "") {
+      return data;
+    }
+
+    return data.filter((attendance) =>
+      attendance.user.name.toLocaleLowerCase().includes(searchValue)
+    );
+  }, [searchValue, data]);
+
+  const tableHadirColumns = useMemo<ColumnsType<any>>(() => {
+    return [
+      {
+        key: "id",
+        title: "No.",
+        width: 64,
+        render: (_, __, index) => `${(currentPage - 1) * 10 + index + 1}.`,
+      },
+      {
+        title: "Nama",
+        ellipsis: true,
+        dataIndex: ["user", "name"],
+        sorter: (a: UsersAttendance, b: UsersAttendance) =>
+          a.user.name < b.user.name ? -1 : 1,
+        render: (value, record: UsersAttendance) => {
+          const profilePictureSrc =
+            record.user.profile_image === "-" ||
+            record.user.profile_image === ""
+              ? "/image/staffTask.png"
+              : record.user.profile_image;
+
+          return (
+            <div className="flex items-center space-x-3">
+              {/* Image */}
+              <div className="w-8 h-8 bg-mono80 rounded-full overflow-hidden">
+                <img
+                  src={profilePictureSrc}
+                  alt={`${record.user.name}'s Avatar`}
+                  className="w-full h-full bg-cover"
+                />
+              </div>
+
+              <span>{value}</span>
+            </div>
+          );
+        },
+      },
+      {
+        title: "Kerja",
+        dataIndex: "is_wfo",
+        width: 96,
+        render: (is_wfo) => (is_wfo === 0 ? "WFO" : "WFH"),
+      },
+      {
+        title: "Waktu Check In",
+        dataIndex: "check_in",
+        width: 196,
+        render: (check_in) =>
+          formatDateToLocale(check_in, "dd MMM yyyy, HH:mm"),
+        sorter: (a: UsersAttendance, b: UsersAttendance) =>
+          isBefore(a.check_in, b.check_in) ? 1 : -1,
+      },
+      {
+        title: "Lokasi Check In",
+        dataIndex: "geo_loc_check_in",
+        ellipsis: true,
+      },
+      {
+        title: "Waktu Check Out",
+        dataIndex: "check_out",
+        width: 196,
+        render: (check_out) =>
+          !check_out
+            ? "-"
+            : formatDateToLocale(check_out, "dd MMM yyyy, HH:mm"),
+      },
+    ];
+  }, [currentPage]);
+
+  const tablePaginationConf = useMemo(
+    () =>
+      getAntdTablePaginationConfig({
+        onChange: (pageNumber) => setCurrentPage(pageNumber),
+      }),
+    []
+  );
+
+  return (
+    <Table
+      columns={tableHadirColumns}
+      dataSource={filteredData}
+      pagination={tablePaginationConf}
+      loading={isLoading}
+      className="tableTypeTask"
+      onRow={() => {
+        /**
+         * TODO: redirect to detail page
+         */
+        return {
+          className: "hover:cursor-pointer",
+        };
+      }}
+    />
+  );
+};
+
+/**
+ * @private
+ */
+const AbsenTable: FC<ITable> = ({ searchValue }) => {
+  const axiosClient = useAxiosClient();
+  const { data, isLoading } = useQuery(
+    AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET,
+    () => AttendanceService.findAsAdmin(axiosClient),
+    {
+      refetchOnMount: false,
+      select: (response) => response.data.data.absent_users,
+    }
+  );
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const filteredData = useMemo(() => {
+    if (!data) {
+      return [];
+    }
+
+    if (!searchValue || searchValue === "") {
+      return data;
+    }
+
+    return data.filter((attendance) =>
+      attendance.name.toLowerCase().includes(searchValue.toLowerCase())
+    );
+  }, [searchValue, data]);
+
+  const tableAbsenColumns = useMemo<ColumnsType<any>>(() => {
+    return [
+      {
+        title: "No.",
+        width: 64,
+        render: (_, __, index) => `${(currentPage - 1) * 10 + index + 1}.`,
+      },
+      {
+        title: "Nama",
+        dataIndex: "name",
+        ellipsis: true,
+        sorter: (a: AbsentUser, b: AbsentUser) => (a.name < b.name ? -1 : 1),
+        render: (value, record: AbsentUser) => {
+          const profilePictureSrc =
+            record.profile_image === "-" || record.profile_image === ""
+              ? "/image/staffTask.png"
+              : record.profile_image;
+
+          return (
+            <div className="flex items-center space-x-3">
+              {/* Image */}
+              <div className="w-8 h-8 bg-mono80 rounded-full overflow-hidden">
+                <img
+                  src={profilePictureSrc}
+                  alt={`${record.name}'s Avatar`}
+                  className="w-full h-full bg-cover"
+                />
+              </div>
+
+              <span>{value}</span>
+            </div>
+          );
+        },
+      },
+      {
+        title: "Jabatan",
+        sorter: true,
+        dataIndex: "position",
+      },
+      {
+        title: "Form Aktivitas",
+        dataIndex: ["attendance_forms", 0, "name"],
+        render: (value) => (!value ? "-" : value),
+        sorter: (a: AbsentUser, b: AbsentUser) => {
+          const aAttendanceForm = a.attendance_forms[0];
+          const bAttendanceForm = b.attendance_forms[0];
+
+          if (!aAttendanceForm) {
+            return 1;
+          }
+
+          if (!bAttendanceForm) {
+            return -1;
+          }
+
+          return aAttendanceForm.name < bAttendanceForm.name ? -1 : 1;
+        },
+      },
+    ];
+  }, [currentPage]);
+
+  const tablePaginationConf = useMemo(
+    () =>
+      getAntdTablePaginationConfig({
+        onChange: (pageNumber) => setCurrentPage(pageNumber),
+      }),
+    []
+  );
+
+  return (
+    <Table
+      columns={tableAbsenColumns}
+      dataSource={filteredData}
+      pagination={tablePaginationConf}
+      loading={isLoading}
+      className="tableTypeTask"
+      onRow={() => {
+        return {
+          className: "hover:cursor-pointer",
+        };
+      }}
+    />
+  );
+};

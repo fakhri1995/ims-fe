@@ -1,0 +1,16 @@
+/**
+ * @link https://github.com/css-modules/css-modules/issues/264#issuecomment-1048012244
+ */
+.custom-map-cluster {
+  :global .marker-cluster.marker-cluster-small {
+    @apply bg-primary50;
+
+    div {
+      @apply bg-primary75;
+
+      span {
+        @apply text-white;
+      }
+    }
+  }
+}

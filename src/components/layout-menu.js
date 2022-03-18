@@ -199,6 +199,9 @@ const LayoutMenu = ({
                 <Menu.Item key="attendance/form-aktivitas">
                   <Link href="/attendance/form-aktivitas">Form Aktivitas</Link>
                 </Menu.Item>
+                <Menu.Item key="attendance/admin">
+                  <Link href="/attendance/admin">Admin Attendance</Link>
+                </Menu.Item>
                 <Menu.Item key="attendance/staff">
                   <Link href="/attendance/staff">My Attendance</Link>
                 </Menu.Item>

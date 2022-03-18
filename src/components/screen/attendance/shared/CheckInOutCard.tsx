@@ -1,6 +1,6 @@
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { Button, Spin, Tooltip } from "antd";
-import { FC, useEffect } from "react";
+import type { FC } from "react";
 
 import { useCheckInOutTimer } from "hooks/use-checkinout-timer";
 
@@ -35,7 +35,7 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
 }) => {
   const { currentTime, currentDate, isOverAttendTime } = useCheckInOutTimer();
   const { hasCheckedInToday, attendeeStatus, isItSafeToCheckOut } =
-    useGetAttendeeInfo();
+    useGetAttendeeInfo(!onlyShowTime);
 
   const buttonClassName = clsx(
     "mig-button relative z-10",
