@@ -1,8 +1,6 @@
-import { DownloadOutlined, SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
 import { FC, memo } from "react";
-
-import ButtonSys from "components/button";
 
 export interface IFormAktivitasTableHeader {
   onSearchTriggered: (searchValue: string) => void;
@@ -19,18 +17,6 @@ export const FormAktivitasTableHeader: FC<IFormAktivitasTableHeader> = memo(
 
         {/* Buttons and Input */}
         <div className="flex space-x-4">
-          <ButtonSys type="default">
-            <DownloadOutlined
-              className="mr-2"
-              onClick={
-                /** TODO */ () => {
-                  alert("Button Unduh Tabel clicked");
-                }
-              }
-            />
-            Unduh Tabel
-          </ButtonSys>
-
           <Form
             form={searchForm}
             layout="inline"
