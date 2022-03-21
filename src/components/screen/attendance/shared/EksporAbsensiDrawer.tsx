@@ -1,5 +1,6 @@
 import { Button, Checkbox, DatePicker, Form, Select } from "antd";
 import moment from "moment";
+import type { Moment } from "moment";
 import { FC, useCallback, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 
@@ -11,6 +12,7 @@ import { useDebounce } from "hooks/use-debounce-value";
 import {
   AttendanceFormAktivitasService,
   AttendanceFormAktivitasServiceQueryKeys,
+  AttendanceService,
 } from "apis/attendance";
 
 const { RangePicker } = DatePicker;
@@ -100,15 +102,45 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
    * Handler ketika form di submit
    */
   const handleOnFormSubmitted = useCallback(
-    (fieldValues: {
-      /** @type {[Moment, Moment]} */
-      rentang_waktu?: object[];
+    async (fieldValues: {
+      rentang_waktu?: [Moment, Moment];
       form_aktivitas?: number;
       selected_staff?: string[];
     }) => {
-      console.log(fieldValues);
+      const from = fieldValues.rentang_waktu[0].toDate();
+      const to = fieldValues.rentang_waktu[1].toDate();
+      let staffIds: number[] = undefined;
+
+      /**
+       * 1. Form Aktivitas is required
+       * 2. Transform array of selected staff (string) into their respective ID (number)
+       */
+      if (exportAsAdmin) {
+        fieldValues.selected_staff.map((staffName) => {
+          const staff = formAktivitasStaffList.find(
+            (staff) => staff.name === staffName
+          );
+
+          if (staff) {
+            staffIds.push(staff.id);
+          }
+        });
+      }
+
+      try {
+        const response = await AttendanceService.exportExcelData(axiosClient, {
+          from,
+          to,
+          attendance_form_id: fieldValues.form_aktivitas,
+          user_ids: staffIds,
+        });
+
+        console.log(response);
+      } catch (error) {
+        console.error(error);
+      }
     },
-    []
+    [exportAsAdmin, formAktivitasStaffList]
   );
 
   /**

@@ -1,6 +1,8 @@
 import type { AxiosInstance } from "axios";
 import QueryString from "qs";
 
+import { formatDateToLocale } from "lib/date-utils";
+
 import {
   IGetAttendanceUserSucceedResponse,
   IGetAttendanceUsersSucceedResponse,
@@ -65,4 +67,81 @@ export class AttendanceService {
       payload
     );
   }
+
+  /**
+   * Retrieve a binary large object file (Excel file, I assume) from the backend.
+   *
+   * @TODO I'm not sure with this code. Try with actual response later.
+   *
+   * @access GET /exportAttendanceActivityUsers
+   * @access GET /exportAttendanceActivityUser
+   */
+  static async exportExcelData(
+    axiosClient: AxiosInstance,
+    criteria: ExportExcelDataCriteria
+  ): Promise<ExportExcelDataResult | Error> {
+    const [formattedFrom, formattedTo] = [criteria.from, criteria.to].map(
+      (value) => formatDateToLocale(value, "YY-mm-dd")
+    );
+
+    const querySearch = QueryString.stringify(
+      {
+        ...criteria,
+        from: formattedFrom,
+        to: formattedTo,
+      },
+      {
+        addQueryPrefix: true,
+      }
+    );
+
+    const isExportMany =
+      criteria.attendance_form_id !== undefined &&
+      criteria.user_ids !== undefined;
+
+    const endpoint = isExportMany
+      ? "/exportAttendanceActivityUsers"
+      : "/exportAttendanceActivityUser";
+
+    const result: ExportExcelDataResult = {
+      file: null,
+      fileName: "",
+    };
+
+    try {
+      const response = await axiosClient.get(endpoint + querySearch, {
+        responseType: "blob",
+      });
+
+      const fileName = "attendance_data-".concat(
+        formatDateToLocale(new Date(), "YYYY-mmmm-dd.xlsx")
+      );
+
+      result.file = response.data;
+      result.fileName = fileName;
+    } catch (error) {
+      return error;
+    }
+
+    return result;
+  }
 }
+
+/**
+ * @private
+ */
+type ExportExcelDataCriteria = {
+  from: Date;
+  to: Date;
+
+  attendance_form_id?: number;
+  user_ids?: number[];
+};
+
+/**
+ * @private
+ */
+type ExportExcelDataResult = {
+  file: Blob | null;
+  fileName: string;
+};
