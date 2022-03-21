@@ -1,6 +1,8 @@
 import type { AxiosInstance } from "axios";
+import QueryString from "qs";
 
 import {
+  IGetAttendanceUserSucceedResponse,
   IGetAttendanceUsersSucceedResponse,
   IGetAttendancesUserSucceedResponse,
   ISetAttendanceTogglePayload,
@@ -30,6 +32,22 @@ export class AttendanceService {
   static async findAsAdmin(axiosClient: AxiosInstance) {
     return await axiosClient.get<IGetAttendanceUsersSucceedResponse>(
       "/getAttendancesUsers"
+    );
+  }
+
+  /**
+   * Retrieve an attendance detail by its ID.
+   *
+   * @access GET /getAttendanceUser
+   */
+  static async findOne(axiosClient: AxiosInstance, attendanceId: number) {
+    const querySearch = QueryString.stringify(
+      { id: attendanceId },
+      { addQueryPrefix: true }
+    );
+
+    return await axiosClient.get<IGetAttendanceUserSucceedResponse>(
+      "/getAttendanceUser" + querySearch
     );
   }
 

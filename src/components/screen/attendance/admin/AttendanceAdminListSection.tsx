@@ -2,7 +2,8 @@ import { DownloadOutlined, SearchOutlined } from "@ant-design/icons";
 import { Button, ConfigProvider, Form, Input, Table, Tabs } from "antd";
 import type { ColumnsType } from "antd/lib/table";
 import { isBefore } from "date-fns";
-import { FC, useMemo, useState } from "react";
+import { useRouter } from "next/router";
+import { FC, useCallback, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
@@ -132,6 +133,7 @@ interface ITable {
  * @private
  */
 const HadirTable: FC<ITable> = ({ searchValue }) => {
+  const router = useRouter();
   const axiosClient = useAxiosClient();
   const { data, isLoading } = useQuery(
     AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET,
@@ -235,6 +237,13 @@ const HadirTable: FC<ITable> = ({ searchValue }) => {
     []
   );
 
+  const handleOnRowClicked = useCallback(
+    (datum: UsersAttendance) => {
+      router?.push(`/attendance/detail/${datum.id}`);
+    },
+    [router]
+  );
+
   return (
     <Table
       columns={tableHadirColumns}
@@ -242,12 +251,10 @@ const HadirTable: FC<ITable> = ({ searchValue }) => {
       pagination={tablePaginationConf}
       loading={isLoading}
       className="tableTypeTask"
-      onRow={() => {
-        /**
-         * TODO: redirect to detail page
-         */
+      onRow={(datum: UsersAttendance) => {
         return {
           className: "hover:cursor-pointer",
+          onClick: () => handleOnRowClicked(datum),
         };
       }}
     />
