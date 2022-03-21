@@ -441,14 +441,18 @@ function JoinOurTeam({ dataCareers, empData }) {
 }
 
 export async function getStaticProps() {
-  const resources = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCareers`,
-    {
-      method: `GET`,
-    }
-  );
-  const resjson = await resources.json();
-  const dataCareers = resjson;
+  let dataCareers = null;
+
+  try {
+    const resources = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCareers`,
+      {
+        method: `GET`,
+      }
+    );
+    const resjson = await resources.json();
+    dataCareers = resjson;
+  } catch {}
   const empData = [
     {
       story:
@@ -477,7 +481,7 @@ export async function getStaticProps() {
   ];
   return {
     props: {
-      dataCareers,
+      dataCareers: dataCareers || [],
       empData,
     },
     revalidate: 60,
