@@ -434,6 +434,7 @@ export const useGetUserAttendanceActivities = (
     dynamicNameFieldPairs: dynamic,
   };
 };
+
 /**
  * Custom hook untuk mendapatkan list seluruh aktivitas hari ini per User.
  *
@@ -515,3 +516,123 @@ export const useMutateAttendanceActivity = () => {
 
   return { addMutation, updateMutation, deleteMutation };
 };
+
+/**
+ * Custom hook digunakan untuk dan hanya pada halaman detail attendance.
+ * Hook akan mempersiapkan data yang akan ditampilkan oleh UI component sehingga tidak ada lagi manipulasi pada consumer hook ini.
+ *
+ * Hook ini melakukan:
+ * 1. Handle ketika aktivitas diganti (aktivitas jam X diganti dengan aktivitas jam Y).
+ * 2. Merge data dari backend sehingga bisa ditampilkan pada UI.
+ *
+ * NOTE: arg `attendanceId` sangat mungkin memiliki nilai `undefined`. Oleh karena itu hanya jalankan query ketika `attendanceId !== undefined`.
+ */
+export const useAttendanceDetailSelector = (attendanceId: number) => {
+  const axiosClient = useAxiosClient();
+
+  const [selectedActivityTimestamp, setSelectedActivityTimestamp] = useState<
+    Date | string | undefined
+  >(undefined);
+
+  const { data } = useQuery(
+    [AttendanceServiceQueryKeys.ATTENDANCE_USER_GET, attendanceId],
+    () => AttendanceService.findOne(axiosClient, attendanceId),
+    {
+      enabled: !!attendanceId,
+      select: (response) => {
+        const attendanceForm = response.data.data.attendance_form;
+        const attendanceActivities = response.data.data.attendance_activities;
+
+        /** Record object (Map-like) untuk mempermudah manipulasi berikutnya */
+        const attendanceFormShape: AttendanceFormShapeType = {};
+        attendanceForm.details.forEach((detail) => {
+          attendanceFormShape[detail.key] = {
+            name: detail.name,
+            list: detail.list || undefined,
+          };
+        });
+
+        const data: Data = [];
+
+        attendanceActivities.forEach((activity) => {
+          const datum: Datum = {
+            timestamp: activity.updated_at,
+            activities: {},
+          };
+
+          activity.details.forEach((detail) => {
+            const activityName = attendanceFormShape[detail.key].name;
+
+            // normal activity
+            if (typeof detail.value === "string") {
+              datum.activities[activityName] = detail.value;
+            } else {
+              const checkboxActivityDetail: CheckboxActivityType = {};
+
+              attendanceFormShape[detail.key].list.forEach(
+                (checkboxValue, index) => {
+                  let isSelected = false;
+                  (detail.value as number[]).forEach((selectedIndex) => {
+                    if (isSelected) {
+                      return;
+                    }
+
+                    isSelected = selectedIndex === index;
+                  });
+
+                  checkboxActivityDetail[checkboxValue] = isSelected;
+                }
+              );
+
+              datum.activities[activityName] = checkboxActivityDetail;
+            }
+          });
+
+          data.push(datum);
+        });
+
+        return data;
+      },
+    }
+  );
+
+  /**
+   * Seleksi satu data yang saat ini sedang ditampilkan.
+   * Data yang terpilih akan berubah ketika timestamp yang dipilih oleh User berbeda.
+   *
+   * Data yang dihasilkan akan ditampilkan pada komponen @see {AttendanceDetailFormAttendanceSection}
+   */
+  const currentActivityData = useMemo(() => {
+    if (!data) {
+      return undefined;
+    }
+
+    if (!selectedActivityTimestamp) {
+      setSelectedActivityTimestamp(data[0]?.timestamp);
+      return undefined;
+    }
+
+    return data.find((datum) => datum.timestamp === selectedActivityTimestamp);
+  }, [data, selectedActivityTimestamp]);
+
+  return { data, currentActivityData, setSelectedActivityTimestamp };
+};
+
+/**
+ * Type helpers for `useAttendanceDetailSelector` hook.
+ *
+ * @private
+ */
+type AttendanceFormShapeType = Record<
+  string,
+  { name: string; list?: string[] }
+>;
+type Data = Datum[];
+interface Datum {
+  timestamp: Date | string;
+  activities: Record<ActivityName, ActivityDetail>;
+}
+type ActivityName = string;
+type ActivityDetail = ActivityExplanation | CheckboxActivityType;
+type ActivityExplanation = string;
+type CheckboxActivityType = Record<string, boolean>;

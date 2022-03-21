@@ -1,10 +1,14 @@
 import { HttpRequestWithDataSucceedResponse } from "types/common";
 
 export enum AttendanceServiceQueryKeys {
+  /** Informasi attendance staff (currently logged in User) */
   ATTENDANCES_USER_GET = "ATTENDANCES_USER_GET",
 
   /** Untuk endpoint /getAttendancesUsers (admin) */
   ATTENDANCE_USERS_GET = "ATTENDANCE_USERS_GET",
+
+  /** Detail attendance */
+  ATTENDANCE_USER_GET = "ATTENDANCE_USER_GET",
 }
 
 /**
@@ -103,4 +107,46 @@ export interface UsersAttendanceUser {
   id: number;
   name: string;
   profile_image: string;
+}
+
+/**
+ * @access GET /getAttendanceUser
+ */
+export type IGetAttendanceUserSucceedResponse =
+  HttpRequestWithDataSucceedResponse<GetAttendanceUserData>;
+
+export interface GetAttendanceUserData {
+  user_attendance: Omit<UsersAttendance, "user">;
+  attendance_form: AttendanceFormUser;
+  attendance_activities: AttendanceActivity[];
+}
+
+export interface AttendanceActivity {
+  id: number;
+  user_id: number;
+  attendance_form_id: number;
+  details: AttendanceActivityDetail[];
+  updated_at: Date | string;
+}
+
+export interface AttendanceActivityDetail {
+  value: number[] | string;
+  key: string;
+}
+
+export interface AttendanceFormUser
+  extends Pick<AttendanceForm, "id" | "name"> {
+  description: string;
+  details: AttendanceFormDetail[];
+  updated_at: Date | null;
+  deleted_at: Date | null;
+  created_by: number;
+}
+
+export interface AttendanceFormDetail {
+  name: string;
+  description: string;
+  type: number;
+  key: string;
+  list?: string[];
 }

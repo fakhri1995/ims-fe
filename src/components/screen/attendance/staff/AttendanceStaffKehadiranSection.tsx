@@ -2,6 +2,7 @@ import { DownloadOutlined } from "@ant-design/icons";
 import { ConfigProvider, Table } from "antd";
 import type { ColumnsType } from "antd/lib/table";
 import { isBefore } from "date-fns";
+import { useRouter } from "next/router";
 import { FC, useCallback, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
@@ -33,6 +34,7 @@ export interface IAttendanceStaffKehadiranSection {}
 export const AttendanceStaffKehadiranSection: FC<
   IAttendanceStaffKehadiranSection
 > = () => {
+  const router = useRouter();
   const axiosClient = useAxiosClient();
 
   const [isExportDrawerShown, setIsExportDrawerShown] = useState(false);
@@ -143,9 +145,12 @@ export const AttendanceStaffKehadiranSection: FC<
     ]
   );
 
-  const onRowItemClicked = useCallback((datum: IModifiedDataKehadiran) => {
-    /** TODO: redirect to detail page */
-  }, []);
+  const onRowItemClicked = useCallback(
+    (datum: IModifiedDataKehadiran) => {
+      router?.push(`/attendance/detail/${datum.id}`);
+    },
+    [router]
+  );
 
   return (
     <>
@@ -162,7 +167,6 @@ export const AttendanceStaffKehadiranSection: FC<
           </ButtonSys>
         </div>
 
-        {/* TODO: Table */}
         <ConfigProvider
           renderEmpty={() => (
             <DataEmptyState caption="Data kehadiran kosong." />

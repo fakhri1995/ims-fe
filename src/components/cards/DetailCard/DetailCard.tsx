@@ -46,12 +46,20 @@ export const DetailCard: FC<IDetailCard> = ({
 }) => {
   const wrapperClassName = clsx("mig-platform flex flex-col", className);
 
+  const hasHeader = React.isValidElement(header);
+  const hasFooter = React.isValidElement(footer);
+
+  const contentClassName = clsx("space-y-5", {
+    "mt-4": hasHeader,
+    "mb-4": hasFooter,
+  });
+
   return (
     <div className={wrapperClassName}>
       {/* Header */}
-      {React.isValidElement(header) && header}
+      {hasHeader && header}
 
-      <div className="space-y-5 my-7">
+      <div className={contentClassName}>
         {/* Skeleton animation */}
         {isLoading &&
           Array(estimatedContentLength)
@@ -68,7 +76,7 @@ export const DetailCard: FC<IDetailCard> = ({
       </div>
 
       {/* Footer */}
-      {React.isValidElement(footer) && footer}
+      {hasFooter && footer}
     </div>
   );
 };
