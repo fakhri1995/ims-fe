@@ -94,9 +94,9 @@ export const TicketDetailTaskCreateDrawer: FC<
   const [nowend, setnowend] = useState(null);
   const [choosedateend, setchoosedateend] = useState(false);
   //repeat date
-  const [repeatable, setrepeatable] = useState(false);
-  const [regular, setregular] = useState(null);
-  const [choosedateendrepeat, setchoosedateendrepeat] = useState(false);
+  // const [repeatable, setrepeatable] = useState(false);
+  // const [regular, setregular] = useState(null);
+  // const [choosedateendrepeat, setchoosedateendrepeat] = useState(false);
 
   //HANDLER
   const handleAddTask = () => {
@@ -143,7 +143,7 @@ export const TicketDetailTaskCreateDrawer: FC<
           setswitchstaffgroup(1);
           setnow(null);
           setnowend(null);
-          setrepeatable(false);
+          // setrepeatable(false);
           onvisible(false);
           notification["success"]({
             message: res2.message,
@@ -327,7 +327,7 @@ export const TicketDetailTaskCreateDrawer: FC<
         setswitchstaffgroup(1);
         setnow(null);
         setnowend(null);
-        setrepeatable(false);
+        // setrepeatable(false);
         onvisible(false);
       }}
       buttonOkText="Simpan Task"
@@ -382,9 +382,11 @@ export const TicketDetailTaskCreateDrawer: FC<
                     });
                 }}
                 filterOption={(input, opt) =>
-                  opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                  (opt.children as unknown as string)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
                 }
-                name={`task_type_id`}
+                // name={`task_type_id`}
                 defaultValue={datacreate.task_type_id}
                 onChange={(value) => {
                   setdatacreate({ ...datacreate, task_type_id: value });
@@ -420,7 +422,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                 suffixIcon={<SearchOutlined />}
                 // showArrow
                 placeholder="Referensi"
-                name={`reference_id`}
+                // name={`reference_id`}
                 // onChange={(value) => {
                 //   setdatacreate({ ...datacreate, reference_id: value });
                 // }}
@@ -496,7 +498,7 @@ export const TicketDetailTaskCreateDrawer: FC<
               showSearch
               suffixIcon={<SearchOutlined />}
               showArrow
-              name={`locations_id`}
+              // name={`locations_id`}
               onChange={(value) => {
                 typeof value === "undefined"
                   ? setdatacreate({
@@ -516,7 +518,9 @@ export const TicketDetailTaskCreateDrawer: FC<
                 /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
                 /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
                 return (
-                  item.title.toLowerCase().indexOf(search.toLowerCase()) >= 0
+                  (item.title as unknown as string)
+                    .toLowerCase()
+                    .indexOf(search.toLowerCase()) >= 0
                 );
               }}
             ></TreeSelect>
@@ -532,7 +536,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                 showSearch
                 suffixIcon={<SearchOutlined />}
                 showArrow
-                name={`locations_id`}
+                // name={`locations_id`}
                 onChange={(value) => {
                   typeof value === "undefined"
                     ? setdatacreate({ ...datacreate, subloc_id: null })
@@ -546,7 +550,9 @@ export const TicketDetailTaskCreateDrawer: FC<
                   /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
                   /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
                   return (
-                    item.title.toLowerCase().indexOf(search.toLowerCase()) >= 0
+                    (item.title as unknown as string)
+                      .toLowerCase()
+                      .indexOf(search.toLowerCase()) >= 0
                   );
                 }}
               ></TreeSelect>
@@ -581,10 +587,10 @@ export const TicketDetailTaskCreateDrawer: FC<
                 showArrow
                 value={datacreate.inventory_ids}
                 placeholder="Cari MIG ID"
-                name={`inventory_ids`}
+                // name={`inventory_ids`}
                 onChange={(values, options) => {
                   setdatacreate({ ...datacreate, inventory_ids: values });
-                  setselecteditems(options);
+                  setselecteditems(options as any);
                   console.log(options);
                 }}
                 showSearch
@@ -608,7 +614,9 @@ export const TicketDetailTaskCreateDrawer: FC<
                     });
                 }}
                 filterOption={(input, opt) =>
-                  opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                  (opt.children as unknown as string)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
                 }
               >
                 {dataitems.map((doc, idx) => (
@@ -696,10 +704,10 @@ export const TicketDetailTaskCreateDrawer: FC<
                   showArrow
                   value={datacreate.assign_ids}
                   placeholder="Cari Nama Staff, Group.."
-                  name={`assign_ids`}
+                  // name={`assign_ids`}
                   onChange={(values, options) => {
                     setdatacreate({ ...datacreate, assign_ids: values });
-                    setselectedstaffgroup(options);
+                    setselectedstaffgroup(options as any);
                     console.log(options);
                   }}
                   showSearch
@@ -727,7 +735,9 @@ export const TicketDetailTaskCreateDrawer: FC<
                       });
                   }}
                   filterOption={(input, opt) =>
-                    opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    (opt.children as unknown as string)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
                   }
                 >
                   {datastaffgroup.map((doc, idx) => (
@@ -749,7 +759,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                   showArrow
                   value={[datacreate.assign_ids]}
                   placeholder="Cari Nama Staff, Group.."
-                  name={`assign_ids`}
+                  // name={`assign_ids`}
                   onChange={(value, option) => {
                     setdatacreate({ ...datacreate, assign_ids: [value] });
                     setselectedstaffgroup([option]);
@@ -778,7 +788,9 @@ export const TicketDetailTaskCreateDrawer: FC<
                       });
                   }}
                   filterOption={(input, opt) =>
-                    opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    (opt.children as unknown as string)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
                   }
                 >
                   {datastaffgroup.map((doc, idx) => (
@@ -1061,7 +1073,7 @@ export const TicketDetailTaskCreateDrawer: FC<
               )}
             </div>
           </div>
-          <div className="mb-6 px-3 flex flex-col">
+          {/* <div className="mb-6 px-3 flex flex-col">
             <div className=" flex mb-2 justify-between">
               <div>
                 <Label>Jadwal Berulang</Label>
@@ -1173,7 +1185,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                 </div>
               </>
             ) : null}
-          </div>
+          </div> */}
           <div className="mb-6 px-3 flex justify-between">
             <div>
               <Label>Unggah Dokumen Pelengkap (PDF, JPG)</Label>
