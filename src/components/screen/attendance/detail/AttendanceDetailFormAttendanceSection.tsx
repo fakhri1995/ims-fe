@@ -2,6 +2,8 @@ import { Skeleton } from "antd";
 import type { FC } from "react";
 import React from "react";
 
+import { DataEmptyState } from "components/states/DataEmptyState";
+
 import CheckedIcon from "assets/vectors/icon-checked.svg";
 import UncheckedIcon from "assets/vectors/icon-unchecked.svg";
 
@@ -10,6 +12,8 @@ import UncheckedIcon from "assets/vectors/icon-unchecked.svg";
  */
 export interface IAttendanceDetailFormAttendanceSection {
   activities?: Record<string, string | Record<string, boolean>>;
+
+  isLoading?: boolean;
 }
 
 /**
@@ -17,18 +21,23 @@ export interface IAttendanceDetailFormAttendanceSection {
  */
 export const AttendanceDetailFormAttendanceSection: FC<
   IAttendanceDetailFormAttendanceSection
-> = ({ activities }) => {
+> = ({ activities, isLoading }) => {
   return (
     <section className="mig-platform space-y-6 text-gray-500">
-      {!activities && (
-        <div>
+      {isLoading && (
+        <>
           <Skeleton round active paragraph={{ rows: 2 }} />
           <Skeleton round active paragraph={{ rows: 1 }} />
           <Skeleton round active paragraph={{ rows: 3 }} />
-        </div>
+        </>
       )}
 
-      {activities &&
+      {!isLoading && !activities && (
+        <DataEmptyState caption="Belum memiliki aktivitas." />
+      )}
+
+      {!isLoading &&
+        activities &&
         Object.entries(activities).map(
           ([activityName, activityValue], index) => {
             return typeof activityValue === "string" ? (

@@ -49,3 +49,33 @@ export const getBase64 = (file: RcFile): Promise<string> => {
     reader.onerror = (error) => reject(error);
   });
 };
+
+/**
+ * Client side function.
+ *
+ * A helper function to download any binary files (pdf, image, xlsx, etc) for client.
+ *
+ * @link https://dev.to/nombrekeff/download-file-from-blob-21ho
+ *
+ * @param fileBinary Blob file.
+ * @param fileName Downloaded file name.
+ */
+export const downloadFile = (fileBinary: Blob, fileName: string) => {
+  const blobUrl = URL.createObjectURL(fileBinary);
+  const anchorElement = document.createElement("a");
+
+  anchorElement.href = blobUrl;
+  anchorElement.download = fileName;
+
+  document.body.append(anchorElement);
+
+  anchorElement.dispatchEvent(
+    new MouseEvent("click", {
+      bubbles: true,
+      cancelable: true,
+      view: window,
+    })
+  );
+
+  document.body.removeChild(anchorElement);
+};
