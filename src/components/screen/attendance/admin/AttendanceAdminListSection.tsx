@@ -51,7 +51,6 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = (
             className="w-1/3"
             onChange={(value) => {
               setActiveTab(value as "1" | "2");
-              setSearchValue("");
             }}
           >
             <TabPane tab="Hadir" key="1" />
@@ -74,7 +73,7 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = (
                 setSearchValue(values.search);
               }}
             >
-              <Form.Item>
+              <Form.Item name="search">
                 <Input
                   placeholder="Cari..."
                   allowClear
@@ -156,7 +155,7 @@ const HadirTable: FC<ITable> = ({ searchValue }) => {
     }
 
     return data.filter((attendance) =>
-      attendance.user.name.toLocaleLowerCase().includes(searchValue)
+      attendance.user.name.toLowerCase().includes(searchValue.toLowerCase())
     );
   }, [searchValue, data]);
 
@@ -327,8 +326,9 @@ const AbsenTable: FC<ITable> = ({ searchValue }) => {
       },
       {
         title: "Jabatan",
-        sorter: true,
         dataIndex: "position",
+        sorter: (a: AbsentUser, b: AbsentUser) =>
+          a.position < b.position ? -1 : 1,
       },
       {
         title: "Form Aktivitas",
