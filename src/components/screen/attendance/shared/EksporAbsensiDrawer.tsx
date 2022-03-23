@@ -1,4 +1,5 @@
-import { Button, Checkbox, DatePicker, Form, Select } from "antd";
+import { Button, Checkbox, DatePicker, Form, Select, notification } from "antd";
+import type { AxiosError } from "axios";
 import moment from "moment";
 import type { Moment } from "moment";
 import { FC, useCallback, useEffect, useState } from "react";
@@ -9,7 +10,10 @@ import DrawerCore from "components/drawer/drawerCore";
 import { useAxiosClient } from "hooks/use-axios-client";
 import { useDebounce } from "hooks/use-debounce-value";
 
+import { downloadFile } from "lib/helper";
+
 import {
+  AttendanceExportExcelDataResult,
   AttendanceFormAktivitasService,
   AttendanceFormAktivitasServiceQueryKeys,
   AttendanceService,
@@ -109,7 +113,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
     }) => {
       const from = fieldValues.rentang_waktu[0].toDate();
       const to = fieldValues.rentang_waktu[1].toDate();
-      let staffIds: number[] = undefined;
+      let staffIds: number[] = [];
 
       /**
        * 1. Form Aktivitas is required
@@ -128,15 +132,32 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
       }
 
       try {
-        const response = await AttendanceService.exportExcelData(axiosClient, {
+        const payload = {
           from,
           to,
           attendance_form_id: fieldValues.form_aktivitas,
-          user_ids: staffIds,
-        });
+        };
 
-        console.log(response);
+        if (exportAsAdmin) {
+          payload["user_ids"] = staffIds;
+        }
+
+        const { file, fileName } = (await AttendanceService.exportExcelData(
+          axiosClient,
+          payload
+        )) as AttendanceExportExcelDataResult;
+        downloadFile(file, fileName);
+
+        notification.success({
+          message: `Berhasil mengunduh file ${fileName}`,
+        });
+        onClose();
       } catch (error) {
+        notification.error({
+          message: `Terdapat kesalahan saat mengunduh file. ${
+            (error as AxiosError).message
+          }`,
+        });
         console.error(error);
       }
     },
