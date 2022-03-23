@@ -139,7 +139,11 @@ const HadirTable: FC<ITable> = ({ searchValue }) => {
     () => AttendanceService.findAsAdmin(axiosClient),
     {
       refetchOnMount: false,
-      select: (response) => response.data.data.users_attendances,
+      select: (response) =>
+        response.data.data.users_attendances.map((userAttendance) => ({
+          ...userAttendance,
+          key: userAttendance.id,
+        })),
     }
   );
 
@@ -270,7 +274,11 @@ const AbsenTable: FC<ITable> = ({ searchValue }) => {
     () => AttendanceService.findAsAdmin(axiosClient),
     {
       refetchOnMount: false,
-      select: (response) => response.data.data.absent_users,
+      select: (response) =>
+        response.data.data.absent_users.map((absentUser) => ({
+          ...absentUser,
+          key: absentUser.id,
+        })),
     }
   );
 

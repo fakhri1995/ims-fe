@@ -106,8 +106,9 @@ const AttendanceMarkers: FC = () => {
 
   return (
     <MarkerClusterGroup>
-      {data.map((attendanceMarker) => (
+      {data.map((attendanceMarker, idx) => (
         <Marker
+          key={idx}
           position={attendanceMarker.checkInLocation.latlng}
           icon={attendanceMarkerIcon}
           eventHandlers={markerHandlers}
