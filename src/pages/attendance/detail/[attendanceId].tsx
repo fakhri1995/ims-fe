@@ -33,10 +33,12 @@ const AttendanceDetailPage: NextPage<ProtectedPageProps> = ({
     },
   ];
 
-  const { data, currentActivityData, setSelectedActivityTimestamp } =
+  const { data, isLoading, currentActivityData, setSelectedActivityTimestamp } =
     useAttendanceDetailSelector(attendanceId);
 
-  const hasData = data && currentActivityData;
+  const hasActivities =
+    (data !== undefined || data.length > 0) &&
+    currentActivityData !== undefined;
 
   return (
     <LayoutDashboard
@@ -55,14 +57,14 @@ const AttendanceDetailPage: NextPage<ProtectedPageProps> = ({
           <div className="mig-platform--p-0">
             <h4 className="mig-heading--4 p-6">Aktivitas</h4>
 
-            {!hasData && (
+            {isLoading && (
               <div className="px-6 pb-6 flex justify-center">
                 <Spin size="large" />
               </div>
             )}
 
             {/* Dyanmic selected aktivitas */}
-            {hasData && (
+            {!isLoading && hasActivities && (
               <aside className="pb-6">
                 {data.map((datum, index) => (
                   <AttendanceDetailClickableAktivitasSelector

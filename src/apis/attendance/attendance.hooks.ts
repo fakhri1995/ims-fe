@@ -534,7 +534,7 @@ export const useAttendanceDetailSelector = (attendanceId: number) => {
     Date | string | undefined
   >(undefined);
 
-  const { data } = useQuery(
+  const { data, isLoading } = useQuery(
     [AttendanceServiceQueryKeys.ATTENDANCE_USER_GET, attendanceId],
     () => AttendanceService.findOne(axiosClient, attendanceId),
     {
@@ -615,7 +615,7 @@ export const useAttendanceDetailSelector = (attendanceId: number) => {
     return data.find((datum) => datum.timestamp === selectedActivityTimestamp);
   }, [data, selectedActivityTimestamp]);
 
-  return { data, currentActivityData, setSelectedActivityTimestamp };
+  return { data, isLoading, currentActivityData, setSelectedActivityTimestamp };
 };
 
 /**

@@ -56,7 +56,11 @@ export const AttendanceDetailMetaCard: FC<IAttendanceDetailMetaCard> = memo(
           const contentData = [
             {
               label: "Waktu Check In",
-              content: formatDateToLocale(attendanceCheckInDate, "HH:mm:ss"),
+              content: formatDateToLocale(
+                attendanceCheckInDate,
+                "HH:mm:ss",
+                "-"
+              ),
             },
             {
               label: "Lokasi Check In",
@@ -64,7 +68,11 @@ export const AttendanceDetailMetaCard: FC<IAttendanceDetailMetaCard> = memo(
             },
             {
               label: "Waktu Check Out",
-              content: formatDateToLocale(attendanceMeta.check_out, "HH:mm:ss"),
+              content: formatDateToLocale(
+                attendanceMeta.check_out,
+                "HH:mm:ss",
+                "-"
+              ),
             },
             {
               label: "Lokasi Check In",

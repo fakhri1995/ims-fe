@@ -51,7 +51,7 @@ export const AttendanceDetailEvidenceSection: FC<IAttendanceDetailEvidenceSectio
       <>
         {Empty.PRESENTED_IMAGE_SIMPLE}
         <span className="mig-caption mig-caption--medium text-center text-mono50 block">
-          Data tidak ditemukan!
+          Belum memiliki bukti.
         </span>
       </>
     );
@@ -60,9 +60,16 @@ export const AttendanceDetailEvidenceSection: FC<IAttendanceDetailEvidenceSectio
 
     const hasData = !isLoading && data;
     const hasValidEvidenceCheckInImage =
-      hasData && !isCheckInEvidenceImageError;
+      hasData && data.check_in_evidence && !isCheckInEvidenceImageError;
     const hasValidEvidenceCheckOutImage =
-      hasData && !isCheckOutEvidenceImageError;
+      hasData && data.check_out_evidence && !isCheckOutEvidenceImageError;
+
+    const checkInEvidenceFileName = hasValidEvidenceCheckInImage
+      ? data.check_in_evidence.split("/").pop()
+      : "";
+    const checkOutEvidenceFileName = hasValidEvidenceCheckOutImage
+      ? data.check_out_evidence.split("/").pop()
+      : "";
 
     return (
       <section className="mig-platform space-y-4 flex flex-col">
@@ -79,12 +86,13 @@ export const AttendanceDetailEvidenceSection: FC<IAttendanceDetailEvidenceSectio
                 onError={() => handleOnImageError("checkin")}
               />
               <span className="mig-caption mig-caption--medium text-center text-mono50 block">
-                {data?.check_in_evidence}
+                {checkInEvidenceFileName}
               </span>
             </>
           )}
 
-          {hasData && isCheckInEvidenceImageError && imageErrorContent}
+          {(hasData && isCheckInEvidenceImageError) ||
+            (!data?.check_in_evidence && imageErrorContent)}
         </div>
 
         {/* Evidence: checkout */}
@@ -95,17 +103,18 @@ export const AttendanceDetailEvidenceSection: FC<IAttendanceDetailEvidenceSectio
             <>
               <img
                 src={data.check_out_evidence}
-                alt="Evidence Check In Image"
+                alt="Evidence Check Out Image"
                 className="w-full h-full bg-cover"
                 onError={() => handleOnImageError("checkout")}
               />
               <span className="mig-caption mig-caption--medium text-center text-mono50 block">
-                {data?.check_in_evidence}
+                {checkOutEvidenceFileName}
               </span>
             </>
           )}
 
-          {hasData && isCheckOutEvidenceImageError && imageErrorContent}
+          {(hasData && isCheckOutEvidenceImageError) ||
+            (!data?.check_out_evidence && imageErrorContent)}
         </div>
       </section>
     );
