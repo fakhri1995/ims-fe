@@ -147,28 +147,12 @@ export const AttendanceStaffAktivitasDrawer: FC<
     });
   }, [action, activityFormId]);
 
-  /** Guard to prevent User fill the form when they're not signed in yet. */
   useEffect(() => {
-    if (visible && attendeeStatus !== "checkin") {
-      Modal.error({
-        centered: true,
-        title: "Perhatian!",
-        content:
-          "Anda perlu Check In terlebih dahulu untuk menambahkan atau memperbarui aktivitas!",
-        okText: "Kembali",
-        onOk: () => onClose(),
-        onCancel: () => onClose(),
-        closable: true,
-      });
-
-      return;
-    }
-
     /** Always clean up the form fields on close */
     if (!visible) {
       form.resetFields();
     }
-  }, [visible, attendeeStatus]);
+  }, [visible]);
 
   useEffect(() => {
     if (action !== "update" || !todayActivities) {

@@ -1,4 +1,3 @@
-import { EditOutlined } from "@ant-design/icons";
 import { Skeleton } from "antd";
 import { FC, memo, useMemo } from "react";
 import React from "react";
@@ -15,6 +14,8 @@ import {
   AttendanceFormAktivitasService,
   AttendanceFormAktivitasServiceQueryKeys,
 } from "apis/attendance";
+
+import EditIcon from "assets/vectors/icon-edit.svg";
 
 export interface IDetailFormAktivitasCard {
   onUbahButtonClicked: () => void;
@@ -111,7 +112,7 @@ export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
               disabled={isLoading}
               onClick={onUbahButtonClicked}
             >
-              <EditOutlined className="mr-2" />
+              <EditIcon className="mr-2" />
               Ubah Form
             </ButtonSys>
           )}

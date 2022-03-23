@@ -14,7 +14,10 @@ import { useAxiosClient } from "hooks/use-axios-client";
 import { formatDateToLocale } from "lib/date-utils";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
 
-import { useGetUserAttendanceActivities } from "apis/attendance";
+import {
+  useGetAttendeeInfo,
+  useGetUserAttendanceActivities,
+} from "apis/attendance";
 import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 
 import { AttendanceStaffAktivitasDrawer } from "./AttendanceStaffAktivitasDrawer";
@@ -36,8 +39,10 @@ export const AttendanceStaffAktivitasSection: FC<
 
   /** 1 => Hari Ini, 2 => Riwayat */
   const [tabActiveKey, setTabActiveKey] = useState<"1" | "2" | string>("1");
+
   const { dataSource, dynamicNameFieldPairs, isDataSourceLoading } =
     useGetUserAttendanceActivities(tabActiveKey === "1" ? "today" : "past");
+  const { attendeeStatus } = useGetAttendeeInfo();
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -99,9 +104,7 @@ export const AttendanceStaffAktivitasSection: FC<
       getAntdTablePaginationConfig({
         onChange: (pageNumber) => setCurrentPage(pageNumber),
       }),
-    [
-      /**TODO */
-    ]
+    []
   );
 
   const mOnRowItemClicked = useCallback(
@@ -135,8 +138,22 @@ export const AttendanceStaffAktivitasSection: FC<
       return;
     }
 
+    /** Prevent user membuka drawer ketika mereka belum check in */
+    if (attendeeStatus !== "checkin") {
+      Modal.error({
+        centered: true,
+        title: "Perhatian!",
+        content:
+          "Anda perlu Check In terlebih dahulu untuk menambahkan atau memperbarui aktivitas!",
+        okText: "Kembali",
+        closable: true,
+      });
+
+      return;
+    }
+
     dispatch({ type: "create", visible: true });
-  }, [userAttendanceForm]);
+  }, [userAttendanceForm, attendeeStatus]);
 
   return (
     <>

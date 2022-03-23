@@ -140,9 +140,7 @@ export const AttendanceStaffKehadiranSection: FC<
       getAntdTablePaginationConfig({
         onChange: (pageNumber) => setCurrentPage(pageNumber),
       }),
-    [
-      /**TODO */
-    ]
+    []
   );
 
   const onRowItemClicked = useCallback(
