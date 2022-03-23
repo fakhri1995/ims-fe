@@ -1996,11 +1996,11 @@ const Acitivty = ({
               descnew =
                 descnew +
                 `Pengubahan Location Item dari "${
-                  invrelations.companies.filter(
+                  invrelations.companies?.filter(
                     (doc) => doc.id === doclogs.properties.old.location
                   )[0].name
                 }" ke "${
-                  invrelations.companies.filter(
+                  invrelations.companies?.filter(
                     (doc) => doc.id === doclogs.properties.attributes.location
                   )[0].name
                 }"`;
@@ -2219,11 +2219,11 @@ const Acitivty = ({
               descnew =
                 descnew +
                 `Pengubahan Location Item dari "${
-                  invrelations.companies.filter(
+                  invrelations.companies?.filter(
                     (doc) => doc.id === doclogs.properties.old.location
                   )[0].name
                 }" ke "${
-                  invrelations.companies.filter(
+                  invrelations.companies?.filter(
                     (doc) => doc.id === doclogs.properties.attributes.location
                   )[0].name
                 }"`;
@@ -2440,11 +2440,11 @@ const Acitivty = ({
               descnew =
                 descnew +
                 `Pengubahan Location Item dari "${
-                  invrelations.companies.filter(
+                  invrelations.companies?.filter(
                     (doc) => doc.id === doclogs.properties.old.location
                   )[0].name
                 }" ke "${
-                  invrelations.companies.filter(
+                  invrelations.companies?.filter(
                     (doc) => doc.id === doclogs.properties.attributes.location
                   )[0].name
                 }"`;
