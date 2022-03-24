@@ -1,5 +1,5 @@
 import { Empty, Spin } from "antd";
-import { FC, memo, useCallback, useMemo, useState } from "react";
+import { FC, memo, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 
 import { useAxiosClient } from "hooks/use-axios-client";
@@ -33,20 +33,6 @@ export const AttendanceDetailEvidenceSection: FC<IAttendanceDetailEvidenceSectio
     const [isCheckOutEvidenceImageError, setIsCheckOutEvidenceImageError] =
       useState(false);
 
-    const handleOnImageError = (imageType: "checkin" | "checkout") => {
-      if (!data) {
-        return;
-      }
-
-      switch (imageType) {
-        case "checkin":
-          return setIsCheckInEvidenceImageError(true);
-
-        case "checkout":
-          return setIsCheckOutEvidenceImageError(true);
-      }
-    };
-
     const imageErrorContent = (
       <>
         {Empty.PRESENTED_IMAGE_SIMPLE}
@@ -56,13 +42,36 @@ export const AttendanceDetailEvidenceSection: FC<IAttendanceDetailEvidenceSectio
       </>
     );
 
-    const shouldShowSpinner = isLoading || !attendanceId;
+    /**
+     * Flag respective evidence to "error" because the source is null.
+     * It will render "Belum memiliki bukti" component (@see {imageErrorContent})
+     */
+    useEffect(() => {
+      if (!data) {
+        return;
+      }
 
-    const hasData = !isLoading && data;
+      if (data.check_in_evidence === null) {
+        return setIsCheckInEvidenceImageError(true);
+      }
+
+      if (data.check_out_evidence === null) {
+        return setIsCheckOutEvidenceImageError(true);
+      }
+    }, [data]);
+
+    /**
+     * Conditional rendering logic.
+     */
+    const shouldShowSpinner = isLoading || !attendanceId;
+    const shouldShowNotFoundCheckIn = !isLoading && isCheckInEvidenceImageError;
+    const shouldShowNotFoundCheckOut =
+      !isLoading && isCheckOutEvidenceImageError;
+
     const hasValidEvidenceCheckInImage =
-      hasData && data.check_in_evidence && !isCheckInEvidenceImageError;
+      data && data.check_in_evidence && !isCheckInEvidenceImageError;
     const hasValidEvidenceCheckOutImage =
-      hasData && data.check_out_evidence && !isCheckOutEvidenceImageError;
+      data && data.check_out_evidence && !isCheckOutEvidenceImageError;
 
     const checkInEvidenceFileName = hasValidEvidenceCheckInImage
       ? data.check_in_evidence.split("/").pop()
@@ -77,13 +86,13 @@ export const AttendanceDetailEvidenceSection: FC<IAttendanceDetailEvidenceSectio
         <span className="mig-caption text-gray-400">Bukti Check In</span>
         <div className="max-w-lg w-full space-y-3 flex flex-col items-center">
           {shouldShowSpinner && <Spin size="large" />}
-          {hasValidEvidenceCheckInImage && (
+
+          {!shouldShowSpinner && data.check_in_evidence !== null && (
             <>
               <img
                 src={data.check_in_evidence}
                 alt="Evidence Check In Image"
                 className="w-full h-full bg-cover"
-                onError={() => handleOnImageError("checkin")}
               />
               <span className="mig-caption mig-caption--medium text-center text-mono50 block">
                 {checkInEvidenceFileName}
@@ -91,21 +100,20 @@ export const AttendanceDetailEvidenceSection: FC<IAttendanceDetailEvidenceSectio
             </>
           )}
 
-          {(hasData && isCheckInEvidenceImageError) ||
-            (!data?.check_in_evidence && imageErrorContent)}
+          {shouldShowNotFoundCheckIn && imageErrorContent}
         </div>
 
         {/* Evidence: checkout */}
         <span className="mig-caption text-gray-400">Bukti Check Out</span>
         <div className="max-w-lg w-full space-y-3 flex flex-col items-center">
           {shouldShowSpinner && <Spin size="large" />}
-          {hasValidEvidenceCheckOutImage && (
+
+          {!shouldShowSpinner && data.check_out_evidence !== null && (
             <>
               <img
                 src={data.check_out_evidence}
                 alt="Evidence Check Out Image"
                 className="w-full h-full bg-cover"
-                onError={() => handleOnImageError("checkout")}
               />
               <span className="mig-caption mig-caption--medium text-center text-mono50 block">
                 {checkOutEvidenceFileName}
@@ -113,8 +121,7 @@ export const AttendanceDetailEvidenceSection: FC<IAttendanceDetailEvidenceSectio
             </>
           )}
 
-          {(hasData && isCheckOutEvidenceImageError) ||
-            (!data?.check_out_evidence && imageErrorContent)}
+          {shouldShowNotFoundCheckOut && imageErrorContent}
         </div>
       </section>
     );

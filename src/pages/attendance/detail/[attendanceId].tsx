@@ -33,13 +33,15 @@ const AttendanceDetailPage: NextPage<ProtectedPageProps> = ({
     },
   ];
 
-  const { data, isLoading, currentActivityData, setSelectedActivityTimestamp } =
-    useAttendanceDetailSelector(attendanceId);
+  const {
+    data,
+    isLoading,
+    currentActivityData,
+    selectedActivityIndex,
+    setSelectedActivityIndex,
+  } = useAttendanceDetailSelector(attendanceId);
 
-  const hasActivities = !isLoading
-    ? (data !== undefined || data.length > 0) &&
-      currentActivityData !== undefined
-    : false;
+  const shouldShowAktivitasSpinner = data === undefined || isLoading;
 
   return (
     <LayoutDashboard
@@ -58,25 +60,33 @@ const AttendanceDetailPage: NextPage<ProtectedPageProps> = ({
           <div className="mig-platform--p-0">
             <h4 className="mig-heading--4 p-6">Aktivitas</h4>
 
-            {!hasActivities && (
+            {shouldShowAktivitasSpinner && (
               <div className="px-6 pb-6 flex justify-center">
                 <Spin size="large" />
               </div>
             )}
 
-            {/* Dyanmic selected aktivitas */}
-            {hasActivities && (
+            {/* Dynamic selected aktivitas */}
+            {data && !isLoading && (
               <aside className="pb-6">
-                {data.map((datum, index) => (
+                {data.length > 0 ? (
+                  data.map((datum, index) => (
+                    <AttendanceDetailClickableAktivitasSelector
+                      key={index}
+                      content={datum.timestamp}
+                      isActive={index === selectedActivityIndex}
+                      onClick={() => {
+                        setSelectedActivityIndex(index);
+                      }}
+                    />
+                  ))
+                ) : (
                   <AttendanceDetailClickableAktivitasSelector
-                    key={index}
-                    content={datum.timestamp}
-                    isActive={datum.timestamp === currentActivityData.timestamp}
-                    onClick={() => {
-                      setSelectedActivityTimestamp(datum.timestamp);
-                    }}
+                    content="Belum memiliki aktivitas."
+                    isActive
+                    onClick={() => {}}
                   />
-                ))}
+                )}
               </aside>
             )}
           </div>
