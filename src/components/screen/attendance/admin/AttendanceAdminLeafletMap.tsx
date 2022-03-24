@@ -103,6 +103,8 @@ const AttendanceMarkers: FC = () => {
           map.flyTo(event.latlng, Math.max(zoomThreshold, map.getZoom()));
         }
       },
+      mouseover: (e) => e.target.openPopup(),
+      mouseout: (e) => e.target.closePopup(),
     }),
     []
   );
