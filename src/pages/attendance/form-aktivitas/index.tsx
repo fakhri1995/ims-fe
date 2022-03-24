@@ -5,7 +5,6 @@ import {
   useQueryParams,
   withDefault,
 } from "next-query-params";
-import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
 
 import styles from "components/layout-dashboard.module.css";
@@ -22,14 +21,17 @@ import { IGetAttendanceFormsParams } from "apis/attendance";
 
 import httpcookie from "cookie";
 
-import { ProtectedPageProps } from "types/common";
+import { PageBreadcrumbValue, ProtectedPageProps } from "types/common";
 
 const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
   token,
   dataProfile,
 }) => {
-  const router = useRouter();
-  const pathArr = router.pathname.split("/").slice(1);
+  const pageBreadcrumb: PageBreadcrumbValue[] = [
+    {
+      name: "Form Aktivitas",
+    },
+  ];
 
   const [criteria, setCriteria] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -67,7 +69,7 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
     <LayoutDashboard
       dataProfile={dataProfile}
       tok={token}
-      pathArr={pathArr}
+      fixedBreadcrumbValues={pageBreadcrumb}
       st={styles}
       sidemenu="attendance/form-aktivitas"
     >

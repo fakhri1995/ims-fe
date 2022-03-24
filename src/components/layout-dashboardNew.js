@@ -5,7 +5,7 @@ import { Breadcrumb, Spin } from "antd";
 import jscookie from "js-cookie";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import LayoutMenu from "./layout-menu";
 import LayoutMenuHeader from "./layout-menu-header";
@@ -90,45 +90,6 @@ function LayoutDashboard({
   //   setTinggi(h);
   // }, []);
   var pathBuilder = "";
-
-  /**
-   * NOTE: just for this one... I don't have enough time to understand how previous developers built this thing :(
-   *
-   * Maybe I'll rewrite this in the future.
-   */
-  const attendanceFormAktivitasBreadcrumb = useMemo(() => {
-    if (childBreacrumbDD[0] !== "Attendance") {
-      return null;
-    }
-
-    const rootPathName = "Form Aktivitas";
-
-    // corner case
-    // ['Attendance', 'Form-aktivitas']
-    if (childBreacrumbDD.length === 2) {
-      return (
-        <Breadcrumb.Item>
-          <strong>{rootPathName}</strong>
-        </Breadcrumb.Item>
-      );
-    }
-
-    // ['Attendance', 'Form-aktivitas', '[aktivitasId]', 'Dynamic Data From The Server']
-    const formAktivitasName = childBreacrumbDD.pop();
-
-    return (
-      <>
-        <Breadcrumb.Item>
-          <Link href="/attendance/form-aktivitas">
-            <a className="font-bold">{rootPathName}</a>
-          </Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>
-          <strong>{formAktivitasName}</strong>
-        </Breadcrumb.Item>
-      </>
-    );
-  }, [childBreacrumbDD]);
 
   return (
     <Spin spinning={loadingspin}>
@@ -445,8 +406,6 @@ function LayoutDashboard({
                           })}
                         </>
                       )}
-
-                      {attendanceFormAktivitasBreadcrumb}
                     </>
                   )}
                 </Breadcrumb>
