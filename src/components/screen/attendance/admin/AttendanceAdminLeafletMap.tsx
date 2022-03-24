@@ -28,6 +28,7 @@ export const AttendanceAdminLeafletMap: FC<IAttendanceAdminLeafletMap> = () => {
     <div className="w-full h-full bg-slate-50 rounded-xl border border-mono80 overflow-hidden min-h-[24rem]">
       <MapContainer
         center={[-1.62, 113.23]}
+        maxZoom={18}
         zoom={5}
         className={"markercluster-map w-full h-full".concat(
           " ",
@@ -94,7 +95,13 @@ const AttendanceMarkers: FC = () => {
   const markerHandlers = useMemo<LeafletEventHandlerFnMap>(
     () => ({
       click: (event) => {
-        map.flyTo(event.latlng, Math.max(13, map.getZoom()));
+        /** Higher zoom === zoom in */
+        const zoomThreshold = 12;
+        const currentZoom = map.getZoom();
+
+        if (currentZoom < zoomThreshold) {
+          map.flyTo(event.latlng, Math.max(zoomThreshold, map.getZoom()));
+        }
       },
     }),
     []
@@ -105,7 +112,7 @@ const AttendanceMarkers: FC = () => {
   }
 
   return (
-    <MarkerClusterGroup>
+    <MarkerClusterGroup showCoverageOnHover={false}>
       {data.map((attendanceMarker, idx) => (
         <Marker
           key={idx}
