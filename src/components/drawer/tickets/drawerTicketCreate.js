@@ -89,7 +89,7 @@ const DrawerTicketCreate = ({
   const [datatypetickets, setdatatypetickets] = useState([]);
   const [datatasktickets, setdatatasktickets] = useState([]);
   const [dataloctickets, setdataloctickets] = useState([]);
-  const [fecthingtickets, setfecthingtickets] = useState(false);
+  // const [fecthingtickets, setfecthingtickets] = useState(false);
   const [warningphonenumber, setwarningphonenumber] = useState(false);
   const [warningproductid, setwarningproductid] = useState(false);
   //files
@@ -235,7 +235,7 @@ const DrawerTicketCreate = ({
       .then((res) => res.json())
       .then((res2) => {
         setdatatypetickets(res2.data.ticket_types);
-        setdatatasktickets(res2.data.ticket_task_types);
+        setdatatasktickets(res2.data.ticket_detail_types);
         setdataloctickets([
           dataprofile.data.role === 1
             ? res2.data.companies
@@ -347,11 +347,13 @@ const DrawerTicketCreate = ({
                 }}
                 value={datapayload.ticket_task_type_id}
               >
-                {datatasktickets.map((doc, idx) => (
-                  <Select.Option value={doc.id}>
-                    {doc.name} - {doc.task_type_name}
-                  </Select.Option>
-                ))}
+                {datatasktickets.map((doc, idx) => {
+                  return (
+                    <Select.Option value={doc.id}>
+                      {doc.name} - {doc.ticket_type_name}
+                    </Select.Option>
+                  );
+                })}
               </Select>
             </div>
           </div>
