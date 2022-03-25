@@ -74,7 +74,7 @@ const DrawerTicketCreate = ({
   //useState
   const [datapayload, setdatapayload] = useState({
     type_id: null,
-    ticket_task_type_id: null,
+    ticket_detail_type_id: null,
     product_id: "",
     pic_name: "",
     pic_contact: "",
@@ -142,7 +142,7 @@ const DrawerTicketCreate = ({
             if (res2.success) {
               setdatapayload({
                 type_id: null,
-                ticket_task_type_id: null,
+                ticket_detail_type_id: null,
                 product_id: "",
                 pic_name: "",
                 pic_contact: "",
@@ -192,7 +192,7 @@ const DrawerTicketCreate = ({
           if (res2.success) {
             setdatapayload({
               type_id: null,
-              ticket_task_type_id: null,
+              ticket_detail_type_id: null,
               product_id: "",
               pic_name: "",
               pic_contact: "",
@@ -247,7 +247,7 @@ const DrawerTicketCreate = ({
     if (
       datapayload.type_id !== null &&
       datapayload.name !== "" &&
-      datapayload.ticket_task_type_id !== null &&
+      datapayload.ticket_detail_type_id !== null &&
       datapayload.product_id !== "" &&
       datapayload.incident_time !== null &&
       datapayload.location_id !== null
@@ -264,7 +264,7 @@ const DrawerTicketCreate = ({
       onClose={() => {
         setdatapayload({
           type_id: null,
-          ticket_task_type_id: null,
+          ticket_detail_type_id: null,
           product_id: "",
           pic_name: "",
           pic_contact: "",
@@ -341,11 +341,11 @@ const DrawerTicketCreate = ({
                 onChange={(value, option) => {
                   setdatapayload({
                     ...datapayload,
-                    ticket_task_type_id: value,
+                    ticket_detail_type_id: value,
                   });
                   setdisabledtrigger((prev) => prev + 1);
                 }}
-                value={datapayload.ticket_task_type_id}
+                value={datapayload.ticket_detail_type_id}
               >
                 {datatasktickets.map((doc, idx) => {
                   return (

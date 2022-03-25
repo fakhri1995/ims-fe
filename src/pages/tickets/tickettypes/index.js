@@ -248,7 +248,7 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
   useEffect(() => {
     setloadingtickettypes(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTicketTaskTypes?page=${pagetickettypes}&rows=${rowstickettypes}&keyword=${searcingtickettypes}&sort_by=${sortingtickettypes.sort_by}&sort_type=${sortingtickettypes.sort_type}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTicketDetailTypes?page=${pagetickettypes}&rows=${rowstickettypes}&keyword=${searcingtickettypes}&sort_by=${sortingtickettypes.sort_by}&sort_type=${sortingtickettypes.sort_type}`,
       {
         method: `GET`,
         headers: {
@@ -345,7 +345,7 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
                     setsearcingtickettypes(e.target.value);
                     setloadingtickettypes(true);
                     fetch(
-                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTicketTaskTypes?page=${pagetickettypes}&rows=${rowstickettypes}&keyword=${e.target.value}&sort_by=${sortingtickettypes.sort_by}&sort_type=${sortingtickettypes.sort_type}`,
+                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTicketDetailTypes?page=${pagetickettypes}&rows=${rowstickettypes}&keyword=${e.target.value}&sort_by=${sortingtickettypes.sort_by}&sort_type=${sortingtickettypes.sort_type}`,
                       {
                         method: `GET`,
                         headers: {
