@@ -215,7 +215,7 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
   //3. Handler
   const handleDeleteTipeTiket = () => {
     setloadingtickettypesdelete(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteTicketTaskType`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteTicketDetailType`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -264,7 +264,11 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
         setdisabledupdate(false);
         setloadingtickettypes(false);
       });
-  }, [refreshtickettypescreate, refreshcreatetickettypesdelete]);
+  }, [
+    refreshtickettypescreate,
+    refreshtickettypesupdate,
+    refreshcreatetickettypesdelete,
+  ]);
 
   return (
     <Layout

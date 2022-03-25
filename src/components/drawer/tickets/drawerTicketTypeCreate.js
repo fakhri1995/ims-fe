@@ -1,48 +1,15 @@
-import { SearchOutlined } from "@ant-design/icons";
 import { Input, Select, Spin, notification } from "antd";
 import React, { useEffect, useState } from "react";
 
 import { Label } from "../../typography";
 import DrawerCore from "../drawerCore";
 
-function modifData1(dataa) {
-  for (var i = 0; i < dataa.length; i++) {
-    dataa[i]["key"] = dataa[i].id;
-    dataa[i]["value"] = dataa[i].id;
-    dataa[i]["title"] = dataa[i].mig_id;
-    if (dataa[i].inventory_parts) {
-      dataa[i]["children"] = dataa[i].inventory_parts;
-      delete dataa[i].inventory_parts;
-      modifData1(dataa[i].children);
-    }
-  }
-  return dataa;
-}
-function modifData2(dataa) {
-  for (var i = 0; i < dataa.length; i++) {
-    dataa[i]["key"] = dataa[i].id;
-    dataa[i]["value"] = dataa[i].id;
-    dataa[i][
-      "title"
-    ] = `${dataa[i].mig_id} - ${dataa[i].model_inventory?.name} - ${dataa[i].model_inventory?.asset?.name}`;
-    if (dataa[i].inventory_parts) {
-      dataa[i]["children"] = dataa[i].inventory_parts;
-      delete dataa[i].inventory_parts;
-      modifData2(dataa[i].children);
-    }
-  }
-  return dataa;
-}
-
 const DrawerTicketTypeCreate = ({
   title,
   visible,
   onvisible,
-  onClose,
   buttonOkText,
-  disabled,
   initProps,
-  refreshtickettypescreate,
   setrefreshtickettypescreate,
 }) => {
   //useState
@@ -50,12 +17,9 @@ const DrawerTicketTypeCreate = ({
     name: "",
     description: "",
     ticket_type_id: 1,
-    task_type_id: null,
   });
   const [loadingsave, setloadingsave] = useState(false);
-  const [datatasktypes, setdatatasktypes] = useState([]);
   const [datatickettypes, setdatatickettypes] = useState([]);
-  const [fecthingtasktypes, setfecthingtasktypes] = useState(false);
   const [disabledcreate, setdisabledcreate] = useState(true);
   const [disabledtrigger, setdisabledtrigger] = useState(-1);
 
@@ -63,7 +27,7 @@ const DrawerTicketTypeCreate = ({
   const handleAddTicketType = () => {
     setloadingsave(true);
     setdisabledcreate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addTicketTaskType`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addTicketDetailType`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -81,7 +45,7 @@ const DrawerTicketTypeCreate = ({
             name: "",
             description: "",
             ticket_type_id: null,
-            task_type_id: null,
+            // task_type_id: null,
           });
           onvisible(false);
           notification["success"]({
@@ -99,18 +63,6 @@ const DrawerTicketTypeCreate = ({
 
   //useEffect
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTaskTypes`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setdatatasktypes(res2.data);
-      });
-  }, []);
-  useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTicketRelation`, {
       method: `GET`,
       headers: {
@@ -123,11 +75,7 @@ const DrawerTicketTypeCreate = ({
       });
   }, []);
   useEffect(() => {
-    if (
-      datapayload.ticket_type_id !== null &&
-      datapayload.name !== "" &&
-      datapayload.task_type_id !== null
-    ) {
+    if (datapayload.ticket_type_id !== null && datapayload.name !== "") {
       setdisabledcreate(false);
     } else {
       setdisabledcreate(true);
@@ -142,7 +90,6 @@ const DrawerTicketTypeCreate = ({
           name: "",
           description: "",
           ticket_type_id: null,
-          task_type_id: null,
         });
         onvisible(false);
       }}
@@ -212,67 +159,6 @@ const DrawerTicketTypeCreate = ({
                 setdisabledtrigger((prev) => prev + 1);
               }}
             ></Input>
-          </div>
-          <div className="flex flex-col mb-6">
-            <div className="flex mb-2">
-              <Label>Tipe Task</Label>
-              <span className="tasktypes"></span>
-              <style jsx>
-                {`
-                                .tasktypes::before{
-                                    content: '*';
-                                    color: red;
-                                }
-                            `}
-              </style>
-            </div>
-            <div className=" mb-2 flex">
-              <Select
-                style={{ width: `100%` }}
-                suffixIcon={<SearchOutlined />}
-                showArrow
-                placeholder="Nama.."
-                onChange={(value, option) => {
-                  setdatapayload({
-                    ...datapayload,
-                    task_type_id: value,
-                  });
-                  setdisabledtrigger((prev) => prev + 1);
-                }}
-                showSearch
-                optionFilterProp="children"
-                notFoundContent={
-                  fecthingtasktypes ? <Spin size="small" /> : null
-                }
-                onSearch={(value) => {
-                  setfecthingtasktypes(true);
-                  fetch(
-                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTaskTypes?name=${value}`,
-                    {
-                      method: `GET`,
-                      headers: {
-                        Authorization: JSON.parse(initProps),
-                      },
-                    }
-                  )
-                    .then((res) => res.json())
-                    .then((res2) => {
-                      setdatatasktypes(res2.data);
-                      setfecthingtasktypes(false);
-                    });
-                }}
-                filterOption={(input, opt) =>
-                  opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                }
-                value={datapayload.task_type_id}
-              >
-                {datatasktypes.map((doc, idx) => (
-                  <Select.Option key={idx} value={doc.id}>
-                    {doc.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </div>
           </div>
           <div className=" mb-6 flex flex-col">
             <div className="flex mb-2">
