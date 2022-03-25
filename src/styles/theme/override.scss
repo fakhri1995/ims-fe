@@ -1,3 +1,14 @@
+/**
+ * File: override.scss
+ *
+ * Overriding classes or applying new rule for global context.
+ */
+
+/**  Element level */
+body {
+  @apply font-sans;
+}
+
 /* Button */
 .btn {
   text-transform: none !important;
@@ -231,4 +242,64 @@
 .slick-prev:before,
 .slick-next:before {
   color: black !important;
+}
+
+/* TREESELECT */
+.ant-select-tree
+  .ant-select-tree-node-content-wrapper.ant-select-tree-node-selected {
+  /** Dropdown tree item yang ter-select */
+  background-color: #c4d8c7;
+}
+.ant-select-tree
+  .ant-select-tree-treenode:not(.ant-select-tree
+    .ant-select-tree-treenode-disabled).filter-node
+  .ant-select-tree-title {
+  /** Dropdown tree item yang ter-highlight */
+  color: #35763b;
+  font-weight: 600;
+}
+
+/* TABS */
+.ant-tabs-tab {
+  @apply font-bold text-sm hover:text-primary75 text-mono80;
+
+  &.ant-tabs-tab-active > .ant-tabs-tab-btn {
+    @apply text-primary100;
+  }
+}
+.ant-tabs-ink-bar {
+  /** Active tab line indicator */
+  @apply bg-primary100;
+}
+
+/**
+ * NOTE: this is a little bit tricky. We can not customize ant's Modal.confirm footer programmatically.
+ *
+ * Apply `custom-modal-confirm-danger` in Modal.confirm.modalRender properties.
+ */
+.custom-modal-confirm-danger > .ant-modal-content > .ant-modal-body {
+  .ant-modal-confirm-btns {
+    @apply w-full flex justify-between items-center;
+
+    .ant-btn {
+      @apply rounded-md text-primary100 border-primary100 hover:text-primary100 hover:border-primary100 focus:text-primary100 focus:border-primary100;
+
+      &.ant-btn-dangerous {
+        @apply text-white hover:text-white focus:text-white bg-state1 border-state1 hover:bg-state12 hover:border-state12 focus:bg-state12 focus:border-state12;
+      }
+    }
+  }
+}
+.custom-modal-confirm-default > .ant-modal-content > .ant-modal-body {
+  .ant-modal-confirm-btns {
+    @apply w-full flex justify-between items-center;
+
+    .ant-btn {
+      @apply rounded-md text-primary100 border-primary100 hover:text-primary100 hover:border-primary100 focus:text-primary100 focus:border-primary100;
+
+      &.ant-btn-primary {
+        @apply text-white hover:text-white focus:text-white bg-primary100 border-primary100 hover:bg-primary75 hover:border-primary75 focus:bg-primary75 focus:border-primary75;
+      }
+    }
+  }
 }

@@ -22,7 +22,7 @@ import {
   notification,
 } from "antd";
 import moment from "moment";
-import Link from "next/link";
+// import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
@@ -41,7 +41,7 @@ const Overview = ({
 }) => {
   const rt = useRouter();
   //useState
-  const [invrelations2, setinvrelations2] = useState({});
+  // const [invrelations2, setinvrelations2] = useState({});
 
   //helper
 
@@ -757,6 +757,15 @@ const KonfigurasiPart = ({
                     onChangeAssetType(extra.allCheckedNodes[0].node.props.id);
                   }
                 }}
+                showSearch
+                treeNodeFilterProp="title"
+                filterTreeNode={(search, item) => {
+                  /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                  /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                  return (
+                    item.title.toLowerCase().indexOf(search.toLowerCase()) >= 0
+                  );
+                }}
               />
             </div>
             <div className="col-span-3 mr-1">
@@ -832,6 +841,17 @@ const KonfigurasiPart = ({
             onMouseLeave: (event) => {
               setevents(0);
             },
+            onClick: (ev) => {
+              /** Only trigger redirection by clicking the row (<td> element) */
+              if (ev.target.tagName !== "TD") {
+                return;
+              }
+
+              const destination = "/items/detail/" + record.id;
+              rt.push(destination);
+              rt.reload();
+            },
+            className: "hover:cursor-pointer",
           };
         }}
       ></Table>
@@ -885,6 +905,15 @@ const KonfigurasiPart = ({
             <TreeSelect
               treeData={datatable3}
               defaultValue={datachanged.key}
+              showSearch
+              treeNodeFilterProp="title"
+              filterTreeNode={(search, item) => {
+                /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                return (
+                  item.title.toLowerCase().indexOf(search.toLowerCase()) >= 0
+                );
+              }}
             ></TreeSelect>
             <style jsx>
               {`
@@ -926,6 +955,15 @@ const KonfigurasiPart = ({
                 });
               }}
               treeData={datareplacements}
+              showSearch
+              treeNodeFilterProp="title"
+              filterTreeNode={(search, item) => {
+                /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                return (
+                  item.title.toLowerCase().indexOf(search.toLowerCase()) >= 0
+                );
+              }}
             >
               {/* {
                                 datareplacements.map((doc, idx) => {
@@ -1262,7 +1300,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
           dataApiadd.type_id === -1 && setdetailtipedataadd(res2.data);
           dataApiadd.type_id === -2 && setdetailtipedataadd(res2.data);
           dataApiadd.type_id === -4 && setdetailtipedataadd(res2.data.data);
-          console.log();
+          // console.log();
         });
     }
   }, [detailtipeadd, subloctrig]);
@@ -1377,7 +1415,8 @@ const Relationship = ({ initProps, maindata, itemid }) => {
         title={
           <div className="flex justify-between p-5 mt-5">
             <h1 className="font-bold text-xl">
-              Form Tambah Relationship "{maindata.name}"
+              Form Tambah Relationship{" "}
+              {`\"${maindata.mig_id} - ${maindata.model_inventory.name}\"`}
             </h1>
             <div className="flex">
               <>
@@ -1658,6 +1697,17 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                       });
                       setsubloctrig(value);
                     }}
+                    showSearch
+                    treeNodeFilterProp="title"
+                    filterTreeNode={(search, item) => {
+                      /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                      /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                      return (
+                        item.title
+                          .toLowerCase()
+                          .indexOf(search.toLowerCase()) >= 0
+                      );
+                    }}
                   ></TreeSelect>
                 </div>
               )}
@@ -1733,6 +1783,15 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                   } else {
                     setdataApiadd({ ...dataApiadd, connected_ids: value });
                   }
+                }}
+                showSearch
+                treeNodeFilterProp="title"
+                filterTreeNode={(search, item) => {
+                  /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                  /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                  return (
+                    item.title.toLowerCase().indexOf(search.toLowerCase()) >= 0
+                  );
                 }}
               ></TreeSelect>
             </div>
@@ -1937,11 +1996,11 @@ const Acitivty = ({
               descnew =
                 descnew +
                 `Pengubahan Location Item dari "${
-                  invrelations.companies.filter(
+                  invrelations.companies?.filter(
                     (doc) => doc.id === doclogs.properties.old.location
                   )[0].name
                 }" ke "${
-                  invrelations.companies.filter(
+                  invrelations.companies?.filter(
                     (doc) => doc.id === doclogs.properties.attributes.location
                   )[0].name
                 }"`;
@@ -2160,11 +2219,11 @@ const Acitivty = ({
               descnew =
                 descnew +
                 `Pengubahan Location Item dari "${
-                  invrelations.companies.filter(
+                  invrelations.companies?.filter(
                     (doc) => doc.id === doclogs.properties.old.location
                   )[0].name
                 }" ke "${
-                  invrelations.companies.filter(
+                  invrelations.companies?.filter(
                     (doc) => doc.id === doclogs.properties.attributes.location
                   )[0].name
                 }"`;
@@ -2381,11 +2440,11 @@ const Acitivty = ({
               descnew =
                 descnew +
                 `Pengubahan Location Item dari "${
-                  invrelations.companies.filter(
+                  invrelations.companies?.filter(
                     (doc) => doc.id === doclogs.properties.old.location
                   )[0].name
                 }" ke "${
-                  invrelations.companies.filter(
+                  invrelations.companies?.filter(
                     (doc) => doc.id === doclogs.properties.attributes.location
                   )[0].name
                 }"`;
@@ -3371,6 +3430,17 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                         : null;
                       setdisabledusage(false);
                     }}
+                    showSearch
+                    treeNodeFilterProp="title"
+                    filterTreeNode={(search, item) => {
+                      /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                      /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                      return (
+                        item.title
+                          .toLowerCase()
+                          .indexOf(search.toLowerCase()) >= 0
+                      );
+                    }}
                   ></TreeSelect>
                 ) : (
                   <Select
@@ -3419,6 +3489,17 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                         ...changeusage,
                         detail_connected_id: value,
                       });
+                    }}
+                    showSearch
+                    treeNodeFilterProp="title"
+                    filterTreeNode={(search, item) => {
+                      /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                      /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                      return (
+                        item.title
+                          .toLowerCase()
+                          .indexOf(search.toLowerCase()) >= 0
+                      );
                     }}
                   ></TreeSelect>
                 </div>
@@ -3564,8 +3645,8 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
       <Modal
         title={
           <h1 className="font-semibold">
-            Apakah anda yakin ingin menghapus item "{maindata.inventory_name} -{" "}
-            {maindata.mig_id}"?
+            Apakah anda yakin ingin menghapus item{" "}
+            {`\"${maindata.mig_id} - ${maindata.model_inventory.name}\"`}?
           </h1>
         }
         visible={modaldelete}

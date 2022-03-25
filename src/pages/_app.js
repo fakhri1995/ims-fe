@@ -1,18 +1,30 @@
-import "antd/dist/antd.css";
+import { NextQueryParamProvider } from "next-query-params";
 import Head from "next/head";
 import Router from "next/router";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
-import "react-datepicker/dist/react-datepicker.css";
+import { useRef } from "react";
+import { CookiesProvider } from "react-cookie";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 
-import "../styles/globals.css";
-import "../styles/index.css";
+import "../styles/globals.scss";
 
 Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
 Router.events.on("routeChangeError", () => NProgress.done());
 
 function MyApp({ Component, pageProps }) {
+  const queryClient = useRef(
+    new QueryClient({
+      defaultOptions: {
+        queries: {
+          refetchOnWindowFocus: false,
+        },
+      },
+    })
+  );
+
   return (
     <>
       <Head>
@@ -24,10 +36,18 @@ function MyApp({ Component, pageProps }) {
           rel="stylesheet"
           href="https://unpkg.com/flickity@2/dist/flickity.min.css"
         ></link>
-        {/* <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script> */}
         <title>MIGSys</title>
       </Head>
-      <Component {...pageProps} />
+
+      <QueryClientProvider client={queryClient.current}>
+        <NextQueryParamProvider>
+          <CookiesProvider>
+            <Component {...pageProps} />
+          </CookiesProvider>
+        </NextQueryParamProvider>
+
+        {process.env.NODE_ENV === "development" && <ReactQueryDevtools />}
+      </QueryClientProvider>
     </>
   );
 }

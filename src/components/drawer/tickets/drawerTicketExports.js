@@ -1,44 +1,18 @@
-import { LoadingOutlined, SearchOutlined } from "@ant-design/icons";
-import {
-  DatePicker,
-  Input,
-  Select,
-  Spin,
-  TreeSelect,
-  notification,
-} from "antd";
-import Checkbox from "antd/lib/checkbox/Checkbox";
+import { SearchOutlined } from "@ant-design/icons";
+import { Checkbox, DatePicker, Select, Spin } from "antd";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 
-import ButtonSys from "../../button";
-import {
-  AssetIconSvg,
-  CalendartimeIconSvg,
-  CircleXIconSvg,
-  CloudUploadIconSvg,
-  TrashIconSvg,
-  UserIconSvg,
-} from "../../icon";
-import {
-  InputRequired,
-  SelectRequired,
-  TextAreaNotRequired,
-} from "../../input";
-import { H1, H2, Label, Text } from "../../typography";
+import { UserIconSvg } from "../../icon";
+import { H2, Label, Text } from "../../typography";
 import DrawerCore from "../drawerCore";
 
 const DrawerTicketExports = ({
   title,
   visible,
   onvisible,
-  onClose,
   buttonOkText,
-  disabled,
   initProps,
-  refreshtickets,
-  setrefreshtickets,
-  dataprofile,
 }) => {
   //useState
   const [datapayload, setdatapayload] = useState({
@@ -117,6 +91,7 @@ const DrawerTicketExports = ({
         setlistgroups(res2.data);
       });
   }, []);
+
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=${1}`, {
       method: `GET`,
@@ -129,6 +104,7 @@ const DrawerTicketExports = ({
         setlistengs(res2.data);
       });
   }, []);
+
   useEffect(() => {
     if (datapayload.core_attributes.every((val) => val === 0) === false) {
       setdisabledcreate(false);
@@ -160,7 +136,7 @@ const DrawerTicketExports = ({
       }}
       disabled={disabledcreate}
     >
-      {loadingsave ? (
+      {false ? (
         <>
           <Spin />
         </>
@@ -171,9 +147,11 @@ const DrawerTicketExports = ({
               *Informasi ini harus diisi
             </p>
           </div>
+
           <div className="mb-6">
             <H2>Pilih Filter:</H2>
           </div>
+
           <div className="flex flex-col mb-6">
             <div className="flex mb-2">
               <Label>Rentang Waktu</Label>
@@ -201,6 +179,7 @@ const DrawerTicketExports = ({
               />
             </div>
           </div>
+
           <div className="flex flex-col mb-6">
             <div className="flex mb-2">
               <Label>Grup</Label>
@@ -252,6 +231,7 @@ const DrawerTicketExports = ({
               </Select>
             </div>
           </div>
+
           <div className="flex flex-col mb-6">
             <div className="flex mb-2">
               <Label>Engineer</Label>
@@ -314,6 +294,7 @@ const DrawerTicketExports = ({
               </Select>
             </div>
           </div>
+
           <div className="flex flex-col mb-6">
             <div className="flex items-center justify-between mb-2">
               <div className="flex">
@@ -383,6 +364,7 @@ const DrawerTicketExports = ({
               </Checkbox.Group>
             </div>
           </div>
+
           <div className="flex flex-col mb-6">
             <div className="flex mb-2">
               <Label>Jenis Tiket</Label>
@@ -403,6 +385,7 @@ const DrawerTicketExports = ({
               <Select.Option value={1}>Incident</Select.Option>
             </Select>
           </div>
+
           {datapayload.type === null ? (
             <div>
               <Label>

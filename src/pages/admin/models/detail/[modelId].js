@@ -10,7 +10,7 @@ import {
   Tooltip,
   notification,
 } from "antd";
-import Link from "next/link";
+// import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
@@ -464,7 +464,8 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
               </style>
             </div>
           </div>
-          {displaydata.is_consumable === false && (
+
+          {displaydata.is_consumable === 0 && (
             <div className="flex flex-col">
               <div className="mb-4 px-5 py-3">
                 <h1 className="font-bold mb-0 text-xl">

@@ -380,6 +380,14 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
                 treeData={[dataticketrelation.companies]}
                 treeDefaultExpandAll
                 value={locfilterhistories === "" ? null : locfilterhistories}
+                treeNodeFilterProp="title"
+                filterTreeNode={(search, item) => {
+                  /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                  /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                  return (
+                    item.title.toLowerCase().indexOf(search.toLowerCase()) >= 0
+                  );
+                }}
               ></TreeSelect>
             </div>
             <div className="mx-1 w-2/12">

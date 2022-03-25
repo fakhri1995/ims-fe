@@ -1,5 +1,14 @@
 import { ExclamationCircleOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Select, Spin, Table, Tooltip, TreeSelect } from "antd";
+import {
+  Button,
+  Input,
+  Select,
+  Spin,
+  Table,
+  TableColumnsType,
+  Tooltip,
+  TreeSelect,
+} from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -121,11 +130,18 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [fetchingmodel, setfetchingmodel] = useState(false);
 
   //3.Define
+  /** @type {TableColumnsType<{ mig_id: string | null }>} */
   const columnsTable = [
     {
       title: "MIG ID",
       dataIndex: "mig_id",
-      sorter: (a, b) => a.mig_id.length - b.mig_id.length,
+      // sorter: (a, b) => {
+      //   if (a.mig_id === null || b.mig_id === null) {
+      //     return 1;
+      //   }
+
+      //   return a.mig_id.length - b.mig_id.length;
+      // },
       defaultSortOrder: `${
         sort_type && sort_by === "mig_id"
           ? sort_type === "asc"
@@ -133,6 +149,10 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
             : "descend"
           : null
       }`,
+      render: (_, _record, __) => {
+        /** If mig_id === null then replace it with "-" */
+        return _record.mig_id || "-";
+      },
     },
     {
       title: "Asset Type",
@@ -594,7 +614,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
         <div className="md:col-span-5 col-span-1 flex flex-col py-3">
           {praloading ? null : (
             <div className="flex mb-8">
-              <div className=" w-full mr-1 grid grid-cols-12">
+              <div className="w-full grid grid-cols-12">
                 <div className="col-span-2 mr-1">
                   <Input
                     style={{ width: `100%`, marginRight: `0.5rem` }}
@@ -627,6 +647,17 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                         // })
                         modelvalue !== null ? setmodelvalue(null) : null;
                       }
+                    }}
+                    showSearch
+                    treeNodeFilterProp="title"
+                    filterTreeNode={(search, item) => {
+                      /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                      /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                      return (
+                        item.title
+                          .toLowerCase()
+                          .indexOf(search.toLowerCase()) >= 0
+                      );
                     }}
                   />
                 </div>
@@ -716,6 +747,17 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                         );
                         setnamaasset(extra.allCheckedNodes[0].node.props.title);
                       }
+                    }}
+                    showSearch
+                    treeNodeFilterProp="title"
+                    filterTreeNode={(search, item) => {
+                      /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                      /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                      return (
+                        item.title
+                          .toLowerCase()
+                          .indexOf(search.toLowerCase()) >= 0
+                      );
                     }}
                   />
                 </div>

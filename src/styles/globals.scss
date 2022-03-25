@@ -1,0 +1,12 @@
+@import "~antd/dist/antd.css";
+
+// @tailwind base;
+@import "./reset.scss";
+@tailwind components;
+@tailwind utilities;
+
+@import "./theme/override.scss";
+
+@layer components {
+  @import "./theme/design-system.scss";
+}

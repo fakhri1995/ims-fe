@@ -4,6 +4,8 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 
 /** @type {import("next").NextConfig } */
 const nextConfig = {
+  reactStrictMode: true,
+  swcMinify: false,
   rewrites: async () => [
     { source: "/advantages", destination: "/migwebsite/advantages" },
     { source: "/hardware", destination: "/migwebsite/hardware" },
@@ -16,6 +18,14 @@ const nextConfig = {
     { source: "/privacy", destination: "/migwebsite/privacy" },
     { source: "/contactus", destination: "/migwebsite/contactus" },
   ],
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ["@svgr/webpack"],
+    });
+
+    return config;
+  },
 };
 
 module.exports = withBundleAnalyzer(nextConfig);

@@ -775,6 +775,16 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                             ? null
                             : lokasifilterstatetaskpick
                         }
+                        treeNodeFilterProp="title"
+                        filterTreeNode={(search, item) => {
+                          /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                          /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                          return (
+                            item.title
+                              .toLowerCase()
+                              .indexOf(search.toLowerCase()) >= 0
+                          );
+                        }}
                       ></TreeSelect>
                     </div>
                     <div className="mx-1 w-1/12">
@@ -826,12 +836,21 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     <H1>Segera Berakhir</H1>
                     {userlasttwo.length > 0 && (
                       <div className="p-2 rounded bg-red-50 text-state1 text-xs flex">
-                        <div className="mr-1 flex items-center">
-                          <ClockIconSvg size={15} color={`#BF4A40`} />
-                        </div>
-                        {moment(userlasttwo[0].deadline)
+                        {userlasttwo[0]?.deadline ? (
+                          <>
+                            <div className="mr-1 flex items-center">
+                              <ClockIconSvg size={15} color={`#BF4A40`} />
+                            </div>
+                            {userlasttwo[0]?.deadline
+                              ? moment(userlasttwo[0].deadline)
+                                  .locale("id")
+                                  .format("lll")
+                              : "-"}
+                          </>
+                        ) : null}
+                        {/* {moment(userlasttwo[0].deadline)
                           .locale("id")
-                          .format("lll")}
+                          .format("lll")} */}
                       </div>
                     )}
                   </div>
@@ -859,14 +878,24 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                               <div className="flex flex-col mt-2">
                                 <Text color={`white`}>
                                   Berakhir{" "}
-                                  {(new Date() -
+                                  {userlasttwo[0]?.deadline
+                                    ? (new Date() -
+                                        new Date(userlasttwo[0].deadline)) /
+                                        (1000 * 60 * 60 * 24) <
+                                      1
+                                      ? `Hari Ini`
+                                      : `${moment(userlasttwo[0].deadline)
+                                          .locale("id")
+                                          .format("Do MMM")}`
+                                    : "-"}
+                                  {/* {(new Date() -
                                     new Date(userlasttwo[0].deadline)) /
                                     (1000 * 60 * 60 * 24) <
                                   1
                                     ? `Hari Ini`
                                     : `${moment(userlasttwo[0].deadline)
                                         .locale("id")
-                                        .format("Do MMM")}`}
+                                        .format("Do MMM")}`} */}
                                 </Text>
                                 <Progress
                                   trailColor={`#4D4D4D`}
@@ -910,14 +939,24 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                               <div className="flex flex-col mt-2">
                                 <Text>
                                   Berakhir{" "}
-                                  {(new Date() -
+                                  {userlasttwo[1].deadline
+                                    ? (new Date() -
+                                        new Date(userlasttwo[1].deadline)) /
+                                        (1000 * 60 * 60 * 24) <
+                                      1
+                                      ? `Hari Ini`
+                                      : `${moment(userlasttwo[1].deadline)
+                                          .locale("id")
+                                          .format("Do MMM")}`
+                                    : "-"}
+                                  {/* {(new Date() -
                                     new Date(userlasttwo[1].deadline)) /
                                     (1000 * 60 * 60 * 24) <
                                   1
                                     ? `Hari Ini`
                                     : `${moment(userlasttwo[1].deadline)
                                         .locale("id")
-                                        .format("Do MMM")}`}
+                                        .format("Do MMM")}`} */}
                                 </Text>
                                 <Progress
                                   trailColor={`#d8e8da`}
@@ -1493,6 +1532,16 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     treeData={datafilterlokasi}
                     treeDefaultExpandAll
                     value={lokasifilterstate === "" ? null : lokasifilterstate}
+                    treeNodeFilterProp="title"
+                    filterTreeNode={(search, item) => {
+                      /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                      /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                      return (
+                        item.title
+                          .toLowerCase()
+                          .indexOf(search.toLowerCase()) >= 0
+                      );
+                    }}
                   ></TreeSelect>
                 </div>
                 <div className=" mx-1 w-2/12">

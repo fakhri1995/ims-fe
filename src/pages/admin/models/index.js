@@ -232,9 +232,21 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
                     dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
                     defaultValue={namaasset === "" ? null : defasset}
                     treeData={assetdata}
+                    filter
                     placeholder="Cari Asset Type"
                     treeDefaultExpandAll
                     style={{ width: `100%`, marginRight: `0.5rem` }}
+                    showSearch
+                    treeNodeFilterProp="title"
+                    filterTreeNode={(search, item) => {
+                      /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                      /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                      return (
+                        item.title
+                          .toLowerCase()
+                          .indexOf(search.toLowerCase()) >= 0
+                      );
+                    }}
                     onChange={(value, label, extra) => {
                       if (typeof value === "undefined") {
                         onChangeAssetType();

@@ -68,6 +68,9 @@ const DrawerTicketCreate = ({
   setrefreshtickets,
   dataprofile,
 }) => {
+  /** Payload `incident_time` harus sesuai dengan format berikut */
+  const incidentTimePayoadFormat = "YYYY-MM-DD HH:mm:ss";
+
   //useState
   const [datapayload, setdatapayload] = useState({
     type_id: null,
@@ -77,7 +80,7 @@ const DrawerTicketCreate = ({
     pic_contact: "",
     location_id: dataprofile.data.company.id,
     problem: "",
-    incident_time: new Date(),
+    incident_time: moment().format(incidentTimePayoadFormat),
     files: [],
     description: "",
   });
@@ -145,7 +148,7 @@ const DrawerTicketCreate = ({
                 pic_contact: "",
                 location_id: dataprofile.data.company.id,
                 problem: "",
-                incident_time: new Date(),
+                incident_time: moment().format(incidentTimePayoadFormat),
                 files: [],
                 description: "",
               });
@@ -195,7 +198,7 @@ const DrawerTicketCreate = ({
               pic_contact: "",
               location_id: dataprofile.data.company.id,
               problem: "",
-              incident_time: new Date(),
+              incident_time: moment().format(incidentTimePayoadFormat),
               files: [],
               description: "",
             });
@@ -267,7 +270,7 @@ const DrawerTicketCreate = ({
           pic_contact: "",
           location_id: dataprofile.data.company.id,
           problem: "",
-          incident_time: new Date(),
+          incident_time: moment().format(incidentTimePayoadFormat),
           files: [],
           description: "",
         });
@@ -443,6 +446,14 @@ const DrawerTicketCreate = ({
                 treeData={dataloctickets}
                 treeDefaultExpandAll
                 value={datapayload.location_id}
+                treeNodeFilterProp="title"
+                filterTreeNode={(search, item) => {
+                  /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                  /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                  return (
+                    item.title.toLowerCase().indexOf(search.toLowerCase()) >= 0
+                  );
+                }}
               ></TreeSelect>
             </div>
           </div>

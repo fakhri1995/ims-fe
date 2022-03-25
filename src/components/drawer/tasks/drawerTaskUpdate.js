@@ -475,6 +475,14 @@ const DrawerTaskUpdate = ({
                 treeData={datalocations}
                 treeDefaultExpandAll
                 value={dataupdate.location_id}
+                treeNodeFilterProp="title"
+                filterTreeNode={(search, item) => {
+                  /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                  /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                  return (
+                    item.title.toLowerCase().indexOf(search.toLowerCase()) >= 0
+                  );
+                }}
               ></TreeSelect>
             </div>
             {dataupdate.location_id !== null ? (
@@ -573,7 +581,7 @@ const DrawerTaskUpdate = ({
                 </Select>
               </div>
               {selecteditems.map((doc, idx) => (
-                <div className="mb-2 flex items-center">
+                <div className="mb-2 flex items-center" key={idx}>
                   <div className="mr-2 flex items-center">
                     <AssetIconSvg size={50} />
                   </div>
@@ -740,7 +748,7 @@ const DrawerTaskUpdate = ({
                 )}
               </div>
               {selectedstaffgroup.map((doc, idx) => (
-                <div className="mb-2 flex items-center">
+                <div className="mb-2 flex items-center" key={idx}>
                   <div className="mr-2 flex items-center">
                     {switchstaffgroup === 1 ? (
                       <div className=" w-10 h-10 rounded-full">

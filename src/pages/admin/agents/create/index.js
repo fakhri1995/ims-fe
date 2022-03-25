@@ -12,13 +12,20 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import Sticky from "wil-react-sticky";
+
+import { useAxiosClient } from "hooks/use-axios-client";
+import { useDebounce } from "hooks/use-debounce-value";
+
+import { AttendanceFormAktivitasService } from "apis/attendance";
 
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
 function AgentsCreate({ initProps, dataProfile, sidemenu }) {
+  const axiosClient = useAxiosClient();
   const rt = useRouter();
   const { originPath } = rt.query;
   const tok = initProps;
@@ -27,6 +34,37 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
   pathArr[pathArr.length - 1] = "Create";
   //init Form instance
   const [instanceForm] = Form.useForm();
+
+  const [searchFormAktivitasValue, setFormAktivitasValue] = useState("");
+  const debouncedSearchFormAktivitasValue = useDebounce(
+    searchFormAktivitasValue
+  );
+
+  const { data: formAktivitasData, refetch: findFormAktivitas } = useQuery(
+    ["ATTENDANCE_FORMS_GET", debouncedSearchFormAktivitasValue],
+    (query) => {
+      const searchKeyword = query.queryKey[1];
+
+      return AttendanceFormAktivitasService.find(axiosClient, {
+        keyword: searchKeyword,
+      });
+    },
+    {
+      enabled: false,
+      select: (response) =>
+        response.data.data.data.map((formAktivitasDatum) => ({
+          id: formAktivitasDatum.id,
+          name: formAktivitasDatum.name,
+        })),
+    }
+  );
+
+  useEffect(() => {
+    findFormAktivitas({
+      queryKey: ["ATTENDANCE_FORMS_GET", debouncedSearchFormAktivitasValue],
+      exact: true,
+    });
+  }, [debouncedSearchFormAktivitasValue]);
 
   //useState
   //data payload
@@ -41,6 +79,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
     password: "",
     confirm_password: "",
     position: "",
+    attendance_form_ids: [],
   });
   //is loading upload image
   const [loadingupload, setLoadingupload] = useState(false);
@@ -254,6 +293,17 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                       onChange={(value) => {
                         setNewuser({ ...newuser, company_id: value });
                       }}
+                      showSearch
+                      treeNodeFilterProp="title"
+                      filterTreeNode={(search, item) => {
+                        /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                        /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                        return (
+                          item.title
+                            .toLowerCase()
+                            .indexOf(search.toLowerCase()) >= 0
+                        );
+                      }}
                     />
                   </Form.Item>
                   <Form.Item
@@ -351,6 +401,42 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                       name="nip"
                       onChange={onChangeCreateAgents}
                     />
+                  </Form.Item>
+                  <Form.Item
+                    label="Form Aktivitas"
+                    name="attendance_form_ids"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Form Aktivitas wajib diisi",
+                      },
+                    ]}
+                  >
+                    <Select
+                      showSearch
+                      allowClear
+                      placeholder="Pilih form aktivitas"
+                      filterOption={false}
+                      onSearch={(value) => setFormAktivitasValue(value)}
+                      onChange={(value) => {
+                        if (value === undefined || value === "") {
+                          setFormAktivitasValue("");
+                          return;
+                        }
+
+                        setNewuser((prev) => ({
+                          ...prev,
+                          attendance_form_ids: [value],
+                        }));
+                      }}
+                    >
+                      {formAktivitasData?.map(({ id, name }) => (
+                        <Select.Option key={id} value={id}>
+                          {name}
+                        </Select.Option>
+                      ))}
+                      {/* TODO */}
+                    </Select>
                   </Form.Item>
                   <Form.Item
                     label="Password"
