@@ -11,6 +11,19 @@ export enum AttendanceServiceQueryKeys {
   ATTENDANCE_USER_GET = "ATTENDANCE_USER_GET",
 }
 
+export type AttendanceExportExcelDataCriteria = {
+  from: Date;
+  to: Date;
+
+  attendance_form_id?: number;
+  user_ids?: number[];
+};
+
+export type AttendanceExportExcelDataResult = {
+  file: Blob | null;
+  fileName: string;
+};
+
 /**
  * @access GET /getAttendancesUser
  */

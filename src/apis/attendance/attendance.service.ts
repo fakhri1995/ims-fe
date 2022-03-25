@@ -1,7 +1,11 @@
 import type { AxiosInstance } from "axios";
 import QueryString from "qs";
 
+import { formatDateToLocale } from "lib/date-utils";
+
 import {
+  AttendanceExportExcelDataCriteria,
+  AttendanceExportExcelDataResult,
   IGetAttendanceUserSucceedResponse,
   IGetAttendanceUsersSucceedResponse,
   IGetAttendancesUserSucceedResponse,
@@ -64,5 +68,72 @@ export class AttendanceService {
       "/setAttendanceToggle",
       payload
     );
+  }
+
+  /**
+   * Retrieve a binary large object file (Excel file, I assume) from the backend.
+   *
+   * @access GET /exportAttendanceActivityUsers
+   * @access GET /exportAttendanceActivityUser
+   */
+  static async exportExcelData(
+    axiosClient: AxiosInstance,
+    criteria: AttendanceExportExcelDataCriteria
+  ): Promise<AttendanceExportExcelDataResult | Error> {
+    const [formattedFrom, formattedTo] = [criteria.from, criteria.to].map(
+      (value) => formatDateToLocale(value, "yyyy-MM-dd")
+    );
+
+    const qsParam: any = {
+      ...criteria,
+      from: formattedFrom,
+      to: formattedTo,
+    };
+
+    if (criteria.user_ids) {
+      qsParam["user_ids"] = `[${criteria.user_ids.join(",")}]`;
+    }
+
+    const querySearch = QueryString.stringify(qsParam, {
+      addQueryPrefix: true,
+    });
+
+    const isExportMany =
+      criteria.attendance_form_id !== undefined &&
+      criteria.user_ids !== undefined;
+
+    const endpoint = isExportMany
+      ? "/exportAttendanceActivityUsers"
+      : "/exportAttendanceActivityUser";
+
+    const result: AttendanceExportExcelDataResult = {
+      file: null,
+      fileName: "",
+    };
+
+    try {
+      const response = await axiosClient.get(endpoint + querySearch, {
+        responseType: "blob",
+        headers: {
+          Accept:
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        },
+      });
+
+      const fileNamePrefix = isExportMany ? "all" : "my";
+      const fileName = "attendance_data-".concat(
+        formatDateToLocale(Date.now(), "yyyy-MM-dd"),
+        ".xlsx"
+      );
+
+      result.file = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      result.fileName = fileNamePrefix.concat("-", fileName);
+    } catch (error) {
+      return error;
+    }
+
+    return result;
   }
 }

@@ -51,7 +51,6 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = (
             className="w-1/3"
             onChange={(value) => {
               setActiveTab(value as "1" | "2");
-              setSearchValue("");
             }}
           >
             <TabPane tab="Hadir" key="1" />
@@ -74,7 +73,7 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = (
                 setSearchValue(values.search);
               }}
             >
-              <Form.Item>
+              <Form.Item name="search">
                 <Input
                   placeholder="Cari..."
                   allowClear
@@ -140,7 +139,17 @@ const HadirTable: FC<ITable> = ({ searchValue }) => {
     () => AttendanceService.findAsAdmin(axiosClient),
     {
       refetchOnMount: false,
-      select: (response) => response.data.data.users_attendances,
+      select: (response) =>
+        response.data.data.users_attendances.map((userAttendance) => ({
+          ...userAttendance,
+          check_in: userAttendance.check_in
+            ? new Date(userAttendance.check_in)
+            : null,
+          check_out: userAttendance.check_out
+            ? new Date(userAttendance.check_out)
+            : null,
+          key: userAttendance.id,
+        })),
     }
   );
 
@@ -156,7 +165,7 @@ const HadirTable: FC<ITable> = ({ searchValue }) => {
     }
 
     return data.filter((attendance) =>
-      attendance.user.name.toLocaleLowerCase().includes(searchValue)
+      attendance.user.name.toLowerCase().includes(searchValue.toLowerCase())
     );
   }, [searchValue, data]);
 
@@ -209,8 +218,13 @@ const HadirTable: FC<ITable> = ({ searchValue }) => {
         width: 196,
         render: (check_in) =>
           formatDateToLocale(check_in, "dd MMM yyyy, HH:mm"),
+        // sorter: (a: UsersAttendance, b: UsersAttendance) => {
+        //   // console.log(`a.check_in(${a.check_in}); b.check_in(${b.check_in});`)
+
+        //   return isBefore(new Date(a.check_in), new Date(b.check_in)) ? -1 : 1
+        // },
         sorter: (a: UsersAttendance, b: UsersAttendance) =>
-          isBefore(a.check_in, b.check_in) ? 1 : -1,
+          isBefore(a.check_in, b.check_in) ? -1 : 1,
       },
       {
         title: "Lokasi Check In",
@@ -271,7 +285,11 @@ const AbsenTable: FC<ITable> = ({ searchValue }) => {
     () => AttendanceService.findAsAdmin(axiosClient),
     {
       refetchOnMount: false,
-      select: (response) => response.data.data.absent_users,
+      select: (response) =>
+        response.data.data.absent_users.map((absentUser) => ({
+          ...absentUser,
+          key: absentUser.id,
+        })),
     }
   );
 
@@ -327,8 +345,9 @@ const AbsenTable: FC<ITable> = ({ searchValue }) => {
       },
       {
         title: "Jabatan",
-        sorter: true,
         dataIndex: "position",
+        sorter: (a: AbsentUser, b: AbsentUser) =>
+          a.position < b.position ? -1 : 1,
       },
       {
         title: "Form Aktivitas",
@@ -339,11 +358,11 @@ const AbsenTable: FC<ITable> = ({ searchValue }) => {
           const bAttendanceForm = b.attendance_forms[0];
 
           if (!aAttendanceForm) {
-            return 1;
+            return -1;
           }
 
           if (!bAttendanceForm) {
-            return -1;
+            return 1;
           }
 
           return aAttendanceForm.name < bAttendanceForm.name ? -1 : 1;

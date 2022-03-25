@@ -27,7 +27,9 @@ export const AttendanceDetailClickableAktivitasSelector: FC<
 
   return (
     <div className={aktivitasClickableItemClassName} onClick={onClick}>
-      <span>{formatDateToLocale(content as Date, "HH:mm")}</span>
+      <span>
+        {formatDateToLocale(content as Date, "HH:mm", content as string)}
+      </span>
     </div>
   );
 };

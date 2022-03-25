@@ -530,11 +530,11 @@ export const useMutateAttendanceActivity = () => {
 export const useAttendanceDetailSelector = (attendanceId: number) => {
   const axiosClient = useAxiosClient();
 
-  const [selectedActivityTimestamp, setSelectedActivityTimestamp] = useState<
-    Date | string | undefined
+  const [selectedActivityIndex, setSelectedActivityIndex] = useState<
+    number | undefined
   >(undefined);
 
-  const { data } = useQuery(
+  const { data, isLoading } = useQuery(
     [AttendanceServiceQueryKeys.ATTENDANCE_USER_GET, attendanceId],
     () => AttendanceService.findOne(axiosClient, attendanceId),
     {
@@ -607,15 +607,21 @@ export const useAttendanceDetailSelector = (attendanceId: number) => {
       return undefined;
     }
 
-    if (!selectedActivityTimestamp) {
-      setSelectedActivityTimestamp(data[0]?.timestamp);
+    if (selectedActivityIndex === undefined) {
+      setSelectedActivityIndex(0);
       return undefined;
     }
 
-    return data.find((datum) => datum.timestamp === selectedActivityTimestamp);
-  }, [data, selectedActivityTimestamp]);
+    return data.find((_, index) => index === selectedActivityIndex);
+  }, [data, selectedActivityIndex]);
 
-  return { data, currentActivityData, setSelectedActivityTimestamp };
+  return {
+    data,
+    isLoading,
+    currentActivityData,
+    selectedActivityIndex,
+    setSelectedActivityIndex,
+  };
 };
 
 /**

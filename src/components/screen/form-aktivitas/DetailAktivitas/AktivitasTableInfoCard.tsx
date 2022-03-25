@@ -53,6 +53,7 @@ export const AktivitasTableInfoCard: FC<IAktivitasTableInfoCard> = ({
 
   const [aktivitasTitle, setAktivitasTitle] = useState("");
   const [aktivitasDescription, setAktivitasDescription] = useState("");
+  const [aktivitasIsRequired, setAktivitasIsRequired] = useState(false);
 
   const onRowClicked = (record: AktivitasDetailType) => {
     setDataSource((prev) => {
@@ -71,7 +72,19 @@ export const AktivitasTableInfoCard: FC<IAktivitasTableInfoCard> = ({
 
     setAktivitasTitle(record.name);
     setAktivitasDescription(record.description);
+    setAktivitasIsRequired(record.required);
   };
+
+  /** Select the top most data on initial render */
+  useEffect(() => {
+    if (dataSource.length === 0) {
+      return;
+    }
+
+    if (aktivitasTitle === "") {
+      onRowClicked(dataSource[0]);
+    }
+  }, [dataSource]);
 
   const tableColumns = useMemo<ColumnsType<AktivitasDetailType>>(
     () => [
@@ -117,6 +130,12 @@ export const AktivitasTableInfoCard: FC<IAktivitasTableInfoCard> = ({
       <div className="w-full md:w-2/3 text-mono30">
         {/* Aktivitas Title */}
         <span className="py-3 block font-bold text-sm">{aktivitasTitle}</span>
+
+        <p>
+          {aktivitasIsRequired
+            ? "Isian wajib diisi"
+            : "Isian tidak wajib diisi"}
+        </p>
 
         {/* Aktivitas Deskription */}
         <p className="mt-6">{aktivitasDescription}</p>

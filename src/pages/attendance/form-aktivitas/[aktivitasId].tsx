@@ -21,7 +21,7 @@ import {
 
 import httpcookie from "cookie";
 
-import { ProtectedPageProps } from "types/common";
+import { PageBreadcrumbValue, ProtectedPageProps } from "types/common";
 
 const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
   dataProfile,
@@ -29,7 +29,6 @@ const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
 }) => {
   const router = useRouter();
   const { aktivitasId } = router.query;
-  const pathArr = router.pathname.split("/").slice(1);
 
   const axiosClient = useAxiosClient();
   const { data } = useQuery(
@@ -39,12 +38,19 @@ const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
 
   const [isDrawerShown, setIsDrawerShown] = useState(false);
 
-  const modifiedPathArr = useMemo(() => {
+  const pageBreadcrumb = useMemo(() => {
+    const pageBreadcrumbValue: PageBreadcrumbValue[] = [
+      { name: "Form Aktivitas", hrefValue: "/attendance/form-aktivitas" },
+    ];
+
     if (!data) {
-      return pathArr;
+      return pageBreadcrumbValue;
     }
 
-    return [...pathArr, data.data.data.name];
+    const aktivitasName = data.data.data.name;
+    pageBreadcrumbValue.push({ name: aktivitasName });
+
+    return pageBreadcrumbValue;
   }, [data]);
 
   const onUbahButtonClicked = useCallback(() => {
@@ -55,7 +61,7 @@ const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
     <LayoutDashboard
       dataProfile={dataProfile}
       tok={token}
-      pathArr={modifiedPathArr}
+      fixedBreadcrumbValues={pageBreadcrumb}
       st={styles}
       sidemenu="attendance/form-aktivitas"
     >

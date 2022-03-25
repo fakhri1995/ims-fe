@@ -26,7 +26,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
   var asset_id1 = "",
     model_id1 = "",
     name1 = "";
-  const { asset_id, model_id, name, nama } = rt.query;
+  const { asset_id, model_id, name, nama, itemId } = rt.query;
   if (asset_id) {
     asset_id1 = asset_id;
   }
@@ -378,7 +378,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
   //useEffect
   useEffect(() => {
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventoryAddable?rows=10&page=1&asset_id=${asset_id1}&model_id=${model_id1}&name=${name1}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventoryAddable?rows=10&page=1&asset_id=${asset_id1}&model_id=${model_id1}&name=${name1}&inventory_id=${itemId}`,
       {
         method: `GET`,
         headers: {
@@ -654,7 +654,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
               onChange: (page, pageSize) => {
                 setpraloading(true);
                 fetch(
-                  `${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventoryAddable?page=${page}&rows=10&asset_id=${asset_id1}&model_id=${model_id1}&name=${name1}`,
+                  `${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventoryAddable?page=${page}&rows=10&asset_id=${asset_id1}&model_id=${model_id1}&name=${name1}&inventory_id=${itemId}`,
                   {
                     method: `GET`,
                     headers: {
