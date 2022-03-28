@@ -867,12 +867,14 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
             <div className="flex w-full">
               <div className="w-6/12 mx-2 flex flex-col">
                 {/* Task */}
-                <div className="mt-2">
-                  <TicketDetailTaskList
-                    ticketId={displaydata.id}
-                    ticketName={displaydata.name}
-                  />
-                </div>
+                {dataProfile.data.role === 1 && (
+                  <div className="my-2">
+                    <TicketDetailTaskList
+                      ticketId={displaydata.id}
+                      ticketName={displaydata.name}
+                    />
+                  </div>
+                )}
 
                 {/* DETAIL ASET TIKET */}
                 {dataProfile.data.role === 1 ? (
