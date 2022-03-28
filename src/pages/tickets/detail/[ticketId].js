@@ -1390,34 +1390,33 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
   );
 };
 
-// TODO: revert it back. This is temporary for mocking the backend.
 export async function getServerSideProps({ req, res, params }) {
-  // const ticketid = params.ticketId;
-  // var initProps = {};
-  // if (!req.headers.cookie) {
-  //   return {
-  //     redirect: {
-  //       permanent: false,
-  //       destination: "/login",
-  //     },
-  //   };
-  // }
-  // const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
-  // if (!cookiesJSON1.token) {
-  //   return {
-  //     redirect: {
-  //       permanent: false,
-  //       destination: "/login",
-  //     },
-  //   };
-  // }
-  // initProps = cookiesJSON1.token;
+  const ticketid = params.ticketId;
+  var initProps = {};
+  if (!req.headers.cookie) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    };
+  }
+  const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+  if (!cookiesJSON1.token) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    };
+  }
+  initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
-        // Authorization: JSON.parse(initProps),
+        Authorization: JSON.parse(initProps),
       },
     }
   );
@@ -1431,11 +1430,10 @@ export async function getServerSideProps({ req, res, params }) {
 
   return {
     props: {
-      initProps:
-        '"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyIiwianRpIjoiNjM1MmNhM2RlYTgxNjNlNTAzNmIwZmQ1OTgwNWIwODdjMWE0NTc1Zjg0YjlmMDlhODJhNzIzNjEwMTRhNjYzMTAyNWFmNGUxOTVlNmI2ZDQiLCJpYXQiOjE2NDc5MzA0OTEuMTk2NjkyLCJuYmYiOjE2NDc5MzA0OTEuMTk2Njk1LCJleHAiOjE2Nzk0NjY0OTEuMTgzODMxLCJzdWIiOiI0NCIsInNjb3BlcyI6W119.J9Aphg_YdH78-q-2FWdXtiROUqTy8hsprK9KzPnmoqaHO7s7x2795O1ySUbnJnPGD3YYZ2s8qJGFr4xzUQEnHlaZsUmlE6Ij1GNcjRFKheSuq-eyETX9sqYWiMABRqyeTK3IJnbjvehnckIhNwouE2pYIajRW8sBMckzBcbDqxOSeqjIBl9ukPwR-LzuYzlNxQBv4XpAW1AxoeuDDrWT-URJDEaJkq3msNbocyPYC-5pkUmeawYGof893uV6uU0YwPeAWWUrYzHbFXN5RFnEV_ERSVisP1S1YKpF9zQjBioMFEz8qnf0DpDMovgzjo_Xvn5NSI4ITNZGWGiyD0XRLJ_8OrxuWwBJDBeoBb7mSBhfaJQnxL1DLihR4dD10qHKY7jMqKG3YU-yliem0NAISvt-4vgheXxUfb6G_xVhW7BKYo1ZQSiopJMCg_44-Lr5X7ldjcI-dv2Ld6n8VI9-vFLVEHytSfi_U5ahNefAPAfXKa_NQAQhL7D4atcXu6GfLWHY3HB8yR_Xbsxn7p1lEoJ89nr5YfEX5ydUaZHlnJGn1OwEnBr3200NvcEr-tPI5o92oBHwPtIF-Uz9uaq1NMxOnIvPlxdyRKCFea-qE6nyySLI1D8QYLSDS8Ncl2DsWF63NoeLAeEZMpjHZw_12A2xBcOCkUuhnFQk5hhu5n0"',
+      initProps,
       dataProfile,
       sidemenu: "2",
-      ticketid: params.ticketId,
+      ticketid,
     },
   };
 }
