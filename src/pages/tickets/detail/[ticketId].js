@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 import InfiniteScroll from "react-infinite-scroll-component";
 
+import { TicketDetailTaskList } from "components/screen/ticket";
+
 import ButtonSys from "../../../components/button";
 import DrawerTicketAssign from "../../../components/drawer/tickets/drawerTicketAssign";
 import DrawerTicketConnectItem from "../../../components/drawer/tickets/drawerTicketConnectItem";
@@ -678,8 +680,8 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
           </div>
           <div className=" col-span-8 flex flex-col">
             {/* STATUS ASSIGN DEADLINE TIKET */}
-            <div className=" w-full flex justify-around mb-2 ml-2 shadow-md rounded-md bg-white p-5">
-              <div className=" w-4/12 pr-8 flex items-center justify-between mb-2">
+            <div className=" w-full flex justify-between mb-2 ml-2 shadow-md rounded-md bg-white p-5">
+              <div className=" w-1/2 pr-8 flex items-center justify-between mb-2">
                 <div className=" flex flex-col">
                   <div className="mb-2">
                     <Label>Status</Label>
@@ -733,7 +735,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                   ticketid={ticketid}
                 />
               </div>
-              <div className=" w-4/12 px-8 flex items-center justify-between mb-2">
+              {/* <div className=" w-4/12 px-8 flex items-center justify-between mb-2 bg-red-400">
                 <div className=" flex flex-col">
                   <div className="mb-2">
                     <Label>
@@ -752,8 +754,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                         className="btn btn-sm text-white bg-state2 border-state2 hover:bg-onhold hover:border-onhold px-6 py-0"
                         onClick={() => {
                           setdrawerassignticket(true);
-                        }}
-                      >
+                        }}>
                         <div className="mr-1">
                           <FilePlusIconSvg size={15} color={`#ffffff`} />
                         </div>
@@ -802,15 +803,14 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                         className=" h-full flex justify-end items-start cursor-pointer"
                         onClick={() => {
                           setdrawerassignticket(true);
-                        }}
-                      >
+                        }}>
                         <UserSearchIconSvg size={18} color={`#4D4D4D`} />
                       </div>
                     )
                   ) : null
                 ) : null}
-              </div>
-              <div className=" w-4/12 pl-8 flex items-center justify-between mb-2">
+              </div> */}
+              <div className=" w-1/2 pl-8 flex items-center justify-between mb-2">
                 <div className=" flex flex-col">
                   <div className=" mb-2">
                     <Label>Deadline</Label>
@@ -865,8 +865,16 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
               </div>
             </div>
             <div className="flex w-full">
-              {/* DETAIL ASET TIKET */}
-              <div className=" w-6/12 mx-2">
+              <div className="w-6/12 mx-2 flex flex-col">
+                {/* Task */}
+                <div className="mt-2">
+                  <TicketDetailTaskList
+                    ticketId={displaydata.id}
+                    ticketName={displaydata.name}
+                  />
+                </div>
+
+                {/* DETAIL ASET TIKET */}
                 {dataProfile.data.role === 1 ? (
                   <div className=" flex w-full flex-col mt-2 shadow-md rounded-md bg-white p-5">
                     <div className=" flex items-center justify-between mb-5">
@@ -1382,33 +1390,34 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
   );
 };
 
+// TODO: revert it back. This is temporary for mocking the backend.
 export async function getServerSideProps({ req, res, params }) {
-  const ticketid = params.ticketId;
-  var initProps = {};
-  if (!req.headers.cookie) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/login",
-      },
-    };
-  }
-  const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
-  if (!cookiesJSON1.token) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/login",
-      },
-    };
-  }
-  initProps = cookiesJSON1.token;
+  // const ticketid = params.ticketId;
+  // var initProps = {};
+  // if (!req.headers.cookie) {
+  //   return {
+  //     redirect: {
+  //       permanent: false,
+  //       destination: "/login",
+  //     },
+  //   };
+  // }
+  // const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+  // if (!cookiesJSON1.token) {
+  //   return {
+  //     redirect: {
+  //       permanent: false,
+  //       destination: "/login",
+  //     },
+  //   };
+  // }
+  // initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
-        Authorization: JSON.parse(initProps),
+        // Authorization: JSON.parse(initProps),
       },
     }
   );
@@ -1422,10 +1431,11 @@ export async function getServerSideProps({ req, res, params }) {
 
   return {
     props: {
-      initProps,
+      initProps:
+        '"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyIiwianRpIjoiNjM1MmNhM2RlYTgxNjNlNTAzNmIwZmQ1OTgwNWIwODdjMWE0NTc1Zjg0YjlmMDlhODJhNzIzNjEwMTRhNjYzMTAyNWFmNGUxOTVlNmI2ZDQiLCJpYXQiOjE2NDc5MzA0OTEuMTk2NjkyLCJuYmYiOjE2NDc5MzA0OTEuMTk2Njk1LCJleHAiOjE2Nzk0NjY0OTEuMTgzODMxLCJzdWIiOiI0NCIsInNjb3BlcyI6W119.J9Aphg_YdH78-q-2FWdXtiROUqTy8hsprK9KzPnmoqaHO7s7x2795O1ySUbnJnPGD3YYZ2s8qJGFr4xzUQEnHlaZsUmlE6Ij1GNcjRFKheSuq-eyETX9sqYWiMABRqyeTK3IJnbjvehnckIhNwouE2pYIajRW8sBMckzBcbDqxOSeqjIBl9ukPwR-LzuYzlNxQBv4XpAW1AxoeuDDrWT-URJDEaJkq3msNbocyPYC-5pkUmeawYGof893uV6uU0YwPeAWWUrYzHbFXN5RFnEV_ERSVisP1S1YKpF9zQjBioMFEz8qnf0DpDMovgzjo_Xvn5NSI4ITNZGWGiyD0XRLJ_8OrxuWwBJDBeoBb7mSBhfaJQnxL1DLihR4dD10qHKY7jMqKG3YU-yliem0NAISvt-4vgheXxUfb6G_xVhW7BKYo1ZQSiopJMCg_44-Lr5X7ldjcI-dv2Ld6n8VI9-vFLVEHytSfi_U5ahNefAPAfXKa_NQAQhL7D4atcXu6GfLWHY3HB8yR_Xbsxn7p1lEoJ89nr5YfEX5ydUaZHlnJGn1OwEnBr3200NvcEr-tPI5o92oBHwPtIF-Uz9uaq1NMxOnIvPlxdyRKCFea-qE6nyySLI1D8QYLSDS8Ncl2DsWF63NoeLAeEZMpjHZw_12A2xBcOCkUuhnFQk5hhu5n0"',
       dataProfile,
       sidemenu: "2",
-      ticketid,
+      ticketid: params.ticketId,
     },
   };
 }

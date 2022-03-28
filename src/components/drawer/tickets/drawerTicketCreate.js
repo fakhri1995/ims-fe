@@ -74,7 +74,7 @@ const DrawerTicketCreate = ({
   //useState
   const [datapayload, setdatapayload] = useState({
     type_id: null,
-    ticket_task_type_id: null,
+    ticket_detail_type_id: null,
     product_id: "",
     pic_name: "",
     pic_contact: "",
@@ -89,7 +89,7 @@ const DrawerTicketCreate = ({
   const [datatypetickets, setdatatypetickets] = useState([]);
   const [datatasktickets, setdatatasktickets] = useState([]);
   const [dataloctickets, setdataloctickets] = useState([]);
-  const [fecthingtickets, setfecthingtickets] = useState(false);
+  // const [fecthingtickets, setfecthingtickets] = useState(false);
   const [warningphonenumber, setwarningphonenumber] = useState(false);
   const [warningproductid, setwarningproductid] = useState(false);
   //files
@@ -142,7 +142,7 @@ const DrawerTicketCreate = ({
             if (res2.success) {
               setdatapayload({
                 type_id: null,
-                ticket_task_type_id: null,
+                ticket_detail_type_id: null,
                 product_id: "",
                 pic_name: "",
                 pic_contact: "",
@@ -192,7 +192,7 @@ const DrawerTicketCreate = ({
           if (res2.success) {
             setdatapayload({
               type_id: null,
-              ticket_task_type_id: null,
+              ticket_detail_type_id: null,
               product_id: "",
               pic_name: "",
               pic_contact: "",
@@ -235,7 +235,7 @@ const DrawerTicketCreate = ({
       .then((res) => res.json())
       .then((res2) => {
         setdatatypetickets(res2.data.ticket_types);
-        setdatatasktickets(res2.data.ticket_task_types);
+        setdatatasktickets(res2.data.ticket_detail_types);
         setdataloctickets([
           dataprofile.data.role === 1
             ? res2.data.companies
@@ -247,7 +247,7 @@ const DrawerTicketCreate = ({
     if (
       datapayload.type_id !== null &&
       datapayload.name !== "" &&
-      datapayload.ticket_task_type_id !== null &&
+      datapayload.ticket_detail_type_id !== null &&
       datapayload.product_id !== "" &&
       datapayload.incident_time !== null &&
       datapayload.location_id !== null
@@ -264,7 +264,7 @@ const DrawerTicketCreate = ({
       onClose={() => {
         setdatapayload({
           type_id: null,
-          ticket_task_type_id: null,
+          ticket_detail_type_id: null,
           product_id: "",
           pic_name: "",
           pic_contact: "",
@@ -341,17 +341,19 @@ const DrawerTicketCreate = ({
                 onChange={(value, option) => {
                   setdatapayload({
                     ...datapayload,
-                    ticket_task_type_id: value,
+                    ticket_detail_type_id: value,
                   });
                   setdisabledtrigger((prev) => prev + 1);
                 }}
-                value={datapayload.ticket_task_type_id}
+                value={datapayload.ticket_detail_type_id}
               >
-                {datatasktickets.map((doc, idx) => (
-                  <Select.Option value={doc.id}>
-                    {doc.name} - {doc.task_type_name}
-                  </Select.Option>
-                ))}
+                {datatasktickets.map((doc, idx) => {
+                  return (
+                    <Select.Option value={doc.id}>
+                      {doc.name} - {doc.ticket_type_name}
+                    </Select.Option>
+                  );
+                })}
               </Select>
             </div>
           </div>
