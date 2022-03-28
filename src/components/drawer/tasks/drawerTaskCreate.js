@@ -221,19 +221,22 @@ const DrawerTaskCreate = ({
   useEffect(() => {
     if (switchstaffgroup !== -1) {
       if (switchstaffgroup === 0) {
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups`, {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        })
+        fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=0`,
+          {
+            method: `GET`,
+            headers: {
+              Authorization: JSON.parse(initProps),
+            },
+          }
+        )
           .then((res) => res.json())
           .then((res2) => {
             setdatastaffgroup(res2.data);
           });
       } else if (switchstaffgroup === 1) {
         fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=${1}`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=1`,
           {
             method: `GET`,
             headers: {
@@ -249,24 +252,30 @@ const DrawerTaskCreate = ({
     }
   }, [switchstaffgroup]);
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=0`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         setdatastaffgroup(res2.data);
       });
   }, []);
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=${1}`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=1`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         setdatastaffgroup(res2.data);
@@ -693,9 +702,7 @@ const DrawerTaskCreate = ({
                   onSearch={(value) => {
                     setfetchingstaffgroup(true);
                     fetch(
-                      `${
-                        process.env.NEXT_PUBLIC_BACKEND_URL
-                      }/getFilterUsers?type=${1}&name=${value}`,
+                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=1&name=${value}`,
                       {
                         method: `GET`,
                         headers: {
@@ -746,7 +753,7 @@ const DrawerTaskCreate = ({
                   onSearch={(value) => {
                     setfetchingstaffgroup(true);
                     fetch(
-                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups?name=${value}`,
+                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=0&name=${value}`,
                       {
                         method: `GET`,
                         headers: {
