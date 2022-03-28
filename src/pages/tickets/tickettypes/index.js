@@ -139,16 +139,16 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
       },
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
-    {
-      title: "Tipe Task",
-      dataIndex: "task_type_name",
-      render: (text, record, index) => {
-        return {
-          children: <>{record.task_type_name}</>,
-        };
-      },
-      sorter: (a, b) => a.name.localeCompare(b.name),
-    },
+    // {
+    //   title: "Tipe Task",
+    //   dataIndex: "task_type_name",
+    //   render: (text, record, index) => {
+    //     return {
+    //       children: <>{record.task_type_name}</>,
+    //     };
+    //   },
+    //   sorter: (a, b) => a.name.localeCompare(b.name),
+    // },
     {
       title: "Deskripsi",
       dataIndex: "description",
