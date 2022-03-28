@@ -8,10 +8,12 @@ import {
   TreeSelect,
   notification,
 } from "antd";
+import type { AxiosError } from "axios";
 import moment from "moment";
 import type { FC } from "react";
 import React, { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
+import { useMutation, useQueryClient } from "react-query";
 
 import ButtonSys from "components/button";
 import DrawerCore from "components/drawer/drawerCore";
@@ -23,6 +25,12 @@ import {
 } from "components/icon";
 import { InputRequired, TextAreaNotRequired } from "components/input";
 import { H2, Label } from "components/typography";
+
+import { useAxiosClient } from "hooks/use-axios-client";
+
+import type { AddTaskPayload } from "apis/task";
+import { TaskService } from "apis/task/task.service";
+import { TicketServiceQueryKeys } from "apis/ticket";
 
 /**
  * Component TicketDetailTaskCreateDrawer's props.
@@ -41,10 +49,16 @@ export interface ITicketDetailTaskCreateDrawer {
 export const TicketDetailTaskCreateDrawer: FC<
   ITicketDetailTaskCreateDrawer
 > = ({ visible, onvisible, ticketId, ticketName }) => {
+  if (ticketId === null) {
+    /** Perlu check ini agar `reference_id` tidak null saat add new task. */
+    return null;
+  }
+
+  const axiosClient = useAxiosClient();
+  const queryClient = useQueryClient();
+
   const [cookies] = useCookies(["token"]);
   const initProps = cookies.token;
-
-  const [loadingcreate, setloadingcreate] = useState(false);
 
   //USESTATE
   const [datacreate, setdatacreate] = useState({
@@ -85,7 +99,10 @@ export const TicketDetailTaskCreateDrawer: FC<
   const [datastaffgroup, setdatastaffgroup] = useState([]);
   const [selectedstaffgroup, setselectedstaffgroup] = useState([]);
   const [fetchingstaffgroup, setfetchingstaffgroup] = useState(false);
+
+  /** 0 => Group, 1 => Engineer */
   const [switchstaffgroup, setswitchstaffgroup] = useState(1);
+
   //start date
   const [now, setnow] = useState(null);
   const [tempdate, settempdate] = useState("");
@@ -98,6 +115,18 @@ export const TicketDetailTaskCreateDrawer: FC<
   // const [regular, setregular] = useState(null);
   // const [choosedateendrepeat, setchoosedateendrepeat] = useState(false);
 
+  const { mutate: addTask, isLoading: addTaskLoading } = useMutation(
+    (payload: AddTaskPayload) => TaskService.add(axiosClient, payload),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([
+          TicketServiceQueryKeys.TICKET_GET,
+          ticketId,
+        ]);
+      },
+    }
+  );
+
   //HANDLER
   const handleAddTask = () => {
     var finaldata = {
@@ -107,25 +136,19 @@ export const TicketDetailTaskCreateDrawer: FC<
           ? datacreate.location_id
           : datacreate.subloc_id,
     };
-    setloadingcreate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addTask`, {
-      method: "POST",
-      headers: {
-        Authorization: initProps,
-        "Content-Type": "application/json",
+
+    addTask(
+      {
+        ...finaldata,
       },
-      body: JSON.stringify(finaldata),
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setloadingcreate(false);
-        if (res2.success) {
+      {
+        onSuccess: (response) => {
           setdatacreate({
             name: "",
             description: "",
             task_type_id: null,
             location_id: null,
-            reference_id: null,
+            reference_id: ticketId,
             created_at: null,
             deadline: null,
             is_group: null,
@@ -146,16 +169,18 @@ export const TicketDetailTaskCreateDrawer: FC<
           // setrepeatable(false);
           onvisible(false);
           notification["success"]({
-            message: res2.message,
+            message: response.data.message,
             duration: 3,
           });
-        } else {
+        },
+        onError: (error: AxiosError) => {
           notification["error"]({
-            message: res2.message,
+            message: error.response.data.message,
             duration: 3,
           });
-        }
-      });
+        },
+      }
+    );
   };
 
   //USEEFFECT
@@ -233,19 +258,22 @@ export const TicketDetailTaskCreateDrawer: FC<
   useEffect(() => {
     if (switchstaffgroup !== -1) {
       if (switchstaffgroup === 0) {
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups`, {
-          method: `GET`,
-          headers: {
-            Authorization: initProps,
-          },
-        })
+        fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=0`,
+          {
+            method: `GET`,
+            headers: {
+              Authorization: initProps,
+            },
+          }
+        )
           .then((res) => res.json())
           .then((res2) => {
             setdatastaffgroup(res2.data);
           });
       } else if (switchstaffgroup === 1) {
         fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=${1}`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=1`,
           {
             method: `GET`,
             headers: {
@@ -261,24 +289,30 @@ export const TicketDetailTaskCreateDrawer: FC<
     }
   }, [switchstaffgroup]);
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups`, {
-      method: `GET`,
-      headers: {
-        Authorization: initProps,
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=0`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: initProps,
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         setdatastaffgroup(res2.data);
       });
   }, []);
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=${1}`, {
-      method: `GET`,
-      headers: {
-        Authorization: initProps,
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=1`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: initProps,
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         setdatastaffgroup(res2.data);
@@ -309,7 +343,7 @@ export const TicketDetailTaskCreateDrawer: FC<
           description: "",
           task_type_id: null,
           location_id: null,
-          reference_id: null,
+          reference_id: ticketId,
           created_at: null,
           deadline: null,
           is_group: null,
@@ -334,7 +368,7 @@ export const TicketDetailTaskCreateDrawer: FC<
       onClick={handleAddTask}
       disabled={disabledcreate}
     >
-      <Spin spinning={loadingcreate}>
+      <Spin spinning={addTaskLoading}>
         <div className="flex flex-col">
           <div className="mb-6">
             <p className="mb-0 text-red-500 text-xs italic">
@@ -718,9 +752,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                   onSearch={(value) => {
                     setfetchingstaffgroup(true);
                     fetch(
-                      `${
-                        process.env.NEXT_PUBLIC_BACKEND_URL
-                      }/getFilterUsers?type=${1}&name=${value}`,
+                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=1&name=${value}`,
                       {
                         method: `GET`,
                         headers: {
@@ -773,7 +805,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                   onSearch={(value) => {
                     setfetchingstaffgroup(true);
                     fetch(
-                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups?name=${value}`,
+                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=0&name=${value}`,
                       {
                         method: `GET`,
                         headers: {
