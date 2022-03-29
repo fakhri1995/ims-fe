@@ -527,7 +527,10 @@ export const useMutateAttendanceActivity = () => {
  *
  * NOTE: arg `attendanceId` sangat mungkin memiliki nilai `undefined`. Oleh karena itu hanya jalankan query ketika `attendanceId !== undefined`.
  */
-export const useAttendanceDetailSelector = (attendanceId: number) => {
+export const useAttendanceDetailSelector = (
+  attendanceId: number,
+  isAdminRole: boolean = false
+) => {
   const axiosClient = useAxiosClient();
 
   const [selectedActivityIndex, setSelectedActivityIndex] = useState<
@@ -536,60 +539,60 @@ export const useAttendanceDetailSelector = (attendanceId: number) => {
 
   const { data, isLoading } = useQuery(
     [AttendanceServiceQueryKeys.ATTENDANCE_USER_GET, attendanceId],
-    () => AttendanceService.findOne(axiosClient, attendanceId),
+    () => AttendanceService.findOne(axiosClient, attendanceId, isAdminRole),
     {
       enabled: !!attendanceId,
       select: (response) => {
-        const attendanceForm = response.data.data.attendance_form;
-        const attendanceActivities = response.data.data.attendance_activities;
-
-        /** Record object (Map-like) untuk mempermudah manipulasi berikutnya */
-        const attendanceFormShape: AttendanceFormShapeType = {};
-        attendanceForm.details.forEach((detail) => {
-          attendanceFormShape[detail.key] = {
-            name: detail.name,
-            list: detail.list || undefined,
-          };
-        });
-
         const data: Data = [];
+        response.data.data.attendance_activities.forEach(
+          (attendanceActivity) => {
+            const attendanceForm = attendanceActivity.attendance_form;
 
-        attendanceActivities.forEach((activity) => {
-          const datum: Datum = {
-            timestamp: activity.updated_at,
-            activities: {},
-          };
+            /** Record object (Map-like) untuk mempermudah manipulasi berikutnya */
+            const attendanceFormShape: AttendanceFormShapeType = {};
+            attendanceForm.details.forEach((detail) => {
+              attendanceFormShape[detail.key] = {
+                name: detail.name,
+                list: detail.list || undefined,
+              };
+            });
 
-          activity.details.forEach((detail) => {
-            const activityName = attendanceFormShape[detail.key].name;
+            const datum: Datum = {
+              timestamp: attendanceActivity.updated_at,
+              activities: {},
+            };
 
-            // normal activity
-            if (typeof detail.value === "string") {
-              datum.activities[activityName] = detail.value;
-            } else {
-              const checkboxActivityDetail: CheckboxActivityType = {};
+            attendanceActivity.details.forEach((detail) => {
+              const activityName = attendanceFormShape[detail.key].name;
 
-              attendanceFormShape[detail.key].list.forEach(
-                (checkboxValue, index) => {
-                  let isSelected = false;
-                  (detail.value as number[]).forEach((selectedIndex) => {
-                    if (isSelected) {
-                      return;
-                    }
+              // normal activity
+              if (typeof detail.value === "string") {
+                datum.activities[activityName] = detail.value;
+              } else {
+                const checkboxActivityDetail: CheckboxActivityType = {};
 
-                    isSelected = selectedIndex === index;
-                  });
+                attendanceFormShape[detail.key].list.forEach(
+                  (checkboxValue, index) => {
+                    let isSelected = false;
+                    (detail.value as number[]).forEach((selectedIndex) => {
+                      if (isSelected) {
+                        return;
+                      }
 
-                  checkboxActivityDetail[checkboxValue] = isSelected;
-                }
-              );
+                      isSelected = selectedIndex === index;
+                    });
 
-              datum.activities[activityName] = checkboxActivityDetail;
-            }
-          });
+                    checkboxActivityDetail[checkboxValue] = isSelected;
+                  }
+                );
 
-          data.push(datum);
-        });
+                datum.activities[activityName] = checkboxActivityDetail;
+              }
+            });
+
+            data.push(datum);
+          }
+        );
 
         return data;
       },

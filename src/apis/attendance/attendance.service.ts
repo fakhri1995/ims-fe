@@ -44,14 +44,22 @@ export class AttendanceService {
    *
    * @access GET /getAttendanceUser
    */
-  static async findOne(axiosClient: AxiosInstance, attendanceId: number) {
+  static async findOne(
+    axiosClient: AxiosInstance,
+    attendanceId: number,
+    withAdminEndpoint: boolean = false
+  ) {
     const querySearch = QueryString.stringify(
       { id: attendanceId },
       { addQueryPrefix: true }
     );
 
+    const endpoint = withAdminEndpoint
+      ? "/getAttendanceUserAdmin"
+      : "/getAttendancesUser";
+
     return await axiosClient.get<IGetAttendanceUserSucceedResponse>(
-      "/getAttendanceUser" + querySearch
+      endpoint + querySearch
     );
   }
 

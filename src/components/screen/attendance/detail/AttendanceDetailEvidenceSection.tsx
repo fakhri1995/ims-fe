@@ -11,17 +11,19 @@ import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
  */
 export interface IAttendanceDetailEvidenceSection {
   attendanceId: number;
+
+  fetchAsAdmin?: boolean;
 }
 
 /**
  * Component AttendanceDetailEvidenceSection
  */
 export const AttendanceDetailEvidenceSection: FC<IAttendanceDetailEvidenceSection> =
-  memo(({ attendanceId }) => {
+  memo(({ attendanceId, fetchAsAdmin = false }) => {
     const axiosClient = useAxiosClient();
     const { data, isLoading } = useQuery(
       [AttendanceServiceQueryKeys.ATTENDANCE_USER_GET, attendanceId],
-      () => AttendanceService.findOne(axiosClient, attendanceId),
+      () => AttendanceService.findOne(axiosClient, attendanceId, fetchAsAdmin),
       {
         enabled: !!attendanceId,
         select: (response) => response.data.data.user_attendance.evidence,

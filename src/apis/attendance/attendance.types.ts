@@ -97,8 +97,8 @@ export interface AttendanceForm {
 export interface UsersAttendance {
   id: number;
   user_id: number;
-  check_in: Date;
-  check_out: Date;
+  check_in: string;
+  check_out: string;
   long_check_in: string;
   lat_check_in: string;
   long_check_out: string;
@@ -129,8 +129,7 @@ export type IGetAttendanceUserSucceedResponse =
   HttpRequestWithDataSucceedResponse<GetAttendanceUserData>;
 
 export interface GetAttendanceUserData {
-  user_attendance: Omit<UsersAttendance, "user">;
-  attendance_form: AttendanceFormUser;
+  user_attendance: UserAttendance;
   attendance_activities: AttendanceActivity[];
 }
 
@@ -139,7 +138,22 @@ export interface AttendanceActivity {
   user_id: number;
   attendance_form_id: number;
   details: AttendanceActivityDetail[];
-  updated_at: Date | string;
+  updated_at: string;
+  attendance_form: AttendanceForm;
+}
+
+export interface AttendanceForm {
+  id: number;
+  details: AttendanceFormDetail[];
+}
+
+export interface AttendanceFormDetail {
+  required: boolean;
+  name: string;
+  description: string;
+  type: number;
+  key: string;
+  list?: string[];
 }
 
 export interface AttendanceActivityDetail {
@@ -147,19 +161,7 @@ export interface AttendanceActivityDetail {
   key: string;
 }
 
-export interface AttendanceFormUser
-  extends Pick<AttendanceForm, "id" | "name"> {
-  description: string;
-  details: AttendanceFormDetail[];
-  updated_at: Date | null;
-  deleted_at: Date | null;
-  created_by: number;
-}
-
-export interface AttendanceFormDetail {
-  name: string;
-  description: string;
-  type: number;
-  key: string;
-  list?: string[];
+export interface Evidence {
+  check_in_evidence: string;
+  check_out_evidence: string;
 }

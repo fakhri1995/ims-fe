@@ -16,17 +16,19 @@ import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
  */
 export interface IAttendanceDetailMetaCard {
   attendanceId: number;
+
+  fetchAsAdmin?: boolean;
 }
 
 /**
  * Component AttendanceDetailMetaCard
  */
 export const AttendanceDetailMetaCard: FC<IAttendanceDetailMetaCard> = memo(
-  ({ attendanceId }) => {
+  ({ attendanceId, fetchAsAdmin = false }) => {
     const axiosClient = useAxiosClient();
     const { data, isLoading } = useQuery(
       [AttendanceServiceQueryKeys.ATTENDANCE_USER_GET, attendanceId],
-      () => AttendanceService.findOne(axiosClient, attendanceId),
+      () => AttendanceService.findOne(axiosClient, attendanceId, fetchAsAdmin),
       {
         enabled: !!attendanceId,
         select: (response) => {
@@ -75,7 +77,7 @@ export const AttendanceDetailMetaCard: FC<IAttendanceDetailMetaCard> = memo(
               ),
             },
             {
-              label: "Lokasi Check In",
+              label: "Lokasi Check Out",
               content: attendanceMeta.geo_loc_check_out || "-",
             },
             { label: "Keterangan", content: isLate },
