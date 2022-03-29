@@ -170,15 +170,44 @@ function LayoutDashboard({
                   {fixedBreadcrumbValues &&
                     fixedBreadcrumbValues.length > 0 &&
                     fixedBreadcrumbValues.map((breadcrumbItem) => {
-                      return (
-                        <Breadcrumb.Item key={breadcrumbItem.name}>
-                          {breadcrumbItem.hrefValue === undefined ? (
-                            <strong>{breadcrumbItem.name}</strong>
-                          ) : (
+                      const isEmptyHrefValue =
+                        breadcrumbItem.hrefValue === undefined ||
+                        breadcrumbItem.hrefValue === "";
+
+                      let breadcrumbContent = null;
+
+                      if (isEmptyHrefValue) {
+                        breadcrumbContent = (
+                          <strong>{breadcrumbItem.name}</strong>
+                        );
+                      } else {
+                        const isShouldPushBack =
+                          breadcrumbItem.hrefValue.toLowerCase() === "back";
+
+                        if (isShouldPushBack) {
+                          breadcrumbContent = (
+                            <a
+                              href="#"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                rt.back();
+                              }}
+                            >
+                              {breadcrumbItem.name}
+                            </a>
+                          );
+                        } else {
+                          breadcrumbContent = (
                             <Link href={breadcrumbItem.hrefValue}>
                               <a className="font-bold">{breadcrumbItem.name}</a>
                             </Link>
-                          )}
+                          );
+                        }
+                      }
+
+                      return (
+                        <Breadcrumb.Item key={breadcrumbItem.name}>
+                          {breadcrumbContent}
                         </Breadcrumb.Item>
                       );
                     })}

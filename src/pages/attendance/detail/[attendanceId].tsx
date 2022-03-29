@@ -26,7 +26,7 @@ const AttendanceDetailPage: NextPage<ProtectedPageProps> = ({
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
       name: "Absensi",
-      hrefValue: "/attendance/staff",
+      hrefValue: "back",
     },
     {
       name: "Detail Absensi",
@@ -89,7 +89,7 @@ const AttendanceDetailPage: NextPage<ProtectedPageProps> = ({
                   <AttendanceDetailClickableAktivitasSelector
                     content="Belum memiliki aktivitas."
                     isActive
-                    onClick={() => {}}
+                    onClick={null}
                   />
                 )}
               </aside>
