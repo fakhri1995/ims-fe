@@ -47,10 +47,6 @@ export const AktivitasTableInfoCard: FC<IAktivitasTableInfoCard> = ({
    * We'll manipulate this state `{ selected: boolean }` value.
    */
   const [dataSource, setDataSource] = useState<AktivitasDetailType[]>([]);
-  useEffect(() => {
-    setDataSource(data || []);
-  }, [data]);
-
   const [aktivitasTitle, setAktivitasTitle] = useState("");
   const [aktivitasDescription, setAktivitasDescription] = useState("");
   const [aktivitasIsRequired, setAktivitasIsRequired] = useState(false);
@@ -75,16 +71,17 @@ export const AktivitasTableInfoCard: FC<IAktivitasTableInfoCard> = ({
     setAktivitasIsRequired(record.required);
   };
 
-  /** Select the top most data on initial render */
   useEffect(() => {
-    if (dataSource.length === 0) {
+    if (!data) {
       return;
     }
 
-    if (aktivitasTitle === "") {
-      onRowClicked(dataSource[0]);
+    setDataSource(data);
+
+    if (data.length > 0) {
+      onRowClicked(data[0]);
     }
-  }, [dataSource]);
+  }, [data]);
 
   const tableColumns = useMemo<ColumnsType<AktivitasDetailType>>(
     () => [

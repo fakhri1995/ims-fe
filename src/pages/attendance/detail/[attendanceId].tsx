@@ -26,12 +26,14 @@ const AttendanceDetailPage: NextPage<ProtectedPageProps> = ({
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
       name: "Absensi",
-      hrefValue: "/attendance/staff",
+      hrefValue: "back",
     },
     {
       name: "Detail Absensi",
     },
   ];
+
+  const isAdminRole = dataProfile.data.role === 1;
 
   const {
     data,
@@ -39,7 +41,7 @@ const AttendanceDetailPage: NextPage<ProtectedPageProps> = ({
     currentActivityData,
     selectedActivityIndex,
     setSelectedActivityIndex,
-  } = useAttendanceDetailSelector(attendanceId);
+  } = useAttendanceDetailSelector(attendanceId, isAdminRole);
 
   const shouldShowAktivitasSpinner = data === undefined || isLoading;
 
@@ -54,7 +56,10 @@ const AttendanceDetailPage: NextPage<ProtectedPageProps> = ({
         {/* First column */}
         <div className="w-full lg:w-2/5 xl:w-1/5 space-y-6">
           {/* Detail attendance meta */}
-          <AttendanceDetailMetaCard attendanceId={attendanceId} />
+          <AttendanceDetailMetaCard
+            attendanceId={attendanceId}
+            fetchAsAdmin={isAdminRole}
+          />
 
           {/* Aktivitas selector */}
           <div className="mig-platform--p-0">
@@ -84,7 +89,7 @@ const AttendanceDetailPage: NextPage<ProtectedPageProps> = ({
                   <AttendanceDetailClickableAktivitasSelector
                     content="Belum memiliki aktivitas."
                     isActive
-                    onClick={() => {}}
+                    onClick={null}
                   />
                 )}
               </aside>
@@ -101,7 +106,10 @@ const AttendanceDetailPage: NextPage<ProtectedPageProps> = ({
           />
 
           {/* Evidence detail */}
-          <AttendanceDetailEvidenceSection attendanceId={attendanceId} />
+          <AttendanceDetailEvidenceSection
+            attendanceId={attendanceId}
+            fetchAsAdmin={isAdminRole}
+          />
         </div>
       </div>
     </LayoutDashboard>

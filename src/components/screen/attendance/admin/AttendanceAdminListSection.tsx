@@ -1,5 +1,13 @@
 import { DownloadOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, ConfigProvider, Form, Input, Table, Tabs } from "antd";
+import {
+  Button,
+  ConfigProvider,
+  Form,
+  Input,
+  Table,
+  Tabs,
+  Typography,
+} from "antd";
 import type { ColumnsType } from "antd/lib/table";
 import { isBefore } from "date-fns";
 import { useRouter } from "next/router";
@@ -33,9 +41,9 @@ export interface IAttendanceAdminListSection {}
 /**
  * Component AttendanceAdminListSection
  */
-export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = (
-  props
-) => {
+export const AttendanceAdminListSection: FC<
+  IAttendanceAdminListSection
+> = () => {
   /** 1 -> Hadir, 2 -> Absen */
   const [activeTab, setActiveTab] = useState<"1" | "2">("1");
   const [isExportDrawerShown, setIsExportDrawerShown] = useState(false);
@@ -179,7 +187,6 @@ const HadirTable: FC<ITable> = ({ searchValue }) => {
       },
       {
         title: "Nama",
-        ellipsis: true,
         dataIndex: ["user", "name"],
         sorter: (a: UsersAttendance, b: UsersAttendance) =>
           a.user.name < b.user.name ? -1 : 1,
@@ -193,15 +200,15 @@ const HadirTable: FC<ITable> = ({ searchValue }) => {
           return (
             <div className="flex items-center space-x-3">
               {/* Image */}
-              <div className="w-8 h-8 bg-mono80 rounded-full overflow-hidden">
-                <img
-                  src={profilePictureSrc}
-                  alt={`${record.user.name}'s Avatar`}
-                  className="w-full h-full bg-cover"
-                />
-              </div>
+              <img
+                src={profilePictureSrc}
+                alt={`${record.user.name}'s Avatar`}
+                className="w-8 h-8 bg-mono80 rounded-full"
+              />
 
-              <span>{value}</span>
+              <Typography.Text className="max-w-full" ellipsis>
+                {value}
+              </Typography.Text>
             </div>
           );
         },
@@ -209,22 +216,17 @@ const HadirTable: FC<ITable> = ({ searchValue }) => {
       {
         title: "Kerja",
         dataIndex: "is_wfo",
-        width: 96,
         render: (is_wfo) => (is_wfo === 0 ? "WFO" : "WFH"),
       },
       {
         title: "Waktu Check In",
         dataIndex: "check_in",
-        width: 196,
         render: (check_in) =>
           formatDateToLocale(check_in, "dd MMM yyyy, HH:mm"),
-        // sorter: (a: UsersAttendance, b: UsersAttendance) => {
-        //   // console.log(`a.check_in(${a.check_in}); b.check_in(${b.check_in});`)
-
-        //   return isBefore(new Date(a.check_in), new Date(b.check_in)) ? -1 : 1
-        // },
         sorter: (a: UsersAttendance, b: UsersAttendance) =>
-          isBefore(a.check_in, b.check_in) ? -1 : 1,
+          isBefore(a.check_in as unknown as Date, b.check_in as unknown as Date)
+            ? -1
+            : 1,
       },
       {
         title: "Lokasi Check In",
@@ -234,7 +236,6 @@ const HadirTable: FC<ITable> = ({ searchValue }) => {
       {
         title: "Waktu Check Out",
         dataIndex: "check_out",
-        width: 196,
         render: (check_out) =>
           !check_out
             ? "-"
@@ -330,15 +331,15 @@ const AbsenTable: FC<ITable> = ({ searchValue }) => {
           return (
             <div className="flex items-center space-x-3">
               {/* Image */}
-              <div className="w-8 h-8 bg-mono80 rounded-full overflow-hidden">
-                <img
-                  src={profilePictureSrc}
-                  alt={`${record.name}'s Avatar`}
-                  className="w-full h-full bg-cover"
-                />
-              </div>
+              <img
+                src={profilePictureSrc}
+                alt={`${record.name}'s Avatar`}
+                className="w-8 h-8 bg-mono80 rounded-full"
+              />
 
-              <span>{value}</span>
+              <Typography.Text className="max-w-full" ellipsis>
+                {value}
+              </Typography.Text>
             </div>
           );
         },

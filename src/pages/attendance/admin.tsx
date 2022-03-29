@@ -35,7 +35,7 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
         {/* First row: real time clock, today attendance stat, maps */}
         <div className="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-6">
           {/* First column: real time clock, today attendance stat */}
-          <div className="flex flex-col w-full lg:w-2/5 xl:w-1/5 space-y-6 justify-around">
+          <div className="flex flex-col w-full lg:w-2/5 xl:w-1/3 2xl:w-1/5 space-y-6 justify-around">
             <div className="min-h-[12rem] flex-grow">
               <CheckInOutCard onlyShowTime />
             </div>
@@ -46,7 +46,7 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
           </div>
 
           {/* Second column: maps */}
-          <div className="flex w-full lg:w-3/5 xl:w-4/5">
+          <div className="flex w-full lg:w-3/5 xl:w-2/3 2xl:w-4/5">
             <div className="mig-platform w-full">
               <AttendanceAdminLeafletMapNoSSR />
             </div>
@@ -54,7 +54,11 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
         </div>
 
         {/* Second row: Table all attendance */}
-        <AttendanceAdminListSection />
+        <div className="grid grid-cols-12">
+          <div className="col-span-full">
+            <AttendanceAdminListSection />
+          </div>
+        </div>
       </div>
     </LayoutDashboard>
   );
