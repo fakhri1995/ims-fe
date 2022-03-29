@@ -5,6 +5,15 @@ export enum TicketServiceQueryKeys {
 }
 
 /**
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/229867523/Update+Status+Ticket
+ */
+export type TicketUpdateStatusPayload = {
+  id: number;
+  status: TaskStatus;
+  notes: string;
+};
+
+/**
  * Enum ini digunakan untuk mapping `status` task.
  * Saat code ini ditulis, Overdue (1) tidak akan dicantumkan. Kalau dicantumkan,
  * maka map menjadi "-".

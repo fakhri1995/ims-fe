@@ -77,11 +77,11 @@ export const TicketDetailTaskCard: FC<Task> = ({
   const hasMultipleUsers = isGroup || usersLength > 1;
 
   const usersDropdownList = hasMultipleUsers ? (
-    <div className="bg-white rounded-md p-2 shadow-md cursor-default max-h-80 overflow-y-auto">
+    <div className="bg-white rounded-md p-2 shadow-md max-h-80 overflow-y-auto">
       {users.map((user) => (
         <div
           key={user.id}
-          className="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-md max-w-xs"
+          className="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-md max-w-xs cursor-pointer transition-colors"
         >
           {/* Profile Image */}
           <img
