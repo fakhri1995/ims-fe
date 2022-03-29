@@ -188,7 +188,7 @@ export const AttendanceStaffAktivitasSection: FC<
             dataSource={dataSource}
             pagination={tablePaginationConf}
             loading={isDataSourceLoading}
-            scroll={{ x: 640 }}
+            scroll={{ x: "max-content" }}
             className="tableTypeTask"
             onRow={(datum) => {
               return {

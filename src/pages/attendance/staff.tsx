@@ -58,12 +58,18 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
         </div>
 
         {/* Column 2: Aktivitas section (Table and Tabs), Kehadiran section (table) */}
-        <div className="w-full lg:w-3/5 xl:w-4/5 space-y-6">
+        <div className="w-full lg:w-3/5 xl:w-4/5">
           {/* Section: Aktivitas Table */}
-          <AttendanceStaffAktivitasSection />
+          <div className="grid grid-cols-12 space-y-6">
+            <div className="col-span-full">
+              <AttendanceStaffAktivitasSection />
+            </div>
 
-          {/* Section: Kehadiran Table */}
-          <AttendanceStaffKehadiranSection />
+            <div className="col-span-full">
+              {/* Section: Kehadiran Table */}
+              <AttendanceStaffKehadiranSection />
+            </div>
+          </div>
         </div>
       </div>
 

@@ -68,7 +68,7 @@ const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
       {/* First Row */}
       <div className="px-5 flex flex-wrap lg:flex-nowrap lg:space-x-6 space-y-6 lg:space-y-0">
         {/* First Column */}
-        <div className="w-full lg:w-2/5 xl:w-1/5">
+        <div className="w-full lg:w-2/5 xl:w-1/3 2xl:w-1/5">
           {/* Project detail card */}
           <DetailFormAktivitasCard
             aktivitasId={+aktivitasId}
@@ -77,7 +77,7 @@ const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
         </div>
 
         {/* Second Column */}
-        <div className="w-full lg:w-3/5 xl:w-4/5 space-y-6">
+        <div className="w-full lg:w-3/5 xl:w-2/3 2xl:w-4/5 space-y-6">
           {/* Staff (editable) card */}
           <AktivitasUserListEditableCard aktivitasId={+aktivitasId} />
 
