@@ -224,7 +224,9 @@ const HadirTable: FC<ITable> = ({ searchValue }) => {
         render: (check_in) =>
           formatDateToLocale(check_in, "dd MMM yyyy, HH:mm"),
         sorter: (a: UsersAttendance, b: UsersAttendance) =>
-          isBefore(a.check_in, b.check_in) ? -1 : 1,
+          isBefore(a.check_in as unknown as Date, b.check_in as unknown as Date)
+            ? -1
+            : 1,
       },
       {
         title: "Lokasi Check In",
