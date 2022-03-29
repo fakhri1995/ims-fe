@@ -1,17 +1,17 @@
-import { SearchOutlined } from "@ant-design/icons";
-import { Empty, Spin, notification } from "antd";
+import { DownOutlined } from "@ant-design/icons";
+import { Dropdown, Empty, Spin, notification } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Bar, Doughnut, Line } from "react-chartjs-2";
-import InfiniteScroll from "react-infinite-scroll-component";
 
-import { TicketDetailTaskList } from "components/screen/ticket";
+import {
+  TicketDetailTaskList,
+  TicketDetailUpdateStatusModal,
+} from "components/screen/ticket";
 
 import ButtonSys from "../../../components/button";
 import DrawerTicketAssign from "../../../components/drawer/tickets/drawerTicketAssign";
 import DrawerTicketConnectItem from "../../../components/drawer/tickets/drawerTicketConnectItem";
-import DrawerTicketCreate from "../../../components/drawer/tickets/drawerTicketCreate";
 import DrawerTicketDeadline from "../../../components/drawer/tickets/drawerTicketDeadline";
 import DrawerTicketUpdate from "../../../components/drawer/tickets/drawerTicketUpdate";
 import {
@@ -19,24 +19,18 @@ import {
   CheckIconSvg,
   EditIconSvg,
   FileExportIconSvg,
-  FilePlusIconSvg,
   ForbidIconSvg,
   InfoCircleIconSvg,
   PlusIconSvg,
   TicketIconSvg,
-  UserIconSvg,
-  UserSearchIconSvg,
-  XIconSvg,
 } from "../../../components/icon";
 import st from "../../../components/layout-dashboard.module.css";
 import Layout from "../../../components/layout-dashboardNew";
 import {
-  ModalCancelTiket,
   ModalNoteTiket,
   ModalReleaseItemTiket,
 } from "../../../components/modal/modalCustom";
-import { TableCustomTickets } from "../../../components/table/tableCustom";
-import { H1, H2, Label, Text } from "../../../components/typography";
+import { H1, Label, Text } from "../../../components/typography";
 import {
   ArcElement,
   BarElement,
@@ -194,14 +188,11 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
   const [showdatepicker, setshowdatepicker] = useState(false);
   const [datevalue, setdatevalue] = useState(null);
   //2.6.Status(Batalkan Tiket)
-  const [modalcancelticket, setmodalcancelticket] = useState(false);
   const [datacancelticket, setdatacancelticket] = useState({
     id: Number(ticketid),
     notes: "",
     name: "",
   });
-  const [loadingcancelticket, setloadingcancelticket] = useState(false);
-  const [refreshcancelticket, setrefreshcancelticket] = useState(-1);
   //2.7.Note
   const [displaynoteticket, setdisplaynoteticket] = useState([]);
   const [datanoteticket, setdatanoteticket] = useState({
@@ -217,7 +208,35 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
   //2.9 Export
   const [loadingexportticket, setloadingexportticket] = useState(false);
 
+  const [updateStatusTicketModal, setUpdateStatusTicketModal] = useState({
+    visible: false,
+    status: "",
+  });
+
+  const possibleTicketStatus = [
+    "Open",
+    "On Hold",
+    "On Progress",
+    "Canceled",
+    "Closed",
+  ];
+
   //3.Handler
+  /**
+   * Handler ketika "menu item" dari dropdown status ticket di-klik.
+   *
+   * @param {"open" | "on-hold" | "on-progress" | "canceled" | "closed"} status
+   * @returns {Function | () => void} a function to be passed into `onClick` props.
+   */
+  const handleOnChangeStatusClicked = (status) => {
+    return () => {
+      setUpdateStatusTicketModal({
+        visible: true,
+        status,
+      });
+    };
+  };
+
   const handleNoteTicket = () => {
     setloadingnoteticket(true);
     fetch(
@@ -242,40 +261,6 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
           setrefreshnoteticket((prev) => prev + 1);
           notification["success"]({
             message: "Note berhasil ditambahkan",
-            duration: 3,
-          });
-        } else if (!res2.success) {
-          notification["error"]({
-            message: res2.message,
-            duration: 3,
-          });
-        }
-      });
-  };
-  const handleCancelTicket = () => {
-    setloadingcancelticket(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
-        dataProfile.data.role === 1 ? `cancelTicket` : `cancelClientTicket`
-      }`,
-      {
-        method: "PUT",
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(datacancelticket),
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setloadingcancelticket(false);
-        setmodalcancelticket(false);
-        if (res2.success) {
-          setdatacancelticket({ id: Number(ticketid), notes: "" });
-          setrefreshcancelticket((prev) => prev + 1);
-          notification["success"]({
-            message: "Tiket berhasil dibatalkan",
             duration: 3,
           });
         } else if (!res2.success) {
@@ -418,7 +403,6 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
     refreshconnectitemticket,
     refreshassignticket,
     refreshdeadlineicket,
-    refreshcancelticket,
     refreshupdateticket,
     refreshclosedupdateticket,
     refreshclosedconnectitemticket,
@@ -695,44 +679,52 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                     </p>
                   </div>
                 </div>
+                {/* Status 7 === cancelled */}
                 {displaydata.status !== 7 && (
-                  <div className="dropdown dropdown-end">
-                    <div
-                      tabIndex={`1`}
-                      className=" h-full flex justify-end items-start cursor-pointer text-lg font-bold"
-                    >
-                      <span className="mb-0">...</span>
-                    </div>
-                    <div
-                      tabIndex={`1`}
-                      className=" menu dropdown-content bg-backdrop p-3"
-                    >
-                      <div
-                        className=" p-3 w-52 flex items-center bg-white rounded shadow hover:bg-red-100 text-overdue cursor-pointer"
-                        onClick={() => {
-                          setmodalcancelticket(true);
-                        }}
-                      >
-                        <div className="mr-2">
-                          <XIconSvg size={15} color={`#BF4A40`} />
-                        </div>
-                        <p className=" mb-0">Batalkan Tiket</p>
+                  <Dropdown
+                    arrow
+                    trigger={["click"]}
+                    placement="bottomRight"
+                    overlay={
+                      <div className="bg-white rounded-md shadow-md p-2 flex flex-col">
+                        {possibleTicketStatus.map((status, idx) => {
+                          const formattedStatus = status
+                            .toLocaleLowerCase()
+                            .split(" ")
+                            .join("-");
+                          return (
+                            <button
+                              key={idx}
+                              onClick={handleOnChangeStatusClicked(
+                                formattedStatus
+                              )}
+                              className="text-left bg-white font-medium text-mono30 px-4 py-2 hover:bg-primary10 rounded-md transition-colors"
+                            >
+                              {status}
+                            </button>
+                          );
+                        })}
                       </div>
-                    </div>
-                  </div>
+                    }
+                  >
+                    <DownOutlined />
+                  </Dropdown>
                 )}
-                <ModalCancelTiket
-                  title={"Pembatalan Tiket"}
-                  visible={modalcancelticket}
-                  onvisible={setmodalcancelticket}
-                  onCancel={() => {
-                    setmodalcancelticket(false);
+
+                <TicketDetailUpdateStatusModal
+                  visible={updateStatusTicketModal.visible}
+                  status={updateStatusTicketModal.status}
+                  ticketDisplayName={displaydata.name}
+                  ticketId={ticketid}
+                  onChangeVisible={(value) => {
+                    setUpdateStatusTicketModal((prev) => ({
+                      ...prev,
+                      visible: value,
+                    }));
                   }}
-                  loading={loadingcancelticket}
-                  onOk={handleCancelTicket}
-                  data={datacancelticket}
-                  setdata={setdatacancelticket}
-                  ticketid={ticketid}
+                  onMutateSucceed={() => {
+                    setrefreshupdateticket((prev) => prev + 1);
+                  }}
                 />
               </div>
               {/* <div className=" w-4/12 px-8 flex items-center justify-between mb-2 bg-red-400">
