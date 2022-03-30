@@ -22,7 +22,11 @@ export const AttendanceDetailEvidenceSection: FC<IAttendanceDetailEvidenceSectio
   memo(({ attendanceId, fetchAsAdmin = false }) => {
     const axiosClient = useAxiosClient();
     const { data, isLoading } = useQuery(
-      [AttendanceServiceQueryKeys.ATTENDANCE_USER_GET, attendanceId],
+      [
+        AttendanceServiceQueryKeys.ATTENDANCE_USER_GET,
+        attendanceId,
+        fetchAsAdmin,
+      ],
       () => AttendanceService.findOne(axiosClient, attendanceId, fetchAsAdmin),
       {
         enabled: !!attendanceId,

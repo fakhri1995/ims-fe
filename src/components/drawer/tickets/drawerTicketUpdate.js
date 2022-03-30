@@ -272,7 +272,7 @@ const DrawerTicketUpdate = ({
                 defaultValue={datapayload.requester_id}
               >
                 {listusers.map((doc, idx) => (
-                  <Select.Option value={doc.id}>
+                  <Select.Option value={doc.id} key={idx}>
                     <div className=" flex items-center">
                       <div className="mr-1 w-7 h7 rounded-full">
                         <img
@@ -535,7 +535,10 @@ const DrawerTicketUpdate = ({
             </div>
             <div className="grid grid-cols-3">
               {datapayload.files.map((doc, idx) => (
-                <div className=" col-span-1 mx-1 flex flex-col items-center mb-2">
+                <div
+                  key={idx}
+                  className=" col-span-1 mx-1 flex flex-col items-center mb-2"
+                >
                   <img
                     src={doc}
                     className=" object-contain mb-1 h-28 w-full"
