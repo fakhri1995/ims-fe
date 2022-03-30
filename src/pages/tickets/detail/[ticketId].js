@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 import {
+  TicketDetailCatatanCard,
   TicketDetailTaskList,
   TicketDetailUpdateStatusModal,
 } from "components/screen/ticket";
@@ -598,7 +599,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
               ) : (
                 <div className=" grid grid-cols-2">
                   {displaydata.ticketable.files?.map((doc, idx) => (
-                    <a target={`_blank`} href={doc}>
+                    <a key={idx} target={`_blank`} href={doc}>
                       <div className=" col-span-1 mx-1 flex flex-col items-center mb-2 cursor-pointer">
                         <img
                           src={doc}
@@ -1137,7 +1138,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                       </>
                     ) : (
                       displaynoteticket.map((note, idx) => (
-                        <div className=" flex flex-col mb-5">
+                        <div key={idx} className=" flex flex-col mb-5">
                           <p className=" mb-3 line-clamp-6 font-light">
                             {note.description}
                           </p>
@@ -1168,7 +1169,11 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
               </div>
               <div className="flex flex-col w-6/12">
                 {/* CATATAN TIKET */}
-                {dataProfile.data.role === 1 && (
+                <TicketDetailCatatanCard
+                  ticketId={ticketid}
+                  fetchAsAdmin={dataProfile.data.role === 1}
+                />
+                {/* {dataProfile.data.role === 1 && (
                   <div className=" shadow-md rounded-md bg-white p-5 my-2 ml-2">
                     <div className=" flex items-center justify-between mb-5">
                       <H1>Catatan</H1>
@@ -1176,8 +1181,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                         className=" h-full flex justify-end items-start cursor-pointer"
                         onClick={() => {
                           setmodalnoteticket(true);
-                        }}
-                      >
+                        }}>
                         <PlusIconSvg size={25} color={`#35763B`} />
                       </div>
                     </div>
@@ -1191,7 +1195,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                       </>
                     ) : (
                       displaynoteticket.map((note, idx) => (
-                        <div className=" flex flex-col mb-5">
+                        <div key={idx} className=" flex flex-col mb-5">
                           <p className=" mb-3 line-clamp-6 font-light">
                             {note.description}
                           </p>
@@ -1218,8 +1222,8 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                       ))
                     )}
                   </div>
-                )}
-                <ModalNoteTiket
+                )} */}
+                {/* <ModalNoteTiket
                   title={"Catatan Baru"}
                   visible={modalnoteticket}
                   onvisible={setmodalnoteticket}
@@ -1231,7 +1235,8 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                   datanoteticket={datanoteticket}
                   setdatanoteticket={setdatanoteticket}
                   ticketid={ticketid}
-                />
+                /> */}
+
                 {/* AKTIVITAS TIKET */}
                 <div className="shadow-md rounded-md bg-white p-5 mt-2 ml-2">
                   <div className=" flex items-center justify-between mb-5">
@@ -1264,7 +1269,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                       // >
                       //     {
                       displaylogticket.map((log, idx) => (
-                        <div className=" flex flex-col mb-4">
+                        <div key={idx} className=" flex flex-col mb-4">
                           <p className=" mb-2 line-clamp-6 font-medium">
                             {log.log_name}
                           </p>

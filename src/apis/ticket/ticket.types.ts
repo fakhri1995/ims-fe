@@ -2,9 +2,11 @@ import type { HttpRequestWithDataSucceedResponse } from "types/common";
 
 export enum TicketServiceQueryKeys {
   TICKET_GET = "TICKET_GET",
+  TICKET_LOG_GET = "TICKET_LOG_GET",
 }
 
 /**
+ * @access PUT /updateStatusTicket
  * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/229867523/Update+Status+Ticket
  */
 export type TicketUpdateStatusPayload = {
@@ -114,4 +116,31 @@ export interface Location {
   id: number;
   name: string;
   full_location: string;
+}
+
+/**
+ * @access /getClientTicketLog?id={{id}}
+ * @access /getTicketLog?id={{id}}
+ */
+export type IGetTicketLogSucceedResponse =
+  HttpRequestWithDataSucceedResponse<GetTicketLogData>;
+
+export interface GetTicketLogData {
+  normal_logs: AlLog[];
+  special_logs: AlLog[];
+}
+
+export interface AlLog {
+  id: number;
+  log_name: string;
+  description: string | null;
+  subject_id: number;
+  causer_id: number;
+  created_at: string;
+  causer: LogCauser;
+}
+
+export interface LogCauser {
+  id: number;
+  name: string;
 }
