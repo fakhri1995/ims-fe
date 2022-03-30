@@ -188,6 +188,7 @@ function LayoutDashboard({
                           breadcrumbContent = (
                             <a
                               href="#"
+                              className="font-bold"
                               onClick={(e) => {
                                 e.preventDefault();
                                 rt.back();
