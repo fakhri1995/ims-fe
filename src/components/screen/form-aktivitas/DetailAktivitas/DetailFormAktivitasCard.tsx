@@ -112,7 +112,7 @@ export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
               disabled={isLoading}
               onClick={onUbahButtonClicked}
             >
-              <EditIcon className="mr-2" />
+              <EditIcon className="mr-2 w-3 h-3" />
               Ubah Form
             </ButtonSys>
           )}
