@@ -199,6 +199,7 @@ const DrawerTicketAssign = ({
               datapayload.assignable_type === true &&
               listengs.map((eng, idx) => (
                 <div
+                  key={idx}
                   className={`${
                     datapayload.assignable_id === eng.id && `bg-primary10`
                   } mb-4 flex items-center cursor-pointer`}
@@ -239,6 +240,7 @@ const DrawerTicketAssign = ({
               datapayload.assignable_type === false &&
               listgroups.map((group, idx) => (
                 <div
+                  key={idx}
                   className={`${
                     datapayload.assignable_id === group.id && `bg-primary10`
                   } mb-4 flex items-center cursor-pointer`}
