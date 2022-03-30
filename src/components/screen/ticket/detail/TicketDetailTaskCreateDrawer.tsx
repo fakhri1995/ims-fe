@@ -39,7 +39,7 @@ export interface ITicketDetailTaskCreateDrawer {
   visible: boolean;
   onvisible: (value: boolean) => void;
 
-  ticketId: number;
+  ticketId: number | string;
   ticketName: string;
 }
 
@@ -49,7 +49,8 @@ export interface ITicketDetailTaskCreateDrawer {
 export const TicketDetailTaskCreateDrawer: FC<
   ITicketDetailTaskCreateDrawer
 > = ({ visible, onvisible, ticketId, ticketName }) => {
-  if (ticketId === null) {
+  const parsedTicketId = parseInt(ticketId as string);
+  if (Object.is(parsedTicketId, NaN)) {
     /** Perlu check ini agar `reference_id` tidak null saat add new task. */
     return null;
   }
@@ -66,7 +67,7 @@ export const TicketDetailTaskCreateDrawer: FC<
     description: "",
     task_type_id: null,
     location_id: null,
-    reference_id: ticketId,
+    reference_id: parsedTicketId,
     created_at: null,
     deadline: null,
     is_group: null,
@@ -121,7 +122,7 @@ export const TicketDetailTaskCreateDrawer: FC<
       onSuccess: () => {
         queryClient.invalidateQueries([
           TicketServiceQueryKeys.TICKET_GET,
-          ticketId,
+          parsedTicketId,
         ]);
       },
     }
@@ -148,7 +149,7 @@ export const TicketDetailTaskCreateDrawer: FC<
             description: "",
             task_type_id: null,
             location_id: null,
-            reference_id: ticketId,
+            reference_id: parsedTicketId,
             created_at: null,
             deadline: null,
             is_group: null,
@@ -343,7 +344,7 @@ export const TicketDetailTaskCreateDrawer: FC<
           description: "",
           task_type_id: null,
           location_id: null,
-          reference_id: ticketId,
+          reference_id: parsedTicketId,
           created_at: null,
           deadline: null,
           is_group: null,
@@ -450,50 +451,15 @@ export const TicketDetailTaskCreateDrawer: FC<
             <div className="w-full">
               <Select
                 disabled
-                value={ticketId}
-                // value={datacreate.reference_id}
+                value={parsedTicketId}
                 style={{ width: `100%` }}
                 suffixIcon={<SearchOutlined />}
-                // showArrow
                 placeholder="Referensi"
-                // name={`reference_id`}
-                // onChange={(value) => {
-                //   setdatacreate({ ...datacreate, reference_id: value });
-                // }}
-                // showSearch
                 optionFilterProp="children"
-                // notFoundContent={
-                //   fetchingreferences ? <Spin size="small" /> : null
-                // }
-                // onSearch={(value) => {
-                //   setfetchingreferences(true);
-                //   fetch(
-                //     `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTickets?id=${value}`,
-                //     {
-                //       method: `GET`,
-                //       headers: {
-                //         Authorization: initProps,
-                //       },
-                //     }
-                //   )
-                //     .then((res) => res.json())
-                //     .then((res2) => {
-                //       setdatareferences(res2.data);
-                //       setfetchingreferences(false);
-                //     });
-                // }}
-                // filterOption={(input, opt) =>
-                //   opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                // }
               >
-                <Select.Option key={ticketId} value={ticketId}>
+                <Select.Option key={parsedTicketId} value={parsedTicketId}>
                   {ticketName}
                 </Select.Option>
-                {/* {datareferences.map((doc, idx) => (
-                  <Select.Option key={idx} value={doc.id}>
-                    {doc.name}
-                  </Select.Option>
-                ))} */}
               </Select>
             </div>
           </div>

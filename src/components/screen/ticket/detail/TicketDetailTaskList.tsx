@@ -15,7 +15,7 @@ import { TicketDetailTaskCreateDrawer } from "./TicketDetailTaskCreateDrawer";
  * Component TicketDetailTaskList's props.
  */
 export interface ITicketDetailTaskList {
-  ticketId: number;
+  ticketId: number | string;
   ticketName: string;
 }
 
@@ -24,13 +24,17 @@ export interface ITicketDetailTaskList {
  */
 export const TicketDetailTaskList: FC<ITicketDetailTaskList> = memo(
   ({ ticketId, ticketName }) => {
-    const axiosClient = useAxiosClient();
+    const parsedTicketId = parseInt(ticketId as string);
+    if (Object.is(parsedTicketId, NaN)) {
+      return null;
+    }
 
+    const axiosClient = useAxiosClient();
     const { data: tasksData, isLoading } = useQuery(
-      [TicketServiceQueryKeys.TICKET_GET, ticketId],
-      () => TicketService.findOne(axiosClient, ticketId),
+      [TicketServiceQueryKeys.TICKET_GET, parsedTicketId],
+      () => TicketService.findOne(axiosClient, parsedTicketId),
       {
-        enabled: !!ticketId,
+        enabled: parsedTicketId !== NaN,
         select: (response) => response.data.data.tasks,
       }
     );
@@ -45,7 +49,7 @@ export const TicketDetailTaskList: FC<ITicketDetailTaskList> = memo(
 
           {/* List Task */}
           <div className="my-6 flex flex-col space-y-6">
-            {isLoading || (!ticketId && <Spin />)}
+            {isLoading && <Spin />}
 
             {!isLoading &&
               tasksData &&
@@ -69,7 +73,7 @@ export const TicketDetailTaskList: FC<ITicketDetailTaskList> = memo(
         <TicketDetailTaskCreateDrawer
           visible={isCreateTaskDrawerShown}
           onvisible={setIsCreateTaskDrawerShown}
-          ticketId={ticketId}
+          ticketId={parsedTicketId}
           ticketName={ticketName}
         />
       </>

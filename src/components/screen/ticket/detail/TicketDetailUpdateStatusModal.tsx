@@ -16,7 +16,7 @@ export interface ITicketDetailUpdateStatusModal {
   onMutateSucceed: () => void;
 
   ticketDisplayName: string;
-  ticketId: number;
+  ticketId: number | string;
 
   status: "open" | "on-hold" | "on-progress" | "canceled" | "closed";
 }
@@ -31,6 +31,11 @@ export const TicketDetailUpdateStatusModal: FC<
   ticketDisplayName,
   ticketId,
 }) => {
+  const parsedTicketId = parseInt(ticketId as string);
+  if (Object.is(parsedTicketId, NaN)) {
+    return null;
+  }
+
   const axiosClient = useAxiosClient();
 
   const [payloadNoteRaw, setPayloadNoteRaw] = useState("");
@@ -94,10 +99,10 @@ export const TicketDetailUpdateStatusModal: FC<
             </ButtonSys>
             <ButtonSys
               type="primary"
-              color={`danger`}
+              color="danger"
               onClick={() => {
                 updateTicketStatus({
-                  id: ticketId,
+                  id: parsedTicketId,
                   notes: payloadNoteRaw,
                   status: payloadStatusNumbered,
                 });
@@ -118,13 +123,13 @@ export const TicketDetailUpdateStatusModal: FC<
 
         <section>
           <label
-            htmlFor="update-status-note"
+            htmlFor="update-status-ticket"
             className="mig-caption text-gray-400 mb-1 block"
           >
             Catatan
           </label>
           <Input.TextArea
-            id="update-status-note"
+            id="update-status-ticket"
             value={payloadNoteRaw}
             onChange={(ev) => setPayloadNoteRaw(ev.target.value)}
           />
