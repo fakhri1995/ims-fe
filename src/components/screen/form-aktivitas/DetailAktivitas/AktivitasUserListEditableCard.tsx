@@ -7,7 +7,7 @@ import {
   UserDeleteOutlined,
 } from "@ant-design/icons";
 import { Button, Empty, Form, Input, Modal, Spin } from "antd";
-import React, { FC, useCallback, useMemo, useState } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
 import { useAxiosClient } from "hooks/use-axios-client";
@@ -229,10 +229,18 @@ export const AktivitasUserListEditableCard: FC<
       return [];
     }
 
+    if (!searchValue) {
+      return currentFormAktivitasUsers;
+    }
+
     return currentFormAktivitasUsers.filter((staff) =>
       staff.name.toLowerCase().includes(searchValue.toLowerCase())
     );
   }, [searchValue, currentFormAktivitasUsers]);
+
+  useEffect(() => {
+    setSearchValue("");
+  }, [cardPhase]);
 
   return (
     <div className="mig-platform w-full overflow-x-auto">
@@ -240,6 +248,7 @@ export const AktivitasUserListEditableCard: FC<
       <CardHeader
         cardPhase={cardPhase}
         onSearch={onSearchStaff}
+        searchValue={searchValue}
         onChangePhase={triggerChangePhase}
         isAllowedToDeleteStaff={currentFormAktivitasUsers?.length > 0}
       />
@@ -318,6 +327,7 @@ interface ICardHeader {
   cardPhase: CardPhaseType;
   onChangePhase: (phase: CardPhaseType) => void;
   onSearch: (searchValue: string) => void;
+  searchValue: string;
   isAllowedToDeleteStaff?: boolean;
 }
 
@@ -328,9 +338,10 @@ const CardHeader: FC<ICardHeader> = ({
   cardPhase,
   onChangePhase,
   onSearch,
+  searchValue,
   isAllowedToDeleteStaff = false,
 }) => {
-  const [searchForm] = Form.useForm();
+  const [form] = Form.useForm();
 
   const cardTitlePrefix =
     cardPhase === "add" ? "Tambah" : cardPhase === "remove" ? "Hapus" : "";
@@ -342,6 +353,10 @@ const CardHeader: FC<ICardHeader> = ({
   const onRemoveButtonClicked = () => {
     onChangePhase("remove");
   };
+
+  useEffect(() => {
+    form?.setFields([{ name: "search", value: searchValue || "" }]);
+  }, [searchValue]);
 
   return (
     <div className="flex items-center justify-between">
@@ -376,10 +391,10 @@ const CardHeader: FC<ICardHeader> = ({
         )}
 
         <Form
-          form={searchForm}
+          form={form}
           layout="inline"
-          onFinish={() => {
-            onSearch(searchForm.getFieldValue("search"));
+          onFinish={(value: { search?: string }) => {
+            onSearch(value.search);
           }}
         >
           <Form.Item name="search">
@@ -587,7 +602,7 @@ const StaffSectionContainer: FC<IStaffSectionContainer> = ({
 }) => {
   const sectionClassName = clsx("py-6 h-80 overflow-x-auto", {
     "flex flex-col space-y-6 items-center justify-center": isLoading,
-    "grid grid-cols-3 md:grid-cols-5 gap-y-6 auto-rows-min":
+    "grid grid-cols-3 2xl:grid-cols-5 gap-y-6 auto-rows-min":
       !isLoading && (data.length > 0 || React.Children.count(children) > 0),
   });
 
@@ -602,6 +617,8 @@ const StaffSectionContainer: FC<IStaffSectionContainer> = ({
         />
       )}
 
+      {!isLoading && children}
+
       {data.map(({ id, name, position, profile_image }) => (
         <StaffListItem
           key={id}
@@ -614,8 +631,6 @@ const StaffSectionContainer: FC<IStaffSectionContainer> = ({
           isSelectable={isItemHoverable}
         />
       ))}
-
-      {!isLoading && children}
     </section>
   );
 };
@@ -683,7 +698,7 @@ const StaffSectionOnRemoveContainer: FC<IStaffSectionOnRemoveContainer> = ({
 
   /** Filter bottom data to match with the `searchValue` */
   const mappedBottomData = useMemo(() => {
-    if (searchValue === "" || items.bottom.length === 0) {
+    if (!searchValue || searchValue === "" || items.bottom.length === 0) {
       return items.bottom;
     }
 
