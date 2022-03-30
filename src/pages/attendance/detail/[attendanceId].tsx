@@ -54,7 +54,7 @@ const AttendanceDetailPage: NextPage<ProtectedPageProps> = ({
     >
       <div className="px-5 flex space-y-6 lg:space-y-0 lg:space-x-6 flex-col lg:flex-row">
         {/* First column */}
-        <div className="w-full lg:w-2/5 xl:w-1/5 space-y-6">
+        <div className="w-full lg:w-2/5 xl:w-1/3 2xl:w-1/5 space-y-6">
           {/* Detail attendance meta */}
           <AttendanceDetailMetaCard
             attendanceId={attendanceId}
@@ -98,7 +98,7 @@ const AttendanceDetailPage: NextPage<ProtectedPageProps> = ({
         </div>
 
         {/* Second column */}
-        <div className="w-full lg:w-3/5 xl:w-4/5 space-y-6">
+        <div className="w-full lg:w-3/5 xl:w-2/3 2xl:w-4/5 space-y-6">
           {/* Form attendances detail */}
           <AttendanceDetailFormAttendanceSection
             activities={currentActivityData?.activities}
