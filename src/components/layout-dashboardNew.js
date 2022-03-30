@@ -91,6 +91,14 @@ function LayoutDashboard({
   // }, []);
   var pathBuilder = "";
 
+  /**
+   * Ini cara saya untuk setup breadcrumb lebih mudah by passing props
+   *  ke component ini instead of hardcoding the entire things here
+   *  whenever a new page is created.
+   */
+  const isUseNewBreadcrumbStrategy =
+    fixedBreadcrumbValues && fixedBreadcrumbValues.length > 0;
+
   return (
     <Spin spinning={loadingspin}>
       <div className="min-h-screen flex">
@@ -167,8 +175,7 @@ function LayoutDashboard({
                   }}
                   className={st.breadcrumbClients}
                 >
-                  {fixedBreadcrumbValues &&
-                    fixedBreadcrumbValues.length > 0 &&
+                  {isUseNewBreadcrumbStrategy &&
                     fixedBreadcrumbValues.map((breadcrumbItem) => {
                       const isEmptyHrefValue =
                         breadcrumbItem.hrefValue === undefined ||
@@ -213,7 +220,7 @@ function LayoutDashboard({
                       );
                     })}
 
-                  {!fixedBreadcrumbValues && (
+                  {!isUseNewBreadcrumbStrategy && (
                     <>
                       {childBreacrumbDD[0] === "Tickets" && (
                         <>
