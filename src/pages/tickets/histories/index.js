@@ -124,7 +124,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.type_name}</>,
         };
       },
-      sorter: (a, b) => a.type.name.localeCompare(b.type.name),
+      sorter: (a, b) => a.type_name.localeCompare(b.type_name),
     },
     {
       title: "Diajukan Oleh",
