@@ -116,8 +116,8 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
   const [pagetickets, setpagetickets] = useState(1);
   const [rowstickets, setrowstickets] = useState(10);
   const [sortingtickets, setsortingtickets] = useState({
-    sort_by: "",
-    sort_type: "",
+    sort_by: "raised_at",
+    sort_type: "desc",
   });
   //Filter
   const [datafilterttickets, setdatafilterttickets] = useState([]);
@@ -186,6 +186,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
         };
       },
       sorter: (a, b) => a.raised_at.localeCompare(b.raised_at),
+      defaultSortOrder: "descend",
     },
     {
       title: "Status",

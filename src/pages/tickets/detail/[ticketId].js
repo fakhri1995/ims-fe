@@ -327,7 +327,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
         setdisplaydata(res2.data);
         setdatapayloadupdate({
           ...datapayloadupdate,
-          requester_id: res2.data.creator_id,
+          requester_id: res2.data.creator.id,
           raised_at: moment(res2.data.raised_at).locale("id").format(),
           closed_at:
             res2.data.closed_at === null
@@ -504,13 +504,13 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                   <div className=" flex flex-col mb-5">
                     <Label>Diajukan Oleh:</Label>
                     <p className=" mb-0 text-gray-600">
-                      {displaydata.creator_name}
+                      {displaydata.creator.name}
                     </p>
                   </div>
                   <div className=" flex flex-col mb-5">
                     <Label>Lokasi:</Label>
                     <p className=" mb-0 text-gray-600">
-                      {displaydata.creator_location}
+                      {displaydata.creator.location}
                     </p>
                   </div>
                   <div className=" flex flex-col mb-5">

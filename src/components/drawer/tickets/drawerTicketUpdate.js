@@ -63,6 +63,7 @@ const DrawerTicketUpdate = ({
   //handler
   const onChangeGambar = async (e) => {
     setloadingfile(true);
+    setdisabledsubmit(true);
     const foto = e.target.files;
     const formdata = new FormData();
     formdata.append("file", foto[0]);
@@ -79,6 +80,7 @@ const DrawerTicketUpdate = ({
     tempfile.push(datajson.secure_url);
     setdatapayload({ ...datapayload, files: tempfile });
     setloadingfile(false);
+    setdisabledsubmit(false);
   };
   const handleUpdateTicket = () => {
     if (
@@ -277,8 +279,9 @@ const DrawerTicketUpdate = ({
                       <div className="mr-1 w-7 h7 rounded-full">
                         <img
                           src={
-                            doc.profile_image === "-"
-                              ? `/image/stafftask.png`
+                            doc.profile_image === "-" ||
+                            doc.profile_image === ""
+                              ? `/image/staffTask.png`
                               : doc.profile_image
                           }
                           className=" object-contain"
@@ -348,12 +351,14 @@ const DrawerTicketUpdate = ({
           <div className="flex flex-col my-6">
             <Label>Tipe Tiket</Label>
             <p className=" mb-0 text-lg font-bold">
-              {
+              {displaydata.ticketable.asset_type !== null &&
                 datatypetickets.filter(
                   (type) =>
-                    type.id === displaydata.ticketable.asset_type.ticket_type_id
-                )[0]?.name
-              }
+                    type.id ===
+                    displaydata.ticketable.asset_type?.ticket_type_id
+                )[0]?.name}
+
+              {displaydata.ticketable.asset_type === null && "-"}
             </p>
             {/* <p className=' mb-0 text-lg font-bold'>{displaydata.name}</p> */}
           </div>
@@ -363,7 +368,11 @@ const DrawerTicketUpdate = ({
               <div className="mr-2 flex items-center">
                 <AssetIconSvg size={50} />
               </div>
-              <H2>{displaydata.ticketable.asset_type.name}</H2>
+              <H2>
+                {displaydata.ticketable.asset_type !== null
+                  ? displaydata.ticketable.asset_type.name
+                  : "-"}
+              </H2>
             </div>
           </div>
           <div className=" mb-6 flex flex-col">
