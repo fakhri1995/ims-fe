@@ -131,7 +131,8 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "requested_by",
       render: (text, record, index) => {
         return {
-          children: <>{record.task.creator.name}</>,
+          // children: <>CREATOR NAME</>,
+          children: <>{record.creator.name}</>,
         };
       },
     },
@@ -140,7 +141,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "location_id",
       render: (text, record, index) => {
         return {
-          children: <>{record.task.location.full_location}</>,
+          children: <>{record.ticketable.location.full_location}</>,
         };
       },
     },
@@ -154,28 +155,29 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
       },
       sorter: (a, b) => a.raised_at.localeCompare(b.raised_at),
     },
-    {
-      title: "Di-assign Ke",
-      dataIndex: "assignable",
-      render: (text, record, index) => {
-        return {
-          children: (
-            <>
-              {record.task.users.length === 0 ? (
-                <div className=" flex items-center bg-onhold bg-opacity-10">
-                  <div className=" mr-2">
-                    <UserIconSvg />
-                  </div>
-                  <div>Belum di-assign</div>
-                </div>
-              ) : (
-                <>{record.task.users[0].name}</>
-              )}
-            </>
-          ),
-        };
-      },
-    },
+    // {
+    //   title: "Di-assign Ke",
+    //   dataIndex: "assignable",
+    //   render: (text, record, index) => {
+    //     return {
+    //       children: <>DI ASSIGN KE</>
+    //       // children: (
+    //       //   <>
+    //       //     {record.task.users.length === 0 ? (
+    //       //       <div className=" flex items-center bg-onhold bg-opacity-10">
+    //       //         <div className=" mr-2">
+    //       //           <UserIconSvg />
+    //       //         </div>
+    //       //         <div>Belum di-assign</div>
+    //       //       </div>
+    //       //     ) : (
+    //       //       <>{record.task.users[0].name}</>
+    //       //     )}
+    //       //   </>
+    //       // ),
+    //     };
+    //   },
+    // },
     {
       title: "Durasi Selesai",
       dataIndex: "resolved_times",
