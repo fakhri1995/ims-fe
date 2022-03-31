@@ -147,6 +147,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
     incident_time: null,
     files: [],
     description: "",
+    ticket_detail_type_id: -1,
   });
   const [drawerupdateticket, setdrawerupdateticket] = useState(false);
   const [refreshclosedupdateticket, setrefreshclosedupdateticket] =
@@ -344,8 +345,9 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
               : moment(res2.data.ticketable.original_incident_time)
                   .locale("id")
                   .format(),
-          files: res2.data.ticketable.files,
+          files: res2.data.ticketable.files || [],
           description: res2.data.ticketable.description,
+          ticket_detail_type_id: res2.data.ticketable.asset_type.id,
         });
         setdisabledupdate(false);
         res2.data.assignment_operator_id === 0
