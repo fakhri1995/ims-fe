@@ -298,7 +298,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
         >
           {/* Pick export date range */}
           <Form.Item name="rentang_waktu" label="Rentang Waktu">
-            <RangePicker format="DD MMM YYYY" />
+            <RangePicker format="DD MMM YYYY" allowClear={false} />
           </Form.Item>
 
           {exportAsAdmin && (
