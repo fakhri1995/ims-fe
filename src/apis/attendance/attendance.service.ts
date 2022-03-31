@@ -1,4 +1,5 @@
 import type { AxiosInstance } from "axios";
+import { addDays } from "date-fns";
 import QueryString from "qs";
 
 import { formatDateToLocale } from "lib/date-utils";
@@ -88,9 +89,11 @@ export class AttendanceService {
     axiosClient: AxiosInstance,
     criteria: AttendanceExportExcelDataCriteria
   ): Promise<AttendanceExportExcelDataResult | Error> {
-    const [formattedFrom, formattedTo] = [criteria.from, criteria.to].map(
-      (value) => formatDateToLocale(value, "yyyy-MM-dd")
-    );
+    /** NOTE: we need to add `to` a day to include today's activities */
+    const [formattedFrom, formattedTo] = [
+      criteria.from,
+      addDays(new Date(criteria.to), 1),
+    ].map((value) => formatDateToLocale(value, "yyyy-MM-dd"));
 
     const qsParam: any = {
       ...criteria,

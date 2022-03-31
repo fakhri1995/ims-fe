@@ -60,9 +60,28 @@ const DrawerTicketUpdate = ({
   //disabled save button
   const [disabledtrigger, setdisabledtrigger] = useState(-1);
 
+  const [tipeTiket, setTipeTiket] = useState(() => {
+    return (
+      datatypetickets.filter(
+        (type) => type.id === displaydata.ticketable.asset_type?.ticket_type_id
+      )[0]?.name || "-"
+    );
+  });
+  const [jenisAset, setJenisAset] = useState("-");
+  useEffect(() => {
+    setJenisAset(displaydata.ticketable.asset_type?.name || "-");
+
+    setTipeTiket(
+      datatypetickets.filter(
+        (type) => type.id === displaydata.ticketable.asset_type?.ticket_type_id
+      )[0]?.name || "-"
+    );
+  }, [displaydata, datatypetickets]);
+
   //handler
   const onChangeGambar = async (e) => {
     setloadingfile(true);
+    setdisabledsubmit(true);
     const foto = e.target.files;
     const formdata = new FormData();
     formdata.append("file", foto[0]);
@@ -79,6 +98,7 @@ const DrawerTicketUpdate = ({
     tempfile.push(datajson.secure_url);
     setdatapayload({ ...datapayload, files: tempfile });
     setloadingfile(false);
+    setdisabledsubmit(false);
   };
   const handleUpdateTicket = () => {
     if (
@@ -194,8 +214,15 @@ const DrawerTicketUpdate = ({
       .then((res) => res.json())
       .then((res2) => {
         setdatatypetickets(res2.data.ticket_types);
-        setdatatasktickets(res2.data.ticket_task_types);
+        setdatatasktickets(res2.data.ticket_detail_types);
         setdataloctickets([res2.data.companies]);
+
+        setTipeTiket(
+          res2.data.ticket_types.filter(
+            (type) =>
+              type.id === displaydata.ticketable.asset_type?.ticket_type_id
+          )[0]?.name || "-"
+        );
       });
   }, []);
   useEffect(() => {
@@ -277,8 +304,9 @@ const DrawerTicketUpdate = ({
                       <div className="mr-1 w-7 h7 rounded-full">
                         <img
                           src={
-                            doc.profile_image === "-"
-                              ? `/image/stafftask.png`
+                            doc.profile_image === "-" ||
+                            doc.profile_image === ""
+                              ? `/image/staffTask.png`
                               : doc.profile_image
                           }
                           className=" object-contain"
@@ -345,15 +373,53 @@ const DrawerTicketUpdate = ({
           {/* ------------------------------------------------------------------------- */}
           <hr />
           {/* ------------------------------------------------------------------------- */}
+          <div className="flex flex-col mb-6 mt-2">
+            <div className="flex mb-2">
+              <Label>Jenis Aset</Label>
+              <span className="tickettask"></span>
+              <style jsx>
+                {`
+                                .tickettask::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+              </style>
+            </div>
+            <div className=" mb-2 flex">
+              <Select
+                style={{ width: `100%` }}
+                onChange={(value, option) => {
+                  setdatapayload({
+                    ...datapayload,
+                    ticket_detail_type_id: value,
+                  });
+                  setdisabledtrigger((prev) => prev + 1);
+                  const jenisAset = option.children[0];
+                  const tipeTiket = option.children[2];
+
+                  setJenisAset(jenisAset);
+                  setTipeTiket(tipeTiket);
+                }}
+                value={datapayload.ticket_detail_type_id}
+              >
+                {datatasktickets.map((doc, idx) => {
+                  return (
+                    <Select.Option key={idx} value={doc.id}>
+                      {doc.name} - {doc.ticket_type_name}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+            </div>
+          </div>
+
           <div className="flex flex-col my-6">
             <Label>Tipe Tiket</Label>
             <p className=" mb-0 text-lg font-bold">
-              {
-                datatypetickets.filter(
-                  (type) =>
-                    type.id === displaydata.ticketable.asset_type.ticket_type_id
-                )[0]?.name
-              }
+              {displaydata.ticketable.asset_type !== null && tipeTiket}
+
+              {displaydata.ticketable.asset_type === null && "-"}
             </p>
             {/* <p className=' mb-0 text-lg font-bold'>{displaydata.name}</p> */}
           </div>
@@ -363,7 +429,7 @@ const DrawerTicketUpdate = ({
               <div className="mr-2 flex items-center">
                 <AssetIconSvg size={50} />
               </div>
-              <H2>{displaydata.ticketable.asset_type.name}</H2>
+              <H2>{displaydata.ticketable.asset_type !== null && jenisAset}</H2>
             </div>
           </div>
           <div className=" mb-6 flex flex-col">
