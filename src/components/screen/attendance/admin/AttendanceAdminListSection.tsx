@@ -216,7 +216,7 @@ const HadirTable: FC<ITable> = ({ searchValue }) => {
       {
         title: "Kerja",
         dataIndex: "is_wfo",
-        render: (is_wfo) => (is_wfo === 0 ? "WFO" : "WFH"),
+        render: (is_wfo) => (is_wfo === 1 ? "WFO" : "WFH"),
       },
       {
         title: "Waktu Check In",
