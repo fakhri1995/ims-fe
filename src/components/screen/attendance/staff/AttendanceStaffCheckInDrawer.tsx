@@ -1,8 +1,8 @@
-import { UploadOutlined } from "@ant-design/icons";
+import { CameraOutlined, UploadOutlined } from "@ant-design/icons";
 import { Input, Spin, UploadProps, notification } from "antd";
 import { Button, Form, Modal, Radio, Upload } from "antd";
-import { RcFile } from "antd/lib/upload";
-import { AxiosError } from "axios";
+import type { RcFile, UploadChangeParam } from "antd/lib/upload";
+import type { AxiosError } from "axios";
 import { FC, useCallback, useEffect, useState } from "react";
 
 import DrawerCore from "components/drawer/drawerCore";
@@ -14,6 +14,8 @@ import { getBase64 } from "lib/helper";
 import { useGetAttendeeInfo, useToggleCheckInCheckOut } from "apis/attendance";
 import { useCloudinaryUploadOne } from "apis/cloudinary";
 import { useNominatimReverseGeocode } from "apis/nominatim";
+
+import { AttendanceStaffWebcamModal } from ".";
 
 /**
  * Component AttendanceStaffCheckInDrawer's props.
@@ -42,8 +44,9 @@ export const AttendanceStaffCheckInDrawer: FC<
     useNominatimReverseGeocode(position);
 
   /** Uploaded file object. Wrapped as RcFile. */
-  const [uploadedEvidencePicture, setUploadedEvidencePicture] =
-    useState<RcFile | null>(null);
+  const [uploadedEvidencePicture, setUploadedEvidencePicture] = useState<
+    RcFile | Blob
+  >(null);
 
   /** Toggle preview modal on and off. */
   const [isPreviewEvidencePicture, setIsPreviewEvidencePicutre] =
@@ -52,6 +55,16 @@ export const AttendanceStaffCheckInDrawer: FC<
   /** Either empty string or long long string (base64) from a file (`uploadedEvidencePicture`). */
   const [previewEvidencePictureData, setPreviewEvidencePictureData] =
     useState("");
+
+  const [isWebcamModalShown, setIsWebcamModalShown] = useState(false);
+  const [evidencePictureSource, setEvidencePictureSource] = useState<
+    "webcam" | "upload"
+  >("upload");
+
+  const [fileList, setFileList] = useState([]);
+  const onUploadChange = ({ fileList }: UploadChangeParam<unknown>) => {
+    setFileList(fileList);
+  };
 
   /**
    * Validating uploaded file before finally attached to the paylaod.
@@ -77,6 +90,7 @@ export const AttendanceStaffCheckInDrawer: FC<
       return Upload.LIST_IGNORE;
     }
 
+    setEvidencePictureSource("upload");
     setUploadedEvidencePicture(uploadedFile);
   }, []);
 
@@ -110,6 +124,9 @@ export const AttendanceStaffCheckInDrawer: FC<
             {
               onSuccess: (response) => {
                 setUploadedEvidencePicture(null);
+                setPreviewEvidencePictureData("");
+                setEvidencePictureSource("upload");
+                setFileList([]);
 
                 form.resetFields();
                 onClose();
@@ -165,7 +182,7 @@ export const AttendanceStaffCheckInDrawer: FC<
         visible={visible}
         onClose={onClose}
         onClick={() => form.submit()}
-        disabled={uploadPictureLoading}
+        disabled={uploadPictureLoading || uploadedEvidencePicture === null}
       >
         <div className="space-y-6">
           {!isPermissionBlocked && (
@@ -213,6 +230,27 @@ export const AttendanceStaffCheckInDrawer: FC<
                   required
                 >
                   <div className="flex flex-col space-y-6">
+                    {/* Gunakan camera */}
+                    <Button
+                      className="mig-button mig-button--outlined-primary self-start"
+                      onClick={() => {
+                        setIsWebcamModalShown(true);
+                      }}
+                    >
+                      <CameraOutlined />
+                      Gunakan Kamera
+                    </Button>
+                    {uploadedEvidencePicture !== null &&
+                      evidencePictureSource === "webcam" &&
+                      previewEvidencePictureData.length > 0 && (
+                        <img
+                          src={previewEvidencePictureData}
+                          className="w-32 h-32"
+                          alt="Evidence's Picture"
+                        />
+                      )}
+
+                    {/* Upload from file */}
                     <Upload
                       capture
                       listType="picture"
@@ -223,6 +261,8 @@ export const AttendanceStaffCheckInDrawer: FC<
                       onRemove={onRemoveEvidencePicture}
                       onPreview={onPreviewEvidencePicture}
                       disabled={uploadPictureLoading}
+                      fileList={fileList}
+                      onChange={onUploadChange}
                     >
                       <Button
                         className="mig-button mig-button--outlined-primary"
@@ -261,6 +301,26 @@ export const AttendanceStaffCheckInDrawer: FC<
       >
         <img alt="Preview Evidence Picture" src={previewEvidencePictureData} />
       </Modal>
+
+      <AttendanceStaffWebcamModal
+        visible={isWebcamModalShown}
+        onCancel={() => setIsWebcamModalShown(false)}
+        onOk={(result) => {
+          /**
+           * 1. Set uploaded evidence picture
+           * 2. Set uploaded evidence picture data (base64) for preview purpose
+           */
+          (async () => {
+            const base64ToBlob = await (await fetch(result)).blob();
+
+            setFileList([]);
+            setEvidencePictureSource("webcam");
+            setUploadedEvidencePicture(base64ToBlob);
+            setPreviewEvidencePictureData(result);
+            setIsWebcamModalShown(false);
+          })();
+        }}
+      />
     </>
   );
 };

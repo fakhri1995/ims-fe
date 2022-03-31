@@ -9,7 +9,7 @@ export class CloudinaryService {
    *
    * @access POST https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload
    */
-  static async uploadOne(axiosClient: AxiosInstance, file: RcFile) {
+  static async uploadOne(axiosClient: AxiosInstance, file: RcFile | Blob) {
     const payload = new FormData();
     payload.append("file", file);
     payload.append("upload_preset", "migsys");
