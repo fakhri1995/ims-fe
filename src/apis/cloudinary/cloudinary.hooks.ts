@@ -10,7 +10,7 @@ import { CloudinaryService } from "./cloudinary.service";
 export const useCloudinaryUploadOne = () => {
   const axiosClient = axios.create();
 
-  return useMutation((file: RcFile) =>
+  return useMutation((file: RcFile | Blob) =>
     CloudinaryService.uploadOne(axiosClient, file)
   );
 };

@@ -41,7 +41,7 @@ export const createKeyPressHandler = (
  * Function ini umunya digunakan untuk transform image data ketika user upload dan dapat dipreview
  *  terlebih dahulu pada browser.
  */
-export const getBase64 = (file: RcFile): Promise<string> => {
+export const getBase64 = (file: RcFile | Blob): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
