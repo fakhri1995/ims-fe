@@ -80,6 +80,8 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const [selectedModelName, setSelectedModelName] = useState(undefined);
 
+  const [totalItems, setTotalItems] = useState(0);
+
   //3.Define
   /** @type {TableColumnsType<{ mig_id: string | null }>} */
   const columnsTable = [
@@ -315,6 +317,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         setdisplaydata(res2.data.data);
+        setTotalItems(res2.data.total);
       });
   }, [
     dataRefresher,
@@ -619,6 +622,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
             pagination={{
               current: queryParams.page,
               pageSize: queryParams.rows,
+              total: totalItems,
             }}
             scroll={{ x: 200 }}
             dataSource={displaydata}
