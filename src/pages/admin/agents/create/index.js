@@ -435,7 +435,6 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                           {name}
                         </Select.Option>
                       ))}
-                      {/* TODO */}
                     </Select>
                   </Form.Item>
                   <Form.Item

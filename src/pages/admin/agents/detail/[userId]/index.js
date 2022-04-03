@@ -453,7 +453,7 @@ function AgentDetail({
                       {data1.attendance_forms.length > 0 && (
                         <div className="col-span-1 flex flex-col mb-5">
                           <h1 className="font-semibold text-sm">
-                            Form Aktivitasi:
+                            Form Aktivitas:
                           </h1>
                           <h1>
                             {data1.attendance_forms.map((attendanceForm) => (
