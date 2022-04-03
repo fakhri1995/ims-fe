@@ -3,7 +3,13 @@ import { Button, Form, Input, Select, TreeSelect, notification } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import Sticky from "wil-react-sticky";
+
+import { useAxiosClient } from "hooks/use-axios-client";
+import { useDebounce } from "hooks/use-debounce-value";
+
+import { AttendanceFormAktivitasService } from "apis/attendance";
 
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
@@ -17,10 +23,44 @@ function AgentUpdate({
   sidemenu,
   userid,
 }) {
+  const axiosClient = useAxiosClient();
   const rt = useRouter();
   const tok = initProps;
   const [instanceForm] = Form.useForm();
   const { Option } = Select;
+
+  // START: Form Aktivitas
+  const [searchFormAktivitasValue, setFormAktivitasValue] = useState("");
+  const debouncedSearchFormAktivitasValue = useDebounce(
+    searchFormAktivitasValue
+  );
+
+  const { data: formAktivitasData, refetch: findFormAktivitas } = useQuery(
+    ["ATTENDANCE_FORMS_GET", debouncedSearchFormAktivitasValue],
+    (query) => {
+      const searchKeyword = query.queryKey[1];
+
+      return AttendanceFormAktivitasService.find(axiosClient, {
+        keyword: searchKeyword,
+      });
+    },
+    {
+      enabled: false,
+      select: (response) =>
+        response.data.data.data.map((formAktivitasDatum) => ({
+          id: formAktivitasDatum.id,
+          name: formAktivitasDatum.name,
+        })),
+    }
+  );
+
+  useEffect(() => {
+    findFormAktivitas({
+      queryKey: ["ATTENDANCE_FORMS_GET", debouncedSearchFormAktivitasValue],
+      exact: true,
+    });
+  }, [debouncedSearchFormAktivitasValue]);
+  // END: Form Aktivitas
 
   //loading upload image
   const [loadingfoto, setLoadingfoto] = useState(false);
@@ -33,6 +73,7 @@ function AgentUpdate({
     role_ids: [],
     position: "",
     nip: "",
+    attendance_form_ids: [],
   });
   //data asal lokasi
   const [datacompanylist, setdatacompanylist] = useState([]);
@@ -126,6 +167,21 @@ function AgentUpdate({
     )
       .then((res) => res.json())
       .then((res2) => {
+        // Update default `attendance_form_ids` data
+        let currentAttendanceFormIds = [];
+        /** @type {{id: number; name: string}[]} */
+        const userAttendanceForms = res2.data.attendance_forms;
+        if (userAttendanceForms.length > 0) {
+          currentAttendanceFormIds = userAttendanceForms.map(
+            (attendanceForm, index) => {
+              if (index === 0) {
+                setFormAktivitasValue(attendanceForm.name);
+              }
+              return attendanceForm.id;
+            }
+          );
+        }
+
         var temp = {
           id: res2.data.id,
           fullname: res2.data.name,
@@ -139,6 +195,7 @@ function AgentUpdate({
           role_ids: res2.data.roles.map((docmap) => docmap.id),
           position: res2.data.position,
           nip: res2.data?.nip || "",
+          attendance_form_ids: currentAttendanceFormIds,
         };
         setdataupdate(temp);
         setdefaultroles(res2.data.roles.map((docmap) => docmap.id));
@@ -394,6 +451,44 @@ function AgentUpdate({
                         onChange={onChangeEditAgents}
                       />
                     </Form.Item>
+
+                    {/* Form Aktivitas */}
+                    <Form.Item
+                      label="Form Aktivitas"
+                      name="attendance_form_ids"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Form Aktivitas wajib diisi",
+                        },
+                      ]}
+                    >
+                      <Select
+                        showSearch
+                        allowClear
+                        placeholder="Pilih form aktivitas"
+                        filterOption={false}
+                        onSearch={(value) => setFormAktivitasValue(value)}
+                        onChange={(value) => {
+                          if (value === undefined || value === "") {
+                            setFormAktivitasValue("");
+                            return;
+                          }
+
+                          setdataupdate((prev) => ({
+                            ...prev,
+                            attendance_form_ids: [value],
+                          }));
+                        }}
+                      >
+                        {formAktivitasData?.map(({ id, name }) => (
+                          <Select.Option key={id} value={id}>
+                            {name}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+
                     <h1 className="text-sm">Role:</h1>
                     {
                       <Select
