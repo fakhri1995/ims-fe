@@ -2,7 +2,7 @@ import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Modal, Switch, Table, Tabs, notification } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
 import Layout from "../../../../../components/layout-dashboard";
@@ -146,6 +146,7 @@ function AgentDetail({
     nip: "",
     profile_image: `/default-users.jpeg`,
     position: "",
+    attendance_forms: [],
   });
   //data email
   const [dataemail, setdataemail] = useState("");
@@ -282,6 +283,7 @@ function AgentDetail({
               ? `/default-users.jpeg`
               : res2.data.profile_image,
           position: res2.data.position,
+          attendance_forms: res2.data.attendance_forms,
         };
         setisenabled(res2.data.is_enabled);
         setData1(temp);
@@ -446,6 +448,22 @@ function AgentDetail({
                           {origincomp}
                         </h1>
                       </div>
+
+                      {/* Form Aktivitas */}
+                      {data1.attendance_forms.length > 0 && (
+                        <div className="col-span-1 flex flex-col mb-5">
+                          <h1 className="font-semibold text-sm">
+                            Form Aktivitasi:
+                          </h1>
+                          <h1>
+                            {data1.attendance_forms.map((attendanceForm) => (
+                              <React.Fragment key={attendanceForm.id}>
+                                {attendanceForm.name} <br />
+                              </React.Fragment>
+                            ))}
+                          </h1>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -529,7 +547,7 @@ function AgentDetail({
                               {doc.name}
                             </div>
                           ))}
-                        </div>{" "}
+                        </div>
                       </div>
                       <div className="col-span-1 flex flex-col mb-5">
                         <h1 className="font-semibold text-sm">Asal Lokasi:</h1>
@@ -537,6 +555,23 @@ function AgentDetail({
                           {origincomp}
                         </h1>
                       </div>
+
+                      {/* Form Aktivitas */}
+                      {/* {data1.attendance_forms.length > 0 && ( */}
+                      {data1.attendance_forms.length > 0 && (
+                        <div className="col-span-1 flex flex-col mb-5">
+                          <h1 className="font-semibold text-sm">
+                            Form Aktivitasi:
+                          </h1>
+                          <h1>
+                            {data1.attendance_forms.map((attendanceForm) => (
+                              <React.Fragment key={attendanceForm.id}>
+                                {attendanceForm.name} <br />
+                              </React.Fragment>
+                            ))}
+                          </h1>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
