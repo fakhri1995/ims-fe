@@ -190,18 +190,18 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
   const [showdatepicker, setshowdatepicker] = useState(false);
   const [datevalue, setdatevalue] = useState(null);
   //2.6.Status(Batalkan Tiket)
-  const [datacancelticket, setdatacancelticket] = useState({
-    id: Number(ticketid),
-    notes: "",
-    name: "",
-  });
+  // const [datacancelticket, setdatacancelticket] = useState({
+  //   id: Number(ticketid),
+  //   notes: "",
+  //   name: "",
+  // });
   //2.7.Note
   const [displaynoteticket, setdisplaynoteticket] = useState([]);
   const [datanoteticket, setdatanoteticket] = useState({
     id: Number(ticketid),
     notes: "",
   });
-  const [modalnoteticket, setmodalnoteticket] = useState(false);
+  // const [modalnoteticket, setmodalnoteticket] = useState(false);
   const [loadingnoteticket, setloadingnoteticket] = useState(false);
   const [refreshnoteticket, setrefreshnoteticket] = useState(-1);
   //2.8.Activity Log
@@ -257,7 +257,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
       .then((res) => res.json())
       .then((res2) => {
         setloadingnoteticket(false);
-        setmodalnoteticket(false);
+        // setmodalnoteticket(false);
         if (res2.success) {
           setdatanoteticket({ id: Number(ticketid), notes: "" });
           setrefreshnoteticket((prev) => prev + 1);
@@ -325,6 +325,27 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
     )
       .then((res) => res.json())
       .then((res2) => {
+        /** Copy paste dari dari halaman [itemId] (detail items) */
+        const additionalAttributes =
+          res2.data?.ticketable?.inventory?.additional_attributes;
+        let parsedAdditionalAttributes = [];
+        if (additionalAttributes !== undefined) {
+          parsedAdditionalAttributes = additionalAttributes.map((doc) => {
+            if (doc.data_type === "dropdown" || doc.data_type === "checkbox") {
+              return {
+                ...doc,
+                value: JSON.parse(doc.value),
+              };
+            } else {
+              return { ...doc };
+            }
+          });
+
+          res2.data.ticketable.inventory.additional_attributes =
+            parsedAdditionalAttributes;
+        }
+        /** END: copy paste */
+
         setdisplaydata(res2.data);
         setdatapayloadupdate({
           ...datapayloadupdate,
@@ -380,7 +401,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
           ? setshowdatepicker(false)
           : setshowdatepicker(true);
         res2.data.deadline === "-" ? setdatevalue(null) : setdatevalue(-10);
-        setdatacancelticket({ ...datacancelticket, name: res2.data.name });
+        // setdatacancelticket({ ...datacancelticket, name: res2.data.name });
       })
       .then(() => {
         fetch(
@@ -1054,67 +1075,6 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                         <hr />
                         {displaydata.ticketable.inventory.additional_attributes.map(
                           (doccolumns, idxcolumns) => {
-                            /** Transform value untuk tipe data dropdown */
-                            let parsedDropdownValue = {
-                              default: "",
-                              opsi: [],
-                            };
-                            let dropdownTypeContent = "";
-                            if (doccolumns.data_type === "dropdown") {
-                              parsedDropdownValue = JSON.parse(
-                                doccolumns.value
-                              );
-
-                              const defaultIndex = parsedDropdownValue.default;
-                              if (
-                                defaultIndex !== "" &&
-                                typeof defaultIndex === "number"
-                              ) {
-                                dropdownTypeContent =
-                                  parsedDropdownValue.opsi[defaultIndex];
-                              }
-                            }
-
-                            /** Transform value untuk tipe data checkbox */
-                            {
-                              /* Contoh untuk testing: */
-                            }
-                            {
-                              /* let parsedCheckboxValue = {
-                              default: [1, 2],
-                              opsi: ["a", "b", "c"],
-                            }; */
-                            }
-
-                            let parsedCheckboxValue = {
-                              default: [],
-                              opsi: [],
-                            };
-
-                            let checkboxTypeContent = "";
-
-                            if (doccolumns.data_type === "checkbox") {
-                              parsedCheckboxValue = JSON.parse(
-                                doccolumns.value
-                              );
-
-                              const defaultIndexes =
-                                parsedCheckboxValue.default;
-                              const defaultIndexesLength =
-                                defaultIndexes.length;
-                              if (
-                                defaultIndexesLength > 0 &&
-                                parsedCheckboxValue.opsi.length >=
-                                  defaultIndexesLength
-                              ) {
-                                checkboxTypeContent = parsedCheckboxValue.opsi
-                                  .filter((_, index) =>
-                                    defaultIndexes.includes(index)
-                                  )
-                                  .join(", ");
-                              }
-                            }
-
                             return (
                               <div
                                 key={idxcolumns}
@@ -1130,31 +1090,33 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                                     <>
                                       {doccolumns.data_type === "dropdown" && (
                                         <>
-                                          {dropdownTypeContent}
-                                          {/* {
+                                          {/* {dropdownTypeContent} */}
+                                          {
                                             doccolumns.value.opsi[
                                               doccolumns.value.default
                                             ]
-                                          } */}
+                                          }
                                         </>
                                       )}
                                       {doccolumns.data_type === "checkbox" && (
                                         <>
-                                          {checkboxTypeContent}
-                                          {/* {doccolumns.value.opsi
+                                          {/* {checkboxTypeContent} */}
+                                          {doccolumns.value.opsi
                                             .filter((_, idxfil) => {
                                               return doccolumns.value.default.includes(
                                                 idxfil
                                               );
                                             })
-                                            .join(", ")} */}
+                                            .join(", ")}
                                         </>
                                       )}
                                       {doccolumns.data_type === "date" && (
                                         <>
-                                          {moment(doccolumns.value)
-                                            .locale("id")
-                                            .format("LL")}
+                                          {doccolumns.value !== ""
+                                            ? moment(doccolumns.value)
+                                                .locale("id")
+                                                .format("LL")
+                                            : "-"}
                                         </>
                                       )}
                                     </>
@@ -1181,15 +1143,20 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                     )}
                   </div>
                 ) : (
-                  <div className=" shadow-md rounded-md bg-white p-5 my-2 ml-2">
-                    <div className=" flex items-center justify-between mb-5">
+                  <div className="shadow-md rounded-md bg-white p-5 my-2 ml-2">
+                    {/* Berdasarkan codingan, component catatan juga ditampilkan di sini ketika role bukan super admin (1) */}
+                    {/* Props `fetchAsAdmin` disini seharusnya _akan_ selalu false */}
+                    <TicketDetailCatatanCard
+                      ticketId={ticketid}
+                      fetchAsAdmin={dataProfile.data.role === 1}
+                    />
+                    {/* <div className=" flex items-center justify-between mb-5">
                       <H1>Catatan</H1>
                       <div
                         className=" h-full flex justify-end items-start cursor-pointer"
                         onClick={() => {
                           setmodalnoteticket(true);
-                        }}
-                      >
+                        }}>
                         <PlusIconSvg size={25} color={`#35763B`} />
                       </div>
                     </div>
@@ -1228,7 +1195,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                           </div>
                         </div>
                       ))
-                    )}
+                    )} */}
                   </div>
                 )}
               </div>
