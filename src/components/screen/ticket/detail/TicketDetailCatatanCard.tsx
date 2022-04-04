@@ -52,7 +52,7 @@ export const TicketDetailCatatanCard: FC<ITicketDetailCatatanCard> = ({
     noteLogId: -1,
   });
 
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, isError } = useQuery(
     [TicketServiceQueryKeys.TICKET_LOG_GET, parsedTicketId, fetchAsAdmin],
     () => TicketService.findOneLog(axiosClient, parsedTicketId, fetchAsAdmin),
     {
@@ -137,6 +137,11 @@ export const TicketDetailCatatanCard: FC<ITicketDetailCatatanCard> = ({
           <div
             className=" h-full flex justify-end items-start cursor-pointer"
             onClick={() => {
+              if (isError) {
+                /** Do nothing when there is an error when initialize data fetching */
+                return;
+              }
+
               setUpsertNoteModal({
                 visible: true,
                 mode: "insert",
@@ -149,104 +154,115 @@ export const TicketDetailCatatanCard: FC<ITicketDetailCatatanCard> = ({
           </div>
         </div>
 
-        {isLoading && <Spin />}
+        {/* Error safe guard */}
+        {!isError && (
+          <>
+            {isLoading && <Spin />}
 
-        {!isLoading && data.length === 0 && (
-          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-        )}
+            {!isLoading && data.length === 0 && (
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            )}
 
-        {!isLoading &&
-          data &&
-          data.map((note, idx) => (
-            <React.Fragment key={idx}>
-              <div className="flex flex-col">
-                <p className=" mb-3 line-clamp-6 font-light">
-                  {note.description}
-                </p>
-                <div className="flex items-center justify-between">
-                  <div className=" flex">
-                    <div className=" w-5 h-5 rounded-full mr-2">
-                      <img
-                        src={"/image/staffTask.png"}
-                        className=" object-contain w-5 h-5"
-                        alt=""
-                      />
+            {!isLoading &&
+              data &&
+              data.map((note, idx) => (
+                <React.Fragment key={idx}>
+                  <div className="flex flex-col">
+                    <p className=" mb-3 line-clamp-6 font-light">
+                      {note.description}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className=" flex">
+                        <div className=" w-5 h-5 rounded-full mr-2">
+                          <img
+                            src={"/image/staffTask.png"}
+                            className=" object-contain w-5 h-5"
+                            alt=""
+                          />
+                        </div>
+                        <Text color={`green`}>{note.causer.name}</Text>
+                      </div>
+                      <div>
+                        <Label>
+                          {moment(note.created_at)
+                            .locale("id")
+                            .format("LL, LT")}
+                        </Label>
+                      </div>
                     </div>
-                    <Text color={`green`}>{note.causer.name}</Text>
                   </div>
-                  <div>
-                    <Label>
-                      {moment(note.created_at).locale("id").format("LL, LT")}
-                    </Label>
+
+                  {/* Delete & Edit button */}
+                  <div className="flex items-center justify-end space-x-2 mt-3">
+                    <button
+                      className="p-2 flex items-center justify-center bg-white"
+                      onClick={() => {
+                        setDeleteNoteModal({
+                          visible: true,
+                          noteLogId: note.id,
+                        });
+                      }}
+                    >
+                      <TrashIcon className="text-state1 w-4 h-4" />
+                    </button>
+
+                    <button
+                      className="p-2 flex items-center justify-center bg-white"
+                      onClick={() => {
+                        setUpsertNoteModal({
+                          visible: true,
+                          currentNotesValue: note.description,
+                          logId: note.id,
+                          mode: "update",
+                        });
+                      }}
+                    >
+                      <EditIcon className="w-3 h-3" />
+                    </button>
                   </div>
-                </div>
-              </div>
-
-              {/* Delete & Edit button */}
-              <div className="flex items-center justify-end space-x-2 mt-3">
-                <button
-                  className="p-2 flex items-center justify-center bg-white"
-                  onClick={() => {
-                    setDeleteNoteModal({
-                      visible: true,
-                      noteLogId: note.id,
-                    });
-                  }}
-                >
-                  <TrashIcon className="text-state1 w-4 h-4" />
-                </button>
-
-                <button
-                  className="p-2 flex items-center justify-center bg-white"
-                  onClick={() => {
-                    setUpsertNoteModal({
-                      visible: true,
-                      currentNotesValue: note.description,
-                      logId: note.id,
-                      mode: "update",
-                    });
-                  }}
-                >
-                  <EditIcon className="w-3 h-3" />
-                </button>
-              </div>
-            </React.Fragment>
-          ))}
+                </React.Fragment>
+              ))}
+          </>
+        )}
       </div>
 
-      <DeleteCatatanModal
-        visible={deleteNoteModal.visible}
-        isLoading={deleteNoteLoading}
-        onCancel={resetDeleteNoteModal}
-        onOk={() => {
-          deleteNote({
-            ticketId: parsedTicketId,
-            log_id: deleteNoteModal.noteLogId,
-          });
-        }}
-      />
+      {!isError && (
+        <>
+          <DeleteCatatanModal
+            visible={deleteNoteModal.visible}
+            isLoading={deleteNoteLoading}
+            onCancel={resetDeleteNoteModal}
+            onOk={() => {
+              deleteNote({
+                ticketId: parsedTicketId,
+                log_id: deleteNoteModal.noteLogId,
+              });
+            }}
+          />
 
-      <UpsertCatatanModal
-        visible={upsertNoteModal.visible}
-        mode={upsertNoteModal.mode}
-        currentNotesValue={upsertNoteModal.currentNotesValue}
-        isLoading={updateNoteLoading || addNoteLoading}
-        onCancel={resetUpsertNoteModal}
-        onOk={(newNote) => {
-          if (upsertNoteModal.mode === "insert") {
-            addNote({
-              ticketId: parsedTicketId,
-              notes: newNote,
-            });
-          } else {
-            updateNote({
-              ticketId: parsedTicketId,
-              log_id: upsertNoteModal.logId,
-              notes: newNote,
-            });
-          }
-        }}
-      />
+          <UpsertCatatanModal
+            visible={upsertNoteModal.visible}
+            mode={upsertNoteModal.mode}
+            currentNotesValue={upsertNoteModal.currentNotesValue}
+            isLoading={updateNoteLoading || addNoteLoading}
+            onCancel={resetUpsertNoteModal}
+            onOk={(newNote) => {
+              if (upsertNoteModal.mode === "insert") {
+                addNote({
+                  ticketId: parsedTicketId,
+                  notes: newNote,
+                });
+              } else {
+                updateNote({
+                  ticketId: parsedTicketId,
+                  log_id: upsertNoteModal.logId,
+                  notes: newNote,
+                });
+              }
+            }}
+          />
+        </>
+      )}
     </>
   );
 };
