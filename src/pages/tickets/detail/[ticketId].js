@@ -1054,6 +1054,67 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                         <hr />
                         {displaydata.ticketable.inventory.additional_attributes.map(
                           (doccolumns, idxcolumns) => {
+                            /** Transform value untuk tipe data dropdown */
+                            let parsedDropdownValue = {
+                              default: "",
+                              opsi: [],
+                            };
+                            let dropdownTypeContent = "";
+                            if (doccolumns.data_type === "dropdown") {
+                              parsedDropdownValue = JSON.parse(
+                                doccolumns.value
+                              );
+
+                              const defaultIndex = parsedDropdownValue.default;
+                              if (
+                                defaultIndex !== "" &&
+                                typeof defaultIndex === "number"
+                              ) {
+                                dropdownTypeContent =
+                                  parsedDropdownValue.opsi[defaultIndex];
+                              }
+                            }
+
+                            /** Transform value untuk tipe data checkbox */
+                            {
+                              /* Contoh untuk testing: */
+                            }
+                            {
+                              /* let parsedCheckboxValue = {
+                              default: [1, 2],
+                              opsi: ["a", "b", "c"],
+                            }; */
+                            }
+
+                            let parsedCheckboxValue = {
+                              default: [],
+                              opsi: [],
+                            };
+
+                            let checkboxTypeContent = "";
+
+                            if (doccolumns.data_type === "checkbox") {
+                              parsedCheckboxValue = JSON.parse(
+                                doccolumns.value
+                              );
+
+                              const defaultIndexes =
+                                parsedCheckboxValue.default;
+                              const defaultIndexesLength =
+                                defaultIndexes.length;
+                              if (
+                                defaultIndexesLength > 0 &&
+                                parsedCheckboxValue.opsi.length >=
+                                  defaultIndexesLength
+                              ) {
+                                checkboxTypeContent = parsedCheckboxValue.opsi
+                                  .filter((_, index) =>
+                                    defaultIndexes.includes(index)
+                                  )
+                                  .join(", ");
+                              }
+                            }
+
                             return (
                               <div
                                 key={idxcolumns}
@@ -1069,22 +1130,24 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                                     <>
                                       {doccolumns.data_type === "dropdown" && (
                                         <>
-                                          {
+                                          {dropdownTypeContent}
+                                          {/* {
                                             doccolumns.value.opsi[
                                               doccolumns.value.default
                                             ]
-                                          }
+                                          } */}
                                         </>
                                       )}
                                       {doccolumns.data_type === "checkbox" && (
                                         <>
-                                          {doccolumns.value.opsi
+                                          {checkboxTypeContent}
+                                          {/* {doccolumns.value.opsi
                                             .filter((_, idxfil) => {
                                               return doccolumns.value.default.includes(
                                                 idxfil
                                               );
                                             })
-                                            .join(", ")}
+                                            .join(", ")} */}
                                         </>
                                       )}
                                       {doccolumns.data_type === "date" && (
