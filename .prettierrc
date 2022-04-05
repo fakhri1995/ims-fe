@@ -6,6 +6,7 @@
   "tabWidth": 2,
   "importOrder": [
     "^components/(.*)$",
+    "^contexts/(.*)$",
     "^hooks/(.*)$",
     "^lib/(.*)$",
     "^apis/(.*)$",
