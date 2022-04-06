@@ -7,7 +7,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-import LayoutMenu from "./layout-menu";
+import { LayoutMenu } from "components/base/LayoutMenu";
+import st from "components/layout-dashboard.module.css";
+
 import LayoutMenuHeader from "./layout-menu-header";
 
 const { Header } = Layout;
@@ -21,7 +23,6 @@ function LayoutDashboard({
   dataProfile,
   pathArr = [],
   sidemenu,
-  st,
   prevpath,
   idpage,
 
@@ -104,12 +105,10 @@ function LayoutDashboard({
       <div className="min-h-screen flex">
         {/* Left sider */}
         <LayoutMenu
-          dataProfile={dataProfile}
           handleCollSmall={handleCollSmall}
           sidemenu={sidemenu}
           coll={coll}
           collsmall={collsmall}
-          st={st}
         />
 
         {/* Header + Main Content */}
@@ -531,7 +530,7 @@ function LayoutDashboard({
             ) : null}
           </Header>
 
-          <main className="h-full bg-backdrop p-6">{children}</main>
+          <main className="h-full bg-backdrop md:p-6">{children}</main>
         </div>
       </div>
     </Spin>

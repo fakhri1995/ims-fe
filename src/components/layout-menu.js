@@ -11,6 +11,8 @@ import Menu from "antd/lib/menu";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import st from "components/layout-dashboard.module.css";
+
 import {
   IconAgents,
   IconAssets,
@@ -45,9 +47,15 @@ const LayoutMenu = ({
   sidemenu,
   coll,
   collsmall,
-  st,
   handleCollSmall,
 }) => {
+  console.log("LayoutMenu.dataProfile: ", dataProfile);
+  console.log("LayoutMenu.sidemenu: ", sidemenu);
+  console.log("LayoutMenu.coll: ", coll);
+  console.log("LayoutMenu.collsmall: ", collsmall);
+  console.log("LayoutMenu.st: ", st);
+  console.log("LayoutMenu.handleCollSmall: ", handleCollSmall);
+
   const userFeat = [
     107, 108, 109, 110, 111, 112, 132, 119, 118, 117, 116, 115, 114, 133, 134,
     135, 136, 137, 138, 139, 140, 141, 142, 143,
@@ -81,11 +89,14 @@ const LayoutMenu = ({
 
   return (
     <div>
+      {/* Untuk toggle sidebar pada smaller screen device */}
       <div
         className={`${lm.modal}`}
         hidden={collsmall}
         onClick={handleCollSmall}
       ></div>
+
+      {/* Sider untuk desktop */}
       <Sider
         collapsible
         collapsed={coll}
@@ -447,6 +458,7 @@ const LayoutMenu = ({
         </Menu>
       </Sider>
 
+      {/* Sider untuk mobile */}
       <Sider
         collapsible
         collapsed={collsmall}
@@ -460,7 +472,7 @@ const LayoutMenu = ({
           position: "absolute",
           height: `100%`,
           backgroundColor: "white",
-          zIndex: "40",
+          zIndex: 9999,
         }}
       >
         <div className="logo flex items-center justify-center my-5">

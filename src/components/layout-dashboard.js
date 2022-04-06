@@ -7,8 +7,11 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-import LayoutMenu from "../components/layout-menu";
+import { LayoutMenu } from "components/base/LayoutMenu";
+
 import LayoutMenuHeader from "./layout-menu-header";
+
+const { Header } = Layout;
 
 function LayoutDashboard({
   children,
@@ -39,7 +42,6 @@ function LayoutDashboard({
   // if (childBreacrumbDD[1] === "Update") {
   //     childBreacrumbDD.splice(2, 1)
   // }
-  const { Sider, Content, Header } = Layout;
   const [coll, setColl] = useState(true);
   const [collsmall, setCollsmall] = useState(true);
   const [tinggi, setTinggi] = useState(90);
@@ -82,13 +84,11 @@ function LayoutDashboard({
     <Spin spinning={loadingspin}>
       <div className=" min-h-screen flex">
         <LayoutMenu
-          dataProfile={dataProfile}
           handleCollSmall={handleCollSmall}
           sidemenu={sidemenu}
           coll={coll}
           collsmall={collsmall}
-          st={st}
-        ></LayoutMenu>
+        />
         <div className="h-auto w-full">
           <Header
             className="site-layout-background"

@@ -1,15 +1,14 @@
-import jscookie from "js-cookie";
+import LayoutDashboard from "components/layout-dashboardNew";
 
-import Layout from "../../components/layout-dashboard";
-import st from "../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
 function DashboardIndex({ initProps, dataProfile, sidemenu }) {
-  const tok = initProps;
-  // const cook = jscookie.get('token')
-  // console.log("cookie di dashboard: " + cook)
   return (
-    <Layout tok={tok} sidemenu={sidemenu} dataProfile={dataProfile} st={st}>
+    <LayoutDashboard
+      dataProfile={dataProfile}
+      tok={initProps}
+      sidemenu={sidemenu}
+    >
       {/* <div className="grid grid-cols-3">
                 <div className="w-auto h-auto border rounded-xl flex flex-col mx-3">
                     <div className="p-3 flex flex-col border-b">
@@ -55,7 +54,7 @@ function DashboardIndex({ initProps, dataProfile, sidemenu }) {
                 </div>
             </div> */}
       <h1>Selamat datang di dashboard</h1>
-    </Layout>
+    </LayoutDashboard>
   );
 }
 
