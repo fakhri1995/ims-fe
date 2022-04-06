@@ -3,6 +3,8 @@ import { useQuery } from "react-query";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
+import { ROLE_SUPER_ADMIN } from "lib/constants";
+
 import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 
 import {
@@ -23,6 +25,7 @@ export const AccessControlProvider: FC = ({ children }) => {
   const [permissionsRecord, setPermissionsRecord] = useState<
     Record<string, boolean>
   >({});
+  const [shouldBypass, setShouldBypass] = useState(false);
 
   const [isPending, setIsPending] = useState(true);
 
@@ -43,8 +46,11 @@ export const AccessControlProvider: FC = ({ children }) => {
           .map(({ name }) => name)
           .reduce((prev, curr) => ({ ...prev, [curr]: true }), {});
 
+        const isSuperAdmin = ROLE_SUPER_ADMIN in roles;
+
         setPermissionsRecord(features);
         setRolesRecord(roles);
+        setShouldBypass(isSuperAdmin);
       },
       onSettled: () => {
         setIsPending(false);
@@ -57,6 +63,10 @@ export const AccessControlProvider: FC = ({ children }) => {
    */
   const hasRole = useCallback<IAccessControlCtx["hasRole"]>(
     (role, opt) => {
+      if (shouldBypass) {
+        return true;
+      }
+
       let isRolesSatisfied = false;
 
       if (typeof role === "string") {
@@ -91,11 +101,15 @@ export const AccessControlProvider: FC = ({ children }) => {
 
       return false;
     },
-    [rolesRecord, isPending]
+    [rolesRecord, isPending, shouldBypass]
   );
 
   const hasPermission = useCallback<IAccessControlCtx["hasPermission"]>(
     (permission, opt) => {
+      if (shouldBypass) {
+        return true;
+      }
+
       let isPermissionsSatisfied = false;
 
       if (typeof permission === "string") {
@@ -130,7 +144,7 @@ export const AccessControlProvider: FC = ({ children }) => {
 
       return false;
     },
-    [permissionsRecord, isPending]
+    [permissionsRecord, isPending, shouldBypass]
   );
 
   /**

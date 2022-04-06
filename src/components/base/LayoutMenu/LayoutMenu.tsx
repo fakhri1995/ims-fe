@@ -17,6 +17,7 @@ import commonLayoutStyle from "components/layout-dashboard.module.css";
 
 import { useAccessControl } from "contexts/access-control";
 
+import { ROLE_SUPER_ADMIN } from "lib/constants";
 import {
   SIDEBAR_ASSET,
   SIDEBAR_ASSET_MANUFACTURER,
@@ -29,7 +30,6 @@ import {
   SIDEBAR_ATTENDANCE_FORM_ACTIVITY,
   SIDEBAR_ATTENDANCE_MY,
   SIDEBAR_COMPANY,
-  SIDEBAR_COMPANY_CLIENT,
   SIDEBAR_COMPANY_PROFILE,
   SIDEBAR_DASHBOARD,
   SIDEBAR_FEATURE,
@@ -121,7 +121,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
       )}
 
       {/* Ticket */}
-      {(hasRole("Super Admin") || hasPermission(SIDEBAR_TICKET)) && (
+      {(hasRole(ROLE_SUPER_ADMIN) || hasPermission(SIDEBAR_TICKET)) && (
         <Menu.Item
           key="2"
           title="Tickets"
