@@ -1,3 +1,4 @@
+import { notification } from "antd";
 import type { RcFile } from "antd/lib/upload";
 
 /**
@@ -78,4 +79,26 @@ export const downloadFile = (fileBinary: Blob, fileName: string) => {
   );
 
   document.body.removeChild(anchorElement);
+};
+
+/**
+ * Helper function untuk render toaster / notification ketika User tidak memiliki fitur
+ *  tertenu.
+ *
+ * Function ini digunakan agar message tetap consistent.
+ *
+ * @example
+ * ```ts
+ * // does not have the permission
+ * permissionWarningNotification("Mengubah", "Task");
+ * // -> Anda tidak memiliki fitur untuk Mengubah Task
+ * ```
+ */
+export const permissionWarningNotification = (
+  action: string,
+  object: string
+) => {
+  notification.warning({
+    message: `Anda tidak memiliki fitur untuk ${action} ${object}`,
+  });
 };

@@ -11,7 +11,11 @@ import {
   DetailFormAktivitasCard,
 } from "components/screen/form-aktivitas/DetailAktivitas";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { useAxiosClient } from "hooks/use-axios-client";
+
+import { ATTENDANCE_FORM_GET } from "lib/features";
 
 import {
   AttendanceFormAktivitasService,
@@ -27,12 +31,17 @@ const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
   token,
 }) => {
   const router = useRouter();
+  const axiosClient = useAxiosClient();
+  const { hasPermission } = useAccessControl();
+
   const { aktivitasId } = router.query;
 
-  const axiosClient = useAxiosClient();
   const { data } = useQuery(
     [AttendanceFormAktivitasServiceQueryKeys.FIND_ONE, +aktivitasId],
-    () => AttendanceFormAktivitasService.findOne(axiosClient, +aktivitasId)
+    () => AttendanceFormAktivitasService.findOne(axiosClient, +aktivitasId),
+    {
+      enabled: hasPermission(ATTENDANCE_FORM_GET),
+    }
   );
 
   const [isDrawerShown, setIsDrawerShown] = useState(false);

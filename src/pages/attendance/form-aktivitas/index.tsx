@@ -16,6 +16,10 @@ import {
   TotalFormAktivitasCard,
 } from "components/screen/form-aktivitas";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { ATTENDANCE_FORM_ADD } from "lib/features";
+
 import { IGetAttendanceFormsParams } from "apis/attendance";
 
 import httpcookie from "cookie";
@@ -26,6 +30,8 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
   token,
   dataProfile,
 }) => {
+  const { hasPermission } = useAccessControl();
+
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
       name: "Form Aktivitas",
@@ -82,6 +88,7 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
           {/* Create new Form Aktivitas */}
           <div className="w-full md:w-1/2">
             <AddNewAktivitasButton
+              disabled={!hasPermission(ATTENDANCE_FORM_ADD)}
               onButtonClicked={onAddNewAktivitasButtonClicked}
             />
           </div>

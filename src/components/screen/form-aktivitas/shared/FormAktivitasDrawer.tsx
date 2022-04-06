@@ -25,7 +25,16 @@ import {
 import { TextAreaRequired } from "components/input";
 import { H2, Label } from "components/typography";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { useAxiosClient } from "hooks/use-axios-client";
+
+import {
+  ATTENDANCE_FORM_ADD,
+  ATTENDANCE_FORM_DELETE,
+  ATTENDANCE_FORM_UPDATE,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import {
   AttendanceFormAktivitasService,
@@ -59,7 +68,10 @@ export interface IFormAktivitasDrawer {
 }
 
 /**
- * Component BuatFormAktivitasDrawer
+ * Component BuatFormAktivitasDrawer digunakan untuk create, update, dan delete Form Aktivitas.
+ *
+ * Phase update dan delete hanya dapat berlaku ketika props `formAktivitasId` defined.
+ * Otherwise drawer ini akan create new form aktivitas.
  */
 export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
   title,
@@ -69,6 +81,15 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
   formAktivitasId,
 }) => {
   const axiosClient = useAxiosClient();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToCreateForm = hasPermission(ATTENDANCE_FORM_ADD);
+  let isAllowedToUpdateForm = false;
+  let isAllowedToDeleteForm = false;
+  if (formAktivitasId !== undefined) {
+    isAllowedToUpdateForm = hasPermission(ATTENDANCE_FORM_UPDATE);
+    isAllowedToDeleteForm = hasPermission(ATTENDANCE_FORM_DELETE);
+  }
+
   const { mutate: addFormAktivitas, isLoading: addFormLoading } =
     useAddFormAktivitas();
   const { mutate: updateFormAktivitas, isLoading: updateFormLoading } =
@@ -155,12 +176,12 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
       return mappedPayload;
     }) as Detail[];
 
-    const resetDrawerState = () => {
-      onvisible(false);
-      setdatacreate({ name: "", description: "", works: [] });
-    };
-
     if (!formAktivitasId) {
+      if (!isAllowedToCreateForm) {
+        permissionWarningNotification("Membuat", "Form Aktivitas");
+        return;
+      }
+
       addFormAktivitas(payload, {
         onSuccess: (response) => {
           notification.success({
@@ -168,7 +189,8 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
             duration: 3,
           });
 
-          resetDrawerState();
+          onvisible(false);
+          setdatacreate({ name: "", description: "", works: [] });
         },
         onError: (error: AxiosError) => {
           notification.error({
@@ -178,6 +200,11 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
         },
       });
     } else {
+      if (!isAllowedToUpdateForm) {
+        permissionWarningNotification("Memperbarui", "Form Aktivitas");
+        return;
+      }
+
       updateFormAktivitas(
         {
           id: formAktivitasId,
@@ -191,7 +218,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
               duration: 3,
             });
 
-            resetDrawerState();
+            onvisible(false);
           },
           onError: (error: AxiosError) => {
             notification.error({
@@ -205,6 +232,11 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
   };
 
   const onDeleteButtonClicked = () => {
+    if (!isAllowedToDeleteForm) {
+      permissionWarningNotification("Menghapus", "Form Aktivitas");
+      return;
+    }
+
     confirm({
       title: "Konfirmasi Penghapusan Form Aktivitas!",
       content: (
@@ -316,6 +348,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
             ></TextAreaRequired>
           </div>
 
+          {/* Menampilkan fields untuk create new form aktivitas */}
           {!formAktivitasId && (
             <>
               <div className="flex flex-col px-3 mb-5">

@@ -1,10 +1,7 @@
 /**
- * Enum feature sidebar.
+ * Daftar feature untuk Sidebar.
  *
- * Feature-feature ini digunakan untuk generate Sidebar menu navigation berdasarkan feature
- *  yang dimiliki oleh user.
- *
- * @link https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/70352909/Group+of+Features
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/70352909/Group+of+Features
  */
 /** ------------------ Menu Situs ------------------ */
 /** Attendance */
@@ -58,3 +55,17 @@ export const SIDEBAR_USER_GROUP = "SIDEBAR_USER_GROUP";
 export const SIDEBAR_CMS = "SIDEBAR_CMS";
 export const SIDEBAR_CMS_CAREER = "SIDEBAR_CMS_CAREER";
 export const SIDEBAR_CMS_MESSAGE = "SIDEBAR_CMS_MESSAGE";
+
+/**
+ * Daftar feature untuk halaman Attendance.
+ *
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/70352909/Group+of+Features
+ */
+/** Attendance Form (Form Aktivitas) */
+export const ATTENDANCE_FORMS_GET = "ATTENDANCE_FORMS_GET";
+export const ATTENDANCE_FORM_ADD = "ATTENDANCE_FORM_ADD";
+export const ATTENDANCE_FORM_GET = "ATTENDANCE_FORM_GET";
+export const ATTENDANCE_FORM_UPDATE = "ATTENDANCE_FORM_UPDATE";
+export const ATTENDANCE_FORM_DELETE = "ATTENDANCE_FORM_DELETE";
+export const ATTENDANCE_FORM_USERS_ADD = "ATTENDANCE_FORM_USERS_ADD";
+export const ATTENDANCE_FORM_USERS_REMOVE = "ATTENDANCE_FORM_USERS_REMOVE";

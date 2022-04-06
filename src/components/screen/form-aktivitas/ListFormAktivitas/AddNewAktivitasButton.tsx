@@ -7,11 +7,13 @@ import BlobLowerIcon from "assets/vectors/blob-lower.svg";
 import BlobUpperIcon from "assets/vectors/blob-upper.svg";
 
 export interface IAddNewAktivitasButton {
+  disabled: boolean;
+
   onButtonClicked: () => void;
 }
 
 export const AddNewAktivitasButton: FC<IAddNewAktivitasButton> = memo(
-  ({ onButtonClicked }) => {
+  ({ disabled, onButtonClicked }) => {
     /** Contoh: Rabu, 23 Februari 2022 */
     const todayDateContent = format(new Date(), "EEEE, dd MMMM yyyy", {
       locale: idLocale,
@@ -19,8 +21,9 @@ export const AddNewAktivitasButton: FC<IAddNewAktivitasButton> = memo(
 
     return (
       <button
-        className="mig-platform w-full h-full flex items-center transition-colors text-white relative bg-primary100 hover:bg-primary75 overflow-hidden"
+        className="mig-platform w-full h-full flex items-center transition-colors text-white relative bg-primary100 disabled:bg-gray-200 hover:bg-primary75 overflow-hidden"
         onClick={onButtonClicked}
+        disabled={disabled}
       >
         <div className="h-full mr-6 flex items-center">
           <AddNewProjectIcon className="" />

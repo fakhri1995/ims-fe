@@ -4,9 +4,12 @@ import { useRouter } from "next/router";
 import { FC, memo, useMemo } from "react";
 import { useQuery } from "react-query";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import { formatDateToLocale } from "lib/date-utils";
+import { ATTENDANCE_FORMS_GET } from "lib/features";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
 
 import {
@@ -39,6 +42,7 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = memo(
   }) => {
     const router = useRouter();
     const axiosClient = useAxiosClient();
+    const { hasPermission } = useAccessControl();
 
     const tableQueryCriteria = useMemo(
       () => ({
@@ -56,6 +60,7 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = memo(
       () =>
         AttendanceFormAktivitasService.find(axiosClient, tableQueryCriteria),
       {
+        enabled: hasPermission(ATTENDANCE_FORMS_GET),
         select: (response) => {
           const mappedData = response.data.data.data.map((datum) => {
             return {
