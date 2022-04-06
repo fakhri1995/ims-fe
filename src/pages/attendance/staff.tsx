@@ -1,7 +1,6 @@
 import { GetServerSideProps, NextPage } from "next";
 import { useCallback, useState } from "react";
 
-import styles from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
 import {
   AttendanceStaffAktivitasSection,
@@ -41,7 +40,6 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
       dataProfile={dataProfile}
       tok={token}
       fixedBreadcrumbValues={pageBreadcrumb}
-      st={styles}
       sidemenu="attendance/staff"
     >
       <div className="px-5 flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-6">

@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
-import styles from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
 import { FormAktivitasDrawer } from "components/screen/form-aktivitas";
 import {
@@ -62,7 +61,6 @@ const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
       dataProfile={dataProfile}
       tok={token}
       fixedBreadcrumbValues={pageBreadcrumb}
-      st={styles}
       sidemenu="attendance/form-aktivitas"
     >
       {/* First Row */}

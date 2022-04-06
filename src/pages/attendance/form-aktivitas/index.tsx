@@ -7,7 +7,6 @@ import {
 } from "next-query-params";
 import { useCallback, useState } from "react";
 
-import styles from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
 import {
   AddNewAktivitasButton,
@@ -70,7 +69,6 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
       dataProfile={dataProfile}
       tok={token}
       fixedBreadcrumbValues={pageBreadcrumb}
-      st={styles}
       sidemenu="attendance/form-aktivitas"
     >
       <div className="px-5">

@@ -2,7 +2,6 @@ import { Spin } from "antd";
 import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
 
-import styles from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
 import {
   AttendanceDetailClickableAktivitasSelector,
@@ -49,7 +48,6 @@ const AttendanceDetailPage: NextPage<ProtectedPageProps> = ({
     <LayoutDashboard
       dataProfile={dataProfile}
       tok={token}
-      st={styles}
       fixedBreadcrumbValues={pageBreadcrumb}
     >
       <div className="px-5 flex space-y-6 lg:space-y-0 lg:space-x-6 flex-col lg:flex-row">
