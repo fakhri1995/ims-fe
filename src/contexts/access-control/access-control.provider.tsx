@@ -82,10 +82,14 @@ export const AccessControlProvider: FC = ({ children }) => {
       if (!isPending) {
         if (isRolesSatisfied) {
           opt?.yes?.call(null);
+          return true;
         } else {
           opt?.no?.call(null);
+          return false;
         }
       }
+
+      return false;
     },
     [rolesRecord, isPending]
   );
@@ -117,10 +121,14 @@ export const AccessControlProvider: FC = ({ children }) => {
       if (!isPending) {
         if (isPermissionsSatisfied) {
           opt?.yes?.call(null);
+          return true;
         } else {
           opt?.no?.call(null);
+          return false;
         }
       }
+
+      return false;
     },
     [permissionsRecord, isPending]
   );

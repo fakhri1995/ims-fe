@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import React from "react";
 
 import { useAccessControl } from "contexts/access-control";
@@ -49,46 +49,10 @@ export const AccessControl: FC<IAccessControl> = ({
   const { hasPermission: validatePermission, hasRole: validateRole } =
     useAccessControl();
 
-  /**
-   * States
-   */
-  const [shouldRender, setShouldRender] = useState(false);
+  const shouldRender = useMemo(
+    () => validatePermission(hasPermission) || validateRole(hasRole),
+    [hasPermission, hasRole, validatePermission, validateRole]
+  );
 
-  /**
-   * Effects / Listeners
-   */
-  /** Effect ini menjadi logic untuk validate apakah persyaratan terpenuhi atau tidak. */
-  useEffect(() => {
-    const isPermissionDefined = hasPermission !== undefined;
-    const isRoleDefined = hasRole !== undefined;
-
-    if (!isPermissionDefined && !isRoleDefined) {
-      setShouldRender(true);
-      return;
-    }
-
-    let isPermissionSatisfied = false;
-    let isRoleSatisfied = false;
-
-    if (hasPermission !== undefined) {
-      validatePermission(hasPermission, {
-        yes: () => (isPermissionSatisfied = true),
-      });
-    }
-
-    if (hasRole !== undefined) {
-      validateRole(hasRole, {
-        yes: () => (isRoleSatisfied = true),
-      });
-    }
-
-    setShouldRender(isPermissionSatisfied || isRoleSatisfied);
-  }, [hasPermission, hasRole, validatePermission, validateRole]);
-
-  /** Conditional rendering */
-  if (!shouldRender) {
-    return null;
-  }
-
-  return <>{children}</>;
+  return shouldRender ? <>{children}</> : null;
 };
