@@ -10,9 +10,9 @@ export enum AuthServiceQueryKeys {
  * @access GET /detailProfile
  */
 export type IDetailProfileSucceedResponse =
-  HttpRequestWithDataSucceedResponse<IDetailProfileData>;
+  HttpRequestWithDataSucceedResponse<DetailProfileData>;
 
-export interface IDetailProfileData {
+export interface DetailProfileData {
   id: number;
   email: string;
   name: string;
