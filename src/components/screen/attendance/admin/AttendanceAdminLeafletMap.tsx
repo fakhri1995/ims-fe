@@ -77,7 +77,7 @@ const AttendanceMarkers: FC = () => {
           staffName: attendance.user.name,
           checkInLocation: {
             latlng: [+attendance.lat_check_in, +attendance.long_check_in],
-            displayName: attendance.geo_loc_check_in,
+            displayName: attendance.geo_loc_check_in?.display_name,
           },
         })) as AttendanceMarkerDataType[],
     }
