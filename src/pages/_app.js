@@ -4,7 +4,6 @@ import Router from "next/router";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { useRef } from "react";
-import { CookiesProvider } from "react-cookie";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 
@@ -43,11 +42,9 @@ function MyApp({ Component, pageProps }) {
 
       <QueryClientProvider client={queryClient.current}>
         <NextQueryParamProvider>
-          <CookiesProvider>
-            <AccessControlProvider>
-              <Component {...pageProps} />
-            </AccessControlProvider>
-          </CookiesProvider>
+          <AccessControlProvider>
+            <Component {...pageProps} />
+          </AccessControlProvider>
         </NextQueryParamProvider>
 
         {process.env.NODE_ENV === "development" && <ReactQueryDevtools />}

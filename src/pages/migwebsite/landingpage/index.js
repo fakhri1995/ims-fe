@@ -716,7 +716,7 @@ function LandingPage({}) {
         >
           Advantages
         </p>
-        <div class="grid grid-cols-2 gap-2 place-content-center mx-auto">
+        <div className="grid grid-cols-2 gap-2 place-content-center mx-auto">
           <div>
             <img
               className="mx-auto"
