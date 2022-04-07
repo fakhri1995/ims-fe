@@ -230,7 +230,7 @@ const HadirTable: FC<ITable> = ({ searchValue }) => {
       },
       {
         title: "Lokasi Check In",
-        dataIndex: "geo_loc_check_in",
+        dataIndex: ["geo_loc_check_in", "display_name"],
         ellipsis: true,
       },
       {
