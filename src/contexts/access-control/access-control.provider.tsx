@@ -3,6 +3,7 @@ import { useQuery } from "react-query";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
+import { getClientToken } from "lib/auth";
 import { ROLE_SUPER_ADMIN } from "lib/constants";
 
 import { AuthService, AuthServiceQueryKeys } from "apis/auth";
@@ -16,6 +17,7 @@ export const AccessControlProvider: FC = ({ children }) => {
   /**
    * Dependencies
    */
+  const token = getClientToken();
   const axiosClient = useAxiosClient();
 
   /**
@@ -151,8 +153,12 @@ export const AccessControlProvider: FC = ({ children }) => {
    * Initiate / fill the data
    */
   useEffect(() => {
+    if (token === "") {
+      return;
+    }
+
     refetch();
-  }, []);
+  }, [token]);
 
   /**
    * Memoized value
