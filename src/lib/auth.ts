@@ -1,43 +1,12 @@
-import { GetServerSidePropsContext } from "next";
-
-import httpcookie from "cookie";
+import Cookies from "js-cookie";
 
 export const TOKEN_COOKIE_NAME = "token";
 
 /**
- * Server side function.
+ * Retrieve token string from cookie.
  *
- * A function to reads the cookie from incoming HTTP request headers and extract
- *  specifiec TOKEN_COOKIE_NAME from it.
- *
- * It does not validating the cookie to the backend. It just read and extract.
- *
- * @example
- * ```ts
- * const { token, hasNoToken } = parseToken(ctx);
- * if (hasNoToken) {
- *   // when there is no "token" in incoming HTTP request's cookie
- * }
- *
- * // token is exists but it's not always a valid token.
- * token;
- * ```
+ * @returns string Stripped string (without quotation mark).
  */
-export const parseToken = ({ req }: GetServerSidePropsContext) => {
-  const { cookie } = req.headers;
-
-  let hasNoToken = true;
-  let token = "";
-
-  if (cookie) {
-    let cookies = httpcookie.parse(cookie);
-    if (TOKEN_COOKIE_NAME in cookies) {
-      hasNoToken = false;
-
-      /** The token is being stringified on login though... */
-      token = JSON.parse(cookies[TOKEN_COOKIE_NAME]);
-    }
-  }
-
-  return { token, hasNoToken };
+export const getClientToken = (): string => {
+  return Cookies.get(TOKEN_COOKIE_NAME)?.replace(/"/g, "") || "";
 };
