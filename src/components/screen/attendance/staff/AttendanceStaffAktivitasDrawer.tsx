@@ -9,7 +9,7 @@ import {
   notification,
 } from "antd";
 import type { AxiosError, AxiosResponse } from "axios";
-import { FC, useCallback, useEffect } from "react";
+import { FC, useCallback, useEffect, useMemo } from "react";
 import { useQuery } from "react-query";
 
 import DrawerCore from "components/drawer/drawerCore";
@@ -68,6 +68,31 @@ export const AttendanceStaffAktivitasDrawer: FC<
       select: (response) => response.data.data.attendance_forms[0],
     }
   );
+
+  const formInitialValue = useMemo(() => {
+    if (userAttendanceForm === undefined) {
+      return {};
+    }
+
+    return userAttendanceForm.details.reduce((prev, curr) => {
+      let defaultValue;
+      switch (curr.type) {
+        case FormAktivitasTypes.TEKS:
+        case FormAktivitasTypes.PARAGRAPH:
+        case FormAktivitasTypes.DROPDOWN:
+          defaultValue = "";
+          break;
+        case FormAktivitasTypes.NUMERAL:
+          defaultValue = curr.required ? 0 : undefined;
+          break;
+        case FormAktivitasTypes.CHECKLIST:
+          defaultValue = [];
+          break;
+      }
+
+      return { ...prev, [curr.key]: defaultValue };
+    }, {});
+  }, [userAttendanceForm]);
 
   const onMutationSucceed = useCallback((response: AxiosResponse<any, any>) => {
     form.resetFields();
@@ -196,6 +221,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
 
             <Form
               form={form}
+              initialValues={formInitialValue}
               layout="vertical"
               onFinish={handleOnFormSubmitted}
               validateMessages={{
