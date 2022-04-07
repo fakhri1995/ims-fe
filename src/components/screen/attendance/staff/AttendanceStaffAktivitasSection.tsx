@@ -1,5 +1,5 @@
 import { AppstoreAddOutlined } from "@ant-design/icons";
-import { ConfigProvider, Modal, Tabs } from "antd";
+import { ConfigProvider, Modal, Tabs, notification } from "antd";
 import { Table } from "antd";
 import type { ColumnsType } from "antd/lib/table";
 import { isBefore } from "date-fns";
@@ -9,9 +9,17 @@ import { useQuery } from "react-query";
 import ButtonSys from "components/button";
 import { DataEmptyState } from "components/states/DataEmptyState";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import { formatDateToLocale } from "lib/date-utils";
+import {
+  ATTENDANCE_ACTIVITY_ADD,
+  ATTENDANCE_ACTIVITY_DELETE,
+  ATTENDANCE_ACTIVITY_UPDATE,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
 
 import {
@@ -36,6 +44,10 @@ export const AttendanceStaffAktivitasSection: FC<
   IAttendanceStaffAktivitasSection
 > = () => {
   const axiosClient = useAxiosClient();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToAddActivity = hasPermission(ATTENDANCE_ACTIVITY_ADD);
+  const isAllowedToUpdateActivity = hasPermission(ATTENDANCE_ACTIVITY_UPDATE);
+  const isAllowedToDeleteActivity = hasPermission(ATTENDANCE_ACTIVITY_DELETE);
 
   /** 1 => Hari Ini, 2 => Riwayat */
   const [tabActiveKey, setTabActiveKey] = useState<"1" | "2" | string>("1");
@@ -114,6 +126,25 @@ export const AttendanceStaffAktivitasSection: FC<
         return;
       }
 
+      if (!isAllowedToUpdateActivity) {
+        permissionWarningNotification("Memperbarui", "Aktivitas");
+        return;
+      }
+
+      /** Prevent user membuka drawer ketika mereka belum check in */
+      if (attendeeStatus !== "checkin") {
+        Modal.error({
+          centered: true,
+          title: "Perhatian!",
+          content:
+            "Anda perlu Check In terlebih dahulu untuk menambahkan atau memperbarui aktivitas!",
+          okText: "Kembali",
+          closable: true,
+        });
+
+        return;
+      }
+
       /** datum.key adalah unique ID dari aktivitas tersebut. Hanya di map menjadi "key" */
       dispatch({
         type: "update",
@@ -121,7 +152,7 @@ export const AttendanceStaffAktivitasSection: FC<
         selectedActivityFormId: datum.key,
       });
     },
-    [tabActiveKey]
+    [tabActiveKey, isAllowedToUpdateActivity, attendeeStatus]
   );
 
   const mOnAddActivityButtonClicked = useCallback(() => {
@@ -171,7 +202,11 @@ export const AttendanceStaffAktivitasSection: FC<
           </Tabs>
 
           <div className="flex space-x-6 w-1/2 justify-end items-center">
-            <ButtonSys type="primary" onClick={mOnAddActivityButtonClicked}>
+            <ButtonSys
+              type="primary"
+              onClick={mOnAddActivityButtonClicked}
+              disabled={!isAllowedToAddActivity}
+            >
               <AppstoreAddOutlined className="mr-2" />
               Masukkan Aktivitas
             </ButtonSys>
@@ -200,12 +235,16 @@ export const AttendanceStaffAktivitasSection: FC<
         </ConfigProvider>
       </section>
 
-      <AttendanceStaffAktivitasDrawer
-        visible={activityDrawerState.visible}
-        action={activityDrawerState.openDrawerAs}
-        activityFormId={activityDrawerState.selectedActivityFormId}
-        onClose={() => dispatch({ type: "create", visible: false })}
-      />
+      {(isAllowedToAddActivity ||
+        isAllowedToUpdateActivity ||
+        isAllowedToDeleteActivity) && (
+        <AttendanceStaffAktivitasDrawer
+          visible={activityDrawerState.visible}
+          action={activityDrawerState.openDrawerAs}
+          activityFormId={activityDrawerState.selectedActivityFormId}
+          onClose={() => dispatch({ type: "create", visible: false })}
+        />
+      )}
     </>
   );
 };

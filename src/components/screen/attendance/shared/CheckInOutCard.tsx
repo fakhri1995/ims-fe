@@ -2,7 +2,11 @@ import { InfoCircleOutlined } from "@ant-design/icons";
 import { Button, Spin, Tooltip } from "antd";
 import type { FC } from "react";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { useCheckInOutTimer } from "hooks/use-checkinout-timer";
+
+import { ATTENDANCE_TOGGLE_SET } from "lib/features";
 
 import { useGetAttendeeInfo } from "apis/attendance";
 
@@ -37,6 +41,9 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
   const { hasCheckedInToday, attendeeStatus, isItSafeToCheckOut } =
     useGetAttendeeInfo(!onlyShowTime);
 
+  const { hasPermission } = useAccessControl();
+  const isAllowedToToggleCheckInCheckOut = hasPermission(ATTENDANCE_TOGGLE_SET);
+
   const buttonClassName = clsx(
     "mig-button relative z-10",
     {
@@ -65,11 +72,16 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
       : "text-primary100/10"
   );
 
-  const shouldRenderSpinner =
-    currentTime === "" || (!onlyShowTime && attendeeStatus === undefined);
+  const shouldRenderSpinner = !isAllowedToToggleCheckInCheckOut
+    ? false
+    : currentTime === "" || (!onlyShowTime && attendeeStatus === undefined);
 
   const shouldDisableCheckOutButton =
-    attendeeStatus === "checkin" && !isItSafeToCheckOut;
+    (attendeeStatus === "checkin" && !isItSafeToCheckOut) ||
+    !isAllowedToToggleCheckInCheckOut;
+  const disabledButtonTooltipContent = isAllowedToToggleCheckInCheckOut
+    ? "Check Out bisa dilakukan setelah mengisi aktivitas"
+    : "Anda tidak memiliki fitur untuk Check In atau Check Out";
 
   return (
     <div className="mig-platform flex flex-col items-center justify-center space-y-6 py-8 relative overflow-hidden min-h-[12rem]">
@@ -95,7 +107,7 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
                   </Button>
 
                   <Tooltip
-                    title="Check Out bisa dilakukan setelah mengisi aktivitas"
+                    title={disabledButtonTooltipContent}
                     placement="right"
                     className="relative z-10"
                   >

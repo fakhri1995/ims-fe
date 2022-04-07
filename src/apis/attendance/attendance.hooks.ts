@@ -3,7 +3,11 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { useAxiosClient } from "hooks/use-axios-client";
+
+import { ATTENDANCES_USER_GET, ATTENDANCE_ACTIVITIES_GET } from "lib/features";
 
 import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 
@@ -135,6 +139,11 @@ export const useAddFormAktivitasStaff = () => {
  */
 export const useGetAttendeeInfo = (isEnabled: boolean = true) => {
   const axiosClient = useAxiosClient();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetUserAttendancesLog = hasPermission(ATTENDANCES_USER_GET);
+  const isAllowedToGetAttendanceActivities = hasPermission(
+    ATTENDANCE_ACTIVITIES_GET
+  );
 
   const [hasCheckedInToday, setHasCheckedInToday] = useState<
     boolean | undefined
@@ -157,7 +166,9 @@ export const useGetAttendeeInfo = (isEnabled: boolean = true) => {
     AttendanceActivityQueryKeys.FIND,
     () => AttendanceActivityService.find(axiosClient),
     {
-      enabled: !!userAttendanceForm,
+      enabled: !isAllowedToGetAttendanceActivities
+        ? false
+        : !!userAttendanceForm,
       select: (response) => {
         if (!userAttendanceForm || userAttendanceForm.length === 0) {
           return 0;
@@ -177,7 +188,7 @@ export const useGetAttendeeInfo = (isEnabled: boolean = true) => {
     AttendanceServiceQueryKeys.ATTENDANCES_USER_GET,
     () => AttendanceService.find(axiosClient),
     {
-      enabled: isEnabled,
+      enabled: !isAllowedToGetUserAttendancesLog ? false : isEnabled,
       select: (response) => response.data.data,
     }
   );
@@ -276,6 +287,10 @@ export const useGetUserAttendanceActivities = (
   criteria: "today" | "past" = "today"
 ) => {
   const axiosClient = useAxiosClient();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetAttendanceActivities = hasPermission(
+    ATTENDANCE_ACTIVITIES_GET
+  );
 
   const { data: userAttendanceForm } = useQuery(
     AuthServiceQueryKeys.DETAIL_PROFILE,
@@ -293,7 +308,9 @@ export const useGetUserAttendanceActivities = (
     AttendanceActivityQueryKeys.FIND,
     () => AttendanceActivityService.find(axiosClient),
     {
-      enabled: !!userAttendanceForm,
+      enabled: !isAllowedToGetAttendanceActivities
+        ? false
+        : !!userAttendanceForm,
       select: (response) => {
         if (!userAttendanceForm || userAttendanceForm.length === 0) {
           return [];

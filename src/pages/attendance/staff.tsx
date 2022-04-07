@@ -1,6 +1,7 @@
 import { GetServerSideProps, NextPage } from "next";
 import { useCallback, useState } from "react";
 
+import { AccessControl } from "components/features/AccessControl";
 import LayoutDashboard from "components/layout-dashboardNew";
 import {
   AttendanceStaffAktivitasSection,
@@ -10,6 +11,8 @@ import {
   CheckInOutCard,
 } from "components/screen/attendance";
 import { AttendanceStaffCheckInDrawer } from "components/screen/attendance/staff/AttendanceStaffCheckInDrawer";
+
+import { ATTENDANCE_TOGGLE_SET } from "lib/features";
 
 import httpcookie from "cookie";
 
@@ -71,10 +74,12 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
         </div>
       </div>
 
-      <AttendanceStaffCheckInDrawer
-        visible={isCheckInDrawerShown}
-        onClose={toggleCheckInDrawer}
-      />
+      <AccessControl hasPermission={ATTENDANCE_TOGGLE_SET}>
+        <AttendanceStaffCheckInDrawer
+          visible={isCheckInDrawerShown}
+          onClose={toggleCheckInDrawer}
+        />
+      </AccessControl>
     </LayoutDashboard>
   );
 };
