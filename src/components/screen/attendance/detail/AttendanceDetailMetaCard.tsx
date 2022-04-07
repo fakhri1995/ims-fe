@@ -70,7 +70,7 @@ export const AttendanceDetailMetaCard: FC<IAttendanceDetailMetaCard> = memo(
             },
             {
               label: "Lokasi Check In",
-              content: attendanceMeta.geo_loc_check_in || "-",
+              content: attendanceMeta.geo_loc_check_in?.display_name || "-",
             },
             {
               label: "Waktu Check Out",
@@ -82,7 +82,7 @@ export const AttendanceDetailMetaCard: FC<IAttendanceDetailMetaCard> = memo(
             },
             {
               label: "Lokasi Check Out",
-              content: attendanceMeta.geo_loc_check_out || "-",
+              content: attendanceMeta.geo_loc_check_out?.display_name || "-",
             },
             { label: "Keterangan", content: isLate },
           ];

@@ -45,8 +45,8 @@ export interface UserAttendance {
   lat_check_in: string;
   long_check_out: null | string;
   lat_check_out: null | string;
-  geo_loc_check_in: null | string;
-  geo_loc_check_out: null | string;
+  geo_loc_check_in: GeolocationCheckInOut | null;
+  geo_loc_check_out: GeolocationCheckInOut | null;
   evidence: Evidence;
   is_wfo: number;
   is_late: boolean;
@@ -55,6 +55,30 @@ export interface UserAttendance {
 export interface Evidence {
   check_in_evidence: string;
   check_out_evidence: string;
+}
+
+export interface GeolocationCheckInOut {
+  place_id: number;
+  licence: string;
+  osm_type: string;
+  osm_id: number;
+  place_rank: number;
+  category: string;
+  type: string;
+  addresstype: string;
+  name: string;
+  display_name: string;
+  address: Address;
+}
+
+export interface Address {
+  road: string;
+  suburb: string;
+  city: string;
+  county: string;
+  postcode: string;
+  country: string;
+  country_code: string;
 }
 
 /**
@@ -103,8 +127,8 @@ export interface UsersAttendance {
   lat_check_in: string;
   long_check_out: string;
   lat_check_out: string;
-  geo_loc_check_in: string | null;
-  geo_loc_check_out: string | null;
+  geo_loc_check_in: GeolocationCheckInOut | null;
+  geo_loc_check_out: GeolocationCheckInOut | null;
   evidence: Evidence;
   is_wfo: number;
   user: UsersAttendanceUser;
