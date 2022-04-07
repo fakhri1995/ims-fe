@@ -153,7 +153,13 @@ export const AccessControlProvider: FC = ({ children }) => {
    * Initiate / fill the data
    */
   useEffect(() => {
+    /** Token will be an empty string after logout */
     if (token === "") {
+      /** Freed some memory */
+      setRolesRecord({});
+      setPermissionsRecord({});
+      setShouldBypass(false);
+      setIsPending(true);
       return;
     }
 
