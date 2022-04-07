@@ -3,7 +3,11 @@ import { Spin } from "antd";
 import type { FC } from "react";
 import { useQuery } from "react-query";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { useAxiosClient } from "hooks/use-axios-client";
+
+import { ATTENDANCES_USERS_GET } from "lib/features";
 
 import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
 
@@ -19,10 +23,14 @@ export const AttendanceAdminTodayStatCard: FC<
   IAttendanceAdminTodayStatCard
 > = () => {
   const axiosClient = useAxiosClient();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetAttendancesUsers = hasPermission(ATTENDANCES_USERS_GET);
+
   const { data, isLoading } = useQuery(
     AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET,
     () => AttendanceService.findAsAdmin(axiosClient),
     {
+      enabled: isAllowedToGetAttendancesUsers,
       select: (response) => {
         return {
           jumlah_hadir: response.data.data.users_attendances_count,
@@ -48,7 +56,7 @@ export const AttendanceAdminTodayStatCard: FC<
             {/* Hadir */}
             <div className="flex flex-col text-center">
               <h4 className="text-5xl py-4 mb-2 text-primary100">
-                {data.jumlah_hadir}
+                {data?.jumlah_hadir || 0}
               </h4>
 
               <div>
@@ -62,7 +70,7 @@ export const AttendanceAdminTodayStatCard: FC<
             {/* Absen */}
             <div className="flex flex-col text-center">
               <h4 className="text-5xl py-4 mb-2 text-mono80">
-                {data.jumlah_absen}
+                {data?.jumlah_absen || 0}
               </h4>
 
               <div>

@@ -9,7 +9,11 @@ import MarkerClusterGroup from "react-leaflet-markercluster";
 import "react-leaflet-markercluster/dist/styles.min.css";
 import { useQuery } from "react-query";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { useAxiosClient } from "hooks/use-axios-client";
+
+import { ATTENDANCES_USERS_GET } from "lib/features";
 
 import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
 
@@ -66,12 +70,15 @@ type AttendanceMarkerDataType = {
  */
 const AttendanceMarkers: FC = () => {
   const map = useMap();
-
   const axiosClient = useAxiosClient();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetAttendancesUsers = hasPermission(ATTENDANCES_USERS_GET);
+
   const { data } = useQuery(
     AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET,
     () => AttendanceService.findAsAdmin(axiosClient),
     {
+      enabled: isAllowedToGetAttendancesUsers,
       select: (response) =>
         response.data.data.users_attendances.map((attendance) => ({
           staffName: attendance.user.name,
