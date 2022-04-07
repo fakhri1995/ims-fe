@@ -12,7 +12,6 @@ import type { AxiosError } from "axios";
 import moment from "moment";
 import type { FC } from "react";
 import React, { useEffect, useState } from "react";
-import { useCookies } from "react-cookie";
 import { useMutation, useQueryClient } from "react-query";
 
 import ButtonSys from "components/button";
@@ -27,6 +26,8 @@ import { InputRequired, TextAreaNotRequired } from "components/input";
 import { H2, Label } from "components/typography";
 
 import { useAxiosClient } from "hooks/use-axios-client";
+
+import { getClientToken } from "lib/auth";
 
 import type { AddTaskPayload } from "apis/task";
 import { TaskService } from "apis/task/task.service";
@@ -57,9 +58,7 @@ export const TicketDetailTaskCreateDrawer: FC<
 
   const axiosClient = useAxiosClient();
   const queryClient = useQueryClient();
-
-  const [cookies] = useCookies(["token"]);
-  const initProps = cookies.token;
+  const initProps = getClientToken();
 
   //USESTATE
   const [datacreate, setdatacreate] = useState({

@@ -1,28 +1,34 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { useMemo } from "react";
-import { useCookies } from "react-cookie";
+
+import { getClientToken } from "lib/auth";
 
 /**
  * A React custom hook to use axios client with token attached on it.
  *
- * This function will produce a new AxiosInstance and use hook `useCookies` to
- *  retrieve the token.
+ * NOTE: hook ini akan selalu re-create axios instance ketika digunakan.
+ * TODO: seharusnya ga begitu. Jadiin context atau global variable.
  */
 export const useAxiosClient = () => {
-  const [cookies] = useCookies(["token"]);
+  const token = getClientToken();
 
   const tokenizedAxiosClient = useMemo(() => {
-    const axiosClient = axios.create({
+    const axiosConfig: AxiosRequestConfig = {
       baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
       headers: {
-        Authorization: cookies.token,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-    });
+    };
+
+    if (token !== "") {
+      axiosConfig.headers["Authorization"] = token;
+    }
+
+    const axiosClient = axios.create(axiosConfig);
 
     return axiosClient;
-  }, [cookies.token]);
+  }, [token]);
 
   return tokenizedAxiosClient;
 };

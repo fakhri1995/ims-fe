@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import { GetServerSidePropsContext } from "next";
 
 import httpcookie from "cookie";
@@ -40,4 +41,13 @@ export const parseToken = ({ req }: GetServerSidePropsContext) => {
   }
 
   return { token, hasNoToken };
+};
+
+/**
+ * Retrieve token string from cookie.
+ *
+ * @returns string Stripped string (without quotation mark).
+ */
+export const getClientToken = (): string => {
+  return Cookies.get(TOKEN_COOKIE_NAME)?.replace(/"/g, "") || "";
 };
