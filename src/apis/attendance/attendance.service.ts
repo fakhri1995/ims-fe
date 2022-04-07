@@ -43,6 +43,7 @@ export class AttendanceService {
   /**
    * Retrieve an attendance detail by its ID.
    *
+   * @access GET /getAttendanceUserAdmin
    * @access GET /getAttendanceUser
    */
   static async findOne(

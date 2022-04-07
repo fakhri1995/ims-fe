@@ -7,7 +7,12 @@ import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
-import { ATTENDANCES_USER_GET, ATTENDANCE_ACTIVITIES_GET } from "lib/features";
+import {
+  ATTENDANCES_USER_GET,
+  ATTENDANCE_ACTIVITIES_GET,
+  ATTENDANCE_USER_ADMIN_GET,
+  ATTENDANCE_USER_GET,
+} from "lib/features";
 
 import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 
@@ -544,21 +549,31 @@ export const useMutateAttendanceActivity = () => {
  *
  * NOTE: arg `attendanceId` sangat mungkin memiliki nilai `undefined`. Oleh karena itu hanya jalankan query ketika `attendanceId !== undefined`.
  */
-export const useAttendanceDetailSelector = (
-  attendanceId: number,
-  isAdminRole: boolean = false
-) => {
+export const useAttendanceDetailSelector = (attendanceId: number) => {
   const axiosClient = useAxiosClient();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetAsAdmin = hasPermission(ATTENDANCE_USER_ADMIN_GET);
+  const isAllowedToGetAsUser = hasPermission(ATTENDANCE_USER_GET);
+  const isAllowedToGet = isAllowedToGetAsAdmin || isAllowedToGetAsUser;
 
   const [selectedActivityIndex, setSelectedActivityIndex] = useState<
     number | undefined
   >(undefined);
 
   const { data, isLoading } = useQuery(
-    [AttendanceServiceQueryKeys.ATTENDANCE_USER_GET, attendanceId],
-    () => AttendanceService.findOne(axiosClient, attendanceId, isAdminRole),
+    [
+      AttendanceServiceQueryKeys.ATTENDANCE_USER_GET,
+      attendanceId,
+      isAllowedToGetAsAdmin,
+    ],
+    () =>
+      AttendanceService.findOne(
+        axiosClient,
+        attendanceId,
+        isAllowedToGetAsAdmin
+      ),
     {
-      enabled: !!attendanceId,
+      enabled: !isAllowedToGet ? false : !!attendanceId,
       select: (response) => {
         const data: Data = [];
         response.data.data.attendance_activities.forEach(

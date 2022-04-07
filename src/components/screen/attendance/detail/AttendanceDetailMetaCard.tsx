@@ -4,10 +4,13 @@ import { useQuery } from "react-query";
 
 import { DetailCard } from "components/cards/DetailCard";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import { ATTENDANCE_SAFE_TIME } from "lib/constants";
 import { formatDateToLocale } from "lib/date-utils";
+import { ATTENDANCE_USER_ADMIN_GET, ATTENDANCE_USER_GET } from "lib/features";
 
 import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
 
@@ -16,25 +19,33 @@ import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
  */
 export interface IAttendanceDetailMetaCard {
   attendanceId: number;
-
-  fetchAsAdmin?: boolean;
 }
 
 /**
  * Component AttendanceDetailMetaCard
  */
 export const AttendanceDetailMetaCard: FC<IAttendanceDetailMetaCard> = memo(
-  ({ attendanceId, fetchAsAdmin = false }) => {
+  ({ attendanceId }) => {
     const axiosClient = useAxiosClient();
+    const { hasPermission } = useAccessControl();
+    const isAllowedToGetAsAdmin = hasPermission(ATTENDANCE_USER_ADMIN_GET);
+    const isAllowedToGetAsUser = hasPermission(ATTENDANCE_USER_GET);
+    const isAllowedToGet = isAllowedToGetAsAdmin || isAllowedToGetAsUser;
+
     const { data, isLoading } = useQuery(
       [
         AttendanceServiceQueryKeys.ATTENDANCE_USER_GET,
         attendanceId,
-        fetchAsAdmin,
+        isAllowedToGetAsAdmin,
       ],
-      () => AttendanceService.findOne(axiosClient, attendanceId, fetchAsAdmin),
+      () =>
+        AttendanceService.findOne(
+          axiosClient,
+          attendanceId,
+          isAllowedToGetAsAdmin
+        ),
       {
-        enabled: !!attendanceId,
+        enabled: !isAllowedToGet ? false : !!attendanceId,
         select: (response) => {
           const attendanceMeta = response.data.data.user_attendance;
 
@@ -92,7 +103,7 @@ export const AttendanceDetailMetaCard: FC<IAttendanceDetailMetaCard> = memo(
       }
     );
 
-    return (
+    return isAllowedToGet ? (
       <DetailCard
         isLoading={isLoading || !attendanceId}
         estimatedContentLength={6}
@@ -101,7 +112,7 @@ export const AttendanceDetailMetaCard: FC<IAttendanceDetailMetaCard> = memo(
         }
         content={data?.contentData || []}
       />
-    );
+    ) : null;
   }
 );
 AttendanceDetailMetaCard.displayName = "AttendanceDetailMetaCard";
