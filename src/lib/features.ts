@@ -86,3 +86,15 @@ export const ATTENDANCE_ACTIVITY_USER_EXPORT =
   "ATTENDANCE_ACTIVITY_USER_EXPORT";
 export const ATTENDANCE_ACTIVITY_USERS_EXPORT =
   "ATTENDANCE_ACTIVITY_USERS_EXPORT";
+
+/**
+ * Daftar feature untuk Company Profile.
+ *
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/70352909/Group+of+Features
+ */
+export const CAREER_ADD = "CAREER_ADD";
+export const CAREER_UPDATE = "CAREER_UPDATE";
+export const CAREER_DELETE = "CAREER_DELETE";
+export const MESSAGES_GET = "MESSAGES_GET";
+export const MESSAGE_DELETE =
+  "MESSAGE_DELETE"; /** It's not yet implemented: route `/admin/messages` */

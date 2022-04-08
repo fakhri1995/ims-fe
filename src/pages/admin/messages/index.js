@@ -3,12 +3,17 @@ import { Button, Modal, Table } from "antd";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
+import { AccessControl } from "components/features/AccessControl";
+
+import { MESSAGES_GET } from "lib/features";
+
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
 const Messages = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
   const rt = useRouter();
+
   const pathArr = rt.pathname.split("/").slice(1);
 
   //Definisi table
@@ -168,12 +173,14 @@ const Messages = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
           <h1 className="font-bold">Messages</h1>
         </div>
         <div className="col-span-5 p-0 md:p-5 flex flex-col">
-          <Table
-            columns={columnsFeature}
-            dataSource={dataMessagesMap}
-            pagination={{ pageSize: 8 }}
-            scroll={{ x: 300 }}
-          ></Table>
+          <AccessControl hasPermission={MESSAGES_GET}>
+            <Table
+              columns={columnsFeature}
+              dataSource={dataMessagesMap}
+              pagination={{ pageSize: 8 }}
+              scroll={{ x: 300 }}
+            ></Table>
+          </AccessControl>
         </div>
       </div>
       <Modal
