@@ -125,12 +125,12 @@ export const AttendanceStaffKehadiranSection: FC<
       {
         key: "id",
         title: "Lokasi Check In",
-        dataIndex: "geo_loc_check_in",
+        dataIndex: ["geo_loc_check_in", "display_name"],
       },
       {
         key: "id",
         title: "Lokasi Check Out",
-        dataIndex: "geo_loc_check_out",
+        dataIndex: ["geo_loc_check_out", "display_name"],
       },
     ];
   }, [currentPage]);
