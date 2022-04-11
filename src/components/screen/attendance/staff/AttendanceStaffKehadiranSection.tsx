@@ -7,11 +7,18 @@ import { FC, useCallback, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
+import { AccessControl } from "components/features/AccessControl";
 import { DataEmptyState } from "components/states/DataEmptyState";
+
+import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import { formatDateToLocale } from "lib/date-utils";
+import {
+  ATTENDANCES_USER_GET,
+  ATTENDANCE_ACTIVITY_USER_EXPORT,
+} from "lib/features";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
 
 import {
@@ -36,6 +43,9 @@ export const AttendanceStaffKehadiranSection: FC<
 > = () => {
   const router = useRouter();
   const axiosClient = useAxiosClient();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetKehadiranData = hasPermission(ATTENDANCES_USER_GET);
+  const isAllowedToExportTable = hasPermission(ATTENDANCE_ACTIVITY_USER_EXPORT);
 
   const [isExportDrawerShown, setIsExportDrawerShown] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -48,6 +58,7 @@ export const AttendanceStaffKehadiranSection: FC<
     AttendanceServiceQueryKeys.ATTENDANCES_USER_GET,
     () => AttendanceService.find(axiosClient),
     {
+      enabled: isAllowedToGetKehadiranData,
       select: (response) =>
         response.data.data.user_attendances.map((datum) => {
           return {
@@ -157,8 +168,9 @@ export const AttendanceStaffKehadiranSection: FC<
         <div className="flex items-center justify-between">
           <h3 className="mig-heading--4">Kehadiran</h3>
           <ButtonSys
-            type="default"
+            type={!isAllowedToExportTable ? "primary" : "default"}
             onClick={() => setIsExportDrawerShown(true)}
+            disabled={!isAllowedToExportTable}
           >
             <DownloadOutlined className="mr-2" />
             Unduh Tabel
@@ -191,10 +203,12 @@ export const AttendanceStaffKehadiranSection: FC<
         </ConfigProvider>
       </section>
 
-      <EksporAbsensiDrawer
-        visible={isExportDrawerShown}
-        onClose={() => setIsExportDrawerShown(false)}
-      />
+      <AccessControl hasPermission={ATTENDANCE_ACTIVITY_USER_EXPORT}>
+        <EksporAbsensiDrawer
+          visible={isExportDrawerShown}
+          onClose={() => setIsExportDrawerShown(false)}
+        />
+      </AccessControl>
     </>
   );
 };

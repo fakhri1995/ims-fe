@@ -3,7 +3,11 @@ import { ColumnsType } from "antd/es/table";
 import { FC, useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { useAxiosClient } from "hooks/use-axios-client";
+
+import { ATTENDANCE_FORM_GET } from "lib/features";
 
 import {
   AttendanceFormAktivitasService,
@@ -25,10 +29,13 @@ export const AktivitasTableInfoCard: FC<IAktivitasTableInfoCard> = ({
   aktivitasId,
 }) => {
   const axiosClient = useAxiosClient();
+  const { hasPermission } = useAccessControl();
+
   const { data, isLoading } = useQuery(
     [AttendanceFormAktivitasServiceQueryKeys.FIND_ONE, aktivitasId],
     () => AttendanceFormAktivitasService.findOne(axiosClient, aktivitasId),
     {
+      enabled: hasPermission(ATTENDANCE_FORM_GET),
       select: (response) => {
         return response.data.data.details.map((datum) => ({
           ...datum,
@@ -125,17 +132,23 @@ export const AktivitasTableInfoCard: FC<IAktivitasTableInfoCard> = ({
 
       {/* Content */}
       <div className="w-full md:w-2/3 text-mono30">
-        {/* Aktivitas Title */}
-        <span className="py-3 block font-bold text-sm">{aktivitasTitle}</span>
+        {!isLoading && data && (
+          <>
+            {/* Aktivitas Title */}
+            <span className="py-3 block font-bold text-sm">
+              {aktivitasTitle}
+            </span>
 
-        <p>
-          {aktivitasIsRequired
-            ? "Isian wajib diisi"
-            : "Isian tidak wajib diisi"}
-        </p>
+            <p>
+              {aktivitasIsRequired
+                ? "Isian wajib diisi"
+                : "Isian tidak wajib diisi"}
+            </p>
 
-        {/* Aktivitas Deskription */}
-        <p className="mt-6">{aktivitasDescription}</p>
+            {/* Aktivitas Deskription */}
+            <p className="mt-6">{aktivitasDescription}</p>
+          </>
+        )}
       </div>
     </div>
   );

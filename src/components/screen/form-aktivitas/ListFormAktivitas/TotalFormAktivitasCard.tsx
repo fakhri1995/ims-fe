@@ -2,7 +2,11 @@ import { Spin } from "antd";
 import { FC, memo } from "react";
 import { useQuery } from "react-query";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { useAxiosClient } from "hooks/use-axios-client";
+
+import { ATTENDANCE_FORMS_GET } from "lib/features";
 
 import {
   AttendanceFormAktivitasService,
@@ -13,9 +17,14 @@ export interface ITotalFormAktivitasCard {}
 
 export const TotalFormAktivitasCard: FC<ITotalFormAktivitasCard> = memo(() => {
   const axiosClient = useAxiosClient();
-  const { data, isLoading, isError } = useQuery(
+  const { hasPermission } = useAccessControl();
+
+  const { data, isLoading } = useQuery(
     AttendanceFormAktivitasServiceQueryKeys.FIND,
-    () => AttendanceFormAktivitasService.find(axiosClient)
+    () => AttendanceFormAktivitasService.find(axiosClient),
+    {
+      enabled: hasPermission(ATTENDANCE_FORMS_GET),
+    }
   );
 
   return (
@@ -25,7 +34,7 @@ export const TotalFormAktivitasCard: FC<ITotalFormAktivitasCard> = memo(() => {
       </span>
 
       <span className="text-5xl text-primary100">
-        {!isError ? (
+        {!isLoading && data ? (
           <>
             {isLoading && <Spin />}
             {data && data.data.data.total}

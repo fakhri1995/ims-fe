@@ -1,7 +1,7 @@
 import { GetServerSideProps, NextPage } from "next";
 import { useCallback, useState } from "react";
 
-import styles from "components/layout-dashboard.module.css";
+import { AccessControl } from "components/features/AccessControl";
 import LayoutDashboard from "components/layout-dashboardNew";
 import {
   AttendanceStaffAktivitasSection,
@@ -11,6 +11,8 @@ import {
   CheckInOutCard,
 } from "components/screen/attendance";
 import { AttendanceStaffCheckInDrawer } from "components/screen/attendance/staff/AttendanceStaffCheckInDrawer";
+
+import { ATTENDANCE_TOGGLE_SET } from "lib/features";
 
 import httpcookie from "cookie";
 
@@ -41,7 +43,6 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
       dataProfile={dataProfile}
       tok={token}
       fixedBreadcrumbValues={pageBreadcrumb}
-      st={styles}
       sidemenu="attendance/staff"
     >
       <div className="px-5 flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-6">
@@ -73,10 +74,12 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
         </div>
       </div>
 
-      <AttendanceStaffCheckInDrawer
-        visible={isCheckInDrawerShown}
-        onClose={toggleCheckInDrawer}
-      />
+      <AccessControl hasPermission={ATTENDANCE_TOGGLE_SET}>
+        <AttendanceStaffCheckInDrawer
+          visible={isCheckInDrawerShown}
+          onClose={toggleCheckInDrawer}
+        />
+      </AccessControl>
     </LayoutDashboard>
   );
 };

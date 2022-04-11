@@ -1,0 +1,364 @@
+import { CheckSquareOutlined } from "@ant-design/icons";
+import { Layout, Menu } from "antd";
+import Link from "next/link";
+import type { FC } from "react";
+
+import {
+  AsetIconSvg,
+  CompanyIconSvg,
+  DashboardIconSvg,
+  FiturIconSvg,
+  ItemIconSvg,
+  TaskIconSvg,
+  TicketIconSvg,
+  UserIconSvg,
+} from "components/icon";
+import commonLayoutStyle from "components/layout-dashboard.module.css";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { ROLE_SUPER_ADMIN } from "lib/constants";
+import {
+  SIDEBAR_ASSET,
+  SIDEBAR_ASSET_MANUFACTURER,
+  SIDEBAR_ASSET_MODEL,
+  SIDEBAR_ASSET_RELATIONSHIP_TYPE,
+  SIDEBAR_ASSET_TYPE,
+  SIDEBAR_ASSET_VENDOR,
+  SIDEBAR_ATTENDANCE,
+  SIDEBAR_ATTENDANCE_ADMIN,
+  SIDEBAR_ATTENDANCE_FORM_ACTIVITY,
+  SIDEBAR_ATTENDANCE_MY,
+  SIDEBAR_COMPANY,
+  SIDEBAR_COMPANY_PROFILE,
+  SIDEBAR_DASHBOARD,
+  SIDEBAR_FEATURE,
+  SIDEBAR_FEATURE_MODULE,
+  SIDEBAR_FEATURE_ROLE,
+  SIDEBAR_ITEMS,
+  SIDEBAR_TASK,
+  SIDEBAR_TASK_ADMIN,
+  SIDEBAR_TASK_MY,
+  SIDEBAR_TICKET,
+  SIDEBAR_USER,
+  SIDEBAR_USER_AGENT,
+  SIDEBAR_USER_GROUP,
+  SIDEBAR_USER_REQUESTER,
+} from "lib/features";
+
+import layoutMenuStyles from "./LayoutMenu.module.scss";
+import clsx from "clsx";
+
+const { SubMenu } = Menu;
+const { Sider } = Layout;
+
+/**
+ * Component LayoutMenu's props.
+ */
+export interface ILayoutMenu {
+  /**
+   * Identifier menu item mana yang sedang aktif (e.g. reflect to currently active page).
+   */
+  sidemenu: string;
+
+  /**
+   * Flag apakah sider desktop collapsed atau tidak.
+   *
+   * TODO: rename this variable name karena sangat membingungkan.
+   */
+  coll: boolean;
+
+  /**
+   * Flag apakah sider pada smaller width device collapsed atau tidak.
+   *
+   * TODO: rename this variable name karena sangat membingungkan.
+   */
+  collsmall: boolean;
+
+  /**
+   * Handler untuk toggle collapsed state pada smaller width device.
+   */
+  handleCollSmall: () => void;
+}
+
+/**
+ * Component LayoutMenu
+ */
+export const LayoutMenu: FC<ILayoutMenu> = ({
+  sidemenu,
+  coll,
+  collsmall,
+  handleCollSmall,
+}) => {
+  /**
+   * Class names
+   */
+  const menuSectionLabelClassName = clsx(
+    "mb-2 font-sans text-gray-400 md:pl-6 uppercase text-sm",
+    {
+      hidden: coll,
+    }
+  );
+
+  /**
+   * Dependencies
+   */
+  const { hasPermission, hasRole } = useAccessControl();
+
+  /**
+   * JSX
+   */
+  const menuSitusContent = (
+    <>
+      <p className={menuSectionLabelClassName}>MENU SITUS</p>
+
+      {/* ------------------ Menu Situs ------------------ */}
+      {/* Dashboard */}
+      {hasPermission(SIDEBAR_DASHBOARD) && (
+        <Menu.Item key="1" icon={<DashboardIconSvg />} title="Dashboard">
+          <Link href="/dashboard/home">Dashboard</Link>
+        </Menu.Item>
+      )}
+
+      {/* Ticket */}
+      {(hasRole(ROLE_SUPER_ADMIN) || hasPermission(SIDEBAR_TICKET)) && (
+        <Menu.Item
+          key="2"
+          title="Tickets"
+          icon={<TicketIconSvg size={20} color={`#597e8d`} />}
+        >
+          <Link href="/tickets">Ticket</Link>
+        </Menu.Item>
+      )}
+
+      {/* Task: Admin Task, My Task */}
+      {hasPermission(SIDEBAR_TASK) && (
+        <SubMenu title="Task" key="20" icon={<TaskIconSvg />}>
+          {hasPermission(SIDEBAR_TASK_ADMIN) && (
+            <Menu.Item key="201" icon={<TaskIconSvg />} title="Admin Task">
+              <Link href="/tasks/admin">Admin Task</Link>
+            </Menu.Item>
+          )}
+
+          {hasPermission(SIDEBAR_TASK_MY) && (
+            <Menu.Item key="202" icon={<TaskIconSvg />} title="My Task">
+              <Link href="/tasks/mytask">My Task</Link>
+            </Menu.Item>
+          )}
+        </SubMenu>
+      )}
+
+      {/* Items */}
+      {hasPermission(SIDEBAR_ITEMS) && (
+        <Menu.Item key="3" icon={<ItemIconSvg />} title="Items">
+          <Link href="/items">Items</Link>
+        </Menu.Item>
+      )}
+
+      {/* Perusahaan: Profil Perusahaan, Klien */}
+      {hasPermission(SIDEBAR_COMPANY) && (
+        <SubMenu title="Perusahaan" key="5" icon={<CompanyIconSvg />}>
+          {hasPermission(SIDEBAR_COMPANY_PROFILE) && (
+            <Menu.Item key="51">
+              <Link href="/company/myCompany">Profil Perusahaan</Link>
+            </Menu.Item>
+          )}
+          {hasPermission(SIDEBAR_COMPANY_PROFILE) && (
+            <Menu.Item key="52">
+              <Link href="/company/clients">Klien</Link>
+            </Menu.Item>
+          )}
+        </SubMenu>
+      )}
+
+      {/* Attendance: Form Aktivitas, Admin Attendance, My Attendance */}
+      {hasPermission(SIDEBAR_ATTENDANCE) && (
+        <SubMenu
+          title="Attendance"
+          key="attendance"
+          icon={<CheckSquareOutlined className="text-[#597e8d]" />}
+        >
+          {hasPermission(SIDEBAR_ATTENDANCE_FORM_ACTIVITY) && (
+            <Menu.Item key="attendance/form-aktivitas">
+              <Link href="/attendance/form-aktivitas">Form Aktivitas</Link>
+            </Menu.Item>
+          )}
+          {hasPermission(SIDEBAR_ATTENDANCE_ADMIN) && (
+            <Menu.Item key="attendance/admin">
+              <Link href="/attendance/admin">Admin Attendance</Link>
+            </Menu.Item>
+          )}
+          {hasPermission(SIDEBAR_ATTENDANCE_MY) && (
+            <Menu.Item key="attendance/staff">
+              <Link href="/attendance/staff">My Attendance</Link>
+            </Menu.Item>
+          )}
+        </SubMenu>
+      )}
+    </>
+  );
+
+  const manajemenContent = (
+    <>
+      <p className={menuSectionLabelClassName}>MANAJEMEN</p>
+      {/* Pengguna: Agents, Requesters, Groups */}
+      {hasPermission(SIDEBAR_USER) && (
+        <SubMenu title="Pengguna" key="6" icon={<UserIconSvg />}>
+          {hasPermission(SIDEBAR_USER_AGENT) && (
+            <Menu.Item key="61">
+              <Link href="/admin/agents">Agents</Link>
+            </Menu.Item>
+          )}
+          {hasPermission(SIDEBAR_USER_REQUESTER) && (
+            <Menu.Item key="62">
+              <Link href="/admin/requesters">Requesters</Link>
+            </Menu.Item>
+          )}
+          {hasPermission(SIDEBAR_USER_GROUP) && (
+            <Menu.Item key="63">
+              <Link href="/admin/groups">Groups</Link>
+            </Menu.Item>
+          )}
+        </SubMenu>
+      )}
+
+      {/* Fitur: Roles. Modules */}
+      {hasPermission(SIDEBAR_FEATURE) && (
+        <SubMenu title="Fitur" key="7" icon={<FiturIconSvg />}>
+          {hasPermission(SIDEBAR_FEATURE_ROLE) && (
+            <Menu.Item key="71">
+              <Link href="/admin/roles">Roles</Link>
+            </Menu.Item>
+          )}
+          {hasPermission(SIDEBAR_FEATURE_MODULE) && (
+            <Menu.Item key="72">
+              <Link href="/admin/modules?module=&featuredisplay=">Modules</Link>
+            </Menu.Item>
+          )}
+        </SubMenu>
+      )}
+
+      {/* Aset: Asset Types, Models, Vendors, Manufacturers, Relationship Type */}
+      {hasPermission(SIDEBAR_ASSET) && (
+        <SubMenu title="Aset" key="8" icon={<AsetIconSvg />}>
+          {hasPermission(SIDEBAR_ASSET_TYPE) && (
+            <Menu.Item key="81">
+              <Link href="/admin/assets">Asset Types</Link>
+            </Menu.Item>
+          )}
+          {hasPermission(SIDEBAR_ASSET_MODEL) && (
+            <Menu.Item key="82">
+              <Link href="/admin/models">Models</Link>
+            </Menu.Item>
+          )}
+          {hasPermission(SIDEBAR_ASSET_VENDOR) && (
+            <Menu.Item key="83">
+              <Link href="/admin/vendors">Vendors</Link>
+            </Menu.Item>
+          )}
+          {hasPermission(SIDEBAR_ASSET_MANUFACTURER) && (
+            <Menu.Item key="84">
+              <Link href="/admin/manufacturers">Manufacturers</Link>
+            </Menu.Item>
+          )}
+          {hasPermission(SIDEBAR_ASSET_RELATIONSHIP_TYPE) && (
+            <Menu.Item key="85">
+              <Link href="/admin/relationships">Relationship Type</Link>
+            </Menu.Item>
+          )}
+        </SubMenu>
+      )}
+    </>
+  );
+
+  const siderHeader = (
+    <div className="logo flex items-center justify-center my-5">
+      <img
+        src="/image/Brand.png"
+        alt="brand"
+        className={`object-contain w-12 h-12 ${
+          !coll || (!collsmall && "mr-0")
+        }`}
+      />
+      {(!coll || !collsmall) && (
+        <h1 className="text-sm mb-0">
+          <span className="font-bold text-2xl mb-0">MIG</span> sys
+        </h1>
+      )}
+    </div>
+  );
+
+  return (
+    <div>
+      {/* Untuk toggle sidebar pada smaller screen device */}
+      <div
+        className={`${layoutMenuStyles.modal}`}
+        hidden={collsmall}
+        onClick={handleCollSmall}
+      ></div>
+
+      {/* Sider untuk desktop */}
+      <Sider
+        collapsible
+        collapsed={coll}
+        trigger={null}
+        width={230}
+        theme="light"
+        className={`${commonLayoutStyle.siderLayout} sider`}
+        style={{ borderRight: `1px solid #f0f0f0`, height: "100%" }}
+      >
+        {/* Sider Header (image) */}
+        {siderHeader}
+
+        <Menu
+          theme="light"
+          mode="inline"
+          defaultSelectedKeys={[sidemenu]}
+          triggerSubMenuAction="hover"
+        >
+          {menuSitusContent}
+          <hr className="my-3 invisible" />
+          {manajemenContent}
+        </Menu>
+      </Sider>
+
+      {/* Sider untuk mobile */}
+      <Sider
+        collapsible
+        collapsed={collsmall}
+        trigger={null}
+        collapsedWidth={0}
+        width={250}
+        theme="light"
+        className={commonLayoutStyle.siderLayoutSmall}
+        style={{
+          borderRight: `1px solid #f0f0f0`,
+          position: "absolute",
+          height: `100%`,
+          backgroundColor: "white",
+          zIndex: 9999,
+        }}
+      >
+        {
+          <div className="logo flex items-center justify-center my-5">
+            <img
+              src="/image/Brand.png"
+              alt="brand"
+              className={`object-contain w-12 h-12 ${!collsmall && "mr-0"}`}
+            />
+            {!coll && (
+              <h1 className="text-sm mb-0">
+                <span className="font-bold text-2xl mb-0">MIG</span> sys
+              </h1>
+            )}
+          </div>
+        }
+        <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]}>
+          {menuSitusContent}
+          <hr className="my-3 invisible" />
+          {manajemenContent}
+        </Menu>
+      </Sider>
+    </div>
+  );
+};

@@ -15,11 +15,18 @@ import { FC, useCallback, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
+import { AccessControl } from "components/features/AccessControl";
 import { DataEmptyState } from "components/states/DataEmptyState";
+
+import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import { formatDateToLocale } from "lib/date-utils";
+import {
+  ATTENDANCES_USERS_GET,
+  ATTENDANCE_ACTIVITY_USERS_EXPORT,
+} from "lib/features";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
 
 import {
@@ -44,6 +51,11 @@ export interface IAttendanceAdminListSection {}
 export const AttendanceAdminListSection: FC<
   IAttendanceAdminListSection
 > = () => {
+  const { hasPermission } = useAccessControl();
+  const isAllowedToExportTableData = hasPermission(
+    ATTENDANCE_ACTIVITY_USERS_EXPORT
+  );
+
   /** 1 -> Hadir, 2 -> Absen */
   const [activeTab, setActiveTab] = useState<"1" | "2">("1");
   const [isExportDrawerShown, setIsExportDrawerShown] = useState(false);
@@ -68,8 +80,9 @@ export const AttendanceAdminListSection: FC<
           {/* Table's header */}
           <div className="flex space-x-4 w-2/3 justify-end items-center">
             <ButtonSys
-              type="default"
+              type={isAllowedToExportTableData ? "default" : "primary"}
               onClick={() => setIsExportDrawerShown(true)}
+              disabled={!isAllowedToExportTableData}
             >
               <DownloadOutlined className="mr-2" />
               Unduh Tabel
@@ -120,11 +133,13 @@ export const AttendanceAdminListSection: FC<
         </ConfigProvider>
       </div>
 
-      <EksporAbsensiDrawer
-        exportAsAdmin
-        visible={isExportDrawerShown}
-        onClose={() => setIsExportDrawerShown(false)}
-      />
+      <AccessControl hasPermission={ATTENDANCE_ACTIVITY_USERS_EXPORT}>
+        <EksporAbsensiDrawer
+          exportAsAdmin
+          visible={isExportDrawerShown}
+          onClose={() => setIsExportDrawerShown(false)}
+        />
+      </AccessControl>
     </>
   );
 };
@@ -142,10 +157,14 @@ interface ITable {
 const HadirTable: FC<ITable> = ({ searchValue }) => {
   const router = useRouter();
   const axiosClient = useAxiosClient();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetAttendancesUsers = hasPermission(ATTENDANCES_USERS_GET);
+
   const { data, isLoading } = useQuery(
     AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET,
     () => AttendanceService.findAsAdmin(axiosClient),
     {
+      enabled: isAllowedToGetAttendancesUsers,
       refetchOnMount: false,
       select: (response) =>
         response.data.data.users_attendances.map((userAttendance) => ({
@@ -281,10 +300,14 @@ const HadirTable: FC<ITable> = ({ searchValue }) => {
  */
 const AbsenTable: FC<ITable> = ({ searchValue }) => {
   const axiosClient = useAxiosClient();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetAttendancesUsers = hasPermission(ATTENDANCES_USERS_GET);
+
   const { data, isLoading } = useQuery(
     AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET,
     () => AttendanceService.findAsAdmin(axiosClient),
     {
+      enabled: isAllowedToGetAttendancesUsers,
       refetchOnMount: false,
       select: (response) =>
         response.data.data.absent_users.map((absentUser) => ({

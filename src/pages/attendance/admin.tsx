@@ -1,6 +1,5 @@
 import { GetServerSideProps, NextPage } from "next";
 
-import styles from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
 import {
   AttendanceAdminListSection,
@@ -27,7 +26,6 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
     <LayoutDashboard
       dataProfile={dataProfile}
       tok={token}
-      st={styles}
       sidemenu="attendance/admin"
       fixedBreadcrumbValues={pageBreadcrumb}
     >

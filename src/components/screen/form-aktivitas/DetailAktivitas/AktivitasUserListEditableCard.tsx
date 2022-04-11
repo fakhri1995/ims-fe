@@ -10,7 +10,16 @@ import { Button, Empty, Form, Input, Modal, Spin } from "antd";
 import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { useAxiosClient } from "hooks/use-axios-client";
+
+import {
+  ATTENDANCE_FORM_GET,
+  ATTENDANCE_FORM_USERS_ADD,
+  ATTENDANCE_FORM_USERS_REMOVE,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import {
   AttendanceFormAktivitasService,
@@ -45,6 +54,10 @@ export const AktivitasUserListEditableCard: FC<
   IAktivitasUserListEditableCard
 > = ({ aktivitasId }) => {
   const axiosClient = useAxiosClient();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToAddUsers = hasPermission(ATTENDANCE_FORM_USERS_ADD);
+  const isAllowedToDeleteUsers = hasPermission(ATTENDANCE_FORM_USERS_REMOVE);
+
   const {
     data: currentFormAktivitasUsers,
     isLoading: currentFormAktivitasUsersLoading,
@@ -52,6 +65,7 @@ export const AktivitasUserListEditableCard: FC<
     [AttendanceFormAktivitasServiceQueryKeys.FIND_ONE, aktivitasId],
     () => AttendanceFormAktivitasService.findOne(axiosClient, aktivitasId),
     {
+      enabled: hasPermission(ATTENDANCE_FORM_GET),
       select: (response) => response.data.data.users as StaffModelType[],
     }
   );
@@ -85,6 +99,16 @@ export const AktivitasUserListEditableCard: FC<
   };
 
   const triggerChangePhase = (phase: CardPhaseType) => {
+    if (phase === "add" && !isAllowedToAddUsers) {
+      permissionWarningNotification("Menambahkan", "User Form Aktivitas");
+      return;
+    }
+
+    if (phase === "remove" && !isAllowedToDeleteUsers) {
+      permissionWarningNotification("Menghapus", "User Form Aktivitas");
+      return;
+    }
+
     setCardPhase(phase);
     setSelectedStaffBuffer([]);
   };
@@ -242,6 +266,11 @@ export const AktivitasUserListEditableCard: FC<
     setSearchValue("");
   }, [cardPhase]);
 
+  const tambahStaffClassName = clsx(
+    "flex flex-col items-center space-y-3 group",
+    isAllowedToAddUsers ? "hover:cursor-pointer" : "hover:cursor-not-allowed"
+  );
+
   return (
     <div className="mig-platform w-full overflow-x-auto">
       {/* Header */}
@@ -266,10 +295,13 @@ export const AktivitasUserListEditableCard: FC<
               }}
             >
               <div
-                className="flex flex-col items-center space-y-3 group hover:cursor-pointer"
+                className={tambahStaffClassName}
                 onClick={() => triggerChangePhase("add")}
               >
-                <Button className="rounded-full bg-primary100/25 w-12 h-12 flex items-center justify-center group-hover:border-primary100 group-hover:bg-primary100/50 focus:border-primary100">
+                <Button
+                  className="rounded-full bg-primary100/25 w-12 h-12 flex items-center justify-center group-hover:border-primary100 group-hover:bg-primary100/50 focus:border-primary100"
+                  disabled={!isAllowedToAddUsers}
+                >
                   <UserAddOutlined className="text-xl text-primary100" />
                 </Button>
 
@@ -475,20 +507,7 @@ const CardFooter: FC<ICardFooter> = ({
   };
 
   return (
-    <div className="flex justify-between">
-      {/* LHS: Pagination */}
-      <div>
-        {/* {cardPhase !== "remove" && (
-          <Pagination
-            defaultCurrent={1}
-            total={50}
-            pageSize={10}
-            showSizeChanger={false}
-          />
-        )} */}
-      </div>
-
-      {/* RHS: Acttion Button */}
+    <div className="flex justify-end">
       {cardPhase !== "default" && (
         <div className="flex space-x-4">
           <Button

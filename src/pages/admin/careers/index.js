@@ -7,12 +7,24 @@ import { Button, Drawer, Form, Input, Modal, Table, notification } from "antd";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { CAREER_ADD, CAREER_DELETE, CAREER_UPDATE } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
 export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
   const rt = useRouter();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToAddCareer = hasPermission(CAREER_ADD);
+  const isAllowedToUpdateCareer = hasPermission(CAREER_UPDATE);
+  const isAllowedToDeleteCareer = hasPermission(CAREER_DELETE);
+
   const pathArr = rt.pathname.split("/").slice(1);
 
   //Definisi table
@@ -31,6 +43,11 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
               <a
                 href="#"
                 onClick={() => {
+                  if (!isAllowedToUpdateCareer) {
+                    permissionWarningNotification("Memperbarui", "Career");
+                    return;
+                  }
+
                   setdrawedit(true);
                   setdataedit({
                     id: record.id,
@@ -132,7 +149,13 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
           children: (
             <div className=" flex">
               <Button
+                disabled={!isAllowedToUpdateCareer}
                 onClick={() => {
+                  if (!isAllowedToUpdateCareer) {
+                    permissionWarningNotification("Memperbarui", "Career");
+                    return;
+                  }
+
                   setdrawedit(true);
                   setdataedit({
                     id: record.id,
@@ -151,6 +174,7 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
                 <EditOutlined />
               </Button>
               <Button
+                disabled={!isAllowedToDeleteCareer}
                 danger
                 onClick={() => {
                   setmodaldelete(true);
@@ -331,6 +355,7 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
           <Button
             type="primary"
             size="large"
+            disabled={!isAllowedToAddCareer}
             onClick={() => {
               setdrawcreate(true);
             }}
@@ -347,235 +372,251 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
           ></Table>
         </div>
       </div>
-      <Drawer
-        title={`Add A New Career`}
-        maskClosable={false}
-        visible={drawcreate}
-        onClose={() => {
-          setdrawcreate(false);
-        }}
-        width={380}
-        destroyOnClose={true}
-      >
-        <div className="flex flex-col">
-          <Form
-            layout="vertical"
-            initialValues={datacreate}
-            onFinish={handleCreate}
-          >
-            <Form.Item
-              label="Position Name"
-              name="position_name"
-              rules={[
-                {
-                  required: true,
-                  message: "Position Name wajib diisi",
-                },
-              ]}
+
+      <AccessControl hasPermission={CAREER_ADD}>
+        <Drawer
+          title={`Add A New Career`}
+          maskClosable={false}
+          visible={drawcreate}
+          onClose={() => {
+            setdrawcreate(false);
+          }}
+          width={380}
+          destroyOnClose={true}
+        >
+          <div className="flex flex-col">
+            <Form
+              layout="vertical"
+              initialValues={datacreate}
+              onFinish={handleCreate}
             >
-              <Input
-                defaultValue={datacreate.position_name}
-                onChange={(e) => {
-                  setdatacreate({
-                    ...datacreate,
-                    position_name: e.target.value,
-                  });
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Description"
-              name="job_description"
-              rules={[
-                {
-                  required: true,
-                  message: "Description Job wajib diisi",
-                },
-              ]}
-            >
-              <Input.TextArea
-                defaultValue={datacreate.job_description}
-                onChange={(e) => {
-                  setdatacreate({
-                    ...datacreate,
-                    job_description: e.target.value,
-                  });
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Category"
-              name="job_category"
-              rules={[
-                {
-                  required: true,
-                  message: "Category wajib diisi",
-                },
-              ]}
-            >
-              <Input
-                defaultValue={datacreate.job_category}
-                onChange={(e) => {
-                  setdatacreate({
-                    ...datacreate,
-                    job_category: e.target.value,
-                  });
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Register Link"
-              name="register_link"
-              rules={[
-                {
-                  required: true,
-                  message: "Register Link wajib diisi",
-                },
-              ]}
-            >
-              <Input
-                defaultValue={datacreate.register_link}
-                onChange={(e) => {
-                  setdatacreate({
-                    ...datacreate,
-                    register_link: e.target.value,
-                  });
-                }}
-              />
-            </Form.Item>
-            <div className="flex justify-end">
-              <Button
-                type="default"
-                onClick={() => {
-                  setdrawcreate(false);
-                }}
-                style={{ marginRight: `1rem` }}
+              <Form.Item
+                label="Position Name"
+                name="position_name"
+                rules={[
+                  {
+                    required: true,
+                    message: "Position Name wajib diisi",
+                  },
+                ]}
               >
-                Cancel
-              </Button>
-              <Button htmlType="submit" type="primary" loading={loadingcreate}>
-                Save
-              </Button>
-            </div>
-          </Form>
-        </div>
-      </Drawer>
-      <Drawer
-        title={`Edit Career`}
-        maskClosable={false}
-        visible={drawedit}
-        onClose={() => {
-          setdrawedit(false);
-        }}
-        width={380}
-        destroyOnClose={true}
-      >
-        <div className="flex flex-col">
-          <Form
-            layout="vertical"
-            initialValues={dataedit}
-            onFinish={handleEdit}
-          >
-            <Form.Item
-              label="Position Name"
-              name="position_name"
-              rules={[
-                {
-                  required: true,
-                  message: "Position Name wajib diisi",
-                },
-              ]}
-            >
-              <Input
-                defaultValue={dataedit.position_name}
-                onChange={(e) => {
-                  setdataedit({ ...dataedit, position_name: e.target.value });
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Description"
-              name="job_description"
-              rules={[
-                {
-                  required: true,
-                  message: "Description Job wajib diisi",
-                },
-              ]}
-            >
-              <Input.TextArea
-                defaultValue={dataedit.job_description}
-                onChange={(e) => {
-                  setdataedit({ ...dataedit, job_description: e.target.value });
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Category"
-              name="job_category"
-              rules={[
-                {
-                  required: true,
-                  message: "Category wajib diisi",
-                },
-              ]}
-            >
-              <Input
-                defaultValue={dataedit.job_category}
-                onChange={(e) => {
-                  setdataedit({ ...dataedit, job_category: e.target.value });
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Register Link"
-              name="register_link"
-              rules={[
-                {
-                  required: true,
-                  message: "Register Link wajib diisi",
-                },
-              ]}
-            >
-              <Input
-                defaultValue={dataedit.register_link}
-                onChange={(e) => {
-                  setdataedit({ ...dataedit, register_link: e.target.value });
-                }}
-              />
-            </Form.Item>
-            <div className="flex justify-end">
-              <Button
-                type="default"
-                onClick={() => {
-                  setdrawedit(false);
-                }}
-                style={{ marginRight: `1rem` }}
+                <Input
+                  defaultValue={datacreate.position_name}
+                  onChange={(e) => {
+                    setdatacreate({
+                      ...datacreate,
+                      position_name: e.target.value,
+                    });
+                  }}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Description"
+                name="job_description"
+                rules={[
+                  {
+                    required: true,
+                    message: "Description Job wajib diisi",
+                  },
+                ]}
               >
-                Cancel
-              </Button>
-              <Button htmlType="submit" type="primary" loading={loadingedit}>
-                Save
-              </Button>
-            </div>
-          </Form>
-        </div>
-      </Drawer>
-      <Modal
-        title={`Konfirmasi hapus career`}
-        visible={modaldelete}
-        okButtonProps={{ disabled: loadingdelete }}
-        onCancel={() => {
-          setmodaldelete(false);
-        }}
-        onOk={handleDelete}
-        maskClosable={false}
-        style={{ top: `3rem` }}
-        width={500}
-        destroyOnClose={true}
-      >
-        Yakin ingin hapus career dengan posisi {featureselected}?
-      </Modal>
+                <Input.TextArea
+                  defaultValue={datacreate.job_description}
+                  onChange={(e) => {
+                    setdatacreate({
+                      ...datacreate,
+                      job_description: e.target.value,
+                    });
+                  }}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Category"
+                name="job_category"
+                rules={[
+                  {
+                    required: true,
+                    message: "Category wajib diisi",
+                  },
+                ]}
+              >
+                <Input
+                  defaultValue={datacreate.job_category}
+                  onChange={(e) => {
+                    setdatacreate({
+                      ...datacreate,
+                      job_category: e.target.value,
+                    });
+                  }}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Register Link"
+                name="register_link"
+                rules={[
+                  {
+                    required: true,
+                    message: "Register Link wajib diisi",
+                  },
+                ]}
+              >
+                <Input
+                  defaultValue={datacreate.register_link}
+                  onChange={(e) => {
+                    setdatacreate({
+                      ...datacreate,
+                      register_link: e.target.value,
+                    });
+                  }}
+                />
+              </Form.Item>
+              <div className="flex justify-end">
+                <Button
+                  type="default"
+                  onClick={() => {
+                    setdrawcreate(false);
+                  }}
+                  style={{ marginRight: `1rem` }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  loading={loadingcreate}
+                >
+                  Save
+                </Button>
+              </div>
+            </Form>
+          </div>
+        </Drawer>
+      </AccessControl>
+
+      <AccessControl hasPermission={CAREER_UPDATE}>
+        <Drawer
+          title={`Edit Career`}
+          maskClosable={false}
+          visible={drawedit}
+          onClose={() => {
+            setdrawedit(false);
+          }}
+          width={380}
+          destroyOnClose={true}
+        >
+          <div className="flex flex-col">
+            <Form
+              layout="vertical"
+              initialValues={dataedit}
+              onFinish={handleEdit}
+            >
+              <Form.Item
+                label="Position Name"
+                name="position_name"
+                rules={[
+                  {
+                    required: true,
+                    message: "Position Name wajib diisi",
+                  },
+                ]}
+              >
+                <Input
+                  defaultValue={dataedit.position_name}
+                  onChange={(e) => {
+                    setdataedit({ ...dataedit, position_name: e.target.value });
+                  }}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Description"
+                name="job_description"
+                rules={[
+                  {
+                    required: true,
+                    message: "Description Job wajib diisi",
+                  },
+                ]}
+              >
+                <Input.TextArea
+                  defaultValue={dataedit.job_description}
+                  onChange={(e) => {
+                    setdataedit({
+                      ...dataedit,
+                      job_description: e.target.value,
+                    });
+                  }}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Category"
+                name="job_category"
+                rules={[
+                  {
+                    required: true,
+                    message: "Category wajib diisi",
+                  },
+                ]}
+              >
+                <Input
+                  defaultValue={dataedit.job_category}
+                  onChange={(e) => {
+                    setdataedit({ ...dataedit, job_category: e.target.value });
+                  }}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Register Link"
+                name="register_link"
+                rules={[
+                  {
+                    required: true,
+                    message: "Register Link wajib diisi",
+                  },
+                ]}
+              >
+                <Input
+                  defaultValue={dataedit.register_link}
+                  onChange={(e) => {
+                    setdataedit({ ...dataedit, register_link: e.target.value });
+                  }}
+                />
+              </Form.Item>
+              <div className="flex justify-end">
+                <Button
+                  type="default"
+                  onClick={() => {
+                    setdrawedit(false);
+                  }}
+                  style={{ marginRight: `1rem` }}
+                >
+                  Cancel
+                </Button>
+                <Button htmlType="submit" type="primary" loading={loadingedit}>
+                  Save
+                </Button>
+              </div>
+            </Form>
+          </div>
+        </Drawer>
+      </AccessControl>
+
+      <AccessControl hasPermission={CAREER_DELETE}>
+        <Modal
+          title={`Konfirmasi hapus career`}
+          visible={modaldelete}
+          okButtonProps={{ disabled: loadingdelete }}
+          onCancel={() => {
+            setmodaldelete(false);
+          }}
+          onOk={handleDelete}
+          maskClosable={false}
+          style={{ top: `3rem` }}
+          width={500}
+          destroyOnClose={true}
+        >
+          Yakin ingin hapus career dengan posisi {featureselected}?
+        </Modal>
+      </AccessControl>
     </Layout>
   );
 };

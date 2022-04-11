@@ -7,7 +7,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-import LayoutMenu from "../components/layout-menu";
+import { LayoutMenu } from "components/base/LayoutMenu";
+
+// import LayoutMenu from "../components/layout-menu";
 import LayoutMenuHeader from "./layout-menu-header";
 
 function LayoutDashboard2({
@@ -72,13 +74,11 @@ function LayoutDashboard2({
     <Spin spinning={loadingspin}>
       <div className=" min-h-screen flex">
         <LayoutMenu
-          dataProfile={dataProfile}
           handleCollSmall={handleCollSmall}
           sidemenu={sidemenu}
           coll={coll}
           collsmall={collsmall}
-          st={st}
-        ></LayoutMenu>
+        />
         <div className="h-auto w-full">
           <Header
             className="site-layout-background"

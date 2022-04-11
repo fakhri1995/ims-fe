@@ -14,7 +14,16 @@ import { useQuery } from "react-query";
 
 import DrawerCore from "components/drawer/drawerCore";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { useAxiosClient } from "hooks/use-axios-client";
+
+import {
+  ATTENDANCE_ACTIVITY_ADD,
+  ATTENDANCE_ACTIVITY_DELETE,
+  ATTENDANCE_ACTIVITY_UPDATE,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import {
   FormAktivitasTypes,
@@ -49,11 +58,14 @@ export const AttendanceStaffAktivitasDrawer: FC<
   IAttendanceStaffAktivitasDrawer
 > = ({ action = "create", visible, onClose, activityFormId }) => {
   const [form] = Form.useForm();
-
   const axiosClient = useAxiosClient();
   const { attendeeStatus } = useGetAttendeeInfo();
   const { todayActivities, findTodayActivity } =
     useGetUserAttendanceTodayActivities();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToAddActivity = hasPermission(ATTENDANCE_ACTIVITY_ADD);
+  const isAllowedToUpdateActivity = hasPermission(ATTENDANCE_ACTIVITY_UPDATE);
+  const isAllowedToDeleteActivity = hasPermission(ATTENDANCE_ACTIVITY_DELETE);
 
   const {
     addMutation: { mutate: addAttendanceActivity },
@@ -113,6 +125,11 @@ export const AttendanceStaffAktivitasDrawer: FC<
       }
 
       if (action === "create") {
+        if (!isAllowedToAddActivity) {
+          permissionWarningNotification("Membuat", "Aktivitas");
+          return;
+        }
+
         const payload: IAddAttendanceActivityPayload = {
           attendance_form_id: userAttendanceForm.id,
           details: [],
@@ -130,6 +147,11 @@ export const AttendanceStaffAktivitasDrawer: FC<
           onError: onMutationFailed,
         });
       } else {
+        if (!isAllowedToUpdateActivity) {
+          permissionWarningNotification("Memperbarui", "Aktivitas");
+          return;
+        }
+
         const payload: IUpdateAttendanceActivityPayload = {
           id: activityFormId,
           details: [],
@@ -148,11 +170,21 @@ export const AttendanceStaffAktivitasDrawer: FC<
         });
       }
     },
-    [activityFormId, userAttendanceForm]
+    [
+      activityFormId,
+      userAttendanceForm,
+      isAllowedToAddActivity,
+      isAllowedToUpdateActivity,
+    ]
   );
 
   const handleOnDeleteAktivitas = useCallback(() => {
     if (action !== "update") {
+      return;
+    }
+
+    if (!isAllowedToDeleteActivity) {
+      permissionWarningNotification("Menghapus", "Aktivitas");
       return;
     }
 
@@ -170,7 +202,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
       },
       onCancel: () => onClose(),
     });
-  }, [action, activityFormId]);
+  }, [action, activityFormId, isAllowedToDeleteActivity]);
 
   useEffect(() => {
     /** Always clean up the form fields on close */

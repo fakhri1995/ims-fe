@@ -6,9 +6,16 @@ import { useQuery } from "react-query";
 import ButtonSys from "components/button";
 import { DetailCard, IDetailCard } from "components/cards/DetailCard";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import { formatDateToLocale } from "lib/date-utils";
+import {
+  ATTENDANCE_FORM_DELETE,
+  ATTENDANCE_FORM_GET,
+  ATTENDANCE_FORM_UPDATE,
+} from "lib/features";
 
 import {
   AttendanceFormAktivitasService,
@@ -26,14 +33,21 @@ export interface IDetailFormAktivitasCard {
 export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
   ({ onUbahButtonClicked, aktivitasId }) => {
     const axiosClient = useAxiosClient();
+    const { hasPermission } = useAccessControl();
+    const isGrantedToUpdateDeleteForm = hasPermission([
+      ATTENDANCE_FORM_UPDATE,
+      ATTENDANCE_FORM_DELETE,
+    ]);
+
     const { data, isLoading } = useQuery(
       [AttendanceFormAktivitasServiceQueryKeys.FIND_ONE, aktivitasId],
       () => AttendanceFormAktivitasService.findOne(axiosClient, aktivitasId),
       {
+        enabled: hasPermission(ATTENDANCE_FORM_GET),
         select: (response) => {
-          /** Reformart date value and replace profile_image with null if there is no image atm */
+          /** Reformat date value and replace profile_image with null if there is no image atm */
           const formattedUpdatedDate = formatDateToLocale(
-            new Date(response.data.data.updated_at.toString()),
+            new Date(response.data.data.updated_at),
             "dd MMMM yyyy"
           );
 
@@ -108,8 +122,8 @@ export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
         <div className="self-center">
           {!isLoading && (
             <ButtonSys
-              type="default"
-              disabled={isLoading}
+              type={!isGrantedToUpdateDeleteForm ? "primary" : "default"}
+              disabled={isLoading || !isGrantedToUpdateDeleteForm}
               onClick={onUbahButtonClicked}
             >
               <EditIcon className="mr-2 w-3 h-3" />

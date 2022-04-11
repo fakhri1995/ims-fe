@@ -12,3 +12,11 @@ export const ATTENDANCE_SAFE_TIME = {
   HOUR: 8,
   MINUTE: 15,
 };
+
+/**
+ * Role tertinggi pada fitur Access Control.
+ * User dengan role ini dapat access seluruh fitur.
+ *
+ * @see {AccessControlProvider}
+ */
+export const ROLE_SUPER_ADMIN = "Super Admin";

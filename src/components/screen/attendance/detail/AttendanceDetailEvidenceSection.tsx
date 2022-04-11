@@ -2,7 +2,11 @@ import { Empty, Spin } from "antd";
 import { FC, memo, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { useAxiosClient } from "hooks/use-axios-client";
+
+import { ATTENDANCE_USER_ADMIN_GET, ATTENDANCE_USER_GET } from "lib/features";
 
 import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
 
@@ -11,25 +15,33 @@ import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
  */
 export interface IAttendanceDetailEvidenceSection {
   attendanceId: number;
-
-  fetchAsAdmin?: boolean;
 }
 
 /**
  * Component AttendanceDetailEvidenceSection
  */
 export const AttendanceDetailEvidenceSection: FC<IAttendanceDetailEvidenceSection> =
-  memo(({ attendanceId, fetchAsAdmin = false }) => {
+  memo(({ attendanceId }) => {
     const axiosClient = useAxiosClient();
+    const { hasPermission } = useAccessControl();
+    const isAllowedToGetAsAdmin = hasPermission(ATTENDANCE_USER_ADMIN_GET);
+    const isAllowedToGetAsUser = hasPermission(ATTENDANCE_USER_GET);
+    const isAllowedToGet = isAllowedToGetAsAdmin || isAllowedToGetAsUser;
+
     const { data, isLoading } = useQuery(
       [
         AttendanceServiceQueryKeys.ATTENDANCE_USER_GET,
         attendanceId,
-        fetchAsAdmin,
+        isAllowedToGetAsAdmin,
       ],
-      () => AttendanceService.findOne(axiosClient, attendanceId, fetchAsAdmin),
+      () =>
+        AttendanceService.findOne(
+          axiosClient,
+          attendanceId,
+          isAllowedToGetAsAdmin
+        ),
       {
-        enabled: !!attendanceId,
+        enabled: !isAllowedToGet ? false : !!attendanceId,
         select: (response) => response.data.data.user_attendance.evidence,
       }
     );
@@ -86,7 +98,7 @@ export const AttendanceDetailEvidenceSection: FC<IAttendanceDetailEvidenceSectio
       ? data.check_out_evidence.split("/").pop()
       : "";
 
-    return (
+    return isAllowedToGet ? (
       <section className="mig-platform space-y-4 flex flex-col">
         {/* Evidence: checkin */}
         <span className="mig-caption text-gray-400">Bukti Check In</span>
@@ -130,6 +142,6 @@ export const AttendanceDetailEvidenceSection: FC<IAttendanceDetailEvidenceSectio
           {shouldShowNotFoundCheckOut && imageErrorContent}
         </div>
       </section>
-    );
+    ) : null;
   });
 AttendanceDetailEvidenceSection.displayName = "AttendanceDetailEvidenceSection";

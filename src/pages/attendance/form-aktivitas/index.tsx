@@ -7,7 +7,6 @@ import {
 } from "next-query-params";
 import { useCallback, useState } from "react";
 
-import styles from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
 import {
   AddNewAktivitasButton,
@@ -16,6 +15,10 @@ import {
   FormAktivitasTableHeader,
   TotalFormAktivitasCard,
 } from "components/screen/form-aktivitas";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { ATTENDANCE_FORM_ADD } from "lib/features";
 
 import { IGetAttendanceFormsParams } from "apis/attendance";
 
@@ -27,6 +30,8 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
   token,
   dataProfile,
 }) => {
+  const { hasPermission } = useAccessControl();
+
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
       name: "Form Aktivitas",
@@ -70,7 +75,6 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
       dataProfile={dataProfile}
       tok={token}
       fixedBreadcrumbValues={pageBreadcrumb}
-      st={styles}
       sidemenu="attendance/form-aktivitas"
     >
       <div className="px-5">
@@ -84,6 +88,7 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
           {/* Create new Form Aktivitas */}
           <div className="w-full md:w-1/2">
             <AddNewAktivitasButton
+              disabled={!hasPermission(ATTENDANCE_FORM_ADD)}
               onButtonClicked={onAddNewAktivitasButtonClicked}
             />
           </div>

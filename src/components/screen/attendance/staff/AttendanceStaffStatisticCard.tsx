@@ -2,7 +2,11 @@ import { Skeleton } from "antd";
 import { FC } from "react";
 import { useQuery } from "react-query";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { useAxiosClient } from "hooks/use-axios-client";
+
+import { ATTENDANCES_USER_GET } from "lib/features";
 
 import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
 
@@ -18,10 +22,14 @@ export const AttendanceStaffStatisticCard: FC<
   IAttendanceStaffStatisticCard
 > = () => {
   const axiosClient = useAxiosClient();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetAttendanceStatistic = hasPermission(ATTENDANCES_USER_GET);
+
   const { data, isLoading } = useQuery(
     AttendanceServiceQueryKeys.ATTENDANCES_USER_GET,
     () => AttendanceService.find(axiosClient),
     {
+      enabled: isAllowedToGetAttendanceStatistic,
       select: (response) => {
         const { late_count, on_time_count } = response.data.data;
 
@@ -40,7 +48,7 @@ export const AttendanceStaffStatisticCard: FC<
           {/* Hadir */}
           <div className="text-center space-y-2">
             <h4 className="font-bold text-2xl text-primary100">
-              {data?.on_time_count} hr
+              {data?.on_time_count || 0} hr
             </h4>
             <p className="text-mono50 text-2xs">Hadir</p>
           </div>
@@ -48,7 +56,7 @@ export const AttendanceStaffStatisticCard: FC<
           {/* Terlambat */}
           <div className="text-center space-y-2">
             <h4 className="font-bold text-2xl text-state1">
-              {data?.late_count} hr
+              {data?.late_count || 0} hr
             </h4>
             <p className="text-mono50 text-2xs">Terlambat</p>
           </div>

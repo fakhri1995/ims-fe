@@ -7,6 +7,8 @@ import { useRef } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 
+import { AccessControlProvider } from "contexts/access-control";
+
 import "../styles/globals.scss";
 
 Router.events.on("routeChangeStart", () => NProgress.start());
@@ -40,7 +42,9 @@ function MyApp({ Component, pageProps }) {
 
       <QueryClientProvider client={queryClient.current}>
         <NextQueryParamProvider>
-          <Component {...pageProps} />
+          <AccessControlProvider>
+            <Component {...pageProps} />
+          </AccessControlProvider>
         </NextQueryParamProvider>
 
         {process.env.NODE_ENV === "development" && <ReactQueryDevtools />}
