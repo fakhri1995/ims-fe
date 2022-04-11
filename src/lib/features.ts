@@ -59,7 +59,7 @@ export const SIDEBAR_CMS_MESSAGE = "SIDEBAR_CMS_MESSAGE";
 /**
  * Daftar feature untuk halaman Attendance.
  *
- * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/70352909/Group+of+Features
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/223805455/Attendance+Management
  */
 /** Attendance Form (Form Aktivitas) */
 export const ATTENDANCE_FORMS_GET = "ATTENDANCE_FORMS_GET";
@@ -81,7 +81,7 @@ export const ATTENDANCES_USERS_GET = "ATTENDANCES_USERS_GET";
 export const ATTENDANCES_USER_GET = "ATTENDANCES_USER_GET";
 export const ATTENDANCE_USER_ADMIN_GET = "ATTENDANCE_USER_ADMIN_GET";
 export const ATTENDANCE_USER_GET = "ATTENDANCE_USER_GET";
-export const ATTENDANCE_TOGGLE_SET = "ATTENDANCE_TOGGLE_SET"; // done;
+export const ATTENDANCE_TOGGLE_SET = "ATTENDANCE_TOGGLE_SET";
 export const ATTENDANCE_ACTIVITY_USER_EXPORT =
   "ATTENDANCE_ACTIVITY_USER_EXPORT";
 export const ATTENDANCE_ACTIVITY_USERS_EXPORT =
@@ -90,7 +90,8 @@ export const ATTENDANCE_ACTIVITY_USERS_EXPORT =
 /**
  * Daftar feature untuk Company Profile.
  *
- * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/70352909/Group+of+Features
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/89718792/Careers
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/89653264/Messages
  */
 export const CAREER_ADD = "CAREER_ADD";
 export const CAREER_UPDATE = "CAREER_UPDATE";
@@ -98,3 +99,28 @@ export const CAREER_DELETE = "CAREER_DELETE";
 export const MESSAGES_GET = "MESSAGES_GET";
 export const MESSAGE_DELETE =
   "MESSAGE_DELETE"; /** It's not yet implemented: route `/admin/messages` */
+
+/**
+ * Daftar feature untuk Feature management.
+ *
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/72876058/Feature
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/69599236/Roles
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/72810531/Module
+ */
+export const FEATURES_GET = "FEATURES_GET"; // routes: `/admin/features`, `/admin/modules`, `/admin/modules/update/feature/[featureId]`
+
+/** Roles */
+export const ROLES_GET = "ROLES_GET"; // routes: `/admin/agents/update/[userId]`, `/admin/agents/create`, `/admin/requesters/detail/[userId]`, `/admin/requesters/create`, `/admin/requesters/update/[userId]`, `/admin/roles/detail/[rolesId]`, `/admin/roles`
+export const ROLE_GET = "ROLE_GET"; // route: `/admin/roles/update/[rolesId]`
+export const ROLE_USER_FEATURES_GET = "ROLE_USER_FEATURES_GET"; // route: `/admin/roles/detail/[rolesId]`
+export const ROLE_ADD = "ROLE_ADD"; // route: `/admin/roles/create`
+export const ROLE_UPDATE = "ROLE_UPDATE"; // route: `/admin/roles/update/[rolesId]`
+export const ROLE_DELETE = "ROLE_DELETE"; // routes: `/admin/roles/detail/[rolesId]`, `/admin/roles/update/[rolesId]`, `/admin/roles`.
+
+/** Modules */
+export const MODULES_GET = "MODULES_GET"; // routes: `/admin/modules/update/module/[moduleId]`, `/admin/modules`, `/admin/roles/create`, `/admin/roles/update/[rolesId]`
+export const MODULE_ADD = "MODULE_ADD"; // routes: `/admin/modules/create/module`, `/admin/modules`
+export const MODULE_UPDATE = "MODULE_UPDATE"; // routes: `/admin/modules/update/module`, `/admin/modules`
+export const MODULE_DELETE = "MODULE_DELETE"; // route: `/admin/modules`
+export const MODULE_FEATURES_ADD = "MODULE_FEATURES_ADD"; // route: `/admin/modules`
+export const MODULE_FEATURES_DELETE = "MODULE_FEATURES_DELETE"; // route: `/admin/modules`
