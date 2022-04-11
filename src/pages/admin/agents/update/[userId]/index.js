@@ -6,8 +6,12 @@ import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import Sticky from "wil-react-sticky";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { useAxiosClient } from "hooks/use-axios-client";
 import { useDebounce } from "hooks/use-debounce-value";
+
+import { ROLES_GET } from "lib/features";
 
 import { AttendanceFormAktivitasService } from "apis/attendance";
 
@@ -23,8 +27,14 @@ function AgentUpdate({
   sidemenu,
   userid,
 }) {
+  /**
+   * Dependencies
+   */
   const axiosClient = useAxiosClient();
   const rt = useRouter();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetRolesList = hasPermission(ROLES_GET);
+
   const tok = initProps;
   const [instanceForm] = Form.useForm();
   const { Option } = Select;
@@ -222,17 +232,20 @@ function AgentUpdate({
   }, []);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setdataroles(res2);
-      });
-  }, []);
+    if (isAllowedToGetRolesList) {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setdataroles(res2);
+        });
+      return;
+    }
+  }, [isAllowedToGetRolesList]);
 
   return (
     <Layout
@@ -493,6 +506,7 @@ function AgentUpdate({
                     {
                       <Select
                         mode="multiple"
+                        disabled={!isAllowedToGetRolesList}
                         placeholder="Pilih Role"
                         onChange={(value) => {
                           onChangeRole(value);

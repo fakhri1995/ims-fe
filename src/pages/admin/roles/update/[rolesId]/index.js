@@ -5,6 +5,13 @@ import { useState } from "react";
 import { useEffect } from "react";
 import Sticky from "wil-react-sticky";
 
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { MODULES_GET, ROLE_GET, ROLE_UPDATE } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
@@ -17,7 +24,15 @@ function RolesUpdate({
   dataListModules,
   idrole,
 }) {
+  /**
+   * Dependencies
+   */
   const rt = useRouter();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetRole = hasPermission(ROLE_GET);
+  const isAllowedToUpdateRole = hasPermission(ROLE_UPDATE);
+  const isAllowedToGetModulesList = hasPermission(MODULES_GET);
+
   const tok = initProps;
 
   const { TextArea } = Input;
@@ -27,8 +42,8 @@ function RolesUpdate({
   const [praloading2, setpraloading2] = useState(true);
   const [patharr, setpatharr] = useState([]);
   const [loadingupdate, setloadingupdate] = useState(false);
-  const [loadingdelete, setloadingdelete] = useState(false);
-  const [modaldelete, setmodaldelete] = useState(false);
+  // const [loadingdelete, setloadingdelete] = useState(false);
+  // const [modaldelete, setmodaldelete] = useState(false);
   // const featureMap = dataRolesDetail.data.role_features.map((doc, idx) => {
   //     return (doc.feature_id)
   // })
@@ -124,79 +139,93 @@ function RolesUpdate({
         }
       });
   };
-  const handleDeleteRoles = () => {
-    setloadingdelete(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRole`, {
-      method: "DELETE",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id: editroles.id,
-      }),
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          notification["success"]({
-            message: res2.message,
-            duration: 3,
-          });
-          setTimeout(() => {
-            setloadingdelete(false);
-            rt.push(`/admin/roles`);
-          }, 300);
-        } else if (!res2.success) {
-          notification["error"]({
-            message: res2.message.errorInfo.status_detail,
-            duration: 3,
-          });
-          setloadingdelete(false);
-        }
-      });
-  };
+  // const handleDeleteRoles = () => {
+  //   setloadingdelete(true);
+  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRole`, {
+  //     method: "DELETE",
+  //     headers: {
+  //       Authorization: JSON.parse(initProps),
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       id: editroles.id,
+  //     }),
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       if (res2.success) {
+  //         notification["success"]({
+  //           message: res2.message,
+  //           duration: 3,
+  //         });
+  //         setTimeout(() => {
+  //           setloadingdelete(false);
+  //           rt.push(`/admin/roles`);
+  //         }, 300);
+  //       } else if (!res2.success) {
+  //         notification["error"]({
+  //           message: res2.message.errorInfo.status_detail,
+  //           duration: 3,
+  //         });
+  //         setloadingdelete(false);
+  //       }
+  //     });
+  // };
 
   //useEffect
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRole?id=${idrole}`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        var temp = {
-          id: res2.data.id,
-          name: res2.data.name,
-          description: res2.data.description,
-          feature_ids:
-            res2.data.features.length === 0
-              ? []
-              : res2.data.features.map((doc) => doc.id),
-        };
-        setEditroles(temp);
-        var pathArr = rt.pathname.split("/").slice(1);
-        pathArr.splice(2, 1);
-        pathArr[pathArr.length - 1] = `Update Role - ` + res2.data.name;
-        setpatharr(pathArr);
-        setpraloading1(false);
-      });
-  }, []);
+    if (isAllowedToGetRole) {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRole?id=${idrole}`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          var temp = {
+            id: res2.data.id,
+            name: res2.data.name,
+            description: res2.data.description,
+            feature_ids:
+              res2.data.features.length === 0
+                ? []
+                : res2.data.features.map((doc) => doc.id),
+          };
+          setEditroles(temp);
+          var pathArr = rt.pathname.split("/").slice(1);
+          pathArr.splice(2, 1);
+          pathArr[pathArr.length - 1] = `Update Role - ` + res2.data.name;
+          setpatharr(pathArr);
+          setpraloading1(false);
+        });
+      return;
+    }
+
+    permissionWarningNotification("Mendapatkan", "Informasi Detail Role");
+    setpraloading1(false);
+  }, [isAllowedToGetRole]);
+
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModules`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setmodules(res2.data);
-        setpraloading2(false);
-      });
-  }, []);
+    if (isAllowedToGetModulesList) {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModules`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setmodules(res2.data);
+          setpraloading2(false);
+        });
+
+      return;
+    }
+
+    permissionWarningNotification("Mendapatkan", "Daftar Module");
+    setpraloading2(false);
+  }, [isAllowedToGetModulesList]);
   return (
     <Layout
       tok={tok}
@@ -229,6 +258,7 @@ function RolesUpdate({
                     <Button
                       type="primary"
                       size="middle"
+                      disabled={!isAllowedToGetRole || !isAllowedToUpdateRole}
                       onClick={instanceForm.submit}
                       loading={loadingupdate}
                     >
@@ -264,6 +294,7 @@ function RolesUpdate({
                       // [177].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                       <Input
                         placeholder="Role Name"
+                        disabled={!isAllowedToGetRole}
                         name={`name`}
                         onChange={onChangeEditRoles}
                         defaultValue={editroles.name}
@@ -293,6 +324,7 @@ function RolesUpdate({
                       // [177].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                       <TextArea
                         placeholder="Description"
+                        disabled={!isAllowedToGetRole}
                         rows={2}
                         name={`description`}
                         defaultValue={editroles.description}
@@ -312,92 +344,95 @@ function RolesUpdate({
             {/* </div> */}
             {/* <Divider style={{ borderTop: '1px solid rgba(0, 0, 0, 0.2)' }} /> */}
             <hr />
-            {praloading2 ? null : (
-              <>
-                {
-                  // [177].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                  <>
-                    <h1 className="font-semibold text-base w-auto p-2">
-                      Permissions
-                    </h1>
-                    <Tabs defaultActiveKey="1" tabPosition="left">
-                      {modules.map((doc, idx) => {
-                        return (
-                          <TabPane tab={doc.name} key={idx + 1}>
-                            <div className=" overflow-y-auto h-80 mb-5">
-                              {doc.features !== null ? (
-                                <>
-                                  {doc.features.map((doc, idx) => {
-                                    const checkedStatus =
-                                      editroles.feature_ids.includes(doc.id);
-                                    return (
-                                      <div
-                                        key={idx}
-                                        className="flex items-center hover:bg-gray-300 p-3"
-                                      >
-                                        <Checkbox
-                                          style={{ marginRight: `1rem` }}
-                                          onChange={(e) => {
-                                            onChangeUpdateCheckbox(e, doc.id);
-                                          }}
-                                          defaultChecked={checkedStatus}
-                                        />{" "}
-                                        {doc.name}
-                                      </div>
-                                    );
-                                  })}
-                                </>
-                              ) : (
-                                <>
-                                  <Empty
-                                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                                  ></Empty>
-                                </>
-                              )}
-                            </div>
-                          </TabPane>
-                        );
-                      })}
-                    </Tabs>
-                  </>
-                  // :
-                  // <>
-                  //     <h1 className="font-semibold text-base w-auto p-2">Permissions</h1>
-                  //     <Tabs defaultActiveKey="1" tabPosition="left">
-                  //         {
-                  //             modules.map((doc, idx) => {
-                  //                 return (
-                  //                     <TabPane tab={doc.name} key={idx + 1}>
-                  //                         <div className=" overflow-y-auto h-80 mb-5">
-                  //                             {
-                  //                                 doc.feature !== null ?
-                  //                                     <>
-                  //                                         {
-                  //                                             doc.feature.map((doc, idx) => {
-                  //                                                 const checkedStatus = editroles.feature_ids.includes(doc.id)
-                  //                                                 return (
-                  //                                                     <div key={idx} className="flex items-center hover:bg-gray-300 p-3">
-                  //                                                         <Checkbox disabled style={{ marginRight: `1rem` }} onChange={(e) => { onChangeUpdateCheckbox(e, doc.id) }} defaultChecked={checkedStatus} /> {doc.name}
-                  //                                                     </div>
-                  //                                                 )
-                  //                                             })
-                  //                                         }
-                  //                                     </>
-                  //                                     :
-                  //                                     <>
-                  //                                         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
-                  //                                     </>
-                  //                             }
-                  //                         </div>
-                  //                     </TabPane>
-                  //                 )
-                  //             })
-                  //         }
-                  //     </Tabs>
-                  // </>
-                }
-              </>
-            )}
+
+            <AccessControl hasPermission={ROLE_GET}>
+              {praloading2 ? null : (
+                <>
+                  {
+                    // [177].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                    <>
+                      <h1 className="font-semibold text-base w-auto p-2">
+                        Permissions
+                      </h1>
+                      <Tabs defaultActiveKey="1" tabPosition="left">
+                        {modules.map((doc, idx) => {
+                          return (
+                            <TabPane tab={doc.name} key={idx + 1}>
+                              <div className=" overflow-y-auto h-80 mb-5">
+                                {doc?.features !== null ? (
+                                  <>
+                                    {doc?.features?.map((doc, idx) => {
+                                      const checkedStatus =
+                                        editroles.feature_ids.includes(doc.id);
+                                      return (
+                                        <div
+                                          key={idx}
+                                          className="flex items-center hover:bg-gray-300 p-3"
+                                        >
+                                          <Checkbox
+                                            style={{ marginRight: `1rem` }}
+                                            onChange={(e) => {
+                                              onChangeUpdateCheckbox(e, doc.id);
+                                            }}
+                                            defaultChecked={checkedStatus}
+                                          />{" "}
+                                          {doc.name}
+                                        </div>
+                                      );
+                                    })}
+                                  </>
+                                ) : (
+                                  <>
+                                    <Empty
+                                      image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                    ></Empty>
+                                  </>
+                                )}
+                              </div>
+                            </TabPane>
+                          );
+                        })}
+                      </Tabs>
+                    </>
+                    // :
+                    // <>
+                    //     <h1 className="font-semibold text-base w-auto p-2">Permissions</h1>
+                    //     <Tabs defaultActiveKey="1" tabPosition="left">
+                    //         {
+                    //             modules.map((doc, idx) => {
+                    //                 return (
+                    //                     <TabPane tab={doc.name} key={idx + 1}>
+                    //                         <div className=" overflow-y-auto h-80 mb-5">
+                    //                             {
+                    //                                 doc.feature !== null ?
+                    //                                     <>
+                    //                                         {
+                    //                                             doc.feature.map((doc, idx) => {
+                    //                                                 const checkedStatus = editroles.feature_ids.includes(doc.id)
+                    //                                                 return (
+                    //                                                     <div key={idx} className="flex items-center hover:bg-gray-300 p-3">
+                    //                                                         <Checkbox disabled style={{ marginRight: `1rem` }} onChange={(e) => { onChangeUpdateCheckbox(e, doc.id) }} defaultChecked={checkedStatus} /> {doc.name}
+                    //                                                     </div>
+                    //                                                 )
+                    //                                             })
+                    //                                         }
+                    //                                     </>
+                    //                                     :
+                    //                                     <>
+                    //                                         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
+                    //                                     </>
+                    //                             }
+                    //                         </div>
+                    //                     </TabPane>
+                    //                 )
+                    //             })
+                    //         }
+                    //     </Tabs>
+                    // </>
+                  }
+                </>
+              )}
+            </AccessControl>
 
             {/* <Tabs defaultActiveKey="1" tabPosition={'left'} style={{}}>
                                 <TabPane tab={`Ticket`} key={1} >

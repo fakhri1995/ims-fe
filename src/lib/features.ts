@@ -110,17 +110,17 @@ export const MESSAGE_DELETE =
 export const FEATURES_GET = "FEATURES_GET"; // routes: `/admin/features`, `/admin/modules`, `/admin/modules/update/feature/[featureId]`
 
 /** Roles */
-export const ROLES_GET = "ROLES_GET"; // routes: `/admin/agents/update/[userId]`, `/admin/agents/create`, `/admin/requesters/detail/[userId]`, `/admin/requesters/create`, `/admin/requesters/update/[userId]`, `/admin/roles/detail/[rolesId]`, `/admin/roles`
-export const ROLE_GET = "ROLE_GET"; // route: `/admin/roles/update/[rolesId]`
+export const ROLES_GET = "ROLES_GET"; // routes: `/admin/agents/update/[userId]`, `/admin/agents/create`, `/admin/requesters/create`, `/admin/requesters/update/[userId]`, `/admin/roles`
+export const ROLE_GET = "ROLE_GET"; // route: `/admin/roles/update/[rolesId]`, `/admin/roles/detail/[rolesId]`
 export const ROLE_USER_FEATURES_GET = "ROLE_USER_FEATURES_GET"; // route: `/admin/roles/detail/[rolesId]`
 export const ROLE_ADD = "ROLE_ADD"; // route: `/admin/roles/create`
 export const ROLE_UPDATE = "ROLE_UPDATE"; // route: `/admin/roles/update/[rolesId]`
-export const ROLE_DELETE = "ROLE_DELETE"; // routes: `/admin/roles/detail/[rolesId]`, `/admin/roles/update/[rolesId]`, `/admin/roles`.
+export const ROLE_DELETE = "ROLE_DELETE"; // route: `/admin/roles/detail/[rolesId]`
 
 /** Modules */
 export const MODULES_GET = "MODULES_GET"; // routes: `/admin/modules/update/module/[moduleId]`, `/admin/modules`, `/admin/roles/create`, `/admin/roles/update/[rolesId]`
-export const MODULE_ADD = "MODULE_ADD"; // routes: `/admin/modules/create/module`, `/admin/modules`
-export const MODULE_UPDATE = "MODULE_UPDATE"; // routes: `/admin/modules/update/module`, `/admin/modules`
+export const MODULE_ADD = "MODULE_ADD"; // route: `/admin/modules/create/module`
+export const MODULE_UPDATE = "MODULE_UPDATE"; // route: `/admin/modules/update/module`
 export const MODULE_DELETE = "MODULE_DELETE"; // route: `/admin/modules`
 export const MODULE_FEATURES_ADD = "MODULE_FEATURES_ADD"; // route: `/admin/modules`
 export const MODULE_FEATURES_DELETE = "MODULE_FEATURES_DELETE"; // route: `/admin/modules`

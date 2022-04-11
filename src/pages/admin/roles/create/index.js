@@ -5,12 +5,26 @@ import { useState } from "react";
 import { useEffect } from "react";
 import Sticky from "wil-react-sticky";
 
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { MODULES_GET, ROLE_ADD } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
 function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
+  /**
+   * Dependencies
+   */
   const rt = useRouter();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToAddRole = hasPermission(ROLE_ADD);
+  const isAllowedToGetModulesList = hasPermission(MODULES_GET);
+
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
   pathArr[pathArr.length - 1] = "Buat Role";
@@ -107,18 +121,24 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
 
   //useEffect
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModules`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setmodules(res2.data);
-        setpraloading2(false);
-      });
-  }, []);
+    if (isAllowedToGetModulesList) {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModules`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setmodules(res2.data);
+          setpraloading2(false);
+        });
+      return;
+    }
+
+    permissionWarningNotification("Mendapatkan", "Daftar Module");
+    setpraloading2(false);
+  }, [isAllowedToGetModulesList]);
   return (
     <Layout
       tok={tok}
@@ -144,6 +164,7 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
                     </Button>
                   </Link>
                   <Button
+                    disabled={!isAllowedToAddRole}
                     type="primary"
                     size="middle"
                     onClick={instanceForm.submit}
@@ -175,7 +196,11 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
                     },
                   ]}
                 >
-                  <Input name={`name`} onChange={onChangeCreateRoles}></Input>
+                  <Input
+                    name={`name`}
+                    disabled={!isAllowedToAddRole}
+                    onChange={onChangeCreateRoles}
+                  ></Input>
                 </Form.Item>
               </div>
 
@@ -193,6 +218,7 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
                 >
                   <TextArea
                     rows={2}
+                    disabled={!isAllowedToAddRole}
                     name={`description`}
                     onChange={onChangeCreateRoles}
                   />
@@ -201,56 +227,58 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
 
               {/* </div> */}
               {/* <Divider style={{ borderTop: '1px solid rgba(0, 0, 0, 0.2)' }} /> */}
-              <hr />
-              <h1 className="font-semibold text-base w-auto p-2">
-                Permissions
-              </h1>
-              {/* <div className="border-gray-300 p-4 border bg-white w-full h-auto "> */}
-              {/* <Tabs defaultActiveKey="1" tabPosition={'left'} style={{ }}>
+              <AccessControl hasPermission={ROLE_ADD}>
+                <hr />
+                <h1 className="font-semibold text-base w-auto p-2">
+                  Permissions
+                </h1>
+                {/* <div className="border-gray-300 p-4 border bg-white w-full h-auto "> */}
+                {/* <Tabs defaultActiveKey="1" tabPosition={'left'} style={{ }}>
                                 {[...Array.from({ length: 10 }, (v, i) => i)].map(i => (
                                 <TabPane tab={`Tab-${i}`} key={i} disabled={i === 5}>
                                     Content of tab {i}
                                 </TabPane>
                                 ))}
                             </Tabs> */}
-              {praloading2 ? null : (
-                <Tabs defaultActiveKey="1" tabPosition="left">
-                  {modules.map((doc, idx) => {
-                    return (
-                      <TabPane tab={doc.name} key={idx + 1}>
-                        <div className="mb-5">
-                          {doc.features !== null ? (
-                            <>
-                              {doc.features.map((doc, idx) => {
-                                return (
-                                  <div
-                                    key={idx}
-                                    className="flex items-center hover:bg-gray-300 p-3"
-                                  >
-                                    <Checkbox
-                                      style={{ marginRight: `1rem` }}
-                                      onChange={(e) => {
-                                        onChangeCreateCheckbox(e, doc.id);
-                                      }}
-                                    />{" "}
-                                    {doc.name}
-                                  </div>
-                                );
-                              })}
-                            </>
-                          ) : (
-                            <>
-                              <Empty
-                                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                              ></Empty>
-                            </>
-                          )}
-                        </div>
-                      </TabPane>
-                    );
-                  })}
-                </Tabs>
-              )}
+                {praloading2 ? null : (
+                  <Tabs defaultActiveKey="1" tabPosition="left">
+                    {modules.map((doc, idx) => {
+                      return (
+                        <TabPane tab={doc.name} key={idx + 1}>
+                          <div className="mb-5">
+                            {doc?.features !== null ? (
+                              <>
+                                {doc?.features?.map((doc, idx) => {
+                                  return (
+                                    <div
+                                      key={idx}
+                                      className="flex items-center hover:bg-gray-300 p-3"
+                                    >
+                                      <Checkbox
+                                        style={{ marginRight: `1rem` }}
+                                        onChange={(e) => {
+                                          onChangeCreateCheckbox(e, doc.id);
+                                        }}
+                                      />{" "}
+                                      {doc.name}
+                                    </div>
+                                  );
+                                })}
+                              </>
+                            ) : (
+                              <>
+                                <Empty
+                                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                ></Empty>
+                              </>
+                            )}
+                          </div>
+                        </TabPane>
+                      );
+                    })}
+                  </Tabs>
+                )}
+              </AccessControl>
 
               {/* <Tabs defaultActiveKey="1" tabPosition={'left'} style={{}}>
                                 <TabPane tab={`Ticket`} key={1} >

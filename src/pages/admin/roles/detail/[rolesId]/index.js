@@ -4,11 +4,24 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { ROLE_DELETE, ROLE_GET, ROLE_USER_FEATURES_GET } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
 const AnggotaSide = ({ initProps, rolesid }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetRoleUserFeatures = hasPermission(ROLE_USER_FEATURES_GET);
+
   const [roleanggota, setroleanggota] = useState([]);
   const [roleanggota2, setroleanggota2] = useState([]);
   const [loadingdata, setloadingdata] = useState(true);
@@ -99,22 +112,27 @@ const AnggotaSide = ({ initProps, rolesid }) => {
     setroleanggota(filtered);
   };
   useEffect(() => {
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoleUserFeatures?id=${rolesid}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setroleanggota(res2.data.users);
-        setroleanggota2(res2.data.users);
-        setloadingdata(false);
-      });
-  }, []);
+    if (isAllowedToGetRoleUserFeatures) {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoleUserFeatures?id=${rolesid}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setroleanggota(res2.data.users);
+          setroleanggota2(res2.data.users);
+          setloadingdata(false);
+        });
+      return;
+    }
+
+    setloadingdata(false);
+  }, [isAllowedToGetRoleUserFeatures]);
   return (
     <div className="flex flex-col space-y-4">
       <Input
@@ -137,6 +155,12 @@ const AnggotaSide = ({ initProps, rolesid }) => {
 };
 
 const FiturSide = ({ initProps, rolesid }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetRoleUserFeatures = hasPermission(ROLE_USER_FEATURES_GET);
+
   const [rolefitur, setrolefitur] = useState([]);
   const [rolefitur2, setrolefitur2] = useState([]);
   const [loadingdata, setloadingdata] = useState(true);
@@ -250,22 +274,27 @@ const FiturSide = ({ initProps, rolesid }) => {
     },
   ];
   useEffect(() => {
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoleUserFeatures?id=${rolesid}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setrolefitur(res2.data.features);
-        setrolefitur2(res2.data.features);
-        setloadingdata(false);
-      });
-  }, []);
+    if (isAllowedToGetRoleUserFeatures) {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoleUserFeatures?id=${rolesid}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setrolefitur(res2.data.features);
+          setrolefitur2(res2.data.features);
+          setloadingdata(false);
+        });
+      return;
+    }
+
+    setloadingdata(false);
+  }, [isAllowedToGetRoleUserFeatures]);
   return (
     <div className="flex flex-col space-y-4">
       <Input
@@ -297,7 +326,15 @@ const FiturSide = ({ initProps, rolesid }) => {
 };
 
 const RolesDetail = ({ initProps, dataProfile, sidemenu, rolesid }) => {
+  /**
+   * Dependencies
+   */
   const rt = useRouter();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetRole = hasPermission(ROLE_GET);
+  const isAllowedToGetRoleUserFeatures = hasPermission(ROLE_USER_FEATURES_GET);
+  const isAllowedToDeleteRole = hasPermission(ROLE_DELETE);
+
   const { TabPane } = Tabs;
 
   //data
@@ -350,41 +387,53 @@ const RolesDetail = ({ initProps, dataProfile, sidemenu, rolesid }) => {
 
   //useEffect
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRole?id=${rolesid}`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setdetaildata({
-          id: res2.data.id,
-          name: res2.data.name,
-          desc: res2.data.description,
-        });
-        var pathArr = rt.pathname.split("/").slice(1);
-        pathArr.splice(2, 1);
-        pathArr[pathArr.length - 1] = `Detail Role - ` + res2.data.name;
-        setpatharr(pathArr);
-        setloadingdata(false);
+    if (isAllowedToGetRole) {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRole?id=${rolesid}`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
       })
-      .then(() => {
-        fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoleUserFeatures?id=${rolesid}`,
-          {
-            method: `GET`,
-            headers: {
-              Authorization: JSON.parse(initProps),
-            },
-          }
-        )
-          .then((res) => res.json())
-          .then((res2) => {
-            setroleanggota(res2.data.users);
+        .then((res) => res.json())
+        .then((res2) => {
+          setdetaildata({
+            id: res2.data.id,
+            name: res2.data.name,
+            desc: res2.data.description,
           });
-      });
-  }, []);
+          var pathArr = rt.pathname.split("/").slice(1);
+          pathArr.splice(2, 1);
+          pathArr[pathArr.length - 1] = `Detail Role - ` + res2.data.name;
+          setpatharr(pathArr);
+          setloadingdata(false);
+        })
+        .then(() => {
+          if (isAllowedToGetRoleUserFeatures) {
+            fetch(
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoleUserFeatures?id=${rolesid}`,
+              {
+                method: `GET`,
+                headers: {
+                  Authorization: JSON.parse(initProps),
+                },
+              }
+            )
+              .then((res) => res.json())
+              .then((res2) => {
+                setroleanggota(res2.data.users);
+              });
+            return;
+          }
+
+          setroleanggota([]);
+        });
+
+      return;
+    }
+
+    permissionWarningNotification("Mendapatkan", "Informasi Detail Role");
+    setloadingdata(false);
+  }, [isAllowedToGetRole, isAllowedToGetRoleUserFeatures]);
   return (
     <Layout
       st={st}
@@ -408,6 +457,7 @@ const RolesDetail = ({ initProps, dataProfile, sidemenu, rolesid }) => {
                   // [174, 177].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                   <Button
                     type="primary"
+                    disabled={!isAllowedToGetRole}
                     size="middle"
                     onClick={() => {
                       rt.push(`/admin/roles/update/${rolesid}`);
@@ -425,6 +475,7 @@ const RolesDetail = ({ initProps, dataProfile, sidemenu, rolesid }) => {
                       setmodaldelete(true);
                     }}
                     danger
+                    disabled={!isAllowedToDeleteRole}
                   >
                     Hapus
                   </Button>
@@ -467,36 +518,39 @@ const RolesDetail = ({ initProps, dataProfile, sidemenu, rolesid }) => {
           </div>
         </div>
       </div>
-      <Modal
-        title="Konfirmasi untuk menghapus role"
-        visible={modaldelete}
-        onOk={handleDeleteRole}
-        okText="Ya"
-        cancelText="Tidak"
-        onCancel={() => setmodaldelete(false)}
-        okButtonProps={{ disabled: loadingdelete }}
-      >
-        <div className="flex flex-col">
-          <p>
-            Apakah Anda yakin untuk menghapus role{" "}
-            <strong>{detaildata.name}</strong> yang berkaitan dengan anggota
-            berikut ini?
-          </p>
-          {roleanggota.length < 1 ? (
-            <p className="font-semibold">-</p>
-          ) : (
-            <ol>
-              {roleanggota.map((doc, idx) => {
-                return (
-                  <li key={idx} className="font-semibold">
-                    {idx + 1}. {doc.name}
-                  </li>
-                );
-              })}
-            </ol>
-          )}
-        </div>
-      </Modal>
+
+      <AccessControl hasPermission={ROLE_DELETE}>
+        <Modal
+          title="Konfirmasi untuk menghapus role"
+          visible={modaldelete}
+          onOk={handleDeleteRole}
+          okText="Ya"
+          cancelText="Tidak"
+          onCancel={() => setmodaldelete(false)}
+          okButtonProps={{ disabled: loadingdelete }}
+        >
+          <div className="flex flex-col">
+            <p>
+              Apakah Anda yakin untuk menghapus role{" "}
+              <strong>{detaildata.name}</strong> yang berkaitan dengan anggota
+              berikut ini?
+            </p>
+            {roleanggota.length < 1 ? (
+              <p className="font-semibold">-</p>
+            ) : (
+              <ol>
+                {roleanggota.map((doc, idx) => {
+                  return (
+                    <li key={idx} className="font-semibold">
+                      {idx + 1}. {doc.name}
+                    </li>
+                  );
+                })}
+              </ol>
+            )}
+          </div>
+        </Modal>
+      </AccessControl>
     </Layout>
   );
 };

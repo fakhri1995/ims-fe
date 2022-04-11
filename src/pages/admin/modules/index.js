@@ -18,6 +18,21 @@ import { useEffect, useState } from "react";
 import ScrollTo from "react-scroll-into-view";
 import Sticky from "wil-react-sticky";
 
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  FEATURES_GET,
+  MODULES_GET,
+  MODULE_ADD,
+  MODULE_DELETE,
+  MODULE_FEATURES_ADD,
+  MODULE_FEATURES_DELETE,
+  MODULE_UPDATE,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
@@ -29,15 +44,27 @@ const ModulesIndex = ({
   dataListFeatures,
   sidemenu,
 }) => {
-  //Initialization
+  /**
+   * Dependencies
+   */
   const rt = useRouter();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetFeaturesList = hasPermission(FEATURES_GET);
+  const isAllowedToGetModulesList = hasPermission(MODULES_GET);
+  const isAllowedToUpdateModule = hasPermission(MODULE_UPDATE);
+  const isAllowedToDeleteModule = hasPermission(MODULE_DELETE);
+  const isAllowedToAddModule = hasPermission(MODULE_ADD);
+  const isAllowedToAddModuleFeatures = hasPermission(MODULE_FEATURES_ADD);
+  const isAllowedToDeleteModuleFeatures = hasPermission(MODULE_FEATURES_DELETE);
+
+  //Initialization
   const pathArr = rt.pathname.split("/").slice(1);
   const { Panel } = Collapse;
   const { module, featuredisplay, feature } = rt.query;
 
   //useState
   //1. Basic
-  const [praloading, setpraloading] = useState(true);
+  // const [praloading, setpraloading] = useState(true);
   const [loop, setloop] = useState([]);
   const [tabnameArrVal, settabnameArrVal] = useState(loop);
   const [datamodules, setdatamodules] = useState([
@@ -326,6 +353,11 @@ const ModulesIndex = ({
 
   //handler
   const handleAddModuleFeature = () => {
+    if (!isAllowedToAddModuleFeatures) {
+      permissionWarningNotification("Menambahkan", "Fitur ke dalam Module");
+      return;
+    }
+
     setloadingcreate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addModuleFeature`, {
       method: "POST",
@@ -361,6 +393,11 @@ const ModulesIndex = ({
       });
   };
   const handleDeleteModuleFeature = () => {
+    if (!isAllowedToDeleteModuleFeatures) {
+      permissionWarningNotification("Menghapus", "Fitur dari Modul");
+      return;
+    }
+
     setloadingdeletefeatmodule(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteModuleFeature`, {
       method: "DELETE",
@@ -469,55 +506,78 @@ const ModulesIndex = ({
 
   //useEffect
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModules`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setdatamodules(res2.data);
-        setdatamodules2(res2.data);
-        setdatamodules3(res2.data);
-        // setcurrentselectkateg(res2.data[0].name)
-        // setcurrentdesckateg(res2.data[0].description)
-        // setdatafeature(res2.data[0].feature)
-        var temp = loop;
-        for (var i = 0; i < res2.data.length; i++) {
-          i !== 0 ? temp.push("hidden") : temp.push("block");
-        }
-        setloop(temp);
-        setloadinglistfeat(false);
-        setidmodulemap(
-          res2.data[Number(module)].features !== null
-            ? res2.data[Number(module)].features.map((doc, idx) => doc.id)
-            : []
-        );
-        setcheckedmodules(
-          module !== "" || typeof module !== "undefined" ? Number(module) : 0
-        );
-        setpraloadingmodule(false);
-      });
-  }, [moduletrigger]);
+    if (isAllowedToGetModulesList) {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModules`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setdatamodules(res2.data);
+          setdatamodules2(res2.data);
+          setdatamodules3(res2.data);
+          // setcurrentselectkateg(res2.data[0].name)
+          // setcurrentdesckateg(res2.data[0].description)
+          // setdatafeature(res2.data[0].feature)
+          var temp = loop;
+          for (var i = 0; i < res2.data.length; i++) {
+            i !== 0 ? temp.push("hidden") : temp.push("block");
+          }
+          setloop(temp);
+          setloadinglistfeat(false);
+          setidmodulemap(
+            res2.data[Number(module)].features !== null
+              ? res2.data[Number(module)].features.map((doc, idx) => doc.id)
+              : []
+          );
+          setcheckedmodules(
+            module !== "" || typeof module !== "undefined" ? Number(module) : 0
+          );
+          setpraloadingmodule(false);
+        });
+      return;
+    }
+
+    setpraloadingmodule(false);
+  }, [moduletrigger, isAllowedToGetModulesList]);
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFeatures`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setlistfeat(res2.data);
-        setlistfeat2(res2.data);
-        setlistfeat3(res2.data);
-        setpraloadingfeature(false);
-      });
-  }, []);
+    if (isAllowedToGetFeaturesList) {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFeatures`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setlistfeat(res2.data);
+          setlistfeat2(res2.data);
+          setlistfeat3(res2.data);
+          setpraloadingfeature(false);
+        });
+
+      return;
+    }
+
+    setpraloadingfeature(false);
+  }, [isAllowedToGetFeaturesList]);
   useEffect(() => {
-    document.getElementById(`panel${scrolltrigger}`).scrollIntoView(true);
-  }, [scrolltrigger]);
+    if (isAllowedToGetModulesList) {
+      document.getElementById(`panel${scrolltrigger}`).scrollIntoView(true);
+    }
+  }, [scrolltrigger, isAllowedToGetModulesList]);
+
+  useEffect(() => {
+    if (!isAllowedToGetFeaturesList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Fitur");
+    }
+
+    if (!isAllowedToGetModulesList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Module");
+    }
+  }, [isAllowedToGetFeaturesList, isAllowedToGetModulesList]);
 
   return (
     <Layout
@@ -541,6 +601,7 @@ const ModulesIndex = ({
             <div className="flex justify-between mb-2 md:mb-5">
               <h1 className="font-bold text-xl">Module</h1>
               <Button
+                disabled={!isAllowedToAddModule}
                 type="primary"
                 onClick={() => {
                   rt.push(
@@ -557,6 +618,7 @@ const ModulesIndex = ({
               <Input
                 style={{ width: `100%` }}
                 placeholder="Cari module"
+                disabled={!isAllowedToGetModulesList}
                 onChange={(e) => {
                   if (e.target.value === "") {
                     setdatamodules(datamodules3);
@@ -576,144 +638,167 @@ const ModulesIndex = ({
                 <Spin size="large" />
               </div>
             ) : (
-              <div className=" mb-2 md:mb-5">
-                <Collapse
-                  accordion
-                  defaultActiveKey={
-                    module === "" || typeof module === "undefined"
-                      ? -1
-                      : Number(module)
-                  }
-                  onChange={(value) => {
-                    if (typeof value === "undefined") {
-                      setdisplayarrow(false);
-                      setrightstatus(true);
-                      setleftstatus(true);
-                      setmodulecounter(0);
-                      setfeaturecounter(0);
-                      setcheckeddatamodules([]);
-                      setcheckeddatafeatures([]);
-                      setpraloadingmodulefeat(true);
-                      setsearchmodulefeature("");
-                    } else {
-                      setpraloadingmodulefeat(false);
-                      setdisplayarrow(true);
-                      setcheckeddatamodules([]);
-                      setcheckeddatafeatures([]);
-                      setcheckedmodules(value);
-                      setmodulecounter(0);
-                      setfeaturecounter(0);
-                      setdatadeletemodule({
-                        ...datadeletemodule,
-                        id: datamodules[value].id,
-                      });
-                      datamodules[value].features
-                        ? setidmodulemap(
-                            datamodules[value].features.map(
-                              (doc, idx) => doc.id
-                            )
-                          )
-                        : setidmodulemap([]);
-                      setscrolltrigger(value);
+              <AccessControl hasPermission={MODULES_GET}>
+                <div className=" mb-2 md:mb-5">
+                  <Collapse
+                    accordion
+                    defaultActiveKey={
+                      module === "" || typeof module === "undefined"
+                        ? -1
+                        : Number(module)
                     }
-                  }}
-                >
-                  {datamodules.map((doc, idx) => {
-                    return (
-                      <Panel
-                        id={`panel${idx}`}
-                        key={idx}
-                        header={<strong>{doc.name}</strong>}
-                        extra={
-                          <div className="flex">
-                            <EditOutlined
-                              style={{ marginRight: `1rem` }}
-                              onClick={() => {
-                                rt.push(
-                                  `/admin/modules/update/module/${doc.id}?module=${idx}`
-                                );
-                              }}
-                            />
-                            <DeleteOutlined
-                              style={{ color: `red` }}
-                              onClick={() => {
-                                setmodaldelete(true);
-                              }}
-                            />
-                          </div>
-                        }
-                      >
-                        <div className="flex flex-col">
-                          <div className="flex justify-between border-b pb-3 mb-3">
-                            <div>
-                              {/* <Checkbox checked={checkAll} onChange={(e) => { onCheckedAll(e) }} />  */}
-                              {modulecounter}/
-                              {doc.features ? doc.features.length : 0}{" "}
-                              {checkeddatamodules.length > 1 ? "items" : "item"}
+                    onChange={(value) => {
+                      if (typeof value === "undefined") {
+                        setdisplayarrow(false);
+                        setrightstatus(true);
+                        setleftstatus(true);
+                        setmodulecounter(0);
+                        setfeaturecounter(0);
+                        setcheckeddatamodules([]);
+                        setcheckeddatafeatures([]);
+                        setpraloadingmodulefeat(true);
+                        setsearchmodulefeature("");
+                      } else {
+                        setpraloadingmodulefeat(false);
+                        setdisplayarrow(true);
+                        setcheckeddatamodules([]);
+                        setcheckeddatafeatures([]);
+                        setcheckedmodules(value);
+                        setmodulecounter(0);
+                        setfeaturecounter(0);
+                        setdatadeletemodule({
+                          ...datadeletemodule,
+                          id: datamodules[value].id,
+                        });
+                        datamodules[value].features
+                          ? setidmodulemap(
+                              datamodules[value].features.map(
+                                (doc, idx) => doc.id
+                              )
+                            )
+                          : setidmodulemap([]);
+                        setscrolltrigger(value);
+                      }
+                    }}
+                  >
+                    {datamodules.map((doc, idx) => {
+                      return (
+                        <Panel
+                          id={`panel${idx}`}
+                          key={idx}
+                          header={<strong>{doc.name}</strong>}
+                          extra={
+                            <div className="flex">
+                              <EditOutlined
+                                style={{ marginRight: `1rem` }}
+                                onClick={() => {
+                                  if (!isAllowedToUpdateModule) {
+                                    permissionWarningNotification(
+                                      "Memperbarui",
+                                      "Module"
+                                    );
+                                    return;
+                                  }
+
+                                  rt.push(
+                                    `/admin/modules/update/module/${doc.id}?module=${idx}`
+                                  );
+                                }}
+                              />
+                              <DeleteOutlined
+                                style={{ color: `red` }}
+                                onClick={() => {
+                                  if (!isAllowedToDeleteModule) {
+                                    permissionWarningNotification(
+                                      "Menghapus",
+                                      "Module"
+                                    );
+                                    return;
+                                  }
+
+                                  setmodaldelete(true);
+                                }}
+                              />
                             </div>
-                            <div>
-                              <strong>
-                                Feature yang terdaftar pada - Module {doc.name}
-                              </strong>
+                          }
+                        >
+                          <div className="flex flex-col">
+                            <div className="flex justify-between border-b pb-3 mb-3">
+                              <div>
+                                {/* <Checkbox checked={checkAll} onChange={(e) => { onCheckedAll(e) }} />  */}
+                                {modulecounter}/
+                                {doc.features ? doc.features.length : 0}{" "}
+                                {checkeddatamodules.length > 1
+                                  ? "items"
+                                  : "item"}
+                              </div>
+                              <div>
+                                <strong>
+                                  Feature yang terdaftar pada - Module{" "}
+                                  {doc.name}
+                                </strong>
+                              </div>
                             </div>
-                          </div>
-                          <div className="mb-5">
-                            <Input
-                              placeholder="Cari feature terdaftar"
-                              onChange={(e) => {
-                                setsearchmodulefeature(
-                                  e.target.value.toLowerCase()
-                                );
-                              }}
-                            ></Input>
-                          </div>
-                          <div className="overflow-y-auto flex flex-col h-48 mb-5 border-b pb-3">
-                            {praloadingmodulefeat ? null : (
-                              <>
-                                {doc.features
-                                  ? doc.features.map((doc2, idx2) => {
-                                      const st = checkeddatamodules.includes(
-                                        doc2.id
-                                      );
-                                      if (
-                                        doc2.name
-                                          .toLowerCase()
-                                          .includes(
-                                            searchmodulefeature.toLowerCase()
-                                          )
-                                      ) {
-                                        return (
-                                          <div className="flex items-center my-2">
-                                            <Checkbox
-                                              checked={st}
-                                              onChange={(e) => {
-                                                onChangeUpdateCheckbox2(
-                                                  e,
-                                                  doc2.id,
-                                                  idx
-                                                );
-                                              }}
-                                              style={{ marginRight: `1rem` }}
-                                            />{" "}
-                                            {doc2.name}
-                                          </div>
+                            <div className="mb-5">
+                              <Input
+                                placeholder="Cari feature terdaftar"
+                                onChange={(e) => {
+                                  setsearchmodulefeature(
+                                    e.target.value.toLowerCase()
+                                  );
+                                }}
+                              ></Input>
+                            </div>
+                            <div className="overflow-y-auto flex flex-col h-48 mb-5 border-b pb-3">
+                              {praloadingmodulefeat ? null : (
+                                <>
+                                  {doc.features
+                                    ? doc.features.map((doc2, idx2) => {
+                                        const st = checkeddatamodules.includes(
+                                          doc2.id
                                         );
-                                      }
-                                    })
-                                  : null}
-                              </>
-                            )}
+                                        if (
+                                          doc2.name
+                                            .toLowerCase()
+                                            .includes(
+                                              searchmodulefeature.toLowerCase()
+                                            )
+                                        ) {
+                                          return (
+                                            <div className="flex items-center my-2">
+                                              <Checkbox
+                                                checked={st}
+                                                onChange={(e) => {
+                                                  onChangeUpdateCheckbox2(
+                                                    e,
+                                                    doc2.id,
+                                                    idx
+                                                  );
+                                                }}
+                                                style={{ marginRight: `1rem` }}
+                                              />{" "}
+                                              {doc2.name}
+                                            </div>
+                                          );
+                                        }
+                                      })
+                                    : null}
+                                </>
+                              )}
+                            </div>
+                            <div>
+                              <h1 className="font-semibold text-lg">
+                                Deskripsi
+                              </h1>
+                              <p className="text-xs mb-0">{doc.description}</p>
+                            </div>
                           </div>
-                          <div>
-                            <h1 className="font-semibold text-lg">Deskripsi</h1>
-                            <p className="text-xs mb-0">{doc.description}</p>
-                          </div>
-                        </div>
-                      </Panel>
-                    );
-                  })}
-                </Collapse>
-              </div>
+                        </Panel>
+                      );
+                    })}
+                  </Collapse>
+                </div>
+              </AccessControl>
             )}
           </div>
           <Sticky containerSelectorFocus="#containerModules" offsetTop={400}>
@@ -727,7 +812,11 @@ const ModulesIndex = ({
                         true
                       ); /*console.log(checkeddatamodules); console.log(datamodules[checkedmodules].feature)*/
                     }}
-                    disabled={rightstatus || modulecounter < 1}
+                    disabled={
+                      isAllowedToDeleteModuleFeatures
+                        ? rightstatus || modulecounter < 1
+                        : true
+                    }
                     style={{ marginBottom: `0.5rem` }}
                   >
                     <ArrowRightOutlined />
@@ -763,6 +852,7 @@ const ModulesIndex = ({
             <div className="mb-2 md:mb-5">
               <Input
                 style={{ width: `100%` }}
+                disabled={!isAllowedToGetFeaturesList}
                 placeholder="Cari feature"
                 onChange={(e) => {
                   if (e.target.value === "") {
@@ -778,229 +868,247 @@ const ModulesIndex = ({
                 }}
               />
             </div>
-            {praloadingfeature ? (
-              <Spin size="large" />
-            ) : (
-              <div className=" mb-2 md:mb-5">
-                {displayarrow ? (
-                  <Sticky
-                    containerSelectorFocus="#containerModules"
-                    offsetTop={60}
-                  >
-                    {datamodules.length > 0 ? (
-                      <div className="flex flex-col border p-2">
-                        <div className="flex justify-between border-b pb-3 mb-3">
-                          <div>
-                            {/* <Checkbox />  */}
-                            {featurecounter}/
-                            {listfeat.length - idmodulemap.length}{" "}
-                            {checkeddatafeatures.length > 1 ? "items" : "item"}
-                          </div>
-                          <div>
-                            <strong>
-                              Feature yang tidak terdaftar pada - Module{" "}
-                              {datamodules[checkedmodules]
-                                ? datamodules[checkedmodules].name
-                                : ""}
-                            </strong>
-                          </div>
-                        </div>
-                        <div className="mb-5">
-                          <Input
-                            placeholder="Cari feature terdaftar"
-                            onChange={(e) => {
-                              setsearchfeature(e.target.value.toLowerCase());
-                            }}
-                          ></Input>
-                        </div>
-                        <div className="overflow-y-auto flex flex-col h-80 mb-5 border-b pb-5">
-                          {listfeat.map((doc3, idx3) => {
-                            const st = checkeddatafeatures.includes(doc3.id);
-                            if (!idmodulemap.includes(doc3.id)) {
-                              if (
-                                doc3.name
-                                  .toLowerCase()
-                                  .includes(searchfeature.toLowerCase())
-                              ) {
-                                return (
-                                  <div
-                                    key={idx3}
-                                    className="flex items-center my-1"
-                                  >
-                                    <Checkbox
-                                      checked={st}
-                                      style={{ marginRight: `1rem` }}
-                                      onChange={(e) => {
-                                        onChangeUpdateCheckbox3(
-                                          e,
-                                          doc3.id,
-                                          idx3
-                                        );
-                                      }}
-                                      style={{ marginRight: `1rem` }}
-                                    />{" "}
-                                    {doc3.name}
-                                  </div>
-                                );
-                              }
-                            }
-                          })}
-                        </div>
-                      </div>
-                    ) : null}
-                  </Sticky>
+            <AccessControl hasPermission={FEATURES_GET}>
+              <>
+                {praloadingfeature ? (
+                  <Spin size="large" />
                 ) : (
-                  <Collapse
-                    accordion
-                    defaultActiveKey={!feature ? -1 : Number(feature)}
-                    onChange={(value) => {
-                      if (typeof value !== "undefined") {
-                        setcheckeddatafeatures([]);
-                        setcheckedfeatures(value);
-                        setdatadeletefeature({
-                          ...datadeletefeature,
-                          id: listfeat[value].id,
-                        });
-                      }
-                    }}
-                  >
-                    {listfeat.map((doc, idx) => {
-                      return (
-                        <Panel key={idx} header={doc.name}>
-                          <p>{doc.description}</p>
-                        </Panel>
-                      );
-                    })}
-                  </Collapse>
+                  <div className=" mb-2 md:mb-5">
+                    {displayarrow ? (
+                      <Sticky
+                        containerSelectorFocus="#containerModules"
+                        offsetTop={60}
+                      >
+                        {datamodules.length > 0 ? (
+                          <div className="flex flex-col border p-2">
+                            <div className="flex justify-between border-b pb-3 mb-3">
+                              <div>
+                                {/* <Checkbox />  */}
+                                {featurecounter}/
+                                {listfeat.length - idmodulemap.length}{" "}
+                                {checkeddatafeatures.length > 1
+                                  ? "items"
+                                  : "item"}
+                              </div>
+                              <div>
+                                <strong>
+                                  Feature yang tidak terdaftar pada - Module{" "}
+                                  {datamodules[checkedmodules]
+                                    ? datamodules[checkedmodules].name
+                                    : ""}
+                                </strong>
+                              </div>
+                            </div>
+                            <div className="mb-5">
+                              <Input
+                                placeholder="Cari feature terdaftar"
+                                onChange={(e) => {
+                                  setsearchfeature(
+                                    e.target.value.toLowerCase()
+                                  );
+                                }}
+                              ></Input>
+                            </div>
+                            <div className="overflow-y-auto flex flex-col h-80 mb-5 border-b pb-5">
+                              {listfeat.map((doc3, idx3) => {
+                                const st = checkeddatafeatures.includes(
+                                  doc3.id
+                                );
+                                if (!idmodulemap.includes(doc3.id)) {
+                                  if (
+                                    doc3.name
+                                      .toLowerCase()
+                                      .includes(searchfeature.toLowerCase())
+                                  ) {
+                                    return (
+                                      <div
+                                        key={idx3}
+                                        className="flex items-center my-1"
+                                      >
+                                        <Checkbox
+                                          checked={st}
+                                          style={{ marginRight: `1rem` }}
+                                          onChange={(e) => {
+                                            onChangeUpdateCheckbox3(
+                                              e,
+                                              doc3.id,
+                                              idx3
+                                            );
+                                          }}
+                                        />{" "}
+                                        {doc3.name}
+                                      </div>
+                                    );
+                                  }
+                                }
+                              })}
+                            </div>
+                          </div>
+                        ) : null}
+                      </Sticky>
+                    ) : (
+                      <Collapse
+                        accordion
+                        defaultActiveKey={!feature ? -1 : Number(feature)}
+                        onChange={(value) => {
+                          if (typeof value !== "undefined") {
+                            setcheckeddatafeatures([]);
+                            setcheckedfeatures(value);
+                            setdatadeletefeature({
+                              ...datadeletefeature,
+                              id: listfeat[value].id,
+                            });
+                          }
+                        }}
+                      >
+                        {listfeat.map((doc, idx) => {
+                          return (
+                            <Panel key={idx} header={doc.name}>
+                              <p>{doc.description}</p>
+                            </Panel>
+                          );
+                        })}
+                      </Collapse>
+                    )}
+                  </div>
                 )}
-              </div>
-            )}
+              </>
+            </AccessControl>
           </div>
         </div>
       </div>
-      <Modal
-        title={`Konfirmasi Tambah Feature pada Module`}
-        visible={modalcreate}
-        onCancel={() => {
-          setloadingcreate(false);
-          setmodalcreate(false);
-        }}
-        onOk={handleAddModuleFeature}
-        okButtonProps={{ loading: loadiingcreate }}
-        okText="Ya"
-        cancelText="Tidak"
-        style={{ top: `3rem` }}
-        width={500}
-        destroyOnClose={true}
-      >
-        <div className="flex flex-col">
+
+      <AccessControl hasPermission={MODULE_FEATURES_ADD}>
+        <Modal
+          title={`Konfirmasi Tambah Feature pada Module`}
+          visible={modalcreate}
+          onCancel={() => {
+            setloadingcreate(false);
+            setmodalcreate(false);
+          }}
+          onOk={handleAddModuleFeature}
+          okButtonProps={{ loading: loadiingcreate }}
+          okText="Ya"
+          cancelText="Tidak"
+          style={{ top: `3rem` }}
+          width={500}
+          destroyOnClose={true}
+        >
+          <div className="flex flex-col">
+            <p>
+              Apakah anda yakin ingin menambahkan Feature berikut ke Module{" "}
+              <strong>
+                {datamodules[checkedmodules]
+                  ? datamodules[checkedmodules].name
+                  : null}
+              </strong>
+              ?
+            </p>
+            {datamodules.length < 1 ? (
+              <p className="font-semibold">-</p>
+            ) : (
+              <ol>
+                {checkeddatafeatures.length > 0
+                  ? listfeat.map((doc, idx) => {
+                      if (checkeddatafeatures.includes(doc.id)) {
+                        return (
+                          <li key={idx} className="font-semibold">
+                            {"-"} {doc.name}
+                          </li>
+                        );
+                      }
+                    })
+                  : "-"}
+              </ol>
+            )}
+          </div>
+        </Modal>
+      </AccessControl>
+
+      <AccessControl hasPermission={MODULE_FEATURES_DELETE}>
+        <Modal
+          title={`Konfirmasi Hapus Feature pada Module`}
+          visible={modaldeletefeatmodule}
+          onCancel={() => {
+            setloadingdeletefeatmodule(false);
+            setmodaldeletefeatmodule(false);
+          }}
+          onOk={handleDeleteModuleFeature}
+          okButtonProps={{ loading: loadingdeletefeatmodule }}
+          okText="Ya"
+          cancelText="Tidak"
+          style={{ top: `3rem` }}
+          width={500}
+          destroyOnClose={true}
+        >
+          <div className="flex flex-col">
+            <p>
+              Apakah anda yakin ingin mengeluarkan Feature berikut dari Module{" "}
+              <strong>
+                {datamodules[checkedmodules]
+                  ? datamodules[checkedmodules].name
+                  : null}
+              </strong>
+              ?
+            </p>
+            {datamodules.length < 1 ? (
+              <p className="font-semibold">----</p>
+            ) : (
+              <ol>
+                {checkeddatamodules.length > 0 &&
+                datamodules[checkedmodules].features
+                  ? datamodules[checkedmodules].features.map((doc, idx) => {
+                      if (checkeddatamodules.includes(doc.id)) {
+                        return (
+                          <li key={idx} className="font-semibold">
+                            - {doc.name}
+                          </li>
+                        );
+                      }
+                    })
+                  : "-"}
+              </ol>
+            )}
+          </div>
+        </Modal>
+      </AccessControl>
+
+      <AccessControl hasPermission={MODULE_DELETE}>
+        <Modal
+          title="Konfirmasi hapus module"
+          visible={modaldelete}
+          onOk={handleDeleteModule}
+          onCancel={() => setmodaldelete(false)}
+          okText="Ya"
+          cancelText="Tidak"
+          okButtonProps={{ loading: loadiingdelete }}
+        >
           <p>
-            Apakah anda yakin ingin menambahkan Feature berikut ke Module{" "}
+            Apakah anda yakin ingin menghapus Module{" "}
             <strong>
-              {datamodules[checkedmodules]
+              {datamodules[checkedmodules] > 0
                 ? datamodules[checkedmodules].name
                 : null}
-            </strong>
-            ?
+            </strong>{" "}
+            yang memiliki Feature berikut ini?
           </p>
-          {datamodules.length < 1 ? (
+          {datamodules[checkedmodules] ? (
             <p className="font-semibold">-</p>
           ) : (
             <ol>
-              {checkeddatafeatures.length > 0
-                ? listfeat.map((doc, idx) => {
-                    if (checkeddatafeatures.includes(doc.id)) {
-                      return (
-                        <li key={idx} className="font-semibold">
-                          {"-"} {doc.name}
-                        </li>
-                      );
-                    }
-                  })
-                : "-"}
-            </ol>
-          )}
-        </div>
-      </Modal>
-      <Modal
-        title={`Konfirmasi Hapus Feature pada Module`}
-        visible={modaldeletefeatmodule}
-        onCancel={() => {
-          setloadingdeletefeatmodule(false);
-          setmodaldeletefeatmodule(false);
-        }}
-        onOk={handleDeleteModuleFeature}
-        okButtonProps={{ loading: loadingdeletefeatmodule }}
-        okText="Ya"
-        cancelText="Tidak"
-        style={{ top: `3rem` }}
-        width={500}
-        destroyOnClose={true}
-      >
-        <div className="flex flex-col">
-          <p>
-            Apakah anda yakin ingin mengeluarkan Feature berikut dari Module{" "}
-            <strong>
               {datamodules[checkedmodules]
-                ? datamodules[checkedmodules].name
-                : null}
-            </strong>
-            ?
-          </p>
-          {datamodules.length < 1 ? (
-            <p className="font-semibold">----</p>
-          ) : (
-            <ol>
-              {checkeddatamodules.length > 0 &&
-              datamodules[checkedmodules].features
                 ? datamodules[checkedmodules].features.map((doc, idx) => {
-                    if (checkeddatamodules.includes(doc.id)) {
-                      return (
-                        <li key={idx} className="font-semibold">
-                          - {doc.name}
-                        </li>
-                      );
-                    }
+                    return (
+                      <li key={idx} className="font-semibold">
+                        {idx + 1}. {doc.name}
+                      </li>
+                    );
                   })
                 : "-"}
             </ol>
           )}
-        </div>
-      </Modal>
-      <Modal
-        title="Konfirmasi hapus module"
-        visible={modaldelete}
-        onOk={handleDeleteModule}
-        onCancel={() => setmodaldelete(false)}
-        okText="Ya"
-        cancelText="Tidak"
-        okButtonProps={{ loading: loadiingdelete }}
-      >
-        <p>
-          Apakah anda yakin ingin menghapus Module{" "}
-          <strong>
-            {datamodules[checkedmodules] > 0
-              ? datamodules[checkedmodules].name
-              : null}
-          </strong>{" "}
-          yang memiliki Feature berikut ini?
-        </p>
-        {datamodules[checkedmodules] ? (
-          <p className="font-semibold">-</p>
-        ) : (
-          <ol>
-            {datamodules[checkedmodules]
-              ? datamodules[checkedmodules].features.map((doc, idx) => {
-                  return (
-                    <li key={idx} className="font-semibold">
-                      {idx + 1}. {doc.name}
-                    </li>
-                  );
-                })
-              : "-"}
-          </ol>
-        )}
-      </Modal>
+        </Modal>
+      </AccessControl>
     </Layout>
   );
 };

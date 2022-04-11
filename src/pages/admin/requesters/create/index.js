@@ -14,21 +14,25 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { ROLES_GET } from "lib/features";
+
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
-function modifData(dataa) {
-  for (var i = 0; i < dataa.length; i++) {
-    dataa[i]["key"] = dataa[i].id;
-    dataa[i]["value"] = dataa[i].id;
-    dataa[i]["title"] = dataa[i].name;
-    dataa[i]["children"] = dataa[i].members;
-    delete dataa[i].members;
-    if (dataa[i].children) [modifData(dataa[i].children)];
-  }
-  return dataa;
-}
+// function modifData(dataa) {
+//   for (var i = 0; i < dataa.length; i++) {
+//     dataa[i]["key"] = dataa[i].id;
+//     dataa[i]["value"] = dataa[i].id;
+//     dataa[i]["title"] = dataa[i].name;
+//     dataa[i]["children"] = dataa[i].members;
+//     delete dataa[i].members;
+//     if (dataa[i].children) [modifData(dataa[i].children)];
+//   }
+//   return dataa;
+// }
 
 function RequestersCreate({
   initProps,
@@ -36,6 +40,12 @@ function RequestersCreate({
   sidemenu,
   dataCompanyList,
 }) {
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetRolesList = hasPermission(ROLES_GET);
+
   const rt = useRouter();
   const tok = initProps;
   var pathArr = rt.pathname.split("/").slice(1);
@@ -159,17 +169,20 @@ function RequestersCreate({
       });
   }, []);
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setdataraw1(res2.data);
-      });
-  }, []);
+    if (isAllowedToGetRolesList) {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setdataraw1(res2.data);
+        });
+      return;
+    }
+  }, [isAllowedToGetRolesList]);
 
   return (
     <Layout
@@ -408,6 +421,7 @@ function RequestersCreate({
                   <Form.Item label="Role" name="role">
                     <Select
                       mode="multiple"
+                      disabled={!isAllowedToGetRolesList}
                       onChange={(value) => {
                         setNewuserrequesters({
                           ...newuserrequesters,

@@ -5,13 +5,24 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { MODULE_ADD } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
 const ModuleCreate = ({ sidemenu, initProps, dataProfile }) => {
-  //1. Init
+  /**
+   * Dependencies
+   */
   const rt = useRouter();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToAddModule = hasPermission(MODULE_ADD);
+
+  //1. Init
   var pathArr = rt.pathname.split("/").slice(1);
   pathArr.splice(2, 1);
   pathArr[pathArr.length - 1] = "Buat Module";
@@ -25,7 +36,7 @@ const ModuleCreate = ({ sidemenu, initProps, dataProfile }) => {
     description: "",
   });
   const [loadingcreate, setloadingcreate] = useState(false);
-  const [praloading, setpraloading] = useState(true);
+  // const [praloading, setpraloading] = useState(true);
 
   //handleCreate
   const handleCreateModule = () => {
@@ -60,6 +71,11 @@ const ModuleCreate = ({ sidemenu, initProps, dataProfile }) => {
   };
 
   //useEffect
+  useEffect(() => {
+    if (!isAllowedToAddModule) {
+      permissionWarningNotification("Menambahkan", "Module");
+    }
+  }, [isAllowedToAddModule]);
 
   return (
     <Layout
@@ -85,6 +101,7 @@ const ModuleCreate = ({ sidemenu, initProps, dataProfile }) => {
                   type="primary"
                   loading={loadingcreate}
                   onClick={instanceForm.submit}
+                  disabled={!isAllowedToAddModule}
                 >
                   Simpan
                 </Button>
@@ -118,6 +135,7 @@ const ModuleCreate = ({ sidemenu, initProps, dataProfile }) => {
                   >
                     <Input
                       value={newdata.name}
+                      disabled={!isAllowedToAddModule}
                       name={`name`}
                       onChange={(e) => {
                         setnewdata({
@@ -140,6 +158,7 @@ const ModuleCreate = ({ sidemenu, initProps, dataProfile }) => {
                   >
                     <Input.TextArea
                       rows={4}
+                      disabled={!isAllowedToAddModule}
                       value={newdata.description}
                       name={`description`}
                       onChange={(e) => {
