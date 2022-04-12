@@ -11,8 +11,13 @@ import {
 } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { AGENT_GROUP_UPDATE } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
@@ -25,7 +30,13 @@ function GroupsAgentsDetail({
   dataDetailGroup,
   sidemenu,
 }) {
+  /**
+   * Dependencies
+   */
   const rt = useRouter();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToUpdateAgentGroup = hasPermission(AGENT_GROUP_UPDATE);
+
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
   pathArr.splice(2, 2);
@@ -111,6 +122,12 @@ function GroupsAgentsDetail({
   //----------------------------------------------
   const { TextArea } = Input;
 
+  useEffect(() => {
+    if (!isAllowedToUpdateAgentGroup) {
+      permissionWarningNotification("Memperbarui", "Group Agent");
+    }
+  }, [isAllowedToUpdateAgentGroup]);
+
   return (
     <Layout
       tok={tok}
@@ -142,6 +159,7 @@ function GroupsAgentsDetail({
                     // [137].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                     <Button
                       type="primary"
+                      disabled={!isAllowedToUpdateAgentGroup}
                       size="middle"
                       onClick={instanceForm.submit}
                       loading={loadingbtn}

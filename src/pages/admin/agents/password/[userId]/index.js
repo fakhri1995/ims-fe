@@ -1,15 +1,25 @@
 import { Button, Form, Input, notification } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Sticky from "wil-react-sticky";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { AGENT_PASSWORD_UPDATE } from "lib/features";
 
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
 function AgentPassword({ initProps, dataProfile, sidemenu, userid }) {
+  /**
+   * Dependencies
+   */
   const rt = useRouter();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToUpdatePassword = hasPermission(AGENT_PASSWORD_UPDATE);
+
   const { name } = rt.query;
   const tok = initProps;
   var pathArr = rt.pathname.split("/").slice(1);
@@ -91,7 +101,7 @@ function AgentPassword({ initProps, dataProfile, sidemenu, userid }) {
                   </Button>
                 </Link>
                 <Button
-                  disabled={praloading}
+                  disabled={praloading || !isAllowedToUpdatePassword}
                   loading={loadingubahpass}
                   onClick={instanceForm.submit}
                   type="primary"

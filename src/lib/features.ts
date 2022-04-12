@@ -152,75 +152,78 @@ export const GROUPS_GET = "GROUPS_GET";
 /**
  * /getAgentList
  *
- * - [ ] /admin/agents
+ * - [x] /admin/agents
  */
 export const AGENTS_GET = "AGENTS_GET";
-
 /**
  * /getAgentDetail
  *
- * - [ ] /admin/agents/update/[userId]
- * - [ ] /admin/agents/detail/[userId]
+ * - [x] /admin/agents/update/[userId]
+ * - [x] /admin/agents/detail/[userId]
  */
 export const AGENT_GET = "AGENT_GET";
 /**
  * /addAgentMember
  *
- * - [ ] /admin/agents/create
+ * - [x] /admin/agents/create
  */
 export const AGENT_ADD = "AGENT_ADD";
 /**
  * /updateAgentDetail
  *
- * - [ ] /admin/agents/update/[userId]
+ * - [x] /admin/agents/update/[userId]
+ * - [x] /admin/agents/detail/[userId]
  */
 export const AGENT_UPDATE = "AGENT_UPDATE";
 /**
  * /changeAgentPassword
  *
- * - [ ] /admin/agents/password/[userId]
+ * - [x] /admin/agents/password/[userId]
+ * - [x] /admin/agents/detail/[userId]
  */
 export const AGENT_PASSWORD_UPDATE = "AGENT_PASSWORD_UPDATE";
 /**
  * /agentActivation
  *
- * - [ ] /admin/agents/detail/[userId]
+ * - [x] /admin/agents/detail/[userId]
  */
 export const AGENT_STATUS = "AGENT_STATUS";
 /**
  * /deleteAgent
  *
- * - [ ] /admin/agents/detail/[userId]
+ * - [x] /admin/agents/detail/[userId]
  */
 export const AGENT_DELETE = "AGENT_DELETE";
 /**
  * /getAgentGroups
  *
- * - [ ] /admin/groups
+ * - [x] /admin/groups
  */
 export const AGENT_GROUPS_GET = "AGENT_GROUPS_GET";
 /**
  * /getAgentGroup
  *
- * - [ ] /admin/groups/update/agents/[groupsId]
+ * - There is no implementation on the client-side for this feature.
  */
 export const AGENT_GROUP_GET = "AGENT_GROUP_GET";
 /**
  * /addAgentGroup
  *
- * - [ ] /admin/groups/create/agents
+ * - [x] /admin/groups/create/agents
+ * - [x] /admin/groups
  */
 export const AGENT_GROUP_ADD = "AGENT_GROUP_ADD";
 /**
  * /updateAgentGroup
  *
- * - [ ] /admin/groups/update/agents/[groupsId]
+ * - [x] /admin/groups/update/agents/[groupsId]
+ * - [x] /admin/groups
  */
 export const AGENT_GROUP_UPDATE = "AGENT_GROUP_UPDATE";
 /**
  * /deleteAgentGroup
  *
- * - [ ] /admin/groups
+ * - [x] /admin/groups
  */
 export const AGENT_GROUP_DELETE = "AGENT_GROUP_DELETE";
 

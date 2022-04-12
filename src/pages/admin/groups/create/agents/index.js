@@ -11,8 +11,13 @@ import {
 } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { AGENT_GROUP_ADD } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
@@ -24,7 +29,13 @@ function GroupsAgentsCreate({
   dataListAccount,
   sidemenu,
 }) {
+  /**
+   * Dependencies
+   */
   const rt = useRouter();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToAddAgentGroup = hasPermission(AGENT_GROUP_ADD);
+
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
   pathArr.splice(2, 1);
@@ -109,7 +120,13 @@ function GroupsAgentsCreate({
   // console.log(dataDD)
   //----------------------------------------------
   const { TextArea } = Input;
-  const { Option } = Select;
+
+  useEffect(() => {
+    if (!isAllowedToAddAgentGroup) {
+      permissionWarningNotification("Menambahkan", "Agent Group ");
+    }
+  }, [isAllowedToAddAgentGroup]);
+
   return (
     <Layout
       tok={tok}
@@ -140,6 +157,7 @@ function GroupsAgentsCreate({
                   <Button
                     type="primary"
                     size="middle"
+                    disabled={!isAllowedToAddAgentGroup}
                     onClick={instanceForm.submit}
                     loading={loadingbtn}
                   >

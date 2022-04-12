@@ -5,6 +5,17 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import Sticky from "wil-react-sticky";
 
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  AGENT_GROUPS_GET,
+  AGENT_GROUP_ADD,
+  AGENT_GROUP_DELETE,
+  AGENT_GROUP_UPDATE,
+} from "lib/features";
+
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
@@ -17,7 +28,16 @@ function Groups({
   sidemenu,
   dataDetailGroup,
 }) {
+  /**
+   * Dependencies
+   */
   const rt = useRouter();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToShowAgentGroups = hasPermission(AGENT_GROUPS_GET);
+  const isAllowedToUpdateAgentGroup = hasPermission(AGENT_GROUP_UPDATE);
+  const isAllowedToAddAgentGroup = hasPermission(AGENT_GROUP_ADD);
+  const isAllowedToDeleteAgentGroup = hasPermission(AGENT_GROUP_DELETE);
+
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
   // const { originPath } = rt.query
@@ -150,23 +170,32 @@ function Groups({
         key: "role",
         width: 700,
         render(text, record) {
+          const disableAgentsUpdateButton =
+            variabel === "agents" && !isAllowedToUpdateAgentGroup;
+
           return {
             props: {
               style: { background: record.idx % 2 == 1 ? "#f2f2f2" : "#fff" },
             },
             children: (
               <div>
-                <Link
-                  href={{
-                    pathname:
-                      `/admin/groups/update/` + variabel + `/${record.key}`,
-                    query: {
-                      originPath: "Admin",
-                    },
-                  }}
+                <Button
+                  disabled={disableAgentsUpdateButton}
+                  type="link"
+                  className="m-0 p-0 text-black hover:text-primary100"
                 >
-                  <a>{record.name}</a>
-                </Link>
+                  <Link
+                    href={{
+                      pathname:
+                        `/admin/groups/update/` + variabel + `/${record.key}`,
+                      query: {
+                        originPath: "Admin",
+                      },
+                    }}
+                  >
+                    <a>{record.name}</a>
+                  </Link>
+                </Button>
                 <p style={{ fontSize: "13px" }}>{record.description}</p>
               </div>
             ),
@@ -189,7 +218,7 @@ function Groups({
                   <>
                     {
                       // [136, 137].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                      <Button>
+                      <Button disabled={!isAllowedToUpdateAgentGroup}>
                         <Link
                           href={{
                             pathname:
@@ -250,6 +279,7 @@ function Groups({
                     {
                       // [138].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                       <Button
+                        disabled={!isAllowedToDeleteAgentGroup}
                         onClick={() => {
                           onClickModalDeleteGroup(true, record, "agents");
                         }}
@@ -289,25 +319,38 @@ function Groups({
         {
           // [135].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
           <Menu.Item key="0">
-            <Link
-              href={{
-                pathname: "/admin/groups/create/agents",
-              }}
+            <Button
+              disabled={!isAllowedToAddAgentGroup}
+              type="link"
+              block
+              className="m-0 p-0 text-black hover:text-primary100"
             >
-              Agent Group
-            </Link>
+              <Link
+                href={{
+                  pathname: "/admin/groups/create/agents",
+                }}
+              >
+                Agent Group
+              </Link>
+            </Button>
           </Menu.Item>
         }
         {
           // [140].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
           <Menu.Item key="1">
-            <Link
-              href={{
-                pathname: "/admin/groups/create/requesters",
-              }}
+            <Button
+              type="link"
+              block
+              className="m-0 p-0 text-black hover:text-primary100"
             >
-              Requester Group
-            </Link>
+              <Link
+                href={{
+                  pathname: "/admin/groups/create/requesters",
+                }}
+              >
+                Requester Group
+              </Link>
+            </Button>
           </Menu.Item>
         }
       </Menu>
@@ -359,7 +402,9 @@ function Groups({
                       <Table
                         showHeader={false}
                         scroll={{ x: 400 }}
-                        dataSource={groupsAgents}
+                        dataSource={
+                          isAllowedToShowAgentGroups ? groupsAgents : []
+                        }
                         columns={columns("agents")}
                         onRow={(record, rowIndex) => {}}
                       ></Table>
@@ -380,18 +425,22 @@ function Groups({
                 </Tabs>
               </div>
             }
-            <Modal
-              title="Konfirmasi untuk menghapus grup agent"
-              visible={warningDelete.istrue}
-              okButtonProps={{ disabled: loadingdelete }}
-              onOk={() => {
-                handleDeleteGroupAgent(warningDelete.key);
-              }}
-              onCancel={() => setWarningDelete(false, null)}
-            >
-              Apakah anda yakin ingin menghapus grup agent{" "}
-              <strong>{warningDelete.name}</strong>?
-            </Modal>
+
+            <AccessControl hasPermission={AGENT_GROUP_DELETE}>
+              <Modal
+                title="Konfirmasi untuk menghapus grup agent"
+                visible={warningDelete.istrue}
+                okButtonProps={{ disabled: loadingdelete }}
+                onOk={() => {
+                  handleDeleteGroupAgent(warningDelete.key);
+                }}
+                onCancel={() => setWarningDelete(false, null)}
+              >
+                Apakah anda yakin ingin menghapus grup agent{" "}
+                <strong>{warningDelete.name}</strong>?
+              </Modal>
+            </AccessControl>
+
             <Modal
               title="Konfirmasi untuk menghapus grup requester"
               visible={warningDeleteRequester.istrue}
