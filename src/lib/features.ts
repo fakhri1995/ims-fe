@@ -124,3 +124,182 @@ export const MODULE_UPDATE = "MODULE_UPDATE"; // route: `/admin/modules/update/m
 export const MODULE_DELETE = "MODULE_DELETE"; // route: `/admin/modules`
 export const MODULE_FEATURES_ADD = "MODULE_FEATURES_ADD"; // route: `/admin/modules`
 export const MODULE_FEATURES_DELETE = "MODULE_FEATURES_DELETE"; // route: `/admin/modules`
+
+/**
+ * Daftar feature untuk User Management.
+ *
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/72187905/User+Management
+ */
+/**
+ * /getFilterUsers | UserService.filterUsers
+ *
+ * - [ ] components/drawer/tasks/drawerTaskUpdate
+ * - [ ] components/drawer/tickets/drawerTicketExports
+ * - [ ] components/drawer/tickets/drawerTicketUpdate
+ * - [ ] components/screen/form-aktivitas/DetailAktivitas/AktivitasUserListEditableCard
+ * - [ ] /admin/groups/update/agents/[groupId]
+ * - [ ] /admin/groups/create/agents
+ */
+export const USERS_GET = "USERS_GET";
+/**
+ * /getFilterGroups
+ *
+ * - [ ] components/drawer/tasks/drawerTaskUpdate
+ * - [ ] components/drawer/tickets/drawerTicketExports
+ */
+export const GROUPS_GET = "GROUPS_GET";
+
+/**
+ * /getAgentList
+ *
+ * - [ ] /admin/agents
+ */
+export const AGENTS_GET = "AGENTS_GET";
+
+/**
+ * /getAgentDetail
+ *
+ * - [ ] /admin/agents/update/[userId]
+ * - [ ] /admin/agents/detail/[userId]
+ */
+export const AGENT_GET = "AGENT_GET";
+/**
+ * /addAgentMember
+ *
+ * - [ ] /admin/agents/create
+ */
+export const AGENT_ADD = "AGENT_ADD";
+/**
+ * /updateAgentDetail
+ *
+ * - [ ] /admin/agents/update/[userId]
+ */
+export const AGENT_UPDATE = "AGENT_UPDATE";
+/**
+ * /changeAgentPassword
+ *
+ * - [ ] /admin/agents/password/[userId]
+ */
+export const AGENT_PASSWORD_UPDATE = "AGENT_PASSWORD_UPDATE";
+/**
+ * /agentActivation
+ *
+ * - [ ] /admin/agents/detail/[userId]
+ */
+export const AGENT_STATUS = "AGENT_STATUS";
+/**
+ * /deleteAgent
+ *
+ * - [ ] /admin/agents/detail/[userId]
+ */
+export const AGENT_DELETE = "AGENT_DELETE";
+/**
+ * /getAgentGroups
+ *
+ * - [ ] /admin/groups
+ */
+export const AGENT_GROUPS_GET = "AGENT_GROUPS_GET";
+/**
+ * /getAgentGroup
+ *
+ * - [ ] /admin/groups/update/agents/[groupsId]
+ */
+export const AGENT_GROUP_GET = "AGENT_GROUP_GET";
+/**
+ * /addAgentGroup
+ *
+ * - [ ] /admin/groups/create/agents
+ */
+export const AGENT_GROUP_ADD = "AGENT_GROUP_ADD";
+/**
+ * /updateAgentGroup
+ *
+ * - [ ] /admin/groups/update/agents/[groupsId]
+ */
+export const AGENT_GROUP_UPDATE = "AGENT_GROUP_UPDATE";
+/**
+ * /deleteAgentGroup
+ *
+ * - [ ] /admin/groups
+ */
+export const AGENT_GROUP_DELETE = "AGENT_GROUP_DELETE";
+
+/**
+ * /getRequesterList
+ *
+ * - [ ] /admin/groups/update/requesters/[groupsId]
+ * - [ ] /admin/groups/create/requesters
+ * - [ ] /admin/requesters
+ */
+export const REQUESTERS_GET = "REQUESTERS_GET";
+/**
+ * /getRequesterDetail
+ *
+ * - [ ] /admin/requesters/detail/[userId]
+ * - [ ] /admin/requesters/update/[userId]
+ */
+export const REQUESTER_GET = "REQUESTER_GET";
+/**
+ * /addRequesterMember
+ *
+ * - [ ] /admin/requesters/create
+ */
+export const REQUESTER_ADD = "REQUESTER_ADD";
+/**
+ * /updateRequesterDetail
+ *
+ * - [ ] /admin/requesters/update/[userId]
+ * - [ ] /admin/requesters/detail/[userId]
+ */
+export const REQUESTER_UPDATE = "REQUESTER_UPDATE";
+/**
+ * /changeRequesterPassword
+ *
+ * - [ ] /admin/requesters/update/[userId]
+ * - [ ] /admin/requesters/detail/[userId]
+ * - [ ] /admin/requesters/password/[userId]
+ */
+export const REQUESTER_PASSWORD_UPDATE = "REQUESTER_PASSWORD_UPDATE";
+/**
+ * /requesterActivation
+ *
+ * - [ ] /admin/requesters/update/[userId]
+ * - [ ] /admin/requesters/detail/[userId]
+ */
+export const REQUESTER_STATUS = "REQUESTER_STATUS";
+/**
+ * /deleteRequester
+ *
+ * - [ ] /admin/requesters/detail/[userId]
+ */
+export const REQUESTER_DELETE = "REQUESTER_DELETE";
+/**
+ * /getRequesterGroups
+ *
+ * - [ ] /admin/groups
+ */
+export const REQUESTER_GROUPS_GET = "REQUESTER_GROUPS_GET";
+/**
+ * /addRequesterGroup
+ *
+ * - [ ] /admin/groups/create/requesters
+ */
+export const REQUESTER_GROUP_ADD = "REQUESTER_GROUP_ADD";
+/**
+ * /getRequesterGroup
+ *
+ * - [ ] /admin/groups/update/requesters/[groupId]
+ */
+export const REQUESTER_GROUP_GET = "REQUESTER_GROUP_GET";
+/**
+ * /updateRequesterGroup
+ *
+ * - [ ] /admin/groups/update/requesters/[groupsId]
+ */
+export const REQUESTER_GROUP_UPDATE = "REQUESTER_GROUP_UPDATE";
+/**
+ * /deleteRequesterGroup
+ *
+ * - [ ] /admin/groups
+ */
+export const REQUESTER_GROUP_DELETE = "REQUESTER_GROUP_DELETE";
