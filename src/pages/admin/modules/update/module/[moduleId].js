@@ -4,13 +4,25 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { MODULES_GET, MODULE_UPDATE } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
 const ModuleUpdate = ({ initProps, sidemenu, dataProfile, idmodule }) => {
-  //1. Init
+  /**
+   * Dependencies
+   */
   const rt = useRouter();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetModules = hasPermission(MODULES_GET);
+  const isAllowedToUpdateModule = hasPermission(MODULE_UPDATE);
+
+  //1. Init
   const { module } = rt.query;
   const [instanceForm] = Form.useForm();
 
@@ -69,39 +81,45 @@ const ModuleUpdate = ({ initProps, sidemenu, dataProfile, idmodule }) => {
 
   //useEffect
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModules`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        const detaildata = res2.data.filter((flt) => {
-          return flt.id === Number(idmodule);
-        })[0];
-        const temp = {
-          id: detaildata.id,
-          key: detaildata.key,
-          name: detaildata.name,
-          status: detaildata.status,
-          company_id: detaildata.company_id,
-          description: detaildata.description,
-          feature: detaildata.feature,
-        };
-        setupdatedata({
-          ...updatedata,
-          name: detaildata.name,
-          description: detaildata.description,
+    if (isAllowedToGetModules) {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModules`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          const detaildata = res2.data.filter((flt) => {
+            return flt.id === Number(idmodule);
+          })[0];
+          const temp = {
+            id: detaildata.id,
+            key: detaildata.key,
+            name: detaildata.name,
+            status: detaildata.status,
+            company_id: detaildata.company_id,
+            description: detaildata.description,
+            feature: detaildata.feature,
+          };
+          setupdatedata({
+            ...updatedata,
+            name: detaildata.name,
+            description: detaildata.description,
+          });
+          setdatadisplay(temp);
+          setpraloading(false);
+          var pathArr = rt.pathname.split("/").slice(1);
+          pathArr.splice(2, 2);
+          pathArr[pathArr.length - 1] = `Ubah Module - ${detaildata.name}`;
+          setpatharr(pathArr);
         });
-        setdatadisplay(temp);
-        setpraloading(false);
-        var pathArr = rt.pathname.split("/").slice(1);
-        pathArr.splice(2, 2);
-        pathArr[pathArr.length - 1] = `Ubah Module - ${detaildata.name}`;
-        setpatharr(pathArr);
-      });
-  }, []);
+      return;
+    }
+
+    permissionWarningNotification("Mendapatkan", "Informasi Module ini");
+    setpraloading(false);
+  }, [isAllowedToGetModules]);
 
   return (
     <Layout
@@ -133,6 +151,7 @@ const ModuleUpdate = ({ initProps, sidemenu, dataProfile, idmodule }) => {
                   </Button>
                 </Link>
                 <Button
+                  disabled={!isAllowedToGetModules || !isAllowedToUpdateModule}
                   type="primary"
                   loading={loadingupdate}
                   onClick={instanceForm.submit}
@@ -170,7 +189,10 @@ const ModuleUpdate = ({ initProps, sidemenu, dataProfile, idmodule }) => {
                       ]}
                     >
                       <Input
-                        defaultValue={datadisplay.name}
+                        disabled={!isAllowedToGetModules}
+                        defaultValue={
+                          isAllowedToGetModules ? datadisplay.name : undefined
+                        }
                         name={`name`}
                         onChange={(e) => {
                           setupdatedata({
@@ -193,7 +215,12 @@ const ModuleUpdate = ({ initProps, sidemenu, dataProfile, idmodule }) => {
                     >
                       <Input.TextArea
                         rows={4}
-                        defaultValue={datadisplay.description}
+                        disabled={!isAllowedToGetModules}
+                        defaultValue={
+                          isAllowedToGetModules
+                            ? datadisplay.description
+                            : undefined
+                        }
                         name={`description`}
                         onChange={(e) => {
                           setupdatedata({

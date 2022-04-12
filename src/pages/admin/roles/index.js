@@ -5,12 +5,23 @@ import { useState } from "react";
 import { useEffect } from "react";
 import Sticky from "wil-react-sticky";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { ROLES_GET, ROLE_ADD } from "lib/features";
+
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
 function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
+  /**
+   * Dependencies
+   */
   const rt = useRouter();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetRolesList = hasPermission(ROLES_GET);
+  const isAllowedToAddRole = hasPermission(ROLE_ADD);
+
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
   const { originPath } = rt.query;
@@ -193,49 +204,54 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
       });
   };
 
-  const handleDeleteRoles = () => {
-    setloadingdelete(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRole`, {
-      method: "DELETE",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(datadelete),
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          notification["success"]({
-            message: res2.message,
-            duration: 3,
-          });
-          setTimeout(() => {
-            setloadingdelete(false);
-            rt.push(`/admin/roles`);
-          }, 300);
-        } else if (!res2.success) {
-          notification["error"]({
-            message: res2.message.errorInfo.status_detail,
-            duration: 3,
-          });
-          setloadingdelete(false);
-        }
-      });
-  };
+  // const handleDeleteRoles = () => {
+  //   setloadingdelete(true);
+  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRole`, {
+  //     method: "DELETE",
+  //     headers: {
+  //       Authorization: JSON.parse(initProps),
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(datadelete),
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       if (res2.success) {
+  //         notification["success"]({
+  //           message: res2.message,
+  //           duration: 3,
+  //         });
+  //         setTimeout(() => {
+  //           setloadingdelete(false);
+  //           rt.push(`/admin/roles`);
+  //         }, 300);
+  //       } else if (!res2.success) {
+  //         notification["error"]({
+  //           message: res2.message.errorInfo.status_detail,
+  //           duration: 3,
+  //         });
+  //         setloadingdelete(false);
+  //       }
+  //     });
+  // };
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setmaindata(res2.data);
-        setloadingtable(false);
-      });
-  }, []);
+    if (isAllowedToGetRolesList) {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setmaindata(res2.data);
+          setloadingtable(false);
+        });
+      return;
+    }
+
+    setloadingtable(false);
+  }, [isAllowedToGetRolesList]);
   return (
     <Layout
       tok={tok}
@@ -258,7 +274,11 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                   // [176].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                   <div className="flex space-x-2">
                     <Link href="/admin/roles/create">
-                      <Button type="primary" size="large">
+                      <Button
+                        type="primary"
+                        size="large"
+                        disabled={!isAllowedToAddRole}
+                      >
                         Tambah
                       </Button>
                     </Link>

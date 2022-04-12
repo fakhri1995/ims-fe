@@ -15,7 +15,11 @@ import {
 } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { FEATURES_GET } from "lib/features";
 
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
@@ -27,6 +31,12 @@ const FeaturesIndex = ({
   dataListFeatures,
   sidemenu,
 }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetFeaturesList = hasPermission(FEATURES_GET);
+
   //Definisi table
   const columnsFeature = [
     {
@@ -170,16 +180,31 @@ const FeaturesIndex = ({
 
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
-  const { Search } = Input;
 
   //useState
-  dataListFeatures.data = dataListFeatures.data.map((doc, idx) => {
-    return {
-      ...doc,
-      nomor: idx + 1,
-    };
-  });
-  const [datatable, setdatatable] = useState(dataListFeatures.data);
+  // dataListFeatures.data = dataListFeatures.data.map((doc, idx) => {
+  //   return {
+  //     ...doc,
+  //     nomor: idx + 1,
+  //   };
+  // });
+  // const [datatable, setdatatable] = useState(dataListFeatures.data);
+  const [datatable, setdatatable] = useState([]);
+
+  useEffect(() => {
+    if (!isAllowedToGetFeaturesList) {
+      return;
+    }
+
+    const mappedData = dataListFeatures.data.map((doc, idx) => {
+      return {
+        ...doc,
+        nomor: idx + 1,
+      };
+    });
+
+    setdatatable(mappedData);
+  }, [isAllowedToGetFeaturesList, dataListFeatures]);
 
   //create
   const [drawcreate, setdrawcreate] = useState(false);

@@ -15,8 +15,12 @@ import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import Sticky from "wil-react-sticky";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { useAxiosClient } from "hooks/use-axios-client";
 import { useDebounce } from "hooks/use-debounce-value";
+
+import { ROLES_GET } from "lib/features";
 
 import { AttendanceFormAktivitasService } from "apis/attendance";
 
@@ -25,8 +29,14 @@ import st from "../../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
 function AgentsCreate({ initProps, dataProfile, sidemenu }) {
+  /**
+   * Dependencies
+   */
   const axiosClient = useAxiosClient();
   const rt = useRouter();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetRolesList = hasPermission(ROLES_GET);
+
   const { originPath } = rt.query;
   const tok = initProps;
   //Breadcrumb
@@ -196,17 +206,20 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
   }, []);
   //data Roles
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setdataroles(res2.data);
-      });
-  }, []);
+    if (isAllowedToGetRolesList) {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setdataroles(res2.data);
+        });
+      return;
+    }
+  }, [isAllowedToGetRolesList]);
 
   return (
     <Layout
@@ -487,6 +500,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                   <Form.Item label="Role" name="role">
                     <Select
                       mode="multiple"
+                      disabled={!isAllowedToGetRolesList}
                       onChange={(value) => {
                         setNewuser({ ...newuser, role_ids: value });
                       }}

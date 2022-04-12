@@ -5,6 +5,10 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { ROLES_GET } from "lib/features";
+
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
@@ -29,7 +33,13 @@ function RequestersUpdate({
   sidemenu,
   userid,
 }) {
+  /**
+   * Dependencies
+   */
   const rt = useRouter();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetRolesList = hasPermission(ROLES_GET);
+
   const tok = initProps;
   // var pathArr = rt.pathname.split("/").slice(1)
   // pathArr[pathArr.length - 1] = dataDetailRequester.data.fullname
@@ -276,19 +286,24 @@ function RequestersUpdate({
         setcompanyid(res2.data.company.id);
       })
       .then(() => {
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        })
-          .then((res) => res.json())
-          .then((res2) => {
-            setdataraw1(res2);
-            setpreloading(false);
-          });
+        if (isAllowedToGetRolesList) {
+          fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
+            method: `GET`,
+            headers: {
+              Authorization: JSON.parse(initProps),
+            },
+          })
+            .then((res) => res.json())
+            .then((res2) => {
+              setdataraw1(res2);
+              setpreloading(false);
+            });
+          return;
+        }
+
+        setpreloading(false);
       });
-  }, []);
+  }, [isAllowedToGetRolesList]);
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocations`, {
       method: `GET`,
@@ -529,10 +544,13 @@ function RequestersUpdate({
                       // [133].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                       <Select
                         mode="multiple"
+                        disabled={!isAllowedToGetRolesList}
                         onChange={(value) => {
                           onChangeRole(value);
                         }}
-                        defaultValue={idrole}
+                        defaultValue={
+                          isAllowedToGetRolesList ? idrole : undefined
+                        }
                         style={{ width: `100%` }}
                       >
                         {dataraw1.data.map((doc, idx) => {
