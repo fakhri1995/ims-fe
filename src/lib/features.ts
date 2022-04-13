@@ -230,79 +230,80 @@ export const AGENT_GROUP_DELETE = "AGENT_GROUP_DELETE";
 /**
  * /getRequesterList
  *
- * - [ ] /admin/groups/update/requesters/[groupsId]
- * - [ ] /admin/groups/create/requesters
- * - [ ] /admin/requesters
+ * - [x] /admin/groups/update/requesters/[groupsId]
+ * - [x] /admin/groups/create/requesters
+ * - [x] /admin/requesters
  */
 export const REQUESTERS_GET = "REQUESTERS_GET";
 /**
  * /getRequesterDetail
  *
- * - [ ] /admin/requesters/detail/[userId]
- * - [ ] /admin/requesters/update/[userId]
+ * - [x] /admin/requesters/detail/[userId]
+ * - [x] /admin/requesters/update/[userId]
  */
 export const REQUESTER_GET = "REQUESTER_GET";
 /**
  * /addRequesterMember
  *
- * - [ ] /admin/requesters/create
+ * - [x] /admin/requesters/create
+ * - [x] /admin/requesters
  */
 export const REQUESTER_ADD = "REQUESTER_ADD";
 /**
  * /updateRequesterDetail
  *
- * - [ ] /admin/requesters/update/[userId]
- * - [ ] /admin/requesters/detail/[userId]
+ * - [x] /admin/requesters/update/[userId]
+ * - [x] /admin/requesters/detail/[userId]
  */
 export const REQUESTER_UPDATE = "REQUESTER_UPDATE";
 /**
  * /changeRequesterPassword
  *
- * - [ ] /admin/requesters/update/[userId]
- * - [ ] /admin/requesters/detail/[userId]
- * - [ ] /admin/requesters/password/[userId]
+ * - [x] /admin/requesters/detail/[userId]
+ * - [x] /admin/requesters/password/[userId]
  */
 export const REQUESTER_PASSWORD_UPDATE = "REQUESTER_PASSWORD_UPDATE";
 /**
  * /requesterActivation
  *
- * - [ ] /admin/requesters/update/[userId]
- * - [ ] /admin/requesters/detail/[userId]
+ * - [x] /admin/requesters/detail/[userId]
  */
 export const REQUESTER_STATUS = "REQUESTER_STATUS";
 /**
  * /deleteRequester
  *
- * - [ ] /admin/requesters/detail/[userId]
+ * - [x] /admin/requesters/detail/[userId]
  */
 export const REQUESTER_DELETE = "REQUESTER_DELETE";
 /**
  * /getRequesterGroups
  *
- * - [ ] /admin/groups
+ * - [x] /admin/groups
  */
 export const REQUESTER_GROUPS_GET = "REQUESTER_GROUPS_GET";
 /**
  * /addRequesterGroup
  *
- * - [ ] /admin/groups/create/requesters
+ * - [x] /admin/groups/create/requesters
+ * - [x] /admin/groups
  */
 export const REQUESTER_GROUP_ADD = "REQUESTER_GROUP_ADD";
 /**
  * /getRequesterGroup
  *
- * - [ ] /admin/groups/update/requesters/[groupId]
+ * - [x] /admin/groups/update/requesters/[groupId]
  */
 export const REQUESTER_GROUP_GET = "REQUESTER_GROUP_GET";
 /**
  * /updateRequesterGroup
  *
- * - [ ] /admin/groups/update/requesters/[groupsId]
+ * - [x] /admin/groups/update/requesters/[groupsId]
+ * - [x] /admin/groups
  */
 export const REQUESTER_GROUP_UPDATE = "REQUESTER_GROUP_UPDATE";
 /**
  * /deleteRequesterGroup
  *
- * - [ ] /admin/groups
+ * - [x] /admin/groups
  */
 export const REQUESTER_GROUP_DELETE = "REQUESTER_GROUP_DELETE";
