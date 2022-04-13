@@ -1522,7 +1522,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                   }}
                 />
               </Form.Item>
-              {newdata.is_consumable === true && (
+              {newdata.is_consumable && (
                 <Form.Item name="quantity" label="Jumlah Barang">
                   <InputNumber
                     style={{ width: `100%` }}
