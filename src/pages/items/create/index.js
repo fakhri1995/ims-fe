@@ -50,7 +50,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
     deskripsi: "",
     manufacturer_id: null,
     is_consumable: false,
-    quantity: null,
+    quantity: 0,
     mig_id: "",
     notes: "",
     inventory_values: [],
@@ -1522,7 +1522,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                   }}
                 />
               </Form.Item>
-              {newdata.is_consumable === true && (
+              {newdata.is_consumable && (
                 <Form.Item name="quantity" label="Jumlah Barang">
                   <InputNumber
                     style={{ width: `100%` }}
